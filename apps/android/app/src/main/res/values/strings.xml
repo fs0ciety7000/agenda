@@ -148,6 +148,8 @@
     <string name="reminders_at_time">À l\'heure</string>
     <string name="reminders_permission">Autoriser les notifications</string>
     <string name="reminders_permission_denied">Les notifications sont désactivées pour l\'application dans les réglages du téléphone.</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="notification_preferences">Choisir quelles notifications recevoir (site)</string>
     <string name="settings_about">À propos</string>
     <string name="version">Version %1$s</string>
     <string name="role_owner">Propriétaire</string>

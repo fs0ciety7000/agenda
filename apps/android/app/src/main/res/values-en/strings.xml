@@ -136,6 +136,8 @@
     <string name="reminders_at_time">On time</string>
     <string name="reminders_permission">Allow notifications</string>
     <string name="reminders_permission_denied">Notifications are turned off for the app in the phone settings.</string>
+    <string name="settings_notifications">Notifications</string>
+    <string name="notification_preferences">Choose which notifications to receive (website)</string>
     <string name="settings_about">About</string>
     <string name="version">Version %1$s</string>
     <string name="role_owner">Owner</string>
