@@ -59,5 +59,15 @@ class FakeAgendaRepository(
         if (moveResult == OpResult.Ok) rows.value = rows.value.map { if (it.id == occurrenceId) it.copy(date = date) else it }
         return moveResult
     }
+    val checklistOps = mutableListOf<String>()
+    override suspend fun addChecklistItem(occurrenceId: String, text: String): OpResult {
+        checklistOps += "add:$text"; return OpResult.Ok
+    }
+    override suspend fun setChecklistItemDone(occurrenceId: String, itemId: String, done: Boolean): OpResult {
+        checklistOps += "done:$itemId=$done"; return OpResult.Ok
+    }
+    override suspend fun removeChecklistItem(occurrenceId: String, itemId: String): OpResult {
+        checklistOps += "remove:$itemId"; return OpResult.Ok
+    }
     override suspend fun calendarStatus(): CalendarStatus? = null
 }

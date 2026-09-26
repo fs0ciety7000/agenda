@@ -76,6 +76,10 @@ android {
         disable += setOf("GradleDependency", "AndroidGradlePluginVersion", "NewerVersionAvailable")
         abortOnError = true
     }
+    // Schémas Room exportés, lus par le test de migration (MigrationTestHelper). Robolectric ne voit
+    // que les assets de la variante testée : ajoutés à la variante debug seulement (pas à la release).
+    sourceSets.getByName("debug").assets.srcDir("$projectDir/schemas")
+
     testOptions {
         unitTests.isReturnDefaultValues = true
         // Robolectric : tests Compose et Room sur la JVM (pas d'émulateur requis en CI).
@@ -136,6 +140,7 @@ dependencies {
     testImplementation(libs.androidx.test.junit)
     testImplementation(libs.androidx.work.testing)
     testImplementation(libs.androidx.glance.testing)
+    testImplementation(libs.androidx.room.testing)
     testImplementation(libs.okhttp.mockwebserver)
     testImplementation(platform(libs.compose.bom))
     testImplementation(libs.compose.ui.test.junit4)

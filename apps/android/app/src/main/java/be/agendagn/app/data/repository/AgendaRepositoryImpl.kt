@@ -7,6 +7,9 @@ import be.agendagn.app.data.local.toDomain
 import be.agendagn.app.data.local.toEntity
 import be.agendagn.app.data.remote.AgendaApi
 import be.agendagn.app.data.remote.ApiErrorDto
+import be.agendagn.app.data.remote.ChecklistItemDto
+import be.agendagn.app.data.remote.ChecklistItemRequest
+import be.agendagn.app.data.remote.ChecklistUpdateRequest
 import be.agendagn.app.data.remote.QuickAddRequest
 import be.agendagn.app.data.remote.json
 import be.agendagn.app.data.sync.SyncEngine
@@ -126,6 +129,9 @@ class AgendaRepositoryImpl(
                 durationMinutes = draft.durationMinutes.takeIf { draft.date != null && draft.startMinute != null },
                 assigneeIds = (if (draft.personal) listOfNotNull(h.myMemberId) else draft.assigneeIds).joinToString(","),
                 isRecurring = draft.repeat != Repeat.NONE,
+                checklist = json.encodeToString(
+                    draft.checklist.mapIndexed { i, t -> ChecklistItemDto("$localId-$i", t.trim(), false) },
+                ),
             ),
         )
         enqueue(h.id, PendingOperationEntity.CREATE, localId, payload.toString())
@@ -242,6 +248,45 @@ class AgendaRepositoryImpl(
             }
         } catch (_: IOException) {
             revert()
+            OpResult.Offline
+        }
+    }
+
+    override suspend fun addChecklistItem(occurrenceId: String, text: String): OpResult =
+        checklistCall(occurrenceId) { h -> api.addChecklistItem(h, occurrenceId, ChecklistItemRequest(text.trim())) }
+
+    override suspend fun setChecklistItemDone(occurrenceId: String, itemId: String, done: Boolean): OpResult =
+        withContext(io) {
+            val row = db.occurrences().get(occurrenceId) ?: return@withContext OpResult.NotFound
+            val items = runCatching { json.decodeFromString<List<ChecklistItemDto>>(row.checklist) }.getOrDefault(emptyList())
+            // Affichage immédiat, rétabli si le serveur refuse ou si le réseau manque.
+            db.occurrences().upsert(row.copy(checklist = json.encodeToString(items.map { if (it.id == itemId) it.copy(done = done) else it })))
+            val result = checklistCall(occurrenceId) { h -> api.updateChecklistItem(h, occurrenceId, itemId, ChecklistUpdateRequest(done)) }
+            if (result != OpResult.Ok && result != OpResult.NotFound) {
+                db.occurrences().get(occurrenceId)?.let { db.occurrences().upsert(it.copy(checklist = row.checklist)) }
+            }
+            result
+        }
+
+    override suspend fun removeChecklistItem(occurrenceId: String, itemId: String): OpResult =
+        checklistCall(occurrenceId) { h -> api.removeChecklistItem(h, occurrenceId, itemId) }
+
+    private suspend fun checklistCall(
+        occurrenceId: String,
+        call: suspend (householdId: String) -> retrofit2.Response<be.agendagn.app.data.remote.OccurrenceDto>,
+    ): OpResult = withContext(io) {
+        val h = db.households().current() ?: return@withContext OpResult.NotFound
+        try {
+            val res = call(h.id)
+            when {
+                res.isSuccessful -> {
+                    res.body()?.let { db.occurrences().upsert(it.toEntity(h.id)) }
+                    OpResult.Ok
+                }
+                res.code() == 404 -> OpResult.NotFound
+                else -> OpResult.Failed(errorCode(res.errorBody()?.string()))
+            }
+        } catch (_: IOException) {
             OpResult.Offline
         }
     }

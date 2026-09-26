@@ -55,6 +55,15 @@ class AgendaTest {
     }
 
     @Test
+    fun `suggestion - la personne la moins chargee, rien en cas d egalite`() {
+        val b = Agenda.weekBalance(Fixtures.week(), TODAY, Fixtures.household.members)
+        // Grace : 45 min + 2 × 15 ; Nicolas : 10 min + 1 × 15.
+        assertEquals("Nicolas", Agenda.suggestAssignee(b)?.first?.displayName)
+        val tie = b.copy(members = b.members.map { it.first to Agenda.Share(1, 30) })
+        assertEquals(null, Agenda.suggestAssignee(tie))
+    }
+
+    @Test
     fun `repartition de la semaine - partagees uniquement, a deux et a definir a part`() {
         val b = Agenda.weekBalance(Fixtures.week(), TODAY, Fixtures.household.members)
         assertEquals(TODAY.minusDays(1), b.from) // lundi

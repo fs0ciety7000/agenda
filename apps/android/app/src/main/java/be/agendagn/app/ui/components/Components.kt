@@ -121,6 +121,7 @@ fun TaskRow(
         add(assigneeLabel(o, members))
         if (o.visibility == Visibility.PERSONAL) add(stringResource(R.string.personal))
         if (o.isRecurring) add("↻")
+        if (o.checklist.isNotEmpty()) add(stringResource(R.string.checklist_row, o.checklist.count { it.done }, o.checklist.size))
     }.joinToString(" · ")
     val priority = when (o.priority) {
         Priority.URGENT -> stringResource(R.string.priority_urgent)

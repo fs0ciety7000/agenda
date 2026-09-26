@@ -1,0 +1,75 @@
+# Surveillance de disponibilité, depuis l'extérieur du serveur (docs/deployment.md §10).
+# Toutes les 10 minutes : /healthz (web → API → PostgreSQL). En cas de panne, un ticket
+# « Site indisponible » est ouvert (notification GitHub par email / appli) ; il est fermé
+# automatiquement au retour du site. Aucun compte tiers nécessaire.
+name: Disponibilité
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+concurrency:
+  group: uptime
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      URL: ${{ vars.UPTIME_URL || 'https://agenda.fs0ciety.org/healthz' }}
+    steps:
+      - name: Vérifier le site (3 essais)
+        id: probe
+        run: |
+          for i in 1 2 3; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 "$URL" || echo 000)
+            echo "essai $i : HTTP $code"
+            if [ "$code" = "200" ]; then echo "up=true" >> "$GITHUB_OUTPUT"; exit 0; fi
+            sleep 20
+          done
+          echo "up=false" >> "$GITHUB_OUTPUT"
+          echo "status=$code" >> "$GITHUB_OUTPUT"
+
+      - name: Ouvrir ou fermer le ticket de panne
+        uses: actions/github-script@v7
+        env:
+          UP: ${{ steps.probe.outputs.up }}
+          STATUS: ${{ steps.probe.outputs.status }}
+        with:
+          script: |
+            const title = 'Site indisponible';
+            const { data: open } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner, repo: context.repo.repo, state: 'open', labels: 'panne',
+            });
+            const incident = open.find((i) => i.title === title);
+            const now = new Date().toISOString();
+            if (process.env.UP === 'true') {
+              if (incident) {
+                await github.rest.issues.createComment({
+                  owner: context.repo.owner, repo: context.repo.repo, issue_number: incident.number,
+                  body: `✅ De nouveau en ligne (${now}).`,
+                });
+                await github.rest.issues.update({
+                  owner: context.repo.owner, repo: context.repo.repo, issue_number: incident.number,
+                  state: 'closed',
+                });
+              }
+              return;
+            }
+            if (!incident) {
+              await github.rest.issues.create({
+                owner: context.repo.owner, repo: context.repo.repo, title, labels: ['panne'],
+                body: [
+                  `❌ ${process.env.URL} ne répond pas (HTTP ${process.env.STATUS || '000'}) depuis ${now}.`,
+                  '',
+                  'À vérifier : Coolify (état des conteneurs, logs de `api` et `web`), Cloudflare, espace disque.',
+                  'Ce ticket se ferme tout seul quand le site répond à nouveau.',
+                ].join('\n'),
+              });
+            }
+            core.setFailed(`Site indisponible (HTTP ${process.env.STATUS})`);

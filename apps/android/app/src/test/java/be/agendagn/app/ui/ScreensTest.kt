@@ -44,6 +44,7 @@ import androidx.compose.ui.test.hasAnyDescendant
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.performCustomAccessibilityActionWithLabel
 import androidx.compose.ui.test.performTouchInput
+import androidx.compose.ui.test.performTextInput
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -178,11 +179,57 @@ class ScreensTest {
     }
 
     @Test
+    fun formulaire_suggestion_de_repartition() {
+        val edits = mutableListOf<be.agendagn.app.domain.model.TaskDraft>()
+        val draft = be.agendagn.app.domain.model.TaskDraft(title = "Sortir les poubelles", date = TODAY)
+        val nicolas = Fixtures.household.members.first { it.id == Fixtures.NICOLAS }
+        screen {
+            TaskFormScreen(
+                TaskFormState(loading = false, draft = draft), Fixtures.household.members, emptyList(),
+                calendarAvailable = false, onEdit = { edits += it(draft) }, onSave = {}, onDelete = {},
+                onConfirmDelete = {}, onScope = {}, onDismissDialogs = {}, onBack = {},
+                suggestion = nicolas to be.agendagn.app.domain.Agenda.Share(1, 10),
+            )
+        }
+        compose.onNodeWithText("Suggestion : Nicolas, la moins chargée cette semaine (1 tâche).").assertIsDisplayed()
+        compose.onNodeWithText("Confier à Nicolas").performClick()
+        assertEquals(listOf(Fixtures.NICOLAS), edits.last().assigneeIds)
+    }
+
+    @Test
+    fun formulaire_liste_de_courses() {
+        val o = Fixtures.week().first().copy(
+            title = "Courses",
+            checklist = listOf(
+                be.agendagn.app.domain.model.ChecklistItem("i1", "Lait", done = true),
+                be.agendagn.app.domain.model.ChecklistItem("i2", "Pain", done = false),
+            ),
+        )
+        val toggled = mutableListOf<String>()
+        val added = mutableListOf<String>()
+        screen {
+            TaskFormScreen(
+                TaskFormState(loading = false, original = o, draft = be.agendagn.app.domain.TaskPayloads.draftOf(o), checklist = o.checklist),
+                Fixtures.household.members, emptyList(), calendarAvailable = false, onEdit = {}, onSave = {},
+                onDelete = {}, onConfirmDelete = {}, onScope = {}, onDismissDialogs = {}, onBack = {},
+                onAddItem = { added += it }, onToggleItem = { toggled += it.id },
+            )
+        }
+        compose.onNodeWithText("1 sur 2").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithContentDescription("Pain").performScrollTo().performClick()
+        assertEquals(listOf("i2"), toggled)
+        compose.onNodeWithText("Ajouter un élément (ex. lait, pain…)").performScrollTo().performTextInput("Café")
+        compose.onNodeWithContentDescription("Mettre dans la liste").performClick()
+        assertEquals(listOf("Café"), added)
+        compose.onNodeWithContentDescription("Retirer « Lait »").assertExists()
+    }
+
+    @Test
     fun reglages() {
         screen {
             SettingsScreen(
                 state, User("u", "grace@example.be", "Grace"),
-                CalendarStatus(CalendarLinkState.ACTIVE, "Commun G & N", "occmons@gmail.com", null, 12, 0, 0),
+                CalendarStatus(CalendarLinkState.ACTIVE, "Commun G & N", "foyer@example.be", null, 12, 0, 0),
                 ReminderSettings(true, 15), notificationsAllowed = true, version = "0.2.0",
                 onReminders = {}, onRequestNotifications = {}, onOpenWeb = {}, onSignOut = {},
             )

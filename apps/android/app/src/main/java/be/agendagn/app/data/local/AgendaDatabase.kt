@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
     entities = [
@@ -13,7 +15,7 @@ import androidx.room.RoomDatabase
         OccurrenceEntity::class,
         PendingOperationEntity::class,
     ],
-    version = 1,
+    version = 2,
     exportSchema = true,
 )
 abstract class AgendaDatabase : RoomDatabase() {
@@ -24,10 +26,19 @@ abstract class AgendaDatabase : RoomDatabase() {
     companion object {
         fun create(context: Context): AgendaDatabase =
             Room.databaseBuilder(context, AgendaDatabase::class.java, "agenda.db")
-                // Simple cache : en cas de changement de schéma, on le reconstruit depuis le serveur.
-                // Les actions hors ligne non envoyées seraient perdues : les migrations deviendront
-                // nécessaires dès que le schéma évoluera en production (voir docs/android.md).
-                .fallbackToDestructiveMigration(dropAllTables = true)
+                // Migrations explicites : les actions hors ligne pas encore envoyées survivent aux
+                // mises à jour de l'app. Seul un retour à une version plus ancienne vide le cache.
+                .addMigrations(*MIGRATIONS)
+                .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = true)
                 .build()
+
+        /** v2 : sous-tâches (liste JSON dans l'occurrence). */
+        val MIGRATION_1_2 = object : Migration(1, 2) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE occurrences ADD COLUMN checklist TEXT NOT NULL DEFAULT '[]'")
+            }
+        }
+
+        val MIGRATIONS = arrayOf(MIGRATION_1_2)
     }
 }

@@ -55,9 +55,13 @@ data class Occurrence(
     val pending: Boolean = false,
     /** Créée hors ligne : id local provisoire, non modifiable avant synchronisation. */
     val isLocal: Boolean = false,
+    /** Sous-tâches / liste (ex. courses). */
+    val checklist: List<ChecklistItem> = emptyList(),
 ) {
     val isDone: Boolean get() = status == OccurrenceStatus.DONE
 }
+
+data class ChecklistItem(val id: String, val text: String, val done: Boolean)
 
 /** Répétitions proposées sur mobile (la configuration avancée reste sur le web). */
 enum class Repeat { NONE, DAILY, WEEKLY, BIWEEKLY, MONTHLY }
@@ -77,6 +81,8 @@ data class TaskDraft(
     /** Répétition : les responsables sélectionnés alternent (« chacun son tour »). */
     val alternate: Boolean = false,
     val syncToCalendar: Boolean = false,
+    /** Création : éléments de la liste (envoyés avec la tâche). */
+    val checklist: List<String> = emptyList(),
 )
 
 data class QuickAddPreview(

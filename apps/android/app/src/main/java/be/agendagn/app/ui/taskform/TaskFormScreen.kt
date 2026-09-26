@@ -38,6 +38,17 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Close
+import be.agendagn.app.domain.Agenda
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +64,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import be.agendagn.app.R
 import be.agendagn.app.domain.model.Category
+import be.agendagn.app.domain.model.ChecklistItem
 import be.agendagn.app.domain.model.EditScope
 import be.agendagn.app.domain.model.Member
 import be.agendagn.app.domain.model.Priority
@@ -81,6 +93,11 @@ fun TaskFormScreen(
     onScope: (EditScope) -> Unit,
     onDismissDialogs: () -> Unit,
     onBack: () -> Unit,
+    /** Personne la moins chargée de la semaine de la tâche (proposée si personne n'est choisi). */
+    suggestion: Pair<Member, Agenda.Share>? = null,
+    onAddItem: (String) -> Unit = {},
+    onToggleItem: (ChecklistItem) -> Unit = {},
+    onRemoveItem: (ChecklistItem) -> Unit = {},
 ) {
     LaunchedEffect(state.done) { if (state.done) onBack() }
     Scaffold(
@@ -142,6 +159,18 @@ fun TaskFormScreen(
                     )
                 }
             }
+            if (suggestion != null && d.assigneeIds.isEmpty() && !d.personal && !state.readOnly) {
+                val (member, share) = suggestion
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Hint(
+                        pluralStringResource(R.plurals.assignee_suggestion, share.count, member.displayName, share.count),
+                        Modifier.weight(1f),
+                    )
+                    TextButton(onClick = { onEdit { it.copy(assigneeIds = listOf(member.id)) } }) {
+                        Text(stringResource(R.string.assignee_suggestion_pick, member.displayName))
+                    }
+                }
+            }
 
             if (!state.isEdit) {
                 Label(stringResource(R.string.field_repeat))
@@ -197,6 +226,17 @@ fun TaskFormScreen(
                 enabled = !state.readOnly,
                 modifier = Modifier.fillMaxWidth(),
             )
+
+            if (!state.readOnly) {
+                ChecklistSection(
+                    items = state.items,
+                    canToggle = state.isEdit,
+                    error = state.checklistError,
+                    onAdd = onAddItem,
+                    onToggle = onToggleItem,
+                    onRemove = onRemoveItem,
+                )
+            }
 
             SwitchRow(stringResource(R.string.field_personal), d.personal, enabled = !state.readOnly) { v ->
                 onEdit { it.copy(personal = v, syncToCalendar = if (v) false else it.syncToCalendar) }
@@ -339,8 +379,8 @@ private fun Label(text: String) =
     Text(text, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
 @Composable
-private fun Hint(text: String) =
-    Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+private fun Hint(text: String, modifier: Modifier = Modifier) =
+    Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = modifier)
 
 @Composable
 private fun <T> ChipRow(
@@ -382,5 +422,83 @@ private fun SwitchRow(label: String, checked: Boolean, enabled: Boolean = true, 
     ) {
         Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
         Switch(checked = checked, onCheckedChange = null, enabled = enabled)
+    }
+}
+
+/** Sous-tâches / liste (ex. courses) : cocher, ajouter (touche Entrée du clavier), retirer. */
+@Composable
+private fun ChecklistSection(
+    items: List<ChecklistItem>,
+    canToggle: Boolean,
+    error: FormError?,
+    onAdd: (String) -> Unit,
+    onToggle: (ChecklistItem) -> Unit,
+    onRemove: (ChecklistItem) -> Unit,
+) {
+    var text by remember { mutableStateOf("") }
+    val submit = {
+        if (text.isNotBlank()) {
+            onAdd(text)
+            text = ""
+        }
+    }
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Label(stringResource(R.string.checklist_title))
+            if (items.isNotEmpty()) {
+                Text(
+                    stringResource(R.string.checklist_progress, items.count { it.done }, items.size),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(start = 8.dp),
+                )
+            }
+        }
+        items.forEach { item ->
+            Row(Modifier.fillMaxWidth().heightIn(min = 48.dp), verticalAlignment = Alignment.CenterVertically) {
+                if (canToggle) {
+                    Checkbox(
+                        checked = item.done,
+                        onCheckedChange = { onToggle(item) },
+                        modifier = Modifier.semantics { contentDescription = item.text },
+                    )
+                } else {
+                    Text("•", modifier = Modifier.padding(horizontal = 16.dp))
+                }
+                Text(
+                    item.text,
+                    style = MaterialTheme.typography.bodyLarge,
+                    textDecoration = if (item.done) TextDecoration.LineThrough else null,
+                    color = if (item.done) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.weight(1f).clearAndSetSemantics { },
+                )
+                val removeLabel = stringResource(R.string.checklist_remove, item.text)
+                IconButton(onClick = { onRemove(item) }) {
+                    Icon(Icons.Filled.Close, contentDescription = removeLabel)
+                }
+            }
+        }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            OutlinedTextField(
+                value = text,
+                onValueChange = { text = it.take(200) },
+                label = { Text(stringResource(R.string.checklist_new)) },
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done, capitalization = KeyboardCapitalization.Sentences),
+                keyboardActions = KeyboardActions(onDone = { submit() }),
+                modifier = Modifier.weight(1f),
+            )
+            IconButton(onClick = submit, enabled = text.isNotBlank()) {
+                Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.checklist_add))
+            }
+        }
+        if (error != null) {
+            Text(
+                stringResource(if (error == FormError.OFFLINE) R.string.checklist_offline else R.string.checklist_error),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+            )
+        }
     }
 }

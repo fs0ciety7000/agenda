@@ -15,6 +15,7 @@ import { ApiTags } from '@nestjs/swagger';
 import {
   type BalanceDto,
   BalanceQuery,
+  ChecklistItemInput,
   CreateTaskInput,
   type OccurrenceDto,
   OccurrenceQuery,
@@ -26,6 +27,7 @@ import {
   type RecurrencePreviewItem,
   ScopeQuery,
   type SeriesDto,
+  UpdateChecklistItemInput,
   UpdateOccurrenceInput,
 } from '@agenda/contracts';
 import { IdempotencyInterceptor } from '../common/idempotency.interceptor';
@@ -111,6 +113,34 @@ export class TasksController {
     @Param('occurrenceId') id: string,
   ): Promise<OccurrenceDto> {
     return this.tasks.reopen(ctx, assertUuid(id));
+  }
+
+  @Post('occurrences/:occurrenceId/checklist')
+  addChecklistItem(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Param('occurrenceId') id: string,
+    @Body(new ZodPipe(ChecklistItemInput)) body: ChecklistItemInput,
+  ): Promise<OccurrenceDto> {
+    return this.tasks.addChecklistItem(ctx, assertUuid(id), body);
+  }
+
+  @Patch('occurrences/:occurrenceId/checklist/:itemId')
+  updateChecklistItem(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Param('occurrenceId') id: string,
+    @Param('itemId') itemId: string,
+    @Body(new ZodPipe(UpdateChecklistItemInput)) body: UpdateChecklistItemInput,
+  ): Promise<OccurrenceDto> {
+    return this.tasks.updateChecklistItem(ctx, assertUuid(id), assertUuid(itemId), body);
+  }
+
+  @Delete('occurrences/:occurrenceId/checklist/:itemId')
+  removeChecklistItem(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Param('occurrenceId') id: string,
+    @Param('itemId') itemId: string,
+  ): Promise<OccurrenceDto> {
+    return this.tasks.removeChecklistItem(ctx, assertUuid(id), assertUuid(itemId));
   }
 
   @Delete('occurrences/:occurrenceId')

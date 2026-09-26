@@ -97,7 +97,17 @@ data class OccurrenceDto(
     val isException: Boolean = false,
     val completedAt: String? = null,
     val version: Int,
+    val checklist: List<ChecklistItemDto> = emptyList(),
 )
+
+@Serializable
+data class ChecklistItemDto(val id: String, val text: String, val done: Boolean, val doneById: String? = null)
+
+@Serializable
+data class ChecklistItemRequest(val text: String)
+
+@Serializable
+data class ChecklistUpdateRequest(val done: Boolean)
 
 @Serializable
 data class QuickAddRequest(val text: String)

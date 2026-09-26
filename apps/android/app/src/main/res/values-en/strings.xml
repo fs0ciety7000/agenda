@@ -173,4 +173,13 @@
     <string name="widget_description">Today\'s and overdue tasks, ticked right from the home screen.</string>
     <string name="widget_empty">Nothing for today 🎉</string>
     <string name="widget_signed_out">Open the app to sign in.</string>
+    <string name="assignee_suggestion_pick">Assign to %1$s</string>
+    <string name="checklist_title">List</string>
+    <string name="checklist_progress">%1$d of %2$d</string>
+    <string name="checklist_new">Add an item (e.g. milk, bread…)</string>
+    <string name="checklist_add">Put in the list</string>
+    <string name="checklist_remove">Remove “%1$s”</string>
+    <string name="checklist_offline">Offline: the list can be edited once connected.</string>
+    <string name="checklist_error">The list couldn\'t be updated. Please try again.</string>
+    <string name="checklist_row">list %1$d/%2$d</string>
 </resources>

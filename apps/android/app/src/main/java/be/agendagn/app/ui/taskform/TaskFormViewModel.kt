@@ -3,6 +3,7 @@ package be.agendagn.app.ui.taskform
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import be.agendagn.app.domain.TaskPayloads
+import be.agendagn.app.domain.model.ChecklistItem
 import be.agendagn.app.domain.model.EditScope
 import be.agendagn.app.domain.model.Occurrence
 import be.agendagn.app.domain.model.Repeat
@@ -30,7 +31,14 @@ data class TaskFormState(
     val askScopeFor: ScopeAction? = null,
     val confirmDelete: Boolean = false,
     val done: Boolean = false,
+    /** Modification : sous-tâches à jour (cache local, suit les changements de l'autre téléphone). */
+    val checklist: List<ChecklistItem> = emptyList(),
+    val checklistError: FormError? = null,
 ) {
+    /** Liste affichée : enregistrée (modification) ou en cours de saisie (création). */
+    val items: List<ChecklistItem>
+        get() = if (isEdit) checklist else draft.checklist.mapIndexed { i, t -> ChecklistItem("draft-$i", t, false) }
+
     val isEdit: Boolean get() = original != null
     val readOnly: Boolean get() = original?.isLocal == true
 }
@@ -53,8 +61,48 @@ class TaskFormViewModel(
             } else {
                 val o = repository.occurrence(occurrenceId).first()
                 _state.value = if (o == null) TaskFormState(loading = false, error = FormError.NOT_FOUND)
-                else TaskFormState(loading = false, original = o, draft = TaskPayloads.draftOf(o))
+                else TaskFormState(loading = false, original = o, draft = TaskPayloads.draftOf(o), checklist = o.checklist)
+                repository.occurrence(occurrenceId).collect { fresh ->
+                    if (fresh != null) _state.update { it.copy(checklist = fresh.checklist) }
+                }
             }
+        }
+    }
+
+    // ───────── Sous-tâches ─────────
+
+    fun addItem(text: String) {
+        val value = text.trim()
+        if (value.isEmpty()) return
+        val o = _state.value.original
+        if (o == null) return edit { it.copy(checklist = it.checklist + value) }
+        checklistOp { repository.addChecklistItem(o.id, value) }
+    }
+
+    fun toggleItem(item: ChecklistItem) {
+        val o = _state.value.original ?: return
+        checklistOp { repository.setChecklistItemDone(o.id, item.id, !item.done) }
+    }
+
+    fun removeItem(item: ChecklistItem) {
+        val o = _state.value.original
+        if (o == null) {
+            val index = item.id.removePrefix("draft-").toIntOrNull() ?: return
+            return edit { d -> d.copy(checklist = d.checklist.filterIndexed { i, _ -> i != index }) }
+        }
+        checklistOp { repository.removeChecklistItem(o.id, item.id) }
+    }
+
+    private fun checklistOp(op: suspend () -> OpResult) {
+        _state.update { it.copy(checklistError = null) }
+        viewModelScope.launch {
+            val error = when (op()) {
+                OpResult.Ok -> null
+                OpResult.Offline -> FormError.OFFLINE
+                OpResult.NotFound -> FormError.NOT_FOUND
+                else -> FormError.GENERIC
+            }
+            _state.update { it.copy(checklistError = error) }
         }
     }
 

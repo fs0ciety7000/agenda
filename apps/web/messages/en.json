@@ -204,7 +204,10 @@
       "syncNeedsDate": "Pick a date to add it to the calendar."
     },
     "recurring": "Recurring task",
-    "recurrenceNeedsDate": "Pick a start date for a repeating task."
+    "recurrenceNeedsDate": "Pick a start date for a repeating task.",
+    "suggestion": "Suggestion: {name}, the least busy this week ({count, plural, =0 {no tasks} one {# task} other {# tasks}}{load, select, other { · {load}} none {}}).",
+    "suggestionPick": "Assign to {name}",
+    "checklistError": "The list couldn't be updated. Please try again."
   },
   "balance": {
     "bothOfUs": "Together",
@@ -548,5 +551,14 @@
     "memberHint": "A shared (“together”) task counts for the person who ticked it.",
     "minutes": "{m} min",
     "hours": "{h} h {m}"
+  },
+  "checklist": {
+    "title": "List",
+    "progress": "{done} of {total}",
+    "newItem": "New list item",
+    "placeholder": "Add an item (e.g. milk, bread…)",
+    "add": "Put in the list",
+    "remove": "Remove “{text}”",
+    "rowProgress": "List: {done} of {total} ticked"
   }
 }

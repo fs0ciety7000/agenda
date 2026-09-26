@@ -132,7 +132,7 @@ manquent. Modèle complet : `.env.prod.example`.
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | active Google Calendar et « Continuer avec Google » | cf. §9 |
 | `SMTP_*`, `EMAIL_FROM` | facultatif : active « Mot de passe oublié » | cf. §8 |
 | `GITHUB_RELEASES_TOKEN` | vide si le dépôt est public ; sinon jeton GitHub lecture seule (Contents) | cf. [`android.md`](android.md) §4 |
-| `SENTRY_DSN` | vide jusqu'en Phase 7 | — |
+| `SENTRY_DSN` | facultatif : suivi des erreurs (§10) | DSN Sentry / GlitchTip |
 
 `REDIS_URL` est fixée par le compose (`redis://redis:6379`) : rien à définir.
 
@@ -274,7 +274,7 @@ vérification du domaine de la même façon.
 ## 9. Google Calendar et connexion Google
 
 Un seul client OAuth pour les deux usages. Dans la **Google Cloud Console**, idéalement avec le
-compte occmons@gmail.com :
+compte Google du foyer :
 
 1. Créer un projet (ex. « Agenda G & N ») ; **APIs & Services → Library** : activer
    **Google Calendar API**.
@@ -305,13 +305,40 @@ Sécurité : un compte Google n'est jamais rattaché automatiquement à un compt
 même adresse (prise de contrôle possible). Pour lier Google à un compte créé avec un mot de passe :
 **Réglages → Données & confidentialité → Lier Google**.
 
-## 10. Surveillance
+## 10. Surveillance et maintenance
 
-- **Santé** : `https://agenda.fs0ciety.org/healthz` (web → API → base). À brancher sur un
-  moniteur externe (UptimeRobot, Better Stack…) ou les notifications Coolify.
+- **Disponibilité** : le workflow GitHub `Disponibilité` (`.github/workflows/uptime.yml`) appelle
+  `https://agenda.fs0ciety.org/healthz` (web → API → base) toutes les 10 minutes, **depuis
+  l'extérieur du serveur**. Après 3 échecs d'affilée, il ouvre un ticket « Site indisponible »
+  (étiquette `panne`) : GitHub vous prévient par email / sur l'appli mobile (*Watch* le dépôt ou
+  être propriétaire suffit). Le ticket se ferme tout seul au retour du site.
+  - Autre adresse : variable de dépôt `UPTIME_URL` (*Settings → Secrets and variables → Actions →
+    Variables*).
+  - GitHub peut retarder les tâches planifiées de quelques minutes, et les suspend après 60 jours
+    sans activité sur le dépôt (un clic sur *Enable workflow* les relance).
+  - Alternative avec alerte SMS / appli dédiée : UptimeRobot ou Better Stack (gratuits) sur la
+    même URL `/healthz`. Uptime Kuma est possible, mais **sur une autre machine** : installé sur le
+    même serveur, il tomberait avec lui.
+- **Sauvegardes** : service `backup` *unhealthy* s'il n'y a pas eu de sauvegarde réussie depuis
+  26 h → activer les notifications Coolify (*Settings → Notifications*, email ou Telegram).
+- **Mises à jour des dépendances** : Dependabot (`.github/dependabot.yml`) ouvre chaque lundi un
+  PR groupé par écosystème (npm, Gradle, images Docker ; actions GitHub chaque mois) pour les
+  versions mineures et correctifs, et un PR par version majeure. Activer aussi *Settings → Code
+  security → Dependabot security updates* : une faille connue ouvre un PR immédiatement. La CI
+  valide chaque PR ; fusionner quand elle est verte (les majeures : lire le changelog).
 - **Logs** : Coolify → ressource → *Logs* (JSON structuré pino côté API ; aucun token ni cookie
   n'y figure).
-- **Erreurs** : Sentry en Phase 7 (`SENTRY_DSN`).
+- **Erreurs (Sentry, facultatif)** : sans configuration, les erreurs du serveur, du site et de
+  l'app Android sont déjà écrites dans les logs de `api` (message `client error` / `server error`).
+  Pour être alerté par email avec le détail (pile d'appels, navigateur, version de l'app) :
+  1. Créer un compte gratuit sur https://sentry.io (offre *Developer*, suffisante pour deux
+     personnes ; ou GlitchTip, compatible, auto-hébergeable).
+  2. *Create Project* → plateforme **Node.js** → nom `agenda`. Copier le **DSN** affiché
+     (`https://…@o….ingest.sentry.io/…`).
+  3. Coolify → variable `SENTRY_DSN` = ce DSN → redéployer. Un seul DSN suffit : le site et l'app
+     Android envoient leurs erreurs à l'API (`/v1/client-errors`), qui les transmet.
+  4. Vérifier : Sentry → *Issues* ; les alertes email sont actives par défaut.
+  Aucune donnée personnelle n'est envoyée (ni email, ni contenu des tâches, ni jetons).
 
 ## 11. Checklist de sécurité
 

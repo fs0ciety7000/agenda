@@ -1,6 +1,6 @@
 # Intégration Google Calendar
 
-> Fonctionnalité centrale. Calendrier cible : **« Commun G & N »** (compte occmons@gmail.com),
+> Fonctionnalité centrale. Calendrier cible : **« Commun G & N »** (compte Google du foyer),
 > **jamais** codé en dur : l'utilisateur le sélectionne, on stocke son `calendarId`.
 
 ## 1. Deux usages de Google, deux flux séparés
@@ -55,7 +55,7 @@ Interface attendue :
 ```
 Calendrier partagé
 ✓ Commun G & N
-Google Calendar connecté · via occmons@gmail.com
+Google Calendar connecté · via foyer@example.be
 ```
 
 ## 3. Tokens
@@ -188,7 +188,7 @@ fériés » (reader). Le bouton « Connecter Google Calendar » revient directem
 
 ### Recette manuelle (à faire une fois en production)
 
-1. Réglages → **Connecter Google Calendar** avec occmons@gmail.com (écran « application non
+1. Réglages → **Connecter Google Calendar** avec le compte Google du foyer (écran « application non
    vérifiée » : *Paramètres avancés → Accéder à Agenda G & N*).
 2. Choisir **« Commun G & N »** (présélectionné) → **Utiliser ce calendrier**.
 3. Créer une tâche datée avec « Ajouter au calendrier partagé » ; vérifier l'événement dans Google

@@ -376,6 +376,12 @@ private fun TaskForm(
         onScope = vm::onScope,
         onDismissDialogs = vm::dismissDialogs,
         onBack = onBack,
+        onAddItem = vm::addItem,
+        onToggleItem = vm::toggleItem,
+        onRemoveItem = vm::removeItem,
+        suggestion = state.household?.let { h ->
+            Agenda.suggestAssignee(Agenda.weekBalance(state.occurrences, form.draft.date ?: state.today, h.members))
+        },
     )
 }
 

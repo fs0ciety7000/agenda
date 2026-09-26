@@ -1,11 +1,13 @@
 'use client';
 
 import type {
+  ChecklistItemDto,
   EditScope,
   OccurrenceDto,
   TaskPriority,
   UpdateOccurrenceInput,
 } from '@agenda/contracts';
+import { addDays, startOfWeek, suggestAssignee } from '@agenda/domain';
 import { CalendarDays, Lock, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
@@ -19,7 +21,7 @@ import { useToast } from '@/components/ui/toast';
 import { ApiError, errorKey } from '@/lib/api';
 import { useCalendarStatus } from '@/lib/calendar';
 import { cn } from '@/lib/cn';
-import { formatDuration, formatTime } from '@/lib/format';
+import { formatDuration, formatTime, useToday } from '@/lib/format';
 import {
   defaultRecurrence,
   fromSeries,
@@ -29,12 +31,15 @@ import {
   withStartDate,
 } from '@/lib/recurrence';
 import {
+  useBalance,
+  useChecklist,
   useCategories,
   useCreateTask,
   useDeleteOccurrence,
   useSeriesDetail,
   useUpdateOccurrence,
 } from '@/lib/tasks';
+import { ChecklistEditor, type ChecklistRow } from './checklist';
 import { useSession } from './household-context';
 import { RecurrenceFields } from './recurrence-fields';
 
@@ -104,6 +109,10 @@ export function TaskFormDialog({
   const [error, setError] = useState<string | null>(null);
   const [version, setVersion] = useState(occurrence?.version ?? 1);
   const [pending, setPending] = useState<PendingScope | null>(null);
+  const checklist = useChecklist(household.id);
+  /** Sous-tâches : enregistrées à chaque action en modification, envoyées à la création sinon. */
+  const [items, setItems] = useState<ChecklistItemDto[]>(occurrence?.checklist ?? []);
+  const [draftItems, setDraftItems] = useState<ChecklistRow[]>([]);
 
   const initialForm = (o?: OccurrenceDto | null, d?: TaskDraft): FormState => {
     const ids = o?.assigneeIds ?? d?.assigneeIds ?? [myMemberId];
@@ -136,6 +145,8 @@ export function TaskFormDialog({
     setVersion(occurrence?.version ?? 1);
     setError(null);
     setPending(null);
+    setItems(occurrence?.checklist ?? []);
+    setDraftItems([]);
     setRec(defaultRecurrence(f.date, household.members));
     setInitialRecKey('null');
     // eslint-disable-next-line react-hooks/exhaustive-deps -- réinitialisation à l'ouverture uniquement
@@ -215,7 +226,12 @@ export function TaskFormDialog({
     const payload = basePayload();
     try {
       if (!occurrence) {
-        await create.mutateAsync({ ...payload, assigneeIds, recurrence: recurrenceInput });
+        await create.mutateAsync({
+          ...payload,
+          assigneeIds,
+          recurrence: recurrenceInput,
+          checklist: draftItems.length ? draftItems.map((i) => i.text) : undefined,
+        });
       } else if (!recurring) {
         await update.mutateAsync({
           id: occurrence.id,
@@ -318,6 +334,9 @@ export function TaskFormDialog({
                   value={form.assignee}
                   onChange={(v) => set('assignee', v)}
                 />
+                {form.assignee === 'none' && (
+                  <AssigneeSuggestion date={form.date} onPick={(id) => set('assignee', id)} />
+                )}
               </div>
             )}
 
@@ -403,6 +422,59 @@ export function TaskFormDialog({
                 className="min-h-11 rounded-md border border-border bg-surface px-3 py-2.5 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
               />
             </div>
+
+            {occurrence ? (
+              <ChecklistEditor
+                items={items.map((i) => ({ key: i.id, text: i.text, done: i.done }))}
+                busy={checklist.add.isPending}
+                onAdd={(text) =>
+                  checklist.add.mutate(
+                    { id: occurrence.id, text },
+                    {
+                      onSuccess: (o) => setItems(o.checklist),
+                      onError: () => toast({ message: t('checklistError'), tone: 'error' }),
+                    },
+                  )
+                }
+                onToggle={(itemId, done) => {
+                  setItems((list) => list.map((i) => (i.id === itemId ? { ...i, done } : i)));
+                  checklist.toggle.mutate(
+                    { id: occurrence.id, itemId, done },
+                    {
+                      onSuccess: (o) => setItems(o.checklist),
+                      onError: () => {
+                        setItems((list) =>
+                          list.map((i) => (i.id === itemId ? { ...i, done: !done } : i)),
+                        );
+                        toast({ message: t('checklistError'), tone: 'error' });
+                      },
+                    },
+                  );
+                }}
+                onRemove={(itemId) =>
+                  checklist.remove.mutate(
+                    { id: occurrence.id, itemId },
+                    {
+                      onSuccess: (o) => setItems(o.checklist),
+                      onError: () => toast({ message: t('checklistError'), tone: 'error' }),
+                    },
+                  )
+                }
+              />
+            ) : (
+              <ChecklistEditor
+                items={draftItems}
+                canToggle={false}
+                onAdd={(text) =>
+                  setDraftItems((list) => [
+                    ...list,
+                    { key: crypto.randomUUID(), text, done: false },
+                  ])
+                }
+                onToggle={() => {}}
+                onRemove={(key) => setDraftItems((list) => list.filter((i) => i.key !== key))}
+              />
+            )}
 
             {calendarLink && !form.personal && (
               <label className="flex min-h-11 cursor-pointer items-center gap-3 text-[0.9375rem]">
@@ -529,5 +601,45 @@ function ScopeChooser({
         </Button>
       </div>
     </div>
+  );
+}
+
+/** « À définir » : propose la personne la moins chargée de la semaine de la tâche. */
+function AssigneeSuggestion({
+  date,
+  onPick,
+}: {
+  date: string;
+  onPick: (memberId: string) => void;
+}) {
+  const t = useTranslations('tasks');
+  const { household } = useSession();
+  const today = useToday();
+  const from = startOfWeek(date || today);
+  const balance = useBalance(
+    household.id,
+    { from, to: addDays(from, 6) },
+    household.members.length > 1,
+  );
+  const suggestion = balance.data ? suggestAssignee(balance.data.members) : null;
+  const member = household.members.find((m) => m.id === suggestion?.memberId);
+  if (!suggestion || !member) return null;
+  return (
+    <p className="flex flex-wrap items-center gap-x-2 text-sm text-text-muted">
+      <span>
+        {t('suggestion', {
+          name: member.displayName,
+          load: suggestion.minutes > 0 ? formatDuration(suggestion.minutes) : 'none',
+          count: suggestion.count,
+        })}
+      </span>
+      <button
+        type="button"
+        onClick={() => onPick(member.id)}
+        className="min-h-11 rounded-md px-1 font-medium text-accent underline-offset-4 hover:underline"
+      >
+        {t('suggestionPick', { name: member.displayName })}
+      </button>
+    </p>
   );
 }

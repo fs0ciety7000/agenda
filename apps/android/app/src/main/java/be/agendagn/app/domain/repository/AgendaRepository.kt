@@ -52,5 +52,9 @@ interface AgendaRepository {
     suspend fun delete(occurrence: Occurrence, scope: EditScope): OpResult
     /** Glisser-déposer du calendrier : change le jour d'UNE occurrence (heure conservée). */
     suspend fun move(occurrenceId: String, date: java.time.LocalDate): OpResult
+    /** Sous-tâches : demandent le réseau (comme modifier) ; cocher s'affiche tout de suite. */
+    suspend fun addChecklistItem(occurrenceId: String, text: String): OpResult
+    suspend fun setChecklistItemDone(occurrenceId: String, itemId: String, done: Boolean): OpResult
+    suspend fun removeChecklistItem(occurrenceId: String, itemId: String): OpResult
     suspend fun calendarStatus(): CalendarStatus?
 }

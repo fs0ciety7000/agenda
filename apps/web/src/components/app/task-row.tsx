@@ -9,6 +9,7 @@ import {
   ChevronUp,
   Lock,
   RefreshCw,
+  ListChecks,
   Repeat,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -29,6 +30,7 @@ export function TaskRow({
   showDate?: boolean;
 }) {
   const t = useTranslations('tasks');
+  const tl = useTranslations('checklist');
   const { household } = useSession();
   const assigneeLabel = useAssigneeLabel(household);
   const dayLabel = useDayLabel();
@@ -105,6 +107,20 @@ export function TaskRow({
             <span className="inline-flex items-center gap-1">
               · <Repeat aria-hidden className="size-3" />
               <span className="sr-only">{t('recurring')}</span>
+            </span>
+          )}
+          {o.checklist.length > 0 && (
+            <span className="inline-flex items-center gap-1 tabular-nums">
+              · <ListChecks aria-hidden className="size-3.5" />
+              <span aria-hidden>
+                {o.checklist.filter((i) => i.done).length}/{o.checklist.length}
+              </span>
+              <span className="sr-only">
+                {tl('rowProgress', {
+                  done: o.checklist.filter((i) => i.done).length,
+                  total: o.checklist.length,
+                })}
+              </span>
             </span>
           )}
           {o.category && (

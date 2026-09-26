@@ -1,5 +1,6 @@
 package be.agendagn.app.data.local
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -61,6 +62,9 @@ data class OccurrenceEntity(
     val version: Int,
     /** Créée hors ligne (id provisoire `local-…`), en attente d'envoi. */
     val isLocal: Boolean = false,
+    /** Sous-tâches, en JSON (liste de [be.agendagn.app.data.remote.ChecklistItemDto]). */
+    @ColumnInfo(defaultValue = "[]")
+    val checklist: String = "[]",
 )
 
 /**

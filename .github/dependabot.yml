@@ -1,0 +1,39 @@
+# Mises à jour des dépendances (docs/deployment.md §10).
+# Hebdomadaire, groupées pour limiter le bruit : un PR « correctifs » (patch + minor) par
+# écosystème ; les versions majeures arrivent chacune dans leur PR (montées dédiées, risque R7).
+# Les alertes de sécurité (Dependabot security updates) ouvrent un PR immédiatement.
+version: 2
+updates:
+  - package-ecosystem: npm # pnpm workspace (apps/*, packages/*)
+    directory: /
+    schedule: { interval: weekly, day: monday, time: '06:00', timezone: Europe/Brussels }
+    open-pull-requests-limit: 5
+    groups:
+      correctifs:
+        update-types: [minor, patch]
+    labels: [dependencies]
+
+  - package-ecosystem: gradle # app Android
+    directory: /apps/android
+    schedule: { interval: weekly, day: monday, time: '06:00', timezone: Europe/Brussels }
+    open-pull-requests-limit: 5
+    groups:
+      correctifs:
+        update-types: [minor, patch]
+    labels: [dependencies, android]
+
+  - package-ecosystem: docker
+    directories: [/apps/api, /apps/web, /infra/backup]
+    schedule: { interval: weekly, day: monday, time: '06:00', timezone: Europe/Brussels }
+    groups:
+      images:
+        update-types: [minor, patch]
+    labels: [dependencies, docker]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: monthly }
+    groups:
+      actions:
+        patterns: ['*']
+    labels: [dependencies]
