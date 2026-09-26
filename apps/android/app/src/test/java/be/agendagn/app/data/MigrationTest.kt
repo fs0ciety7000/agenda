@@ -60,7 +60,25 @@ class MigrationTest {
         }
     }
 
+    @Test
+    fun `v3 vers v4 - echeance souple ajoutee, vide pour les taches existantes`() {
+        helper.createDatabase(DB4, 3).use { db ->
+            db.execSQL(
+                """INSERT INTO occurrences (id, householdId, taskId, title, priority, visibility, status, date,
+                assigneeIds, createdById, isRecurring, syncToCalendar, version, isLocal, checklist)
+                VALUES ('o1', 'h1', 't1', 'Garage', 'NORMAL', 'SHARED', 'TODO', NULL, '', 'm1', 0, 0, 1, 0, '[]')""",
+            )
+        }
+        helper.runMigrationsAndValidate(DB4, 4, true, *AgendaDatabase.MIGRATIONS).use { db ->
+            db.query("SELECT dueDate FROM occurrences WHERE id = 'o1'").use { c ->
+                c.moveToFirst()
+                assertEquals(true, c.isNull(0))
+            }
+        }
+    }
+
     private companion object {
+        const val DB4 = "migration-test-4.db"
         const val DB3 = "migration-test-3.db"
         const val DB = "migration-test.db"
     }

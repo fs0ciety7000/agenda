@@ -113,7 +113,11 @@ export class TasksService {
         and.push({ date: { gt: toDbDate(today) }, status: 'TODO' });
         break;
       case 'overdue':
-        and.push({ date: { lt: toDbDate(today) }, status: 'TODO' });
+        // Date passée, ou tâche sans date dont l'échéance souple est dépassée.
+        and.push({
+          status: 'TODO',
+          OR: [{ date: { lt: toDbDate(today) } }, { date: null, dueDate: { lt: toDbDate(today) } }],
+        });
         break;
       case 'unscheduled':
         and.push({ date: null, status: 'TODO' });
@@ -155,6 +159,7 @@ export class TasksService {
           ? [{ completedAt: 'desc' }]
           : [
               { date: { sort: 'asc', nulls: 'last' } },
+              { dueDate: { sort: 'asc', nulls: 'last' } },
               { startMinute: { sort: 'asc', nulls: 'last' } },
               { createdAt: 'asc' },
             ],
@@ -287,6 +292,7 @@ export class TasksService {
             householdId: ctx.householdId,
             taskId: task.id,
             ...scheduleColumns(schedule, tz),
+            dueDate: !schedule.date && input.dueDate ? toDbDate(input.dueDate) : null,
             assignees: { create: dedupe(assigneeIds).map((memberId) => ({ memberId })) },
           },
         });
@@ -436,6 +442,7 @@ export class TasksService {
       assigneeIds: parsed.assigneeIds ?? [],
       categoryId: parsed.categoryId,
       date: parsed.date,
+      dueDate: parsed.dueDate,
       startMinute: parsed.startMinute,
       durationMinutes: parsed.durationMinutes,
       syncToCalendar: Boolean(parsed.date) && (await this.calendarLinked(ctx)),
@@ -543,6 +550,12 @@ export class TasksService {
         where: { id: current.id, version: input.version },
         data: {
           ...scheduleColumns(schedule, tz),
+          // Planifiée : l'échéance souple n'a plus de sens. Sinon, celle demandée (ou l'actuelle).
+          dueDate: schedule.date
+            ? null
+            : input.dueDate !== undefined
+              ? input.dueDate && toDbDate(input.dueDate)
+              : current.dueDate,
           ...(exception
             ? {
                 isException: true,
@@ -1179,6 +1192,7 @@ function toDto(o: OccurrenceRow): OccurrenceDto {
     visibility: o.task.visibility,
     status: o.status,
     date: fromDbDate(o.date),
+    dueDate: o.date ? null : fromDbDate(o.dueDate),
     startMinute: o.startMinute,
     durationMinutes: o.durationMinutes,
     assigneeIds: o.assignees.map((a) => a.memberId).sort(),

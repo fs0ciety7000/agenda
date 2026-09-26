@@ -131,6 +131,7 @@ class AgendaRepositoryImpl(
                 priority = draft.priority.name,
                 visibility = if (draft.personal) Visibility.PERSONAL.name else Visibility.SHARED.name,
                 date = draft.date?.toString(),
+                dueDate = draft.dueDate?.toString().takeIf { draft.date == null },
                 startMinute = draft.startMinute.takeIf { draft.date != null },
                 durationMinutes = draft.durationMinutes.takeIf { draft.date != null && draft.startMinute != null },
                 assigneeIds = (if (draft.personal) listOfNotNull(h.myMemberId) else draft.assigneeIds).joinToString(","),

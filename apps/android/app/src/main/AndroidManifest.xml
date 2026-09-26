@@ -93,6 +93,9 @@
             android:name=".notifications.ReminderReceiver"
             android:exported="false" />
         <receiver
+            android:name=".notifications.RecapReceiver"
+            android:exported="false" />
+        <receiver
             android:name=".notifications.BootReceiver"
             android:exported="true">
             <intent-filter>

@@ -59,6 +59,8 @@ data class Occurrence(
     val isLocal: Boolean = false,
     /** Sous-tâches / liste (ex. courses). */
     val checklist: List<ChecklistItem> = emptyList(),
+    /** Tâche sans date : à faire au plus tard ce jour-là (« cette semaine » = dimanche). */
+    val dueDate: LocalDate? = null,
 ) {
     val isDone: Boolean get() = status == OccurrenceStatus.DONE
 }
@@ -73,6 +75,8 @@ data class TaskDraft(
     val title: String = "",
     val notes: String = "",
     val date: LocalDate? = null,
+    /** Échéance souple, seulement sans date. */
+    val dueDate: LocalDate? = null,
     val startMinute: Int? = null,
     val durationMinutes: Int? = null,
     val assigneeIds: List<String> = emptyList(),

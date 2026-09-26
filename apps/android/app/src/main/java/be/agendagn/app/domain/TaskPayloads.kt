@@ -30,6 +30,7 @@ object TaskPayloads {
             put("visibility", if (personal) Visibility.PERSONAL.name else Visibility.SHARED.name)
             put("assigneeIds", ids(assignees))
             draft.date?.let { put("date", it.toString()) }
+            if (draft.date == null) draft.dueDate?.let { put("dueDate", it.toString()) }
             if (draft.date != null) {
                 draft.startMinute?.let { put("startMinute", it) }
                 if (draft.startMinute != null) draft.durationMinutes?.let { put("durationMinutes", it) }
@@ -46,6 +47,7 @@ object TaskPayloads {
         title = o.title,
         notes = o.notes.orEmpty(),
         date = o.date,
+        dueDate = o.dueDate,
         startMinute = o.startMinute,
         durationMinutes = o.durationMinutes,
         assigneeIds = o.assigneeIds,
@@ -66,6 +68,8 @@ object TaskPayloads {
             if (draft.title.trim() != before.title) put("title", draft.title.trim())
             if (draft.notes.trim() != before.notes.trim()) put("notes", draft.notes.trim().ifEmpty { null }.orNullJson())
             if (draft.date != before.date) put("date", draft.date?.toString().orNullJson())
+            val due = if (draft.date == null) draft.dueDate else null
+            if (due != before.dueDate) put("dueDate", due?.toString().orNullJson())
             val start = if (draft.date == null) null else draft.startMinute
             if (start != before.startMinute) put("startMinute", start.orNullJson())
             val duration = if (start == null) null else draft.durationMinutes

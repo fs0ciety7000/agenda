@@ -60,6 +60,8 @@ fun SettingsScreen(
     update: @Composable () -> Unit = {},
     /** Diagnostic des notifications instantanées (null = masqué). */
     push: PushState? = null,
+    morningRecap: Boolean = true,
+    onMorningRecap: (Boolean) -> Unit = {},
     onRetryPush: () -> Unit = {},
 ) {
     var confirmSignOut by remember { mutableStateOf(false) }
@@ -161,6 +163,17 @@ fun SettingsScreen(
         SectionHeader(stringResource(R.string.settings_notifications))
         OutlinedCard(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+                Row(
+                    Modifier.fillMaxWidth().heightIn(min = 48.dp).toggleable(
+                        value = morningRecap,
+                        role = Role.Switch,
+                        onValueChange = onMorningRecap,
+                    ),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(stringResource(R.string.recap_setting), modifier = Modifier.weight(1f))
+                    Switch(checked = morningRecap, onCheckedChange = null)
+                }
                 if (!notificationsAllowed) {
                     Text(
                         stringResource(R.string.reminders_permission_denied),

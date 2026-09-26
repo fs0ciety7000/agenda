@@ -7,7 +7,14 @@ import type {
   TaskPriority,
   UpdateOccurrenceInput,
 } from '@agenda/contracts';
-import { addDays, startOfWeek, suggestAssignee } from '@agenda/domain';
+import {
+  addDays,
+  endOfMonth,
+  endOfWeek,
+  postponeWeekend,
+  startOfWeek,
+  suggestAssignee,
+} from '@agenda/domain';
 import { CalendarDays, Lock, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
@@ -21,7 +28,7 @@ import { useToast } from '@/components/ui/toast';
 import { ApiError, errorKey } from '@/lib/api';
 import { useCalendarStatus } from '@/lib/calendar';
 import { cn } from '@/lib/cn';
-import { formatDuration, formatTime, useToday } from '@/lib/format';
+import { formatDuration, formatTime, useDayLabel, useToday } from '@/lib/format';
 import {
   defaultRecurrence,
   fromSeries,
@@ -36,6 +43,7 @@ import {
   useCategories,
   useCreateTask,
   useDeleteOccurrence,
+  useMoveOccurrence,
   useSeriesDetail,
   useUpdateOccurrence,
 } from '@/lib/tasks';
@@ -46,6 +54,7 @@ import { RecurrenceFields } from './recurrence-fields';
 export interface TaskDraft {
   title?: string;
   date?: string | null;
+  dueDate?: string | null;
   startMinute?: number | null;
   durationMinutes?: number | null;
   assigneeIds?: string[];
@@ -56,6 +65,8 @@ export interface TaskDraft {
 interface FormState {
   title: string;
   date: string;
+  /** Échéance souple (tâche sans date) ; '' = aucune. */
+  dueDate: string;
   time: string;
   duration: string;
   assignee: string; // memberId | 'together' | 'none'
@@ -120,6 +131,7 @@ export function TaskFormDialog({
     return {
       title: o?.title ?? d?.title ?? '',
       date: o?.date ?? d?.date ?? '',
+      dueDate: o?.dueDate ?? d?.dueDate ?? '',
       time: minute != null ? formatTime(minute) : '',
       duration: String(o?.durationMinutes ?? d?.durationMinutes ?? ''),
       assignee: ids.length === 0 ? 'none' : ids.length > 1 ? 'together' : ids[0]!,
@@ -198,6 +210,8 @@ export function TaskFormDialog({
     title: form.title.trim(),
     notes: form.notes.trim() || null,
     date: form.date || null,
+    // Une échéance n'a de sens que sans date (le serveur l'ignore sinon).
+    dueDate: form.date ? null : form.dueDate || null,
     startMinute: form.date ? toMinute(form.time) : null,
     durationMinutes: form.duration ? Number(form.duration) : null,
     categoryId: form.categoryId || null,
@@ -372,6 +386,14 @@ export function TaskFormDialog({
                 ))}
               </Select>
             </div>
+
+            {!form.date && rec.preset === 'none' && (
+              <DueField value={form.dueDate} onChange={(v) => set('dueDate', v)} />
+            )}
+
+            {occurrence?.date && occurrence.status === 'TODO' && (
+              <Postpone occurrence={occurrence} onDone={() => onOpenChange(false)} />
+            )}
 
             <RecurrenceFields
               state={rec}
@@ -641,5 +663,96 @@ function AssigneeSuggestion({
         {t('suggestionPick', { name: member.displayName })}
       </button>
     </p>
+  );
+}
+
+/** Tâche sans date : « à faire cette semaine », « ce mois-ci » ou avant une date. */
+function DueField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const t = useTranslations('tasks.due');
+  const today = useToday();
+  const week = endOfWeek(today);
+  const month = endOfMonth(today);
+  const mode = !value ? 'none' : value === week ? 'week' : value === month ? 'month' : 'date';
+  return (
+    <div className="grid grid-cols-2 gap-3">
+      <Select
+        label={t('label')}
+        value={mode}
+        onChange={(e) => {
+          const m = e.target.value;
+          onChange(
+            m === 'none'
+              ? ''
+              : m === 'week'
+                ? week
+                : m === 'month'
+                  ? month
+                  : value || addDays(today, 7),
+          );
+        }}
+      >
+        <option value="none">{t('none')}</option>
+        <option value="week">{t('week')}</option>
+        {month !== week && <option value="month">{t('month')}</option>}
+        <option value="date">{t('date')}</option>
+      </Select>
+      {mode === 'date' && (
+        <Field
+          label={t('before')}
+          type="date"
+          min={today}
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+        />
+      )}
+    </div>
+  );
+}
+
+/** Reporter en un geste (cette occurrence seulement, heure conservée). */
+function Postpone({ occurrence, onDone }: { occurrence: OccurrenceDto; onDone: () => void }) {
+  const t = useTranslations('tasks.postpone');
+  const { household } = useSession();
+  const today = useToday();
+  const dayLabel = useDayLabel();
+  const move = useMoveOccurrence(household.id);
+  const toast = useToast();
+  const options = [
+    { key: 'tomorrow', date: addDays(today, 1) },
+    { key: 'weekend', date: postponeWeekend(today) },
+  ] as const;
+  const go = (date: string) =>
+    move.mutate(
+      {
+        o: occurrence,
+        date,
+        startMinute: occurrence.startMinute,
+        durationMinutes: occurrence.durationMinutes,
+      },
+      {
+        onSuccess: () => {
+          onDone();
+          toast({ message: t('done', { title: occurrence.title, date: dayLabel(date, 'long') }) });
+        },
+        onError: () => toast({ message: t('error'), tone: 'error' }),
+      },
+    );
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <span className="text-sm font-medium">{t('label')}</span>
+      {options
+        .filter((o) => o.date !== occurrence.date)
+        .map((o) => (
+          <Button
+            key={o.key}
+            type="button"
+            variant="secondary"
+            disabled={move.isPending}
+            onClick={() => go(o.date)}
+          >
+            {t(o.key)}
+          </Button>
+        ))}
+    </div>
   );
 }

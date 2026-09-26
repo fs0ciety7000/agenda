@@ -95,6 +95,12 @@ fun TodayScreen(
             } else {
                 items(sections.today, key = { "t-" + it.id }) { TaskRow(it, members, { onToggle(it) }, { onOpen(it) }) }
             }
+            if (sections.dueThisWeek.isNotEmpty()) {
+                item { SectionHeader(stringResource(R.string.due_section), trailing = sections.dueThisWeek.size.toString()) }
+                items(sections.dueThisWeek, key = { "d-" + it.id }) {
+                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, today = state.today)
+                }
+            }
             item { SectionHeader(stringResource(R.string.this_week)) }
             if (sections.upcoming.isEmpty()) {
                 item {

@@ -29,6 +29,8 @@ object Agenda {
         val today: List<Occurrence>,
         val upcoming: List<Occurrence>,
         val unscheduledCount: Int,
+        /** Sans date, à faire d'ici dimanche. */
+        val dueThisWeek: List<Occurrence> = emptyList(),
     ) {
         val todayDone: Int get() = today.count { it.isDone }
     }
@@ -36,7 +38,8 @@ object Agenda {
     fun todaySections(all: List<Occurrence>, today: LocalDate, weekDays: Long = 7): TodaySections {
         val visible = all.filter { it.status !in hidden }
         return TodaySections(
-            overdue = visible.filter { it.status == OccurrenceStatus.TODO && it.date != null && it.date < today }
+            // En retard : date passée, ou échéance souple dépassée.
+            overdue = visible.filter { it.status == OccurrenceStatus.TODO && isOverdue(it, today) }
                 .sortedWith(order),
             today = visible.filter { it.date == today }.sortedWith(compareBy<Occurrence> { it.isDone }.then(order)),
             upcoming = visible.filter {
@@ -44,7 +47,26 @@ object Agenda {
                     it.date <= today.plusDays(weekDays)
             }.sortedWith(order),
             unscheduledCount = visible.count { it.status == OccurrenceStatus.TODO && it.date == null },
+            dueThisWeek = visible.filter {
+                it.status == OccurrenceStatus.TODO && it.date == null && it.dueDate != null &&
+                    it.dueDate >= today && it.dueDate <= endOfWeek(today)
+            }.sortedBy { it.dueDate },
         )
+    }
+
+    fun isOverdue(o: Occurrence, today: LocalDate): Boolean =
+        (o.date != null && o.date < today) || (o.date == null && o.dueDate != null && o.dueDate < today)
+
+    /** Dimanche de la semaine (« cette semaine »). */
+    fun endOfWeek(date: LocalDate): LocalDate = date.plusDays((7 - date.dayOfWeek.value).toLong())
+
+    fun endOfMonth(date: LocalDate): LocalDate = date.withDayOfMonth(date.lengthOfMonth())
+
+    /** Reporter « ce week-end » : samedi qui vient ; samedi → dimanche ; dimanche → samedi suivant. */
+    fun postponeWeekend(today: LocalDate): LocalDate = when (today.dayOfWeek.value) {
+        6 -> today.plusDays(1)
+        7 -> today.plusDays(6)
+        else -> today.plusDays((6 - today.dayOfWeek.value).toLong())
     }
 
     enum class View { TODO, UPCOMING, UNSCHEDULED, DONE }

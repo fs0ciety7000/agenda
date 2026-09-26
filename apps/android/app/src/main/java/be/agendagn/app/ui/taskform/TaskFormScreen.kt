@@ -76,6 +76,7 @@ import be.agendagn.app.ui.components.currentLocale
 import be.agendagn.app.ui.components.formatDuration
 import be.agendagn.app.ui.components.formatLongDate
 import be.agendagn.app.ui.components.formatMinute
+import be.agendagn.app.ui.components.formatShortDate
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -100,6 +101,7 @@ fun TaskFormScreen(
     onToggleItem: (ChecklistItem) -> Unit = {},
     onRemoveItem: (ChecklistItem) -> Unit = {},
     onRetrySeries: () -> Unit = {},
+    onPostpone: (LocalDate) -> Unit = {},
 ) {
     LaunchedEffect(state.done) { if (state.done) onBack() }
     Scaffold(
@@ -144,6 +146,13 @@ fun TaskFormScreen(
                 modifier = Modifier.fillMaxWidth(),
             )
             DateTimeFields(d, onEdit, enabled = !state.readOnly)
+            if (d.date == null && !d.recurrence.repeating && !state.readOnly) {
+                DueChips(d.dueDate) { v -> onEdit { it.copy(dueDate = v) } }
+            }
+            val original = state.original
+            if (original?.date != null && !original.isDone && !state.readOnly && !state.saving) {
+                PostponeRow(original.date, onPostpone)
+            }
 
             // Rotation (chacun son tour…) : les responsables viennent de la répétition.
             val rotating = d.recurrence.repeating && d.recurrence.rotation != RotationKind.FIXED && !d.personal
@@ -508,6 +517,63 @@ private fun ChecklistSection(
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
             )
+        }
+    }
+}
+
+/** Tâche sans date : « à faire cette semaine », « ce mois-ci » ou avant une date choisie. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun DueChips(due: LocalDate?, onChange: (LocalDate?) -> Unit) {
+    val today = LocalDate.now()
+    val week = Agenda.endOfWeek(today)
+    val month = Agenda.endOfMonth(today)
+    val locale = currentLocale()
+    var pick by remember { mutableStateOf(false) }
+    Label(stringResource(R.string.due_label))
+    Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        FilterChip(selected = due == null, onClick = { onChange(null) }, label = { Text(stringResource(R.string.none)) })
+        FilterChip(selected = due == week, onClick = { onChange(week) }, label = { Text(stringResource(R.string.due_this_week)) })
+        if (month != week) {
+            FilterChip(selected = due == month, onClick = { onChange(month) }, label = { Text(stringResource(R.string.due_this_month)) })
+        }
+        val custom = due != null && due != week && due != month
+        FilterChip(
+            selected = custom,
+            onClick = { pick = true },
+            label = { Text(if (custom) stringResource(R.string.due_by, formatShortDate(due!!, locale, today)) else stringResource(R.string.due_pick)) },
+        )
+    }
+    if (pick) {
+        val state = rememberDatePickerState(
+            initialSelectedDateMillis = (due ?: today.plusDays(7)).atStartOfDay().toInstant(ZoneOffset.UTC).toEpochMilli(),
+        )
+        DatePickerDialog(
+            onDismissRequest = { pick = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    state.selectedDateMillis?.let { onChange(maxOf(today, Instant.ofEpochMilli(it).atZone(ZoneOffset.UTC).toLocalDate())) }
+                    pick = false
+                }) { Text(stringResource(R.string.ok)) }
+            },
+            dismissButton = { TextButton(onClick = { pick = false }) { Text(stringResource(R.string.cancel)) } },
+        ) { DatePicker(state) }
+    }
+}
+
+/** Reporter en un geste : demain ou ce week-end (l'heure est conservée). */
+@Composable
+private fun PostponeRow(current: LocalDate, onPostpone: (LocalDate) -> Unit) {
+    val today = LocalDate.now()
+    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        Label(stringResource(R.string.postpone_label))
+        listOf(
+            today.plusDays(1) to R.string.postpone_tomorrow,
+            Agenda.postponeWeekend(today) to R.string.postpone_weekend,
+        ).filter { it.first != current }.forEach { (date, label) ->
+            OutlinedButton(onClick = { onPostpone(date) }, modifier = Modifier.heightIn(min = 48.dp)) {
+                Text(stringResource(label))
+            }
         }
     }
 }

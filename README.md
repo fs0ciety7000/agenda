@@ -18,6 +18,8 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
 
 - **Aujourd'hui** : en retard, du jour, de la semaine ; répartition de la semaine (sans classement).
 - **Ajout rapide en langage naturel** : « Sortir les poubelles demain 19h Grace », en français ou en anglais.
+- **Échéance souple** (« Appeler le garage cette semaine ») et **report en un geste** (demain,
+  ce week-end) depuis la fiche, la notification ou le widget ; **récapitulatif du matin** à 8 h.
 - **Répétitions et tour de rôle** :
   - répétitions : chaque jour, jours ouvrés, semaines, mois, dernier jour du mois, personnalisées ;
   - tour de rôle : fixe, à deux, chacun son tour, rotation personnalisée, selon le jour, par semaine ;

@@ -248,6 +248,9 @@ class TaskFormViewModel(
         execute { o -> repository.update(o, s.draft, scope, recurrence) }
     }
 
+    /** Reporter en un geste (cette occurrence, heure conservée). */
+    fun postpone(date: LocalDate) = execute { o -> repository.move(o.id, date) }
+
     private fun deleteWithScope(scope: EditScope) = execute { o -> repository.delete(o, scope) }
 
     private fun execute(op: suspend (Occurrence) -> OpResult) {

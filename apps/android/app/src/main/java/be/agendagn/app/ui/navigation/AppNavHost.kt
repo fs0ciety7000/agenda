@@ -153,6 +153,7 @@ private fun MainScaffold(
     val state by vm.state.collectAsStateWithLifecycle()
     val quickAdd by vm.quickAdd.collectAsStateWithLifecycle()
     val reminders by container.settings.reminders.collectAsStateWithLifecycle(initialValue = ReminderSettings())
+    val morningRecap by container.settings.morningRecap.collectAsStateWithLifecycle(initialValue = true)
     val nav = rememberNavController()
     val backStack by nav.currentBackStackEntryAsState()
     val route = backStack?.destination?.route
@@ -395,6 +396,8 @@ private fun MainScaffold(
                     contentPadding = padding,
                     update = updateBanner,
                     push = pushState,
+                    morningRecap = morningRecap,
+                    onMorningRecap = { scope.launch { container.settings.setMorningRecap(it) } },
                     onRetryPush = { scope.launch { container.push.register() } },
                 )
             }
@@ -460,6 +463,7 @@ private fun TaskForm(
         onToggleItem = vm::toggleItem,
         onRemoveItem = vm::removeItem,
         onRetrySeries = vm::retrySeries,
+        onPostpone = vm::postpone,
         suggestion = state.household?.let { h ->
             Agenda.suggestAssignee(Agenda.weekBalance(state.occurrences, form.draft.date ?: state.today, h.members))
         },

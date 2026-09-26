@@ -86,6 +86,7 @@ data class OccurrenceDto(
     val visibility: String,
     val status: String,
     val date: String? = null,
+    val dueDate: String? = null,
     val startMinute: Int? = null,
     val durationMinutes: Int? = null,
     val assigneeIds: List<String>,

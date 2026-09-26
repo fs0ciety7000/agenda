@@ -49,6 +49,8 @@ data class OccurrenceEntity(
     val status: String,
     /** ISO-8601 (AAAA-MM-JJ) : trié correctement comme texte. */
     val date: String?,
+    /** Échéance souple d'une tâche sans date (v4). */
+    @ColumnInfo(defaultValue = "NULL") val dueDate: String? = null,
     val startMinute: Int?,
     val durationMinutes: Int?,
     /** Identifiants séparés par des virgules (des UUID : jamais de virgule). */

@@ -21,6 +21,7 @@ import be.agendagn.app.domain.repository.AgendaRepository
 import be.agendagn.app.domain.repository.AuthRepository
 import be.agendagn.app.notifications.ActivityNotifier
 import be.agendagn.app.notifications.PushRegistrar
+import be.agendagn.app.notifications.RecapScheduler
 import be.agendagn.app.notifications.ReminderScheduler
 import kotlinx.coroutines.flow.Flow
 
@@ -40,6 +41,7 @@ class AppContainer(context: Context) {
     private val repositoryImpl = AgendaRepositoryImpl(api, database, SyncEngine(api, database, settings), syncScheduler)
     val repository: AgendaRepository = repositoryImpl
     val reminders = ReminderScheduler(app, repository, settings)
+    val recap = RecapScheduler(app, settings)
     val authRepository: AuthRepository = AuthRepositoryImpl(
         api,
         tokenStore,

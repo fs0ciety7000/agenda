@@ -88,7 +88,8 @@
     "emptyBody": "Enjoy, or add a task above.",
     "sectionOverdue": "To catch up ({count})",
     "weekEmpty": "Nothing planned for the next few days.",
-    "seeStats": "See summary"
+    "seeStats": "See summary",
+    "sectionDue": "To do this week"
   },
   "placeholder": {
     "title": "Coming soon",
@@ -147,7 +148,11 @@
   "dates": {
     "today": "today",
     "tomorrow": "tomorrow",
-    "yesterday": "yesterday"
+    "yesterday": "yesterday",
+    "dueThisWeek": "This week",
+    "dueThisMonth": "This month",
+    "dueBy": "By {date}",
+    "dueOverdue": "Past due ({date})"
   },
   "quickAdd": {
     "label": "Quickly add a task",
@@ -209,7 +214,22 @@
     "recurrenceNeedsDate": "Pick a start date for a repeating task.",
     "suggestion": "Suggestion: {name}, the least busy this week ({count, plural, =0 {no tasks} one {# task} other {# tasks}}{load, select, other { · {load}} none {}}).",
     "suggestionPick": "Assign to {name}",
-    "checklistError": "The list couldn't be updated. Please try again."
+    "checklistError": "The list couldn't be updated. Please try again.",
+    "due": {
+      "label": "Due",
+      "none": "None",
+      "week": "This week",
+      "month": "This month",
+      "date": "By a date…",
+      "before": "At the latest on"
+    },
+    "postpone": {
+      "label": "Postpone:",
+      "tomorrow": "Tomorrow",
+      "weekend": "This weekend",
+      "done": "“{title}” moved to {date}",
+      "error": "Couldn't postpone the task."
+    }
   },
   "balance": {
     "bothOfUs": "Together",

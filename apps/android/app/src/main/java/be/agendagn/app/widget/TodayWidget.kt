@@ -52,6 +52,7 @@ import be.agendagn.app.domain.Agenda
 import be.agendagn.app.domain.model.Member
 import be.agendagn.app.domain.model.Occurrence
 import be.agendagn.app.domain.repository.AgendaRepository
+import be.agendagn.app.notifications.PostponeWorker
 import be.agendagn.app.notifications.ReminderScheduler
 import be.agendagn.app.ui.components.formatMinute
 import be.agendagn.app.ui.theme.DarkColors
@@ -128,6 +129,14 @@ class ToggleTaskAction : ActionCallback {
 }
 
 val OccurrenceIdKey = ActionParameters.Key<String>("occurrenceId")
+
+/** « → » : reporter la tâche à demain (envoyé dès que le réseau est là). */
+class PostponeTaskAction : ActionCallback {
+    override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
+        val id = parameters[OccurrenceIdKey] ?: return
+        PostponeWorker.enqueue(context, id, LocalDate.now().plusDays(1))
+    }
+}
 
 private fun container(context: Context) = (context.applicationContext as AgendaApplication).container
 
@@ -239,6 +248,15 @@ private fun TaskLine(o: Occurrence, late: Boolean, members: Map<String, Member>)
                 meta,
                 maxLines = 1,
                 style = TextStyle(color = if (late) colors.error else colors.onSurfaceVariant, fontSize = 12.sp),
+            )
+        }
+        if (!o.isDone) {
+            Image(
+                ImageProvider(R.drawable.ic_widget_postpone),
+                contentDescription = context.getString(R.string.widget_postpone, o.title),
+                colorFilter = androidx.glance.ColorFilter.tint(colors.onSurfaceVariant),
+                modifier = GlanceModifier.size(40.dp).padding(8.dp)
+                    .clickable(actionRunCallback<PostponeTaskAction>(actionParametersOf(OccurrenceIdKey to o.id))),
             )
         }
     }

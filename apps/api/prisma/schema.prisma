@@ -307,6 +307,8 @@ model TaskOccurrence {
   originalDate    DateTime?        @db.Date
   /// Date effective (peut différer si déplacée). null = non planifiée.
   date            DateTime?        @db.Date
+  /// Échéance souple d'une tâche non planifiée (« cette semaine » = dimanche). Ignorée si `date`.
+  dueDate         DateTime?        @db.Date
   startMinute     Int?
   durationMinutes Int?
   allDay          Boolean          @default(false)

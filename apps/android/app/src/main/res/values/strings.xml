@@ -256,4 +256,22 @@
     <string name="widget_shopping_name">Courses</string>
     <string name="widget_shopping_description">La liste de courses du foyer, à cocher au magasin.</string>
     <string name="widget_shopping_empty">Rien à acheter.</string>
+    <string name="due_label">Échéance</string>
+    <string name="due_this_week">Cette semaine</string>
+    <string name="due_this_month">Ce mois-ci</string>
+    <string name="due_by">Avant %1$s</string>
+    <string name="due_pick">Avant une date…</string>
+    <string name="due_overdue">Échéance dépassée (%1$s)</string>
+    <string name="due_section">À faire cette semaine</string>
+    <string name="postpone_label">Reporter :</string>
+    <string name="postpone_tomorrow">Demain</string>
+    <string name="postpone_weekend">Ce week-end</string>
+    <string name="widget_postpone">Reporter « %1$s » à demain</string>
+    <string name="recap_channel">Récapitulatif du matin</string>
+    <string name="recap_channel_desc">À 8 h, les tâches du jour qui vous concernent.</string>
+    <string name="recap_title">Aujourd\'hui</string>
+    <string name="recap_setting">Récapitulatif du matin (8 h)</string>
+    <plurals name="recap_today"><item quantity="one">%d tâche aujourd\'hui</item><item quantity="many">%d tâches aujourd\'hui</item><item quantity="other">%d tâches aujourd\'hui</item></plurals>
+    <plurals name="recap_overdue"><item quantity="one">%d en retard</item><item quantity="many">%d en retard</item><item quantity="other">%d en retard</item></plurals>
+    <plurals name="recap_due"><item quantity="one">%d à faire cette semaine</item><item quantity="many">%d à faire cette semaine</item><item quantity="other">%d à faire cette semaine</item></plurals>
 </resources>
