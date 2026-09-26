@@ -16,7 +16,9 @@ import {
  *             le 12, le 12/10[/2027], 12 octobre, today, tomorrow, monday, next monday, in N days
  *   heures    19h, 19h30, 19:30, à 7h, midi, minuit, 7pm
  *   durées    30 min, pendant 1h30, pour 2h, for 45 min
- *   personnes @grace, @nicolas, @nous / @tous / @ensemble (à deux)
+ *   personnes @grace, @nicolas, @nous / @tous / @ensemble (à deux) ; sans @, un prénom seul
+ *             APRÈS une date / heure / durée reconnue (« …21h Grace », « …demain Grace et Nicolas »,
+ *             « …20h à deux ») — avant, il reste dans le titre (« Appeler Grace demain »)
  *   catégorie #courses
  *   priorité  !  (haute)   !! (urgente)
  * Tout ce qui n'est pas reconnu reste dans le titre.
@@ -133,6 +135,31 @@ function nextDayOfMonth(today: IsoDate, day: number): IsoDate | undefined {
 }
 
 const validTime = (h: number, m: number) => h >= 0 && h <= 23 && m >= 0 && m <= 59;
+
+const TOGETHER_BARE = new Set([
+  'a deux',
+  'tous les deux',
+  'toutes les deux',
+  'nous deux',
+  'ensemble',
+  'together',
+  'both of us',
+]);
+
+/** « Grace », « Grace et Nicolas », « à deux »… → membres ; null si ce n'est pas que ça. */
+function bareAssignees(gap: string, members: { id: string; key: string }[]): string[] | null {
+  if (!gap || members.length === 0) return null;
+  if (TOGETHER_BARE.has(gap)) return members.map((m) => m.id);
+  const parts = gap.split(/\s*(?:,|&|\bet\b|\band\b)\s*/u).filter(Boolean);
+  const ids: string[] = [];
+  for (const part of parts) {
+    const found =
+      members.find((m) => m.key === part) ?? members.find((m) => m.key.split(' ')[0] === part);
+    if (!found) return null;
+    ids.push(found.id);
+  }
+  return ids.length ? [...new Set(ids)] : null;
+}
 
 export function parseQuickAdd(input: string, ctx: QuickAddContext): QuickAddResult {
   const text = input.replace(/\s+/g, ' ').trim();
@@ -293,6 +320,24 @@ export function parseQuickAdd(input: string, ctx: QuickAddContext): QuickAddResu
     if (taken.has(m) && m.apply(result)) consumed.push(m);
   }
   consumed.sort((a, b) => a.start - b.start);
+
+  // Prénoms sans @ : seulement dans les intervalles APRÈS le premier fragment reconnu, et si
+  // l'intervalle entier désigne des membres (« chez Grace » reste dans le titre).
+  if (!result.assigneeIds && consumed.length > 0) {
+    for (let i = 0; i < consumed.length; i++) {
+      const from = consumed[i]!.end;
+      const to = consumed[i + 1]?.start ?? norm.length;
+      const gap = norm.slice(from, to);
+      const ids = bareAssignees(gap.trim(), members);
+      if (!ids) continue;
+      const lead = gap.length - gap.trimStart().length;
+      const start = from + lead;
+      const end = from + gap.trimEnd().length;
+      result.assigneeIds = ids;
+      consumed.splice(i + 1, 0, { start, end, kind: 'assignee', apply: () => true });
+      break;
+    }
+  }
   result.tokens = consumed.map((m) => ({ kind: m.kind, text: text.slice(m.start, m.end) }));
 
   let title = '';

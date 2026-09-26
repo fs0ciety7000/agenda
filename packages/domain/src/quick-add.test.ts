@@ -155,3 +155,38 @@ describe('quick add — titre', () => {
     expect(p('Acheter 2h2o').startMinute).toBeUndefined();
   });
 });
+
+describe('quick add — prénoms sans @', () => {
+  it('après l’heure : « Sortir les poubelles 21h Grace »', () => {
+    expect(p('Sortir les poubelles 21h Grace')).toMatchObject({
+      title: 'Sortir les poubelles',
+      startMinute: 21 * 60,
+      assigneeIds: ['g'],
+    });
+    expect(p('Sortir les poubelles 21h Grace').tokens.map((t) => t.text)).toEqual(['21h', 'Grace']);
+  });
+
+  it('entre deux fragments, plusieurs prénoms, « à deux »', () => {
+    expect(p('Sortir les poubelles mardi Nicolas 20h')).toMatchObject({
+      title: 'Sortir les poubelles',
+      date: '2026-09-29',
+      startMinute: 20 * 60,
+      assigneeIds: ['n'],
+    });
+    expect(p('Courses demain Grace et Nicolas').assigneeIds).toEqual(['g', 'n']);
+    expect(p('Cuisine ce soir à deux').assigneeIds).toEqual(['g', 'n']);
+    expect(p('Cuisine demain grâce').assigneeIds).toEqual(['g']);
+  });
+
+  it('dans le titre, le prénom reste du texte', () => {
+    expect(p('Appeler Grace demain')).toMatchObject({ title: 'Appeler Grace', date: '2026-09-27' });
+    expect(p('Appeler Grace demain').assigneeIds).toBeUndefined();
+    expect(p('Dîner demain chez Grace')).toMatchObject({ title: 'Dîner chez Grace' });
+    expect(p('Dîner demain chez Grace').assigneeIds).toBeUndefined();
+    expect(p('Anniversaire Grace').assigneeIds).toBeUndefined();
+  });
+
+  it('@ reste prioritaire', () => {
+    expect(p('Courses demain @nicolas Grace')).toMatchObject({ assigneeIds: ['n'] });
+  });
+});
