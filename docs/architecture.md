@@ -166,7 +166,7 @@ Tests critiques listés dans le cahier des charges §29 → chacun a un test nom
 ## 10. Sécurité & RGPD
 
 - **Chiffrement** des refresh tokens Google : AES‑256‑GCM, clé `TOKEN_ENCRYPTION_KEY` (32 octets, base64) hors base ; format `v1:<iv>:<tag>:<ciphertext>` → rotation de clé possible.
-- **Rate limiting** : `@nestjs/throttler` — global 100 req/min/IP, auth 10 req/min/IP. Stockage en mémoire en V1 (une instance) ; Redis si plusieurs instances.
+- **Rate limiting** : `@nestjs/throttler` — global 600 req/min/IP (`GLOBAL_RATE_LIMIT` ; les membres d'un foyer partagent souvent la même IP), auth 10 req/min/IP (`AUTH_RATE_LIMIT`). Stockage en mémoire en V1 (une instance) ; Redis si plusieurs instances.
 - **Headers** : Helmet (API), CSP stricte (web), HSTS.
 - **Entrées** : Zod partout, Prisma paramétré (pas de SQL brut non paramétré), React échappe par défaut, pas de `dangerouslySetInnerHTML`.
 - **Logs** : pino structuré, **sans** données personnelles ni tokens (redaction configurée).

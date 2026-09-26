@@ -1,0 +1,23 @@
+{
+  "name": "@agenda/domain",
+  "version": "0.0.0",
+  "files": [
+    "dist"
+  ],
+  "private": true,
+  "description": "Logique métier pure (dates/fuseaux, quick add ; récurrence et rotation en Phase 3). Aucune I/O.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@agenda/config": "workspace:*",
+    "eslint": "^9.37.0",
+    "typescript": "5.9.3",
+    "vitest": "3.2.4"
+  }
+}

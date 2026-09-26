@@ -2,7 +2,6 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import {
   type AcceptInvitationInput,
-  type CategoryDto,
   type CreateHouseholdInput,
   type CreateInvitationInput,
   DEFAULT_CATEGORIES,
@@ -73,14 +72,6 @@ export class HouseholdsService {
     });
     if (!household) throw notFound('HOUSEHOLD_NOT_FOUND');
     return toDto(household);
-  }
-
-  async listCategories(ctx: HouseholdContext): Promise<CategoryDto[]> {
-    const categories = await this.prisma.category.findMany({
-      where: { householdId: ctx.householdId, deletedAt: null },
-      orderBy: { position: 'asc' },
-    });
-    return categories.map(({ id, name, emoji, position }) => ({ id, name, emoji, position }));
   }
 
   /** Le jeton brut n'est renvoyé qu'une fois ; seul son hash est stocké. */

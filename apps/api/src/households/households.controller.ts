@@ -2,7 +2,6 @@ import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import {
   AcceptInvitationInput,
-  type CategoryDto,
   CreateHouseholdInput,
   CreateInvitationInput,
   type HouseholdDto,
@@ -39,12 +38,6 @@ export class HouseholdsController {
   @UseGuards(HouseholdMemberGuard)
   get(@CurrentHousehold() ctx: HouseholdContext): Promise<HouseholdDto> {
     return this.households.get(ctx);
-  }
-
-  @Get('households/:householdId/categories')
-  @UseGuards(HouseholdMemberGuard)
-  categories(@CurrentHousehold() ctx: HouseholdContext): Promise<CategoryDto[]> {
-    return this.households.listCategories(ctx);
   }
 
   @Post('households/:householdId/invitations')

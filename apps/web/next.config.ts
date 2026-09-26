@@ -18,7 +18,7 @@ const config: NextConfig = {
   // Image Docker minimale (server.js autonome) ; racine = monorepo pour tracer les paquets workspace.
   output: 'standalone',
   outputFileTracingRoot: path.join(import.meta.dirname, '../..'),
-  transpilePackages: ['@agenda/contracts'],
+  transpilePackages: ['@agenda/contracts', '@agenda/domain'],
   // L'API est servie sous la même origine (/v1/*) : cookies first-party, pas de CORS côté web.
   async rewrites() {
     return [

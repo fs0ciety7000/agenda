@@ -7,8 +7,10 @@ import { ClientIpThrottlerGuard } from './common/client-ip-throttler.guard';
 import { HttpExceptionFilter } from './common/http-exception.filter';
 import { env } from './config/env';
 import { HealthController } from './health/health.controller';
+import { CategoriesModule } from './categories/categories.module';
 import { HouseholdsModule } from './households/households.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { TasksModule } from './tasks/tasks.module';
 
 @Module({
   imports: [
@@ -21,10 +23,14 @@ import { PrismaModule } from './prisma/prisma.module';
       },
     }),
     // V1 : stockage en mémoire (une seule instance). Passage à Redis si mise à l'échelle horizontale.
-    ThrottlerModule.forRoot([{ name: 'default', ttl: 60_000, limit: 100 }]),
+    ThrottlerModule.forRoot([
+      { name: 'default', ttl: 60_000, limit: () => env().GLOBAL_RATE_LIMIT },
+    ]),
     PrismaModule,
     AuthModule,
     HouseholdsModule,
+    CategoriesModule,
+    TasksModule,
   ],
   controllers: [HealthController],
   providers: [

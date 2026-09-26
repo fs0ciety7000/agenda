@@ -1,5 +1,8 @@
 {
-  "app": { "name": "Agenda G & N", "skipToContent": "Skip to content" },
+  "app": {
+    "name": "Agenda G & N",
+    "skipToContent": "Skip to content"
+  },
   "nav": {
     "today": "Today",
     "tasks": "Tasks",
@@ -39,7 +42,10 @@
     "retry": "Retry",
     "email": "Invalid email address.",
     "passwordMin": "At least 10 characters.",
-    "required": "Required."
+    "required": "Required.",
+    "CATEGORY_NAME_TAKEN": "A category with this name already exists.",
+    "TASK_TITLE_REQUIRED": "Add a title to the task.",
+    "VERSION_CONFLICT": "This task was changed in the meantime."
   },
   "today": {
     "greeting": "Hello {name} 👋",
@@ -47,9 +53,14 @@
     "sectionWeek": "This week",
     "sectionBalance": "Balance",
     "emptyTitle": "Nothing for today.",
-    "emptyBody": "Enjoy. Task creation is coming in the next version."
+    "emptyBody": "Enjoy, or add a task above.",
+    "sectionOverdue": "To catch up ({count})",
+    "weekEmpty": "Nothing planned for the next few days."
   },
-  "placeholder": { "title": "Coming soon", "body": "This section is coming in a later phase." },
+  "placeholder": {
+    "title": "Coming soon",
+    "body": "This section is coming in a later phase."
+  },
   "onboarding": {
     "welcome": "Welcome 👋",
     "tagline": "Let's organise your everyday life together.",
@@ -78,12 +89,124 @@
     "members": "Members",
     "owner": "Owner",
     "appearance": "Appearance",
-    "theme": { "system": "System", "light": "Light", "dark": "Dark" },
+    "theme": {
+      "system": "System",
+      "light": "Light",
+      "dark": "Dark"
+    },
     "calendar": "Shared calendar",
     "calendarSoon": "Google Calendar connection is coming in phase 4.",
     "account": "Account",
     "logout": "Sign out",
-    "logoutAll": "Sign out of all devices"
+    "logoutAll": "Sign out of all devices",
+    "categories": "Categories"
   },
-  "common": { "loading": "Loading…" }
+  "common": {
+    "loading": "Loading…",
+    "close": "Close"
+  },
+  "dates": {
+    "today": "today",
+    "tomorrow": "tomorrow",
+    "yesterday": "yesterday"
+  },
+  "quickAdd": {
+    "label": "Quickly add a task",
+    "placeholder": "Take out the trash tomorrow 7pm @nicolas",
+    "moreOptions": "More options",
+    "previewLabel": "Detected:",
+    "added": "“{title}” added",
+    "priority": {
+      "HIGH": "High priority",
+      "URGENT": "Urgent"
+    }
+  },
+  "tasks": {
+    "unassigned": "Unassigned",
+    "bothOfUs": "Both of us",
+    "everyone": "Everyone",
+    "personal": "Personal",
+    "markDone": "Mark “{title}” as done",
+    "markTodo": "Mark “{title}” as to do",
+    "completedToast": "“{title}” done",
+    "undo": "Undo",
+    "toggleError": "Couldn't update the task. Please retry.",
+    "newTitle": "New task",
+    "editTitle": "Edit task",
+    "create": "Add",
+    "save": "Save",
+    "delete": "Delete",
+    "confirmDelete": "Delete “{title}”?",
+    "createdToast": "Task added",
+    "savedToast": "Changes saved",
+    "deletedToast": "Task deleted",
+    "conflict": "Someone else changed this task in the meantime. Here is the current version: check it and save again.",
+    "priority": {
+      "LOW": "Low",
+      "NORMAL": "Normal",
+      "HIGH": "High",
+      "URGENT": "Urgent"
+    },
+    "fields": {
+      "title": "Title",
+      "titlePlaceholder": "Clean the bathroom",
+      "assignee": "Assignee",
+      "date": "Date",
+      "time": "Time",
+      "timeNeedsDate": "Pick a date first.",
+      "duration": "Duration",
+      "category": "Category",
+      "noCategory": "None",
+      "priority": "Priority",
+      "notes": "Notes",
+      "personal": "Personal task",
+      "personalHint": "Only visible to you."
+    }
+  },
+  "balance": {
+    "bothOfUs": "Together",
+    "together": "Together",
+    "unassigned": "Unassigned",
+    "count": "{count, plural, =0 {no tasks} one {# task} other {# tasks}}",
+    "empty": "No shared tasks planned this week."
+  },
+  "tasksPage": {
+    "title": "Tasks",
+    "new": "New task",
+    "views": "Views",
+    "search": "Search",
+    "noDate": "No date",
+    "emptyTitle": "No tasks here.",
+    "emptyFiltered": "Try widening the filters.",
+    "tabs": {
+      "all": "All",
+      "today": "Today",
+      "upcoming": "Upcoming",
+      "overdue": "Overdue",
+      "unscheduled": "No date",
+      "done": "Done",
+      "personal": "Personal",
+      "shared": "Shared",
+      "together": "Together"
+    },
+    "filters": {
+      "person": "Person",
+      "everyone": "Everyone",
+      "category": "Category",
+      "allCategories": "All categories",
+      "priority": "Priority",
+      "allPriorities": "All priorities"
+    }
+  },
+  "categories": {
+    "emoji": "Emoji",
+    "name": "Name",
+    "save": "Save",
+    "cancel": "Cancel",
+    "rename": "Edit {name}",
+    "delete": "Delete {name}",
+    "confirmDelete": "Delete the “{name}” category? Its tasks will stay, without a category.",
+    "add": "New category",
+    "addButton": "Add"
+  }
 }

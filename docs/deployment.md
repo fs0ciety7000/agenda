@@ -122,7 +122,8 @@ manquent. Modèle complet : `.env.prod.example`.
 | `TOKEN_ENCRYPTION_KEY` | 32 octets en base64 | `openssl rand -base64 32` |
 | `CLIENT_IP_HEADER` | `cf-connecting-ip` | défaut |
 | `REGISTRATION_ENABLED` | `true`, puis **`false`** après vos deux inscriptions | cf. §5 |
-| `AUTH_RATE_LIMIT` | `10` | défaut |
+| `AUTH_RATE_LIMIT` | `10` | défaut (connexion, inscription, refresh) |
+| `GLOBAL_RATE_LIMIT` | `600` | défaut (toute l'API, par IP) |
 | `POSTGRES_USER` / `POSTGRES_DB` | `agenda` | défaut |
 | `GOOGLE_*` | vide jusqu'en Phase 4 | cf. §8 |
 | `SENTRY_DSN` | vide jusqu'en Phase 7 | — |

@@ -1,9 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { notFound } from '../common/app-exception';
+import { isUuid } from '../common/uuid';
 import { AppRequest } from '../common/request-context';
 import { PrismaService } from '../prisma/prisma.service';
-
-const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
  * Isolation multi-tenant. Toute route `/households/:householdId/...` exige que l'utilisateur
@@ -17,8 +16,7 @@ export class HouseholdMemberGuard implements CanActivate {
   async canActivate(ctx: ExecutionContext): Promise<boolean> {
     const req = ctx.switchToHttp().getRequest<AppRequest>();
     const householdId = req.params.householdId;
-    if (!req.user || typeof householdId !== 'string' || !UUID.test(householdId))
-      throw notFound('HOUSEHOLD_NOT_FOUND');
+    if (!req.user || !isUuid(householdId)) throw notFound('HOUSEHOLD_NOT_FOUND');
 
     const member = await this.prisma.householdMember.findFirst({
       where: { householdId, userId: req.user.userId, leftAt: null, household: { deletedAt: null } },
