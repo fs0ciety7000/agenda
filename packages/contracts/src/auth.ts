@@ -31,6 +31,9 @@ export const MeResponse = z.object({
   email: z.string(),
   displayName: z.string(),
   locale: Locale,
+  /** Faux pour un compte créé via Google uniquement. */
+  hasPassword: z.boolean(),
+  googleLinked: z.boolean(),
 });
 export type MeResponse = z.infer<typeof MeResponse>;
 

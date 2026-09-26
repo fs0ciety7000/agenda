@@ -118,7 +118,7 @@ export class AuthController {
   async forgotPassword(
     @Body(new ZodPipe(ForgotPasswordInput)) body: ForgotPasswordInput,
   ): Promise<void> {
-    await this.passwordReset.request(body.email);
+    this.passwordReset.requestInBackground(body.email);
   }
 
   @Public()

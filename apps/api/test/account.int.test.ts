@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import request from 'supertest';
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { GoogleOidcClient, type GoogleProfile } from '../src/auth/google-oidc.client';
 import { MailService } from '../src/mail/mail.service';
 import { coupleHousehold, createTestApp, CSRF, registerUser } from './app';
@@ -45,6 +45,27 @@ describe('Compte : mot de passe oublié, Google Sign-In, RGPD (intégration)', (
   describe('mot de passe oublié', () => {
     const tokenFrom = (text: string) => decodeURIComponent(/token=([^\s]+)/.exec(text)![1]!);
 
+    it("SÉCURITÉ : une panne SMTP ne change pas la réponse (pas d'énumération des comptes)", async () => {
+      const grace = await registerUser(app, 'Grace');
+      const original = mail.send.bind(mail);
+      mail.send = () => Promise.reject(new Error('SMTP down'));
+      try {
+        const known = await http()
+          .post('/v1/auth/password/forgot')
+          .set(CSRF)
+          .send({ email: grace.email });
+        const unknown = await http()
+          .post('/v1/auth/password/forgot')
+          .set(CSRF)
+          .send({ email: 'x@example.test' });
+        expect([known.status, unknown.status]).toEqual([202, 202]);
+        expect(known.body).toEqual(unknown.body);
+      } finally {
+        await new Promise((r) => setTimeout(r, 200));
+        mail.send = original;
+      }
+    });
+
     it('envoie un lien, réinitialise, révoque les sessions, usage unique', async () => {
       const grace = await registerUser(app, 'Grace');
       await http()
@@ -52,7 +73,8 @@ describe('Compte : mot de passe oublié, Google Sign-In, RGPD (intégration)', (
         .set(CSRF)
         .send({ email: grace.email.toUpperCase() })
         .expect(202);
-      expect(mail.outbox).toHaveLength(1);
+      // Envoi en arrière-plan (réponse immédiate et identique pour tous les emails).
+      await vi.waitFor(() => expect(mail.outbox).toHaveLength(1));
       expect(mail.outbox[0]).toMatchObject({
         to: grace.email,
         subject: 'Réinitialisation de votre mot de passe',
@@ -91,6 +113,7 @@ describe('Compte : mot de passe oublié, Google Sign-In, RGPD (intégration)', (
         .set(CSRF)
         .send({ email: 'inconnu@example.test' })
         .expect(202);
+      await new Promise((r) => setTimeout(r, 300));
       expect(mail.outbox).toHaveLength(0);
 
       const grace = await registerUser(app, 'Grace');
@@ -99,11 +122,13 @@ describe('Compte : mot de passe oublié, Google Sign-In, RGPD (intégration)', (
         .set(CSRF)
         .send({ email: grace.email })
         .expect(202);
+      await vi.waitFor(() => expect(mail.outbox).toHaveLength(1));
       await http()
         .post('/v1/auth/password/forgot')
         .set(CSRF)
         .send({ email: grace.email })
         .expect(202);
+      await vi.waitFor(() => expect(mail.outbox).toHaveLength(2));
       const [first, second] = mail.outbox.map((m) => tokenFrom(m.text));
       await http()
         .post('/v1/auth/password/reset')

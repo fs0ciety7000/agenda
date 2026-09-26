@@ -16,6 +16,7 @@ import { errorKey } from '@/lib/api';
 import { cn } from '@/lib/cn';
 import { useDayLabel } from '@/lib/format';
 import { useCategories, useOccurrences } from '@/lib/tasks';
+import { SeriesList } from '@/components/app/series-list';
 
 type Tab =
   | 'all'
@@ -26,12 +27,14 @@ type Tab =
   | 'done'
   | 'personal'
   | 'shared'
-  | 'together';
+  | 'together'
+  | 'recurring';
 const TABS: Tab[] = [
   'all',
   'today',
   'upcoming',
   'overdue',
+  'recurring',
   'unscheduled',
   'personal',
   'shared',
@@ -49,6 +52,7 @@ function tabQuery(tab: Tab): Partial<OccurrenceQuery> {
     case 'together':
       return { assignee: 'together', status: 'TODO' };
     case 'all':
+    case 'recurring':
       return { status: 'TODO' };
     default:
       return { view: tab };
@@ -132,7 +136,7 @@ function TasksView() {
         </ul>
       </nav>
 
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+      <div className={cn('grid grid-cols-2 gap-3 md:grid-cols-4', tab === 'recurring' && 'hidden')}>
         <div className="relative col-span-2 md:col-span-1">
           <label htmlFor="task-search" className="sr-only">
             {t('search')}
@@ -198,7 +202,9 @@ function TasksView() {
         </Select>
       </div>
 
-      {list.error ? (
+      {tab === 'recurring' ? (
+        <SeriesList onOpen={dialog.openEdit} />
+      ) : list.error ? (
         <ErrorState
           message={te(errorKey(list.error) as 'generic')}
           retryLabel={te('retry')}

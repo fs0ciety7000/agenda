@@ -31,6 +31,10 @@ export class MailService {
           auth: config.SMTP_USER
             ? { user: config.SMTP_USER, pass: config.SMTP_PASSWORD }
             : undefined,
+          // Un serveur SMTP injoignable ne doit pas bloquer indéfiniment.
+          connectionTimeout: 10_000,
+          greetingTimeout: 10_000,
+          socketTimeout: 20_000,
         })
       : null;
   }

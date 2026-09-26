@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { AppException } from '../common/app-exception';
 import { randomToken, sha256Hex } from '../common/crypto';
 import { env } from '../config/env';
@@ -12,6 +12,8 @@ const TOKEN_TTL_MS = 30 * 60_000;
 
 @Injectable()
 export class PasswordResetService {
+  private readonly logger = new Logger(PasswordResetService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly mail: MailService,
@@ -20,9 +22,17 @@ export class PasswordResetService {
   ) {}
 
   /**
-   * Toujours la même réponse, que l'email existe ou non (pas d'énumération des comptes).
-   * Un nouveau lien invalide les précédents.
+   * Toujours la même réponse, immédiate, que l'email existe ou non : tout le traitement (recherche
+   * du compte, jeton, envoi SMTP) se fait en arrière-plan. Ni le délai ni une panne d'envoi ne
+   * révèlent l'existence d'un compte.
    */
+  requestInBackground(email: string): void {
+    void this.request(email).catch((e: unknown) =>
+      this.logger.error(`Password reset failed: ${e instanceof Error ? e.message : String(e)}`),
+    );
+  }
+
+  /** Un nouveau lien invalide les précédents. */
   async request(email: string): Promise<void> {
     const user = await this.prisma.user.findUnique({ where: { email } });
     if (!user || user.deletedAt) return;

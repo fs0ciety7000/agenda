@@ -138,6 +138,18 @@ describe('récurrence — bornes et indices', () => {
     ).toEqual([]);
   });
 
+  it('première occurrence absente : date de fin avant la première date possible', () => {
+    expect(
+      firstOccurrence(
+        { freq: 'WEEKLY', interval: 1, byWeekday: ['SA'] },
+        { startDate: '2026-09-28', untilDate: '2026-10-01' },
+      ),
+    ).toBeNull();
+    expect(
+      firstOccurrence({ freq: 'DAILY', interval: 1 }, { startDate: '2026-09-28', count: 0 }),
+    ).toBeNull();
+  });
+
   it('première occurrence', () => {
     expect(
       firstOccurrence(

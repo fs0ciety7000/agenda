@@ -12,11 +12,43 @@ import type { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
 import { api, errorKey } from '@/lib/api';
+import { useProviders } from '@/lib/queries';
 
 const RegisterForm = RegisterInput.pick({ email: true, password: true, displayName: true });
 type FormValues = { email: string; password: string; displayName?: string };
 
 /** Évite les redirections ouvertes : seules les destinations internes sont suivies. */
+const KNOWN_REDIRECT_ERRORS = [
+  'GOOGLE_FAILED',
+  'GOOGLE_EMAIL_EXISTS',
+  'GOOGLE_NOT_CONFIGURED',
+  'REGISTRATION_CLOSED',
+];
+
+/** Logo Google officiel (couleurs de la marque, exigées par les consignes Google Sign-In). */
+function GoogleMark() {
+  return (
+    <svg aria-hidden viewBox="0 0 18 18" className="size-[18px]">
+      <path
+        fill="#4285F4"
+        d="M17.64 9.2c0-.64-.06-1.25-.16-1.84H9v3.48h4.84a4.14 4.14 0 0 1-1.8 2.72v2.26h2.92c1.7-1.57 2.68-3.88 2.68-6.62z"
+      />
+      <path
+        fill="#34A853"
+        d="M9 18c2.43 0 4.47-.8 5.96-2.18l-2.92-2.26c-.8.54-1.84.86-3.04.86-2.34 0-4.32-1.58-5.03-3.7H.96v2.33A9 9 0 0 0 9 18z"
+      />
+      <path
+        fill="#FBBC05"
+        d="M3.97 10.72A5.41 5.41 0 0 1 3.68 9c0-.6.1-1.18.29-1.72V4.95H.96A9 9 0 0 0 0 9c0 1.45.35 2.83.96 4.05l3.01-2.33z"
+      />
+      <path
+        fill="#EA4335"
+        d="M9 3.58c1.32 0 2.5.45 3.44 1.35l2.58-2.59C13.46.89 11.43 0 9 0A9 9 0 0 0 .96 4.95l3.01 2.33C4.68 5.16 6.66 3.58 9 3.58z"
+      />
+    </svg>
+  );
+}
+
 function safeNext(next: string | null): string {
   return next && next.startsWith('/') && !next.startsWith('//') ? next : '/';
 }
@@ -26,7 +58,14 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
   const router = useRouter();
   const params = useSearchParams();
   const queryClient = useQueryClient();
-  const [serverError, setServerError] = useState<string | null>(null);
+  const providers = useProviders();
+  // Erreur renvoyée par le retour Google (/login?error=…).
+  const redirectError = params.get('error');
+  const [serverError, setServerError] = useState<string | null>(
+    redirectError && KNOWN_REDIRECT_ERRORS.includes(redirectError)
+      ? t(`errors.${redirectError}` as 'errors.generic')
+      : null,
+  );
 
   const schema: z.ZodType<FormValues, FormValues> = mode === 'login' ? LoginInput : RegisterForm;
   const {
@@ -93,6 +132,33 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
       <Button type="submit" size="lg" loading={isSubmitting}>
         {t(isLogin ? 'auth.submitLogin' : 'auth.submitRegister')}
       </Button>
+
+      {isLogin && providers.data?.passwordReset !== false && (
+        <Link
+          href="/forgot-password"
+          className="-mt-2 self-center text-sm text-text-muted underline-offset-4 hover:text-text hover:underline"
+        >
+          {t('auth.forgot')}
+        </Link>
+      )}
+
+      {providers.data?.google && (
+        <>
+          <div className="flex items-center gap-3 text-xs text-text-muted" aria-hidden>
+            <span className="h-px flex-1 bg-border" />
+            {t('auth.or')}
+            <span className="h-px flex-1 bg-border" />
+          </div>
+          <Button asChild variant="secondary" size="lg">
+            <a
+              href={`/v1/auth/google/start?next=${encodeURIComponent(safeNext(params.get('next')))}`}
+            >
+              <GoogleMark />
+              {t('auth.google')}
+            </a>
+          </Button>
+        </>
+      )}
 
       <p className="text-center text-sm text-text-muted">
         {t(isLogin ? 'auth.noAccount' : 'auth.hasAccount')}{' '}

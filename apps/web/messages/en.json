@@ -24,7 +24,19 @@
     "noAccount": "No account yet?",
     "hasAccount": "Already have an account?",
     "toRegister": "Create an account",
-    "toLogin": "Sign in"
+    "toLogin": "Sign in",
+    "forgot": "Forgot your password?",
+    "or": "or",
+    "google": "Continue with Google",
+    "forgotTitle": "Forgot password",
+    "forgotSubtitle": "Enter your email: if an account exists, you'll receive a link to choose a new password.",
+    "forgotSent": "If an account exists for this email, a message is on its way. The link is valid for 30 minutes.",
+    "forgotSubmit": "Send the link",
+    "backToLogin": "Back to sign in",
+    "resetTitle": "New password",
+    "resetDone": "Password changed. For security, you've been signed out of all your devices.",
+    "newPassword": "New password",
+    "resetSubmit": "Save"
   },
   "errors": {
     "VALIDATION_FAILED": "Some fields are invalid.",
@@ -45,7 +57,13 @@
     "required": "Required.",
     "CATEGORY_NAME_TAKEN": "A category with this name already exists.",
     "TASK_TITLE_REQUIRED": "Add a title to the task.",
-    "VERSION_CONFLICT": "This task was changed in the meantime."
+    "VERSION_CONFLICT": "This task was changed in the meantime.",
+    "GOOGLE_FAILED": "Signing in with Google didn't work. Please try again.",
+    "GOOGLE_EMAIL_EXISTS": "An account already exists with this email. Sign in with your password, then link Google in Settings.",
+    "GOOGLE_NOT_CONFIGURED": "Google sign-in is not available.",
+    "GOOGLE_ALREADY_LINKED": "This Google account is already linked to another account.",
+    "RESET_TOKEN_INVALID": "This link is no longer valid. Ask for a new one.",
+    "CONFIRMATION_REQUIRED": "Incorrect confirmation."
   },
   "today": {
     "greeting": "Hello {name} 👋",
@@ -99,7 +117,8 @@
     "account": "Account",
     "logout": "Sign out",
     "logoutAll": "Sign out of all devices",
-    "categories": "Categories"
+    "categories": "Categories",
+    "privacy": "Data & privacy"
   },
   "common": {
     "loading": "Loading…",
@@ -160,8 +179,11 @@
       "priority": "Priority",
       "notes": "Notes",
       "personal": "Personal task",
-      "personalHint": "Only visible to you."
-    }
+      "personalHint": "Only visible to you.",
+      "occurrenceDate": "Date (this time)"
+    },
+    "recurring": "Recurring task",
+    "recurrenceNeedsDate": "Pick a start date for a repeating task."
   },
   "balance": {
     "bothOfUs": "Together",
@@ -187,7 +209,8 @@
       "done": "Done",
       "personal": "Personal",
       "shared": "Shared",
-      "together": "Together"
+      "together": "Together",
+      "recurring": "Recurring"
     },
     "filters": {
       "person": "Person",
@@ -196,7 +219,10 @@
       "allCategories": "All categories",
       "priority": "Priority",
       "allPriorities": "All priorities"
-    }
+    },
+    "noSeries": "No recurring tasks.",
+    "noSeriesBody": "Create a task and choose “Repeat” so it comes back automatically.",
+    "next": "next: {date}"
   },
   "categories": {
     "emoji": "Emoji",
@@ -208,5 +234,128 @@
     "confirmDelete": "Delete the “{name}” category? Its tasks will stay, without a category.",
     "add": "New category",
     "addButton": "Add"
+  },
+  "recurrence": {
+    "legend": "Repeat",
+    "repeat": "Repeat",
+    "needsDate": "Pick a start date first.",
+    "every": "Every",
+    "unit": "Unit",
+    "days": "Days",
+    "monthDay": "Day of month",
+    "onDay": "On the {day}",
+    "lastDay": "On the last day of the month",
+    "ends": "Ends",
+    "endNever": "Never",
+    "endUntil": "On a date",
+    "endCount": "After a number of times",
+    "untilDate": "Until",
+    "times": "Number of times",
+    "rotation": "Who takes care of it?",
+    "startsWith": "Starts with",
+    "steps": "Rotation order",
+    "step": "Turn {n}",
+    "removeStep": "Remove turn {n}",
+    "addStep": "Add a turn",
+    "perWeek": "Change assignee every week rather than every time",
+    "next": "Next times",
+    "noOccurrence": "This repetition produces no dates.",
+    "bothOfUs": "Both of us",
+    "everyone": "Everyone",
+    "eachInTurn": "Each in turn",
+    "presets": {
+      "none": "Does not repeat",
+      "daily": "Every day",
+      "weekdays": "Every weekday",
+      "weekly": "Every week",
+      "biweekly": "Every 2 weeks",
+      "monthly": "Every month",
+      "quarterly": "Every 3 months",
+      "yearly": "Every year",
+      "custom": "Custom…"
+    },
+    "units": {
+      "day": "{n, plural, one {day} other {days}}",
+      "week": "{n, plural, one {week} other {weeks}}",
+      "month": "{n, plural, one {month} other {months}}",
+      "year": "{n, plural, one {year} other {years}}"
+    },
+    "rotationKinds": {
+      "fixed": "Fixed assignee (above)",
+      "alternate": "Each in turn",
+      "sequence": "Custom rotation",
+      "weekday": "Depends on the day"
+    },
+    "summary": {
+      "daily": "{n, plural, one {Every day} other {Every # days}}",
+      "weekdays": "Every weekday",
+      "weekly": "{n, plural, one {Every week} other {Every # weeks}} on {days}",
+      "monthly": "{n, plural, one {Every month} other {Every # months}} on day {day}",
+      "monthlyLast": "{n, plural, one {Every month} other {Every # months}}, on the last day",
+      "yearly": "{n, plural, one {Every year} other {Every # years}}"
+    },
+    "rotationSummary": {
+      "unassigned": "unassigned",
+      "fixed": "{name}",
+      "together": "{names} together",
+      "alternate": "each in turn: {names}",
+      "sequence": "rotation: {steps}",
+      "weekday": "depends on the day"
+    }
+  },
+  "scope": {
+    "saveQuestion": "This task repeats. What do you want to change?",
+    "deleteQuestion": "This task repeats. What do you want to delete?",
+    "save": {
+      "this": "This occurrence only",
+      "following": "This and following occurrences",
+      "all": "The whole series"
+    },
+    "delete": {
+      "this": "This occurrence only",
+      "following": "This and following occurrences",
+      "all": "The whole series"
+    },
+    "cancel": "Cancel",
+    "confirmSave": "Save",
+    "confirmDelete": "Delete"
+  },
+  "calendar": {
+    "today": "Today",
+    "previous": "Previous period",
+    "next": "Next period",
+    "view": "View",
+    "views": {
+      "day": "Day",
+      "week": "Week",
+      "month": "Month"
+    },
+    "weekOf": "Week of {date}",
+    "allDay": "All day",
+    "createAt": "New task at {time}",
+    "openDay": "Open {date}",
+    "more": "+{count} more"
+  },
+  "privacy": {
+    "google": "Sign in with Google",
+    "googleOn": "Your Google account is linked.",
+    "googleOff": "Link your Google account to sign in with one click.",
+    "linkGoogle": "Link Google",
+    "googleLinked": "Google account linked.",
+    "export": "Export my data",
+    "exportHint": "All your data in a readable JSON file.",
+    "exportButton": "Download",
+    "delete": "Delete my account",
+    "deleteHint": "Permanent. The household stays available to other members.",
+    "deleteButton": "Delete…",
+    "deleteTitle": "Delete your account?",
+    "deleteWhat1": "Your account, sessions and personal tasks are erased immediately.",
+    "deleteWhat2": "Shared tasks stay with the household; you'll appear as “Former member”.",
+    "deleteWhat3": "This cannot be undone. Consider exporting your data first.",
+    "password": "Your password",
+    "typeToConfirm": "Type {word} to confirm",
+    "confirmWord": "DELETE",
+    "cancel": "Cancel",
+    "confirmDelete": "Delete permanently"
   }
 }

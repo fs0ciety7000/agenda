@@ -15,3 +15,45 @@ export async function signUpWithHousehold(page: Page, name = 'Grace') {
   await expect(page.getByRole('heading', { name: `Bonjour ${name} 👋` })).toBeVisible();
   return { email };
 }
+
+const API_HEADERS = {
+  'content-type': 'application/json',
+  'x-requested-with': 'agenda-gn',
+  'x-client': 'mobile',
+};
+
+/** Crée un 2e membre (Nicolas) par l'API et le fait rejoindre le foyer courant de la page. */
+export async function addPartner(page: Page, baseURL: string, name = 'Nicolas') {
+  const cookies = await page.context().cookies();
+  const cookie = cookies.map((c) => `${c.name}=${c.value}`).join('; ');
+  const households = await (
+    await fetch(`${baseURL}/v1/households`, { headers: { cookie } })
+  ).json();
+  const invite = await (
+    await fetch(`${baseURL}/v1/households/${households[0].id}/invitations`, {
+      method: 'POST',
+      headers: { ...API_HEADERS, cookie },
+      body: '{}',
+    })
+  ).json();
+  const reg = await (
+    await fetch(`${baseURL}/v1/auth/register`, {
+      method: 'POST',
+      headers: API_HEADERS,
+      body: JSON.stringify({
+        email: `${name.toLowerCase()}.${Date.now()}@example.test`,
+        password: 'correct horse battery',
+        displayName: name,
+      }),
+    })
+  ).json();
+  await fetch(`${baseURL}/v1/invitations/accept`, {
+    method: 'POST',
+    headers: { ...API_HEADERS, authorization: `Bearer ${reg.accessToken}` },
+    body: JSON.stringify({ token: invite.token }),
+  });
+}
+
+/** Date du jour à Bruxelles (YYYY-MM-DD). */
+export const todayBrussels = () =>
+  new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Brussels' }).format(new Date());

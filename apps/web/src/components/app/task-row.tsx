@@ -1,7 +1,7 @@
 'use client';
 
 import type { OccurrenceDto } from '@agenda/contracts';
-import { Check, ChevronsUp, ChevronUp, Lock } from 'lucide-react';
+import { Check, ChevronsUp, ChevronUp, Lock, Repeat } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/cn';
 import { formatDuration, formatTime, useDayLabel } from '@/lib/format';
@@ -91,6 +91,12 @@ export function TaskRow({
             <AssigneeAvatars household={household} ids={o.assigneeIds} />
             {assigneeLabel(o.assigneeIds)}
           </span>
+          {o.isRecurring && (
+            <span className="inline-flex items-center gap-1">
+              · <Repeat aria-hidden className="size-3" />
+              <span className="sr-only">{t('recurring')}</span>
+            </span>
+          )}
           {o.category && (
             <span>
               · {o.category.emoji ? `${o.category.emoji} ` : ''}

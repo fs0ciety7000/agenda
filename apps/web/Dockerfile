@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1
 # Image du web Next.js (sortie standalone). Contexte de build : racine du monorepo.
 
 FROM node:22-alpine AS base

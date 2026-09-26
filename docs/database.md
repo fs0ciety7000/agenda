@@ -52,7 +52,7 @@ erDiagram
 | Table | Rôle | Points clés |
 |---|---|---|
 | `Household` | Tenant | `timezone` IANA (défaut `Europe/Brussels`) |
-| `HouseholdMember` | Lien user ↔ foyer | unique `(householdId, userId)`, `role` (`OWNER`/`MEMBER`), `displayName` (« Grace »), `color` (token de couleur, pas un hex libre) |
+| `HouseholdMember` | Lien user ↔ foyer | `userId` nullable : compte supprimé ⇒ membre anonymisé conservé pour l'historique partagé ; unique `(householdId, userId)`, `role` (`OWNER`/`MEMBER`), `displayName` (« Grace »), `color` (token de couleur, pas un hex libre) |
 | `HouseholdInvitation` | Invitation | `tokenHash`, expiration 7 j, usage unique |
 | `Category` | Catégorie configurable | unique `(householdId, name)` parmi les non supprimées, `emoji`, `position` |
 
@@ -114,7 +114,7 @@ Autres colonnes de `TaskSeries` : `startDate`, `untilDate?`, `count?`, `startMin
 `durationMinutes`, `allDay`, `rotationMode` (indication UI), `rotationAdvance`
 (`PER_OCCURRENCE` | `PER_WEEK`), `rotationOffset` (continuité de la rotation après un split).
 
-**Matérialisation** : occurrences générées de `startDate` jusqu'à `aujourd'hui + 90 jours`.
+**Matérialisation** (paresseuse, avant chaque lecture, verrou consultatif par série) : occurrences générées de `startDate` jusqu'à `aujourd'hui + 90 jours`.
 Unicité `(seriesId, originalDate)` → la génération est **idempotente** (`INSERT … ON CONFLICT DO NOTHING`).
 `originalDate` = date prévue par la règle (équivalent de `RECURRENCE-ID`) ; `date` = date effective
 (différente si l'occurrence a été déplacée). Une occurrence avec `isException = true` n'est jamais
