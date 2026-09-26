@@ -12,13 +12,23 @@ export interface FcmServiceAccount {
 }
 
 export function parseServiceAccount(raw: string | undefined): FcmServiceAccount | null {
-  if (!raw?.trim()) return null;
-  const text = raw.trim().startsWith('{') ? raw : Buffer.from(raw, 'base64').toString('utf8');
-  const json = JSON.parse(text) as Partial<FcmServiceAccount>;
-  if (!json.project_id || !json.client_email || !json.private_key) {
-    throw new Error('FCM_SERVICE_ACCOUNT must contain project_id, client_email and private_key');
+  let text = raw?.trim();
+  if (!text) return null;
+  // Valeur collée entre guillemets dans l'interface (Coolify, .env) : on les retire.
+  if (/^(['"]).*\1$/s.test(text)) text = text.slice(1, -1).trim();
+  if (!text.startsWith('{')) text = Buffer.from(text, 'base64').toString('utf8').trim();
+  let json: Partial<FcmServiceAccount>;
+  try {
+    json = JSON.parse(text) as Partial<FcmServiceAccount>;
+  } catch {
+    // Message générique : l'erreur de JSON.parse recopie un extrait du secret.
+    throw new Error('JSON illisible');
   }
-  return json as FcmServiceAccount;
+  if (!json.project_id || !json.client_email || !json.private_key) {
+    throw new Error('project_id, client_email or private_key missing');
+  }
+  // Clé collée avec des « \n » littéraux au lieu de retours à la ligne.
+  return { ...json, private_key: json.private_key.replace(/\\n/g, '\n') } as FcmServiceAccount;
 }
 
 const SCOPE = 'https://www.googleapis.com/auth/firebase.messaging';
@@ -37,7 +47,19 @@ export class PushService {
   private token: { value: string; expiresAt: number } | null = null;
 
   constructor(private readonly prisma: PrismaService) {
-    this.account = parseServiceAccount(env().FCM_SERVICE_ACCOUNT);
+    // Configuration invalide : l'API démarre quand même, seules les notifications instantanées
+    // sont désactivées (les téléphones continuent de relever leurs notifications périodiquement).
+    try {
+      this.account = parseServiceAccount(env().FCM_SERVICE_ACCOUNT);
+    } catch (e) {
+      this.account = null;
+      this.logger.error(
+        `FCM_SERVICE_ACCOUNT invalide (${(e as Error).message}) : notifications instantanées ` +
+          'désactivées. Coller le fichier JSON du compte de service tel quel, ou en base64 (docs/android.md §4.1).',
+      );
+    }
+    if (this.account)
+      this.logger.log(`Notifications instantanées actives (${this.account.project_id})`);
   }
 
   get enabled(): boolean {
