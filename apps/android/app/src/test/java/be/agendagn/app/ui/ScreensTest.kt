@@ -37,6 +37,13 @@ import be.agendagn.app.ui.tasks.TasksScreen
 import be.agendagn.app.ui.theme.AgendaTheme
 import be.agendagn.app.ui.today.TodayScreen
 import com.github.takahirom.roborazzi.captureRoboImage
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.test.SemanticsMatcher
+import androidx.compose.ui.test.hasAnyDescendant
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.performCustomAccessibilityActionWithLabel
+import androidx.compose.ui.test.performTouchInput
 import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
@@ -117,6 +124,37 @@ class ScreensTest {
         assertEquals(TODAY.plusDays(2), selected)
         compose.onNodeWithText("Courses de la semaine").assertIsDisplayed()
         shot("calendar")
+    }
+
+    @Test
+    @OptIn(androidx.compose.ui.test.ExperimentalTestApi::class)
+    fun calendrier_glisser_deposer_et_actions_talkback() {
+        val moves = mutableListOf<Pair<String, java.time.LocalDate>>()
+        screen {
+            CalendarScreen(
+                state, YearMonth.from(TODAY), TODAY, {}, {}, {}, {}, {},
+                onMove = { o, d -> moves += o.title to d },
+            )
+        }
+        val task = compose.onNodeWithText("Nettoyer la salle de bain")
+        val from = task.fetchSemanticsNode().boundsInRoot
+        val to = compose.onNodeWithContentDescription("Jeudi 1 octobre, 1 tâche").fetchSemanticsNode().boundsInRoot
+        task.performTouchInput {
+            down(center)
+            advanceEventTime(1_000) // appui long
+            moveBy(Offset(0f, -20f))
+            moveTo(Offset(to.center.x - from.left, to.center.y - from.top))
+            up()
+        }
+        compose.waitForIdle()
+        assertEquals(listOf("Nettoyer la salle de bain" to TODAY.plusDays(2)), moves)
+
+        // Alternative sans geste (TalkBack) : actions personnalisées sur la tâche.
+        compose.onNode(
+            SemanticsMatcher.keyIsDefined(SemanticsActions.CustomActions) and
+                hasAnyDescendant(hasText("Sortir les poubelles")),
+        ).performCustomAccessibilityActionWithLabel("Déplacer au jour suivant")
+        assertEquals("Sortir les poubelles" to TODAY.plusDays(1), moves.last())
     }
 
     @Test

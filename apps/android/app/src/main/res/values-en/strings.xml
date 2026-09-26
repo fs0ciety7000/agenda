@@ -164,4 +164,13 @@
     <string name="activity_assigned">%1$s gave you “%2$s”</string>
     <string name="activity_assigned_recurring">%1$s included you in “%2$s” (recurring)</string>
     <string name="activity_calendar_failed">Google Calendar sync is interrupted. Open the website settings.</string>
+    <string name="drag_hint">Long-press a task, then drag it onto a day of the month to move it.</string>
+    <string name="move_previous_day">Move to the previous day</string>
+    <string name="move_next_day">Move to the next day</string>
+    <string name="task_moved">“%1$s” moved to %2$s</string>
+    <string name="undo">Undo</string>
+    <string name="widget_name">Today · Agenda G &amp; N</string>
+    <string name="widget_description">Today\'s and overdue tasks, ticked right from the home screen.</string>
+    <string name="widget_empty">Nothing for today 🎉</string>
+    <string name="widget_signed_out">Open the app to sign in.</string>
 </resources>

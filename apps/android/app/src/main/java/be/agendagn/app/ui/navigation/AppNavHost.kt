@@ -67,7 +67,15 @@ import be.agendagn.app.ui.calendar.CalendarScreen
 import be.agendagn.app.ui.components.UpdateBanner
 import be.agendagn.app.ui.login.LoginScreen
 import be.agendagn.app.ui.login.LoginViewModel
+import be.agendagn.app.ui.main.AgendaEvent
 import be.agendagn.app.ui.main.AgendaViewModel
+import be.agendagn.app.domain.repository.OpResult
+import be.agendagn.app.ui.components.currentLocale
+import be.agendagn.app.ui.components.formatLongDate
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import be.agendagn.app.ui.quickadd.QuickAddSheet
 import be.agendagn.app.ui.settings.SettingsScreen
 import be.agendagn.app.ui.taskform.TaskFormScreen
@@ -83,6 +91,7 @@ import java.time.YearMonth
 fun AppNavHost(
     container: AppContainer,
     openOccurrenceId: String? = null,
+    quickAddRequest: Int = 0,
     googleCallback: Uri? = null,
     onGoogleCallbackHandled: () -> Unit = {},
 ) {
@@ -107,7 +116,7 @@ fun AppNavHost(
                     onGoogle = { scope.launch { openWeb(context, vm.googleUrl(container.webBaseUrl), "") } },
                 )
             }
-            true -> MainScaffold(container, openOccurrenceId)
+            true -> MainScaffold(container, openOccurrenceId, quickAddRequest)
         }
     }
 }
@@ -124,7 +133,7 @@ private enum class Tab(val route: String, val label: Int) {
 }
 
 @Composable
-private fun MainScaffold(container: AppContainer, openOccurrenceId: String?) {
+private fun MainScaffold(container: AppContainer, openOccurrenceId: String?, quickAddRequest: Int) {
     val context = LocalContext.current
     val vm: AgendaViewModel = viewModel(
         factory = viewModelFactory { initializer { AgendaViewModel(container.repository, container.online) } },
@@ -157,6 +166,7 @@ private fun MainScaffold(container: AppContainer, openOccurrenceId: String?) {
         if (!notificationsAllowed && Build.VERSION.SDK_INT >= 33) permission.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
     LaunchedEffect(openOccurrenceId) { openOccurrenceId?.let { nav.navigate("task/$it") } }
+    LaunchedEffect(quickAddRequest) { if (quickAddRequest > 0) showQuickAdd = true }
 
     // Mise à jour de l'app : vérifiée au lancement et au retour dans l'app (ex. après avoir
     // autorisé l'installation dans les réglages Android).
@@ -181,6 +191,36 @@ private fun MainScaffold(container: AppContainer, openOccurrenceId: String?) {
         update?.let { UpdateBanner(it, updateState, canInstall, onUpdate) }
     }
 
+    // Messages du glisser-déposer (avec « Annuler »).
+    val snackbar = remember { SnackbarHostState() }
+    val locale = currentLocale()
+    val undoLabel = stringResource(R.string.undo)
+    val movedFormat = stringResource(R.string.task_moved)
+    val moveErrors = mapOf(
+        OpResult.Offline to stringResource(R.string.error_offline_edit),
+        OpResult.Conflict to stringResource(R.string.error_conflict),
+        OpResult.NotFound to stringResource(R.string.error_not_found),
+    )
+    val genericError = stringResource(R.string.error_generic)
+    LaunchedEffect(vm) {
+        vm.events.collect { event ->
+            when (event) {
+                is AgendaEvent.Moved -> scope.launch {
+                    val result = snackbar.showSnackbar(
+                        movedFormat.format(event.title, formatLongDate(event.to, locale)),
+                        actionLabel = undoLabel,
+                        duration = SnackbarDuration.Short,
+                    )
+                    if (result == SnackbarResult.ActionPerformed) {
+                        vm.state.value.occurrences.firstOrNull { it.id == event.occurrenceId }
+                            ?.let { vm.move(it, event.from, undo = true) }
+                    }
+                }
+                is AgendaEvent.MoveFailed -> scope.launch { snackbar.showSnackbar(moveErrors[event.result] ?: genericError) }
+            }
+        }
+    }
+
     val tabs = Tab.entries
     val onTab = route in tabs.map { it.route }
     val open = { id: String -> nav.navigate("task/$id") }
@@ -191,6 +231,7 @@ private fun MainScaffold(container: AppContainer, openOccurrenceId: String?) {
     }
 
     Scaffold(
+        snackbarHost = { SnackbarHost(snackbar) },
         bottomBar = {
             if (onTab) {
                 NavigationBar {
@@ -254,6 +295,7 @@ private fun MainScaffold(container: AppContainer, openOccurrenceId: String?) {
                     onToggle = vm::toggle,
                     onOpen = { open(it.id) },
                     onAddOn = { nav.navigate("new?date=$it") },
+                    onMove = { o, day -> vm.move(o, day) },
                     contentPadding = padding,
                 )
             }

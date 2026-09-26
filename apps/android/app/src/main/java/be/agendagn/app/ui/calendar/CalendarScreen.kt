@@ -1,5 +1,27 @@
 package be.agendagn.app.ui.calendar
 
+import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInRoot
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.unit.IntOffset
+import kotlin.math.roundToInt
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -57,7 +79,14 @@ import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
 
-/** Mois (pastilles = tâches à faire) + liste du jour choisi. */
+/** Tâche en cours de glissement : position du doigt (coordonnées racine) et jour survolé. */
+private data class Drag(val occurrence: Occurrence, val pointer: Offset, val target: LocalDate?)
+
+/**
+ * Mois (pastilles = tâches à faire) + liste du jour choisi.
+ * Glisser-déposer : appui long sur une tâche de la liste, puis la lâcher sur un jour du mois
+ * (l'heure est conservée). Alternative TalkBack : actions « jour précédent / suivant ».
+ */
 @Composable
 fun CalendarScreen(
     state: AgendaUiState,
@@ -68,14 +97,24 @@ fun CalendarScreen(
     onToggle: (Occurrence) -> Unit,
     onOpen: (Occurrence) -> Unit,
     onAddOn: (LocalDate) -> Unit,
+    onMove: (Occurrence, LocalDate) -> Unit = { _, _ -> },
     contentPadding: PaddingValues = PaddingValues(),
 ) {
     val locale = currentLocale()
     val counts = Agenda.countsByDay(state.occurrences)
     val dayList = Agenda.onDay(state.occurrences, selected)
+    val haptics = LocalHapticFeedback.current
+    val cells = remember { mutableMapOf<LocalDate, Rect>() }
+    var drag by remember { mutableStateOf<Drag?>(null) }
+    var origin by remember { mutableStateOf(Offset.Zero) }
+    val dayAt = { p: Offset -> cells.entries.firstOrNull { it.value.contains(p) }?.key }
+    val prevLabel = stringResource(R.string.move_previous_day)
+    val nextLabel = stringResource(R.string.move_next_day)
+    Box(Modifier.fillMaxSize().onGloballyPositioned { origin = it.positionInRoot() }) {
     LazyColumn(
         Modifier.fillMaxSize().padding(contentPadding),
         contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 96.dp),
+        userScrollEnabled = drag == null,
     ) {
         item {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -92,19 +131,101 @@ fun CalendarScreen(
                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = stringResource(R.string.next_month))
                 }
             }
-            MonthGrid(month, selected, state.today, counts, onSelect)
+            MonthGrid(
+                month, selected, state.today, counts, onSelect,
+                dropTarget = drag?.target,
+                onCellBounds = { day, rect -> cells[day] = rect },
+            )
         }
         item {
             SectionHeader(if (selected == state.today) stringResource(R.string.today) else formatLongDate(selected, locale))
         }
         if (dayList.isEmpty()) item { EmptyState(stringResource(R.string.day_empty)) }
-        items(dayList, key = { it.id }) { TaskRow(it, state.members, { onToggle(it) }, { onOpen(it) }) }
+        else item {
+            Text(
+                stringResource(R.string.drag_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(horizontal = 4.dp, vertical = 4.dp),
+            )
+        }
+        items(dayList, key = { it.id }) { o ->
+            val movable = !o.isLocal && o.date != null
+            var rowOrigin by remember { mutableStateOf(Offset.Zero) }
+            Box(
+                Modifier
+                    .onGloballyPositioned { rowOrigin = it.positionInRoot() }
+                    .alpha(if (drag?.occurrence?.id == o.id) 0.4f else 1f)
+                    .then(
+                        if (!movable) Modifier
+                        else Modifier
+                            .pointerInput(o.id, o.date) {
+                                detectDragGesturesAfterLongPress(
+                                    onDragStart = { at ->
+                                        haptics.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        val p = rowOrigin + at
+                                        drag = Drag(o, p, dayAt(p))
+                                    },
+                                    onDrag = { change, amount ->
+                                        change.consume()
+                                        drag = drag?.let { d ->
+                                            val p = d.pointer + amount
+                                            val target = dayAt(p)
+                                            if (target != null && target != d.target) {
+                                                haptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
+                                            }
+                                            d.copy(pointer = p, target = target)
+                                        }
+                                    },
+                                    onDragEnd = {
+                                        drag?.let { d -> d.target?.let { if (it != o.date) onMove(o, it) } }
+                                        drag = null
+                                    },
+                                    onDragCancel = { drag = null },
+                                )
+                            }
+                            .semantics {
+                                customActions = listOf(
+                                    CustomAccessibilityAction(prevLabel) { onMove(o, o.date!!.minusDays(1)); true },
+                                    CustomAccessibilityAction(nextLabel) { onMove(o, o.date!!.plusDays(1)); true },
+                                )
+                            },
+                    ),
+            ) {
+                TaskRow(o, state.members, { onToggle(o) }, { onOpen(o) })
+            }
+        }
         item {
             TextButton(onClick = { onAddOn(selected) }, modifier = Modifier.heightIn(min = 48.dp)) {
                 Icon(Icons.Filled.Add, contentDescription = null)
                 Text(stringResource(R.string.add_on_day), modifier = Modifier.padding(start = 8.dp))
             }
         }
+    }
+    // Étiquette qui suit le doigt pendant le glissement.
+    drag?.let { d ->
+        val density = LocalDensity.current
+        Surface(
+            shape = MaterialTheme.shapes.medium,
+            color = MaterialTheme.colorScheme.primaryContainer,
+            shadowElevation = 6.dp,
+            modifier = Modifier
+                .offset {
+                    val p = d.pointer - origin
+                    IntOffset((p.x - with(density) { 24.dp.toPx() }).roundToInt(), (p.y - with(density) { 56.dp.toPx() }).roundToInt())
+                }
+                .widthIn(max = 240.dp)
+                .clearAndSetSemantics { },
+        ) {
+            Text(
+                listOfNotNull(d.occurrence.title, d.target?.let { formatLongDate(it, locale) }).joinToString(" → "),
+                style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                maxLines = 2,
+                modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            )
+        }
+    }
     }
 }
 
@@ -115,6 +236,8 @@ private fun MonthGrid(
     today: LocalDate,
     counts: Map<LocalDate, Int>,
     onSelect: (LocalDate) -> Unit,
+    dropTarget: LocalDate? = null,
+    onCellBounds: (LocalDate, Rect) -> Unit = { _, _ -> },
 ) {
     val locale = currentLocale()
     // Semaine du lundi au dimanche (usage belge / français).
@@ -144,7 +267,8 @@ private fun MonthGrid(
                         isSelected = day == selected,
                         count = counts[day] ?: 0,
                         onClick = { onSelect(day) },
-                        modifier = Modifier.weight(1f),
+                        isDropTarget = day == dropTarget,
+                        modifier = Modifier.weight(1f).onGloballyPositioned { onCellBounds(day, it.boundsInRoot()) },
                     )
                 }
             }
@@ -160,6 +284,7 @@ private fun DayCell(
     isSelected: Boolean,
     count: Int,
     onClick: () -> Unit,
+    isDropTarget: Boolean,
     modifier: Modifier,
 ) {
     val locale = currentLocale()
@@ -168,7 +293,14 @@ private fun DayCell(
     Box(
         modifier.aspectRatio(1f).heightIn(min = 48.dp).padding(2.dp)
             .background(if (isSelected) colors.primary else Color.Transparent, MaterialTheme.shapes.medium)
-            .then(if (isToday && !isSelected) Modifier.border(1.5.dp, colors.primary, MaterialTheme.shapes.medium) else Modifier)
+            .then(
+                when {
+                    isDropTarget -> Modifier.background(colors.primaryContainer, MaterialTheme.shapes.medium)
+                        .border(2.dp, colors.primary, MaterialTheme.shapes.medium)
+                    isToday && !isSelected -> Modifier.border(1.5.dp, colors.primary, MaterialTheme.shapes.medium)
+                    else -> Modifier
+                },
+            )
             .clickable(onClick = onClick)
             .semantics {
                 contentDescription = description

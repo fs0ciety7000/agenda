@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.compositeOver
 
 /** Thème Material 3 alimenté par les tokens partagés avec le web (packages/design-tokens). */
-private val LightColors = lightColorScheme(
+internal val LightColors = lightColorScheme(
     primary = Tokens.Light.accent,
     onPrimary = Tokens.Light.accentFg,
     background = Tokens.Light.bg,
@@ -28,7 +28,7 @@ private val LightColors = lightColorScheme(
     error = Tokens.Light.danger,
 )
 
-private val DarkColors = darkColorScheme(
+internal val DarkColors = darkColorScheme(
     primary = Tokens.Dark.accent,
     onPrimary = Tokens.Dark.accentFg,
     background = Tokens.Dark.bg,
