@@ -1,6 +1,14 @@
 'use client';
 
-import { BarChart3, CalendarDays, ListChecks, Settings, Sun, type LucideIcon } from 'lucide-react';
+import {
+  BarChart3,
+  CalendarDays,
+  ListChecks,
+  Settings,
+  ShoppingCart,
+  Sun,
+  type LucideIcon,
+} from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -9,14 +17,17 @@ import { ErrorState, Skeleton } from '@/components/ui/states';
 import { ApiError, errorKey } from '@/lib/api';
 import { cn } from '@/lib/cn';
 import { useHouseholds, useMe } from '@/lib/queries';
+import { useRealtime } from '@/lib/realtime';
 import { SessionContext } from './household-context';
 
-type NavKey = 'today' | 'tasks' | 'calendar' | 'stats' | 'settings';
-const NAV: { href: string; key: NavKey; icon: LucideIcon }[] = [
+type NavKey = 'today' | 'tasks' | 'shopping' | 'calendar' | 'stats' | 'settings';
+/** `mobile: false` : absent de la barre du bas (cinq onglets au plus), lien depuis Aujourd'hui. */
+const NAV: { href: string; key: NavKey; icon: LucideIcon; mobile?: false }[] = [
   { href: '/', key: 'today', icon: Sun },
   { href: '/tasks', key: 'tasks', icon: ListChecks },
+  { href: '/shopping', key: 'shopping', icon: ShoppingCart },
   { href: '/calendar', key: 'calendar', icon: CalendarDays },
-  { href: '/stats', key: 'stats', icon: BarChart3 },
+  { href: '/stats', key: 'stats', icon: BarChart3, mobile: false },
   { href: '/settings', key: 'settings', icon: Settings },
 ];
 
@@ -29,6 +40,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const unauthenticated = me.error instanceof ApiError && me.error.status === 401;
   const household = households.data?.[0];
+  useRealtime(household?.id);
 
   useEffect(() => {
     if (unauthenticated) router.replace(`/login?next=${encodeURIComponent(pathname)}`);
@@ -99,7 +111,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         aria-label={t('nav.main')}
         className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-border bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
       >
-        {NAV.map(({ href, key, icon: Icon }) => (
+        {NAV.filter((n) => n.mobile !== false).map(({ href, key, icon: Icon }) => (
           <Link
             key={href}
             href={href}

@@ -22,8 +22,14 @@ class MainActivity : ComponentActivity() {
     /** « + » du widget : incrémenté à chaque demande d'ajout rapide. */
     private val quickAddRequest = mutableIntStateOf(0)
 
+    /** Onglet demandé (widget, raccourci) : (route, numéro de demande). */
+    private val tabRequest = mutableStateOf<Pair<String, Int>?>(null)
+
     private fun handle(intent: Intent) {
         if (intent.action == ACTION_QUICK_ADD) quickAddRequest.intValue++
+        if (intent.action == ACTION_OPEN_TAB) {
+            intent.getStringExtra(EXTRA_TAB)?.let { tabRequest.value = it to ((tabRequest.value?.second ?: 0) + 1) }
+        }
         intent.getStringExtra(ReminderScheduler.EXTRA_ID)?.let { openOccurrence.value = it }
         intent.data?.takeIf { it.scheme == "be.agendagn.app" && it.host == "auth" }?.let { googleCallback.value = it }
     }
@@ -39,6 +45,7 @@ class MainActivity : ComponentActivity() {
                     container = container,
                     openOccurrenceId = openOccurrence.value,
                     quickAddRequest = quickAddRequest.intValue,
+                    tabRequest = tabRequest.value,
                     googleCallback = googleCallback.value,
                     onGoogleCallbackHandled = { googleCallback.value = null },
                 )
@@ -53,5 +60,9 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         const val ACTION_QUICK_ADD = "be.agendagn.app.QUICK_ADD"
+        const val ACTION_OPEN_TAB = "be.agendagn.app.OPEN_TAB"
+        const val EXTRA_TAB = "tab"
+        const val TAB_SHOPPING = "shopping"
+        const val TAB_TODAY = "today"
     }
 }

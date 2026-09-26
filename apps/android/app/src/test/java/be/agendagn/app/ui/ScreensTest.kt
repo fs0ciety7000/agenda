@@ -244,4 +244,29 @@ class ScreensTest {
         compose.onNodeWithText("Actives : ce téléphone est enregistré.", substring = true).performScrollTo().assertIsDisplayed()
         shot("settings")
     }
+
+    @Test
+    fun courses_ajout_coche_et_panier() {
+        val added = mutableListOf<List<String>>()
+        val toggled = mutableListOf<String>()
+        screen {
+            be.agendagn.app.ui.shopping.ShoppingScreen(
+                items = listOf(
+                    be.agendagn.app.domain.model.ShoppingItem("1", "Lait", false),
+                    be.agendagn.app.domain.model.ShoppingItem("2", "Pain", true, Fixtures.NICOLAS),
+                ),
+                members = state.members, online = true, live = true, sync = SyncState(), refreshing = false,
+                onRefresh = {}, onAdd = { added += it }, onToggle = { toggled += it.text }, onRemove = {}, onClearDone = {},
+            )
+        }
+        compose.onNodeWithText("En direct").assertIsDisplayed()
+        compose.onNodeWithText("À ACHETER (1)").assertIsDisplayed()
+        compose.onNodeWithText("Pris par Nicolas").assertIsDisplayed()
+        compose.onNodeWithText("Ajouter à la liste").performTextInput("Œufs, beurre")
+        compose.onNodeWithContentDescription("Ajouter à la liste").performClick()
+        assertEquals(listOf(listOf("Œufs", "beurre")), added)
+        compose.onNodeWithText("Lait").performClick()
+        assertEquals(listOf("Lait"), toggled)
+        shot("shopping")
+    }
 }

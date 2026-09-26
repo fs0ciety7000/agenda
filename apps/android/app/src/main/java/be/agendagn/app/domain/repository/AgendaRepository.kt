@@ -8,6 +8,7 @@ import be.agendagn.app.domain.model.EditScope
 import be.agendagn.app.domain.model.Household
 import be.agendagn.app.domain.model.Occurrence
 import be.agendagn.app.domain.model.QuickAddPreview
+import be.agendagn.app.domain.model.ShoppingItem
 import be.agendagn.app.domain.model.TaskDraft
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -70,4 +71,13 @@ interface AgendaRepository {
     suspend fun setChecklistItemDone(occurrenceId: String, itemId: String, done: Boolean): OpResult
     suspend fun removeChecklistItem(occurrenceId: String, itemId: String): OpResult
     suspend fun calendarStatus(): CalendarStatus?
+
+    // ───────── Liste de courses (hors ligne : affichée tout de suite, envoyée dès que possible) ─────────
+
+    val shopping: Flow<List<ShoppingItem>>
+    suspend fun addShopping(texts: List<String>)
+    suspend fun setShoppingDone(item: ShoppingItem, done: Boolean)
+    suspend fun removeShopping(item: ShoppingItem)
+    suspend fun clearShoppingDone()
+    suspend fun refreshShopping(): RefreshOutcome
 }

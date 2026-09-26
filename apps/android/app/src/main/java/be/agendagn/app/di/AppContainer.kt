@@ -11,6 +11,7 @@ import be.agendagn.app.data.local.AgendaDatabase
 import be.agendagn.app.data.monitoring.CrashReporter
 import be.agendagn.app.data.observeOnline
 import be.agendagn.app.data.remote.ApiClient
+import be.agendagn.app.data.remote.RealtimeClient
 import be.agendagn.app.data.repository.AgendaRepositoryImpl
 import be.agendagn.app.data.repository.AuthRepositoryImpl
 import be.agendagn.app.data.sync.SyncEngine
@@ -30,7 +31,9 @@ import kotlinx.coroutines.flow.Flow
 class AppContainer(context: Context) {
     private val app = context.applicationContext
     private val tokenStore = DataStoreTokenStore(app, KeystoreCipher())
-    private val api = ApiClient.create(BuildConfig.API_BASE_URL, tokenStore)
+    private val clients = ApiClient.createWithClient(BuildConfig.API_BASE_URL, tokenStore)
+    private val api = clients.first
+    val realtime = RealtimeClient(BuildConfig.API_BASE_URL, clients.second)
     val database: AgendaDatabase = AgendaDatabase.create(app)
     val settings: SettingsStore = DataStoreSettingsStore(app)
     val syncScheduler = WorkManagerSyncScheduler(app)

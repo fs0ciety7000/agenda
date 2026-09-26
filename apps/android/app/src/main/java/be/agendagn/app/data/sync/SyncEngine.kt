@@ -8,11 +8,18 @@ import be.agendagn.app.data.local.PendingOperationEntity.Companion.COMPLETE
 import be.agendagn.app.data.local.PendingOperationEntity.Companion.CREATE
 import be.agendagn.app.data.local.PendingOperationEntity.Companion.QUICK_ADD
 import be.agendagn.app.data.local.PendingOperationEntity.Companion.REOPEN
+import be.agendagn.app.data.local.PendingOperationEntity.Companion.SHOP_ADD
+import be.agendagn.app.data.local.PendingOperationEntity.Companion.SHOP_CLEAR
+import be.agendagn.app.data.local.PendingOperationEntity.Companion.SHOP_DELETE
+import be.agendagn.app.data.local.PendingOperationEntity.Companion.SHOP_SET
+import be.agendagn.app.data.local.ShoppingItemEntity
 import be.agendagn.app.data.local.toEntity
 import be.agendagn.app.data.remote.AgendaApi
 import be.agendagn.app.data.remote.ApiErrorDto
 import be.agendagn.app.data.remote.OccurrenceDto
 import be.agendagn.app.data.remote.QuickAddRequest
+import be.agendagn.app.data.remote.ShoppingItemRequest
+import be.agendagn.app.data.remote.ShoppingUpdateRequest
 import be.agendagn.app.data.remote.json
 import be.agendagn.app.domain.repository.RefreshOutcome
 import kotlinx.coroutines.sync.Mutex
@@ -43,6 +50,8 @@ class SyncEngine(
     data class PushResult(val outcome: PushOutcome, val rejected: Int)
 
     private companion object {
+        val SHOPPING_OPS = setOf(SHOP_ADD, SHOP_SET, SHOP_DELETE, SHOP_CLEAR)
+
         /** Au-delà (erreur serveur persistante), l'action est abandonnée plutôt que bloquer la file. */
         const val MAX_ATTEMPTS = 10
     }
@@ -82,8 +91,9 @@ class SyncEngine(
         var rejected = 0
         while (true) {
             val op = ops.next() ?: return PushResult(PushOutcome.DONE, rejected)
-            val response = try {
-                send(op)
+            val shop = op.type in SHOPPING_OPS
+            val response: Response<*> = try {
+                if (shop) sendShopping(op) else send(op)
             } catch (_: IOException) {
                 return PushResult(PushOutcome.RETRY, rejected)
             } catch (_: SerializationException) {
@@ -92,8 +102,9 @@ class SyncEngine(
             }
             val code = response.code()
             when {
+                response.isSuccessful && shop -> ops.delete(op.id)
                 response.isSuccessful -> {
-                    val body = response.body()
+                    val body = response.body() as OccurrenceDto?
                     if (op.type == CREATE || op.type == QUICK_ADD) {
                         occurrences.delete(op.occurrenceId)
                         if (body != null) ops.remap(op.occurrenceId, body.id)
@@ -114,9 +125,10 @@ class SyncEngine(
                     // Refus définitif (tâche supprimée ailleurs, donnée invalide) : on abandonne l'action.
                     rejected++
                     ops.delete(op.id)
-                    if (op.type == CREATE || op.type == QUICK_ADD || code == 404) {
+                    if (!shop && (op.type == CREATE || op.type == QUICK_ADD || code == 404)) {
                         occurrences.delete(op.occurrenceId)
                     }
+                    if (op.type == SHOP_ADD) db.shopping().delete(op.occurrenceId)
                 }
             }
         }
@@ -132,6 +144,59 @@ class SyncEngine(
         )
         QUICK_ADD -> api.quickAdd(op.householdId, op.idempotencyKey, QuickAddRequest(op.payload!!))
         else -> error("Unknown operation ${op.type}")
+    }
+
+    private suspend fun sendShopping(op: PendingOperationEntity): Response<*> = when (op.type) {
+        SHOP_ADD -> api.addShopping(op.householdId, ShoppingItemRequest(op.occurrenceId, op.payload!!))
+        SHOP_SET -> api.updateShopping(op.householdId, op.occurrenceId, ShoppingUpdateRequest(op.payload == "true"))
+        SHOP_DELETE -> api.deleteShopping(op.householdId, op.occurrenceId)
+        SHOP_CLEAR -> api.clearShopping(op.householdId)
+        else -> error("Unknown operation ${op.type}")
+    }
+
+    /**
+     * Liste de courses seule (ouverture de l'écran, signal temps réel) : envoie ce qui attend,
+     * puis recharge la liste. Plus léger qu'un [refresh] complet.
+     */
+    suspend fun refreshShopping(): RefreshOutcome = mutex.withLock {
+        val hid = db.households().current()?.id ?: return RefreshOutcome.NO_HOUSEHOLD
+        if (push().outcome == PushOutcome.SIGNED_OUT) return RefreshOutcome.SIGNED_OUT
+        try {
+            pullShopping(hid)
+        } catch (_: IOException) {
+            RefreshOutcome.OFFLINE
+        } catch (_: SerializationException) {
+            RefreshOutcome.ERROR
+        }
+    }
+
+    private suspend fun pullShopping(hid: String): RefreshOutcome {
+        val res = api.shopping(hid)
+        if (res.code() == 401) return RefreshOutcome.SIGNED_OUT
+        val items = res.body() ?: return RefreshOutcome.ERROR
+        db.shopping().replace(hid, items.map { it.toEntity(hid) })
+        reapplyPendingShopping(hid)
+        return RefreshOutcome.OK
+    }
+
+    /** Ajouts et coches pas encore envoyés : l'affichage reste celui de l'utilisateur. */
+    private suspend fun reapplyPendingShopping(hid: String) {
+        val shopping = db.shopping()
+        for (op in db.pendingOperations().all().filter { it.householdId == hid }) {
+            when (op.type) {
+                SHOP_ADD -> shopping.upsert(
+                    ShoppingItemEntity(op.occurrenceId, hid, op.payload!!, false, null, Instant.ofEpochMilli(op.createdAt).toString(), null),
+                )
+                SHOP_SET -> shopping.setDone(
+                    op.occurrenceId,
+                    op.payload == "true",
+                    null,
+                    if (op.payload == "true") Instant.ofEpochMilli(op.createdAt).toString() else null,
+                )
+                SHOP_DELETE -> shopping.delete(op.occurrenceId)
+                SHOP_CLEAR -> shopping.deleteDone(hid)
+            }
+        }
     }
 
     private fun errorCode(response: Response<*>): String? = runCatching {
@@ -163,6 +228,7 @@ class SyncEngine(
             )
             db.occurrences().replaceServerRows(hid, rows)
             reapplyPending()
+            pullShopping(hid)
             settings.setLastRefreshAt(Instant.now(clock).toEpochMilli())
             return RefreshOutcome.OK
         } catch (_: IOException) {

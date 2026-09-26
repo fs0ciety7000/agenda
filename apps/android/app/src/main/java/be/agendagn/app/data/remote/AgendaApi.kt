@@ -73,6 +73,25 @@ interface AgendaApi {
     @POST("v1/households/{h}/recurrence/preview")
     suspend fun previewRecurrence(@Path("h") householdId: String, @Body body: JsonObject): Response<List<RecurrencePreviewItemDto>>
 
+    @GET("v1/households/{h}/shopping")
+    suspend fun shopping(@Path("h") householdId: String): Response<List<ShoppingItemDto>>
+
+    @POST("v1/households/{h}/shopping")
+    suspend fun addShopping(@Path("h") householdId: String, @Body body: ShoppingItemRequest): Response<ShoppingItemDto>
+
+    @PATCH("v1/households/{h}/shopping/{id}")
+    suspend fun updateShopping(
+        @Path("h") householdId: String,
+        @Path("id") id: String,
+        @Body body: ShoppingUpdateRequest,
+    ): Response<ShoppingItemDto>
+
+    @DELETE("v1/households/{h}/shopping/{id}")
+    suspend fun deleteShopping(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
+
+    @POST("v1/households/{h}/shopping/clear-done")
+    suspend fun clearShopping(@Path("h") householdId: String): Response<Unit>
+
     @PUT("v1/me/push-tokens")
     suspend fun registerPushToken(@Body body: PushTokenRequest): Response<Unit>
 

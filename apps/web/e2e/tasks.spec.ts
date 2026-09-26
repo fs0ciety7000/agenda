@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { signUpWithHousehold } from './helpers';
+import { signUpWithHousehold, todayBrussels } from './helpers';
 
 test('quick add → aujourd’hui → cocher / annuler → modifier → rechercher', async ({ page }) => {
   await signUpWithHousehold(page);
@@ -31,7 +31,9 @@ test('quick add → aujourd’hui → cocher / annuler → modifier → recherch
   await expect(
     page.getByRole('list', { name: /demain/i }).getByText('Sortir les poubelles'),
   ).toBeVisible();
-  await expect(page.getByText('2 tâches')).toBeVisible();
+  // Répartition de la semaine en cours : le dimanche, « demain » tombe la semaine suivante.
+  const sunday = new Date(`${todayBrussels()}T12:00:00Z`).getUTCDay() === 0;
+  await expect(page.getByText(sunday ? '1 tâche' : '2 tâches', { exact: true })).toBeVisible();
 
   // Modifier depuis le formulaire.
   await today.getByRole('button', { name: /Faire les courses/ }).click();

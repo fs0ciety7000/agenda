@@ -10,7 +10,8 @@
     "calendar": "Calendrier",
     "settings": "Réglages",
     "main": "Navigation principale",
-    "stats": "Bilan"
+    "stats": "Bilan",
+    "shopping": "Courses"
   },
   "auth": {
     "loginTitle": "Bon retour",
@@ -86,7 +87,8 @@
     "emptyTitle": "Rien pour aujourd'hui.",
     "emptyBody": "Profitez-en, ou ajoutez une tâche ci-dessus.",
     "sectionOverdue": "À rattraper ({count})",
-    "weekEmpty": "Rien de prévu les prochains jours."
+    "weekEmpty": "Rien de prévu les prochains jours.",
+    "seeStats": "Voir le bilan"
   },
   "placeholder": {
     "title": "Bientôt disponible",
@@ -470,7 +472,7 @@
     },
     "data": {
       "title": "Données traitées",
-      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations.\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, historique des actions (qui a fait quoi, quand).\nSessions : appareil (navigateur ou application) et dates de connexion, pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion."
+      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations, liste de courses.\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, historique des actions (qui a fait quoi, quand).\nSessions : appareil (navigateur ou application) et dates de connexion, pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion."
     },
     "google": {
       "title": "Données Google",
@@ -569,5 +571,20 @@
     "add": "Mettre dans la liste",
     "remove": "Retirer « {text} »",
     "rowProgress": "Liste : {done} sur {total} cochés"
+  },
+  "shopping": {
+    "title": "Courses",
+    "live": "En direct",
+    "notLive": "Hors ligne",
+    "add": "Ajouter à la liste",
+    "placeholder": "Lait, pain, œufs…",
+    "emptyTitle": "La liste est vide",
+    "emptyBody": "Ajoutez ce qui manque : l'autre le voit tout de suite, même au magasin.",
+    "toBuy": "À acheter ({count})",
+    "inCart": "Dans le panier ({count})",
+    "allDone": "Tout est dans le panier 🎉",
+    "clear": "Vider le panier",
+    "remove": "Retirer « {text} »",
+    "takenBy": "Pris par {name}"
   }
 }

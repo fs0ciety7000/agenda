@@ -164,3 +164,19 @@ data class SeriesDto(
 
 @Serializable
 data class RecurrencePreviewItemDto(val date: String, val assigneeIds: List<String>)
+
+@Serializable
+data class ShoppingItemDto(
+    val id: String,
+    val text: String,
+    val done: Boolean,
+    val doneById: String? = null,
+    val createdAt: String,
+    val doneAt: String? = null,
+)
+
+@Serializable
+data class ShoppingItemRequest(val id: String, val text: String)
+
+@Serializable
+data class ShoppingUpdateRequest(val done: Boolean)

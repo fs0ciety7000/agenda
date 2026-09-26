@@ -2,6 +2,7 @@
 
 import type { OccurrenceDto } from '@agenda/contracts';
 import { CalendarCheck, Sun } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
@@ -121,7 +122,12 @@ export default function TodayPage() {
       </section>
 
       <section aria-labelledby="balance-heading" className="flex flex-col gap-3">
-        <SectionTitle id="balance-heading">{t('sectionBalance')}</SectionTitle>
+        <div className="flex items-baseline justify-between gap-3">
+          <SectionTitle id="balance-heading">{t('sectionBalance')}</SectionTitle>
+          <Link href="/stats" className="text-sm text-accent hover:underline">
+            {t('seeStats')}
+          </Link>
+        </div>
         <div className="rounded-lg border border-border bg-surface p-4">
           <Balance />
         </div>

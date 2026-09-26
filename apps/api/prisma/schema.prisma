@@ -114,6 +114,7 @@ model Household {
   tasks          Task[]
   occurrences    TaskOccurrence[]
   checklistItems ChecklistItem[]
+  shoppingItems  ShoppingItem[]
   calendarLink   HouseholdCalendarLink?
   activity       ActivityLog[]
 }
@@ -357,6 +358,24 @@ model ChecklistItem {
   occurrence TaskOccurrence @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
 
   @@index([occurrenceId, position])
+}
+
+/// Liste de courses permanente du foyer. `id` peut être choisi par le client (ajout idempotent).
+model ShoppingItem {
+  id          String    @id @db.Uuid
+  householdId String    @db.Uuid
+  text        String    @db.VarChar(200)
+  done        Boolean   @default(false)
+  /// Membres (jamais supprimés physiquement : anonymisés), sans clé étrangère.
+  createdById String?   @db.Uuid
+  doneById    String?   @db.Uuid
+  doneAt      DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@index([householdId, done])
 }
 
 model OccurrenceAssignee {

@@ -65,6 +65,9 @@ data class Occurrence(
 
 data class ChecklistItem(val id: String, val text: String, val done: Boolean)
 
+/** Article de la liste de courses du foyer ([doneById] : qui l'a mis dans le panier). */
+data class ShoppingItem(val id: String, val text: String, val done: Boolean, val doneById: String? = null)
+
 /** Saisie du formulaire de création / modification. */
 data class TaskDraft(
     val title: String = "",

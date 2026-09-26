@@ -48,7 +48,7 @@ export class PrivacyService {
       },
     });
     const memberIds = user.memberships.map((m) => m.id);
-    const [createdTasks, assigned] = await Promise.all([
+    const [createdTasks, assigned, shopping] = await Promise.all([
       this.prisma.task.findMany({
         where: { createdById: { in: memberIds }, deletedAt: null },
         include: {
@@ -79,6 +79,11 @@ export class PrivacyService {
         where: { assignees: { some: { memberId: { in: memberIds } } }, task: { deletedAt: null } },
         select: { date: true, status: true, completedAt: true, task: { select: { title: true } } },
         orderBy: { date: 'asc' },
+      }),
+      this.prisma.shoppingItem.findMany({
+        where: { createdById: { in: memberIds } },
+        select: { text: true, done: true, createdAt: true, doneAt: true },
+        orderBy: { createdAt: 'asc' },
       }),
     ]);
     return {
@@ -122,6 +127,7 @@ export class PrivacyService {
         status: o.status,
         completedAt: o.completedAt,
       })),
+      shoppingItemsAdded: shopping,
     };
   }
 

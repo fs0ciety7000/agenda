@@ -10,7 +10,8 @@
     "calendar": "Calendar",
     "settings": "Settings",
     "main": "Main navigation",
-    "stats": "Summary"
+    "stats": "Summary",
+    "shopping": "Shopping"
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -86,7 +87,8 @@
     "emptyTitle": "Nothing for today.",
     "emptyBody": "Enjoy, or add a task above.",
     "sectionOverdue": "To catch up ({count})",
-    "weekEmpty": "Nothing planned for the next few days."
+    "weekEmpty": "Nothing planned for the next few days.",
+    "seeStats": "See summary"
   },
   "placeholder": {
     "title": "Coming soon",
@@ -470,7 +472,7 @@
     },
     "data": {
       "title": "Data processed",
-      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, activity history (who did what, when).\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out."
+      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, activity history (who did what, when).\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out."
     },
     "google": {
       "title": "Google data",
@@ -569,5 +571,20 @@
     "add": "Put in the list",
     "remove": "Remove “{text}”",
     "rowProgress": "List: {done} of {total} ticked"
+  },
+  "shopping": {
+    "title": "Shopping",
+    "live": "Live",
+    "notLive": "Offline",
+    "add": "Add to the list",
+    "placeholder": "Milk, bread, eggs…",
+    "emptyTitle": "The list is empty",
+    "emptyBody": "Add what's missing: the other person sees it right away, even at the shop.",
+    "toBuy": "To buy ({count})",
+    "inCart": "In the basket ({count})",
+    "allDone": "Everything is in the basket 🎉",
+    "clear": "Empty the basket",
+    "remove": "Remove “{text}”",
+    "takenBy": "Picked up by {name}"
   }
 }
