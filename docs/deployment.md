@@ -132,7 +132,7 @@ manquent. Modèle complet : `.env.prod.example`.
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | active Google Calendar et « Continuer avec Google » | cf. §9 |
 | `SMTP_*`, `EMAIL_FROM` | facultatif : active « Mot de passe oublié » | cf. §8 |
 | `GITHUB_RELEASES_TOKEN` | vide si le dépôt est public ; sinon jeton GitHub lecture seule (Contents) | cf. [`android.md`](android.md) §4 |
-| `SENTRY_DSN` | vide jusqu'en Phase 7 | — |
+| `SENTRY_DSN` | facultatif : suivi des erreurs (§10) | DSN Sentry / GlitchTip |
 
 `REDIS_URL` est fixée par le compose (`redis://redis:6379`) : rien à définir.
 
@@ -328,7 +328,17 @@ même adresse (prise de contrôle possible). Pour lier Google à un compte cré�
   valide chaque PR ; fusionner quand elle est verte (les majeures : lire le changelog).
 - **Logs** : Coolify → ressource → *Logs* (JSON structuré pino côté API ; aucun token ni cookie
   n'y figure).
-- **Erreurs** : remontées dans les logs, et dans Sentry / GlitchTip si `SENTRY_DSN` est défini.
+- **Erreurs (Sentry, facultatif)** : sans configuration, les erreurs du serveur, du site et de
+  l'app Android sont déjà écrites dans les logs de `api` (message `client error` / `server error`).
+  Pour être alerté par email avec le détail (pile d'appels, navigateur, version de l'app) :
+  1. Créer un compte gratuit sur https://sentry.io (offre *Developer*, suffisante pour deux
+     personnes ; ou GlitchTip, compatible, auto-hébergeable).
+  2. *Create Project* → plateforme **Node.js** → nom `agenda`. Copier le **DSN** affiché
+     (`https://…@o….ingest.sentry.io/…`).
+  3. Coolify → variable `SENTRY_DSN` = ce DSN → redéployer. Un seul DSN suffit : le site et l'app
+     Android envoient leurs erreurs à l'API (`/v1/client-errors`), qui les transmet.
+  4. Vérifier : Sentry → *Issues* ; les alertes email sont actives par défaut.
+  Aucune donnée personnelle n'est envoyée (ni email, ni contenu des tâches, ni jetons).
 
 ## 11. Checklist de sécurité
 
