@@ -1,7 +1,7 @@
 'use client';
 
 import { useQueryClient } from '@tanstack/react-query';
-import { Download, Link2, Trash2 } from 'lucide-react';
+import { Download, Link2, Trash2, Unlink } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState, type FormEvent } from 'react';
@@ -10,7 +10,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
 import { useToast } from '@/components/ui/toast';
 import { api, errorKey } from '@/lib/api';
-import { useProviders } from '@/lib/queries';
+import { queryKeys, useProviders } from '@/lib/queries';
 import { useSession } from './household-context';
 
 /** Liaison Google, export des données (portabilité) et suppression du compte (effacement). */
@@ -25,6 +25,7 @@ export function PrivacySettings() {
   const queryClient = useQueryClient();
   const toast = useToast();
   const [open, setOpen] = useState(false);
+  const [unlinkOpen, setUnlinkOpen] = useState(false);
   const [password, setPassword] = useState('');
   const [confirm, setConfirm] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -40,6 +41,20 @@ export function PrivacySettings() {
     if (params.get('linked') || err) router.replace('/settings', { scroll: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const onUnlink = async () => {
+    setBusy(true);
+    try {
+      await api<void>('/v1/auth/google', { method: 'DELETE' });
+      await queryClient.invalidateQueries({ queryKey: queryKeys.me });
+      setUnlinkOpen(false);
+      toast({ message: t('googleUnlinked') });
+    } catch (err) {
+      toast({ message: te(errorKey(err) as 'generic'), tone: 'error' });
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const onDelete = async (e: FormEvent) => {
     e.preventDefault();
@@ -71,7 +86,18 @@ export function PrivacySettings() {
               {me.googleLinked ? t('googleOn') : t('googleOff')}
             </p>
           </div>
-          {!me.googleLinked && (
+          {me.googleLinked ? (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setUnlinkOpen(true)}
+              disabled={!me.hasPassword}
+              aria-describedby={me.hasPassword ? undefined : 'unlink-needs-password'}
+            >
+              <Unlink aria-hidden className="size-4" />
+              {t('unlinkGoogle')}
+            </Button>
+          ) : (
             <Button asChild variant="secondary" size="sm">
               <a href="/v1/auth/google/start?mode=link">
                 <Link2 aria-hidden className="size-4" />
@@ -79,8 +105,29 @@ export function PrivacySettings() {
               </a>
             </Button>
           )}
+          {me.googleLinked && !me.hasPassword && (
+            <p id="unlink-needs-password" className="w-full text-[0.8125rem] text-text-muted">
+              {t('unlinkNeedsPassword')}
+            </p>
+          )}
         </div>
       )}
+
+      <Dialog open={unlinkOpen} onOpenChange={setUnlinkOpen}>
+        <DialogContent title={t('unlinkTitle')} closeLabel={tc('close')}>
+          <div className="flex flex-col gap-4">
+            <p className="text-[0.9375rem] text-text-muted">{t('unlinkBody')}</p>
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="ghost" onClick={() => setUnlinkOpen(false)}>
+                {t('cancel')}
+              </Button>
+              <Button type="button" variant="danger" loading={busy} onClick={onUnlink}>
+                {t('unlinkConfirm')}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>

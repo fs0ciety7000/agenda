@@ -236,6 +236,92 @@ describe('Compte : mot de passe oublié, Google Sign-In, RGPD (intégration)', (
     });
   });
 
+  describe('Mot de passe et liaison Google depuis les Réglages', () => {
+    const login = (email: string, password: string) =>
+      http().post('/v1/auth/login').set(CSRF).set('x-client', 'mobile').send({ email, password });
+
+    it('changer son mot de passe : ancien exigé, autres appareils déconnectés, session en cours gardée', async () => {
+      const user = await registerUser(app, 'Grace');
+      const phone = (await login(user.email, 'correct horse battery').expect(200)).body;
+
+      const wrong = await http()
+        .post('/v1/auth/password/change')
+        .set(user.auth)
+        .send({ currentPassword: 'pas le bon', newPassword: 'un nouveau mot de passe' })
+        .expect(400);
+      expect(wrong.body.error.code).toBe('CURRENT_PASSWORD_INVALID');
+      await http()
+        .post('/v1/auth/password/change')
+        .set(user.auth)
+        .send({ newPassword: 'un nouveau mot de passe' })
+        .expect(400);
+      await http()
+        .post('/v1/auth/password/change')
+        .set(user.auth)
+        .send({ currentPassword: 'correct horse battery', newPassword: 'court' })
+        .expect(400);
+
+      await http()
+        .post('/v1/auth/password/change')
+        .set(user.auth)
+        .send({ currentPassword: 'correct horse battery', newPassword: 'un nouveau mot de passe' })
+        .expect(204);
+      await http().get('/v1/me').set(user.auth).expect(200); // session en cours conservée
+      await http()
+        .post('/v1/auth/refresh')
+        .set(CSRF)
+        .set('x-client', 'mobile')
+        .send({ refreshToken: phone.refreshToken })
+        .expect(401); // l'autre appareil doit se reconnecter
+      await login(user.email, 'correct horse battery').expect(401);
+      await login(user.email, 'un nouveau mot de passe').expect(200);
+    });
+
+    it('délier Google (mauvais compte) puis pouvoir en lier un autre', async () => {
+      const user = await registerUser(app, 'Nicolas');
+      await prisma.authIdentity.create({
+        data: { userId: user.userId, provider: 'GOOGLE', providerSubject: `wrong-${user.userId}` },
+      });
+      expect((await http().get('/v1/me').set(user.auth).expect(200)).body.googleLinked).toBe(true);
+      await http().delete('/v1/auth/google').set(user.auth).expect(204);
+      expect((await http().get('/v1/me').set(user.auth).expect(200)).body.googleLinked).toBe(false);
+      expect(await prisma.authIdentity.count({ where: { userId: user.userId } })).toBe(0);
+      // Idempotent.
+      await http().delete('/v1/auth/google').set(user.auth).expect(204);
+    });
+
+    it('compte Google seul : définir un mot de passe (sans ancien), puis délier devient possible', async () => {
+      const user = await registerUser(app, 'Grace');
+      await prisma.user.update({ where: { id: user.userId }, data: { passwordHash: null } });
+      await prisma.authIdentity.create({
+        data: { userId: user.userId, provider: 'GOOGLE', providerSubject: `only-${user.userId}` },
+      });
+      const blocked = await http().delete('/v1/auth/google').set(user.auth).expect(409);
+      expect(blocked.body.error.code).toBe('PASSWORD_REQUIRED');
+      await http()
+        .post('/v1/auth/password/change')
+        .set(user.auth)
+        .send({ newPassword: 'mon premier mot de passe' })
+        .expect(204);
+      expect((await http().get('/v1/me').set(user.auth).expect(200)).body.hasPassword).toBe(true);
+      await http().delete('/v1/auth/google').set(user.auth).expect(204);
+      await login(user.email, 'mon premier mot de passe').expect(200);
+    });
+
+    it('protections : connexion requise, en-tête anti-CSRF exigé', async () => {
+      await http()
+        .post('/v1/auth/password/change')
+        .set(CSRF)
+        .send({ newPassword: 'un nouveau mot de passe' })
+        .expect(401);
+      const user = await registerUser(app, 'Grace');
+      await http()
+        .delete('/v1/auth/google')
+        .set({ authorization: user.auth.authorization })
+        .expect(403);
+    });
+  });
+
   describe('RGPD', () => {
     it('export : mes données, dont mes tâches personnelles, jamais celles du partenaire', async () => {
       const h = await coupleHousehold(app);

@@ -55,6 +55,13 @@ export const ResetPasswordInput = z.object({
 });
 export type ResetPasswordInput = z.infer<typeof ResetPasswordInput>;
 
+/** `currentPassword` obligatoire si le compte a déjà un mot de passe (compte Google seul : non). */
+export const ChangePasswordInput = z.object({
+  currentPassword: z.string().max(128).optional(),
+  newPassword: Password,
+});
+export type ChangePasswordInput = z.infer<typeof ChangePasswordInput>;
+
 export const AuthProvidersDto = z.object({
   google: z.boolean(),
   registration: z.boolean(),

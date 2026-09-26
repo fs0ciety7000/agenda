@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Headers,
   HttpCode,
@@ -13,6 +14,7 @@ import { ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import {
   type AuthResponse,
+  ChangePasswordInput,
   ForgotPasswordInput,
   LoginInput,
   type MeResponse,
@@ -131,6 +133,22 @@ export class AuthController {
   ): Promise<void> {
     await this.passwordReset.reset(body.token, body.password);
     clearAuthCookies(res);
+  }
+
+  @Throttle(AUTH_THROTTLE)
+  @Post('auth/password/change')
+  @HttpCode(204)
+  changePassword(
+    @CurrentUser() user: AuthUser,
+    @Body(new ZodPipe(ChangePasswordInput)) body: ChangePasswordInput,
+  ): Promise<void> {
+    return this.auth.changePassword(user, body);
+  }
+
+  @Delete('auth/google')
+  @HttpCode(204)
+  unlinkGoogle(@CurrentUser() user: AuthUser): Promise<void> {
+    return this.auth.unlinkGoogle(user.userId);
   }
 
   @Get('me')

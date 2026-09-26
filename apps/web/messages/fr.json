@@ -72,7 +72,9 @@
     "GOOGLE_FLOW_EXPIRED": "La connexion avec Google a expiré ou a été ouverte dans un autre navigateur. Relancez « Connecter Google Calendar » depuis ce navigateur.",
     "GOOGLE_DENIED": "Vous avez annulé l'autorisation sur l'écran Google. Rien n'a été connecté.",
     "GOOGLE_SCOPES_MISSING": "Google n'a pas donné accès à votre calendrier. Relancez la connexion et cochez les deux cases (voir vos calendriers, gérer les événements) sur l'écran Google.",
-    "GOOGLE_CALENDAR_FAILED": "Google a refusé la connexion. Réessayez ; si cela persiste, la configuration du serveur est à vérifier (journaux de l'API)."
+    "GOOGLE_CALENDAR_FAILED": "Google a refusé la connexion. Réessayez ; si cela persiste, la configuration du serveur est à vérifier (journaux de l'API).",
+    "CURRENT_PASSWORD_INVALID": "Mot de passe actuel incorrect.",
+    "PASSWORD_REQUIRED": "Définissez d'abord un mot de passe."
   },
   "today": {
     "greeting": "Bonjour {name} 👋",
@@ -371,7 +373,13 @@
     "typeToConfirm": "Tapez {word} pour confirmer",
     "confirmWord": "SUPPRIMER",
     "cancel": "Annuler",
-    "confirmDelete": "Supprimer définitivement"
+    "confirmDelete": "Supprimer définitivement",
+    "unlinkGoogle": "Délier",
+    "unlinkTitle": "Délier ce compte Google ?",
+    "unlinkBody": "Vous ne pourrez plus vous connecter avec ce compte Google. Vous pourrez ensuite lier un autre compte (bouton « Lier Google »). Votre compte, vos tâches et Google Calendar ne sont pas touchés.",
+    "unlinkConfirm": "Délier",
+    "googleUnlinked": "Compte Google délié. Vous pouvez lier le bon compte.",
+    "unlinkNeedsPassword": "Pour délier Google, définissez d'abord un mot de passe (section Compte), sinon vous ne pourriez plus vous connecter."
   },
   "calendarSync": {
     "notConfigured": "La connexion à Google Calendar n'est pas activée sur ce serveur.",
@@ -413,5 +421,20 @@
       "CALENDAR_RATE_LIMITED": "Google limite temporairement les envois. La synchronisation reprendra automatiquement.",
       "CALENDAR_UNAVAILABLE": "Google Calendar est momentanément indisponible. La synchronisation avec « {calendar} » reprendra automatiquement."
     }
+  },
+  "password": {
+    "changeTitle": "Mot de passe",
+    "changeHint": "Les autres appareils connectés devront se reconnecter.",
+    "setTitle": "Définir un mot de passe",
+    "setHint": "Votre compte utilise Google pour se connecter. Un mot de passe permet aussi de vous connecter sans Google (et à l'app Android).",
+    "current": "Mot de passe actuel",
+    "new": "Nouveau mot de passe",
+    "confirm": "Confirmer le nouveau mot de passe",
+    "rule": "10 caractères minimum. Une phrase courte est idéale.",
+    "mismatch": "Les deux mots de passe ne correspondent pas.",
+    "submitChange": "Changer le mot de passe",
+    "submitSet": "Définir le mot de passe",
+    "changed": "Mot de passe changé. Les autres appareils ont été déconnectés.",
+    "set": "Mot de passe défini."
   }
 }
