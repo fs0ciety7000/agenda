@@ -7,14 +7,15 @@ synchronisation vers le calendrier Google partagé « Commun G & N ».
 
 ## Documentation
 
-| Document                                          | Contenu                                           |
-| ------------------------------------------------- | ------------------------------------------------- |
-| [Exigences produit](docs/product-requirements.md) | Vision, user stories MVP, ambiguïtés et décisions |
-| [Architecture](docs/architecture.md)              | Choix techniques (ADR), sécurité, RGPD, infra     |
-| [Base de données](docs/database.md)               | Modèle, récurrence, fuseaux, index                |
-| [Google Calendar](docs/google-calendar.md)        | OAuth, stratégie de synchronisation, erreurs      |
-| [Design system](docs/design-system.md)            | Tokens, composants, accessibilité                 |
-| [Roadmap](docs/roadmap.md)                        | Phases, risques                                   |
+| Document                                          | Contenu                                            |
+| ------------------------------------------------- | -------------------------------------------------- |
+| [Exigences produit](docs/product-requirements.md) | Vision, user stories MVP, ambiguïtés et décisions  |
+| [Architecture](docs/architecture.md)              | Choix techniques (ADR), sécurité, RGPD, infra      |
+| [Base de données](docs/database.md)               | Modèle, récurrence, fuseaux, index                 |
+| [Google Calendar](docs/google-calendar.md)        | OAuth, stratégie de synchronisation, erreurs       |
+| [Design system](docs/design-system.md)            | Tokens, composants, accessibilité                  |
+| [Roadmap](docs/roadmap.md)                        | Phases, risques                                    |
+| [Déploiement](docs/deployment.md)                 | Coolify (Docker Compose) + Cloudflare, sauvegardes |
 
 ## Structure
 
@@ -49,6 +50,10 @@ pnpm test                               # unitaires + intégration API (base age
 pnpm --filter @agenda/web e2e           # Playwright (API et web démarrés)
 cd apps/android && ./gradlew lintDebug testDebugUnitTest assembleDebug
 ```
+
+### Production
+
+`docker-compose.prod.yml` (Coolify + Cloudflare) : voir [docs/deployment.md](docs/deployment.md).
 
 ### Android
 

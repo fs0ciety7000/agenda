@@ -33,6 +33,9 @@ export class AuthService {
   ) {}
 
   async register(input: RegisterInput, userAgent?: string): Promise<IssuedTokens> {
+    if (!env().REGISTRATION_ENABLED) {
+      throw new AppException('REGISTRATION_CLOSED', HttpStatus.FORBIDDEN, 'Registration is closed');
+    }
     const passwordHash = await this.passwords.hash(input.password);
     let user: User;
     try {

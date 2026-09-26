@@ -27,6 +27,7 @@
     "VALIDATION_FAILED": "Certains champs sont invalides.",
     "INVALID_CREDENTIALS": "Email ou mot de passe incorrect.",
     "EMAIL_ALREADY_USED": "Un compte existe déjà avec cette adresse.",
+    "REGISTRATION_CLOSED": "Les inscriptions sont fermées. Demandez un accès au foyer.",
     "SESSION_EXPIRED": "Votre session a expiré. Reconnectez-vous.",
     "UNAUTHENTICATED": "Veuillez vous connecter.",
     "RATE_LIMITED": "Trop de tentatives. Réessayez dans une minute.",

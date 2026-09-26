@@ -7,7 +7,7 @@
 ```
             ┌──────────────────┐        ┌───────────────────────┐
             │  Web (Next.js)   │        │ Android (Kotlin/Compose)│
-            │  Vercel, fra1    │        │ Room + WorkManager     │
+            │  Coolify/Docker  │        │ Room + WorkManager     │
             └────────┬─────────┘        └───────────┬───────────┘
                      │ HTTPS (cookies httpOnly)      │ HTTPS (Bearer)
                      ▼                               ▼
@@ -182,16 +182,19 @@ Tests critiques listés dans le cahier des charges §29 → chacun a un test nom
 
 | Option | Coût/mois (ordre de grandeur) | + | − |
 |---|---|---|---|
-| A. Vercel (web) + **Render** Frankfurt (API+worker, Postgres, Key Value) | ~ 25–40 € | Tout managé, région UE, backups Postgres, simple | Cold start plan gratuit (on prend un plan payant) |
-| B. Vercel + Railway (EU West) | ~ 20–40 € | DX excellente, usage-based | Backups Postgres moins avancés, facturation variable |
-| C. Vercel + Fly.io + Neon + Upstash | ~ 15–35 € | Performant, serverless DB | 4 fournisseurs, plus d'opérations |
+| A. Vercel (web) + Render Frankfurt (API, Postgres, Key Value) | ~ 25–40 € | Tout managé, région UE, backups Postgres | Deux fournisseurs de plus, coût récurrent |
+| B. Vercel + Railway / Fly.io + Neon | ~ 15–40 € | DX excellente | Plusieurs fournisseurs, facturation variable |
+| C. **Coolify auto-hébergé (Docker Compose, Traefik) + Cloudflare** | coût du serveur déjà en place | Infrastructure existante de l'équipe, un seul `docker-compose.prod.yml`, données sur un serveur maîtrisé, pas de dépendance à un PaaS | Backups et mises à jour du serveur à notre charge |
 | D. AWS (ECS/RDS/ElastiCache) | ~ 80 €+ | Puissant | Surdimensionné, maintenance lourde |
 
-**Choix : A** — un seul fournisseur backend en UE, backups managés, Docker standard (portable
-vers B/C/D sans réécriture). Détails dans `roadmap.md` Phase 7.
+**Choix : C** (décision du 2026-09-26, remplace le choix initial A) : le serveur Coolify existe
+déjà et héberge d'autres projets sur `fs0ciety.org`. Les images Docker restent standard, donc
+portables vers A/B/D sans réécriture. Un seul domaine public (`agenda.fs0ciety.org`, service
+`web`), API et base internes. Mode opératoire complet : [`deployment.md`](deployment.md).
 
 - CI/CD : GitHub Actions (lint, typecheck, tests, build ; job Android séparé).
-- Monitoring : Sentry (web + API + Android), logs pino JSON, `/health/live` et `/health/ready` (DB + Redis), métriques BullMQ (taille des files, jobs en échec).
+- Monitoring : Sentry (web + API + Android), logs pino JSON, `/health/live` et `/health/ready` (DB, puis Redis en Phase 4) exposé publiquement en `/healthz`, métriques BullMQ (taille des files, jobs en échec).
+- Sauvegardes : `pg_dump` quotidien (tâche planifiée Coolify) + copie hors serveur (cf. `deployment.md` §6).
 - Stockage S3 : non nécessaire en MVP (pas de pièces jointes) → reporté.
 
 ## 12. Versions (épinglées)

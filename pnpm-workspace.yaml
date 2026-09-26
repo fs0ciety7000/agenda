@@ -12,3 +12,6 @@ onlyBuiltDependencies:
   - '@nestjs/core'
   - unrs-resolver
   - '@swc/core'
+# Télémétrie de @scarf/scarf (via Swagger UI) : jamais exécutée.
+ignoredBuiltDependencies:
+  - '@scarf/scarf'

@@ -12,7 +12,7 @@ Une phase n'est « terminée » que si la CI est verte et la documentation à jo
 | **4 — Google Calendar** | OAuth calendrier, sélection « Commun G & N », `GoogleCalendarSyncService`, BullMQ, retry/backoff, réconciliation, erreurs humaines | Suite fake Google verte + recette manuelle sur « Commun G & N » | ⏳ |
 | **5 — Android** | Compose : navigation, dashboard, tâches, calendrier, création rapide, Room + outbox + WorkManager, notifications locales | Tests Compose + instrumentation ; APK de recette | ⏳ |
 | **6 — Polish** | Drag & drop calendrier, animations, accessibilité (audit axe + TalkBack), dark mode fin, onboarding complet, statistiques, notifications & préférences | Audit a11y sans violation AA | ⏳ |
-| **7 — Production** | Render (Frankfurt) + Vercel, Sentry, backups vérifiés (restauration testée), passage de l'app OAuth Google en production, politique de confidentialité, AAB Play Store (test interne) | Checklist de mise en production signée | ⏳ |
+| **7 — Production** | Coolify + Cloudflare (`docs/deployment.md`), Sentry, backups vérifiés (restauration testée), passage de l'app OAuth Google en production, politique de confidentialité, AAB Play Store (test interne) | Checklist de mise en production signée | ⏳ |
 
 ## Risques principaux
 
@@ -24,6 +24,7 @@ Une phase n'est « terminée » que si la CI est verte et la documentation à jo
 | R4 | Conflits offline Android | Perte de coche / écrasement | Outbox idempotente + versions + « la complétion gagne » |
 | R5 | Sur-ingénierie | Retard, maintenance | Worker dans le process API en V1, pas de WebSocket en V1, 1 fournisseur backend |
 | R6 | Fuite inter-foyers | Grave (vie privée) | Guard de foyer + filtres Prisma systématiques + tests d'intégration dédiés |
+| R8 | Serveur auto-hébergé : perte de disque | Perte des données | Dumps quotidiens + copie hors serveur, restauration testée (`deployment.md` §6) |
 | R7 | Montées de version majeures (TS 7, Next 16, Prisma 7…) | Casse de build | Versions épinglées ; montées en PR dédiées |
 
 ## Phase 1 — détail de ce qui est livré

@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ThrottlerModule } from '@nestjs/throttler';
 import { LoggerModule } from 'nestjs-pino';
 import { AuthModule } from './auth/auth.module';
+import { ClientIpThrottlerGuard } from './common/client-ip-throttler.guard';
 import { HttpExceptionFilter } from './common/http-exception.filter';
 import { env } from './config/env';
 import { HealthController } from './health/health.controller';
@@ -27,7 +28,7 @@ import { PrismaModule } from './prisma/prisma.module';
   ],
   controllers: [HealthController],
   providers: [
-    { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: APP_GUARD, useClass: ClientIpThrottlerGuard },
     { provide: APP_FILTER, useClass: HttpExceptionFilter },
   ],
 })

@@ -16,8 +16,23 @@ const EnvSchema = z.object({
     .int()
     .default(15 * 60),
   REFRESH_TOKEN_TTL_DAYS: z.coerce.number().int().default(60),
+  /**
+   * En-tête portant l'IP réelle du client derrière les proxys (Cloudflare → Traefik → web → API).
+   * Vide = IP de la connexion TCP (développement). Voir docs/deployment.md.
+   */
+  CLIENT_IP_HEADER: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .optional()
+    .transform((v) => v || undefined),
   /** Requêtes/minute/IP sur login, inscription, refresh. */
   AUTH_RATE_LIMIT: z.coerce.number().int().min(1).default(10),
+  /** Inscriptions ouvertes. À passer à false une fois les membres du foyer inscrits. */
+  REGISTRATION_ENABLED: z
+    .enum(['true', 'false'])
+    .default('true')
+    .transform((v) => v === 'true'),
 });
 
 export type Env = z.infer<typeof EnvSchema>;
