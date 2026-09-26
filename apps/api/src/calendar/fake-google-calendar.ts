@@ -54,6 +54,19 @@ export class FakeGoogleCalendar extends GoogleCalendarClient {
   }
 
   /** Événements visibles (non supprimés) d'un calendrier. */
+  /** Simule une modification faite par quelqu'un dans Google Calendar (web, téléphone). */
+  editExternally(calendarId: string, eventId: string, patch: Partial<GoogleEvent>) {
+    const cal = this.cal(calendarId, true);
+    const current = cal.events.get(eventId);
+    if (!current) throw new Error(`no event ${eventId}`);
+    cal.events.set(eventId, {
+      ...current,
+      ...patch,
+      etag: `"${++this.counter}"`,
+      updated: new Date().toISOString(),
+    });
+  }
+
   events(calendarId: string): GoogleEvent[] {
     return [...(this.calendars.get(calendarId)?.events.values() ?? [])].filter(
       (e) => e.status !== 'cancelled',
@@ -101,7 +114,12 @@ export class FakeGoogleCalendar extends GoogleCalendarClient {
     this.step('events.insert', token);
     const cal = this.cal(calendarId, true);
     if (cal.events.has(event.id)) throw new GoogleApiError('conflict', 409, 'duplicate');
-    const stored = { ...event, status: 'confirmed' as const, etag: `"${++this.counter}"` };
+    const stored = {
+      ...event,
+      status: 'confirmed' as const,
+      etag: `"${++this.counter}"`,
+      updated: new Date().toISOString(),
+    };
     cal.events.set(event.id, stored);
     return stored;
   }
@@ -116,7 +134,12 @@ export class FakeGoogleCalendar extends GoogleCalendarClient {
     const cal = this.cal(calendarId, true);
     const current = cal.events.get(eventId);
     if (!current) throw new GoogleApiError('not_found', 404);
-    const next = { ...current, ...patch, etag: `"${++this.counter}"` };
+    const next = {
+      ...current,
+      ...patch,
+      etag: `"${++this.counter}"`,
+      updated: new Date().toISOString(),
+    };
     cal.events.set(eventId, next);
     return next;
   }
@@ -127,18 +150,24 @@ export class FakeGoogleCalendar extends GoogleCalendarClient {
     const current = cal.events.get(eventId);
     if (!current) throw new GoogleApiError('not_found', 404);
     if (current.status === 'cancelled') throw new GoogleApiError('not_found', 410);
-    cal.events.set(eventId, { ...current, status: 'cancelled' });
+    cal.events.set(eventId, {
+      ...current,
+      status: 'cancelled',
+      etag: `"${++this.counter}"`,
+      updated: new Date().toISOString(),
+    });
   }
 
   async listAppEvents(
     token: string,
     calendarId: string,
-    q: { householdId: string; timeMin: string; timeMax: string },
+    q: { householdId: string; timeMin: string; timeMax: string; updatedMin?: string },
   ) {
     this.step('events.list', token);
     const cal = this.cal(calendarId, false);
     return [...cal.events.values()].filter((e) => {
       if (e.extendedProperties?.private?.gnHouseholdId !== q.householdId) return false;
+      if (q.updatedMin && e.updated && e.updated < q.updatedMin) return false;
       const start = e.start?.dateTime ?? `${e.start?.date}T00:00:00Z`;
       return (
         new Date(start) < new Date(q.timeMax) &&

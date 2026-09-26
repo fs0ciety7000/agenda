@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { addDays, todayIn, weekdayOf, WEEKDAYS } from '@agenda/domain';
+import { addDays, todayIn, weekdayOf, WEEKDAYS, zonedToUtc } from '@agenda/domain';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { GoogleCalendarSyncService, eventIdFor } from '../src/calendar/calendar-sync.service';
@@ -456,6 +456,122 @@ describe('Google Calendar — connexion, synchronisation, erreurs (intégration)
       });
       expect(await h.sweep()).toMatchObject({ created: 1, failed: 0 });
       expect(h.events()).toHaveLength(2);
+    });
+  });
+
+  describe('sens Google → app (modifications faites dans Google Calendar)', () => {
+    const at = (date: string, minute: number) =>
+      zonedToUtc(date as never, minute, 'Europe/Brussels').toISOString();
+    const pull = (h: Awaited<ReturnType<typeof setup>>) => sync.pull(h.householdId);
+    const get = async (h: Awaited<ReturnType<typeof setup>>, id: string) =>
+      (await http().get(`${h.base}/occurrences/${id}`).set(h.grace.auth).expect(200)).body;
+
+    it('tâche ponctuelle déplacée et renommée dans Google ⇒ reportée dans l’app, sans écho', async () => {
+      const h = await setup();
+      const t = await http()
+        .post(`${h.base}/tasks`)
+        .set(h.grace.auth)
+        .send({
+          title: 'Arroser',
+          date: today,
+          startMinute: 600,
+          assigneeIds: [h.grace.memberId],
+          syncToCalendar: true,
+        })
+        .expect(201);
+      await h.sweep();
+      expect(await pull(h)).toEqual({ updated: 0, detached: 0 }); // 1re relève : point de départ
+      const tomorrow = addDays(today, 1);
+      google.editExternally(h.calendarId, eventIdFor(t.body.id), {
+        summary: 'Arroser le balcon · Grace',
+        start: { dateTime: at(tomorrow, 15 * 60), timeZone: 'Europe/Brussels' },
+        end: { dateTime: at(tomorrow, 16 * 60 + 30), timeZone: 'Europe/Brussels' },
+      });
+      expect(await pull(h)).toEqual({ updated: 1, detached: 0 });
+      expect(await get(h, t.body.id)).toMatchObject({
+        title: 'Arroser le balcon',
+        date: tomorrow,
+        startMinute: 15 * 60,
+        durationMinutes: 90,
+        version: t.body.version + 1,
+      });
+      // Rien à republier (ni boucle) ; une nouvelle relève ne retraite pas l'événement.
+      google.calls = [];
+      expect(await h.sweep()).toMatchObject({ created: 0, updated: 0 });
+      expect(await pull(h)).toEqual({ updated: 0, detached: 0 });
+      expect(google.calls.filter((c) => c === 'events.patch')).toEqual([]);
+    });
+
+    it('série : une occurrence déplacée dans Google devient une exception, les autres ne bougent pas', async () => {
+      const h = await setup();
+      await weeklyTask(h);
+      await h.sweep();
+      await pull(h);
+      const [first, second, third] = await h.occurrences();
+      const day = addDays(second!.date, 1);
+      google.editExternally(h.calendarId, eventIdFor(second!.id), {
+        summary: 'Salle de bain à fond · Nicolas',
+        start: { dateTime: at(day, 9 * 60), timeZone: 'Europe/Brussels' },
+        end: { dateTime: at(day, 9 * 60 + 45), timeZone: 'Europe/Brussels' },
+      });
+      expect(await pull(h)).toMatchObject({ updated: 1 });
+      const moved = await get(h, second!.id);
+      expect(moved).toMatchObject({
+        date: day,
+        startMinute: 540,
+        title: 'Salle de bain à fond',
+        isException: true,
+      });
+      expect(await get(h, first!.id)).toMatchObject({
+        title: 'Nettoyer la salle de bain',
+        startMinute: 600,
+      });
+      expect(await get(h, third!.id)).toMatchObject({
+        title: 'Nettoyer la salle de bain',
+        startMinute: 600,
+      });
+    });
+
+    it('conflit : une modification de l’app pas encore publiée l’emporte sur Google', async () => {
+      const h = await setup();
+      const t = await http()
+        .post(`${h.base}/tasks`)
+        .set(h.grace.auth)
+        .send({ title: 'Courses', date: today, startMinute: 600, syncToCalendar: true })
+        .expect(201);
+      await h.sweep();
+      await pull(h);
+      await http()
+        .patch(`${h.base}/occurrences/${t.body.id}`)
+        .set(h.grace.auth)
+        .send({ version: t.body.version, startMinute: 11 * 60 })
+        .expect(200);
+      google.editExternally(h.calendarId, eventIdFor(t.body.id), {
+        start: { dateTime: at(today, 18 * 60), timeZone: 'Europe/Brussels' },
+        end: { dateTime: at(today, 18 * 60 + 30), timeZone: 'Europe/Brussels' },
+      });
+      expect(await pull(h)).toMatchObject({ updated: 0 });
+      expect((await get(h, t.body.id)).startMinute).toBe(11 * 60);
+      await h.sweep();
+      const ev = h.events().find((e) => e.id === eventIdFor(t.body.id))!;
+      expect(ev.start!.dateTime).toBe(at(today, 11 * 60));
+    });
+
+    it('supprimé dans Google ⇒ la tâche reste dans l’app mais n’est plus republiée', async () => {
+      const h = await setup();
+      const t = await http()
+        .post(`${h.base}/tasks`)
+        .set(h.grace.auth)
+        .send({ title: 'Rendez-vous', date: today, startMinute: 600, syncToCalendar: true })
+        .expect(201);
+      await h.sweep();
+      await pull(h);
+      google.editExternally(h.calendarId, eventIdFor(t.body.id), { status: 'cancelled' });
+      expect(await pull(h)).toEqual({ updated: 0, detached: 1 });
+      expect((await get(h, t.body.id)).title).toBe('Rendez-vous');
+      google.calls = [];
+      await h.sweep();
+      expect(google.calls.filter((c) => c === 'events.insert' || c === 'events.patch')).toEqual([]);
     });
   });
 

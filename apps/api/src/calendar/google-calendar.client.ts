@@ -57,6 +57,8 @@ export interface GoogleEvent {
   reminders?: { useDefault: boolean; overrides?: unknown[] };
   extendedProperties?: { private?: Record<string, string> };
   etag?: string;
+  /** Dernière modification (RFC 3339), fournie par Google. */
+  updated?: string;
 }
 
 export interface TokenSet {
@@ -88,10 +90,11 @@ export abstract class GoogleCalendarClient {
   ): Promise<GoogleEvent>;
   abstract deleteEvent(token: string, calendarId: string, eventId: string): Promise<void>;
   /** Nos événements (filtre extendedProperties), y compris supprimés, sur une fenêtre. */
+  /** Événements créés par l'app pour ce foyer uniquement (filtre sur la propriété privée). */
   abstract listAppEvents(
     token: string,
     calendarId: string,
-    q: { householdId: string; timeMin: string; timeMax: string },
+    q: { householdId: string; timeMin: string; timeMax: string; updatedMin?: string },
   ): Promise<GoogleEvent[]>;
   abstract authorizationUrl(p: {
     redirectUri: string;
@@ -230,7 +233,7 @@ export class HttpGoogleCalendarClient extends GoogleCalendarClient {
   async listAppEvents(
     token: string,
     calendarId: string,
-    q: { householdId: string; timeMin: string; timeMax: string },
+    q: { householdId: string; timeMin: string; timeMax: string; updatedMin?: string },
   ): Promise<GoogleEvent[]> {
     const items: GoogleEvent[] = [];
     let pageToken: string | undefined;
@@ -240,6 +243,8 @@ export class HttpGoogleCalendarClient extends GoogleCalendarClient {
       url.searchParams.set('timeMin', q.timeMin);
       url.searchParams.set('timeMax', q.timeMax);
       url.searchParams.set('showDeleted', 'true');
+      // Relève des modifications faites dans Google : seulement ce qui a changé depuis.
+      if (q.updatedMin) url.searchParams.set('updatedMin', q.updatedMin);
       url.searchParams.set('singleEvents', 'true');
       url.searchParams.set('maxResults', '2500');
       if (pageToken) url.searchParams.set('pageToken', pageToken);
