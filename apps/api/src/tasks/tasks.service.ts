@@ -27,6 +27,7 @@ import {
 } from '@agenda/domain';
 import { AppException, notFound } from '../common/app-exception';
 import { fromDbDate, toDbDate } from '../common/dates';
+import { DomainEvents } from '../common/domain-events';
 import { HouseholdContext } from '../common/request-context';
 import { PrismaService } from '../prisma/prisma.service';
 import { type Schedule, scheduleColumns } from './schedule';
@@ -35,6 +36,7 @@ import { boundsOf, rotationConfig, rotationMemberIds, SeriesService } from './se
 const occurrenceInclude = {
   task: { include: { category: true } },
   assignees: { select: { memberId: true } },
+  eventLink: { select: { syncStatus: true, syncedVersion: true, lastErrorCode: true } },
 } satisfies Prisma.TaskOccurrenceInclude;
 
 type OccurrenceRow = Prisma.TaskOccurrenceGetPayload<{ include: typeof occurrenceInclude }>;
@@ -50,6 +52,7 @@ export class TasksService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly series: SeriesService,
+    private readonly events: DomainEvents,
   ) {}
 
   // ───────────── Lecture ─────────────
@@ -249,6 +252,8 @@ export class TasksService {
           categoryId: input.categoryId ?? null,
           priority: input.priority,
           visibility: input.visibility,
+          // Une tâche personnelle n'est jamais publiée dans le calendrier partagé.
+          syncToCalendar: !personal && input.syncToCalendar,
         },
       });
       await this.log(tx, ctx, 'task.created', 'Task', task.id);
@@ -275,6 +280,7 @@ export class TasksService {
       await this.series.materialize(tx, seriesId, this.horizonFor(tz, input.date!));
       return this.firstOccurrenceId(tx, seriesId);
     });
+    this.events.householdChanged(ctx.householdId);
     return this.get(ctx, occurrenceId);
   }
 
@@ -317,7 +323,17 @@ export class TasksService {
       date: parsed.date,
       startMinute: parsed.startMinute,
       durationMinutes: parsed.durationMinutes,
+      syncToCalendar: Boolean(parsed.date) && (await this.calendarLinked(ctx)),
     });
+  }
+
+  /** Le foyer a-t-il un calendrier partagé actif ? (valeur par défaut de « Ajouter au calendrier »). */
+  private async calendarLinked(ctx: HouseholdContext): Promise<boolean> {
+    const link = await this.prisma.householdCalendarLink.findUnique({
+      where: { householdId: ctx.householdId },
+      select: { status: true },
+    });
+    return link?.status === 'ACTIVE';
   }
 
   // ───────────── Modification ─────────────
@@ -331,6 +347,17 @@ export class TasksService {
    * Catégorie, priorité et visibilité s'appliquent toujours à toute la tâche.
    */
   async update(
+    ctx: HouseholdContext,
+    id: string,
+    input: UpdateOccurrenceInput,
+    scope: EditScope,
+  ): Promise<OccurrenceDto> {
+    const result = await this.applyUpdate(ctx, id, input, scope);
+    this.events.householdChanged(ctx.householdId);
+    return result;
+  }
+
+  private async applyUpdate(
     ctx: HouseholdContext,
     id: string,
     input: UpdateOccurrenceInput,
@@ -412,7 +439,7 @@ export class TasksService {
           categoryId: input.categoryId,
           priority: input.priority,
           visibility,
-          syncToCalendar: visibility === 'PERSONAL' ? false : undefined,
+          syncToCalendar: visibility === 'PERSONAL' ? false : input.syncToCalendar,
           version: { increment: 1 },
         },
       });
@@ -548,7 +575,10 @@ export class TasksService {
           categoryId: input.categoryId !== undefined ? input.categoryId : current.task.categoryId,
           priority: input.priority ?? current.task.priority,
           visibility,
-          syncToCalendar: visibility === 'PERSONAL' ? false : current.task.syncToCalendar,
+          syncToCalendar:
+            visibility === 'PERSONAL'
+              ? false
+              : (input.syncToCalendar ?? current.task.syncToCalendar),
         },
       });
       const seriesId = await this.series.createSeries(tx, {
@@ -632,6 +662,11 @@ export class TasksService {
       }
       // Régénération à partir d'aujourd'hui, identifiants conservés ; faites / modifiées intactes.
       await this.series.regenerate(tx, old.id, today, this.horizonFor(tz, today));
+      // Titre ou responsables changés : toutes les occurrences à venir sont à republier dans Google.
+      await tx.taskOccurrence.updateMany({
+        where: { taskId: current.taskId, date: { gte: toDbDate(addDays(today, -1)) } },
+        data: { syncVersion: { increment: 1 } },
+      });
       await this.log(tx, ctx, 'series.updated', 'TaskSeries', old.id, changedFields(input, 'all'));
     });
 
@@ -677,6 +712,7 @@ export class TasksService {
         await this.log(tx, ctx, 'occurrence.completed', 'TaskOccurrence', id);
       });
     }
+    this.events.householdChanged(ctx.householdId);
     return this.get(ctx, id);
   }
 
@@ -697,6 +733,7 @@ export class TasksService {
         await this.log(tx, ctx, 'occurrence.reopened', 'TaskOccurrence', id);
       });
     }
+    this.events.householdChanged(ctx.householdId);
     return this.get(ctx, id);
   }
 
@@ -745,6 +782,7 @@ export class TasksService {
       });
       await this.log(tx, ctx, 'series.ended', 'TaskSeries', series.id);
     });
+    this.events.householdChanged(ctx.householdId);
   }
 
   // ───────────── Répartition ─────────────
@@ -941,10 +979,28 @@ function toDto(o: OccurrenceRow): OccurrenceDto {
     isRecurring: o.seriesId !== null,
     seriesId: o.seriesId,
     isException: o.isException,
+    syncToCalendar: o.task.syncToCalendar,
+    calendarSync: calendarSyncState(o),
     completedAt: o.completedAt?.toISOString() ?? null,
     completedById: o.completedById,
     version: o.version,
   };
+}
+
+/** État affiché de la synchronisation Google de l'occurrence (✓ / ⟳ / ⚠). */
+function calendarSyncState(o: OccurrenceRow): OccurrenceDto['calendarSync'] {
+  if (!o.task.syncToCalendar || o.task.visibility === 'PERSONAL' || !o.date) return null;
+  const l = o.eventLink;
+  if (!l) {
+    // Hors fenêtre synchronisée (J-1 → J+60) : pas encore concernée.
+    const d = fromDbDate(o.date)!;
+    const today = todayIn('UTC');
+    return d >= addDays(today, -1) && d <= addDays(today, 60) ? 'PENDING' : null;
+  }
+  if (l.syncStatus === 'DELETED') return null;
+  if (l.syncStatus === 'ERROR') return 'ERROR';
+  if (l.syncStatus === 'BLOCKED') return 'BLOCKED';
+  return l.syncStatus === 'SYNCED' && l.syncedVersion >= o.syncVersion ? 'SYNCED' : 'PENDING';
 }
 
 /** Responsables choisis pour « la suite » de la série : toujours ces personnes. */
@@ -964,7 +1020,7 @@ function taskFields(input: UpdateOccurrenceInput, visibility: 'PERSONAL' | 'SHAR
     categoryId: input.categoryId,
     priority: input.priority,
     visibility,
-    syncToCalendar: visibility === 'PERSONAL' ? false : undefined,
+    syncToCalendar: visibility === 'PERSONAL' ? false : input.syncToCalendar,
     version: { increment: 1 },
   };
 }

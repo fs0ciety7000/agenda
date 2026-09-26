@@ -39,6 +39,14 @@ const EnvSchema = z.object({
   SMTP_USER: z.string().optional(),
   SMTP_PASSWORD: z.string().optional(),
   EMAIL_FROM: z.string().default('Agenda G & N <no-reply@example.invalid>'),
+  // ── Google Calendar (Phase 4) ──
+  /** Redis pour la file de synchronisation (BullMQ). Sans Redis : synchronisation directe en mémoire. */
+  REDIS_URL: z.string().optional(),
+  /**
+   * `queue` (BullMQ, production), `inline` (minuterie en mémoire, développement sans Redis),
+   * `off` (tests : synchronisation déclenchée explicitement). Défaut déduit de l'environnement.
+   */
+  CALENDAR_SYNC_MODE: z.enum(['queue', 'inline', 'off']).optional(),
   // ── Google Sign-In (OIDC). Sans identifiants : le bouton est masqué. ──
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),

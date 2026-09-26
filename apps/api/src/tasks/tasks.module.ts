@@ -8,5 +8,6 @@ import { TasksService } from './tasks.service';
   imports: [HouseholdsModule],
   controllers: [TasksController],
   providers: [TasksService, SeriesService],
+  exports: [SeriesService],
 })
 export class TasksModule {}
