@@ -9,7 +9,8 @@
     "tasks": "Tasks",
     "calendar": "Calendar",
     "settings": "Settings",
-    "main": "Main navigation"
+    "main": "Main navigation",
+    "stats": "Summary"
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -133,7 +134,8 @@
     "logout": "Sign out",
     "logoutAll": "Sign out of all devices",
     "categories": "Categories",
-    "privacy": "Data & privacy"
+    "privacy": "Data & privacy",
+    "notifications": "Notifications"
   },
   "common": {
     "loading": "Loading…",
@@ -494,5 +496,51 @@
       "body": "For any question or request:",
       "fallback": "For any question or request, contact your household's administrator."
     }
+  },
+  "notifications": {
+    "bell": "Notifications",
+    "bellUnread": "Notifications, {count, plural, one {# unread} other {# unread}}",
+    "title": "Notifications",
+    "empty": "Nothing new.",
+    "markAll": "Mark all as read",
+    "unread": "Unread",
+    "assigned": "{by} gave you “{title}”",
+    "assignedRecurring": "{by} included you in “{title}” (recurring)",
+    "assignedDeleted": "{by} gave you a task that has since been deleted",
+    "calendarFailed": "Google Calendar sync is interrupted. Open Settings."
+  },
+  "notificationSettings": {
+    "title": "Notification preferences",
+    "inApp": "In the app",
+    "push": "On the phone",
+    "hint": "“On the phone”: Android app notifications (checked hourly and when opening the app). Reminders before a task are set in the Android app.",
+    "types": {
+      "TASK_ASSIGNED": "Someone gives me a task",
+      "CALENDAR_SYNC_FAILED": "Google Calendar sync problem"
+    }
+  },
+  "stats": {
+    "title": "Summary",
+    "period": "Period",
+    "days7": "7 days",
+    "days30": "30 days",
+    "intro": "Shared household tasks. To plan together — not to keep score.",
+    "done": "Done",
+    "time": "Time spent",
+    "late": "Done late",
+    "lateHint": "after their planned date",
+    "overdue": "Overdue",
+    "overdueHint": "to catch up today",
+    "perDay": "Tasks done per day",
+    "empty": "No task done in this period.",
+    "showTable": "Show the numbers",
+    "day": "Day",
+    "doneCount": "{count, plural, one {# done} other {# done}}",
+    "byCategory": "By category",
+    "noCategory": "No category",
+    "byMember": "Who ticked",
+    "memberHint": "A shared (“together”) task counts for the person who ticked it.",
+    "minutes": "{m} min",
+    "hours": "{h} h {m}"
   }
 }

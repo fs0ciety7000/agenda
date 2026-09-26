@@ -12,8 +12,8 @@ Une phase n'est « terminée » que si la CI est verte et la documentation à jo
 | **3 — Récurrence & rotation** | `packages/domain` : moteur RRULE-subset, DST, rotation (slots, par semaine, par jour), matérialisation 90 j, exceptions, split de série, 3 modes d'édition | Couverture domaine ≥ 95 %, tests critiques §29 | ✅ Livré (98,6 % des lignes) |
 | **4 — Google Calendar** | OAuth calendrier, sélection « Commun G & N », `GoogleCalendarSyncService`, BullMQ, retry/backoff, réconciliation, erreurs humaines | Suite fake Google verte + recette manuelle sur « Commun G & N » | ✅ Livré, recette manuelle à faire (cf. §Phase 4) |
 | **5 — Android** | Compose : navigation, dashboard, tâches, calendrier, création rapide, Room + outbox + WorkManager, notifications locales | Tests Compose + instrumentation ; APK de recette | ✅ Livré, recette sur téléphone à faire (cf. §Phase 5) |
-| **6 — Polish** | Drag & drop calendrier, animations, accessibilité (audit axe + TalkBack), dark mode fin, onboarding complet, statistiques, notifications & préférences | Audit a11y sans violation AA | ⏳ |
-| **7 — Production** | Coolify + Cloudflare (`docs/deployment.md`), Sentry, backups vérifiés (restauration testée), passage de l'app OAuth Google en production, politique de confidentialité, AAB Play Store (test interne) | Checklist de mise en production signée | ⏳ |
+| **6 — Polish** | Drag & drop calendrier, animations, accessibilité (audit axe + TalkBack), dark mode fin, onboarding complet, statistiques, notifications & préférences | Audit a11y sans violation AA | 🚧 6a livrée (statistiques, notifications) — reste 6b (cf. §Phase 6a) |
+| **7 — Production** | Coolify + Cloudflare (`docs/deployment.md`), Sentry, backups vérifiés (restauration testée), passage de l'app OAuth Google en production, politique de confidentialité, AAB Play Store (test interne) | Checklist de mise en production signée | ✅ Essentiel livré (cf. §Phase 7) ; Play Store optionnel |
 
 ## Risques principaux
 
@@ -196,6 +196,28 @@ pastilles.
 Décision : l'instrumentation sur émulateur est remplacée par Robolectric (rendu natif, même API
 de test Compose) — les runners CI n'ont pas de virtualisation matérielle. Recette sur téléphone
 réel : `android.md` §7.
+
+## Phase 6a — détail de ce qui est livré
+
+- **Bilan** (`/stats`, onglet « Bilan ») : sur 7 ou 30 jours, tâches partagées faites, temps
+  estimé, faites en retard, en retard aujourd'hui ; faites par jour (survol + tableau accessible),
+  par catégorie et « qui a coché » (la personne qui a coché, pas l'attribution). Une seule teinte
+  (l'accent, contraste ≥ 3:1 sur les deux thèmes) : l'identité passe par les libellés et avatars,
+  jamais par la couleur seule. Non compétitif, comme la répartition.
+- **Notifications** : « tâche attribuée » quand l'autre personne vous attribue une tâche partagée
+  (création ou modification des responsables, rotation incluse) et « synchronisation du calendrier
+  en échec ». Cloche dans « Aujourd'hui » (compteur non lus, clic → ouvre la tâche), tout marquer lu.
+  Le contenu est résolu à la lecture (titre renommé ou tâche supprimée : jamais de donnée périmée).
+- **Préférences** par personne et par type (dans l'app / sur le téléphone), Réglages → Notifications.
+- **Android** : les nouvelles notifications « sur le téléphone » apparaissent comme notifications
+  système (au retour dans l'app et à chaque synchronisation de fond, ~15 min) ; toucher ouvre la tâche.
+  Pas de push serveur (FCM) en V1 : aucun service tiers à configurer.
+
+Vérifié : 5 tests d'intégration API (dont isolation entre foyers), E2E `activity.spec.ts`
+(desktop + mobile), test Robolectric de l'`ActivityNotifier`.
+
+Reste pour la Phase 6 (6b) : glisser-déposer dans le calendrier, audit d'accessibilité (axe)
+et corrections, finitions de l'onboarding.
 
 ## Phase 7 (essentiel) — détail de ce qui est livré
 

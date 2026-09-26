@@ -21,6 +21,8 @@ import {
   QuickAddInput,
   type QuickAddPreview,
   RecurrencePreviewInput,
+  type StatsDto,
+  StatsQuery,
   type RecurrencePreviewItem,
   ScopeQuery,
   type SeriesDto,
@@ -143,6 +145,14 @@ export class TasksController {
     @Body(new ZodPipe(RecurrencePreviewInput)) body: RecurrencePreviewInput,
   ): Promise<RecurrencePreviewItem[]> {
     return this.tasks.preview(ctx, body);
+  }
+
+  @Get('stats')
+  stats(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Query(new ZodPipe(StatsQuery)) query: StatsQuery,
+  ): Promise<StatsDto> {
+    return this.tasks.stats(ctx, query);
   }
 
   @Get('balance')

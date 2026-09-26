@@ -5,3 +5,4 @@ export * from './households';
 export * from './recurrence';
 export * from './tasks';
 export * from './calendar';
+export * from './notifications';

@@ -47,11 +47,19 @@ export async function addPartner(page: Page, baseURL: string, name = 'Nicolas') 
       }),
     })
   ).json();
-  await fetch(`${baseURL}/v1/invitations/accept`, {
-    method: 'POST',
+  const joined = await (
+    await fetch(`${baseURL}/v1/invitations/accept`, {
+      method: 'POST',
+      headers: { ...API_HEADERS, authorization: `Bearer ${reg.accessToken}` },
+      body: JSON.stringify({ token: invite.token }),
+    })
+  ).json();
+  return {
+    householdId: households[0].id as string,
+    accessToken: reg.accessToken as string,
+    members: joined.members as { id: string; displayName: string }[],
     headers: { ...API_HEADERS, authorization: `Bearer ${reg.accessToken}` },
-    body: JSON.stringify({ token: invite.token }),
-  });
+  };
 }
 
 /** Date du jour à Bruxelles (YYYY-MM-DD). */

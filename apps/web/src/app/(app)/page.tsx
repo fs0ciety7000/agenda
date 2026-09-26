@@ -2,16 +2,19 @@
 
 import type { OccurrenceDto } from '@agenda/contracts';
 import { CalendarCheck, Sun } from 'lucide-react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { useEffect } from 'react';
 import { Balance } from '@/components/app/balance';
 import { CalendarBanner } from '@/components/app/calendar-banner';
 import { useSession } from '@/components/app/household-context';
+import { NotificationBell } from '@/components/app/notification-bell';
 import { QuickAdd } from '@/components/app/quick-add';
 import { TaskList } from '@/components/app/task-row';
 import { useTaskDialog } from '@/components/app/use-task-dialog';
 import { SectionTitle } from '@/components/ui/card';
 import { EmptyState, ErrorState, Skeleton } from '@/components/ui/states';
-import { errorKey } from '@/lib/api';
+import { api, errorKey } from '@/lib/api';
 import { addDays, useDayLabel, useToday } from '@/lib/format';
 import { useOccurrences } from '@/lib/tasks';
 
@@ -24,6 +27,19 @@ export default function TodayPage() {
   const today = useToday();
   const dayLabel = useDayLabel();
   const dialog = useTaskDialog();
+  const params = useSearchParams();
+  const router = useRouter();
+
+  // Ouverture depuis une notification (/?open=<occurrence>).
+  const openId = params.get('open');
+  useEffect(() => {
+    if (!openId) return;
+    router.replace('/', { scroll: false });
+    api<OccurrenceDto>(`/v1/households/${household.id}/occurrences/${openId}`)
+      .then(dialog.openEdit)
+      .catch(() => undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openId]);
 
   const todayQ = useOccurrences(household.id, { view: 'today' });
   const overdueQ = useOccurrences(household.id, { view: 'overdue' });
@@ -37,9 +53,12 @@ export default function TodayPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-[2rem] font-semibold leading-tight tracking-tight">
-        {t('greeting', { name: member?.displayName ?? me.displayName })}
-      </h1>
+      <div className="flex items-start justify-between gap-3">
+        <h1 className="text-[2rem] font-semibold leading-tight tracking-tight">
+          {t('greeting', { name: member?.displayName ?? me.displayName })}
+        </h1>
+        <NotificationBell className="mt-1 shrink-0" />
+      </div>
 
       <CalendarBanner />
 

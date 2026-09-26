@@ -87,6 +87,13 @@ interface AgendaApi {
         @Query("scope") scope: String,
     ): Response<Unit>
 
+    @GET("v1/households/{h}/notifications")
+    suspend fun notifications(
+        @Path("h") householdId: String,
+        @Query("since") since: String? = null,
+        @Query("limit") limit: Int = 20,
+    ): Response<NotificationListDto>
+
     @GET("v1/households/{h}/calendar")
     suspend fun calendarStatus(@Path("h") householdId: String): Response<CalendarStatusDto>
 }

@@ -18,6 +18,7 @@ import be.agendagn.app.data.update.AppUpdater
 import be.agendagn.app.data.sync.WorkManagerSyncScheduler
 import be.agendagn.app.domain.repository.AgendaRepository
 import be.agendagn.app.domain.repository.AuthRepository
+import be.agendagn.app.notifications.ActivityNotifier
 import be.agendagn.app.notifications.ReminderScheduler
 import kotlinx.coroutines.flow.Flow
 
@@ -44,5 +45,6 @@ class AppContainer(context: Context) {
     val online: Flow<Boolean> = app.observeOnline()
     val updater = AppUpdater(app, BuildConfig.UPDATE_MANIFEST_URL, BuildConfig.VERSION_CODE)
     val crashReporter = CrashReporter(app, api, BuildConfig.VERSION_NAME)
+    val activityNotifier = ActivityNotifier(app, api)
     val webBaseUrl: String = BuildConfig.WEB_BASE_URL
 }
