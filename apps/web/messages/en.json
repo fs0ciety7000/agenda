@@ -108,8 +108,9 @@
     "continue": "Continue",
     "later": "Later",
     "stepCalendar": "Connect Google Calendar",
-    "calendarBody": "Optional: your scheduled tasks will appear in your shared calendar.",
-    "connectCalendar": "Connect Google Calendar"
+    "calendarBody": "Optional: your scheduled tasks will appear in your shared calendar (for example “Commun G & N”). You can also do this later in Settings.",
+    "connectCalendar": "Connect Google Calendar",
+    "yourNameHint": "This is how the other person will see you in tasks."
   },
   "invite": {
     "title": "Join a household",
@@ -354,7 +355,12 @@
     "allDay": "All day",
     "createAt": "New task at {time}",
     "openDay": "Open {date}",
-    "more": "+{count} more"
+    "more": "+{count} more",
+    "moved": "“{title}” moved: {when}",
+    "resized": "Duration of “{title}” changed",
+    "undo": "Undo",
+    "moveError": "Couldn't move the task. Please try again.",
+    "dragHint": "Tip: drag a task to move it (long press on mobile) and drag its bottom edge to change its duration. With the keyboard, on a task: Alt + ↑/↓ shifts by 15 minutes, Alt + ←/→ changes the day, add Shift for the duration."
   },
   "privacy": {
     "google": "Sign in with Google",

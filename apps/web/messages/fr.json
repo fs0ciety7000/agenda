@@ -108,8 +108,9 @@
     "continue": "Continuer",
     "later": "Plus tard",
     "stepCalendar": "Connecter Google Calendar",
-    "calendarBody": "Facultatif : vos tâches planifiées apparaîtront dans votre calendrier partagé (par exemple « Commun G & N »).",
-    "connectCalendar": "Connecter Google Calendar"
+    "calendarBody": "Facultatif : vos tâches planifiées apparaîtront dans votre calendrier partagé (par exemple « Commun G & N »). Vous pourrez aussi le faire plus tard dans les Réglages.",
+    "connectCalendar": "Connecter Google Calendar",
+    "yourNameHint": "C'est ainsi que l'autre personne vous verra dans les tâches."
   },
   "invite": {
     "title": "Rejoindre un foyer",
@@ -354,7 +355,12 @@
     "allDay": "Journée",
     "createAt": "Nouvelle tâche à {time}",
     "openDay": "Voir le {date}",
-    "more": "+{count} autres"
+    "more": "+{count} autres",
+    "moved": "« {title} » déplacée : {when}",
+    "resized": "Durée de « {title} » modifiée",
+    "undo": "Annuler",
+    "moveError": "Impossible de déplacer la tâche. Réessayez.",
+    "dragHint": "Astuce : faites glisser une tâche pour la déplacer (appui long sur mobile) et tirez son bord inférieur pour changer sa durée. Au clavier, sur une tâche : Alt + ↑/↓ décale de 15 minutes, Alt + ←/→ change de jour, avec Maj pour la durée."
   },
   "privacy": {
     "google": "Connexion avec Google",

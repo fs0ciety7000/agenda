@@ -3,22 +3,28 @@
 import { CreateHouseholdInput, type HouseholdDto } from '@agenda/contracts';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
+import { AndroidAppCard } from '@/components/app/android-app-card';
 import { InviteLink } from '@/components/app/invite-link';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Field } from '@/components/ui/field';
 import { api, errorKey } from '@/lib/api';
+import { connectUrl, useCalendarStatus } from '@/lib/calendar';
 import { queryKeys, useMe } from '@/lib/queries';
 
 const Form = CreateHouseholdInput.pick({ name: true, memberDisplayName: true });
 type FormValues = z.input<typeof Form>;
 
-/** Onboarding : 1. créer le foyer 2. inviter. (Google Calendar : Phase 4, notifications : Phase 6.) */
+/**
+ * Onboarding : 1. créer le foyer 2. inviter l'autre personne 3. (si activé sur le serveur)
+ * connecter le calendrier partagé ; puis l'app Android si elle est publiée.
+ */
 export default function OnboardingPage() {
   const t = useTranslations();
   const router = useRouter();
@@ -29,8 +35,23 @@ export default function OnboardingPage() {
   const {
     register,
     handleSubmit,
+    getValues,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(Form) });
+  const inviteHeading = useRef<HTMLHeadingElement>(null);
+
+  // Le prénom du compte arrive après le premier rendu : pré-remplir sans écraser une saisie.
+  useEffect(() => {
+    if (me.data?.displayName && !getValues('memberDisplayName')) {
+      setValue('memberDisplayName', me.data.displayName);
+    }
+  }, [me.data?.displayName, getValues, setValue]);
+
+  // Étape suivante : y amener le focus (clavier, lecteur d'écran).
+  useEffect(() => {
+    if (household) inviteHeading.current?.focus();
+  }, [household]);
 
   const onSubmit = handleSubmit(async (values) => {
     setServerError(null);
@@ -52,6 +73,7 @@ export default function OnboardingPage() {
       className="mx-auto flex min-h-dvh w-full max-w-lg flex-col justify-center gap-8 px-4 py-12"
     >
       <div className="flex flex-col gap-2">
+        <Image src="/icons/icon-192.png" alt="" width={64} height={64} priority className="mb-4" />
         <h1 className="text-[2rem] font-semibold leading-tight tracking-tight">
           {t('onboarding.welcome')}
         </h1>
@@ -75,7 +97,7 @@ export default function OnboardingPage() {
             />
             <Field
               label={t('onboarding.yourName')}
-              defaultValue={me.data?.displayName}
+              hint={t('onboarding.yourNameHint')}
               autoComplete="given-name"
               {...register('memberDisplayName')}
             />
@@ -93,7 +115,7 @@ export default function OnboardingPage() {
 
       {household && (
         <Card className="flex flex-col gap-4">
-          <h2 className="text-lg font-semibold">
+          <h2 ref={inviteHeading} tabIndex={-1} className="text-lg font-semibold outline-none">
             <span className="mr-2 text-text-muted">2.</span>
             {t('onboarding.stepInvite')}
           </h2>
@@ -101,20 +123,8 @@ export default function OnboardingPage() {
         </Card>
       )}
 
-      {household && (
-        <Card className="flex flex-col gap-3">
-          <h2 className="text-lg font-semibold">
-            <span className="mr-2 text-text-muted">3.</span>
-            {t('onboarding.stepCalendar')}
-          </h2>
-          <p className="text-[0.9375rem] text-text-muted">{t('onboarding.calendarBody')}</p>
-          <Button asChild variant="secondary" className="self-start">
-            <a href="/v1/calendar/google/connect?next=/settings">
-              {t('onboarding.connectCalendar')}
-            </a>
-          </Button>
-        </Card>
-      )}
+      {household && <CalendarStep householdId={household.id} />}
+      {household && <AndroidAppCard />}
 
       {household && (
         <Button onClick={() => router.replace('/')} size="lg" className="self-end">
@@ -122,5 +132,24 @@ export default function OnboardingPage() {
         </Button>
       )}
     </main>
+  );
+}
+
+/** Facultatif, et seulement si l'intégration Google est activée sur ce serveur. */
+function CalendarStep({ householdId }: { householdId: string }) {
+  const t = useTranslations('onboarding');
+  const status = useCalendarStatus(householdId);
+  if (!status.data?.configured || status.data.connection) return null;
+  return (
+    <Card className="flex flex-col gap-3">
+      <h2 className="text-lg font-semibold">
+        <span className="mr-2 text-text-muted">3.</span>
+        {t('stepCalendar')}
+      </h2>
+      <p className="text-[0.9375rem] text-text-muted">{t('calendarBody')}</p>
+      <Button asChild variant="secondary" className="self-start">
+        <a href={connectUrl('/settings')}>{t('connectCalendar')}</a>
+      </Button>
+    </Card>
   );
 }

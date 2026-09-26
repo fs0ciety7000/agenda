@@ -12,7 +12,7 @@ Une phase n'est « terminée » que si la CI est verte et la documentation à jo
 | **3 — Récurrence & rotation** | `packages/domain` : moteur RRULE-subset, DST, rotation (slots, par semaine, par jour), matérialisation 90 j, exceptions, split de série, 3 modes d'édition | Couverture domaine ≥ 95 %, tests critiques §29 | ✅ Livré (98,6 % des lignes) |
 | **4 — Google Calendar** | OAuth calendrier, sélection « Commun G & N », `GoogleCalendarSyncService`, BullMQ, retry/backoff, réconciliation, erreurs humaines | Suite fake Google verte + recette manuelle sur « Commun G & N » | ✅ Livré, recette manuelle à faire (cf. §Phase 4) |
 | **5 — Android** | Compose : navigation, dashboard, tâches, calendrier, création rapide, Room + outbox + WorkManager, notifications locales | Tests Compose + instrumentation ; APK de recette | ✅ Livré, recette sur téléphone à faire (cf. §Phase 5) |
-| **6 — Polish** | Drag & drop calendrier, animations, accessibilité (audit axe + TalkBack), dark mode fin, onboarding complet, statistiques, notifications & préférences | Audit a11y sans violation AA | 🚧 6a livrée (statistiques, notifications) — reste 6b (cf. §Phase 6a) |
+| **6 — Polish** | Drag & drop calendrier, animations, accessibilité (audit axe + TalkBack), dark mode fin, onboarding complet, statistiques, notifications & préférences | Audit a11y sans violation AA | ✅ Livré (cf. §Phase 6) ; TalkBack à vérifier en recette |
 | **7 — Production** | Coolify + Cloudflare (`docs/deployment.md`), Sentry, backups vérifiés (restauration testée), passage de l'app OAuth Google en production, politique de confidentialité, AAB Play Store (test interne) | Checklist de mise en production signée | ✅ Essentiel livré (cf. §Phase 7) ; Play Store optionnel |
 
 ## Risques principaux
@@ -197,7 +197,9 @@ Décision : l'instrumentation sur émulateur est remplacée par Robolectric (ren
 de test Compose) — les runners CI n'ont pas de virtualisation matérielle. Recette sur téléphone
 réel : `android.md` §7.
 
-## Phase 6a — détail de ce qui est livré
+## Phase 6 — détail de ce qui est livré
+
+### 6a — statistiques et notifications
 
 - **Bilan** (`/stats`, onglet « Bilan ») : sur 7 ou 30 jours, tâches partagées faites, temps
   estimé, faites en retard, en retard aujourd'hui ; faites par jour (survol + tableau accessible),
@@ -216,8 +218,28 @@ réel : `android.md` §7.
 Vérifié : 5 tests d'intégration API (dont isolation entre foyers), E2E `activity.spec.ts`
 (desktop + mobile), test Robolectric de l'`ActivityNotifier`.
 
-Reste pour la Phase 6 (6b) : glisser-déposer dans le calendrier, audit d'accessibilité (axe)
-et corrections, finitions de l'onboarding.
+### 6b — calendrier, accessibilité, onboarding
+
+- **Glisser-déposer** (web, vues jour / semaine / mois) : déplacer une tâche (jour et heure, pas
+  de 15 min), tirer son bord inférieur pour changer la durée ; appui long au doigt pour ne pas
+  gêner le défilement ; Échap annule. Seule l'occurrence déplacée change (portée « celle-ci »,
+  même dans une série) ; affichage immédiat, toast avec **Annuler**, synchronisation Google
+  comme pour toute modification.
+- **Alternative clavier** (WCAG 2.5.7) : sur une tâche, Alt + ↑/↓ décale de 15 min, Alt + ←/→
+  change de jour, Maj en plus pour la durée ; consigne affichée sous le calendrier et reliée aux
+  tâches (`aria-describedby`).
+- **Audit axe (WCAG 2.2 AA)** automatisé en E2E (`e2e/a11y.spec.ts`) : pages publiques,
+  onboarding, Aujourd'hui, Tâches, calendrier (3 vues), Bilan, Réglages, formulaire — thèmes
+  clair et sombre, desktop et mobile. Corrigé : contraste des jours hors mois, cibles tactiles
+  < 24 px (tâches courtes), libellés « Voir le 2026-08-31 » → date lisible.
+- **Onboarding** : logo, prénom pré-rempli de façon fiable, focus amené sur l'étape suivante,
+  étape calendrier seulement si Google est activé sur le serveur (et pas déjà connecté), carte
+  de l'app Android.
+
+Vérifié : E2E `calendar-drag.spec.ts` (souris, redimensionnement, clavier, annuler, vue mois) et
+`a11y.spec.ts` ; suite complète 38 réussis (2 ignorés : mode démo Google).
+
+Non automatisable, en recette : TalkBack (Android) et lecteur d'écran sur le web.
 
 ## Phase 7 (essentiel) — détail de ce qui est livré
 
