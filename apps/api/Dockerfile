@@ -1,6 +1,6 @@
 # Image de l'API NestJS. Contexte de build : racine du monorepo.
 
-FROM node:22-alpine AS base
+FROM node:26-alpine AS base
 RUN apk add --no-cache openssl && corepack enable
 WORKDIR /repo
 
@@ -17,7 +17,7 @@ RUN pnpm turbo run build --filter=@agenda/api
 RUN pnpm --filter @agenda/api deploy --prod --legacy /out \
  && cd /out && node_modules/.bin/prisma generate
 
-FROM node:22-alpine AS runtime
+FROM node:26-alpine AS runtime
 RUN apk add --no-cache openssl tini
 ENV NODE_ENV=production PORT=4000
 WORKDIR /app
