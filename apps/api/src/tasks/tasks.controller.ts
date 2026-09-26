@@ -19,6 +19,10 @@ import {
   OccurrenceQuery,
   QuickAddInput,
   type QuickAddPreview,
+  RecurrencePreviewInput,
+  type RecurrencePreviewItem,
+  ScopeQuery,
+  type SeriesDto,
   UpdateOccurrenceInput,
 } from '@agenda/contracts';
 import { CurrentHousehold, HouseholdContext } from '../common/request-context';
@@ -80,8 +84,9 @@ export class TasksController {
     @CurrentHousehold() ctx: HouseholdContext,
     @Param('occurrenceId') id: string,
     @Body(new ZodPipe(UpdateOccurrenceInput)) body: UpdateOccurrenceInput,
+    @Query(new ZodPipe(ScopeQuery)) { scope }: ScopeQuery,
   ): Promise<OccurrenceDto> {
-    return this.tasks.update(ctx, assertUuid(id), body);
+    return this.tasks.update(ctx, assertUuid(id), body, scope);
   }
 
   @Post('occurrences/:occurrenceId/complete')
@@ -107,8 +112,33 @@ export class TasksController {
   remove(
     @CurrentHousehold() ctx: HouseholdContext,
     @Param('occurrenceId') id: string,
+    @Query(new ZodPipe(ScopeQuery)) { scope }: ScopeQuery,
   ): Promise<void> {
-    return this.tasks.remove(ctx, assertUuid(id));
+    return this.tasks.remove(ctx, assertUuid(id), scope);
+  }
+
+  /** Tâches récurrentes actives (une ligne par série, avec la prochaine date). */
+  @Get('series')
+  listSeries(@CurrentHousehold() ctx: HouseholdContext): Promise<SeriesDto[]> {
+    return this.tasks.listSeries(ctx);
+  }
+
+  @Get('series/:seriesId')
+  getSeries(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Param('seriesId') id: string,
+  ): Promise<SeriesDto> {
+    return this.tasks.getSeries(ctx, assertUuid(id));
+  }
+
+  /** Aperçu des prochaines occurrences et de la rotation (aucune écriture). */
+  @Post('recurrence/preview')
+  @HttpCode(200)
+  previewRecurrence(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Body(new ZodPipe(RecurrencePreviewInput)) body: RecurrencePreviewInput,
+  ): Promise<RecurrencePreviewItem[]> {
+    return this.tasks.preview(ctx, body);
   }
 
   @Get('balance')

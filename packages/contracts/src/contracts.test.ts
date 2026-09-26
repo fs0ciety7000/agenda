@@ -73,3 +73,36 @@ describe('tâches', async () => {
     expect(OccurrenceQuery.safeParse({ assignee: 'grace' }).success).toBe(false);
   });
 });
+
+describe('récurrence & rotation', async () => {
+  const { CreateTaskInput, RecurrenceInput } = await import('./index');
+  const G = '00000000-0000-4000-8000-000000000001';
+
+  it('valeurs par défaut : non attribuée, avance par occurrence', () => {
+    expect(RecurrenceInput.parse({ rule: { freq: 'WEEKLY', byWeekday: ['SA'] } })).toMatchObject({
+      rotation: { mode: 'UNASSIGNED' },
+      advance: 'PER_OCCURRENCE',
+    });
+  });
+
+  it('une tâche récurrente exige une date de début', () => {
+    const recurrence = { rule: { freq: 'DAILY' } };
+    expect(CreateTaskInput.safeParse({ title: 'x', recurrence }).success).toBe(false);
+    expect(CreateTaskInput.safeParse({ title: 'x', recurrence, date: '2026-09-26' }).success).toBe(
+      true,
+    );
+  });
+
+  it('jours ouvrés : intervalle 1 uniquement ; alternance : au moins 2 membres', () => {
+    expect(
+      RecurrenceInput.safeParse({ rule: { freq: 'DAILY', interval: 2, weekdaysOnly: true } })
+        .success,
+    ).toBe(false);
+    expect(
+      RecurrenceInput.safeParse({
+        rule: { freq: 'DAILY' },
+        rotation: { mode: 'ALTERNATE', memberIds: [G] },
+      }).success,
+    ).toBe(false);
+  });
+});

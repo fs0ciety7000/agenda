@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { OccurrenceStatus, TaskPriority, TaskVisibility } from './enums';
+import { RecurrenceInput, RecurrenceRule, RotationInput } from './recurrence';
 
 export const IsoDate = z
   .string()
@@ -22,7 +23,12 @@ const taskFields = {
   date: IsoDate.nullish(),
   startMinute: StartMinute.nullish(),
   durationMinutes: Duration.nullish(),
+  /** Tâche récurrente : les responsables viennent alors de la rotation (assigneeIds ignoré). */
+  recurrence: RecurrenceInput.nullish(),
 };
+
+const recurrenceNeedsDate = (v: { date?: string | null; recurrence?: unknown }) =>
+  !v.recurrence || v.date != null;
 
 const timeNeedsDate = (v: { date?: string | null; startMinute?: number | null }) =>
   v.startMinute == null || v.date != null;
@@ -34,7 +40,8 @@ export const CreateTaskInput = z
     visibility: taskFields.visibility.default('SHARED'),
     assigneeIds: taskFields.assigneeIds.default([]),
   })
-  .refine(timeNeedsDate, { message: 'startMinute requires date', path: ['startMinute'] });
+  .refine(timeNeedsDate, { message: 'startMinute requires date', path: ['startMinute'] })
+  .refine(recurrenceNeedsDate, { message: 'recurrence requires date', path: ['date'] });
 export type CreateTaskInput = z.infer<typeof CreateTaskInput>;
 
 /** Modification partielle ; `version` = concurrence optimiste (409 si la ressource a changé). */
@@ -87,6 +94,9 @@ export const OccurrenceDto = z.object({
   assigneeIds: z.array(z.uuid()),
   createdById: z.uuid(),
   isRecurring: z.boolean(),
+  seriesId: z.uuid().nullable(),
+  /** Occurrence modifiée individuellement dans une série. */
+  isException: z.boolean(),
   completedAt: z.string().nullable(),
   completedById: z.uuid().nullable(),
   version: z.number().int(),
@@ -130,3 +140,31 @@ export const UpdateCategoryInput = CategoryInput.partial().extend({
   position: z.number().int().min(0).optional(),
 });
 export type UpdateCategoryInput = z.infer<typeof UpdateCategoryInput>;
+
+export const SeriesDto = z.object({
+  id: z.uuid(),
+  taskId: z.uuid(),
+  title: z.string(),
+  rule: RecurrenceRule,
+  startDate: IsoDate,
+  untilDate: IsoDate.nullable(),
+  count: z.number().int().nullable(),
+  startMinute: z.number().int().nullable(),
+  durationMinutes: z.number().int().nullable(),
+  rotation: RotationInput,
+  advance: z.enum(['PER_OCCURRENCE', 'PER_WEEK']),
+  category: z.object({ id: z.uuid(), name: z.string(), emoji: z.string().nullable() }).nullable(),
+  visibility: TaskVisibility,
+  nextDate: IsoDate.nullable(),
+});
+export type SeriesDto = z.infer<typeof SeriesDto>;
+
+export const RecurrencePreviewInput = z.object({
+  startDate: IsoDate,
+  recurrence: RecurrenceInput,
+  limit: z.number().int().min(1).max(20).default(6),
+});
+export type RecurrencePreviewInput = z.infer<typeof RecurrencePreviewInput>;
+
+export const RecurrencePreviewItem = z.object({ date: IsoDate, assigneeIds: z.array(z.uuid()) });
+export type RecurrencePreviewItem = z.infer<typeof RecurrencePreviewItem>;
