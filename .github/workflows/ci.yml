@@ -152,7 +152,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
       - run: ./gradlew lintDebug testDebugUnitTest assembleDebug --console=plain
       # Build release (R8) vérifié ; l'APK signé et publié vient d'android-release.yml.
-      - run: ./gradlew assembleRelease --console=plain -Pagenda.apiBaseUrl=https://agenda.example.invalid/
+      - run: ./gradlew assembleRelease bundlePlay --console=plain -Pagenda.apiBaseUrl=https://agenda.example.invalid/
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
