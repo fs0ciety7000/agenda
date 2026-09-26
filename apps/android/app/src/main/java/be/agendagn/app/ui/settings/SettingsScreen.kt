@@ -153,18 +153,28 @@ fun SettingsScreen(
                             )
                         }
                     }
-                    if (!notificationsAllowed) {
-                        Text(
-                            stringResource(R.string.reminders_permission_denied),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.error,
-                        )
-                        TextButton(onClick = onRequestNotifications, modifier = Modifier.heightIn(min = 48.dp)) {
-                            Text(stringResource(R.string.reminders_permission))
-                        }
+                }
+            }
+        }
+
+        // Rappels locaux comme notifications instantanées ont besoin de l'autorisation Android.
+        SectionHeader(stringResource(R.string.settings_notifications))
+        OutlinedCard(Modifier.fillMaxWidth()) {
+            Column(Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
+                if (!notificationsAllowed) {
+                    Text(
+                        stringResource(R.string.reminders_permission_denied),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                    TextButton(onClick = onRequestNotifications, modifier = Modifier.heightIn(min = 48.dp)) {
+                        Text(stringResource(R.string.reminders_permission))
                     }
                 }
                 push?.let { PushStatusRow(it, onRetryPush) }
+                TextButton(onClick = { onOpenWeb("settings") }, modifier = Modifier.heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.notification_preferences))
+                }
             }
         }
 

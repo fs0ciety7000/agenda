@@ -28,6 +28,7 @@ import be.agendagn.app.domain.model.User
 import be.agendagn.app.domain.repository.SyncState
 import be.agendagn.app.testing.Fixtures
 import be.agendagn.app.testing.Fixtures.TODAY
+import be.agendagn.app.notifications.PushState
 import be.agendagn.app.ui.calendar.CalendarScreen
 import be.agendagn.app.ui.main.AgendaUiState
 import be.agendagn.app.ui.settings.SettingsScreen
@@ -232,9 +233,11 @@ class ScreensTest {
                 CalendarStatus(CalendarLinkState.ACTIVE, "Commun G & N", "foyer@example.be", null, 12, 0, 0),
                 ReminderSettings(true, 15), notificationsAllowed = true, version = "0.2.0",
                 onReminders = {}, onRequestNotifications = {}, onOpenWeb = {}, onSignOut = {},
+                push = PushState.Registered,
             )
         }
         compose.onNodeWithText("✓ Synchronisé avec « Commun G & N »").assertIsDisplayed()
+        compose.onNodeWithText("Actives : ce téléphone est enregistré.", substring = true).performScrollTo().assertIsDisplayed()
         shot("settings")
     }
 }
