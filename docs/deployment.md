@@ -323,6 +323,7 @@ même adresse (prise de contrôle possible). Pour lier Google à un compte cré�
 | L'API redémarre en boucle | Variable manquante/invalide (message `Invalid environment`) ou migration en échec | Logs du service `api` |
 | `redirect_uri_mismatch` chez Google | URI absente ou différente dans le client OAuth | Copier exactement `https://agenda.fs0ciety.org/v1/calendar/google/callback` (§9) |
 | « La connexion avec Google a expiré ou a été ouverte dans un autre navigateur » | Cookie du flux absent : plus de 10 min sur l'écran Google, navigateur différent (ex. lien ouvert depuis une autre app), cookies bloqués | Relancer depuis le même navigateur, sans navigation privée |
+| « Google a refusé la connexion » + log `TOKEN_ENCRYPTION_KEY must be 32 …` | Clé de chiffrement invalide (depuis ce correctif, l'API refuse de démarrer avec ce message) | `openssl rand -base64 32` → coller le résultat (44 caractères, finit par `=`) dans `TOKEN_ENCRYPTION_KEY`, redéployer, reconnecter Google |
 | « Google n'a pas donné accès à votre calendrier » | Cases décochées sur l'écran de consentement Google | Relancer et cocher les deux cases |
 | « Google a refusé la connexion » | Échange du code refusé : `GOOGLE_CLIENT_SECRET` erroné, client OAuth différent, API Calendar non activée | Logs `api` : ligne `Calendar connection failed: Google API 401 unauthorized (invalid_client)` ⇒ secret ; vérifier §9 |
 | « Google Calendar n'est pas configuré » dans Réglages | `GOOGLE_CLIENT_ID`/`SECRET` vides | Les renseigner dans Coolify, redéployer |

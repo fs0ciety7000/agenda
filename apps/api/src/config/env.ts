@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { decodeEncryptionKey } from '../common/crypto';
 
 const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
@@ -12,7 +13,28 @@ const EnvSchema = z.object({
     .transform((v) => v.replace(/\/+$/, '')),
   DATABASE_URL: z.string().min(1),
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
-  TOKEN_ENCRYPTION_KEY: z.string().optional(),
+  // Vérifiée au démarrage : une clé invalide ne doit pas attendre la première connexion Google.
+  TOKEN_ENCRYPTION_KEY: z.preprocess(
+    (v) => (typeof v === 'string' && v.trim() === '' ? undefined : v),
+    z
+      .string()
+      .trim()
+      .refine(
+        (v) => {
+          try {
+            decodeEncryptionKey(v);
+            return true;
+          } catch {
+            return false;
+          }
+        },
+        {
+          message:
+            'TOKEN_ENCRYPTION_KEY must be 32 random bytes: generate one with `openssl rand -base64 32`',
+        },
+      )
+      .optional(),
+  ),
   COOKIE_SECURE: z
     .enum(['true', 'false'])
     .default('false')

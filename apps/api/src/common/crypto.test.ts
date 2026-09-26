@@ -1,6 +1,6 @@
 import { randomBytes } from 'node:crypto';
 import { describe, expect, it } from 'vitest';
-import { randomToken, SecretBox, sha256Hex } from './crypto';
+import { decodeEncryptionKey, randomToken, SecretBox, sha256Hex } from './crypto';
 
 describe('crypto', () => {
   it('génère des jetons uniques de 256 bits', () => {
@@ -31,5 +31,20 @@ describe('crypto', () => {
 
   it('refuse une clé de mauvaise taille', () => {
     expect(() => new SecretBox(randomBytes(16).toString('base64'))).toThrow();
+  });
+
+  it('clé : base64 ou hex de 32 octets acceptés, le reste refusé avec la commande à utiliser', () => {
+    const raw = randomBytes(32);
+    expect(decodeEncryptionKey(raw.toString('base64'))).toEqual(raw);
+    expect(decodeEncryptionKey(` ${raw.toString('hex')}\n`)).toEqual(raw);
+    for (const bad of [
+      '',
+      'changeme',
+      randomBytes(16).toString('base64'),
+      randomBytes(48).toString('base64'),
+      raw.toString('hex').slice(2),
+    ]) {
+      expect(() => decodeEncryptionKey(bad)).toThrow(/openssl rand -base64 32/);
+    }
   });
 });
