@@ -14,9 +14,21 @@ android {
         applicationId = "be.agendagn.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 1
-        versionName = "0.1.0"
+        versionCode = 2
+        versionName = "0.2.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        // Clé de publication (docs/android.md) : jamais dans le dépôt, passée en propriétés Gradle.
+        create("release") {
+            providers.gradleProperty("agenda.keystore").orNull?.let { path ->
+                storeFile = file(path)
+                storePassword = providers.gradleProperty("agenda.keystorePassword").get()
+                keyAlias = providers.gradleProperty("agenda.keyAlias").get()
+                keyPassword = providers.gradleProperty("agenda.keyPassword").get()
+            }
+        }
     }
 
     buildTypes {
@@ -27,6 +39,12 @@ android {
             buildConfigField("String", "WEB_BASE_URL", "\"http://10.0.2.2:3000/\"")
         }
         release {
+            signingConfig = when {
+                providers.gradleProperty("agenda.keystore").isPresent -> signingConfigs.getByName("release")
+                // APK de recette installable (CI) : signé avec la clé de debug, jamais pour le Play Store.
+                providers.gradleProperty("agenda.debugSigned").isPresent -> signingConfigs.getByName("debug")
+                else -> null
+            }
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -65,6 +83,8 @@ android {
             it.systemProperty("robolectric.pixelCopyRenderMode", "hardware")
             // Captures d'écran (docs/screenshots) : ./gradlew testDebugUnitTest -Pscreenshots
             if (project.hasProperty("screenshots")) it.systemProperty("roborazzi.test.record", "true")
+            // Test contre une vraie API locale : ./gradlew testDebugUnitTest -PliveApi=http://localhost:4000/
+            project.findProperty("liveApi")?.let { url -> it.systemProperty("agenda.liveApi", url) }
         }
     }
 }

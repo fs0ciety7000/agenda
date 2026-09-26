@@ -2,6 +2,7 @@ package be.agendagn.app.ui.login
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -15,6 +16,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,7 +36,7 @@ import be.agendagn.app.R
 import be.agendagn.app.domain.repository.AuthError
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel, onSignedIn: () -> Unit) {
+fun LoginScreen(viewModel: LoginViewModel, onSignedIn: () -> Unit, onOpenWeb: (path: String) -> Unit = {}) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     LaunchedEffect(state.signedIn) { if (state.signedIn) onSignedIn() }
 
@@ -84,6 +86,15 @@ fun LoginScreen(viewModel: LoginViewModel, onSignedIn: () -> Unit) {
                     CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
                 } else {
                     Text(stringResource(R.string.sign_in))
+                }
+            }
+            // Inscription et réinitialisation : sur le site (mêmes écrans, emails et règles de sécurité).
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                TextButton(onClick = { onOpenWeb("forgot-password") }, modifier = Modifier.heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.forgot_password))
+                }
+                TextButton(onClick = { onOpenWeb("register") }, modifier = Modifier.heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.create_account))
                 }
             }
         }

@@ -1,6 +1,7 @@
 package be.agendagn.app.data.remote
 
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonObject
 
 @Serializable
 data class LoginRequest(val email: String, val password: String)
@@ -24,3 +25,84 @@ data class ApiErrorDto(val error: ApiErrorBody) {
     @Serializable
     data class ApiErrorBody(val code: String, val message: String)
 }
+
+@Serializable
+data class MemberDto(
+    val id: String,
+    val userId: String? = null,
+    val displayName: String,
+    val role: String,
+    val color: String,
+)
+
+@Serializable
+data class HouseholdDto(val id: String, val name: String, val timezone: String, val members: List<MemberDto>)
+
+@Serializable
+data class CategoryDto(val id: String, val name: String, val emoji: String? = null, val position: Int = 0)
+
+@Serializable
+data class CategoryRefDto(val id: String, val name: String, val emoji: String? = null)
+
+@Serializable
+data class OccurrenceDto(
+    val id: String,
+    val taskId: String,
+    val title: String,
+    val notes: String? = null,
+    val category: CategoryRefDto? = null,
+    val priority: String,
+    val visibility: String,
+    val status: String,
+    val date: String? = null,
+    val startMinute: Int? = null,
+    val durationMinutes: Int? = null,
+    val assigneeIds: List<String>,
+    val createdById: String,
+    val isRecurring: Boolean,
+    val seriesId: String? = null,
+    val syncToCalendar: Boolean = false,
+    val calendarSync: String? = null,
+    val isException: Boolean = false,
+    val completedAt: String? = null,
+    val version: Int,
+)
+
+@Serializable
+data class QuickAddRequest(val text: String)
+
+@Serializable
+data class QuickAddPreviewDto(
+    val title: String,
+    val date: String? = null,
+    val startMinute: Int? = null,
+    val durationMinutes: Int? = null,
+    val assigneeIds: List<String>? = null,
+    val categoryId: String? = null,
+    val priority: String? = null,
+)
+
+@Serializable
+data class CalendarStatusDto(
+    val configured: Boolean,
+    val connection: Connection? = null,
+    val link: Link? = null,
+    val stats: Stats,
+) {
+    @Serializable
+    data class Connection(val email: String, val status: String)
+
+    @Serializable
+    data class Link(
+        val summary: String,
+        val status: String,
+        val errorCode: String? = null,
+        val connectionEmail: String,
+    )
+
+    @Serializable
+    data class Stats(val synced: Int, val pending: Int, val errors: Int)
+}
+
+/** Corps de création : construit par `TaskPayloads` (récurrence en JSON libre, cf. contracts). */
+typealias CreateTaskBody = JsonObject

@@ -10,5 +10,7 @@ class AgendaApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         container = AppContainer(this)
+        container.reminders.start()
+        container.syncScheduler.schedulePeriodic()
     }
 }

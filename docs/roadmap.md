@@ -11,7 +11,7 @@ Une phase n'est « terminée » que si la CI est verte et la documentation à jo
 | **2b — Compte & RGPD** | Google Sign-In, réinitialisation du mot de passe (SMTP générique, Brevo recommandé), export / suppression de compte | Tests d'intégration + E2E | ✅ Livré (cf. §Phase 3 & 2b) |
 | **3 — Récurrence & rotation** | `packages/domain` : moteur RRULE-subset, DST, rotation (slots, par semaine, par jour), matérialisation 90 j, exceptions, split de série, 3 modes d'édition | Couverture domaine ≥ 95 %, tests critiques §29 | ✅ Livré (98,6 % des lignes) |
 | **4 — Google Calendar** | OAuth calendrier, sélection « Commun G & N », `GoogleCalendarSyncService`, BullMQ, retry/backoff, réconciliation, erreurs humaines | Suite fake Google verte + recette manuelle sur « Commun G & N » | ✅ Livré, recette manuelle à faire (cf. §Phase 4) |
-| **5 — Android** | Compose : navigation, dashboard, tâches, calendrier, création rapide, Room + outbox + WorkManager, notifications locales | Tests Compose + instrumentation ; APK de recette | ⏳ |
+| **5 — Android** | Compose : navigation, dashboard, tâches, calendrier, création rapide, Room + outbox + WorkManager, notifications locales | Tests Compose + instrumentation ; APK de recette | ✅ Livré, recette sur téléphone à faire (cf. §Phase 5) |
 | **6 — Polish** | Drag & drop calendrier, animations, accessibilité (audit axe + TalkBack), dark mode fin, onboarding complet, statistiques, notifications & préférences | Audit a11y sans violation AA | ⏳ |
 | **7 — Production** | Coolify + Cloudflare (`docs/deployment.md`), Sentry, backups vérifiés (restauration testée), passage de l'app OAuth Google en production, politique de confidentialité, AAB Play Store (test interne) | Checklist de mise en production signée | ⏳ |
 
@@ -171,4 +171,29 @@ modification de tâche.
 
 Reste à faire côté humain : créer le client OAuth, publier l'app « In production », connecter
 Google et choisir « Commun G & N » (`deployment.md` §9), puis la recette de `google-calendar.md` §8.
+
+## Phase 5 — détail de ce qui est livré
+
+Voir [`android.md`](android.md) (fonctionnement, décisions, installation, tests).
+
+- 4 onglets (Aujourd'hui, Tâches, Calendrier, Réglages), ajout rapide avec aperçu, formulaire
+  complet avec répétition simple et « chacun son tour », portées pour les séries.
+- Hors ligne : cache Room, outbox (cocher, créer, ajout rapide) rejouée par WorkManager ;
+  API : en-tête `Idempotency-Key` sur les créations (aucun doublon au rejeu).
+- Rappels locaux avec action « Fait », reprogrammés automatiquement.
+- FR / EN (pluriels), thème clair / sombre depuis les tokens partagés, cibles ≥ 48 dp,
+  libellés pour lecteurs d'écran.
+- CI : lint, 37 tests (Robolectric, sans émulateur), APK de recette pointant vers la production.
+
+Vérifié : 36 tests Android + 1 parcours contre la vraie API locale ; 92 tests API.
+
+Trouvé et corrigé pendant les tests : l'outbox était rejouée avant de vérifier le compte connecté
+(après expiration de session puis connexion d'une autre personne, ses actions seraient parties
+sous le mauvais compte) ; une réponse illisible (page d'erreur d'un proxy) faisait échouer le
+rafraîchissement au lieu d'être réessayée ; chiffres du calendrier décalés selon la présence de
+pastilles.
+
+Décision : l'instrumentation sur émulateur est remplacée par Robolectric (rendu natif, même API
+de test Compose) — les runners CI n'ont pas de virtualisation matérielle. Recette sur téléphone
+réel : `android.md` §7.
 

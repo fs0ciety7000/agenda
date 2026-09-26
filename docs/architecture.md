@@ -147,8 +147,8 @@ perte même si l'enqueue échoue.
 
 - **Room** = cache local (occurrences de −7 j à +60 j, catégories, membres).
 - **Outbox** locale : chaque action (cocher, créer, modifier) = une ligne `PendingOperation` avec `idempotencyKey` (UUID client). **WorkManager** la rejoue quand le réseau revient.
-- API : header `Idempotency-Key` accepté sur les POST/PATCH ; stocké 24 h → rejouer est sans effet.
-- Concurrence optimiste : chaque ressource a un `version` (entier). `PATCH` avec `If-Match: <version>`. Conflit → `409 VERSION_CONFLICT` + ressource serveur.
+- API : header `Idempotency-Key` accepté sur les créations (`POST tasks`, `POST tasks/quick`) ; réservé avant traitement, stocké 24 h → rejouer renvoie la réponse d'origine. Cocher / décocher sont idempotents par nature.
+- Concurrence optimiste : chaque ressource a un `version` (entier), envoyé dans le corps du `PATCH`. Conflit → `409 VERSION_CONFLICT` ; l'app recharge la version serveur. Modifier / supprimer se font en ligne (cf. `android.md`).
 - Résolution : pour `status` (cocher), **la complétion gagne** (idempotent, intention claire) ; pour les autres champs, fusion champ par champ si les champs modifiés diffèrent, sinon l'UI propose « garder la mienne / garder celle du serveur ».
 - Statut visible : ✓ Synchronisé / ⟳ Synchronisation… / ⚠ En attente.
 

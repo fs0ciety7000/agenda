@@ -65,9 +65,11 @@ private class RefreshAuthenticator(
 }
 
 object ApiClient {
-    fun create(baseUrl: String, tokens: TokenStore): AgendaApi {
+    /** [networkInterceptor] : tests uniquement (simuler une coupure réseau). */
+    fun create(baseUrl: String, tokens: TokenStore, networkInterceptor: Interceptor? = null): AgendaApi {
         val converter = json.asConverterFactory("application/json".toMediaType())
         val plain = OkHttpClient.Builder()
+            .apply { networkInterceptor?.let(::addInterceptor) }
             .addInterceptor(DefaultHeadersInterceptor(tokens))
             .connectTimeout(15, TimeUnit.SECONDS)
             .readTimeout(20, TimeUnit.SECONDS)
