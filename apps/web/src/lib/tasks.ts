@@ -47,10 +47,12 @@ export const useOccurrences = (hid: string, q: ListQuery) =>
       query.state.data?.some((o) => o.calendarSync === 'PENDING') ? 3_000 : 30_000,
   });
 
-export const useBalance = (hid: string) =>
+/** Répartition de la semaine en cours, ou d'une autre période (`from` / `to`, YYYY-MM-DD). */
+export const useBalance = (hid: string, range?: { from: string; to: string }, enabled = true) =>
   useQuery({
-    queryKey: taskKeys.balance(hid),
-    queryFn: () => api<BalanceDto>(`/v1/households/${hid}/balance`),
+    queryKey: [...taskKeys.balance(hid), range ?? {}],
+    queryFn: () => api<BalanceDto>(`/v1/households/${hid}/balance${range ? qs(range) : ''}`),
+    enabled,
   });
 
 export const useCategories = (hid: string) =>

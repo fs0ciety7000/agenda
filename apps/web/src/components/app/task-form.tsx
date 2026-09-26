@@ -6,6 +6,7 @@ import type {
   TaskPriority,
   UpdateOccurrenceInput,
 } from '@agenda/contracts';
+import { addDays, startOfWeek, suggestAssignee } from '@agenda/domain';
 import { CalendarDays, Lock, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
@@ -19,7 +20,7 @@ import { useToast } from '@/components/ui/toast';
 import { ApiError, errorKey } from '@/lib/api';
 import { useCalendarStatus } from '@/lib/calendar';
 import { cn } from '@/lib/cn';
-import { formatDuration, formatTime } from '@/lib/format';
+import { formatDuration, formatTime, useToday } from '@/lib/format';
 import {
   defaultRecurrence,
   fromSeries,
@@ -29,6 +30,7 @@ import {
   withStartDate,
 } from '@/lib/recurrence';
 import {
+  useBalance,
   useCategories,
   useCreateTask,
   useDeleteOccurrence,
@@ -318,6 +320,9 @@ export function TaskFormDialog({
                   value={form.assignee}
                   onChange={(v) => set('assignee', v)}
                 />
+                {form.assignee === 'none' && (
+                  <AssigneeSuggestion date={form.date} onPick={(id) => set('assignee', id)} />
+                )}
               </div>
             )}
 
@@ -529,5 +534,45 @@ function ScopeChooser({
         </Button>
       </div>
     </div>
+  );
+}
+
+/** « À définir » : propose la personne la moins chargée de la semaine de la tâche. */
+function AssigneeSuggestion({
+  date,
+  onPick,
+}: {
+  date: string;
+  onPick: (memberId: string) => void;
+}) {
+  const t = useTranslations('tasks');
+  const { household } = useSession();
+  const today = useToday();
+  const from = startOfWeek(date || today);
+  const balance = useBalance(
+    household.id,
+    { from, to: addDays(from, 6) },
+    household.members.length > 1,
+  );
+  const suggestion = balance.data ? suggestAssignee(balance.data.members) : null;
+  const member = household.members.find((m) => m.id === suggestion?.memberId);
+  if (!suggestion || !member) return null;
+  return (
+    <p className="flex flex-wrap items-center gap-x-2 text-sm text-text-muted">
+      <span>
+        {t('suggestion', {
+          name: member.displayName,
+          load: suggestion.minutes > 0 ? formatDuration(suggestion.minutes) : 'none',
+          count: suggestion.count,
+        })}
+      </span>
+      <button
+        type="button"
+        onClick={() => onPick(member.id)}
+        className="min-h-11 rounded-md px-1 font-medium text-accent underline-offset-4 hover:underline"
+      >
+        {t('suggestionPick', { name: member.displayName })}
+      </button>
+    </p>
   );
 }

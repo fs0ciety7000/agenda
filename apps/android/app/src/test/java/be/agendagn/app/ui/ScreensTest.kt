@@ -178,11 +178,29 @@ class ScreensTest {
     }
 
     @Test
+    fun formulaire_suggestion_de_repartition() {
+        val edits = mutableListOf<be.agendagn.app.domain.model.TaskDraft>()
+        val draft = be.agendagn.app.domain.model.TaskDraft(title = "Sortir les poubelles", date = TODAY)
+        val nicolas = Fixtures.household.members.first { it.id == Fixtures.NICOLAS }
+        screen {
+            TaskFormScreen(
+                TaskFormState(loading = false, draft = draft), Fixtures.household.members, emptyList(),
+                calendarAvailable = false, onEdit = { edits += it(draft) }, onSave = {}, onDelete = {},
+                onConfirmDelete = {}, onScope = {}, onDismissDialogs = {}, onBack = {},
+                suggestion = nicolas to be.agendagn.app.domain.Agenda.Share(1, 10),
+            )
+        }
+        compose.onNodeWithText("Suggestion : Nicolas, la moins chargée cette semaine (1 tâche).").assertIsDisplayed()
+        compose.onNodeWithText("Confier à Nicolas").performClick()
+        assertEquals(listOf(Fixtures.NICOLAS), edits.last().assigneeIds)
+    }
+
+    @Test
     fun reglages() {
         screen {
             SettingsScreen(
                 state, User("u", "grace@example.be", "Grace"),
-                CalendarStatus(CalendarLinkState.ACTIVE, "Commun G & N", "occmons@gmail.com", null, 12, 0, 0),
+                CalendarStatus(CalendarLinkState.ACTIVE, "Commun G & N", "foyer@example.be", null, 12, 0, 0),
                 ReminderSettings(true, 15), notificationsAllowed = true, version = "0.2.0",
                 onReminders = {}, onRequestNotifications = {}, onOpenWeb = {}, onSignOut = {},
             )

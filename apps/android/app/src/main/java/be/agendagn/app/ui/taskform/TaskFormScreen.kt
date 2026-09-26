@@ -38,6 +38,8 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import be.agendagn.app.domain.Agenda
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -81,6 +83,8 @@ fun TaskFormScreen(
     onScope: (EditScope) -> Unit,
     onDismissDialogs: () -> Unit,
     onBack: () -> Unit,
+    /** Personne la moins chargée de la semaine de la tâche (proposée si personne n'est choisi). */
+    suggestion: Pair<Member, Agenda.Share>? = null,
 ) {
     LaunchedEffect(state.done) { if (state.done) onBack() }
     Scaffold(
@@ -140,6 +144,18 @@ fun TaskFormScreen(
                         label = { Text(m.displayName) },
                         leadingIcon = { MemberAvatar(m, 20) },
                     )
+                }
+            }
+            if (suggestion != null && d.assigneeIds.isEmpty() && !d.personal && !state.readOnly) {
+                val (member, share) = suggestion
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Hint(
+                        pluralStringResource(R.plurals.assignee_suggestion, share.count, member.displayName, share.count),
+                        Modifier.weight(1f),
+                    )
+                    TextButton(onClick = { onEdit { it.copy(assigneeIds = listOf(member.id)) } }) {
+                        Text(stringResource(R.string.assignee_suggestion_pick, member.displayName))
+                    }
                 }
             }
 
@@ -339,8 +355,8 @@ private fun Label(text: String) =
     Text(text, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
 @Composable
-private fun Hint(text: String) =
-    Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+private fun Hint(text: String, modifier: Modifier = Modifier) =
+    Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = modifier)
 
 @Composable
 private fun <T> ChipRow(

@@ -111,4 +111,16 @@ object Agenda {
             unassigned = share(rows.filter { it.assigneeIds.isEmpty() }),
         )
     }
+
+    /**
+     * Suggestion de répartition (même règle que le web, `packages/domain/src/balance.ts`) :
+     * personne la moins chargée de la semaine, charge = minutes + 15 min par tâche ; égalité → aucune.
+     */
+    fun suggestAssignee(balance: Balance): Pair<Member, Share>? {
+        if (balance.members.size < 2) return null
+        fun load(s: Share) = s.minutes + s.count * 15
+        val sorted = balance.members.sortedBy { load(it.second) }
+        if (load(sorted[0].second) == load(sorted[1].second)) return null
+        return sorted[0]
+    }
 }

@@ -204,7 +204,9 @@
       "syncNeedsDate": "Pick a date to add it to the calendar."
     },
     "recurring": "Recurring task",
-    "recurrenceNeedsDate": "Pick a start date for a repeating task."
+    "recurrenceNeedsDate": "Pick a start date for a repeating task.",
+    "suggestion": "Suggestion: {name}, the least busy this week ({count, plural, =0 {no tasks} one {# task} other {# tasks}}{load, select, other { · {load}} none {}}).",
+    "suggestionPick": "Assign to {name}"
   },
   "balance": {
     "bothOfUs": "Together",

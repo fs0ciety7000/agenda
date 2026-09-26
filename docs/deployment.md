@@ -274,7 +274,7 @@ vérification du domaine de la même façon.
 ## 9. Google Calendar et connexion Google
 
 Un seul client OAuth pour les deux usages. Dans la **Google Cloud Console**, idéalement avec le
-compte occmons@gmail.com :
+compte Google du foyer :
 
 1. Créer un projet (ex. « Agenda G & N ») ; **APIs & Services → Library** : activer
    **Google Calendar API**.

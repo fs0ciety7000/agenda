@@ -24,4 +24,8 @@
         <item quantity="one">+ %d more in the app</item>
         <item quantity="other">+ %d more in the app</item>
     </plurals>
+    <plurals name="assignee_suggestion">
+        <item quantity="one">Suggestion: %1$s, the least busy this week (%2$d task).</item>
+        <item quantity="other">Suggestion: %1$s, the least busy this week (%2$d tasks).</item>
+    </plurals>
 </resources>

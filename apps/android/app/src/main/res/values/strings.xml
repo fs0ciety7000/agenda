@@ -186,4 +186,5 @@
     <string name="widget_description">Les tâches du jour et celles en retard, à cocher depuis l\'écran d\'accueil.</string>
     <string name="widget_empty">Rien pour aujourd\'hui 🎉</string>
     <string name="widget_signed_out">Ouvrez l\'app pour vous connecter.</string>
+    <string name="assignee_suggestion_pick">Confier à %1$s</string>
 </resources>

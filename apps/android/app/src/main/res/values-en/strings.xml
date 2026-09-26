@@ -173,4 +173,5 @@
     <string name="widget_description">Today\'s and overdue tasks, ticked right from the home screen.</string>
     <string name="widget_empty">Nothing for today 🎉</string>
     <string name="widget_signed_out">Open the app to sign in.</string>
+    <string name="assignee_suggestion_pick">Assign to %1$s</string>
 </resources>
