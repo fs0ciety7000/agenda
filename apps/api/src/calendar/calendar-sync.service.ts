@@ -4,6 +4,7 @@ import type { CalendarErrorCode } from '@agenda/contracts';
 import { addDays, todayIn } from '@agenda/domain';
 import { fromDbDate, toDbDate } from '../common/dates';
 import { env } from '../config/env';
+import { PushService } from '../notifications/push.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { SeriesService } from '../tasks/series.service';
 import { GoogleApiError, GoogleCalendarClient, type GoogleEvent } from './google-calendar.client';
@@ -86,6 +87,7 @@ export class GoogleCalendarSyncService {
     private readonly google: GoogleCalendarClient,
     private readonly tokens: GoogleTokensService,
     private readonly series: SeriesService,
+    private readonly push: PushService,
   ) {}
 
   // ───────────── Balayage ─────────────
@@ -334,6 +336,10 @@ export class GoogleCalendarSyncService {
         payload: { code },
       })),
     });
+    void this.push.wakeMembers(
+      link.householdId,
+      members.map((m) => m.id),
+    );
     this.logger.warn(`Calendar link ${calendarLinkId} blocked: ${code}`);
   }
 

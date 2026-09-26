@@ -8,6 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.Header
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -65,6 +66,12 @@ interface AgendaApi {
 
     @POST("v1/households/{h}/quick-add/parse")
     suspend fun parseQuickAdd(@Path("h") householdId: String, @Body body: QuickAddRequest): Response<QuickAddPreviewDto>
+
+    @PUT("v1/me/push-tokens")
+    suspend fun registerPushToken(@Body body: PushTokenRequest): Response<Unit>
+
+    @DELETE("v1/me/push-tokens/{token}")
+    suspend fun unregisterPushToken(@Path("token") token: String): Response<Unit>
 
     @POST("v1/households/{h}/occurrences/{id}/checklist")
     suspend fun addChecklistItem(

@@ -31,6 +31,7 @@ model User {
   googleConnections GoogleConnection[]
   resetTokens       PasswordResetToken[]
   mobileAuthCodes   MobileAuthCode[]
+  pushTokens        PushToken[]
 }
 
 enum AuthProvider {
@@ -529,4 +530,19 @@ model IdempotencyKey {
   createdAt    DateTime @default(now())
 
   @@index([createdAt])
+}
+
+/// Jeton Firebase Cloud Messaging d'un téléphone (notifications instantanées, docs/android.md).
+/// Le message envoyé ne contient aucune donnée : il réveille l'app, qui relit ses notifications.
+model PushToken {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @db.Uuid
+  token      String   @unique @db.VarChar(4096)
+  platform   String   @default("android") @db.VarChar(16)
+  createdAt  DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

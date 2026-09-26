@@ -45,6 +45,12 @@ jobs:
       - name: Construire l'APK (production)
         env:
           KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          # Notifications instantanées (facultatif, docs/android.md) : variables du dépôt (identifiants
+          # publics du projet Firebase, pas des secrets). Absentes = relève périodique seulement.
+          FCM_APP_ID: ${{ vars.FCM_APP_ID }}
+          FCM_API_KEY: ${{ vars.FCM_API_KEY }}
+          FCM_PROJECT_ID: ${{ vars.FCM_PROJECT_ID }}
+          FCM_SENDER_ID: ${{ vars.FCM_SENDER_ID }}
         run: |
           # Numéro de version strictement croissant (condition des mises à jour Android).
           code=$((GITHUB_RUN_NUMBER + 10))
@@ -54,6 +60,8 @@ jobs:
             -Pagenda.apiBaseUrl="$API_BASE_URL" \
             -Pagenda.versionCode="$code" -Pagenda.versionName="0.3.$code" \
             -Pagenda.updateUrl="${API_BASE_URL}v1/app/android/version.json" \
+            -Pagenda.fcm.appId="$FCM_APP_ID" -Pagenda.fcm.apiKey="$FCM_API_KEY" \
+            -Pagenda.fcm.projectId="$FCM_PROJECT_ID" -Pagenda.fcm.senderId="$FCM_SENDER_ID" \
             -Pagenda.keystore="$RUNNER_TEMP/agenda.jks" -Pagenda.keyAlias=agenda \
             -Pagenda.keystorePassword="$KEYSTORE_PASSWORD" -Pagenda.keyPassword="$KEYSTORE_PASSWORD"
           rm -f "$RUNNER_TEMP/agenda.jks"

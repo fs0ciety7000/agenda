@@ -19,6 +19,16 @@ android {
         versionName = providers.gradleProperty("agenda.versionName").orNull ?: "0.2.0"
         // Manifeste de mise à jour (version.json de la release) ; vide = pas de mise à jour auto.
         buildConfigField("String", "UPDATE_MANIFEST_URL", "\"${providers.gradleProperty("agenda.updateUrl").getOrElse("")}\"")
+        // Notifications instantanées (Firebase, docs/android.md) : identifiants publics du projet,
+        // fournis par la CI (variables du dépôt). Vides = désactivées.
+        for ((field, prop) in listOf(
+            "FCM_APP_ID" to "agenda.fcm.appId",
+            "FCM_API_KEY" to "agenda.fcm.apiKey",
+            "FCM_PROJECT_ID" to "agenda.fcm.projectId",
+            "FCM_SENDER_ID" to "agenda.fcm.senderId",
+        )) {
+            buildConfigField("String", field, "\"${providers.gradleProperty(prop).getOrElse("")}\"")
+        }
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -131,6 +141,8 @@ dependencies {
     implementation(libs.androidx.work.runtime)
     implementation(libs.androidx.browser)
     implementation(libs.androidx.glance.appwidget)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
     implementation(libs.androidx.glance.material3)
 
     testImplementation(libs.junit)

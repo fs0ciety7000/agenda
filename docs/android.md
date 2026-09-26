@@ -25,8 +25,14 @@ métier propre à Android : les règles (récurrence, rotation, quick add) reste
   toucher une tâche l'ouvre, « + » ouvre l'ajout rapide. Mis à jour à chaque changement et au
   moins toutes les 30 minutes (passage à minuit).
 - **Activité** : « Nicolas vous a attribué … » en notification système (si activé dans
-  Réglages → Notifications sur le web), vérifié au retour dans l'app et à chaque synchronisation
-  de fond ; la première vérification après installation ne notifie rien d'ancien.
+  Réglages → Notifications sur le web). **Instantanée** si Firebase est configuré (§4.1), sinon
+  vérifiée au retour dans l'app et à chaque synchronisation de fond ; la première vérification
+  après installation ne notifie rien d'ancien.
+- **Listes / sous-tâches** (ex. « Courses ») : dans le formulaire d'une tâche, ajouter des éléments
+  (touche Entrée), les cocher à deux, les retirer ; progression « liste 1/3 » dans les lignes.
+  Demande une connexion (comme modifier une tâche).
+- **Suggestion de répartition** : tâche partagée « à définir » → « Suggestion : Nicolas, la moins
+  chargée cette semaine » avec un bouton pour la lui confier.
 
 ## 2. Hors ligne (ADR-007, tel qu'implémenté)
 
@@ -115,6 +121,38 @@ cd apps/android
 
 Développement : `./gradlew installDebug` (émulateur ; l'API locale est vue en `10.0.2.2:4000`).
 
+### 4.1 Notifications instantanées (Firebase, facultatif)
+
+Sans configuration, l'app relève ses notifications à l'ouverture et lors de la synchronisation de
+fond (jusqu'à ~15 min de délai). Avec Firebase Cloud Messaging (gratuit), le serveur **réveille**
+le téléphone dès qu'il y a du nouveau. Le message ne contient **aucune donnée** (ni titre, ni
+nom) : l'app relit ensuite ses notifications auprès de l'API, avec les mêmes règles et préférences.
+
+1. https://console.firebase.google.com → *Ajouter un projet* (ex. `agenda-gn`), Google Analytics
+   **désactivé**.
+2. *Ajouter une application* → **Android**, nom du package `be.agendagn.app` → télécharger
+   `google-services.json` (inutile de l'ajouter au projet : on n'en reprend que 4 valeurs).
+3. GitHub → *Settings → Secrets and variables → Actions → **Variables*** (pas des secrets : ce sont
+   des identifiants publics, déjà présents dans tout APK Firebase) :
+
+   | Variable | Valeur dans `google-services.json` |
+   |---|---|
+   | `FCM_APP_ID` | `client[0].client_info.mobilesdk_app_id` (`1:…:android:…`) |
+   | `FCM_API_KEY` | `client[0].api_key[0].current_key` (`AIza…`) |
+   | `FCM_PROJECT_ID` | `project_info.project_id` |
+   | `FCM_SENDER_ID` | `project_info.project_number` |
+
+4. Firebase → ⚙ *Paramètres du projet → Comptes de service* → **Générer une nouvelle clé privée**
+   (fichier JSON). Coolify → variable `FCM_SERVICE_ACCOUNT` = contenu du fichier (tel quel, ou en
+   base64 sur une ligne : `base64 -w0 fichier.json`) → redéployer. **C'est un secret** : ne jamais
+   le committer ; supprimer le fichier téléchargé une fois copié.
+5. Relancer le workflow *Android release* (*Actions → Run workflow*) : la nouvelle version de l'app
+   est proposée automatiquement ; après la mise à jour, ouvrir l'app une fois (enregistrement du
+   téléphone).
+
+Vérifier : l'autre personne vous confie une tâche → la notification arrive en quelques secondes,
+téléphone verrouillé. En cas de doute : logs de l'API (`FCM …`).
+
 ## 5. Tests
 
 ```bash
@@ -140,9 +178,10 @@ générées dont le nom contient des accents.
 
 ## 6. Limites connues
 
-- Pas encore de widget, de raccourcis ni de glisser-déposer dans le calendrier (Phase 6).
-- Les rappels sont locaux (pas de push serveur) : ils couvrent les 48 h suivantes et sont
-  replanifiés au moins toutes les heures par WorkManager.
+- Les rappels sont locaux : ils couvrent les 48 h suivantes et sont replanifiés au moins toutes
+  les heures par WorkManager (Firebase ne sert qu'aux notifications d'activité).
+- Listes, déplacement et modification demandent le réseau ; cocher une tâche et créer marchent
+  hors ligne.
 - Pas de vérification sur appareil physique dans la CI : faire la recette §7 à chaque version.
 
 ## 7. Recette manuelle (téléphone réel)
