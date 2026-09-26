@@ -53,6 +53,18 @@ export const UpdatePreferencesInput = z.object({
 });
 export type UpdatePreferencesInput = z.infer<typeof UpdatePreferencesInput>;
 
+/** Diagnostic des notifications instantanées pour le compte connecté. */
+export const PushStatusDto = z.object({
+  /** Le serveur peut envoyer (FCM_SERVICE_ACCOUNT valide). */
+  serverEnabled: z.boolean(),
+  /** Raison si désactivé : non configuré, ou configuration illisible. */
+  serverIssue: z.enum(['NOT_CONFIGURED', 'INVALID_CONFIG']).nullable(),
+  /** Téléphones de ce compte enregistrés pour les recevoir. */
+  devices: z.number().int(),
+  lastRegisteredAt: z.string().nullable(),
+});
+export type PushStatusDto = z.infer<typeof PushStatusDto>;
+
 /** Jeton Firebase d'un téléphone (notifications instantanées). */
 export const PushTokenInput = z.object({
   token: z.string().trim().min(10).max(4096),

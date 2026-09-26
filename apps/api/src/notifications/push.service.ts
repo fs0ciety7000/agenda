@@ -1,5 +1,6 @@
 import { createSign } from 'node:crypto';
 import { Injectable, Logger } from '@nestjs/common';
+import type { PushStatusDto } from '@agenda/contracts';
 import { env } from '../config/env';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -44,6 +45,7 @@ const b64url = (v: string | Buffer) => Buffer.from(v).toString('base64url');
 export class PushService {
   private readonly logger = new Logger(PushService.name);
   private readonly account: FcmServiceAccount | null;
+  private readonly issue: 'NOT_CONFIGURED' | 'INVALID_CONFIG' | null = null;
   private token: { value: string; expiresAt: number } | null = null;
 
   constructor(private readonly prisma: PrismaService) {
@@ -53,17 +55,39 @@ export class PushService {
       this.account = parseServiceAccount(env().FCM_SERVICE_ACCOUNT);
     } catch (e) {
       this.account = null;
+      this.issue = 'INVALID_CONFIG';
       this.logger.error(
         `FCM_SERVICE_ACCOUNT invalide (${(e as Error).message}) : notifications instantanées ` +
           'désactivées. Coller le fichier JSON du compte de service tel quel, ou en base64 (docs/android.md §4.1).',
       );
     }
-    if (this.account)
+    if (this.account) {
       this.logger.log(`Notifications instantanées actives (${this.account.project_id})`);
+    } else if (!this.issue) {
+      this.issue = 'NOT_CONFIGURED';
+      this.logger.log('Notifications instantanées désactivées : FCM_SERVICE_ACCOUNT non défini');
+    }
   }
 
   get enabled(): boolean {
     return this.account !== null;
+  }
+
+  async status(userId: string): Promise<PushStatusDto> {
+    const [devices, last] = await Promise.all([
+      this.prisma.pushToken.count({ where: { userId } }),
+      this.prisma.pushToken.findFirst({
+        where: { userId },
+        orderBy: { lastSeenAt: 'desc' },
+        select: { lastSeenAt: true },
+      }),
+    ]);
+    return {
+      serverEnabled: this.enabled,
+      serverIssue: this.issue,
+      devices,
+      lastRegisteredAt: last?.lastSeenAt.toISOString() ?? null,
+    };
   }
 
   async register(userId: string, token: string, platform = 'android'): Promise<void> {

@@ -526,6 +526,15 @@
     "types": {
       "TASK_ASSIGNED": "Someone gives me a task",
       "CALENDAR_SYNC_FAILED": "Google Calendar sync problem"
+    },
+    "status": {
+      "title": "Instant phone notifications: not active yet",
+      "ok": "Instant phone notifications: active",
+      "server": "✓ Server: sending configured (Firebase).",
+      "serverOff": "✗ Server: not configured (FCM_SERVICE_ACCOUNT is empty). Phones check for notifications when opened and periodically.",
+      "serverInvalid": "✗ Server: unreadable Firebase key (FCM_SERVICE_ACCOUNT). Paste the service account JSON file again.",
+      "devices": "✓ {count, plural, one {# phone registered} other {# phones registered}} for your account (latest: {date}).",
+      "noDevice": "✗ No phone registered for your account: update the Android app, then open it once."
     }
   },
   "stats": {

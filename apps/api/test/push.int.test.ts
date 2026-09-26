@@ -139,7 +139,11 @@ describe('Notifications instantanées (FCM, intégration)', () => {
     await new Promise((r) => setTimeout(r, 300));
     expect(messages().length).toBe(before);
 
+    const status = await http().get('/v1/me/push-tokens/status').set(h.grace.auth).expect(200);
+    expect(status.body).toMatchObject({ serverEnabled: true, serverIssue: null, devices: 1 });
     await http().delete('/v1/me/push-tokens/grace-quiet-token').set(h.grace.auth).expect(204);
+    const after = await http().get('/v1/me/push-tokens/status').set(h.grace.auth).expect(200);
+    expect(after.body).toMatchObject({ devices: 0, lastRegisteredAt: null });
     expect(await prisma.pushToken.count({ where: { token: 'grace-quiet-token' } })).toBe(0);
   });
 });

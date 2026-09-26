@@ -174,6 +174,7 @@ private fun MainScaffold(container: AppContainer, openOccurrenceId: String?, qui
     // autorisé l'installation dans les réglages Android).
     val updater = container.updater
     val update by updater.available.collectAsStateWithLifecycle()
+    val pushState by container.push.state.collectAsStateWithLifecycle()
     val updateState by updater.state.collectAsStateWithLifecycle()
     var canInstall by remember { mutableStateOf(updater.canInstall()) }
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
@@ -323,6 +324,8 @@ private fun MainScaffold(container: AppContainer, openOccurrenceId: String?, qui
                     },
                     contentPadding = padding,
                     update = updateBanner,
+                    push = pushState,
+                    onRetryPush = { scope.launch { container.push.register() } },
                 )
             }
             composable("task/{id}", arguments = listOf(navArgument("id") { type = NavType.StringType })) { entry ->

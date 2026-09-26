@@ -39,6 +39,7 @@ import be.agendagn.app.domain.model.CalendarLinkState
 import be.agendagn.app.domain.model.CalendarStatus
 import be.agendagn.app.domain.model.User
 import be.agendagn.app.ui.components.MemberAvatar
+import be.agendagn.app.notifications.PushState
 import be.agendagn.app.ui.components.SectionHeader
 import be.agendagn.app.ui.main.AgendaUiState
 
@@ -57,6 +58,9 @@ fun SettingsScreen(
     contentPadding: PaddingValues = PaddingValues(),
     /** Zone « À propos » : mise à jour de l'app. */
     update: @Composable () -> Unit = {},
+    /** Diagnostic des notifications instantanées (null = masqué). */
+    push: PushState? = null,
+    onRetryPush: () -> Unit = {},
 ) {
     var confirmSignOut by remember { mutableStateOf(false) }
     Column(
@@ -160,6 +164,7 @@ fun SettingsScreen(
                         }
                     }
                 }
+                push?.let { PushStatusRow(it, onRetryPush) }
             }
         }
 
@@ -199,5 +204,29 @@ fun SettingsScreen(
             },
             dismissButton = { TextButton(onClick = { confirmSignOut = false }) { Text(stringResource(R.string.cancel)) } },
         )
+    }
+}
+
+/** « Notifications instantanées » : ce que ce téléphone sait de son enregistrement. */
+@Composable
+private fun PushStatusRow(state: PushState, onRetry: () -> Unit) {
+    val (text, problem) = when (state) {
+        PushState.Registered -> stringResource(R.string.push_registered) to false
+        PushState.Pending -> stringResource(R.string.push_pending) to false
+        PushState.NotInBuild -> stringResource(R.string.push_not_in_build) to true
+        PushState.Offline -> stringResource(R.string.push_offline) to true
+        is PushState.TokenError -> stringResource(R.string.push_token_error, state.message) to true
+        is PushState.ServerError -> stringResource(R.string.push_server_error, state.code) to true
+    }
+    Column(Modifier.padding(vertical = 8.dp)) {
+        Text(stringResource(R.string.push_title), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Text(
+            text,
+            style = MaterialTheme.typography.bodySmall,
+            color = if (problem) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        if (state is PushState.Offline || state is PushState.TokenError || state is PushState.ServerError) {
+            TextButton(onClick = onRetry, modifier = Modifier.heightIn(min = 48.dp)) { Text(stringResource(R.string.push_retry)) }
+        }
     }
 }

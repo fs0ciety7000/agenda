@@ -1,9 +1,14 @@
 'use client';
 
 import type { NotificationKind, NotificationPreferenceDto } from '@agenda/contracts';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 import { Skeleton } from '@/components/ui/states';
-import { useNotificationPreferences, useUpdateNotificationPreferences } from '@/lib/notifications';
+import { cn } from '@/lib/cn';
+import {
+  useNotificationPreferences,
+  usePushStatus,
+  useUpdateNotificationPreferences,
+} from '@/lib/notifications';
 import { useSession } from './household-context';
 
 /** Préférences par type : dans l'app (cloche) et sur le téléphone (app Android). */
@@ -56,6 +61,46 @@ export function NotificationSettings() {
         </tbody>
       </table>
       <p className="text-[0.8125rem] text-text-muted">{t('hint')}</p>
+      <PushStatus />
+    </div>
+  );
+}
+
+/** « Sur le téléphone » : état réel de l'envoi instantané, pour savoir quoi corriger. */
+function PushStatus() {
+  const t = useTranslations('notificationSettings.status');
+  const status = usePushStatus();
+  const format = useFormatter();
+  if (!status.data) return null;
+  const { serverEnabled, serverIssue, devices, lastRegisteredAt } = status.data;
+  const ok = serverEnabled && devices > 0;
+  return (
+    <div
+      className={cn(
+        'rounded-md border px-3 py-2.5 text-[0.875rem]',
+        ok ? 'border-success/40 bg-success/10' : 'border-border bg-surface-muted',
+      )}
+    >
+      <p className="font-medium">{t(ok ? 'ok' : 'title')}</p>
+      <ul className="mt-1 flex flex-col gap-0.5 text-text-muted">
+        <li>
+          {t(
+            serverEnabled
+              ? 'server'
+              : serverIssue === 'INVALID_CONFIG'
+                ? 'serverInvalid'
+                : 'serverOff',
+          )}
+        </li>
+        <li>
+          {devices > 0 && lastRegisteredAt
+            ? t('devices', {
+                count: devices,
+                date: format.relativeTime(new Date(lastRegisteredAt)),
+              })
+            : t('noDevice')}
+        </li>
+      </ul>
     </div>
   );
 }

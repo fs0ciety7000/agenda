@@ -1,6 +1,11 @@
 'use client';
 
-import type { NotificationListDto, NotificationPreferenceDto, StatsDto } from '@agenda/contracts';
+import type {
+  NotificationListDto,
+  NotificationPreferenceDto,
+  PushStatusDto,
+  StatsDto,
+} from '@agenda/contracts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from './api';
 
@@ -25,6 +30,14 @@ export function useMarkNotificationsRead(hid: string) {
     onSuccess: () => qc.invalidateQueries({ queryKey: notificationKeys.list(hid) }),
   });
 }
+
+/** Diagnostic des notifications instantanées (serveur configuré, téléphones enregistrés). */
+export const usePushStatus = () =>
+  useQuery({
+    queryKey: ['me', 'push-status'],
+    queryFn: () => api<PushStatusDto>('/v1/me/push-tokens/status'),
+    staleTime: 0,
+  });
 
 export const useNotificationPreferences = (hid: string) =>
   useQuery({

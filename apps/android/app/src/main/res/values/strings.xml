@@ -195,4 +195,12 @@
     <string name="checklist_offline">Hors ligne : la liste se modifie avec une connexion.</string>
     <string name="checklist_error">La liste n\'a pas pu être mise à jour. Réessayez.</string>
     <string name="checklist_row">liste %1$d/%2$d</string>
+    <string name="push_title">Notifications instantanées</string>
+    <string name="push_registered">Actives : ce téléphone est enregistré.</string>
+    <string name="push_pending">Enregistrement en cours…</string>
+    <string name="push_not_in_build">Non incluses dans cette version de l\'app (configuration Firebase absente au moment de sa construction). Les notifications arrivent quand l\'app se synchronise.</string>
+    <string name="push_offline">Enregistrement impossible : pas de connexion.</string>
+    <string name="push_token_error">Firebase a refusé l\'enregistrement : %1$s</string>
+    <string name="push_server_error">Le serveur a refusé l\'enregistrement (erreur %1$d).</string>
+    <string name="push_retry">Réessayer</string>
 </resources>
