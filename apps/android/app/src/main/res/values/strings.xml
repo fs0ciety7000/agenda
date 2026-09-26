@@ -177,4 +177,13 @@
     <string name="activity_assigned">%1$s vous a confié « %2$s »</string>
     <string name="activity_assigned_recurring">%1$s vous a inclus dans « %2$s » (récurrente)</string>
     <string name="activity_calendar_failed">La synchronisation avec Google Calendar est interrompue. Ouvrez les Réglages du site.</string>
+    <string name="drag_hint">Appui long sur une tâche, puis glissez-la sur un jour du mois pour la déplacer.</string>
+    <string name="move_previous_day">Déplacer au jour précédent</string>
+    <string name="move_next_day">Déplacer au jour suivant</string>
+    <string name="task_moved">« %1$s » déplacée au %2$s</string>
+    <string name="undo">Annuler</string>
+    <string name="widget_name">Aujourd\'hui · Agenda G &amp; N</string>
+    <string name="widget_description">Les tâches du jour et celles en retard, à cocher depuis l\'écran d\'accueil.</string>
+    <string name="widget_empty">Rien pour aujourd\'hui 🎉</string>
+    <string name="widget_signed_out">Ouvrez l\'app pour vous connecter.</string>
 </resources>

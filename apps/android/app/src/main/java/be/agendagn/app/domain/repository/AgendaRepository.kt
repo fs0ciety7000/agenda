@@ -50,5 +50,7 @@ interface AgendaRepository {
     suspend fun previewQuickAdd(text: String): QuickAddPreview?
     suspend fun update(occurrence: Occurrence, draft: TaskDraft, scope: EditScope): OpResult
     suspend fun delete(occurrence: Occurrence, scope: EditScope): OpResult
+    /** Glisser-déposer du calendrier : change le jour d'UNE occurrence (heure conservée). */
+    suspend fun move(occurrenceId: String, date: java.time.LocalDate): OpResult
     suspend fun calendarStatus(): CalendarStatus?
 }

@@ -7,6 +7,7 @@ import be.agendagn.app.data.local.AgendaDatabase
 import be.agendagn.app.data.remote.ApiClient
 import be.agendagn.app.data.repository.AgendaRepositoryImpl
 import be.agendagn.app.data.sync.SyncEngine
+import be.agendagn.app.domain.repository.OpResult
 import be.agendagn.app.domain.model.OccurrenceStatus
 import be.agendagn.app.domain.model.TaskDraft
 import be.agendagn.app.domain.repository.RefreshOutcome
@@ -86,6 +87,18 @@ class SyncEngineTest {
                             }
                         }
                         json(rows.joinToString(",", "[", "]"))
+                    }
+                    request.method == "PATCH" && path.contains("/occurrences/") -> {
+                        val id = path.substringAfterLast('/')
+                        val row = serverRows[id] ?: return MockResponse().setResponseCode(404)
+                        val body = request.body.readUtf8()
+                        val version = Regex("\"version\":(\\d+)").find(row)!!.groupValues[1]
+                        if (!body.contains("\"version\":$version")) return MockResponse().setResponseCode(409)
+                        val date = Regex("\"date\":\"([^\"]+)\"").find(body)!!.groupValues[1]
+                        val updated = row.replace(Regex("\"date\":\"[^\"]+\""), "\"date\":\"$date\"")
+                            .replace("\"version\":1", "\"version\":2")
+                        serverRows[id] = updated
+                        json(updated)
                     }
                     path.endsWith("/complete") || path.endsWith("/reopen") -> {
                         val id = path.split('/')[5]
@@ -207,6 +220,33 @@ class SyncEngineTest {
         val bread = repo.occurrences.first().first { it.title == "Acheter du pain" }
         assertEquals(OccurrenceStatus.DONE, bread.status)
         assertTrue(requests.any { it.path!!.endsWith("/${bread.id}/complete") })
+    }
+
+    @Test
+    fun `deplacer une tache - portee celle-ci, version envoyee, cache mis a jour`() = runBlocking {
+        repo.refresh()
+        assertEquals(OpResult.Ok, repo.move("o1", java.time.LocalDate.parse("2026-10-01")))
+        val patch = requests.last { it.method == "PATCH" }
+        assertEquals("this", patch.requestUrl!!.queryParameter("scope"))
+        assertEquals(java.time.LocalDate.parse("2026-10-01"), repo.occurrence("o1").first()!!.date)
+        assertEquals(2, repo.occurrence("o1").first()!!.version)
+    }
+
+    @Test
+    fun `deplacer hors ligne - refuse et date d origine restauree`() = runBlocking {
+        repo.refresh()
+        offline = true
+        assertEquals(OpResult.Offline, repo.move("o1", java.time.LocalDate.parse("2026-10-01")))
+        assertEquals(java.time.LocalDate.parse("2026-09-29"), repo.occurrence("o1").first()!!.date)
+    }
+
+    @Test
+    fun `deplacer une tache modifiee ailleurs - conflit, version du serveur rechargee`() = runBlocking {
+        repo.refresh()
+        serverRows["o1"] = serverRows.getValue("o1").replace("\"version\":1", "\"version\":3")
+            .replace("2026-09-29", "2026-09-30")
+        assertEquals(OpResult.Conflict, repo.move("o1", java.time.LocalDate.parse("2026-10-01")))
+        assertEquals(java.time.LocalDate.parse("2026-09-30"), repo.occurrence("o1").first()!!.date)
     }
 
     @Test

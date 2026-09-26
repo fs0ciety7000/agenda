@@ -44,9 +44,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 import java.io.IOException
 import java.time.Clock
 import java.time.Instant
+import java.time.LocalDate
 import java.util.UUID
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -200,6 +203,45 @@ class AgendaRepositoryImpl(
                 else -> OpResult.Failed(errorCode(res.errorBody()?.string()))
             }
         } catch (_: IOException) {
+            OpResult.Offline
+        }
+    }
+
+    override suspend fun move(occurrenceId: String, date: LocalDate): OpResult = withContext(io) {
+        val h = db.households().current() ?: return@withContext OpResult.NotFound
+        // Version relue dans le cache : « Annuler » juste après un déplacement reste valable.
+        val current = db.occurrences().get(occurrenceId) ?: return@withContext OpResult.NotFound
+        if (current.isLocal) return@withContext OpResult.Offline
+        val previous = current.date
+        if (previous == date.toString()) return@withContext OpResult.Ok
+        db.occurrences().setDate(occurrenceId, date.toString()) // affichage immédiat
+        val body = buildJsonObject {
+            put("date", date.toString())
+            put("version", current.version)
+        }
+        val revert: suspend () -> Unit = { previous?.let { db.occurrences().setDate(occurrenceId, it) } }
+        try {
+            val res = api.updateOccurrence(h.id, occurrenceId, EditScope.THIS.wire, body)
+            when {
+                res.isSuccessful -> {
+                    res.body()?.let { db.occurrences().upsert(it.toEntity(h.id)) }
+                    OpResult.Ok
+                }
+                res.code() == 409 -> {
+                    engine.refresh()
+                    OpResult.Conflict
+                }
+                res.code() == 404 -> {
+                    db.occurrences().delete(occurrenceId)
+                    OpResult.NotFound
+                }
+                else -> {
+                    revert()
+                    OpResult.Failed(errorCode(res.errorBody()?.string()))
+                }
+            }
+        } catch (_: IOException) {
+            revert()
             OpResult.Offline
         }
     }

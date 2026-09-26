@@ -8,11 +8,14 @@ import be.agendagn.app.domain.model.Member
 import be.agendagn.app.domain.model.Occurrence
 import be.agendagn.app.domain.model.QuickAddPreview
 import be.agendagn.app.domain.repository.AgendaRepository
+import be.agendagn.app.domain.repository.OpResult
 import be.agendagn.app.domain.repository.RefreshOutcome
 import be.agendagn.app.domain.repository.SyncState
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -42,6 +45,12 @@ data class AgendaUiState(
 ) {
     val members: Map<String, Member> get() = household?.members.orEmpty().associateBy { it.id }
     val me: Member? get() = myMemberId?.let { members[it] }
+}
+
+/** Messages ponctuels (snackbar). */
+sealed interface AgendaEvent {
+    data class Moved(val occurrenceId: String, val title: String, val from: LocalDate, val to: LocalDate) : AgendaEvent
+    data class MoveFailed(val result: OpResult) : AgendaEvent
 }
 
 data class QuickAddState(val text: String = "", val preview: QuickAddPreview? = null)
@@ -96,6 +105,21 @@ class AgendaViewModel(
 
     fun toggle(o: Occurrence) {
         viewModelScope.launch { repository.toggle(o) }
+    }
+
+    private val _events = MutableSharedFlow<AgendaEvent>(extraBufferCapacity = 4)
+    val events: SharedFlow<AgendaEvent> = _events
+
+    /** Glisser-déposer du calendrier ; `undo` = retour au jour d'origine, sans nouveau message. */
+    fun move(o: Occurrence, to: LocalDate, undo: Boolean = false) {
+        val from = o.date ?: return
+        if (from == to || o.isLocal) return
+        viewModelScope.launch {
+            when (val result = repository.move(o.id, to)) {
+                OpResult.Ok -> if (!undo) _events.emit(AgendaEvent.Moved(o.id, o.title, from, to))
+                else -> _events.emit(AgendaEvent.MoveFailed(result))
+            }
+        }
     }
 
     fun onQuickAddText(text: String) = _quickAdd.update { it.copy(text = text, preview = null) }

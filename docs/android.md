@@ -11,7 +11,7 @@ métier propre à Android : les règles (récurrence, rotation, quick add) reste
 |---|---|
 | **Aujourd'hui** | « Bonjour Grace 👋 », en retard, aujourd'hui (x sur y faites), 7 prochains jours, tâches sans date, répartition de la semaine (tâches partagées, non compétitive) |
 | **Tâches** | Recherche, filtres À faire / À venir / Sans date / Faites, « Les miennes », regroupement par jour |
-| **Calendrier** | Mois (lundi → dimanche, pastilles = tâches à faire), liste du jour choisi, « Ajouter ce jour-là » |
+| **Calendrier** | Mois (lundi → dimanche, pastilles = tâches à faire), liste du jour choisi, « Ajouter ce jour-là » ; **glisser-déposer** : appui long sur une tâche puis la lâcher sur un jour (heure conservée, cette occurrence seulement, « Annuler » dans le message ; TalkBack : actions « jour précédent / suivant ») |
 | **Réglages** | Foyer et membres, état du calendrier partagé (Google), rappels, compte, déconnexion |
 
 - **Ajout rapide** (bouton +) : « Sortir les poubelles mardi 20h Nicolas », aperçu analysé par l'API.
@@ -20,6 +20,10 @@ métier propre à Android : les règles (récurrence, rotation, quick add) reste
   partagé. Modifier / supprimer une tâche récurrente demande la portée (celle-ci, les suivantes, toute la série).
 - **Rappels** : notification avant chaque tâche planifiée qui me concerne (moi, à deux, à définir),
   délai réglable, bouton **Fait** dans la notification (fonctionne hors ligne).
+- **Widget « Aujourd'hui »** (appui long sur l'écran d'accueil → Widgets → Agenda G & N) : tâches
+  en retard et du jour, à cocher directement (hors ligne compris, même file d'envoi que l'app),
+  toucher une tâche l'ouvre, « + » ouvre l'ajout rapide. Mis à jour à chaque changement et au
+  moins toutes les 30 minutes (passage à minuit).
 - **Activité** : « Nicolas vous a attribué … » en notification système (si activé dans
   Réglages → Notifications sur le web), vérifié au retour dans l'app et à chaque synchronisation
   de fond ; la première vérification après installation ne notifie rien d'ancien.

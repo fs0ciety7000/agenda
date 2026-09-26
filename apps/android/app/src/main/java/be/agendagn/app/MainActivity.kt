@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import be.agendagn.app.notifications.ReminderScheduler
 import be.agendagn.app.ui.navigation.AppNavHost
@@ -18,7 +19,11 @@ class MainActivity : ComponentActivity() {
     /** Retour de « Continuer avec Google » (be.agendagn.app://auth?code=…). */
     private val googleCallback = mutableStateOf<Uri?>(null)
 
+    /** « + » du widget : incrémenté à chaque demande d'ajout rapide. */
+    private val quickAddRequest = mutableIntStateOf(0)
+
     private fun handle(intent: Intent) {
+        if (intent.action == ACTION_QUICK_ADD) quickAddRequest.intValue++
         intent.getStringExtra(ReminderScheduler.EXTRA_ID)?.let { openOccurrence.value = it }
         intent.data?.takeIf { it.scheme == "be.agendagn.app" && it.host == "auth" }?.let { googleCallback.value = it }
     }
@@ -33,6 +38,7 @@ class MainActivity : ComponentActivity() {
                 AppNavHost(
                     container = container,
                     openOccurrenceId = openOccurrence.value,
+                    quickAddRequest = quickAddRequest.intValue,
                     googleCallback = googleCallback.value,
                     onGoogleCallbackHandled = { googleCallback.value = null },
                 )
@@ -43,5 +49,9 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         handle(intent)
+    }
+
+    companion object {
+        const val ACTION_QUICK_ADD = "be.agendagn.app.QUICK_ADD"
     }
 }

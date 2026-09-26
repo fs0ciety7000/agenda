@@ -20,4 +20,8 @@
         <item quantity="one">%1$d task · %2$s</item>
         <item quantity="other">%1$d tasks · %2$s</item>
     </plurals>
+    <plurals name="widget_more">
+        <item quantity="one">+ %d more in the app</item>
+        <item quantity="other">+ %d more in the app</item>
+    </plurals>
 </resources>

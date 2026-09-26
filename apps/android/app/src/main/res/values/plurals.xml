@@ -25,4 +25,9 @@
         <item quantity="many">%1$d tâches · %2$s</item>
         <item quantity="other">%1$d tâches · %2$s</item>
     </plurals>
+    <plurals name="widget_more">
+        <item quantity="one">+ %d autre dans l\'app</item>
+        <item quantity="many">+ %d autres dans l\'app</item>
+        <item quantity="other">+ %d autres dans l\'app</item>
+    </plurals>
 </resources>

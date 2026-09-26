@@ -241,6 +241,11 @@ Vérifié : E2E `calendar-drag.spec.ts` (souris, redimensionnement, clavier, ann
 
 Non automatisable, en recette : TalkBack (Android) et lecteur d'écran sur le web.
 
+### Ensuite — Android
+
+- Glisser-déposer dans le calendrier Android (appui long → jour du mois), actions TalkBack.
+- Widget « Aujourd'hui » (Glance) : cocher depuis l'écran d'accueil, ouvrir une tâche, ajout rapide.
+
 ## Phase 7 (essentiel) — détail de ce qui est livré
 
 - **Sauvegardes** : service `backup` du compose : dump nuitier **restauré dans une base

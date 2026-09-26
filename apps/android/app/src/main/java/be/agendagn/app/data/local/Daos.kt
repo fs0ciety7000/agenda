@@ -62,6 +62,9 @@ interface OccurrenceDao {
     @Query("UPDATE occurrences SET status = :status, completedAt = :completedAt WHERE id = :id")
     suspend fun setStatus(id: String, status: String, completedAt: String?)
 
+    @Query("UPDATE occurrences SET date = :date WHERE id = :id")
+    suspend fun setDate(id: String, date: String)
+
     /** Remplace le cache serveur, en conservant les créations locales non encore envoyées. */
     @Transaction
     suspend fun replaceServerRows(householdId: String, rows: List<OccurrenceEntity>) {

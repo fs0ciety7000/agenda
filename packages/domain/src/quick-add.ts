@@ -169,8 +169,10 @@ export function parseQuickAdd(input: string, ctx: QuickAddContext): QuickAddResu
     regex: RegExp,
     kind: QuickAddTokenKind,
     apply: (m: RegExpExecArray, r: QuickAddResult) => boolean,
+    keep: (m: RegExpExecArray) => boolean = () => true,
   ) => {
     for (const m of norm.matchAll(regex)) {
+      if (!keep(m)) continue;
       matches.push({ start: m.index, end: m.index + m[0].length, kind, apply: (r) => apply(m, r) });
     }
   };
@@ -261,10 +263,10 @@ export function parseQuickAdd(input: string, ctx: QuickAddContext): QuickAddResu
     if (m[2] === 'am' && h === 12) h = 0;
     return setTime(r, h, 0);
   });
-  add(re('(?:a |vers |at )?(\\d{1,2})h(\\d{2})?'), 'time', (m, r) =>
+  add(re('(?:a |vers |at |@ ?)?(\\d{1,2})h(\\d{2})?'), 'time', (m, r) =>
     setTime(r, Number(m[1]), Number(m[2] ?? 0)),
   );
-  add(re('(?:a |vers |at )?(\\d{1,2}):(\\d{2})'), 'time', (m, r) =>
+  add(re('(?:a |vers |at |@ ?)?(\\d{1,2}):(\\d{2})'), 'time', (m, r) =>
     setTime(r, Number(m[1]), Number(m[2])),
   );
   add(re('(?:a |at )?(midi|noon|minuit|midnight)'), 'time', (m, r) =>
@@ -273,18 +275,27 @@ export function parseQuickAdd(input: string, ctx: QuickAddContext): QuickAddResu
 
   // ── Responsables, catégorie, priorité ──
   const members = ctx.members.map((mb) => ({ ...mb, key: normalize(mb.displayName) }));
-  add(/(?<!\S)@([\p{L}\p{N}_-]+)/gu, 'assignee', (m, r) => {
-    const key = m[1]!;
-    if (TOGETHER.has(key)) {
-      r.assigneeIds = members.map((mb) => mb.id);
-      return members.length > 0;
-    }
-    const found =
-      members.find((mb) => mb.key === key) ?? members.find((mb) => mb.key.startsWith(key));
-    if (!found) return false;
-    r.assigneeIds = [...new Set([...(r.assigneeIds ?? []), found.id])];
-    return true;
-  });
+  // « @21h » n'est pas une personne : le fragment n'est retenu que s'il désigne un membre, sinon
+  // il masquerait l'heure qu'il contient.
+  const resolvesMember = (key: string) =>
+    TOGETHER.has(key) || members.some((mb) => mb.key === key || mb.key.startsWith(key));
+  add(
+    /(?<!\S)@(\p{L}[\p{L}\p{N}_-]*)/gu,
+    'assignee',
+    (m, r) => {
+      const key = m[1]!;
+      if (TOGETHER.has(key)) {
+        r.assigneeIds = members.map((mb) => mb.id);
+        return members.length > 0;
+      }
+      const found =
+        members.find((mb) => mb.key === key) ?? members.find((mb) => mb.key.startsWith(key));
+      if (!found) return false;
+      r.assigneeIds = [...new Set([...(r.assigneeIds ?? []), found.id])];
+      return true;
+    },
+    (m) => resolvesMember(m[1]!),
+  );
   const categories = ctx.categories.map((c) => ({ ...c, key: normalize(c.name) }));
   add(/(?<!\S)#([\p{L}\p{N}_-]+)/gu, 'category', (m, r) => {
     if (r.categoryId) return false;

@@ -52,5 +52,12 @@ class FakeAgendaRepository(
         return updateResult
     }
     override suspend fun delete(occurrence: Occurrence, scope: EditScope): OpResult { deletes += scope; return OpResult.Ok }
+    val moves = mutableListOf<Pair<String, java.time.LocalDate>>()
+    var moveResult: OpResult = OpResult.Ok
+    override suspend fun move(occurrenceId: String, date: java.time.LocalDate): OpResult {
+        moves += occurrenceId to date
+        if (moveResult == OpResult.Ok) rows.value = rows.value.map { if (it.id == occurrenceId) it.copy(date = date) else it }
+        return moveResult
+    }
     override suspend fun calendarStatus(): CalendarStatus? = null
 }
