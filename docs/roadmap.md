@@ -10,7 +10,7 @@ Une phase n'est « terminée » que si la CI est verte et la documentation à jo
 | **2 — Core Tasks** | CRUD tâches ponctuelles, catégories, attribution, statuts, dashboard « Aujourd'hui », vue Tâches + filtres + recherche, quick add (parseur FR/EN déterministe) | E2E Playwright : créer → cocher | ✅ Livré (cf. §Phase 2) |
 | **2b — Compte & RGPD** | Google Sign-In, réinitialisation du mot de passe (SMTP générique, Brevo recommandé), export / suppression de compte | Tests d'intégration + E2E | ✅ Livré (cf. §Phase 3 & 2b) |
 | **3 — Récurrence & rotation** | `packages/domain` : moteur RRULE-subset, DST, rotation (slots, par semaine, par jour), matérialisation 90 j, exceptions, split de série, 3 modes d'édition | Couverture domaine ≥ 95 %, tests critiques §29 | ✅ Livré (98,6 % des lignes) |
-| **4 — Google Calendar** | OAuth calendrier, sélection « Commun G & N », `GoogleCalendarSyncService`, BullMQ, retry/backoff, réconciliation, erreurs humaines | Suite fake Google verte + recette manuelle sur « Commun G & N » | ⏳ |
+| **4 — Google Calendar** | OAuth calendrier, sélection « Commun G & N », `GoogleCalendarSyncService`, BullMQ, retry/backoff, réconciliation, erreurs humaines | Suite fake Google verte + recette manuelle sur « Commun G & N » | ✅ Livré, recette manuelle à faire (cf. §Phase 4) |
 | **5 — Android** | Compose : navigation, dashboard, tâches, calendrier, création rapide, Room + outbox + WorkManager, notifications locales | Tests Compose + instrumentation ; APK de recette | ⏳ |
 | **6 — Polish** | Drag & drop calendrier, animations, accessibilité (audit axe + TalkBack), dark mode fin, onboarding complet, statistiques, notifications & préférences | Audit a11y sans violation AA | ⏳ |
 | **7 — Production** | Coolify + Cloudflare (`docs/deployment.md`), Sentry, backups vérifiés (restauration testée), passage de l'app OAuth Google en production, politique de confidentialité, AAB Play Store (test interne) | Checklist de mise en production signée | ⏳ |
@@ -130,3 +130,45 @@ build (retirée).
 Décision : le client API généré depuis l'OpenAPI est abandonné pour l'instant (les schémas Zod
 de `packages/contracts` typent déjà le web ; l'OpenAPI actuel est pauvre car l'API valide par Zod
 et non par classes). À réévaluer pour Android en Phase 5.
+
+## Phase 4 — détail de ce qui est livré
+
+**API** (`apps/api/src/calendar`)
+- Client REST Google Calendar (sans le SDK `googleapis`, ~80 Mo pour 8 appels) avec délai
+  maximal de 15 s et classification des erreurs (401, `invalid_grant`, 403 droits / quota, 404/410,
+  409, 412, 429, 5xx, réseau).
+- OAuth calendrier séparé du Google Sign-In : code + PKCE, `access_type=offline`, scopes minimaux,
+  tokens chiffrés AES-256-GCM, refresh sérialisé par verrou PostgreSQL, révocation auprès de Google
+  à la déconnexion et à la suppression du compte.
+- Sélection du calendrier (jamais d'id codé en dur) : calendriers en lecture seule refusés avec
+  un message clair ; changer de calendrier retire les événements de l'ancien.
+- Synchronisation par balayage de la base (*outbox* `syncVersion`/`syncedVersion`), une occurrence
+  ↔ un événement à id déterministe (anti-doublons même après un crash), fenêtre J−1 → J+60,
+  rotation dans le titre (« Sortir les poubelles · Grace », « · à deux »), « ✓ » à la complétion,
+  portées *cette occurrence / les suivantes / toute la série* répercutées.
+- BullMQ + Redis comme déclencheur (regroupement 2 s, concurrence 1, balayage 10 min,
+  réconciliation 6 h) ; backoff exponentiel avec jitter ; erreurs bloquantes ⇒ lien `INVALID`
+  + notification ; réconciliation (orphelins, doublons, supprimés chez Google non recréés,
+  manquants).
+
+**Web**
+- Réglages « Calendrier partagé » : connexion, choix du calendrier (« Commun G & N » présélectionné,
+  calendriers en lecture seule grisés et expliqués), état (tâches synchronisées, en attente, en
+  erreur, dernière synchro), *Synchroniser maintenant*, changer / délier / déconnecter.
+- Case « Ajouter au calendrier partagé » (cochée par défaut pour une tâche datée quand un
+  calendrier est lié), badge d'état par tâche, bannière sur l'accueil en cas de problème, étape
+  « Connecter Google Calendar » dans l'onboarding.
+
+**Déploiement** : service `redis` interne dans `docker-compose.prod.yml` ; configuration Google
+pas à pas dans `deployment.md` §9.
+
+Vérifié : 82 tests API (dont 16 synchro calendrier sur faux Google fidèle et 1 sur vraie file
+BullMQ/Redis), E2E Playwright du parcours complet en mode démo (`GOOGLE_CALENDAR_FAKE=true`).
+
+Trouvé et corrigé pendant les tests : un événement orphelin dont l'occurrence n'existe plus était
+compté comme doublon ; l'état du calendrier dans Réglages ne se rafraîchissait pas après une
+modification de tâche.
+
+Reste à faire côté humain : créer le client OAuth, publier l'app « In production », connecter
+Google et choisir « Commun G & N » (`deployment.md` §9), puis la recette de `google-calendar.md` §8.
+

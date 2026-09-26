@@ -47,6 +47,11 @@ const EnvSchema = z.object({
    * `off` (tests : synchronisation déclenchée explicitement). Défaut déduit de l'environnement.
    */
   CALENDAR_SYNC_MODE: z.enum(['queue', 'inline', 'off']).optional(),
+  /** Développement uniquement : faux Google Calendar en mémoire (refusé en production). */
+  GOOGLE_CALENDAR_FAKE: z
+    .enum(['true', 'false'])
+    .default('false')
+    .transform((v) => v === 'true'),
   // ── Google Sign-In (OIDC). Sans identifiants : le bouton est masqué. ──
   GOOGLE_CLIENT_ID: z.string().optional(),
   GOOGLE_CLIENT_SECRET: z.string().optional(),

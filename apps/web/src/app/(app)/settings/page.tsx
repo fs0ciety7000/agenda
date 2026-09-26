@@ -1,11 +1,11 @@
 'use client';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { CalendarDays } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Suspense, useEffect, useState } from 'react';
 import { useSession } from '@/components/app/household-context';
+import { CalendarSettings } from '@/components/app/calendar-settings';
 import { CategoriesSettings } from '@/components/app/categories-settings';
 import { InviteLink } from '@/components/app/invite-link';
 import { PrivacySettings } from '@/components/app/privacy-settings';
@@ -67,9 +67,10 @@ export default function SettingsPage() {
 
       <section className="flex flex-col gap-3" aria-labelledby="s-calendar">
         <SectionTitle id="s-calendar">{t('calendar')}</SectionTitle>
-        <Card className="flex items-center gap-3">
-          <CalendarDays aria-hidden className="size-5 stroke-[1.5] text-text-muted" />
-          <p className="text-[0.9375rem] text-text-muted">{t('calendarSoon')}</p>
+        <Card>
+          <Suspense>
+            <CalendarSettings />
+          </Suspense>
         </Card>
       </section>
 

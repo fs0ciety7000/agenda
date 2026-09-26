@@ -6,7 +6,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { GoogleCalendarSyncService, eventIdFor } from '../src/calendar/calendar-sync.service';
 import { GoogleCalendarClient } from '../src/calendar/google-calendar.client';
 import { coupleHousehold, createTestApp, registerUser } from './app';
-import { FakeGoogleCalendar } from './fake-google-calendar';
+import { FakeGoogleCalendar } from '../src/calendar/fake-google-calendar';
 
 const COMMUN = 'commun-gn@group.calendar.google.com';
 

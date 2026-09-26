@@ -1,7 +1,16 @@
 'use client';
 
 import type { OccurrenceDto } from '@agenda/contracts';
-import { Check, ChevronsUp, ChevronUp, Lock, Repeat } from 'lucide-react';
+import {
+  AlertTriangle,
+  CalendarCheck,
+  Check,
+  ChevronsUp,
+  ChevronUp,
+  Lock,
+  RefreshCw,
+  Repeat,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/cn';
 import { formatDuration, formatTime, useDayLabel } from '@/lib/format';
@@ -91,6 +100,7 @@ export function TaskRow({
             <AssigneeAvatars household={household} ids={o.assigneeIds} />
             {assigneeLabel(o.assigneeIds)}
           </span>
+          {o.calendarSync && <SyncBadge state={o.calendarSync} />}
           {o.isRecurring && (
             <span className="inline-flex items-center gap-1">
               · <Repeat aria-hidden className="size-3" />
@@ -147,5 +157,24 @@ export function TaskList({
         <TaskRow key={o.id} occurrence={o} onOpen={onOpen} showDate={showDate} />
       ))}
     </ul>
+  );
+}
+
+/** ✓ Synchronisé · ⟳ Synchronisation… · ⚠ Problème — icône + texte pour les lecteurs d'écran. */
+function SyncBadge({ state }: { state: NonNullable<OccurrenceDto['calendarSync']> }) {
+  const t = useTranslations('calendarSync.state');
+  const Icon = state === 'SYNCED' ? CalendarCheck : state === 'PENDING' ? RefreshCw : AlertTriangle;
+  return (
+    <span
+      className={
+        state === 'ERROR' || state === 'BLOCKED'
+          ? 'inline-flex items-center gap-1 text-warning'
+          : 'inline-flex items-center gap-1'
+      }
+      title={t(state)}
+    >
+      · <Icon aria-hidden className="size-3" />
+      <span className="sr-only">{t(state)}</span>
+    </span>
   );
 }

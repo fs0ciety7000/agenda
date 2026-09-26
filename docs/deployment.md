@@ -19,8 +19,9 @@ Serveur Coolify ── Traefik :443 ── agenda.fs0ciety.org
                                         ▼
                        web (Next.js :3000) ── /v1/*, /healthz ──▶ api (NestJS :4000)
                                                                      │
-                                                                     ▼
-                                                              postgres (:5432, volume)
+                                                      ┌──────────────┼──────────────┐
+                                                      ▼              ▼              ▼
+                                         postgres (:5432)    redis (:6379)   Google Calendar API
 ```
 
 | Service | Exposition | Rôle |
@@ -28,8 +29,10 @@ Serveur Coolify ── Traefik :443 ── agenda.fs0ciety.org
 | `web` | **seul service public** (domaine Coolify) | Pages + proxy same-origin `/v1/*` → API |
 | `api` | interne (réseau Docker) | API REST ; applique les migrations au démarrage |
 | `postgres` | interne | Données (volume `agenda_postgres_data`) + dumps (`agenda_postgres_backups`) |
+| `redis` | interne | File BullMQ de la synchro Google Calendar (volume `agenda_redis_data`) |
 
-Redis n'est pas encore déployé : il arrive en Phase 4 (synchronisation Google Calendar).
+Redis ne contient que des déclencheurs : l'état de synchronisation vit dans PostgreSQL. Perdre
+Redis (ou son volume) ne perd aucune donnée ; il n'est donc **pas** à sauvegarder.
 
 ### Pourquoi un seul domaine public ?
 
@@ -125,12 +128,14 @@ manquent. Modèle complet : `.env.prod.example`.
 | `AUTH_RATE_LIMIT` | `10` | défaut (connexion, inscription, refresh) |
 | `GLOBAL_RATE_LIMIT` | `600` | défaut (toute l'API, par IP) |
 | `POSTGRES_USER` / `POSTGRES_DB` | `agenda` | défaut |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | facultatif : active « Continuer avec Google » | cf. §9 |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | active Google Calendar et « Continuer avec Google » | cf. §9 |
 | `SMTP_*`, `EMAIL_FROM` | facultatif : active « Mot de passe oublié » | cf. §8 |
 | `SENTRY_DSN` | vide jusqu'en Phase 7 | — |
 
-⚠️ **`TOKEN_ENCRYPTION_KEY` ne doit jamais changer** une fois des comptes Google connectés
-(Phase 4) : les tokens chiffrés deviendraient illisibles. Conservez-la dans un gestionnaire de
+`REDIS_URL` est fixée par le compose (`redis://redis:6379`) : rien à définir.
+
+⚠️ **`TOKEN_ENCRYPTION_KEY` ne doit jamais changer** une fois Google Calendar connecté : les
+tokens chiffrés deviendraient illisibles (il faudrait reconnecter Google). Conservez-la dans un gestionnaire de
 mots de passe. Changer `JWT_SECRET` déconnecte simplement tout le monde.
 
 Cocher *Is Build Variable?* n'est nécessaire pour aucune de ces variables : la seule valeur de
@@ -254,23 +259,33 @@ Pour un foyer (quelques emails par an), Brevo est largement suffisant.
 Resend : `SMTP_HOST=smtp.resend.com`, `SMTP_USER=resend`, `SMTP_PASSWORD=<clé API>`, après
 vérification du domaine de la même façon.
 
-## 9. Google : connexion (Sign-In) et calendrier (Phase 4)
+## 9. Google Calendar et connexion Google
 
-Un seul client OAuth pour les deux usages. Dans la **Google Cloud Console** :
+Un seul client OAuth pour les deux usages. Dans la **Google Cloud Console**, idéalement avec le
+compte occmons@gmail.com :
 
-1. Créer un projet (ex. « Agenda G & N »), puis **APIs & Services → OAuth consent screen** :
-   type *External*, nom, logo facultatif, domaine autorisé `fs0ciety.org`, scopes `openid`, `email`,
-   `profile` (Phase 4 : ajouter `calendar.calendarlist.readonly` et `calendar.events`).
-2. **Publier l'application en « In production »** (sinon les refresh tokens expirent au bout de
-   7 jours ; cf. `google-calendar.md`, risque R1). Pour `openid email profile` seuls, aucune
-   vérification Google n'est requise.
-3. **Credentials → Create credentials → OAuth client ID → Web application** :
+1. Créer un projet (ex. « Agenda G & N ») ; **APIs & Services → Library** : activer
+   **Google Calendar API**.
+2. **OAuth consent screen** (*Google Auth Platform*) : type *External*, nom « Agenda G & N »,
+   email d'assistance, domaine autorisé `fs0ciety.org`. **Data access** : ajouter les scopes
+   `openid`, `email`, `profile`, `…/auth/calendar.calendarlist.readonly` et
+   `…/auth/calendar.events` — rien de plus (pas `…/auth/calendar`).
+3. **Audience → Publish app** : passer en **« In production »**. Indispensable : en *Testing*,
+   Google invalide les autorisations au bout de 7 jours et la synchro s'arrêterait chaque semaine
+   (risque R1). Sans vérification Google, l'écran de consentement affiche « Google n'a pas validé
+   cette application » : cliquer *Paramètres avancés → Accéder à Agenda G & N* (normal pour une
+   app personnelle, limite de 100 utilisateurs).
+4. **Clients → Create client → Web application** :
    - Authorized JavaScript origins : `https://agenda.fs0ciety.org`
-   - Authorized redirect URIs :
-     - `https://agenda.fs0ciety.org/v1/auth/google/callback` (connexion)
-     - `https://agenda.fs0ciety.org/v1/calendar/google/callback` (Phase 4)
-4. Renseigner `GOOGLE_CLIENT_ID` et `GOOGLE_CLIENT_SECRET` dans Coolify et redéployer : le bouton
-   « Continuer avec Google » apparaît sur les pages de connexion et d'inscription.
+   - Authorized redirect URIs (exactement, sans barre finale) :
+     - `https://agenda.fs0ciety.org/v1/calendar/google/callback` (calendrier)
+     - `https://agenda.fs0ciety.org/v1/auth/google/callback` (connexion avec Google)
+5. Renseigner `GOOGLE_CLIENT_ID` et `GOOGLE_CLIENT_SECRET` dans Coolify et redéployer.
+6. Dans l'app : **Réglages → Calendrier partagé → Connecter Google Calendar**, autoriser, choisir
+   **« Commun G & N »** → *Utiliser ce calendrier*. Un seul membre du foyer a besoin de connecter
+   son compte, s'il a le droit « Apporter des modifications aux événements » sur ce calendrier.
+
+Les URI de redirection sont dérivées de `WEB_ORIGIN` : aucune variable supplémentaire.
 
 Sécurité : un compte Google n'est jamais rattaché automatiquement à un compte existant ayant la
 même adresse (prise de contrôle possible). Pour lier Google à un compte créé avec un mot de passe :
@@ -287,7 +302,8 @@ même adresse (prise de contrôle possible). Pour lier Google à un compte cré�
 ## 11. Checklist de sécurité
 
 - [ ] Nuage orange actif, SSL **Full (strict)**, Always Use HTTPS.
-- [ ] Seul `web` a un domaine ; `api` et `postgres` n'ont ni domaine ni port publié.
+- [ ] Seul `web` a un domaine ; `api`, `postgres` et `redis` n'ont ni domaine ni port publié.
+- [ ] App OAuth Google en « In production », scopes limités à ceux du §9.
 - [ ] Secrets générés aléatoirement, stockés uniquement dans Coolify (+ gestionnaire de mots de passe).
 - [ ] `REGISTRATION_ENABLED=false` après l'inscription du foyer (vaut aussi pour Google Sign-In).
 - [ ] Domaine d'envoi authentifié (DKIM/SPF/DMARC) si les emails sont activés.
@@ -305,4 +321,8 @@ même adresse (prise de contrôle possible). Pour lier Google à un compte cré�
 | Tout le monde reçoit « Trop de tentatives » | `CLIENT_IP_HEADER` absent, ou trafic ne passant pas par Cloudflare | `CLIENT_IP_HEADER=cf-connecting-ip`, nuage orange |
 | `/v1/*` renvoie 500 « Internal Server Error » en texte brut | API injoignable depuis `web` | Vérifier que le service s'appelle bien `api` et qu'il est *healthy* |
 | L'API redémarre en boucle | Variable manquante/invalide (message `Invalid environment`) ou migration en échec | Logs du service `api` |
+| `redirect_uri_mismatch` chez Google | URI absente ou différente dans le client OAuth | Copier exactement `https://agenda.fs0ciety.org/v1/calendar/google/callback` (§9) |
+| « Google Calendar n'est pas configuré » dans Réglages | `GOOGLE_CLIENT_ID`/`SECRET` vides | Les renseigner dans Coolify, redéployer |
+| Synchro arrêtée au bout d'une semaine | App OAuth restée en *Testing* | La publier « In production », puis *Reconnecter* dans Réglages |
+| Tâches « en attente » de synchro qui n'avancent pas | `redis` non *healthy*, ou quota Google | Logs `api` (`Calendar sync mode: queue`, `Sweep …`) ; le balayage reprend toutes les 10 min |
 | Build `web` échoue sur `next/font` | Pas d'accès à `fonts.googleapis.com` pendant le build | Autoriser la sortie réseau du serveur pendant le build |

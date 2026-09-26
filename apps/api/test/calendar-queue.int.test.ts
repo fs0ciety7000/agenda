@@ -5,7 +5,7 @@ import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 import { GoogleCalendarClient } from '../src/calendar/google-calendar.client';
 import { resetEnvCache } from '../src/config/env';
 import { coupleHousehold, createTestApp } from './app';
-import { FakeGoogleCalendar } from './fake-google-calendar';
+import { FakeGoogleCalendar } from '../src/calendar/fake-google-calendar';
 
 /** Chemin de production : BullMQ + Redis, déclenché par les modifications de tâches. */
 describe('Google Calendar — file BullMQ (intégration, Redis réel)', () => {

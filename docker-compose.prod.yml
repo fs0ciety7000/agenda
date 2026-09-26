@@ -44,7 +44,8 @@ services:
       REGISTRATION_ENABLED: ${REGISTRATION_ENABLED:-true}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
-      GOOGLE_OAUTH_REDIRECT_URI: ${GOOGLE_OAUTH_REDIRECT_URI:-}
+      # File BullMQ de la synchronisation Google Calendar (déclencheur ; l'état vit en base).
+      REDIS_URL: redis://redis:6379
       # Emails (mot de passe oublié) — SMTP générique, cf. docs/deployment.md §8.
       SMTP_HOST: ${SMTP_HOST:-}
       SMTP_PORT: ${SMTP_PORT:-587}
@@ -54,6 +55,8 @@ services:
       SENTRY_DSN: ${SENTRY_DSN:-}
     depends_on:
       postgres:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     # Interne uniquement — pas de domaine (le web la proxifie sous /v1/*).
 
@@ -76,8 +79,24 @@ services:
       retries: 10
     # Interne uniquement — jamais exposé publiquement.
 
-  # Redis (BullMQ) sera ajouté en Phase 4 avec la synchronisation Google Calendar.
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    # AOF : les jobs planifiés survivent à un redémarrage (perdre la file n'est de toute façon
+    # pas grave : le balayage périodique rattrape tout depuis la base).
+    command: ['redis-server', '--appendonly', 'yes', '--maxmemory-policy', 'noeviction']
+    expose:
+      - '6379'
+    volumes:
+      - agenda_redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # Interne uniquement — jamais exposé publiquement.
 
 volumes:
   agenda_postgres_data:
   agenda_postgres_backups:
+  agenda_redis_data:

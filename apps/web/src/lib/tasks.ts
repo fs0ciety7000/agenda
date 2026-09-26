@@ -41,8 +41,10 @@ export const useOccurrences = (hid: string, q: ListQuery) =>
     queryKey: taskKeys.occurrences(hid, q),
     queryFn: () => api<OccurrenceDto[]>(`/v1/households/${hid}/occurrences${qs(q)}`),
     placeholderData: keepPreviousData,
-    // Deux personnes, pas de temps réel en V1 : rafraîchissement léger (cf. ADR-006).
-    refetchInterval: 30_000,
+    // Deux personnes, pas de temps réel en V1 : rafraîchissement léger (cf. ADR-006),
+    // plus fréquent tant qu'une synchronisation Google est en cours.
+    refetchInterval: (query) =>
+      query.state.data?.some((o) => o.calendarSync === 'PENDING') ? 3_000 : 30_000,
   });
 
 export const useBalance = (hid: string) =>
@@ -66,6 +68,7 @@ function useInvalidateTasks(hid: string) {
       qc.invalidateQueries({ queryKey: ['households', hid, 'occurrences'] }),
       qc.invalidateQueries({ queryKey: taskKeys.balance(hid) }),
       qc.invalidateQueries({ queryKey: taskKeys.series(hid) }),
+      qc.invalidateQueries({ queryKey: ['households', hid, 'calendar'] }),
     ]);
 }
 

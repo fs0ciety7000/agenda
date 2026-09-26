@@ -63,7 +63,12 @@
     "GOOGLE_NOT_CONFIGURED": "Google sign-in is not available.",
     "GOOGLE_ALREADY_LINKED": "This Google account is already linked to another account.",
     "RESET_TOKEN_INVALID": "This link is no longer valid. Ask for a new one.",
-    "CONFIRMATION_REQUIRED": "Incorrect confirmation."
+    "CONFIRMATION_REQUIRED": "Incorrect confirmation.",
+    "CALENDAR_NOT_CONFIGURED": "Google Calendar is not available on this server.",
+    "CALENDAR_NOT_CONNECTED": "Connect your Google Calendar account first.",
+    "CALENDAR_READ_ONLY": "You can't edit this calendar.",
+    "CALENDAR_NOT_FOUND": "This calendar can't be found.",
+    "GOOGLE_REVOKED": "Access to Google Calendar was removed. Reconnect your Google account."
   },
   "today": {
     "greeting": "Hello {name} 👋",
@@ -93,7 +98,10 @@
     "copy": "Copy link",
     "copied": "Link copied",
     "continue": "Continue",
-    "later": "Later"
+    "later": "Later",
+    "stepCalendar": "Connect Google Calendar",
+    "calendarBody": "Optional: your scheduled tasks will appear in your shared calendar.",
+    "connectCalendar": "Connect Google Calendar"
   },
   "invite": {
     "title": "Join a household",
@@ -180,7 +188,10 @@
       "notes": "Notes",
       "personal": "Personal task",
       "personalHint": "Only visible to you.",
-      "occurrenceDate": "Date (this time)"
+      "occurrenceDate": "Date (this time)",
+      "syncToCalendar": "Add to the shared calendar",
+      "syncHint": "Shown in “{calendar}”.",
+      "syncNeedsDate": "Pick a date to add it to the calendar."
     },
     "recurring": "Recurring task",
     "recurrenceNeedsDate": "Pick a start date for a repeating task."
@@ -357,5 +368,46 @@
     "confirmWord": "DELETE",
     "cancel": "Cancel",
     "confirmDelete": "Delete permanently"
+  },
+  "calendarSync": {
+    "notConfigured": "Google Calendar is not enabled on this server.",
+    "intro": "Connect your Google account to show scheduled tasks in your shared calendar.",
+    "connect": "Connect Google Calendar",
+    "reconnect": "Reconnect Google",
+    "privacyNote": "The app only reads your calendar list and only writes its own events. Your Google password is never requested.",
+    "connectedToast": "Google Calendar connected.",
+    "linkedToast": "Shared calendar saved. Syncing…",
+    "syncStarted": "Sync started.",
+    "connected": "Google Calendar connected",
+    "interrupted": "Sync interrupted",
+    "via": "via {email} ({name})",
+    "stats": "{synced, plural, =0 {No tasks synced} one {# task synced} other {# tasks synced}}{pending, plural, =0 {} other { · # pending}}{errors, plural, =0 {} one { · # error} other { · # errors}}",
+    "syncNow": "Sync now",
+    "change": "Change calendar",
+    "unlink": "Disconnect calendar",
+    "unlinkConfirm": "Disconnect “{calendar}”? Events created by the app will be removed from it.",
+    "myAccount": "Your Google account: {email}.",
+    "disconnect": "Remove access",
+    "disconnectConfirm": "Remove the app's access to your Google Calendar account?",
+    "lastCheck": "Last full check {date}.",
+    "pickTitle": "Choose the shared calendar",
+    "readOnly": "Read-only: tasks can't be added.",
+    "notListed": "Your shared calendar isn't listed? Ask its owner to share it with your Google address with “Make changes to events”.",
+    "useCalendar": "Use this calendar",
+    "cancel": "Cancel",
+    "fix": "Open calendar settings",
+    "state": {
+      "SYNCED": "Synced",
+      "PENDING": "Syncing…",
+      "ERROR": "Sync pending",
+      "BLOCKED": "Sync interrupted"
+    },
+    "errors": {
+      "CALENDAR_READ_ONLY": "Can't sync tasks with Google Calendar. The connected account can't edit “{calendar}”.",
+      "CALENDAR_NOT_FOUND": "The calendar “{calendar}” can't be found. It may have been deleted or is no longer shared with you.",
+      "GOOGLE_REVOKED": "Access to Google Calendar was removed. Reconnect your Google account to resume syncing with “{calendar}”.",
+      "CALENDAR_RATE_LIMITED": "Google is temporarily limiting requests. Sync will resume automatically.",
+      "CALENDAR_UNAVAILABLE": "Google Calendar is temporarily unavailable. Sync with “{calendar}” will resume automatically."
+    }
   }
 }

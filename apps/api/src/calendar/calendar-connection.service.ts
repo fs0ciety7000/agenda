@@ -29,7 +29,10 @@ export class CalendarConnectionService {
   ) {}
 
   get configured(): boolean {
-    return Boolean(env().GOOGLE_CLIENT_ID && env().GOOGLE_CLIENT_SECRET && this.tokens.available);
+    return Boolean(
+      (env().GOOGLE_CALENDAR_FAKE || (env().GOOGLE_CLIENT_ID && env().GOOGLE_CLIENT_SECRET)) &&
+      this.tokens.available,
+    );
   }
 
   assertConfigured() {

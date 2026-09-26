@@ -4,6 +4,7 @@ import type { OccurrenceDto } from '@agenda/contracts';
 import { CalendarCheck, Sun } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Balance } from '@/components/app/balance';
+import { CalendarBanner } from '@/components/app/calendar-banner';
 import { useSession } from '@/components/app/household-context';
 import { QuickAdd } from '@/components/app/quick-add';
 import { TaskList } from '@/components/app/task-row';
@@ -39,6 +40,8 @@ export default function TodayPage() {
       <h1 className="text-[2rem] font-semibold leading-tight tracking-tight">
         {t('greeting', { name: member?.displayName ?? me.displayName })}
       </h1>
+
+      <CalendarBanner />
 
       <QuickAdd onMoreOptions={dialog.openNew} />
 

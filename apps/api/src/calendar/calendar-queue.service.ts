@@ -113,11 +113,9 @@ export class CalendarQueueService implements OnModuleInit, OnModuleDestroy {
   /** Synchronisation complète à la demande (bouton « Synchroniser maintenant »). */
   async scheduleFull(householdId: string): Promise<void> {
     if (syncMode() === 'queue' && this.queue) {
-      await this.queue.add(
-        'reconcile',
-        { householdId },
-        { jobId: `reconcile:${householdId}:${Date.now()}` },
-      );
+      await this.queue
+        .add('reconcile', { householdId }, { jobId: `reconcile:${householdId}:${Date.now()}` })
+        .catch((e: Error) => this.logger.warn(`Could not enqueue reconcile: ${e.message}`));
     } else if (syncMode() === 'inline') {
       void this.sync
         .reconcile(householdId)

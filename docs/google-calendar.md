@@ -34,12 +34,13 @@ un calendrier possédé par l'autre membre).
 
 ```
 Web ──GET /v1/calendar/google/connect──▶ API
-API: state = JWT signé {userId, householdId, nonce, PKCE verifier ref}, 10 min
-API ──302──▶ accounts.google.com (scopes calendrier, PKCE S256)
+API: cookie signé httpOnly `gn_cal_oauth` {userId, state, PKCE verifier, next}, 10 min,
+     restreint au chemin /v1/calendar/google
+API ──302──▶ accounts.google.com (scopes calendrier, PKCE S256, access_type=offline, prompt=consent)
 Google ──302 /v1/calendar/google/callback?code&state──▶ API
 API: vérifie state, échange code → tokens, lit l'id_token (sub, email)
      upsert GoogleConnection (refresh token chiffré AES-256-GCM)
-API ──302──▶ Web /settings/calendar?connected=1
+API ──302──▶ Web <next>?calendar=connected   (ou ?calendarError=<code>)
 Web ──GET /v1/households/:id/calendar/available──▶ liste calendarList (accessRole ≥ writer en tête)
 Utilisateur choisit « Commun G & N »
 Web ──PUT /v1/households/:id/calendar/link {connectionId, calendarId}──▶
@@ -60,8 +61,8 @@ Google Calendar connecté · via occmons@gmail.com
 ## 3. Tokens
 
 - Access token : conservé chiffré avec son expiration ; renouvelé si `expiresAt − 60 s < now`.
-- Refresh : `oauth2.refreshAccessToken`. Réponse `invalid_grant` ⇒ autorisation révoquée ou expirée ⇒ `GoogleConnection.status = REVOKED`, toutes les synchros du foyer passent en `BLOCKED`, notification « Reconnectez Google Calendar ».
-- Mutex de refresh par connexion (verrou Redis `SET NX PX`) pour éviter deux refresh concurrents.
+- Refresh : `POST oauth2.googleapis.com/token`. Réponse `invalid_grant` ⇒ autorisation révoquée ou expirée ⇒ `GoogleConnection.status = REVOKED`, lien du foyer `INVALID` (`GOOGLE_REVOKED`), notification « Reconnectez Google Calendar ». Une reconnexion réactive automatiquement le lien.
+- Mutex de refresh par connexion : verrou consultatif PostgreSQL (`pg_advisory_xact_lock`) — pas besoin de Redis, et le verrou suit la transaction qui écrit le nouveau token.
 - Déconnexion / suppression de compte : `oauth2.revokeToken` puis suppression des tokens.
 
 ## 4. Stratégie de synchronisation **[ADR-009]**
@@ -103,19 +104,29 @@ Tâche **personnelle** : jamais synchronisée dans le calendrier partagé.
 
 ## 5. `GoogleCalendarSyncService`
 
+**Implémenté (Phase 4) : un balayage par foyer plutôt qu'un job par occurrence.** La base est la
+file d'attente (*outbox*) : toute mutation incrémente `syncVersion` dans sa transaction ; le
+balayage traite chaque occurrence de la fenêtre dont `syncVersion ≠ syncedVersion` (ou dont
+l'événement doit disparaître). BullMQ ne sert que de **déclencheur** — perdre un job n'a aucune
+conséquence, le balayage périodique rattrape tout.
+
 | Méthode | Rôle |
 |---|---|
-| `createEvent(occ)` | `events.insert` avec id déterministe ; 409 ⇒ `updateEvent` |
-| `updateEvent(occ)` | `events.patch` (ou `update`) ; 404/410 ⇒ recrée |
-| `deleteEvent(link)` | `events.delete` ; 404/410 ⇒ considéré succès (idempotent) |
-| `syncOccurrence(id)` | Décide create/update/delete selon l'état local ; point d'entrée du job |
-| `syncTask(taskId)` / `syncSeries(seriesId)` | Enqueue `syncOccurrence` pour chaque occurrence dans la fenêtre |
-| `reconcile(householdId)` | Liste nos événements (filtre `privateExtendedProperty`) sur la fenêtre, compare au local : manquants ⇒ recréés, orphelins (occurrence supprimée) ⇒ supprimés, doublons (même `gnOccurrenceId`, id différent — ne devrait jamais arriver) ⇒ gardés l'événement canonique, suppression des autres, supprimés côté Google ⇒ politique A7 |
-| `retryFailedSyncs()` | Réenqueue les `ERROR` retryables dont `nextAttemptAt` est échu |
+| `sweep(householdId)` | Étend l'horizon des séries, puis pour chaque occurrence éligible : `upsertEvent` / `deleteEvent`. Renvoie `{created, updated, deleted, failed, blocked?, retryInMs?}` |
+| `upsertEvent` | `events.insert` avec id déterministe ; 409 ⇒ `patch` ; `patch` 404/410 ⇒ `insert` |
+| `deleteEvent` | `events.delete` ; 404/410 ⇒ succès (idempotent) |
+| `reconcile(householdId)` | Liste nos événements (filtre `privateExtendedProperty=gnHouseholdId=…`, `showDeleted`) : orphelins ⇒ supprimés, doublons ⇒ l'événement canonique est gardé, supprimés côté Google ⇒ politique A7 (marqués `DELETED_IN_GOOGLE`, **non recréés**), manquants ⇒ remis en attente |
+| `removeAllEvents(linkId)` | Retire nos événements (changement de calendrier, déliaison, déconnexion) |
 
-Chaque job : charge l'occurrence **à jour** (pas de payload périmé dans la file), compare
-`syncVersion` vs `syncedVersion`, fait l'appel, puis écrit `syncedVersion`, `etag`, `lastSyncedAt`.
-Concurrence : `jobId = occ:<id>` + verrou ⇒ un seul job actif par occurrence.
+Déclenchement (`CalendarQueueService`) :
+- Mutation d'une tâche ⇒ événement de domaine `householdChanged` ⇒ balayage du foyer regroupé
+  sur 2 s (`jobId = sweep:<foyer>:<tranche>`), exécuté **hors requête** (jamais de latence Google
+  pour l'utilisateur).
+- File `calendar-sync` à **concurrence 1** : deux balayages ne se chevauchent jamais.
+- Planifications BullMQ : balayage de tous les foyers liés toutes les **10 min**, réconciliation
+  toutes les **6 h** ; bouton « Synchroniser maintenant » = réconciliation + balayage.
+- Modes (`CALENDAR_SYNC_MODE`) : `queue` si `REDIS_URL` est défini (production), `inline`
+  (minuteries en mémoire, développement sans Redis), `off` (tests : appels directs).
 
 ### Édition d'une occurrence récurrente (cohérence avec Google)
 
@@ -141,7 +152,9 @@ Concurrence : `jobId = occ:<id>` + verrou ⇒ un seul job actif par occurrence.
 | 412 (etag) | modifié côté Google entre-temps | relire, appliquer, retry | — | — |
 
 Backoff : `délai = min(2^tentative × 1 s, 1 h) ± 20 % jitter`, 8 tentatives, puis `ERROR` +
-notification ; `retryFailedSyncs` réessaie toutes les heures les erreurs retryables.
+notification. Une erreur bloquante (droits, calendrier supprimé, révocation) arrête le balayage
+du foyer, passe le lien en `INVALID` et notifie les membres ; le quota (429 / `rateLimitExceeded`)
+arrête le balayage et le replanifie après le délai de backoff.
 
 ## 7. Cas de droits (cahier des charges §37)
 
@@ -154,11 +167,31 @@ notification ; `retryFailedSyncs` réessaie toutes les heures les erreurs retrya
 | Supprimé après liaison | 404 | lien `INVALID`, bannière, re-sélection |
 | Autorisation révoquée | `invalid_grant` | connexion `REVOKED`, bouton « Reconnecter » (pour n'importe quel membre ayant les droits) |
 
-## 8. Plan de test (Phase 4)
+## 8. Tests (Phase 4)
 
-Faux client Google en mémoire (`FakeGoogleCalendarClient`) reproduisant ids client, 409, 404/410,
-403, 429, `invalid_grant` ; puis tests manuels sur un calendrier de test, puis sur « Commun G & N ».
-Tests nommés : création récurrente → N événements ; rotation reflétée dans les titres ;
-modification d'une occurrence ; suppression d'une occurrence ; split de série ; crash entre
-insert Google et commit local (⇒ 409 ⇒ pas de doublon) ; expiration du token ; révocation ;
-reconnexion ; calendrier supprimé ; droits en lecture seule ; réconciliation d'un orphelin.
+Faux client Google en mémoire (`apps/api/src/calendar/fake-google-calendar.ts`) fidèle aux ids
+client, 409, 404/410, 403 lecture seule, 429, `invalid_grant`, expiration des access tokens.
+`apps/api/test/calendar.int.test.ts` (16 tests) : OAuth + chiffrement des tokens ; listing et
+calendrier en lecture seule refusé ; isolation entre foyers ; tâche récurrente → N événements avec
+la rotation dans les titres ; modification d'une occurrence ; « ✓ » à la complétion ; suppressions ;
+« celle-ci et les suivantes » ; tâches personnelles / non cochées jamais envoyées ; **crash entre
+l'insert Google et l'écriture locale ⇒ aucun doublon** ; expiration du token ; révocation puis
+reconnexion ; calendrier supprimé ; quota et erreur transitoire ; réconciliation (orphelin, doublon,
+supprimé chez Google, manquant) ; déliaison ; déconnexion. `calendar-queue.int.test.ts` : vraie file
+BullMQ sur Redis. E2E Playwright `calendar.spec.ts` (parcours complet avec `E2E_FAKE_GOOGLE=1`).
+
+### Mode démo (développement)
+
+`GOOGLE_CALENDAR_FAKE=true` (refusé si `NODE_ENV=production`) remplace Google par le faux client,
+avec trois calendriers : « Commun G & N » (writer), un calendrier principal (owner) et « Jours
+fériés » (reader). Le bouton « Connecter Google Calendar » revient directement sur l'application.
+
+### Recette manuelle (à faire une fois en production)
+
+1. Réglages → **Connecter Google Calendar** avec occmons@gmail.com (écran « application non
+   vérifiée » : *Paramètres avancés → Accéder à Agenda G & N*).
+2. Choisir **« Commun G & N »** (présélectionné) → **Utiliser ce calendrier**.
+3. Créer une tâche datée avec « Ajouter au calendrier partagé » ; vérifier l'événement dans Google
+   Calendar (titre « Tâche · Prénom »), puis la cocher (« ✓ »), la déplacer, la supprimer.
+4. Créer une tâche récurrente avec rotation ; modifier « cette occurrence » puis « toute la série ».
+5. Supprimer un événement à la main dans Google : il n'est **pas** recréé (A7).

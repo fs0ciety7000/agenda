@@ -22,3 +22,6 @@ apps/android/.idea/
 apps/android/.kotlin/
 apps/web/test-results/
 apps/web/playwright-report/
+
+# Redis local
+dump.rdb

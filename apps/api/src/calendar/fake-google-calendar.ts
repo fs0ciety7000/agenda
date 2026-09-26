@@ -5,16 +5,31 @@ import {
   type GoogleErrorKind,
   type GoogleEvent,
   type TokenSet,
-} from '../src/calendar/google-calendar.client';
+} from './google-calendar.client';
 
 const b64 = (o: object) => Buffer.from(JSON.stringify(o)).toString('base64url');
 
 /**
- * Faux Google Calendar en mémoire, fidèle aux points qui comptent pour la synchro :
+ * Faux Google Calendar en mémoire (tests et mode démo de développement, jamais en production), fidèle aux points qui comptent pour la synchro :
  * identifiants d'événements imposés (409 si déjà pris, même supprimé), 404/410, droits
  * owner/writer/reader, jetons d'accès qui expirent, refresh tokens révocables, pannes injectables.
  */
 export class FakeGoogleCalendar extends GoogleCalendarClient {
+  /** Mode démo (développement) : calendriers d'exemple et OAuth sans écran Google. */
+  static demo(): FakeGoogleCalendar {
+    const fake = new FakeGoogleCalendar();
+    fake.demo = true;
+    fake.addCalendar('commun-gn@group.calendar.google.com', 'Commun G & N', 'writer');
+    fake.addCalendar('demo@example.test', 'demo@example.test', 'owner');
+    fake.addCalendar(
+      'fr.be#holiday@group.v.calendar.google.com',
+      'Jours fériés en Belgique',
+      'reader',
+    );
+    return fake;
+  }
+
+  private demo = false;
   calendars = new Map<string, { entry: CalendarListEntry; events: Map<string, GoogleEvent> }>();
   private access = new Set<string>();
   private refreshTokens = new Map<string, { sub: string; email: string; revoked: boolean }>();
@@ -132,6 +147,10 @@ export class FakeGoogleCalendar extends GoogleCalendarClient {
   }
 
   authorizationUrl(p: { redirectUri: string; state: string }) {
+    if (this.demo) {
+      // Mode démo : pas d'écran Google, retour direct sur l'application avec un compte fictif.
+      return `${p.redirectUri}?code=${encodeURIComponent('demo-user|demo@example.test')}&state=${p.state}`;
+    }
     return `https://accounts.google.test/o/oauth2/v2/auth?state=${p.state}&redirect_uri=${encodeURIComponent(p.redirectUri)}`;
   }
 
