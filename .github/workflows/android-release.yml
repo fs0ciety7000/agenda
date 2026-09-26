@@ -42,6 +42,25 @@ jobs:
           distribution: temurin
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
+      - name: Vérifier la configuration Firebase (facultative)
+        env:
+          FCM_APP_ID: ${{ vars.FCM_APP_ID }}
+          FCM_API_KEY: ${{ vars.FCM_API_KEY }}
+          FCM_PROJECT_ID: ${{ vars.FCM_PROJECT_ID }}
+          FCM_SENDER_ID: ${{ vars.FCM_SENDER_ID }}
+        run: |
+          # Tout vide = notifications instantanées désactivées (normal). Sinon, les 4 valeurs doivent
+          # être celles de google-services.json (docs/android.md §4.1), pas les chemins du tableau.
+          if [ -z "$FCM_APP_ID$FCM_API_KEY$FCM_PROJECT_ID$FCM_SENDER_ID" ]; then
+            echo "Firebase non configuré : notifications instantanées désactivées."; exit 0
+          fi
+          ok=true
+          [[ "$FCM_APP_ID" =~ ^1:[0-9]+:android:[0-9a-f]+$ ]] || { echo "::error::FCM_APP_ID doit ressembler à 1:123456789012:android:0a1b2c3d4e5f…"; ok=false; }
+          [[ "$FCM_API_KEY" =~ ^AIza[0-9A-Za-z_-]{35}$ ]] || { echo "::error::FCM_API_KEY doit ressembler à AIza… (39 caractères)"; ok=false; }
+          [[ "$FCM_PROJECT_ID" =~ ^[a-z][a-z0-9-]{4,29}$ ]] || { echo "::error::FCM_PROJECT_ID doit ressembler à agenda-gn"; ok=false; }
+          [[ "$FCM_SENDER_ID" =~ ^[0-9]+$ ]] || { echo "::error::FCM_SENDER_ID doit être un nombre (project_number)"; ok=false; }
+          [[ "$FCM_APP_ID" == "1:$FCM_SENDER_ID:"* ]] || { echo "::error::FCM_APP_ID et FCM_SENDER_ID ne viennent pas du même projet"; ok=false; }
+          $ok
       - name: Construire l'APK (production)
         env:
           KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
