@@ -111,7 +111,11 @@ function TasksView() {
         </Button>
       </div>
 
-      <nav aria-label={t('views')} className="-mx-4 overflow-x-auto px-4 md:mx-0 md:px-0">
+      {/* Marge verticale dans la zone qui défile : sinon elle rogne les pastilles (texte agrandi). */}
+      <nav
+        aria-label={t('views')}
+        className="-mx-4 -my-1 overflow-x-auto px-4 py-1 [scrollbar-width:none] md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden"
+      >
         <ul className="flex gap-1.5">
           {TABS.map((key) => {
             const next = new URLSearchParams(params);
@@ -124,7 +128,7 @@ function TasksView() {
                   scroll={false}
                   aria-current={tab === key ? 'page' : undefined}
                   className={cn(
-                    'inline-flex h-9 items-center whitespace-nowrap rounded-full border border-border px-3.5 text-sm text-text-muted transition-colors hover:text-text',
+                    'inline-flex min-h-9 items-center whitespace-nowrap rounded-full border border-border px-3.5 py-1.5 text-sm text-text-muted transition-colors hover:text-text',
                     tab === key && 'border-text bg-text text-bg hover:text-bg',
                   )}
                 >
