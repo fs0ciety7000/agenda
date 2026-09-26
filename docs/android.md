@@ -20,6 +20,9 @@ métier propre à Android : les règles (récurrence, rotation, quick add) reste
   partagé. Modifier / supprimer une tâche récurrente demande la portée (celle-ci, les suivantes, toute la série).
 - **Rappels** : notification avant chaque tâche planifiée qui me concerne (moi, à deux, à définir),
   délai réglable, bouton **Fait** dans la notification (fonctionne hors ligne).
+- **Activité** : « Nicolas vous a attribué … » en notification système (si activé dans
+  Réglages → Notifications sur le web), vérifié au retour dans l'app et à chaque synchronisation
+  de fond ; la première vérification après installation ne notifie rien d'ancien.
 
 ## 2. Hors ligne (ADR-007, tel qu'implémenté)
 

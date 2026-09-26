@@ -9,6 +9,7 @@ import { CalendarSettings } from '@/components/app/calendar-settings';
 import { CategoriesSettings } from '@/components/app/categories-settings';
 import { InviteLink } from '@/components/app/invite-link';
 import { AndroidAppCard } from '@/components/app/android-app-card';
+import { NotificationSettings } from '@/components/app/notification-settings';
 import { PasswordSettings } from '@/components/app/password-settings';
 import { PrivacySettings } from '@/components/app/privacy-settings';
 import { MemberAvatar } from '@/components/app/member-avatar';
@@ -101,6 +102,13 @@ export default function SettingsPage() {
             </button>
           ))}
         </div>
+      </section>
+
+      <section className="flex flex-col gap-3" aria-labelledby="s-notifications">
+        <SectionTitle id="s-notifications">{t('notifications')}</SectionTitle>
+        <Card>
+          <NotificationSettings />
+        </Card>
       </section>
 
       <section className="flex flex-col gap-3" aria-labelledby="s-privacy">

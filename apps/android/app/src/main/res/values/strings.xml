@@ -173,4 +173,8 @@
     <string name="update_allow">Autoriser les mises à jour</string>
     <string name="up_to_date">L\'app est à jour.</string>
     <string name="privacy_policy">Politique de confidentialité</string>
+    <string name="activity_channel">Activité du foyer</string>
+    <string name="activity_assigned">%1$s vous a confié « %2$s »</string>
+    <string name="activity_assigned_recurring">%1$s vous a inclus dans « %2$s » (récurrente)</string>
+    <string name="activity_calendar_failed">La synchronisation avec Google Calendar est interrompue. Ouvrez les Réglages du site.</string>
 </resources>

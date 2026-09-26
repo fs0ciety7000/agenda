@@ -9,7 +9,8 @@
     "tasks": "Tâches",
     "calendar": "Calendrier",
     "settings": "Réglages",
-    "main": "Navigation principale"
+    "main": "Navigation principale",
+    "stats": "Bilan"
   },
   "auth": {
     "loginTitle": "Bon retour",
@@ -107,8 +108,9 @@
     "continue": "Continuer",
     "later": "Plus tard",
     "stepCalendar": "Connecter Google Calendar",
-    "calendarBody": "Facultatif : vos tâches planifiées apparaîtront dans votre calendrier partagé (par exemple « Commun G & N »).",
-    "connectCalendar": "Connecter Google Calendar"
+    "calendarBody": "Facultatif : vos tâches planifiées apparaîtront dans votre calendrier partagé (par exemple « Commun G & N »). Vous pourrez aussi le faire plus tard dans les Réglages.",
+    "connectCalendar": "Connecter Google Calendar",
+    "yourNameHint": "C'est ainsi que l'autre personne vous verra dans les tâches."
   },
   "invite": {
     "title": "Rejoindre un foyer",
@@ -133,7 +135,8 @@
     "logout": "Se déconnecter",
     "logoutAll": "Se déconnecter de tous les appareils",
     "categories": "Catégories",
-    "privacy": "Données & confidentialité"
+    "privacy": "Données & confidentialité",
+    "notifications": "Notifications"
   },
   "common": {
     "loading": "Chargement…",
@@ -352,7 +355,12 @@
     "allDay": "Journée",
     "createAt": "Nouvelle tâche à {time}",
     "openDay": "Voir le {date}",
-    "more": "+{count} autres"
+    "more": "+{count} autres",
+    "moved": "« {title} » déplacée : {when}",
+    "resized": "Durée de « {title} » modifiée",
+    "undo": "Annuler",
+    "moveError": "Impossible de déplacer la tâche. Réessayez.",
+    "dragHint": "Astuce : faites glisser une tâche pour la déplacer (appui long sur mobile) et tirez son bord inférieur pour changer sa durée. Au clavier, sur une tâche : Alt + ↑/↓ décale de 15 minutes, Alt + ←/→ change de jour, avec Maj pour la durée."
   },
   "privacy": {
     "google": "Connexion avec Google",
@@ -494,5 +502,51 @@
       "body": "Pour toute question ou demande :",
       "fallback": "Pour toute question ou demande, contactez l'administrateur de votre foyer."
     }
+  },
+  "notifications": {
+    "bell": "Notifications",
+    "bellUnread": "Notifications, {count, plural, one {# non lue} other {# non lues}}",
+    "title": "Notifications",
+    "empty": "Rien de nouveau.",
+    "markAll": "Tout marquer comme lu",
+    "unread": "Non lue",
+    "assigned": "{by} vous a confié « {title} »",
+    "assignedRecurring": "{by} vous a inclus dans « {title} » (récurrente)",
+    "assignedDeleted": "{by} vous avait confié une tâche, supprimée depuis",
+    "calendarFailed": "La synchronisation avec Google Calendar est interrompue. Ouvrez les Réglages."
+  },
+  "notificationSettings": {
+    "title": "Préférences de notification",
+    "inApp": "Dans l'app",
+    "push": "Sur le téléphone",
+    "hint": "« Sur le téléphone » : notifications de l'app Android (vérifiées toutes les heures et à l'ouverture). Les rappels avant une tâche se règlent dans l'app Android.",
+    "types": {
+      "TASK_ASSIGNED": "Quelqu'un me confie une tâche",
+      "CALENDAR_SYNC_FAILED": "Problème de synchronisation Google Calendar"
+    }
+  },
+  "stats": {
+    "title": "Bilan",
+    "period": "Période",
+    "days7": "7 jours",
+    "days30": "30 jours",
+    "intro": "Tâches partagées du foyer. Pour s'organiser ensemble — pas pour compter les points.",
+    "done": "Faites",
+    "time": "Temps passé",
+    "late": "Faites en retard",
+    "lateHint": "après leur date prévue",
+    "overdue": "En retard",
+    "overdueHint": "à rattraper aujourd'hui",
+    "perDay": "Tâches faites par jour",
+    "empty": "Aucune tâche faite sur cette période.",
+    "showTable": "Voir les chiffres",
+    "day": "Jour",
+    "doneCount": "{count, plural, one {# faite} other {# faites}}",
+    "byCategory": "Par catégorie",
+    "noCategory": "Sans catégorie",
+    "byMember": "Qui a coché",
+    "memberHint": "Une tâche « à deux » compte pour la personne qui l'a cochée.",
+    "minutes": "{m} min",
+    "hours": "{h} h {m}"
   }
 }

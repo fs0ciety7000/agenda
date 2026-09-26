@@ -59,6 +59,10 @@ class SyncWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
     override suspend fun doWork(): Result {
         val container = (applicationContext as AgendaApplication).container
         val outcome = container.repository.refresh()
+        // « Nicolas vous a confié… » : notifications du foyer affichées sur le téléphone.
+        if (outcome == RefreshOutcome.OK) {
+            container.database.households().current()?.let { container.activityNotifier.poll(it.id) }
+        }
         // Nouvelle version de l'app : une notification par version.
         container.updater.check()?.let { UpdateNotifier.notifyOnce(applicationContext, it) }
         val pending = container.database.pendingOperations().count()

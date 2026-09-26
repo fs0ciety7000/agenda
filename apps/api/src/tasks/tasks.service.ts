@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import type {
   BalanceDto,
@@ -13,6 +13,8 @@ import type {
   RecurrencePreviewItem,
   RotationInput,
   SeriesDto,
+  StatsDto,
+  StatsQuery,
   UpdateOccurrenceInput,
 } from '@agenda/contracts';
 import {
@@ -24,11 +26,14 @@ import {
   type Rule,
   startOfWeek,
   todayIn,
+  wallClock,
+  zonedToUtc,
 } from '@agenda/domain';
 import { AppException, notFound } from '../common/app-exception';
 import { fromDbDate, toDbDate } from '../common/dates';
 import { DomainEvents } from '../common/domain-events';
 import { HouseholdContext } from '../common/request-context';
+import { NotificationsService } from '../notifications/notifications.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { type Schedule, scheduleColumns } from './schedule';
 import { boundsOf, rotationConfig, rotationMemberIds, SeriesService } from './series.service';
@@ -49,11 +54,22 @@ const validation = (field: string, message: string) =>
 
 @Injectable()
 export class TasksService {
+  private readonly logger = new Logger(TasksService.name);
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly series: SeriesService,
     private readonly events: DomainEvents,
+    private readonly notifications: NotificationsService,
   ) {}
+
+  /** Une notification ratée ne doit jamais faire échouer l'action de l'utilisateur. */
+  private async notifyAssigned(ctx: HouseholdContext, o: OccurrenceDto, memberIds: string[]) {
+    if (o.visibility !== 'SHARED' || !memberIds.length) return;
+    await this.notifications
+      .notifyAssigned(ctx, o.id, memberIds, o.isRecurring)
+      .catch((e: Error) => this.logger.warn(`Notification failed: ${e.message}`));
+  }
 
   // ───────────── Lecture ─────────────
 
@@ -281,7 +297,13 @@ export class TasksService {
       return this.firstOccurrenceId(tx, seriesId);
     });
     this.events.householdChanged(ctx.householdId);
-    return this.get(ctx, occurrenceId);
+    const created = await this.get(ctx, occurrenceId);
+    await this.notifyAssigned(
+      ctx,
+      created,
+      recurrence ? rotationMemberIds(recurrence.rotation) : assigneeIds,
+    );
+    return created;
   }
 
   async previewQuickAdd(ctx: HouseholdContext, text: string): Promise<QuickAddPreview> {
@@ -352,8 +374,18 @@ export class TasksService {
     input: UpdateOccurrenceInput,
     scope: EditScope,
   ): Promise<OccurrenceDto> {
+    const before = await this.prisma.occurrenceAssignee.findMany({
+      where: { occurrenceId: id },
+      select: { memberId: true },
+    });
     const result = await this.applyUpdate(ctx, id, input, scope);
     this.events.householdChanged(ctx.householdId);
+    const previous = new Set(before.map((a) => a.memberId));
+    await this.notifyAssigned(
+      ctx,
+      result,
+      result.assigneeIds.filter((m) => !previous.has(m)),
+    );
     return result;
   }
 
@@ -788,6 +820,88 @@ export class TasksService {
   // ───────────── Répartition ─────────────
 
   /** Répartition factuelle des tâches partagées sur une période (semaine courante par défaut). */
+  /** Statistiques des tâches partagées sur 7 ou 30 jours (jusqu'à aujourd'hui inclus). */
+  async stats(ctx: HouseholdContext, query: StatsQuery): Promise<StatsDto> {
+    const tz = await this.timezone(ctx);
+    const to = todayIn(tz);
+    const from = addDays(to, -(query.days - 1));
+    const shared = { deletedAt: null, visibility: 'SHARED' as const };
+    const [done, overdue, members] = await Promise.all([
+      this.prisma.taskOccurrence.findMany({
+        where: {
+          householdId: ctx.householdId,
+          status: 'DONE',
+          completedAt: { gte: zonedToUtc(from, 0, tz) },
+          task: shared,
+        },
+        select: {
+          date: true,
+          durationMinutes: true,
+          completedAt: true,
+          completedById: true,
+          task: { select: { category: { select: { id: true, name: true, emoji: true } } } },
+        },
+      }),
+      this.prisma.taskOccurrence.count({
+        where: {
+          householdId: ctx.householdId,
+          status: 'TODO',
+          date: { lt: toDbDate(to) },
+          task: shared,
+        },
+      }),
+      this.prisma.householdMember.findMany({
+        where: { householdId: ctx.householdId, leftAt: null },
+        orderBy: { joinedAt: 'asc' },
+        select: { id: true },
+      }),
+    ]);
+
+    const perDay = new Map<string, number>();
+    for (let d = from; d <= to; d = addDays(d, 1)) perDay.set(d, 0);
+    const byCategory = new Map<string, StatsDto['byCategory'][number]>();
+    const byMember = new Map(members.map((m) => [m.id, { memberId: m.id, done: 0, minutes: 0 }]));
+    let minutes = 0;
+    let late = 0;
+    for (const o of done) {
+      const day = wallClock(o.completedAt!, tz).date;
+      perDay.set(day, (perDay.get(day) ?? 0) + 1);
+      const m = o.durationMinutes ?? 0;
+      minutes += m;
+      const planned = fromDbDate(o.date);
+      if (planned && planned < day) late += 1;
+      const cat = o.task.category;
+      const key = cat?.id ?? 'none';
+      const entry = byCategory.get(key) ?? {
+        categoryId: cat?.id ?? null,
+        name: cat?.name ?? null,
+        emoji: cat?.emoji ?? null,
+        done: 0,
+        minutes: 0,
+      };
+      entry.done += 1;
+      entry.minutes += m;
+      byCategory.set(key, entry);
+      const member = o.completedById ? byMember.get(o.completedById) : undefined;
+      if (member) {
+        member.done += 1;
+        member.minutes += m;
+      }
+    }
+    return {
+      from,
+      to,
+      days: query.days,
+      done: done.length,
+      doneMinutes: minutes,
+      doneLate: late,
+      overdue,
+      perDay: [...perDay].map(([date, count]) => ({ date, done: count })),
+      byCategory: [...byCategory.values()].sort((a, b) => b.done - a.done),
+      byMember: [...byMember.values()],
+    };
+  }
+
   async balance(ctx: HouseholdContext, query: BalanceQuery): Promise<BalanceDto> {
     const tz = await this.timezone(ctx);
     const today = todayIn(tz);

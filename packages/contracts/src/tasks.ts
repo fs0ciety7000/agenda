@@ -174,3 +174,38 @@ export type RecurrencePreviewInput = z.infer<typeof RecurrencePreviewInput>;
 
 export const RecurrencePreviewItem = z.object({ date: IsoDate, assigneeIds: z.array(z.uuid()) });
 export type RecurrencePreviewItem = z.infer<typeof RecurrencePreviewItem>;
+
+export const StatsQuery = z.object({
+  days: z.coerce
+    .number()
+    .int()
+    .refine((d) => d === 7 || d === 30, 'days must be 7 or 30')
+    .default(7),
+});
+export type StatsQuery = z.infer<typeof StatsQuery>;
+
+const StatsShare = z.object({ done: z.number().int(), minutes: z.number().int() });
+
+/** Statistiques factuelles des tâches PARTAGÉES (jamais de classement). */
+export const StatsDto = z.object({
+  from: IsoDate,
+  to: IsoDate,
+  days: z.number().int(),
+  done: z.number().int(),
+  doneMinutes: z.number().int(),
+  /** Faites après leur date prévue. */
+  doneLate: z.number().int(),
+  /** À faire dont la date est passée (aujourd'hui). */
+  overdue: z.number().int(),
+  perDay: z.array(z.object({ date: IsoDate, done: z.number().int() })),
+  byCategory: z.array(
+    StatsShare.extend({
+      categoryId: z.uuid().nullable(),
+      name: z.string().nullable(),
+      emoji: z.string().nullable(),
+    }),
+  ),
+  /** Par personne qui a coché la tâche. */
+  byMember: z.array(StatsShare.extend({ memberId: z.uuid() })),
+});
+export type StatsDto = z.infer<typeof StatsDto>;

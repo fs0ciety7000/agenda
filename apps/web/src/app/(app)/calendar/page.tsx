@@ -12,21 +12,30 @@ import {
 import { ChevronLeft, ChevronRight, Repeat } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useFormatter, useTranslations } from 'next-intl';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useRef, useState, type PointerEvent } from 'react';
+import {
+  nudge,
+  placementOf,
+  useCalendarDrag,
+  type DragMode,
+  type Placement,
+} from '@/components/app/calendar-drag';
 import { useSession } from '@/components/app/household-context';
 import { useWeekdayName } from '@/components/app/recurrence-text';
 import { useTaskDialog } from '@/components/app/use-task-dialog';
 import { Button } from '@/components/ui/button';
 import { Segmented } from '@/components/ui/segmented';
 import { Skeleton } from '@/components/ui/states';
+import { useToast } from '@/components/ui/toast';
 import { cn } from '@/lib/cn';
-import { formatTime, useToday } from '@/lib/format';
-import { useOccurrences } from '@/lib/tasks';
+import { formatTime, useDayLabel, useToday } from '@/lib/format';
+import { useMoveOccurrence, useOccurrences } from '@/lib/tasks';
 
 type View = 'day' | 'week' | 'month';
 const HOUR_PX = 48;
 const DEFAULT_START = 7;
 const DEFAULT_END = 23;
+const DRAG_HINT_ID = 'calendar-drag-hint';
 
 const MEMBER_BLOCK: Record<HouseholdMemberDto['color'], string> = {
   sage: 'bg-member-sage/15 border-member-sage',
@@ -124,6 +133,35 @@ function CalendarView() {
   const { from, to, days } = range(view, anchor);
   const occurrences = useOccurrences(household.id, { view: 'all', from, to, limit: 500 });
   const items = occurrences.data ?? [];
+  const move = useMoveOccurrence(household.id);
+  const toast = useToast();
+  const dayLabel = useDayLabel();
+
+  const onMove = (o: OccurrenceDto, to: Placement) => {
+    const from = placementOf(o);
+    move.mutate(
+      { o, ...to },
+      {
+        onSuccess: (updated) =>
+          toast({
+            message: t(
+              to.date === from.date && to.startMinute === from.startMinute ? 'resized' : 'moved',
+              {
+                title: o.title,
+                when: [
+                  dayLabel(to.date),
+                  to.startMinute != null ? formatTime(to.startMinute) : null,
+                ]
+                  .filter(Boolean)
+                  .join(' · '),
+              },
+            ),
+            action: { label: t('undo'), onClick: () => move.mutate({ o: updated, ...from }) },
+          }),
+        onError: () => toast({ message: t('moveError'), tone: 'error' }),
+      },
+    );
+  };
 
   const go = (next: Partial<{ view: View; date: string }>) => {
     const q = new URLSearchParams(params);
@@ -201,6 +239,7 @@ function CalendarView() {
           items={items}
           onOpen={dialog.openEdit}
           onPick={(d) => go({ view: 'day', date: d })}
+          onMove={onMove}
           dayName={dayName}
         />
       ) : (
@@ -210,12 +249,29 @@ function CalendarView() {
           items={items}
           onOpen={dialog.openEdit}
           onCreate={dialog.openNew}
+          onMove={onMove}
           dayName={dayName}
         />
+      )}
+      {occurrences.data && (
+        <p id={DRAG_HINT_ID} className="text-xs text-text-muted">
+          {t('dragHint')}
+        </p>
       )}
       {dialog.dialog}
     </div>
   );
+}
+
+type MoveHandler = (o: OccurrenceDto, to: Placement) => void;
+
+/** Remplace la tâche en cours de glissement par sa position provisoire. */
+function withPreview(
+  items: OccurrenceDto[],
+  preview: { id: string; placement: Placement } | null,
+): OccurrenceDto[] {
+  if (!preview) return items;
+  return items.map((o) => (o.id === preview.id ? { ...o, ...preview.placement } : o));
 }
 
 function TimeGrid({
@@ -224,6 +280,7 @@ function TimeGrid({
   items,
   onOpen,
   onCreate,
+  onMove,
   dayName,
 }: {
   days: string[];
@@ -231,11 +288,16 @@ function TimeGrid({
   items: OccurrenceDto[];
   onOpen: (o: OccurrenceDto) => void;
   onCreate: (draft: { date: string; startMinute: number }) => void;
+  onMove: MoveHandler;
   dayName: (weekday: number, style?: 'long' | 'short' | 'narrow') => string;
 }) {
   const t = useTranslations('calendar');
   const { household } = useSession();
-  const byDay = new Map(days.map((d) => [d, items.filter((o) => o.date === d)]));
+  const gridRef = useRef<HTMLDivElement>(null);
+  const drag = useCalendarDrag({ containerRef: gridRef, pxPerHour: HOUR_PX, onDrop: onMove });
+  const shown = withPreview(items, drag.preview);
+  const byDay = new Map(days.map((d) => [d, shown.filter((o) => o.date === d)]));
+  // Plage horaire calculée sur les positions enregistrées : la grille ne bouge pas sous le pointeur.
   const timed = items.filter((o) => o.startMinute != null);
   const startHour = Math.min(DEFAULT_START, ...timed.map((o) => Math.floor(o.startMinute! / 60)));
   const endHour = Math.max(
@@ -251,10 +313,18 @@ function TimeGrid({
   // Heure « murale » du foyer, pas celle du navigateur.
   const nowMinute = wallClock(now, household.timezone).minute;
   const hasAllDay = items.some((o) => o.date && o.startMinute == null);
+  const blockProps = (o: OccurrenceDto) => ({
+    o,
+    members: household.members,
+    dragging: drag.preview?.id === o.id,
+    onOpen: (x: OccurrenceDto) => !drag.consumeClick() && onOpen(x),
+    onDragStart: (e: PointerEvent, mode: DragMode) => drag.start(e, o, mode),
+    onNudge: onMove,
+  });
 
   return (
     <div className="overflow-x-auto rounded-lg border border-border bg-surface">
-      <div className={cn(days.length > 1 && 'min-w-[40rem]')}>
+      <div ref={gridRef} className={cn(days.length > 1 && 'min-w-[40rem]')}>
         {/* En-têtes de jours */}
         <div
           className="grid border-b border-border"
@@ -284,12 +354,12 @@ function TimeGrid({
               {t('allDay')}
             </div>
             {days.map((d) => (
-              <div key={d} className="flex flex-col gap-1 border-l border-border p-1">
+              <div key={d} data-date={d} className="flex flex-col gap-1 border-l border-border p-1">
                 {byDay
                   .get(d)!
                   .filter((o) => o.startMinute == null)
                   .map((o) => (
-                    <Block key={o.id} o={o} members={household.members} onOpen={onOpen} compact />
+                    <Block key={o.id} {...blockProps(o)} compact />
                   ))}
               </div>
             ))}
@@ -314,7 +384,7 @@ function TimeGrid({
             ))}
           </div>
           {days.map((d) => (
-            <div key={d} className="relative border-l border-border">
+            <div key={d} data-date={d} className="relative border-l border-border">
               {hours.map((h) => (
                 <button
                   key={h}
@@ -340,15 +410,14 @@ function TimeGrid({
                   className="absolute z-20 px-0.5"
                   style={{
                     top: ((start - startHour * 60) / 60) * HOUR_PX,
-                    height: Math.max(((end - start) / 60) * HOUR_PX, 22),
+                    height: Math.max(((end - start) / 60) * HOUR_PX, 24),
                     left: `${(lane / lanes) * 100}%`,
                     width: `${100 / lanes}%`,
                   }}
                 >
                   <Block
-                    o={o}
-                    members={household.members}
-                    onOpen={onOpen}
+                    {...blockProps(o)}
+                    resizable
                     compact={((end - start) / 60) * HOUR_PX < 38}
                   />
                 </div>
@@ -365,11 +434,19 @@ function Block({
   o,
   members,
   onOpen,
+  onDragStart,
+  onNudge,
+  dragging,
+  resizable,
   compact,
 }: {
   o: OccurrenceDto;
   members: HouseholdMemberDto[];
   onOpen: (o: OccurrenceDto) => void;
+  onDragStart?: (e: PointerEvent, mode: DragMode) => void;
+  onNudge?: MoveHandler;
+  dragging?: boolean;
+  resizable?: boolean;
   compact?: boolean;
 }) {
   const done = o.status === 'DONE';
@@ -381,11 +458,29 @@ function Block({
     <button
       type="button"
       onClick={() => onOpen(o)}
+      onPointerDown={onDragStart && ((e) => onDragStart(e, 'move'))}
+      onKeyDown={
+        onNudge &&
+        ((e) => {
+          if (!e.altKey) return;
+          const to = nudge(o, e.key, e.shiftKey);
+          if (!to) return;
+          e.preventDefault();
+          onNudge(o, to);
+        })
+      }
+      aria-keyshortcuts={
+        onNudge ? 'Alt+ArrowUp Alt+ArrowDown Alt+ArrowLeft Alt+ArrowRight' : undefined
+      }
+      aria-describedby={onNudge ? DRAG_HINT_ID : undefined}
       className={cn(
-        'flex h-full w-full flex-col overflow-hidden rounded-sm border-l-[3px] px-1.5 py-1 text-left text-xs',
+        'relative flex h-full w-full touch-manipulation select-none flex-col overflow-hidden rounded-sm border-l-[3px] px-1.5 py-1 text-left text-xs [-webkit-touch-callout:none]',
         blockColor(o, members),
         done && 'opacity-55',
-        compact && 'py-0.5',
+        compact && 'min-h-6 py-0.5',
+        onDragStart && 'cursor-grab',
+        dragging &&
+          'cursor-grabbing opacity-90 shadow-[0_4px_12px_rgb(0_0_0/0.18)] ring-2 ring-accent',
       )}
     >
       <span className={cn('truncate font-medium text-text', done && 'line-through')}>
@@ -398,6 +493,13 @@ function Block({
           {names && ` · ${names}`}
         </span>
       )}
+      {resizable && onDragStart && o.startMinute != null && (
+        <span
+          aria-hidden
+          onPointerDown={(e) => onDragStart(e, 'resize')}
+          className="absolute inset-x-0 bottom-0 h-2 cursor-ns-resize after:absolute after:bottom-0.5 after:left-1/2 after:h-0.5 after:w-6 after:-translate-x-1/2 after:rounded-full after:bg-text-muted/50"
+        />
+      )}
     </button>
   );
 }
@@ -409,6 +511,7 @@ function MonthGrid({
   items,
   onOpen,
   onPick,
+  onMove,
   dayName,
 }: {
   days: string[];
@@ -417,13 +520,18 @@ function MonthGrid({
   items: OccurrenceDto[];
   onOpen: (o: OccurrenceDto) => void;
   onPick: (date: string) => void;
+  onMove: MoveHandler;
   dayName: (weekday: number, style?: 'long' | 'short' | 'narrow') => string;
 }) {
   const t = useTranslations('calendar');
   const { household } = useSession();
+  const format = useFormatter();
   const month = anchor.slice(0, 7);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const drag = useCalendarDrag({ containerRef: gridRef, pxPerHour: 0, onDrop: onMove });
+  const shown = withPreview(items, drag.preview);
   return (
-    <div className="overflow-hidden rounded-lg border border-border bg-surface">
+    <div ref={gridRef} className="overflow-hidden rounded-lg border border-border bg-surface">
       <div className="grid grid-cols-7 border-b border-border">
         {Array.from({ length: 7 }, (_, i) => (
           <div key={i} className="py-2 text-center text-xs text-text-muted first-letter:uppercase">
@@ -433,10 +541,11 @@ function MonthGrid({
       </div>
       <div className="grid grid-cols-7">
         {days.map((d) => {
-          const dayItems = items.filter((o) => o.date === d);
+          const dayItems = shown.filter((o) => o.date === d);
           return (
             <div
               key={d}
+              data-date={d}
               className={cn(
                 'min-h-24 border-b border-l border-border p-1 first:border-l-0 [&:nth-child(7n+1)]:border-l-0',
                 d.slice(0, 7) !== month && 'bg-bg/60',
@@ -445,21 +554,37 @@ function MonthGrid({
               <button
                 type="button"
                 onClick={() => onPick(d)}
-                aria-label={t('openDay', { date: d })}
+                aria-label={t('openDay', {
+                  date: format.dateTime(new Date(`${d}T12:00:00Z`), {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'long',
+                    timeZone: 'UTC',
+                  }),
+                })}
                 className={cn(
                   'mb-1 inline-flex size-7 items-center justify-center rounded-full text-xs tabular-nums',
                   d === today
                     ? 'bg-accent font-semibold text-accent-fg'
                     : d.slice(0, 7) !== month
-                      ? 'text-text-muted/60'
-                      : 'text-text-muted',
+                      ? 'text-text-muted'
+                      : 'text-text',
                 )}
               >
                 {Number(d.slice(8, 10))}
               </button>
               <div className="flex flex-col gap-0.5">
                 {dayItems.slice(0, 3).map((o) => (
-                  <Block key={o.id} o={o} members={household.members} onOpen={onOpen} compact />
+                  <Block
+                    key={o.id}
+                    o={o}
+                    members={household.members}
+                    dragging={drag.preview?.id === o.id}
+                    onOpen={(x) => !drag.consumeClick() && onOpen(x)}
+                    onDragStart={(e) => drag.start(e, o, 'move')}
+                    onNudge={onMove}
+                    compact
+                  />
                 ))}
                 {dayItems.length > 3 && (
                   <button

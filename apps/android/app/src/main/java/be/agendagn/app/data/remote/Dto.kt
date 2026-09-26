@@ -10,6 +10,22 @@ data class LoginRequest(val email: String, val password: String)
 data class RefreshRequest(val refreshToken: String)
 
 @Serializable
+data class NotificationDto(
+    val id: String,
+    val type: String,
+    val createdAt: String,
+    val readAt: String? = null,
+    val push: Boolean = true,
+    val occurrenceId: String? = null,
+    val title: String? = null,
+    val recurring: Boolean = false,
+    val byName: String? = null,
+)
+
+@Serializable
+data class NotificationListDto(val unread: Int, val items: List<NotificationDto>)
+
+@Serializable
 data class ClientErrorRequest(
     val source: String,
     val message: String,

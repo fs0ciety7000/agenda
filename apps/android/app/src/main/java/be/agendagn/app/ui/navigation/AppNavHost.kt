@@ -167,6 +167,7 @@ private fun MainScaffold(container: AppContainer, openOccurrenceId: String?) {
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
         canInstall = updater.canInstall()
         scope.launch { updater.check() }
+        state.household?.id?.let { hid -> scope.launch { container.activityNotifier.poll(hid) } }
     }
     val onUpdate: () -> Unit = {
         val manifest = update

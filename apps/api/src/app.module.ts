@@ -14,6 +14,7 @@ import { HouseholdsModule } from './households/households.module';
 import { CalendarModule } from './calendar/calendar.module';
 import { DomainEventsModule } from './common/domain-events';
 import { MailModule } from './mail/mail.module';
+import { NotificationsModule } from './notifications/notifications.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { PrivacyModule } from './privacy/privacy.module';
 import { TasksModule } from './tasks/tasks.module';
@@ -42,6 +43,7 @@ import { TasksModule } from './tasks/tasks.module';
     PrivacyModule,
     CalendarModule,
     AppDistributionModule,
+    NotificationsModule,
   ],
   controllers: [HealthController, ClientErrorsController],
   providers: [

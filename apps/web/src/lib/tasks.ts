@@ -115,6 +115,36 @@ export function useUpdateOccurrence(hid: string) {
   });
 }
 
+export type MoveInput = Pick<UpdateOccurrenceInput, 'date' | 'startMinute' | 'durationMinutes'>;
+
+/**
+ * Glisser-déposer du calendrier : déplacement / redimensionnement d'UNE occurrence (portée
+ * « celle-ci », y compris dans une série), affiché immédiatement puis confirmé par l'API.
+ */
+export function useMoveOccurrence(hid: string) {
+  const qc = useQueryClient();
+  const invalidate = useInvalidateTasks(hid);
+  return useMutation({
+    mutationFn: ({ o, ...input }: MoveInput & { o: OccurrenceDto }) =>
+      api<OccurrenceDto>(`/v1/households/${hid}/occurrences/${o.id}?scope=this`, {
+        method: 'PATCH',
+        json: { ...input, version: o.version },
+      }),
+    onMutate: async ({ o, ...input }) => {
+      const key = ['households', hid, 'occurrences'];
+      await qc.cancelQueries({ queryKey: key });
+      const snapshot = qc.getQueriesData<OccurrenceDto[]>({ queryKey: key });
+      qc.setQueriesData<OccurrenceDto[]>({ queryKey: key }, (list) =>
+        list?.map((x) => (x.id === o.id ? { ...x, ...input } : x)),
+      );
+      return { snapshot };
+    },
+    onError: (_e, _v, context) =>
+      context?.snapshot.forEach(([k, data]) => qc.setQueryData(k, data)),
+    onSettled: invalidate,
+  });
+}
+
 export function useDeleteOccurrence(hid: string) {
   const invalidate = useInvalidateTasks(hid);
   return useMutation({
