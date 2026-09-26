@@ -93,10 +93,12 @@ Les tâches `PERSONAL` sont en plus filtrées par `createdById = currentUser`.
 
 **Choix : A**, avec des briques éprouvées (argon2id, jose) :
 - **Access token** JWT (HS256 → migrable EdDSA), durée 15 min, contient `sub`, `sid`.
-- **Refresh token** opaque (256 bits aléatoires), stocké **haché** (SHA‑256) dans `Session`, rotation à chaque usage, détection de réutilisation (famille révoquée si un ancien token est rejoué).
-- **Web** : tokens en cookies `httpOnly; Secure; SameSite=Lax`, refresh cookie restreint au path `/v1/auth`. Protection CSRF : `SameSite` + header custom `X-Requested-With` exigé sur les mutations cookie (les formulaires cross-site ne peuvent pas l'envoyer).
+- **Refresh token** opaque (256 bits aléatoires), stocké **haché** (SHA‑256) dans `Session`, rotation à chaque usage, détection de réutilisation (famille révoquée si un ancien token est rejoué plus de 30 s après sa rotation ; en deçà, rejeu toléré pour les onglets concurrents).
+- **Web** : tokens en cookies `httpOnly; Secure; SameSite=Lax`, refresh cookie restreint au path `/v1/auth`. Le web appelle l'API **sur sa propre origine** (`/v1/*` réécrit par Next.js vers l'API) : cookies first-party, aucun CORS nécessaire, indépendant du domaine de l'API.
+- **CSRF** : `SameSite=Lax` + header `X-Requested-With: agenda-gn` exigé sur **toute** mutation (règle uniforme web/Android, `CsrfGuard`). Un formulaire ou une image cross-site ne peut pas ajouter ce header ; CORS ne l'autorise que depuis `WEB_ORIGIN`.
 - **Android** : `Authorization: Bearer`, refresh token dans DataStore chiffré (Android Keystore).
-- « Déconnexion de tous les appareils » = révocation de toutes les `Session` de l'utilisateur.
+- « Déconnexion de tous les appareils » = révocation de toutes les `Session` de l'utilisateur. Le guard vérifie à chaque requête que la session de l'access token n'est pas révoquée (1 lecture par clé primaire) : la déconnexion est **immédiate**, sans attendre l'expiration des 15 min.
+- Rate limiting des routes d'auth : `AUTH_RATE_LIMIT` req/min/IP (défaut 10).
 - Mots de passe : argon2id (m=19 MiB, t=2, p=1 — recommandations OWASP), longueur min 10, vérification HIBP (k-anonymity) post‑MVP.
 - **Google Sign-In** (OIDC, scopes `openid email profile`) ≠ **connexion Google Calendar** (scopes calendrier, incrémentaux). Deux flux, deux tables (`AuthIdentity` vs `GoogleConnection`). Cf. `google-calendar.md`.
 
@@ -164,7 +166,7 @@ Tests critiques listés dans le cahier des charges §29 → chacun a un test nom
 ## 10. Sécurité & RGPD
 
 - **Chiffrement** des refresh tokens Google : AES‑256‑GCM, clé `TOKEN_ENCRYPTION_KEY` (32 octets, base64) hors base ; format `v1:<iv>:<tag>:<ciphertext>` → rotation de clé possible.
-- **Rate limiting** : `@nestjs/throttler` (stockage Redis) — global 100 req/min/IP, auth 10 req/min/IP.
+- **Rate limiting** : `@nestjs/throttler` — global 100 req/min/IP, auth 10 req/min/IP. Stockage en mémoire en V1 (une instance) ; Redis si plusieurs instances.
 - **Headers** : Helmet (API), CSP stricte (web), HSTS.
 - **Entrées** : Zod partout, Prisma paramétré (pas de SQL brut non paramétré), React échappe par défaut, pas de `dangerouslySetInnerHTML`.
 - **Logs** : pino structuré, **sans** données personnelles ni tokens (redaction configurée).

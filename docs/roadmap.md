@@ -33,4 +33,12 @@ Une phase n'est « terminée » que si la CI est verte et la documentation à jo
 - Tests : unitaires (crypto, tokens) + intégration (PostgreSQL réel) dont **isolation inter-foyers**.
 - `apps/web` : Next.js 15, Tailwind 4 branché sur les tokens, dark/light, i18n FR/EN (`next-intl`), pages connexion/inscription, shell responsive, onboarding « Bienvenue ».
 - `apps/android` : projet Gradle Kotlin DSL + Compose, thème généré depuis les tokens, Clean Architecture (squelette `data/domain/ui`).
-- `docker-compose.yml` (PostgreSQL 16, Redis 7), `.env.example`, CI GitHub Actions.
+- `docker-compose.yml` (PostgreSQL 16, Redis 7), `.env.example`, CI GitHub Actions (JS, E2E, Android).
+
+Vérifié localement : lint + typecheck + build (tous paquets), 5 tests contracts, 23 tests API
+(dont rotation/réutilisation de refresh token, refresh concurrents, CSRF, logout-all, isolation inter-foyers),
+4 E2E Playwright (desktop + mobile), Android : lint, 3 tests unitaires ViewModel, APK debug.
+
+Reporté explicitement de la Phase 1 vers la Phase 2 : Google Sign-In, réinitialisation du mot
+de passe par email (nécessite un fournisseur d'emails), export / suppression de compte (RGPD),
+client API généré depuis l'OpenAPI, onboarding complet (étapes Google et notifications).

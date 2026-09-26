@@ -1,0 +1,115 @@
+'use client';
+
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { CalendarDays } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { useEffect, useState } from 'react';
+import { useSession } from '@/components/app/household-context';
+import { InviteLink } from '@/components/app/invite-link';
+import { MemberAvatar } from '@/components/app/member-avatar';
+import { Button } from '@/components/ui/button';
+import { Card, SectionTitle } from '@/components/ui/card';
+import { api } from '@/lib/api';
+import { cn } from '@/lib/cn';
+import { applyTheme, readTheme, type ThemePreference } from '@/lib/theme';
+
+const THEMES: ThemePreference[] = ['system', 'light', 'dark'];
+
+export default function SettingsPage() {
+  const t = useTranslations('settings');
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const { household } = useSession();
+  const [theme, setTheme] = useState<ThemePreference>('system');
+  useEffect(() => setTheme(readTheme()), []);
+
+  const signOut = useMutation({
+    mutationFn: (all: boolean) =>
+      api<void>(all ? '/v1/auth/logout-all' : '/v1/auth/logout', { method: 'POST', json: {} }),
+    onSettled: () => {
+      queryClient.clear();
+      router.replace('/login');
+    },
+  });
+
+  return (
+    <div className="flex flex-col gap-8">
+      <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
+
+      <section className="flex flex-col gap-3" aria-labelledby="s-household">
+        <SectionTitle id="s-household">{t('household')}</SectionTitle>
+        <Card className="flex flex-col gap-5">
+          <p className="text-lg font-medium">{household.name}</p>
+          <ul aria-label={t('members')} className="flex flex-col gap-3">
+            {household.members.map((m) => (
+              <li key={m.id} className="flex items-center gap-3">
+                <MemberAvatar member={m} />
+                <span className="text-[0.9375rem]">{m.displayName}</span>
+                {m.role === 'OWNER' && (
+                  <span className="text-[0.8125rem] text-text-muted">· {t('owner')}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+          {household.members.length < 2 && <InviteLink householdId={household.id} />}
+        </Card>
+      </section>
+
+      <section className="flex flex-col gap-3" aria-labelledby="s-calendar">
+        <SectionTitle id="s-calendar">{t('calendar')}</SectionTitle>
+        <Card className="flex items-center gap-3">
+          <CalendarDays aria-hidden className="size-5 stroke-[1.5] text-text-muted" />
+          <p className="text-[0.9375rem] text-text-muted">{t('calendarSoon')}</p>
+        </Card>
+      </section>
+
+      <section className="flex flex-col gap-3" aria-labelledby="s-appearance">
+        <SectionTitle id="s-appearance">{t('appearance')}</SectionTitle>
+        <div
+          role="radiogroup"
+          aria-labelledby="s-appearance"
+          className="inline-flex self-start rounded-md border border-border bg-surface p-1"
+        >
+          {THEMES.map((value) => (
+            <button
+              key={value}
+              role="radio"
+              aria-checked={theme === value}
+              onClick={() => {
+                applyTheme(value);
+                setTheme(value);
+              }}
+              className={cn(
+                'h-9 rounded-sm px-4 text-sm text-text-muted transition-colors',
+                theme === value && 'bg-surface-muted font-medium text-text',
+              )}
+            >
+              {t(`theme.${value}`)}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-3" aria-labelledby="s-account">
+        <SectionTitle id="s-account">{t('account')}</SectionTitle>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Button
+            variant="secondary"
+            onClick={() => signOut.mutate(false)}
+            loading={signOut.isPending && !signOut.variables}
+          >
+            {t('logout')}
+          </Button>
+          <Button
+            variant="ghost"
+            onClick={() => signOut.mutate(true)}
+            loading={signOut.isPending && signOut.variables}
+          >
+            {t('logoutAll')}
+          </Button>
+        </div>
+      </section>
+    </div>
+  );
+}

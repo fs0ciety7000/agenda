@@ -1,0 +1,23 @@
+{
+  "name": "@agenda/contracts",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Schémas Zod partagés (API ↔ Web) : DTO, enums, codes d'erreur. Les types sont inférés.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint src",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@agenda/config": "workspace:*",
+    "eslint": "^9.37.0",
+    "typescript": "5.9.3",
+    "vitest": "3.2.4"
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "app": { "name": "Agenda G & N", "skipToContent": "Skip to content" },
+  "nav": {
+    "today": "Today",
+    "tasks": "Tasks",
+    "calendar": "Calendar",
+    "settings": "Settings",
+    "main": "Main navigation"
+  },
+  "auth": {
+    "loginTitle": "Welcome back",
+    "loginSubtitle": "Sign in to pick up where you left off.",
+    "registerTitle": "Create an account",
+    "registerSubtitle": "It only takes a few seconds.",
+    "email": "Email address",
+    "password": "Password",
+    "passwordHint": "At least 10 characters.",
+    "displayName": "First name",
+    "submitLogin": "Sign in",
+    "submitRegister": "Create my account",
+    "noAccount": "No account yet?",
+    "hasAccount": "Already have an account?",
+    "toRegister": "Create an account",
+    "toLogin": "Sign in"
+  },
+  "errors": {
+    "VALIDATION_FAILED": "Some fields are invalid.",
+    "INVALID_CREDENTIALS": "Incorrect email or password.",
+    "EMAIL_ALREADY_USED": "An account already exists with this email.",
+    "SESSION_EXPIRED": "Your session has expired. Please sign in again.",
+    "UNAUTHENTICATED": "Please sign in.",
+    "RATE_LIMITED": "Too many attempts. Try again in a minute.",
+    "INVITATION_INVALID": "This invitation is no longer valid. Ask for a new one.",
+    "ALREADY_MEMBER": "You are already a member of this household.",
+    "HOUSEHOLD_NOT_FOUND": "Household not found.",
+    "NETWORK": "Can't connect. Check your network.",
+    "generic": "Something went wrong. Please try again.",
+    "retry": "Retry",
+    "email": "Invalid email address.",
+    "passwordMin": "At least 10 characters.",
+    "required": "Required."
+  },
+  "today": {
+    "greeting": "Hello {name} 👋",
+    "sectionToday": "Today",
+    "sectionWeek": "This week",
+    "sectionBalance": "Balance",
+    "emptyTitle": "Nothing for today.",
+    "emptyBody": "Enjoy. Task creation is coming in the next version."
+  },
+  "placeholder": { "title": "Coming soon", "body": "This section is coming in a later phase." },
+  "onboarding": {
+    "welcome": "Welcome 👋",
+    "tagline": "Let's organise your everyday life together.",
+    "stepHousehold": "Create your household",
+    "householdName": "Household name",
+    "householdNamePlaceholder": "G & N",
+    "yourName": "Your name in the household",
+    "create": "Create household",
+    "stepInvite": "Invite your partner",
+    "inviteBody": "Share this link. It is valid for 7 days and can be used once.",
+    "generateInvite": "Generate an invitation link",
+    "copy": "Copy link",
+    "copied": "Link copied",
+    "continue": "Continue",
+    "later": "Later"
+  },
+  "invite": {
+    "title": "Join a household",
+    "body": "You have been invited to share tasks.",
+    "accept": "Join",
+    "loginFirst": "Sign in or create an account to join this household."
+  },
+  "settings": {
+    "title": "Settings",
+    "household": "Household",
+    "members": "Members",
+    "owner": "Owner",
+    "appearance": "Appearance",
+    "theme": { "system": "System", "light": "Light", "dark": "Dark" },
+    "calendar": "Shared calendar",
+    "calendarSoon": "Google Calendar connection is coming in phase 4.",
+    "account": "Account",
+    "logout": "Sign out",
+    "logoutAll": "Sign out of all devices"
+  },
+  "common": { "loading": "Loading…" }
+}

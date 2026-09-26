@@ -1,0 +1,112 @@
+'use client';
+
+import { CalendarDays, ListChecks, Settings, Sun, type LucideIcon } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { useTranslations } from 'next-intl';
+import { useEffect, type ReactNode } from 'react';
+import { ErrorState, Skeleton } from '@/components/ui/states';
+import { ApiError, errorKey } from '@/lib/api';
+import { cn } from '@/lib/cn';
+import { useHouseholds, useMe } from '@/lib/queries';
+import { SessionContext } from './household-context';
+
+type NavKey = 'today' | 'tasks' | 'calendar' | 'settings';
+const NAV: { href: string; key: NavKey; icon: LucideIcon }[] = [
+  { href: '/', key: 'today', icon: Sun },
+  { href: '/tasks', key: 'tasks', icon: ListChecks },
+  { href: '/calendar', key: 'calendar', icon: CalendarDays },
+  { href: '/settings', key: 'settings', icon: Settings },
+];
+
+export function AppShell({ children }: { children: ReactNode }) {
+  const t = useTranslations();
+  const pathname = usePathname();
+  const router = useRouter();
+  const me = useMe();
+  const households = useHouseholds();
+
+  const unauthenticated = me.error instanceof ApiError && me.error.status === 401;
+  const household = households.data?.[0];
+
+  useEffect(() => {
+    if (unauthenticated) router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+    // Seulement sur une donnée fraîche : un cache périmé « aucun foyer » ne doit pas renvoyer à l'onboarding.
+    else if (households.isFetchedAfterMount && households.data?.length === 0)
+      router.replace('/onboarding');
+  }, [unauthenticated, households.isFetchedAfterMount, households.data, pathname, router]);
+
+  if (me.error && !unauthenticated) {
+    return (
+      <ErrorState
+        message={t(`errors.${errorKey(me.error)}` as 'errors.generic')}
+        retryLabel={t('errors.retry')}
+        onRetry={() => void me.refetch()}
+      />
+    );
+  }
+
+  const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
+
+  return (
+    <div className="min-h-dvh md:flex">
+      {/* Tablette / desktop : navigation latérale */}
+      <nav
+        aria-label={t('nav.main')}
+        className="sticky top-0 hidden h-dvh shrink-0 flex-col gap-1 border-r border-border px-3 py-6 md:flex md:w-20 xl:w-60"
+      >
+        <p className="mb-6 hidden px-3 text-sm font-semibold xl:block">{t('app.name')}</p>
+        {NAV.map(({ href, key, icon: Icon }) => (
+          <Link
+            key={href}
+            href={href}
+            aria-current={isActive(href) ? 'page' : undefined}
+            className={cn(
+              'flex h-11 items-center gap-3 rounded-md px-3 text-[0.9375rem] text-text-muted transition-colors hover:bg-surface-muted hover:text-text',
+              'justify-center xl:justify-start',
+              isActive(href) && 'bg-surface-muted font-medium text-text',
+            )}
+          >
+            <Icon aria-hidden className="size-5 stroke-[1.5]" />
+            <span className="sr-only xl:not-sr-only">{t(`nav.${key}`)}</span>
+          </Link>
+        ))}
+      </nav>
+
+      <main id="main" className="mx-auto w-full max-w-3xl flex-1 px-4 pb-28 pt-8 md:px-8 md:pb-12">
+        {me.data && household ? (
+          <SessionContext.Provider value={{ me: me.data, household }}>
+            {children}
+          </SessionContext.Provider>
+        ) : (
+          <div aria-busy className="flex flex-col gap-4" aria-label={t('common.loading')}>
+            <Skeleton className="h-9 w-56" />
+            <Skeleton className="h-16 w-full" />
+            <Skeleton className="h-16 w-full" />
+          </div>
+        )}
+      </main>
+
+      {/* Mobile : barre d'onglets en bas */}
+      <nav
+        aria-label={t('nav.main')}
+        className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-4 border-t border-border bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
+      >
+        {NAV.map(({ href, key, icon: Icon }) => (
+          <Link
+            key={href}
+            href={href}
+            aria-current={isActive(href) ? 'page' : undefined}
+            className={cn(
+              'flex h-16 flex-col items-center justify-center gap-1 text-[0.75rem] text-text-muted',
+              isActive(href) && 'font-medium text-accent',
+            )}
+          >
+            <Icon aria-hidden className="size-5 stroke-[1.5]" />
+            {t(`nav.${key}`)}
+          </Link>
+        ))}
+      </nav>
+    </div>
+  );
+}

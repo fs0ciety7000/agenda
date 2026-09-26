@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Agenda G &amp; N</string>
+    <string name="login_title">Bon retour</string>
+    <string name="login_subtitle">Connectez-vous pour retrouver votre quotidien.</string>
+    <string name="email">Adresse email</string>
+    <string name="password">Mot de passe</string>
+    <string name="sign_in">Se connecter</string>
+    <string name="sign_out">Se déconnecter</string>
+    <string name="greeting">Bonjour %1$s 👋</string>
+    <string name="today">Aujourd\'hui</string>
+    <string name="today_empty_title">Rien pour aujourd\'hui.</string>
+    <string name="today_empty_body">Profitez-en. Les tâches arrivent dans la prochaine version.</string>
+    <string name="error_invalid_credentials">Email ou mot de passe incorrect.</string>
+    <string name="error_network">Connexion impossible. Vérifiez votre réseau.</string>
+    <string name="error_rate_limited">Trop de tentatives. Réessayez dans une minute.</string>
+    <string name="error_generic">Une erreur est survenue. Réessayez.</string>
+</resources>

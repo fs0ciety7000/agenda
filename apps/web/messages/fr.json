@@ -1,0 +1,91 @@
+{
+  "app": { "name": "Agenda G & N", "skipToContent": "Aller au contenu" },
+  "nav": {
+    "today": "Aujourd'hui",
+    "tasks": "Tâches",
+    "calendar": "Calendrier",
+    "settings": "Réglages",
+    "main": "Navigation principale"
+  },
+  "auth": {
+    "loginTitle": "Bon retour",
+    "loginSubtitle": "Connectez-vous pour retrouver votre quotidien.",
+    "registerTitle": "Créer un compte",
+    "registerSubtitle": "Quelques secondes suffisent.",
+    "email": "Adresse email",
+    "password": "Mot de passe",
+    "passwordHint": "10 caractères minimum.",
+    "displayName": "Prénom",
+    "submitLogin": "Se connecter",
+    "submitRegister": "Créer mon compte",
+    "noAccount": "Pas encore de compte ?",
+    "hasAccount": "Déjà un compte ?",
+    "toRegister": "Créer un compte",
+    "toLogin": "Se connecter"
+  },
+  "errors": {
+    "VALIDATION_FAILED": "Certains champs sont invalides.",
+    "INVALID_CREDENTIALS": "Email ou mot de passe incorrect.",
+    "EMAIL_ALREADY_USED": "Un compte existe déjà avec cette adresse.",
+    "SESSION_EXPIRED": "Votre session a expiré. Reconnectez-vous.",
+    "UNAUTHENTICATED": "Veuillez vous connecter.",
+    "RATE_LIMITED": "Trop de tentatives. Réessayez dans une minute.",
+    "INVITATION_INVALID": "Cette invitation n'est plus valable. Demandez-en une nouvelle.",
+    "ALREADY_MEMBER": "Vous faites déjà partie de ce foyer.",
+    "HOUSEHOLD_NOT_FOUND": "Foyer introuvable.",
+    "NETWORK": "Connexion impossible. Vérifiez votre réseau.",
+    "generic": "Une erreur est survenue. Réessayez.",
+    "retry": "Réessayer",
+    "email": "Adresse email invalide.",
+    "passwordMin": "10 caractères minimum.",
+    "required": "Champ requis."
+  },
+  "today": {
+    "greeting": "Bonjour {name} 👋",
+    "sectionToday": "Aujourd'hui",
+    "sectionWeek": "Cette semaine",
+    "sectionBalance": "Répartition",
+    "emptyTitle": "Rien pour aujourd'hui.",
+    "emptyBody": "Profitez-en. La création de tâches arrive dans la prochaine version."
+  },
+  "placeholder": {
+    "title": "Bientôt disponible",
+    "body": "Cette section arrive dans une prochaine phase."
+  },
+  "onboarding": {
+    "welcome": "Bienvenue 👋",
+    "tagline": "Organisons votre quotidien ensemble.",
+    "stepHousehold": "Créer votre foyer",
+    "householdName": "Nom du foyer",
+    "householdNamePlaceholder": "G & N",
+    "yourName": "Votre prénom dans le foyer",
+    "create": "Créer le foyer",
+    "stepInvite": "Inviter votre partenaire",
+    "inviteBody": "Partagez ce lien. Il est valable 7 jours et utilisable une seule fois.",
+    "generateInvite": "Générer un lien d'invitation",
+    "copy": "Copier le lien",
+    "copied": "Lien copié",
+    "continue": "Continuer",
+    "later": "Plus tard"
+  },
+  "invite": {
+    "title": "Rejoindre un foyer",
+    "body": "Vous avez été invité·e à partager vos tâches.",
+    "accept": "Rejoindre",
+    "loginFirst": "Connectez-vous ou créez un compte pour rejoindre ce foyer."
+  },
+  "settings": {
+    "title": "Réglages",
+    "household": "Foyer",
+    "members": "Membres",
+    "owner": "Propriétaire",
+    "appearance": "Apparence",
+    "theme": { "system": "Système", "light": "Clair", "dark": "Sombre" },
+    "calendar": "Calendrier partagé",
+    "calendarSoon": "La connexion à Google Calendar arrive en phase 4.",
+    "account": "Compte",
+    "logout": "Se déconnecter",
+    "logoutAll": "Se déconnecter de tous les appareils"
+  },
+  "common": { "loading": "Chargement…" }
+}

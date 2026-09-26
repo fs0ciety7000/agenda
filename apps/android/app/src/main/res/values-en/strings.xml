@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_title">Welcome back</string>
+    <string name="login_subtitle">Sign in to pick up where you left off.</string>
+    <string name="email">Email address</string>
+    <string name="password">Password</string>
+    <string name="sign_in">Sign in</string>
+    <string name="sign_out">Sign out</string>
+    <string name="greeting">Hello %1$s 👋</string>
+    <string name="today">Today</string>
+    <string name="today_empty_title">Nothing for today.</string>
+    <string name="today_empty_body">Enjoy. Tasks are coming in the next version.</string>
+    <string name="error_invalid_credentials">Incorrect email or password.</string>
+    <string name="error_network">Can\'t connect. Check your network.</string>
+    <string name="error_rate_limited">Too many attempts. Try again in a minute.</string>
+    <string name="error_generic">Something went wrong. Please try again.</string>
+</resources>

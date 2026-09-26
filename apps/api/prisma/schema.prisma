@@ -1,0 +1,493 @@
+// Modèle de données — voir docs/database.md pour les justifications.
+// Conventions : UUID, householdId sur toute donnée métier, soft delete via deletedAt,
+// `version` pour la concurrence optimiste.
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["relationJoins", "postgresqlExtensions"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [citext]
+}
+
+// ───────────────────────────── Identité ─────────────────────────────
+
+model User {
+  id           String    @id @default(uuid()) @db.Uuid
+  email        String    @unique @db.Citext
+  passwordHash String?
+  displayName  String    @db.VarChar(60)
+  locale       String    @default("fr") @db.VarChar(5)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  sessions          Session[]
+  identities        AuthIdentity[]
+  memberships       HouseholdMember[]
+  googleConnections GoogleConnection[]
+  resetTokens       PasswordResetToken[]
+}
+
+enum AuthProvider {
+  GOOGLE
+}
+
+/// Login fédéré (Google OIDC). Jamais lié par email : uniquement par `sub`.
+model AuthIdentity {
+  id              String       @id @default(uuid()) @db.Uuid
+  userId          String       @db.Uuid
+  provider        AuthProvider
+  providerSubject String       @db.VarChar(255)
+  createdAt       DateTime     @default(now())
+  user            User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerSubject])
+  @@index([userId])
+}
+
+/// Une session = un appareil. Le refresh token n'est stocké que haché (SHA-256).
+model Session {
+  id               String    @id @default(uuid()) @db.Uuid
+  userId           String    @db.Uuid
+  /// Tous les refresh tokens issus d'une même connexion partagent la famille.
+  familyId         String    @db.Uuid
+  refreshTokenHash String    @unique @db.Char(64)
+  userAgent        String?   @db.VarChar(255)
+  createdAt        DateTime  @default(now())
+  lastUsedAt       DateTime  @default(now())
+  expiresAt        DateTime
+  revokedAt        DateTime?
+  /// Renseigné lors d'une rotation : un token déjà remplacé et rejoué = vol probable.
+  replacedAt       DateTime?
+  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([familyId])
+}
+
+model PasswordResetToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  tokenHash String    @unique @db.Char(64)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ───────────────────────────── Foyer ─────────────────────────────
+
+model Household {
+  id        String    @id @default(uuid()) @db.Uuid
+  name      String    @db.VarChar(80)
+  timezone  String    @default("Europe/Brussels") @db.VarChar(64)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  members      HouseholdMember[]
+  invitations  HouseholdInvitation[]
+  categories   Category[]
+  tasks        Task[]
+  occurrences  TaskOccurrence[]
+  calendarLink HouseholdCalendarLink?
+  activity     ActivityLog[]
+}
+
+enum HouseholdRole {
+  OWNER
+  MEMBER
+}
+
+model HouseholdMember {
+  id          String        @id @default(uuid()) @db.Uuid
+  householdId String        @db.Uuid
+  userId      String        @db.Uuid
+  role        HouseholdRole @default(MEMBER)
+  displayName String        @db.VarChar(40)
+  /// Nom d'un token de couleur (sage, ocean…), jamais un hex libre.
+  color       String        @db.VarChar(16)
+  joinedAt    DateTime      @default(now())
+  leftAt      DateTime?
+
+  household            Household                @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  user                 User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdTasks         Task[]                   @relation("TaskCreatedBy")
+  rotationSlots        RotationSlot[]
+  assignments          OccurrenceAssignee[]
+  completedOccurrences TaskOccurrence[]         @relation("OccurrenceCompletedBy")
+  notifications        Notification[]
+  preferences          NotificationPreference[]
+  sentInvitations      HouseholdInvitation[]
+  activity             ActivityLog[]
+
+  @@unique([householdId, userId])
+  @@index([userId])
+}
+
+model HouseholdInvitation {
+  id          String    @id @default(uuid()) @db.Uuid
+  householdId String    @db.Uuid
+  invitedById String    @db.Uuid
+  email       String?   @db.Citext
+  tokenHash   String    @unique @db.Char(64)
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  revokedAt   DateTime?
+  createdAt   DateTime  @default(now())
+
+  household Household       @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  invitedBy HouseholdMember @relation(fields: [invitedById], references: [id], onDelete: Cascade)
+
+  @@index([householdId])
+}
+
+model Category {
+  id          String    @id @default(uuid()) @db.Uuid
+  householdId String    @db.Uuid
+  /// Clé de traduction des catégories par défaut (null si créée par l'utilisateur).
+  key         String?   @db.VarChar(32)
+  name        String    @db.VarChar(40)
+  emoji       String?   @db.VarChar(16)
+  position    Int       @default(0)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  tasks     Task[]
+
+  // Unicité (householdId, name) parmi les non supprimées : index partiel en SQL (migration).
+  @@index([householdId])
+}
+
+// ───────────────────────────── Tâches ─────────────────────────────
+
+enum TaskVisibility {
+  PERSONAL
+  SHARED
+}
+
+enum TaskPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+model Task {
+  id             String         @id @default(uuid()) @db.Uuid
+  householdId    String         @db.Uuid
+  createdById    String         @db.Uuid
+  categoryId     String?        @db.Uuid
+  title          String         @db.VarChar(200)
+  notes          String?        @db.VarChar(5000)
+  location       String?        @db.VarChar(200)
+  priority       TaskPriority   @default(NORMAL)
+  visibility     TaskVisibility @default(SHARED)
+  /// « Ajouter au calendrier partagé ». Forcé à false pour les tâches PERSONAL (CHECK SQL).
+  syncToCalendar Boolean        @default(false)
+  version        Int            @default(1)
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+  deletedAt      DateTime?
+
+  household   Household        @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  createdBy   HouseholdMember  @relation("TaskCreatedBy", fields: [createdById], references: [id])
+  category    Category?        @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  series      TaskSeries[]
+  occurrences TaskOccurrence[]
+
+  @@index([householdId, deletedAt])
+  @@index([categoryId])
+}
+
+enum RotationMode {
+  UNASSIGNED
+  FIXED
+  TOGETHER
+  ALTERNATE
+  SEQUENCE
+  WEEKDAY
+}
+
+enum RotationAdvance {
+  PER_OCCURRENCE
+  PER_WEEK
+}
+
+/// Règle de récurrence + rotation d'une tâche sur [startDate, untilDate].
+/// « Cette occurrence et les suivantes » = on clôt la série et on en crée une nouvelle.
+model TaskSeries {
+  id              String          @id @default(uuid()) @db.Uuid
+  taskId          String          @db.Uuid
+  /// RecurrenceRule (packages/contracts), validé par Zod.
+  rule            Json
+  startDate       DateTime        @db.Date
+  untilDate       DateTime?       @db.Date
+  count           Int?
+  startMinute     Int?
+  durationMinutes Int?
+  allDay          Boolean         @default(false)
+  rotationMode    RotationMode    @default(UNASSIGNED)
+  rotationAdvance RotationAdvance @default(PER_OCCURRENCE)
+  /// Décalage d'index pour que la rotation continue après un split.
+  rotationOffset  Int             @default(0)
+  /// Dernière date matérialisée (horizon glissant de 90 jours).
+  generatedUntil  DateTime?       @db.Date
+  version         Int             @default(1)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  task        Task             @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  slots       RotationSlot[]
+  occurrences TaskOccurrence[]
+
+  @@index([taskId])
+}
+
+/// Qui fait quoi. Une « position » peut contenir plusieurs membres (= à deux).
+/// weekday null = s'applique à tous les jours ; sinon rotation propre à ce jour (0 = lundi).
+model RotationSlot {
+  id       String @id @default(uuid()) @db.Uuid
+  seriesId String @db.Uuid
+  weekday  Int?   @db.SmallInt
+  position Int    @db.SmallInt
+  memberId String @db.Uuid
+
+  series TaskSeries      @relation(fields: [seriesId], references: [id], onDelete: Cascade)
+  member HouseholdMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([seriesId, weekday, position, memberId])
+  @@index([memberId])
+}
+
+enum OccurrenceStatus {
+  TODO
+  DONE
+  SKIPPED
+  CANCELLED
+}
+
+model TaskOccurrence {
+  id              String           @id @default(uuid()) @db.Uuid
+  /// Dénormalisé pour l'isolation et les index (toujours = task.householdId).
+  householdId     String           @db.Uuid
+  taskId          String           @db.Uuid
+  seriesId        String?          @db.Uuid
+  /// Index de l'occurrence dans sa série (entrée de la rotation).
+  seriesIndex     Int?
+  /// Date prévue par la règle (≈ RECURRENCE-ID). Identité stable de l'occurrence.
+  originalDate    DateTime?        @db.Date
+  /// Date effective (peut différer si déplacée). null = non planifiée.
+  date            DateTime?        @db.Date
+  startMinute     Int?
+  durationMinutes Int?
+  allDay          Boolean          @default(false)
+  /// Dérivés (fuseau du foyer) pour les requêtes par plage.
+  startsAt        DateTime?
+  endsAt          DateTime?
+  status          OccurrenceStatus @default(TODO)
+  /// Modifiée individuellement : jamais réécrite par la régénération de la série.
+  isException     Boolean          @default(false)
+  titleOverride   String?          @db.VarChar(200)
+  notesOverride   String?          @db.VarChar(5000)
+  completedAt     DateTime?
+  completedById   String?          @db.Uuid
+  version         Int              @default(1)
+  /// Incrémenté à chaque changement visible dans Google Calendar.
+  syncVersion     Int              @default(1)
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  household   Household            @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  task        Task                 @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  series      TaskSeries?          @relation(fields: [seriesId], references: [id], onDelete: SetNull)
+  completedBy HouseholdMember?     @relation("OccurrenceCompletedBy", fields: [completedById], references: [id], onDelete: SetNull)
+  assignees   OccurrenceAssignee[]
+  eventLink   CalendarEventLink?
+
+  @@unique([seriesId, originalDate])
+  @@index([householdId, date])
+  @@index([householdId, status, startsAt])
+  @@index([taskId])
+}
+
+model OccurrenceAssignee {
+  occurrenceId String @db.Uuid
+  memberId     String @db.Uuid
+
+  occurrence TaskOccurrence  @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
+  member     HouseholdMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@id([occurrenceId, memberId])
+  @@index([memberId])
+}
+
+// ───────────────────────────── Google Calendar ─────────────────────────────
+
+enum GoogleConnectionStatus {
+  ACTIVE
+  REVOKED
+  ERROR
+}
+
+/// Autorisation OAuth Calendar d'un utilisateur (distincte du login Google).
+model GoogleConnection {
+  id                   String                 @id @default(uuid()) @db.Uuid
+  userId               String                 @db.Uuid
+  googleSubject        String                 @db.VarChar(255)
+  email                String                 @db.VarChar(254)
+  /// AES-256-GCM, format v1:iv:tag:ciphertext (base64url).
+  refreshTokenEnc      String
+  accessTokenEnc       String?
+  accessTokenExpiresAt DateTime?
+  scopes               String[]
+  status               GoogleConnectionStatus @default(ACTIVE)
+  lastErrorCode        String?                @db.VarChar(64)
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+
+  user          User                    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  calendarLinks HouseholdCalendarLink[]
+
+  @@unique([userId, googleSubject])
+}
+
+enum CalendarLinkStatus {
+  ACTIVE
+  /// Calendrier supprimé, plus partagé, ou droits insuffisants.
+  INVALID
+}
+
+/// Le calendrier partagé du foyer (ex. « Commun G & N »). Jamais codé en dur.
+model HouseholdCalendarLink {
+  id               String             @id @default(uuid()) @db.Uuid
+  householdId      String             @unique @db.Uuid
+  connectionId     String             @db.Uuid
+  googleCalendarId String             @db.VarChar(255)
+  /// Cache d'affichage du nom ; l'identité est googleCalendarId.
+  summary          String             @db.VarChar(255)
+  accessRole       String             @db.VarChar(32)
+  timeZone         String?            @db.VarChar(64)
+  status           CalendarLinkStatus @default(ACTIVE)
+  lastErrorCode    String?            @db.VarChar(64)
+  lastReconciledAt DateTime?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+
+  household  Household           @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  connection GoogleConnection    @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  events     CalendarEventLink[]
+}
+
+enum SyncStatus {
+  PENDING
+  SYNCING
+  SYNCED
+  ERROR
+  BLOCKED
+  PENDING_DELETE
+  DELETED
+}
+
+/// Mapping occurrence ↔ événement Google. Jamais par le titre.
+model CalendarEventLink {
+  id               String     @id @default(uuid()) @db.Uuid
+  occurrenceId     String?    @unique @db.Uuid
+  calendarLinkId   String     @db.Uuid
+  googleCalendarId String     @db.VarChar(255)
+  /// Déterministe : "gn" + uuid de l'occurrence sans tirets (cf. docs/google-calendar.md §4).
+  googleEventId    String     @db.VarChar(1024)
+  etag             String?    @db.VarChar(255)
+  syncStatus       SyncStatus @default(PENDING)
+  syncedVersion    Int        @default(0)
+  attempts         Int        @default(0)
+  nextAttemptAt    DateTime?
+  lastErrorCode    String?    @db.VarChar(64)
+  lastSyncedAt     DateTime?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  occurrence   TaskOccurrence?       @relation(fields: [occurrenceId], references: [id], onDelete: SetNull)
+  calendarLink HouseholdCalendarLink @relation(fields: [calendarLinkId], references: [id], onDelete: Cascade)
+
+  @@unique([googleCalendarId, googleEventId])
+  @@index([syncStatus, nextAttemptAt])
+}
+
+// ───────────────────────────── Transverse ─────────────────────────────
+
+enum NotificationType {
+  TASK_UPCOMING
+  TASK_OVERDUE
+  TASK_REMINDER
+  TASK_ASSIGNED
+  ASSIGNEE_CHANGED
+  CALENDAR_SYNC_FAILED
+}
+
+model Notification {
+  id        String           @id @default(uuid()) @db.Uuid
+  memberId  String           @db.Uuid
+  type      NotificationType
+  /// Données minimales (ids), jamais de texte libre sensible.
+  payload   Json
+  readAt    DateTime?
+  createdAt DateTime         @default(now())
+
+  member HouseholdMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([memberId, readAt])
+}
+
+model NotificationPreference {
+  id                   String           @id @default(uuid()) @db.Uuid
+  memberId             String           @db.Uuid
+  type                 NotificationType
+  inApp                Boolean          @default(true)
+  push                 Boolean          @default(true)
+  email                Boolean          @default(false)
+  /// Délai de rappel avant l'échéance (TASK_UPCOMING).
+  leadMinutes          Int?
+
+  member HouseholdMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@unique([memberId, type])
+}
+
+model ActivityLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  householdId String   @db.Uuid
+  actorId     String?  @db.Uuid
+  action      String   @db.VarChar(64)
+  entityType  String   @db.VarChar(32)
+  entityId    String   @db.Uuid
+  /// Diff minimal (champs modifiés), sans données sensibles.
+  data        Json?
+  createdAt   DateTime @default(now())
+
+  household Household        @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  actor     HouseholdMember? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([householdId, createdAt])
+}
+
+/// Rejeu sûr des requêtes (Android offline). Purgé après 24 h.
+model IdempotencyKey {
+  key          String   @id @db.VarChar(64)
+  userId       String   @db.Uuid
+  method       String   @db.VarChar(8)
+  path         String   @db.VarChar(255)
+  statusCode   Int
+  responseBody Json
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+}

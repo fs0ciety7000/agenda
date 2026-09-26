@@ -1,0 +1,19 @@
+{
+  "name": "@agenda/design-tokens",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Source unique des tokens de design → variables CSS (web) et Tokens.kt (Android).",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./tokens.css": "./dist/tokens.css"
+  },
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "gen:android": "node scripts/build.mjs --android"
+  }
+}
