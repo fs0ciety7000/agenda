@@ -1,6 +1,11 @@
 {
   "name": "@agenda/design-tokens",
   "version": "0.0.0",
+  "files": [
+    "dist",
+    "tokens.json",
+    "scripts"
+  ],
   "private": true,
   "description": "Source unique des tokens de design → variables CSS (web) et Tokens.kt (Android).",
   "main": "dist/index.js",

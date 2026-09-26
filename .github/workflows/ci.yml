@@ -90,6 +90,22 @@ jobs:
             api.log
             web.log
 
+  docker:
+    name: Images Docker (compose de production)
+    runs-on: ubuntu-latest
+    needs: js
+    timeout-minutes: 20
+    env:
+      # Valeurs factices : seule la construction des images est vérifiée ici.
+      WEB_ORIGIN: https://agenda.example.test
+      POSTGRES_PASSWORD: ci
+      JWT_SECRET: ci-secret-ci-secret-ci-secret-ci-secret-1234
+      TOKEN_ENCRYPTION_KEY: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker compose -f docker-compose.prod.yml config --quiet
+      - run: docker compose -f docker-compose.prod.yml build
+
   android:
     name: Android (lint · tests · APK debug)
     runs-on: ubuntu-latest

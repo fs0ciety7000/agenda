@@ -1,6 +1,9 @@
 {
   "name": "@agenda/contracts",
   "version": "0.0.0",
+  "files": [
+    "dist"
+  ],
   "private": true,
   "description": "Schémas Zod partagés (API ↔ Web) : DTO, enums, codes d'erreur. Les types sont inférés.",
   "main": "dist/index.js",

@@ -1,0 +1,76 @@
+# Déploiement Coolify (Docker Compose) — voir docs/deployment.md.
+# Domaines + HTTPS : attribués dans l'interface Coolify. TOUT le routage Traefik est géré par
+# Coolify — AUCUN label ici. Seul `web` reçoit un domaine public ; l'API est interne.
+name: agenda
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+      args:
+        # URL de l'API vue depuis le conteneur web (réseau Docker interne), figée au build.
+        API_URL: http://api:4000
+    restart: unless-stopped
+    expose:
+      - '3000'
+    depends_on:
+      api:
+        condition: service_healthy
+    # Domaine : https://agenda.fs0ciety.org (port 3000) — dans l'UI Coolify.
+
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    restart: unless-stopped
+    expose:
+      - '4000'
+    environment:
+      NODE_ENV: production
+      PORT: '4000'
+      # Origine PUBLIQUE du web (CORS, redirections OAuth).
+      WEB_ORIGIN: ${WEB_ORIGIN:?WEB_ORIGIN est requis (ex. https://agenda.fs0ciety.org)}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-agenda}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-agenda}?schema=public
+      JWT_SECRET: ${JWT_SECRET:?JWT_SECRET est requis}
+      TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:?TOKEN_ENCRYPTION_KEY est requis}
+      # Le navigateur ne voit que du HTTPS (Cloudflare/Traefik) : cookies Secure.
+      COOKIE_SECURE: 'true'
+      # IP réelle du client posée par Cloudflare (rate limiting par IP).
+      CLIENT_IP_HEADER: ${CLIENT_IP_HEADER:-cf-connecting-ip}
+      AUTH_RATE_LIMIT: ${AUTH_RATE_LIMIT:-10}
+      # Passer à false après l'inscription de Grace et Nicolas.
+      REGISTRATION_ENABLED: ${REGISTRATION_ENABLED:-true}
+      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
+      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
+      GOOGLE_OAUTH_REDIRECT_URI: ${GOOGLE_OAUTH_REDIRECT_URI:-}
+      SENTRY_DSN: ${SENTRY_DSN:-}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    # Interne uniquement — pas de domaine (le web la proxifie sous /v1/*).
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-agenda}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD est requis}
+      POSTGRES_DB: ${POSTGRES_DB:-agenda}
+    expose:
+      - '5432'
+    volumes:
+      - agenda_postgres_data:/var/lib/postgresql/data
+      - agenda_postgres_backups:/backups
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-agenda} -d ${POSTGRES_DB:-agenda}']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # Interne uniquement — jamais exposé publiquement.
+
+  # Redis (BullMQ) sera ajouté en Phase 4 avec la synchronisation Google Calendar.
+
+volumes:
+  agenda_postgres_data:
+  agenda_postgres_backups:

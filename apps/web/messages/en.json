@@ -27,6 +27,7 @@
     "VALIDATION_FAILED": "Some fields are invalid.",
     "INVALID_CREDENTIALS": "Incorrect email or password.",
     "EMAIL_ALREADY_USED": "An account already exists with this email.",
+    "REGISTRATION_CLOSED": "Registration is closed. Ask the household for access.",
     "SESSION_EXPIRED": "Your session has expired. Please sign in again.",
     "UNAUTHENTICATED": "Please sign in.",
     "RATE_LIMITED": "Too many attempts. Try again in a minute.",

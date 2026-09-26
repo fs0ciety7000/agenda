@@ -149,5 +149,5 @@ réécrite par la régénération.
 ## 8. Migrations
 
 `prisma migrate dev` en local, `prisma migrate deploy` au démarrage du déploiement (étape
-pré-déploiement Render). Les `CHECK` constraints et index partiels non exprimables en Prisma
+démarrage du conteneur API, `apps/api/docker-entrypoint.sh`). Les `CHECK` constraints et index partiels non exprimables en Prisma
 sont ajoutés en SQL dans les migrations.
