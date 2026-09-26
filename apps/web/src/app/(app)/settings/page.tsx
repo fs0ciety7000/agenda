@@ -8,6 +8,7 @@ import { useSession } from '@/components/app/household-context';
 import { CalendarSettings } from '@/components/app/calendar-settings';
 import { CategoriesSettings } from '@/components/app/categories-settings';
 import { InviteLink } from '@/components/app/invite-link';
+import { AndroidAppCard } from '@/components/app/android-app-card';
 import { PasswordSettings } from '@/components/app/password-settings';
 import { PrivacySettings } from '@/components/app/privacy-settings';
 import { MemberAvatar } from '@/components/app/member-avatar';
@@ -116,6 +117,7 @@ export default function SettingsPage() {
         <Card>
           <PasswordSettings />
         </Card>
+        <AndroidAppCard />
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button
             variant="secondary"

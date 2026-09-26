@@ -12,6 +12,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import be.agendagn.app.AgendaApplication
+import be.agendagn.app.data.update.UpdateNotifier
 import be.agendagn.app.domain.repository.RefreshOutcome
 import java.util.concurrent.TimeUnit
 
@@ -58,6 +59,8 @@ class SyncWorker(context: Context, params: WorkerParameters) : CoroutineWorker(c
     override suspend fun doWork(): Result {
         val container = (applicationContext as AgendaApplication).container
         val outcome = container.repository.refresh()
+        // Nouvelle version de l'app : une notification par version.
+        container.updater.check()?.let { UpdateNotifier.notifyOnce(applicationContext, it) }
         val pending = container.database.pendingOperations().count()
         return when {
             outcome == RefreshOutcome.SIGNED_OUT -> Result.success()

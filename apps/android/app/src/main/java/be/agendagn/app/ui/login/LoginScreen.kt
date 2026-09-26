@@ -15,6 +15,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -38,7 +39,12 @@ import be.agendagn.app.R
 import be.agendagn.app.domain.repository.AuthError
 
 @Composable
-fun LoginScreen(viewModel: LoginViewModel, onSignedIn: () -> Unit, onOpenWeb: (path: String) -> Unit = {}) {
+fun LoginScreen(
+    viewModel: LoginViewModel,
+    onSignedIn: () -> Unit,
+    onOpenWeb: (path: String) -> Unit = {},
+    onGoogle: () -> Unit = {},
+) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     LaunchedEffect(state.signedIn) { if (state.signedIn) onSignedIn() }
 
@@ -95,6 +101,19 @@ fun LoginScreen(viewModel: LoginViewModel, onSignedIn: () -> Unit, onOpenWeb: (p
                     Text(stringResource(R.string.sign_in))
                 }
             }
+            if (state.googleAvailable) {
+                Text(
+                    stringResource(R.string.or),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                )
+                OutlinedButton(
+                    onClick = onGoogle,
+                    enabled = !state.isSubmitting,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+                ) { Text(stringResource(R.string.continue_with_google)) }
+            }
             // Inscription et réinitialisation : sur le site (mêmes écrans, emails et règles de sécurité).
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 TextButton(onClick = { onOpenWeb("forgot-password") }, modifier = Modifier.heightIn(min = 48.dp)) {
@@ -113,4 +132,7 @@ private fun AuthError.messageRes(): Int = when (this) {
     AuthError.RATE_LIMITED -> R.string.error_rate_limited
     AuthError.NETWORK -> R.string.error_network
     AuthError.UNKNOWN -> R.string.error_generic
+    AuthError.GOOGLE_FAILED -> R.string.error_google_failed
+    AuthError.GOOGLE_EMAIL_EXISTS -> R.string.error_google_email_exists
+    AuthError.REGISTRATION_CLOSED -> R.string.error_registration_closed
 }

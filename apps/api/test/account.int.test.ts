@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import { createHash, randomBytes } from 'node:crypto';
 import request from 'supertest';
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { GoogleOidcClient, type GoogleProfile } from '../src/auth/google-oidc.client';
@@ -149,9 +150,13 @@ describe('Compte : mot de passe oublié, Google Sign-In, RGPD (intégration)', (
   });
 
   describe('Google Sign-In', () => {
-    async function googleFlow(code: (state: string) => string, cookieJar?: string[]) {
+    async function googleFlow(
+      code: (state: string) => string,
+      cookieJar?: string[],
+      startQuery = 'next=/tasks',
+    ) {
       const start = await http()
-        .get('/v1/auth/google/start?next=/tasks')
+        .get(`/v1/auth/google/start?${startQuery}`)
         .set('Cookie', cookieJar ?? [])
         .expect(302);
       const state = new URL(start.headers.location!).searchParams.get('state')!;
@@ -199,6 +204,66 @@ describe('Compte : mot de passe oublié, Google Sign-In, RGPD (intégration)', (
       expect(unverified.headers.location).toBe('/login?error=GOOGLE_FAILED');
       const failed = await googleFlow(() => 'bad');
       expect(failed.headers.location).toBe('/login?error=GOOGLE_FAILED');
+    });
+
+    describe('app Android (Custom Tab + code à usage unique, PKCE app ↔ API)', () => {
+      const pkce = () => {
+        const verifier = randomBytes(32).toString('base64url');
+        return { verifier, challenge: createHash('sha256').update(verifier).digest('base64url') };
+      };
+      const exchange = (code: string, codeVerifier: string) =>
+        http().post('/v1/auth/google/mobile/exchange').set(CSRF).send({ code, codeVerifier });
+
+      it('connexion : retour vers l’app, code échangé une seule fois et seulement avec le bon verifier', async () => {
+        const email = `android.${Date.now()}@gmail.test`;
+        const { verifier, challenge } = pkce();
+        const res = await googleFlow(
+          () => `sub-${email}|${email}|verified`,
+          undefined,
+          `client=android&code_challenge=${challenge}`,
+        );
+        const location = new URL(res.headers.location!);
+        expect(`${location.protocol}//${location.host}`).toBe('be.agendagn.app://auth');
+        expect(res.headers['set-cookie']?.toString() ?? '').not.toContain('gn_at=');
+        const code = location.searchParams.get('code')!;
+
+        await exchange(code, pkce().verifier).expect(400); // code intercepté sans le verifier
+        const ok = await exchange(code, verifier).expect(200);
+        expect(ok.body.user.email).toBe(email);
+        await http()
+          .get('/v1/me')
+          .set({ authorization: `Bearer ${ok.body.accessToken}` })
+          .expect(200);
+        expect(ok.body.refreshToken).toBeTruthy();
+        await exchange(code, verifier).expect(400); // usage unique
+      });
+
+      it('code expiré refusé ; challenge absent ou erreurs Google renvoyés vers l’app', async () => {
+        const email = `android2.${Date.now()}@gmail.test`;
+        const { verifier, challenge } = pkce();
+        const res = await googleFlow(
+          () => `sub-${email}|${email}|verified`,
+          undefined,
+          `client=android&code_challenge=${challenge}`,
+        );
+        const code = new URL(res.headers.location!).searchParams.get('code')!;
+        await prisma.mobileAuthCode.updateMany({
+          where: { user: { email } },
+          data: { expiresAt: new Date(Date.now() - 1000) },
+        });
+        await exchange(code, verifier).expect(400);
+
+        const noChallenge = await http().get('/v1/auth/google/start?client=android').expect(302);
+        expect(noChallenge.headers.location).toBe('be.agendagn.app://auth?error=GOOGLE_FAILED');
+
+        const grace = await registerUser(app, 'Grace');
+        const exists = await googleFlow(
+          () => `other-sub-${Date.now()}|${grace.email}|verified`,
+          undefined,
+          `client=android&code_challenge=${pkce().challenge}`,
+        );
+        expect(exists.headers.location).toBe('be.agendagn.app://auth?error=GOOGLE_EMAIL_EXISTS');
+      });
     });
 
     it('rattacher Google depuis les Réglages (connecté)', async () => {

@@ -33,6 +33,14 @@ class LoginViewModelTest {
         }
         override suspend fun currentUser(): User? = null
         override suspend fun logout() = Unit
+        var googleResult: AuthResult = AuthResult.Failure(AuthError.GOOGLE_FAILED)
+        var googleCalls = mutableListOf<Pair<String?, String?>>()
+        override suspend fun googleAvailable() = true
+        override suspend fun googleSignInUrl(webBaseUrl: String) = "${webBaseUrl}v1/auth/google/start"
+        override suspend fun completeGoogleSignIn(code: String?, error: String?): AuthResult {
+            googleCalls += code to error
+            return googleResult
+        }
     }
 
     @Before fun setUp() = Dispatchers.setMain(dispatcher)
@@ -71,5 +79,25 @@ class LoginViewModelTest {
         assertEquals(AuthError.INVALID_CREDENTIALS, vm.state.value.error)
         vm.onPasswordChange("wrong2")
         assertNull(vm.state.value.error)
+    }
+
+    @Test
+    fun `retour Google - succes connecte, erreur affichee`() = runTest(dispatcher) {
+        val repo = FakeAuthRepository(AuthResult.Failure(AuthError.UNKNOWN))
+        val vm = LoginViewModel(repo)
+        advanceUntilIdle()
+        assertTrue(vm.state.value.googleAvailable)
+
+        repo.googleResult = AuthResult.Failure(AuthError.GOOGLE_EMAIL_EXISTS)
+        vm.onGoogleCallback(null, "GOOGLE_EMAIL_EXISTS")
+        advanceUntilIdle()
+        assertEquals(AuthError.GOOGLE_EMAIL_EXISTS, vm.state.value.error)
+        assertFalse(vm.state.value.signedIn)
+
+        repo.googleResult = AuthResult.Success(User("1", "grace@example.be", "Grace"))
+        vm.onGoogleCallback("code", null)
+        advanceUntilIdle()
+        assertTrue(vm.state.value.signedIn)
+        assertEquals(listOf<Pair<String?, String?>>(null to "GOOGLE_EMAIL_EXISTS", "code" to null), repo.googleCalls)
     }
 }

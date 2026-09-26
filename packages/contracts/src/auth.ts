@@ -75,3 +75,13 @@ export const DeleteAccountInput = z.object({
   confirm: z.literal('SUPPRIMER').or(z.literal('DELETE')).optional(),
 });
 export type DeleteAccountInput = z.infer<typeof DeleteAccountInput>;
+
+/** App Android : échange du code reçu après « Continuer avec Google » (PKCE app ↔ API). */
+export const MobileExchangeInput = z.object({
+  code: z.string().min(20).max(200),
+  codeVerifier: z.string().regex(/^[A-Za-z0-9._~-]{43,128}$/),
+});
+export type MobileExchangeInput = z.infer<typeof MobileExchangeInput>;
+
+/** Adresse de retour vers l'app Android (schéma propre à l'app, cf. AndroidManifest). */
+export const ANDROID_AUTH_REDIRECT = 'be.agendagn.app://auth';

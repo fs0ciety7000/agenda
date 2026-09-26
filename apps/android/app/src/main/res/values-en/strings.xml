@@ -144,4 +144,19 @@
     <string name="notification_channel_reminders_desc">A reminder before each scheduled task that concerns you.</string>
     <string name="reminder_body">Planned at %1$s</string>
     <string name="reminder_done">Done</string>
+    <string name="or">or</string>
+    <string name="continue_with_google">Continue with Google</string>
+    <string name="error_google_failed">Signing in with Google didn\'t work. Please try again.</string>
+    <string name="error_google_email_exists">An account already exists with this address. Sign in with your password, then link Google in the website settings.</string>
+    <string name="error_registration_closed">Registration is closed. Ask for an invitation.</string>
+    <string name="update_channel">App updates</string>
+    <string name="update_available">New version available (%1$s)</string>
+    <string name="update_tap">Tap to open the app and install the update.</string>
+    <string name="update_hint">Downloads then installs over the current app: your data is kept.</string>
+    <string name="update_permission_hint">Android asks you once to allow the app to install its updates. Turn the option on, come back, then tap “Update”.</string>
+    <string name="update_failed">The download failed. Check your connection and try again.</string>
+    <string name="update_downloading">Downloading… %1$d %%</string>
+    <string name="update_install">Update</string>
+    <string name="update_allow">Allow updates</string>
+    <string name="up_to_date">The app is up to date.</string>
 </resources>

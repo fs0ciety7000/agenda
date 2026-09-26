@@ -50,6 +50,8 @@ fun TodayScreen(
     onOpen: (Occurrence) -> Unit,
     onShowUnscheduled: () -> Unit,
     contentPadding: PaddingValues = PaddingValues(),
+    /** Bandeau optionnel en haut (ex. nouvelle version de l'app). */
+    banner: @Composable () -> Unit = {},
 ) {
     val sections = Agenda.todaySections(state.occurrences, state.today)
     val members = state.members
@@ -73,6 +75,7 @@ fun TodayScreen(
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 SyncBanner(state.online, state.sync)
+                banner()
             }
             if (sections.overdue.isNotEmpty()) {
                 item { SectionHeader(stringResource(R.string.overdue), trailing = sections.overdue.size.toString()) }

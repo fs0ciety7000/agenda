@@ -130,6 +130,7 @@ manquent. Modèle complet : `.env.prod.example`.
 | `POSTGRES_USER` / `POSTGRES_DB` | `agenda` | défaut |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | active Google Calendar et « Continuer avec Google » | cf. §9 |
 | `SMTP_*`, `EMAIL_FROM` | facultatif : active « Mot de passe oublié » | cf. §8 |
+| `GITHUB_RELEASES_TOKEN` | vide si le dépôt est public ; sinon jeton GitHub lecture seule (Contents) | cf. [`android.md`](android.md) §4 |
 | `SENTRY_DSN` | vide jusqu'en Phase 7 | — |
 
 `REDIS_URL` est fixée par le compose (`redis://redis:6379`) : rien à définir.

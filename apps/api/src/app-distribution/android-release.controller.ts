@@ -1,0 +1,44 @@
+import { Controller, Get, Res } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import type { Response } from 'express';
+import { Readable } from 'node:stream';
+import type { ReadableStream } from 'node:stream/web';
+import { Public } from '../common/request-context';
+import { env } from '../config/env';
+import { AndroidReleaseService } from './android-release.service';
+
+/**
+ * Téléchargement et mises à jour de l'app Android, servis par le domaine de l'app :
+ * - `version.json` : lu par l'app pour proposer une mise à jour ;
+ * - `agenda-gn.apk` : lien « Télécharger l'app Android » du site et mises à jour.
+ * Publics : l'APK ne contient aucun secret (même contenu que la release GitHub).
+ */
+@ApiTags('app')
+@Public()
+@Controller({ path: 'app/android', version: '1' })
+export class AndroidReleaseController {
+  constructor(private readonly releases: AndroidReleaseService) {}
+
+  @Get('version.json')
+  async version(@Res({ passthrough: true }) res: Response) {
+    const release = await this.releases.latest();
+    res.setHeader('cache-control', 'no-cache');
+    return {
+      versionCode: release.versionCode,
+      versionName: release.versionName,
+      sha256: release.sha256,
+      apkUrl: `${env().WEB_ORIGIN}/v1/app/android/agenda-gn.apk`,
+    };
+  }
+
+  @Get('agenda-gn.apk')
+  async apk(@Res() res: Response): Promise<void> {
+    const upstream = await this.releases.download();
+    res.status(200);
+    res.setHeader('content-type', 'application/vnd.android.package-archive');
+    res.setHeader('content-disposition', 'attachment; filename="agenda-gn.apk"');
+    const length = upstream.headers.get('content-length');
+    if (length) res.setHeader('content-length', length);
+    Readable.fromWeb(upstream.body as unknown as ReadableStream).pipe(res);
+  }
+}

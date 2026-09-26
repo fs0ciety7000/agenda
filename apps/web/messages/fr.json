@@ -436,5 +436,10 @@
     "submitSet": "Définir le mot de passe",
     "changed": "Mot de passe changé. Les autres appareils ont été déconnectés.",
     "set": "Mot de passe défini."
+  },
+  "androidApp": {
+    "title": "Application Android · {version}",
+    "hint": "Installez-la sur votre téléphone ; elle se met ensuite à jour d'elle-même.",
+    "download": "Télécharger"
   }
 }

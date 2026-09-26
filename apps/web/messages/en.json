@@ -436,5 +436,10 @@
     "submitSet": "Set password",
     "changed": "Password changed. Other devices have been signed out.",
     "set": "Password set."
+  },
+  "androidApp": {
+    "title": "Android app · {version}",
+    "hint": "Install it on your phone; it then keeps itself up to date.",
+    "download": "Download"
   }
 }

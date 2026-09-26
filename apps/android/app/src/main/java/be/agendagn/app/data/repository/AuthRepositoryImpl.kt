@@ -1,10 +1,12 @@
 package be.agendagn.app.data.repository
 
+import be.agendagn.app.data.auth.PkceStore
 import be.agendagn.app.data.auth.TokenStore
 import be.agendagn.app.data.remote.AgendaApi
 import be.agendagn.app.data.remote.ApiErrorDto
 import be.agendagn.app.data.remote.LoginRequest
 import be.agendagn.app.data.remote.MeDto
+import be.agendagn.app.data.remote.MobileExchangeRequest
 import be.agendagn.app.data.remote.RefreshRequest
 import be.agendagn.app.data.remote.json
 import be.agendagn.app.domain.model.User
@@ -19,6 +21,7 @@ class AuthRepositoryImpl(
     private val tokens: TokenStore,
     /** Efface le cache local et l'outbox à la déconnexion volontaire. */
     private val clearLocalData: suspend () -> Unit = {},
+    private val pkce: PkceStore? = null,
 ) : AuthRepository {
     override val isSignedIn: Flow<Boolean> = tokens.hasSession
 
@@ -34,6 +37,40 @@ class AuthRepositoryImpl(
         }
     } catch (_: IOException) {
         AuthResult.Failure(AuthError.NETWORK)
+    }
+
+    override suspend fun googleAvailable(): Boolean = try {
+        pkce != null && api.providers().body()?.google == true
+    } catch (_: IOException) {
+        false
+    }
+
+    override suspend fun googleSignInUrl(webBaseUrl: String): String {
+        val (_, challenge) = requireNotNull(pkce).create()
+        return "${webBaseUrl}v1/auth/google/start?client=android&code_challenge=$challenge"
+    }
+
+    override suspend fun completeGoogleSignIn(code: String?, error: String?): AuthResult {
+        val verifier = pkce?.take()
+        if (code == null || verifier == null) return AuthResult.Failure(googleError(error))
+        return try {
+            val response = api.googleMobileExchange(MobileExchangeRequest(code, verifier))
+            val body = response.body()
+            if (response.isSuccessful && body?.accessToken != null && body.refreshToken != null) {
+                tokens.save(body.accessToken, body.refreshToken)
+                AuthResult.Success(body.user.toDomain())
+            } else {
+                AuthResult.Failure(if (response.code() == 429) AuthError.RATE_LIMITED else AuthError.GOOGLE_FAILED)
+            }
+        } catch (_: IOException) {
+            AuthResult.Failure(AuthError.NETWORK)
+        }
+    }
+
+    private fun googleError(code: String?) = when (code) {
+        "GOOGLE_EMAIL_EXISTS" -> AuthError.GOOGLE_EMAIL_EXISTS
+        "REGISTRATION_CLOSED" -> AuthError.REGISTRATION_CLOSED
+        else -> AuthError.GOOGLE_FAILED
     }
 
     override suspend fun currentUser(): User? = try {
