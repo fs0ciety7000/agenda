@@ -159,4 +159,5 @@
     <string name="update_install">Update</string>
     <string name="update_allow">Allow updates</string>
     <string name="up_to_date">The app is up to date.</string>
+    <string name="privacy_policy">Privacy policy</string>
 </resources>

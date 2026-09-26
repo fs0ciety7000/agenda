@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "Agenda G & N",
-    "skipToContent": "Aller au contenu"
+    "skipToContent": "Aller au contenu",
+    "privacy": "Politique de confidentialité"
   },
   "nav": {
     "today": "Aujourd'hui",
@@ -379,7 +380,8 @@
     "unlinkBody": "Vous ne pourrez plus vous connecter avec ce compte Google. Vous pourrez ensuite lier un autre compte (bouton « Lier Google »). Votre compte, vos tâches et Google Calendar ne sont pas touchés.",
     "unlinkConfirm": "Délier",
     "googleUnlinked": "Compte Google délié. Vous pouvez lier le bon compte.",
-    "unlinkNeedsPassword": "Pour délier Google, définissez d'abord un mot de passe (section Compte), sinon vous ne pourriez plus vous connecter."
+    "unlinkNeedsPassword": "Pour délier Google, définissez d'abord un mot de passe (section Compte), sinon vous ne pourriez plus vous connecter.",
+    "policyLink": "Comment vos données sont utilisées (politique de confidentialité)"
   },
   "calendarSync": {
     "notConfigured": "La connexion à Google Calendar n'est pas activée sur ce serveur.",
@@ -441,5 +443,56 @@
     "title": "Application Android · {version}",
     "hint": "Installez-la sur votre téléphone ; elle se met ensuite à jour d'elle-même.",
     "download": "Télécharger"
+  },
+  "errorPage": {
+    "title": "Oups, cette page n'a pas pu s'afficher",
+    "body": "L'erreur nous a été signalée automatiquement. Vous pouvez réessayer ; vos données ne sont pas perdues.",
+    "retry": "Réessayer"
+  },
+  "privacyPolicy": {
+    "title": "Politique de confidentialité",
+    "updated": "Dernière mise à jour : 26 septembre 2026",
+    "intro": "Agenda G & N est une application privée et non commerciale d'organisation des tâches du foyer, utilisée par ses membres. Cette page explique quelles données elle traite, pourquoi, et comment les supprimer.",
+    "who": {
+      "title": "Qui gère vos données",
+      "body": "L'application est hébergée et administrée par un membre du foyer, sur son propre serveur (derrière Cloudflare). Il n'y a ni publicité, ni revente, ni pistage : vos données servent uniquement à faire fonctionner l'application pour votre foyer."
+    },
+    "data": {
+      "title": "Données traitées",
+      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations.\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, historique des actions (qui a fait quoi, quand).\nSessions : appareil (navigateur ou application) et dates de connexion, pour pouvoir vous déconnecter à distance.\nL'application Android conserve une copie de vos tâches sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion."
+    },
+    "google": {
+      "title": "Données Google",
+      "body": "Connexion avec Google : l'application reçoit votre identifiant Google et votre adresse e-mail vérifiée, uniquement pour vous connecter. Votre mot de passe Google n'est jamais vu par l'application.\nGoogle Calendar (si vous le connectez) : l'application lit la liste de vos calendriers (pour que vous choisissiez le calendrier partagé) et crée, modifie ou supprime uniquement les événements qu'elle a elle-même créés pour vos tâches. Elle ne lit pas vos autres événements. Les jetons d'accès Google sont chiffrés (AES-256-GCM) sur le serveur et révoqués à la déconnexion ou à la suppression du compte.\nL'utilisation des données reçues des API Google respecte la Google API Services User Data Policy, y compris les exigences d'utilisation limitée (Limited Use) : ces données ne sont ni transférées à des tiers, ni utilisées pour de la publicité, ni lues par des personnes, sauf à votre demande pour résoudre un problème ou si la loi l'exige."
+    },
+    "use": {
+      "title": "Pourquoi",
+      "body": "Afficher et partager les tâches du foyer, envoyer les rappels, synchroniser le calendrier partagé si vous l'activez, vous permettre de réinitialiser votre mot de passe par e-mail, et diagnostiquer les erreurs techniques. Base légale : l'exécution du service que vous utilisez et, pour Google Calendar, votre consentement (révocable à tout moment)."
+    },
+    "processors": {
+      "title": "Prestataires",
+      "body": "Cloudflare (acheminement et protection du site), Google (si vous utilisez la connexion Google ou Google Calendar), le fournisseur d'e-mails configuré pour « mot de passe oublié » (par exemple Brevo), le stockage de sauvegarde hors serveur s'il est configuré (par exemple Cloudflare R2), et, s'il est activé, un service de suivi des erreurs (Sentry) qui ne reçoit que des informations techniques (type d'erreur, page), sans contenu de tâche ni identité."
+    },
+    "retention": {
+      "title": "Durées de conservation",
+      "body": "Vos données sont conservées tant que votre compte existe. Les sessions expirent après 60 jours d'inactivité. Les liens de réinitialisation de mot de passe expirent après 30 minutes.\nSuppression du compte : immédiate dans l'application. Les sauvegardes sont conservées 14 jours sur le serveur et 30 jours hors serveur : vos données y disparaissent au plus tard après ce délai."
+    },
+    "security": {
+      "title": "Sécurité",
+      "body": "Connexions chiffrées (HTTPS), mots de passe hachés, jetons Google chiffrés, cloisonnement strict entre foyers, tâches personnelles visibles par vous seul, limitation des tentatives de connexion, sauvegardes quotidiennes vérifiées."
+    },
+    "rights": {
+      "title": "Vos droits",
+      "body": "Depuis Réglages → Données & confidentialité, vous pouvez à tout moment : exporter toutes vos données (fichier JSON), délier Google, déconnecter Google Calendar, supprimer votre compte. Vous disposez aussi des droits d'accès, de rectification, d'opposition et de réclamation auprès de l'autorité de protection des données de votre pays (en Belgique : l'Autorité de protection des données)."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "body": "Uniquement des cookies strictement nécessaires : session de connexion (httpOnly, sécurisés) et, pendant quelques minutes, le suivi d'une connexion Google en cours. Le choix du thème clair ou sombre est gardé dans votre navigateur. Aucun cookie de mesure d'audience ni de publicité."
+    },
+    "contact": {
+      "title": "Contact",
+      "body": "Pour toute question ou demande :",
+      "fallback": "Pour toute question ou demande, contactez l'administrateur de votre foyer."
+    }
   }
 }

@@ -12,6 +12,9 @@ services:
         # URL de l'API vue depuis le conteneur web (réseau Docker interne), figée au build.
         API_URL: http://api:4000
     restart: unless-stopped
+    environment:
+      # Adresse affichée sur /privacy (politique de confidentialité).
+      PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-}
     expose:
       - '3000'
     depends_on:
@@ -74,13 +77,47 @@ services:
       - '5432'
     volumes:
       - agenda_postgres_data:/var/lib/postgresql/data
-      - agenda_postgres_backups:/backups
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-agenda} -d ${POSTGRES_DB:-agenda}']
       interval: 5s
       timeout: 5s
       retries: 10
     # Interne uniquement — jamais exposé publiquement.
+
+  # Sauvegarde chaque nuit, RESTAURÉE dans une base temporaire pour vérification, copiée hors
+  # serveur si configuré (docs/deployment.md §6). Unhealthy si aucune sauvegarde réussie < 26 h.
+  backup:
+    build:
+      context: infra/backup
+    restart: unless-stopped
+    environment:
+      PGHOST: postgres
+      PGUSER: ${POSTGRES_USER:-agenda}
+      PGPASSWORD: ${POSTGRES_PASSWORD}
+      PGDATABASE: ${POSTGRES_DB:-agenda}
+      BACKUP_HOUR: ${BACKUP_HOUR:-2}
+      BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
+      # Copie hors serveur (rclone) : ex. Cloudflare R2 → BACKUP_OFFSITE_REMOTE=offsite:agenda-backups
+      BACKUP_OFFSITE_REMOTE: ${BACKUP_OFFSITE_REMOTE:-}
+      RCLONE_CONFIG_OFFSITE_TYPE: s3
+      RCLONE_CONFIG_OFFSITE_PROVIDER: ${BACKUP_S3_PROVIDER:-Cloudflare}
+      RCLONE_CONFIG_OFFSITE_ENDPOINT: ${BACKUP_S3_ENDPOINT:-}
+      RCLONE_CONFIG_OFFSITE_ACCESS_KEY_ID: ${BACKUP_S3_ACCESS_KEY_ID:-}
+      RCLONE_CONFIG_OFFSITE_SECRET_ACCESS_KEY: ${BACKUP_S3_SECRET_ACCESS_KEY:-}
+      RCLONE_CONFIG_OFFSITE_NO_CHECK_BUCKET: 'true'
+    volumes:
+      - agenda_postgres_backups:/backups
+    depends_on:
+      # L'API applique les migrations au démarrage : on attend un schéma complet.
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ['CMD-SHELL', 'test -n "$$(find /backups/last-success -mmin -1560 2>/dev/null)"']
+      interval: 10m
+      timeout: 10s
+      start_period: 10m
+      retries: 1
+    # Interne uniquement.
 
   redis:
     image: redis:7-alpine

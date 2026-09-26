@@ -25,6 +25,9 @@ interface AgendaApi {
     @GET("v1/me")
     suspend fun me(): Response<MeDto>
 
+    @POST("v1/client-errors")
+    suspend fun reportClientError(@Body body: ClientErrorRequest): Response<Unit>
+
     @GET("v1/auth/providers")
     suspend fun providers(): Response<ProvidersDto>
 

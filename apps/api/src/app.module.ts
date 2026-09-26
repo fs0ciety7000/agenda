@@ -4,6 +4,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { LoggerModule } from 'nestjs-pino';
 import { AppDistributionModule } from './app-distribution/app-distribution.module';
 import { AuthModule } from './auth/auth.module';
+import { ClientErrorsController } from './common/client-errors.controller';
 import { ClientIpThrottlerGuard } from './common/client-ip-throttler.guard';
 import { HttpExceptionFilter } from './common/http-exception.filter';
 import { env } from './config/env';
@@ -42,7 +43,7 @@ import { TasksModule } from './tasks/tasks.module';
     CalendarModule,
     AppDistributionModule,
   ],
-  controllers: [HealthController],
+  controllers: [HealthController, ClientErrorsController],
   providers: [
     { provide: APP_GUARD, useClass: ClientIpThrottlerGuard },
     { provide: APP_FILTER, useClass: HttpExceptionFilter },

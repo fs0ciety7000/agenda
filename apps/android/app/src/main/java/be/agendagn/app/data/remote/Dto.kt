@@ -10,6 +10,15 @@ data class LoginRequest(val email: String, val password: String)
 data class RefreshRequest(val refreshToken: String)
 
 @Serializable
+data class ClientErrorRequest(
+    val source: String,
+    val message: String,
+    val stack: String? = null,
+    val location: String? = null,
+    val release: String? = null,
+)
+
+@Serializable
 data class MobileExchangeRequest(val code: String, val codeVerifier: String)
 
 @Serializable

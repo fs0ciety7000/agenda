@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "Agenda G & N",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "privacy": "Privacy policy"
   },
   "nav": {
     "today": "Today",
@@ -379,7 +380,8 @@
     "unlinkBody": "You will no longer be able to sign in with this Google account. You can then link another one (“Link Google” button). Your account, tasks and Google Calendar are not affected.",
     "unlinkConfirm": "Unlink",
     "googleUnlinked": "Google account unlinked. You can now link the right one.",
-    "unlinkNeedsPassword": "To unlink Google, first set a password (Account section), otherwise you could no longer sign in."
+    "unlinkNeedsPassword": "To unlink Google, first set a password (Account section), otherwise you could no longer sign in.",
+    "policyLink": "How your data is used (privacy policy)"
   },
   "calendarSync": {
     "notConfigured": "Google Calendar is not enabled on this server.",
@@ -441,5 +443,56 @@
     "title": "Android app · {version}",
     "hint": "Install it on your phone; it then keeps itself up to date.",
     "download": "Download"
+  },
+  "errorPage": {
+    "title": "Oops, this page couldn't be displayed",
+    "body": "The error was reported automatically. You can try again; your data is not lost.",
+    "retry": "Try again"
+  },
+  "privacyPolicy": {
+    "title": "Privacy policy",
+    "updated": "Last updated: 26 September 2026",
+    "intro": "Agenda G & N is a private, non-commercial app used by the members of a household to organise their tasks. This page explains what data it processes, why, and how to delete it.",
+    "who": {
+      "title": "Who manages your data",
+      "body": "The app is hosted and run by a member of the household, on their own server (behind Cloudflare). There are no ads, no data sales and no tracking: your data is only used to run the app for your household."
+    },
+    "data": {
+      "title": "Data processed",
+      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, activity history (who did what, when).\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out."
+    },
+    "google": {
+      "title": "Google data",
+      "body": "Sign in with Google: the app receives your Google identifier and verified email address, only to sign you in. The app never sees your Google password.\nGoogle Calendar (if you connect it): the app reads the list of your calendars (so you can pick the shared calendar) and only creates, updates or deletes the events it created itself for your tasks. It does not read your other events. Google access tokens are encrypted (AES-256-GCM) on the server and revoked when you disconnect or delete your account.\nThe app's use of information received from Google APIs adheres to the Google API Services User Data Policy, including the Limited Use requirements: this data is not transferred to third parties, not used for advertising, and not read by humans except at your request to fix a problem or when required by law."
+    },
+    "use": {
+      "title": "Why",
+      "body": "To show and share household tasks, send reminders, sync the shared calendar if you enable it, let you reset your password by email, and diagnose technical errors. Legal basis: providing the service you use and, for Google Calendar, your consent (which you can withdraw at any time)."
+    },
+    "processors": {
+      "title": "Service providers",
+      "body": "Cloudflare (site delivery and protection), Google (if you use Google sign-in or Google Calendar), the email provider configured for “forgot password” (e.g. Brevo), off-site backup storage if configured (e.g. Cloudflare R2), and, if enabled, an error-tracking service (Sentry) that only receives technical information (error type, page), without task content or identity."
+    },
+    "retention": {
+      "title": "Retention",
+      "body": "Your data is kept as long as your account exists. Sessions expire after 60 days of inactivity. Password reset links expire after 30 minutes.\nAccount deletion: immediate in the app. Backups are kept 14 days on the server and 30 days off-site: your data disappears from them at the latest after that."
+    },
+    "security": {
+      "title": "Security",
+      "body": "Encrypted connections (HTTPS), hashed passwords, encrypted Google tokens, strict separation between households, personal tasks visible only to you, sign-in attempt limits, verified daily backups."
+    },
+    "rights": {
+      "title": "Your rights",
+      "body": "From Settings → Data & privacy you can at any time: export all your data (JSON file), unlink Google, disconnect Google Calendar, delete your account. You also have the rights of access, rectification, objection and complaint to your country's data protection authority."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "body": "Only strictly necessary cookies: sign-in session (httpOnly, secure) and, for a few minutes, tracking of a Google sign-in in progress. Your light/dark theme choice is stored in your browser. No analytics or advertising cookies."
+    },
+    "contact": {
+      "title": "Contact",
+      "body": "For any question or request:",
+      "fallback": "For any question or request, contact your household's administrator."
+    }
   }
 }

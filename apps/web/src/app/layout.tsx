@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getTranslations } from 'next-intl/server';
 import type { ReactNode } from 'react';
+import { ErrorListener } from '@/components/app/error-listener';
 import { themeInitScript } from '@/lib/theme';
 import { Providers } from './providers';
 import './globals.css';
@@ -36,7 +37,10 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
           {t('skipToContent')}
         </a>
         <NextIntlClientProvider>
-          <Providers>{children}</Providers>
+          <Providers>
+            <ErrorListener />
+            {children}
+          </Providers>
         </NextIntlClientProvider>
       </body>
     </html>

@@ -195,7 +195,7 @@ portables vers A/B/D sans réécriture. Un seul domaine public (`agenda.fs0ciety
 
 - CI/CD : GitHub Actions (lint, typecheck, tests, build ; job Android séparé).
 - Monitoring : Sentry (web + API + Android), logs pino JSON, `/health/live` et `/health/ready` (DB ; Redis volontairement exclu : sa panne ne fait que retarder la synchro) exposé publiquement en `/healthz`, métriques BullMQ (taille des files, jobs en échec).
-- Sauvegardes : `pg_dump` quotidien (tâche planifiée Coolify) + copie hors serveur (cf. `deployment.md` §6).
+- Sauvegardes : service `backup` (dump nuitier restauré en base temporaire pour vérification, copie R2) — cf. `deployment.md` §6.
 - Stockage S3 : non nécessaire en MVP (pas de pièces jointes) → reporté.
 
 ## 12. Versions (épinglées)

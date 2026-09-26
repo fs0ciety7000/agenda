@@ -173,6 +173,9 @@ fun SettingsScreen(
                 OutlinedButton(onClick = { onOpenWeb("") }, modifier = Modifier.heightIn(min = 48.dp)) {
                     Text(stringResource(R.string.open_website))
                 }
+                TextButton(onClick = { onOpenWeb("privacy") }, modifier = Modifier.heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.privacy_policy))
+                }
                 TextButton(onClick = { confirmSignOut = true }, modifier = Modifier.heightIn(min = 48.dp)) {
                     Text(stringResource(R.string.sign_out), color = MaterialTheme.colorScheme.error)
                 }

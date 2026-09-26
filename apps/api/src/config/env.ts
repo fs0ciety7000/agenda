@@ -84,6 +84,8 @@ const EnvSchema = z.object({
   // Espaces ou retours à la ligne collés par erreur dans Coolify ⇒ `invalid_client` chez Google.
   GOOGLE_CLIENT_ID: z.string().trim().optional(),
   GOOGLE_CLIENT_SECRET: z.string().trim().optional(),
+  // ── Suivi des erreurs (optionnel) : Sentry ou GlitchTip. Sans DSN : erreurs dans les logs seulement. ──
+  SENTRY_DSN: z.preprocess((v) => (v === '' ? undefined : v), z.string().url().optional()),
   // ── Distribution de l'app Android (docs/android.md §4) ──
   /** Dépôt GitHub dont la release `android-latest` contient l'APK et version.json. */
   ANDROID_RELEASE_REPO: z.string().trim().default('fs0ciety7000/agenda'),

@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 /**
  * Codes d'erreur stables renvoyés par l'API. Les clients traduisent le code ;
  * l'API ne renvoie jamais de message destiné à être affiché tel quel.
@@ -50,3 +52,14 @@ export interface ApiErrorBody {
     details?: unknown;
   };
 }
+
+/** Erreur survenue dans le navigateur ou l'app Android, remontée à l'API (logs + Sentry). */
+export const ClientErrorInput = z.object({
+  source: z.enum(['web', 'android']),
+  message: z.string().trim().min(1).max(500),
+  stack: z.string().max(8000).optional(),
+  /** Chemin de la page (sans paramètres) ou écran Android. */
+  location: z.string().max(200).optional(),
+  release: z.string().max(40).optional(),
+});
+export type ClientErrorInput = z.infer<typeof ClientErrorInput>;
