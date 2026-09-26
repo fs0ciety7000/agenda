@@ -33,7 +33,7 @@ import {
 import { ZodPipe } from '../common/zod.pipe';
 import { env } from '../config/env';
 import { HouseholdMemberGuard } from '../households/household-member.guard';
-import { CalendarConnectionService } from './calendar-connection.service';
+import { CalendarConnectionService, CalendarScopesMissing } from './calendar-connection.service';
 import { CalendarQueueService } from './calendar-queue.service';
 import { GoogleApiError, GoogleCalendarClient } from './google-calendar.client';
 
@@ -104,23 +104,40 @@ export class CalendarController {
   ): Promise<void> {
     res.clearCookie(FLOW_COOKIE, { ...this.cookieOptions(), maxAge: undefined });
     let flow: { state: string; verifier: string; userId: string; next: string };
+    const raw = (req.cookies as Record<string, string>)[FLOW_COOKIE];
     try {
-      const raw = (req.cookies as Record<string, string>)[FLOW_COOKIE];
       flow = (await jwtVerify(raw ?? '', this.secret, { audience: 'google-calendar' }))
         .payload as typeof flow;
-    } catch {
-      return res.redirect('/settings?calendarError=GOOGLE_FAILED');
+    } catch (e) {
+      // Cookie absent (autre navigateur, cookies bloqués) ou expiré (> 10 min sur l'écran Google).
+      this.logger.warn(
+        `Calendar connection failed: flow cookie ${raw ? `invalid (${e instanceof Error ? e.message : String(e)})` : 'missing'}`,
+      );
+      return res.redirect('/settings?calendarError=GOOGLE_FLOW_EXPIRED');
     }
-    // Refus de l'utilisateur sur l'écran Google, ou state invalide.
-    if (error || !code || state !== flow.state)
-      return res.redirect(withParam(flow.next, 'calendarError=GOOGLE_FAILED'));
+    if (error) {
+      this.logger.warn(`Calendar connection failed: Google returned error=${error}`);
+      return res.redirect(
+        withParam(
+          flow.next,
+          `calendarError=${error === 'access_denied' ? 'GOOGLE_DENIED' : 'GOOGLE_FAILED'}`,
+        ),
+      );
+    }
+    if (!code || state !== flow.state) {
+      this.logger.warn('Calendar connection failed: missing code or state mismatch');
+      return res.redirect(withParam(flow.next, 'calendarError=GOOGLE_FLOW_EXPIRED'));
+    }
     try {
       await this.calendar.saveConnection(flow.userId, code, flow.verifier);
     } catch (e) {
+      const scopes = e instanceof CalendarScopesMissing;
       this.logger.warn(
-        `Calendar connection failed: ${e instanceof GoogleApiError ? e.message : String(e)}`,
+        `Calendar connection failed: ${e instanceof GoogleApiError || scopes ? e.message : String(e)}`,
       );
-      return res.redirect(withParam(flow.next, 'calendarError=GOOGLE_FAILED'));
+      return res.redirect(
+        withParam(flow.next, `calendarError=${scopes ? 'GOOGLE_SCOPES_MISSING' : 'GOOGLE_FAILED'}`),
+      );
     }
     res.redirect(withParam(flow.next, 'calendar=connected'));
   }

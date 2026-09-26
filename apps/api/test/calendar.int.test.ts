@@ -56,7 +56,7 @@ describe('Google Calendar — connexion, synchronisation, erreurs (intégration)
     return { ...h, calendarId, email, events, occurrences, sweep: () => sync.sweep(h.householdId) };
   }
 
-  async function connect(auth: Record<string, string>, sub: string, email: string) {
+  async function startFlow(auth: Record<string, string>) {
     const start = await http()
       .get('/v1/calendar/google/connect?next=/settings')
       .set(auth)
@@ -65,6 +65,11 @@ describe('Google Calendar — connexion, synchronisation, erreurs (intégration)
     const flow = (start.headers['set-cookie'] as unknown as string[])
       .find((c) => c.startsWith('gn_cal_oauth='))!
       .split(';')[0]!;
+    return { state, flow };
+  }
+
+  async function connect(auth: Record<string, string>, sub: string, email: string) {
+    const { state, flow } = await startFlow(auth);
     const res = await http()
       .get(
         `/v1/calendar/google/callback?code=${encodeURIComponent(`${sub}|${email}`)}&state=${state}`,
@@ -106,6 +111,43 @@ describe('Google Calendar — connexion, synchronisation, erreurs (intégration)
       });
       expect(JSON.stringify(status.body)).not.toMatch(/rt-|at-|Enc/);
       // Grace n'a pas (encore) connecté son propre compte Google.
+      const grace = await http().get(`${h.base}/calendar`).set(h.grace.auth).expect(200);
+      expect(grace.body.connection).toBeNull();
+    });
+
+    it('échecs du retour Google : chaque cause a son code, rien n’est enregistré', async () => {
+      const h = await coupleHousehold(app);
+      const callback = (qs: string, cookie?: string) => {
+        const req = http().get(`/v1/calendar/google/callback?${qs}`);
+        return (cookie ? req.set('Cookie', cookie) : req).expect(302);
+      };
+      // Cookie de flux absent (autre navigateur, cookies bloqués ou > 10 min).
+      let res = await callback('code=x%7Cy&state=s');
+      expect(res.headers.location).toBe('/settings?calendarError=GOOGLE_FLOW_EXPIRED');
+      // Annulation sur l'écran Google.
+      let f = await startFlow(h.grace.auth);
+      res = await callback(`error=access_denied&state=${f.state}`, f.flow);
+      expect(res.headers.location).toBe('/settings?calendarError=GOOGLE_DENIED');
+      // state falsifié.
+      f = await startFlow(h.grace.auth);
+      res = await callback('code=x%7Cy&state=forged', f.flow);
+      expect(res.headers.location).toBe('/settings?calendarError=GOOGLE_FLOW_EXPIRED');
+      // Consentement granulaire : accès aux événements décoché.
+      google.uncheckedScopes = ['https://www.googleapis.com/auth/calendar.events'];
+      try {
+        f = await startFlow(h.grace.auth);
+        const code = encodeURIComponent(`sub-scopes-${h.householdId}|grace@gmail.test`);
+        res = await callback(`code=${code}&state=${f.state}`, f.flow);
+        expect(res.headers.location).toBe('/settings?calendarError=GOOGLE_SCOPES_MISSING');
+      } finally {
+        google.uncheckedScopes = [];
+      }
+      // Code refusé par Google à l'échange (ex. client secret erroné).
+      google.failNext('token.exchange', 'bad_request');
+      f = await startFlow(h.grace.auth);
+      res = await callback(`code=a%7Cb&state=${f.state}`, f.flow);
+      expect(res.headers.location).toBe('/settings?calendarError=GOOGLE_FAILED');
+
       const grace = await http().get(`${h.base}/calendar`).set(h.grace.auth).expect(200);
       expect(grace.body.connection).toBeNull();
     });

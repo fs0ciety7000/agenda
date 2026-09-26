@@ -68,7 +68,11 @@
     "CALENDAR_NOT_CONNECTED": "Connect your Google Calendar account first.",
     "CALENDAR_READ_ONLY": "You can't edit this calendar.",
     "CALENDAR_NOT_FOUND": "This calendar can't be found.",
-    "GOOGLE_REVOKED": "Access to Google Calendar was removed. Reconnect your Google account."
+    "GOOGLE_REVOKED": "Access to Google Calendar was removed. Reconnect your Google account.",
+    "GOOGLE_FLOW_EXPIRED": "The Google sign-in expired or was opened in another browser. Start “Connect Google Calendar” again from this browser.",
+    "GOOGLE_DENIED": "You cancelled on the Google screen. Nothing was connected.",
+    "GOOGLE_SCOPES_MISSING": "Google did not grant access to your calendar. Try again and tick both boxes (see your calendars, manage events) on the Google screen.",
+    "GOOGLE_CALENDAR_FAILED": "Google refused the connection. Try again; if it keeps failing, the server configuration needs checking (API logs)."
   },
   "today": {
     "greeting": "Hello {name} 👋",

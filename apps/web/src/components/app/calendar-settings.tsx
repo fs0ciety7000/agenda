@@ -38,6 +38,14 @@ export function useCalendarErrorText() {
  * Réglages « Calendrier partagé » :
  * 1. connecter Google Calendar ; 2. choisir « Commun G & N » ; 3. vérifier l'état de la synchro.
  */
+/** Codes renvoyés par le retour d'autorisation Google (`?calendarError=…`), chacun avec son message. */
+const CALLBACK_ERRORS = [
+  'CALENDAR_NOT_CONFIGURED',
+  'GOOGLE_FLOW_EXPIRED',
+  'GOOGLE_DENIED',
+  'GOOGLE_SCOPES_MISSING',
+];
+
 export function CalendarSettings() {
   const t = useTranslations('calendarSync');
   const te = useTranslations('errors');
@@ -58,9 +66,7 @@ export function CalendarSettings() {
     if (err)
       toast({
         message: te(
-          (err === 'CALENDAR_NOT_CONFIGURED'
-            ? 'CALENDAR_NOT_CONFIGURED'
-            : 'GOOGLE_FAILED') as 'GOOGLE_FAILED',
+          (CALLBACK_ERRORS.includes(err) ? err : 'GOOGLE_CALENDAR_FAILED') as 'GOOGLE_FAILED',
         ),
         tone: 'error',
       });

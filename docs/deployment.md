@@ -322,6 +322,9 @@ même adresse (prise de contrôle possible). Pour lier Google à un compte cré�
 | `/v1/*` renvoie 500 « Internal Server Error » en texte brut | API injoignable depuis `web` | Vérifier que le service s'appelle bien `api` et qu'il est *healthy* |
 | L'API redémarre en boucle | Variable manquante/invalide (message `Invalid environment`) ou migration en échec | Logs du service `api` |
 | `redirect_uri_mismatch` chez Google | URI absente ou différente dans le client OAuth | Copier exactement `https://agenda.fs0ciety.org/v1/calendar/google/callback` (§9) |
+| « La connexion avec Google a expiré ou a été ouverte dans un autre navigateur » | Cookie du flux absent : plus de 10 min sur l'écran Google, navigateur différent (ex. lien ouvert depuis une autre app), cookies bloqués | Relancer depuis le même navigateur, sans navigation privée |
+| « Google n'a pas donné accès à votre calendrier » | Cases décochées sur l'écran de consentement Google | Relancer et cocher les deux cases |
+| « Google a refusé la connexion » | Échange du code refusé : `GOOGLE_CLIENT_SECRET` erroné, client OAuth différent, API Calendar non activée | Logs `api` : ligne `Calendar connection failed: Google API 401 unauthorized (invalid_client)` ⇒ secret ; vérifier §9 |
 | « Google Calendar n'est pas configuré » dans Réglages | `GOOGLE_CLIENT_ID`/`SECRET` vides | Les renseigner dans Coolify, redéployer |
 | Synchro arrêtée au bout d'une semaine | App OAuth restée en *Testing* | La publier « In production », puis *Reconnecter* dans Réglages |
 | Tâches « en attente » de synchro qui n'avancent pas | `redis` non *healthy*, ou quota Google | Logs `api` (`Calendar sync mode: queue`, `Sweep …`) ; le balayage reprend toutes les 10 min |
