@@ -3,7 +3,13 @@ import { z } from 'zod';
 const EnvSchema = z.object({
   NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
   PORT: z.coerce.number().int().default(4000),
-  WEB_ORIGIN: z.string().url().default('http://localhost:3000'),
+  // Sans barre finale : sert à construire les URI de redirection OAuth (comparées à l'octet près).
+  WEB_ORIGIN: z
+    .string()
+    .trim()
+    .url()
+    .default('http://localhost:3000')
+    .transform((v) => v.replace(/\/+$/, '')),
   DATABASE_URL: z.string().min(1),
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
   TOKEN_ENCRYPTION_KEY: z.string().optional(),
@@ -53,8 +59,9 @@ const EnvSchema = z.object({
     .default('false')
     .transform((v) => v === 'true'),
   // ── Google Sign-In (OIDC). Sans identifiants : le bouton est masqué. ──
-  GOOGLE_CLIENT_ID: z.string().optional(),
-  GOOGLE_CLIENT_SECRET: z.string().optional(),
+  // Espaces ou retours à la ligne collés par erreur dans Coolify ⇒ `invalid_client` chez Google.
+  GOOGLE_CLIENT_ID: z.string().trim().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().trim().optional(),
   /** Inscriptions ouvertes. À passer à false une fois les membres du foyer inscrits. */
   REGISTRATION_ENABLED: z
     .enum(['true', 'false'])

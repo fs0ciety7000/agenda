@@ -1,6 +1,7 @@
 import 'reflect-metadata';
 import { INestApplication } from '@nestjs/common';
 import { Test } from '@nestjs/testing';
+import { randomUUID } from 'node:crypto';
 import request from 'supertest';
 import { loadTestEnv } from './env';
 
@@ -23,11 +24,10 @@ export async function createTestApp(
   return app;
 }
 
-let counter = 0;
-
 /** Crée un utilisateur (client mobile) et renvoie ses jetons. */
 export async function registerUser(app: INestApplication, name: string) {
-  const email = `${name.toLowerCase()}.${Date.now()}.${counter++}@example.test`;
+  // UUID : unique même entre fichiers de test exécutés en parallèle (compteur propre à chaque fichier).
+  const email = `${name.toLowerCase()}.${randomUUID()}@example.test`;
   const res = await request(app.getHttpServer())
     .post('/v1/auth/register')
     .set(CSRF)
