@@ -115,9 +115,16 @@ const TIMEOUT_MS = 15_000;
 async function toError(res: Response): Promise<GoogleApiError> {
   const body = (await res.json().catch(() => null)) as {
     error?: string | { errors?: { reason?: string }[]; status?: string };
+    error_description?: string;
   } | null;
   const oauthError = typeof body?.error === 'string' ? body.error : undefined;
-  const reason = typeof body?.error === 'object' ? body.error.errors?.[0]?.reason : oauthError;
+  // Erreurs OAuth : `error_description` (ex. « Unauthorized ») précise la cause dans les logs.
+  const reason =
+    typeof body?.error === 'object'
+      ? body.error.errors?.[0]?.reason
+      : oauthError && body?.error_description
+        ? `${oauthError}: ${body.error_description}`
+        : oauthError;
   if (oauthError === 'invalid_grant')
     return new GoogleApiError('invalid_grant', res.status, reason);
   switch (true) {

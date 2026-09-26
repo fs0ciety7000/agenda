@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -22,6 +23,8 @@ android {
         debug {
             // 10.0.2.2 = machine hôte depuis l'émulateur Android.
             buildConfigField("String", "API_BASE_URL", "\"http://10.0.2.2:4000/\"")
+            // Pages web ouvertes depuis l'app (inscription, mot de passe oublié, Google Calendar).
+            buildConfigField("String", "WEB_BASE_URL", "\"http://10.0.2.2:3000/\"")
         }
         release {
             isMinifyEnabled = true
@@ -31,6 +34,12 @@ android {
                 "String",
                 "API_BASE_URL",
                 "\"${providers.gradleProperty("agenda.apiBaseUrl").getOrElse("https://api.example.invalid/")}\"",
+            )
+            // Même domaine que l'API (le web proxifie /v1/*) sauf indication contraire.
+            buildConfigField(
+                "String",
+                "WEB_BASE_URL",
+                "\"${providers.gradleProperty("agenda.webBaseUrl").orElse(providers.gradleProperty("agenda.apiBaseUrl")).getOrElse("https://api.example.invalid/")}\"",
             )
         }
     }
@@ -50,7 +59,18 @@ android {
     }
     testOptions {
         unitTests.isReturnDefaultValues = true
+        // Robolectric : tests Compose et Room sur la JVM (pas d'émulateur requis en CI).
+        unitTests.isIncludeAndroidResources = true
+        unitTests.all {
+            it.systemProperty("robolectric.pixelCopyRenderMode", "hardware")
+            // Captures d'écran (docs/screenshots) : ./gradlew testDebugUnitTest -Pscreenshots
+            if (project.hasProperty("screenshots")) it.systemProperty("roborazzi.test.record", "true")
+        }
     }
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 kotlin {
@@ -79,9 +99,24 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.compose.material.icons.core)
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.androidx.browser)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.test.junit)
+    testImplementation(libs.androidx.work.testing)
+    testImplementation(libs.okhttp.mockwebserver)
+    testImplementation(platform(libs.compose.bom))
+    testImplementation(libs.compose.ui.test.junit4)
+    testImplementation(libs.roborazzi)
+    testImplementation(libs.roborazzi.compose)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.ui.test.junit4)
 }

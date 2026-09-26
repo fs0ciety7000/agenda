@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger, OnApplicationBootstrap } from '@nestjs/common';
 import type { AvailableCalendarDto, CalendarErrorCode, CalendarStatusDto } from '@agenda/contracts';
 import { decodeJwt } from 'jose';
 import { AppException } from '../common/app-exception';
@@ -26,7 +26,7 @@ export class CalendarScopesMissing extends Error {
 }
 
 @Injectable()
-export class CalendarConnectionService {
+export class CalendarConnectionService implements OnApplicationBootstrap {
   private readonly logger = new Logger(CalendarConnectionService.name);
 
   constructor(
@@ -36,6 +36,15 @@ export class CalendarConnectionService {
     private readonly sync: GoogleCalendarSyncService,
     private readonly queue: CalendarQueueService,
   ) {}
+
+  /** Aide au diagnostic : l'URI exacte à déclarer dans le client OAuth Google (sans secret). */
+  onApplicationBootstrap(): void {
+    if (!this.configured || env().GOOGLE_CALENDAR_FAKE) return;
+    const id = env().GOOGLE_CLIENT_ID!;
+    this.logger.log(
+      `Google Calendar enabled: client ${id.slice(0, 12)}…${id.slice(-27)}, redirect URI ${this.redirectUri}`,
+    );
+  }
 
   get configured(): boolean {
     return Boolean(
