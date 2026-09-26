@@ -161,6 +161,8 @@ private fun MainScaffold(container: AppContainer, openOccurrenceId: String?, qui
         if (state.household != null) calendar = container.repository.calendarStatus()
     }
     LaunchedEffect(Unit) {
+        // Notifications instantanées : ce téléphone est rattaché au compte connecté.
+        launch { container.push.register() }
         user = container.authRepository.currentUser()
         // Rappels activés par défaut : on demande l'autorisation une fois, dans le contexte.
         if (!notificationsAllowed && Build.VERSION.SDK_INT >= 33) permission.launch(Manifest.permission.POST_NOTIFICATIONS)
@@ -313,7 +315,12 @@ private fun MainScaffold(container: AppContainer, openOccurrenceId: String?, qui
                         if (Build.VERSION.SDK_INT >= 33) permission.launch(Manifest.permission.POST_NOTIFICATIONS)
                     },
                     onOpenWeb = { openWeb(context, container.webBaseUrl, it) },
-                    onSignOut = { scope.launch { container.authRepository.logout() } },
+                    onSignOut = {
+                        scope.launch {
+                            container.push.unregister()
+                            container.authRepository.logout()
+                        }
+                    },
                     contentPadding = padding,
                     update = updateBanner,
                 )

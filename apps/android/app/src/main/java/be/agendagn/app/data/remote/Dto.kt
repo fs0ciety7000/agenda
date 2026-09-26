@@ -104,6 +104,9 @@ data class OccurrenceDto(
 data class ChecklistItemDto(val id: String, val text: String, val done: Boolean, val doneById: String? = null)
 
 @Serializable
+data class PushTokenRequest(val token: String, val platform: String = "android")
+
+@Serializable
 data class ChecklistItemRequest(val text: String)
 
 @Serializable

@@ -470,7 +470,7 @@
     },
     "data": {
       "title": "Data processed",
-      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, activity history (who did what, when).\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out."
+      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, activity history (who did what, when).\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out."
     },
     "google": {
       "title": "Google data",
@@ -482,7 +482,7 @@
     },
     "processors": {
       "title": "Service providers",
-      "body": "Cloudflare (site delivery and protection), Google (if you use Google sign-in or Google Calendar), the email provider configured for “forgot password” (e.g. Brevo), off-site backup storage if configured (e.g. Cloudflare R2), and, if enabled, an error-tracking service (Sentry) that only receives technical information (error type, page), without task content or identity."
+      "body": "Cloudflare (site delivery and protection), Google (if you use Google sign-in or Google Calendar), the email provider configured for “forgot password” (e.g. Brevo), off-site backup storage if configured (e.g. Cloudflare R2), Google Firebase Cloud Messaging for instant notifications in the Android app if enabled (it only receives the phone's notification identifier and a “something new” signal, never task content or names), and, if enabled, an error-tracking service (Sentry) that only receives technical information (error type, page), without task content or identity."
     },
     "retention": {
       "title": "Retention",

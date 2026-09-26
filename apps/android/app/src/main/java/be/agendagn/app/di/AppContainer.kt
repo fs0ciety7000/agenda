@@ -19,6 +19,7 @@ import be.agendagn.app.data.sync.WorkManagerSyncScheduler
 import be.agendagn.app.domain.repository.AgendaRepository
 import be.agendagn.app.domain.repository.AuthRepository
 import be.agendagn.app.notifications.ActivityNotifier
+import be.agendagn.app.notifications.PushRegistrar
 import be.agendagn.app.notifications.ReminderScheduler
 import kotlinx.coroutines.flow.Flow
 
@@ -46,5 +47,10 @@ class AppContainer(context: Context) {
     val updater = AppUpdater(app, BuildConfig.UPDATE_MANIFEST_URL, BuildConfig.VERSION_CODE)
     val crashReporter = CrashReporter(app, api, BuildConfig.VERSION_NAME)
     val activityNotifier = ActivityNotifier(app, api)
+    /** Notifications instantanées : actives seulement si la build contient la configuration Firebase. */
+    val push = PushRegistrar(
+        api,
+        PushRegistrar.firebase(app, BuildConfig.FCM_APP_ID, BuildConfig.FCM_API_KEY, BuildConfig.FCM_PROJECT_ID, BuildConfig.FCM_SENDER_ID),
+    )
     val webBaseUrl: String = BuildConfig.WEB_BASE_URL
 }

@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { NotificationsModule } from '../notifications/notifications.module';
 import { HouseholdsModule } from '../households/households.module';
 import { TasksModule } from '../tasks/tasks.module';
 import { CalendarConnectionService } from './calendar-connection.service';
@@ -11,7 +12,7 @@ import { GoogleCalendarClient, HttpGoogleCalendarClient } from './google-calenda
 import { GoogleTokensService } from './google-tokens.service';
 
 @Module({
-  imports: [HouseholdsModule, TasksModule],
+  imports: [HouseholdsModule, TasksModule, NotificationsModule],
   controllers: [CalendarController],
   providers: [
     {

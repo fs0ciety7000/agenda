@@ -47,6 +47,22 @@
                 android:resource="@xml/update_paths" />
         </provider>
 
+        <!-- Notifications instantanées : réveil sans contenu envoyé par le serveur (Firebase). -->
+        <service
+            android:name=".notifications.AgendaMessagingService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <!-- Firebase n'est démarré que si la build contient sa configuration (PushRegistrar). -->
+        <meta-data
+            android:name="firebase_messaging_auto_init_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="firebase_analytics_collection_deactivated"
+            android:value="true" />
+
         <!-- Widget « Aujourd'hui » (Glance). -->
         <receiver
             android:name=".widget.TodayWidgetReceiver"

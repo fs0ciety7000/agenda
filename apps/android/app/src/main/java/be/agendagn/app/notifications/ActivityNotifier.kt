@@ -15,12 +15,15 @@ import be.agendagn.app.MainActivity
 import be.agendagn.app.R
 import be.agendagn.app.data.remote.AgendaApi
 import be.agendagn.app.data.remote.NotificationDto
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.io.IOException
 import java.time.Instant
 
 /**
- * Notifications du foyer (« Nicolas vous a confié… ») affichées sur le téléphone, sans service de
- * push : relevées à chaque synchronisation (ouverture de l'app, retour du réseau, toutes les heures).
+ * Notifications du foyer (« Nicolas vous a confié… ») affichées sur le téléphone : relevées tout
+ * de suite quand le serveur réveille l'app (Firebase, si configuré), et sinon à chaque
+ * synchronisation (ouverture de l'app, retour du réseau, synchronisation de fond).
  * Au premier passage, rien n'est affiché (on ne rejoue pas l'historique).
  */
 class ActivityNotifier(
@@ -29,9 +32,13 @@ class ActivityNotifier(
     private val now: () -> Instant = Instant::now,
 ) {
     private val prefs = context.getSharedPreferences("activity", Context.MODE_PRIVATE)
+    /** Réveil Firebase et retour dans l'app en même temps : une seule relève à la fois (pas de doublon). */
+    private val mutex = Mutex()
 
     /** Renvoie les notifications affichées (tests). */
-    suspend fun poll(householdId: String): List<NotificationDto> {
+    suspend fun poll(householdId: String): List<NotificationDto> = mutex.withLock { pollLocked(householdId) }
+
+    private suspend fun pollLocked(householdId: String): List<NotificationDto> {
         val since = prefs.getString(KEY_SINCE, null)
         if (since == null) {
             prefs.edit().putString(KEY_SINCE, now().toString()).apply()

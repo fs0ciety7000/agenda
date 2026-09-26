@@ -133,6 +133,7 @@ manquent. Modèle complet : `.env.prod.example`.
 | `SMTP_*`, `EMAIL_FROM` | facultatif : active « Mot de passe oublié » | cf. §8 |
 | `GITHUB_RELEASES_TOKEN` | vide si le dépôt est public ; sinon jeton GitHub lecture seule (Contents) | cf. [`android.md`](android.md) §4 |
 | `SENTRY_DSN` | facultatif : suivi des erreurs (§10) | DSN Sentry / GlitchTip |
+| `FCM_SERVICE_ACCOUNT` | facultatif : notifications instantanées Android | JSON du compte de service Firebase (docs/android.md §4.1) |
 
 `REDIS_URL` est fixée par le compose (`redis://redis:6379`) : rien à définir.
 

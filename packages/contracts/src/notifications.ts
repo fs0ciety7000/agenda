@@ -52,3 +52,10 @@ export const UpdatePreferencesInput = z.object({
   preferences: z.array(NotificationPreferenceDto).min(1).max(10),
 });
 export type UpdatePreferencesInput = z.infer<typeof UpdatePreferencesInput>;
+
+/** Jeton Firebase d'un téléphone (notifications instantanées). */
+export const PushTokenInput = z.object({
+  token: z.string().trim().min(10).max(4096),
+  platform: z.enum(['android']).default('android'),
+});
+export type PushTokenInput = z.infer<typeof PushTokenInput>;

@@ -9,6 +9,7 @@ import type {
 import { Prisma } from '@prisma/client';
 import type { HouseholdContext } from '../common/request-context';
 import { PrismaService } from '../prisma/prisma.service';
+import { PushService } from './push.service';
 
 export const NOTIFICATION_KINDS: NotificationKind[] = ['TASK_ASSIGNED', 'CALENDAR_SYNC_FAILED'];
 const DEFAULT_PREF = { inApp: true, push: true };
@@ -25,7 +26,10 @@ interface AssignedPayload {
  */
 @Injectable()
 export class NotificationsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly push: PushService,
+  ) {}
 
   /** « Nicolas vous a attribué une tâche » : jamais pour ses propres actions. */
   async notifyAssigned(
@@ -54,7 +58,13 @@ export class NotificationsService {
         type: 'TASK_ASSIGNED' as const,
         payload: { ...payload, push: pref.push } as unknown as Prisma.InputJsonValue,
       }));
-    if (data.length) await this.prisma.notification.createMany({ data });
+    if (!data.length) return;
+    await this.prisma.notification.createMany({ data });
+    // Téléphones réveillés tout de suite (sans contenu) pour ceux qui veulent la notification.
+    void this.push.wakeMembers(
+      ctx.householdId,
+      members.filter((m) => (m.preferences[0] ?? DEFAULT_PREF).push).map((m) => m.id),
+    );
   }
 
   async list(ctx: HouseholdContext, query: NotificationQuery): Promise<NotificationListDto> {

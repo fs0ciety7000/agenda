@@ -470,7 +470,7 @@
     },
     "data": {
       "title": "Données traitées",
-      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations.\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, historique des actions (qui a fait quoi, quand).\nSessions : appareil (navigateur ou application) et dates de connexion, pour pouvoir vous déconnecter à distance.\nL'application Android conserve une copie de vos tâches sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion."
+      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations.\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, historique des actions (qui a fait quoi, quand).\nSessions : appareil (navigateur ou application) et dates de connexion, pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion."
     },
     "google": {
       "title": "Données Google",
@@ -482,7 +482,7 @@
     },
     "processors": {
       "title": "Prestataires",
-      "body": "Cloudflare (acheminement et protection du site), Google (si vous utilisez la connexion Google ou Google Calendar), le fournisseur d'e-mails configuré pour « mot de passe oublié » (par exemple Brevo), le stockage de sauvegarde hors serveur s'il est configuré (par exemple Cloudflare R2), et, s'il est activé, un service de suivi des erreurs (Sentry) qui ne reçoit que des informations techniques (type d'erreur, page), sans contenu de tâche ni identité."
+      "body": "Cloudflare (acheminement et protection du site), Google (si vous utilisez la connexion Google ou Google Calendar), le fournisseur d'e-mails configuré pour « mot de passe oublié » (par exemple Brevo), le stockage de sauvegarde hors serveur s'il est configuré (par exemple Cloudflare R2), Google Firebase Cloud Messaging pour les notifications instantanées de l'application Android s'il est activé (il ne reçoit que l'identifiant de notification du téléphone et un signal « du nouveau », jamais le contenu d'une tâche ni un nom), et, s'il est activé, un service de suivi des erreurs (Sentry) qui ne reçoit que des informations techniques (type d'erreur, page), sans contenu de tâche ni identité."
     },
     "retention": {
       "title": "Durées de conservation",

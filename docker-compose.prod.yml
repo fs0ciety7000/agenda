@@ -56,6 +56,8 @@ services:
       SMTP_PASSWORD: ${SMTP_PASSWORD:-}
       EMAIL_FROM: ${EMAIL_FROM:-Agenda G & N <no-reply@fs0ciety.org>}
       SENTRY_DSN: ${SENTRY_DSN:-}
+      # Notifications instantanées Android (compte de service Firebase, JSON ou base64) — docs/android.md.
+      FCM_SERVICE_ACCOUNT: ${FCM_SERVICE_ACCOUNT:-}
       # App Android : release GitHub relayée par l'API (jeton lecture seule si dépôt privé).
       ANDROID_RELEASE_REPO: ${ANDROID_RELEASE_REPO:-fs0ciety7000/agenda}
       GITHUB_RELEASES_TOKEN: ${GITHUB_RELEASES_TOKEN:-}
