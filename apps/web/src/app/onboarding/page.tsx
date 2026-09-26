@@ -98,10 +98,28 @@ export default function OnboardingPage() {
             {t('onboarding.stepInvite')}
           </h2>
           <InviteLink householdId={household.id} />
-          <Button onClick={() => router.replace('/')} className="self-end">
-            {t('onboarding.continue')}
+        </Card>
+      )}
+
+      {household && (
+        <Card className="flex flex-col gap-3">
+          <h2 className="text-lg font-semibold">
+            <span className="mr-2 text-text-muted">3.</span>
+            {t('onboarding.stepCalendar')}
+          </h2>
+          <p className="text-[0.9375rem] text-text-muted">{t('onboarding.calendarBody')}</p>
+          <Button asChild variant="secondary" className="self-start">
+            <a href="/v1/calendar/google/connect?next=/settings">
+              {t('onboarding.connectCalendar')}
+            </a>
           </Button>
         </Card>
+      )}
+
+      {household && (
+        <Button onClick={() => router.replace('/')} size="lg" className="self-end">
+          {t('onboarding.continue')}
+        </Button>
       )}
     </main>
   );

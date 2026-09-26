@@ -9,6 +9,8 @@ import { env } from './config/env';
 import { HealthController } from './health/health.controller';
 import { CategoriesModule } from './categories/categories.module';
 import { HouseholdsModule } from './households/households.module';
+import { CalendarModule } from './calendar/calendar.module';
+import { DomainEventsModule } from './common/domain-events';
 import { MailModule } from './mail/mail.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { PrivacyModule } from './privacy/privacy.module';
@@ -30,11 +32,13 @@ import { TasksModule } from './tasks/tasks.module';
     ]),
     PrismaModule,
     MailModule,
+    DomainEventsModule,
     AuthModule,
     HouseholdsModule,
     CategoriesModule,
     TasksModule,
     PrivacyModule,
+    CalendarModule,
   ],
   controllers: [HealthController],
   providers: [

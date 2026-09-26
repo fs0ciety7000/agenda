@@ -3,6 +3,7 @@ import type { DeleteAccountInput } from '@agenda/contracts';
 import { AppException } from '../common/app-exception';
 import { fromDbDate } from '../common/dates';
 import { PasswordService } from '../auth/password.service';
+import { CalendarConnectionService } from '../calendar/calendar-connection.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 /** Nom affiché d'un ancien membre dont le compte a été supprimé. */
@@ -18,6 +19,7 @@ export class PrivacyService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly passwords: PasswordService,
+    private readonly calendar: CalendarConnectionService,
   ) {}
 
   async export(userId: string) {
@@ -138,6 +140,12 @@ export class PrivacyService {
       );
     }
     const formerName = FORMER_MEMBER[user.locale === 'en' ? 'en' : 'fr'];
+
+    // Autorisations Google Calendar révoquées auprès de Google (les événements du calendrier
+    // partagé restent ; l'autre membre peut reconnecter son propre compte pour reprendre la synchro).
+    for (const c of await this.prisma.googleConnection.findMany({ where: { userId } })) {
+      await this.calendar.revokeQuietly(c.refreshTokenEnc);
+    }
 
     await this.prisma.$transaction(async (tx) => {
       for (const m of user.memberships) {

@@ -49,6 +49,7 @@ describe('tâches', async () => {
       priority: 'NORMAL',
       visibility: 'SHARED',
       assigneeIds: [],
+      syncToCalendar: false,
     });
   });
 

@@ -6,7 +6,7 @@ import type {
   TaskPriority,
   UpdateOccurrenceInput,
 } from '@agenda/contracts';
-import { Lock, Trash2 } from 'lucide-react';
+import { CalendarDays, Lock, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
@@ -17,6 +17,7 @@ import { Select } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/states';
 import { useToast } from '@/components/ui/toast';
 import { ApiError, errorKey } from '@/lib/api';
+import { useCalendarStatus } from '@/lib/calendar';
 import { cn } from '@/lib/cn';
 import { formatDuration, formatTime } from '@/lib/format';
 import {
@@ -57,6 +58,8 @@ interface FormState {
   priority: TaskPriority;
   personal: boolean;
   notes: string;
+  /** null = valeur par défaut (cochée si un calendrier partagé est lié). */
+  sync: boolean | null;
 }
 
 const DURATIONS = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180];
@@ -91,6 +94,7 @@ export function TaskFormDialog({
   const myMemberId = household.members.find((m) => m.userId === me.id)?.id ?? '';
   const categories = useCategories(household.id);
   const series = useSeriesDetail(household.id, open ? occurrence?.seriesId : null);
+  const calendarStatus = useCalendarStatus(household.id);
   const create = useCreateTask(household.id);
   const update = useUpdateOccurrence(household.id);
   const remove = useDeleteOccurrence(household.id);
@@ -114,6 +118,7 @@ export function TaskFormDialog({
       priority: o?.priority ?? d?.priority ?? 'NORMAL',
       personal: o?.visibility === 'PERSONAL',
       notes: o?.notes ?? '',
+      sync: o ? o.syncToCalendar : null,
     };
   };
   const [form, setForm] = useState<FormState>(() => initialForm(occurrence, draft));
@@ -159,6 +164,8 @@ export function TaskFormDialog({
         ? household.members.map((m) => m.id)
         : [form.assignee];
   const canEditVisibility = !occurrence || occurrence.createdById === myMemberId;
+  const calendarLink = calendarStatus.data?.link ?? null;
+  const syncChecked = form.sync ?? calendarLink?.status === 'ACTIVE';
   const recurrenceInput = useMemo(
     () => toRecurrenceInput(rec, form.date, form.assignee, household.members, form.personal),
     [rec, form.date, form.assignee, form.personal, household.members],
@@ -185,6 +192,8 @@ export function TaskFormDialog({
     categoryId: form.categoryId || null,
     priority: form.priority,
     visibility: form.personal ? ('PERSONAL' as const) : ('SHARED' as const),
+    // Une tâche personnelle n'est jamais publiée dans le calendrier partagé.
+    syncToCalendar: !form.personal && syncChecked,
   });
 
   const handleError = (err: unknown) => {
@@ -394,6 +403,26 @@ export function TaskFormDialog({
                 className="min-h-11 rounded-md border border-border bg-surface px-3 py-2.5 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
               />
             </div>
+
+            {calendarLink && !form.personal && (
+              <label className="flex min-h-11 cursor-pointer items-center gap-3 text-[0.9375rem]">
+                <input
+                  type="checkbox"
+                  checked={syncChecked}
+                  onChange={(e) => set('sync', e.target.checked)}
+                  className="size-5 accent-(--color-accent)"
+                />
+                <CalendarDays aria-hidden className="size-4 text-text-muted" />
+                <span>
+                  {t('fields.syncToCalendar')}
+                  <span className="block text-[0.8125rem] text-text-muted">
+                    {form.date
+                      ? t('fields.syncHint', { calendar: calendarLink.summary })
+                      : t('fields.syncNeedsDate')}
+                  </span>
+                </span>
+              </label>
+            )}
 
             {canEditVisibility && (
               <label className="flex min-h-11 cursor-pointer items-center gap-3 text-[0.9375rem]">

@@ -63,7 +63,12 @@
     "GOOGLE_NOT_CONFIGURED": "La connexion avec Google n'est pas disponible.",
     "GOOGLE_ALREADY_LINKED": "Ce compte Google est déjà lié à un autre compte.",
     "RESET_TOKEN_INVALID": "Ce lien n'est plus valable. Demandez-en un nouveau.",
-    "CONFIRMATION_REQUIRED": "Confirmation incorrecte."
+    "CONFIRMATION_REQUIRED": "Confirmation incorrecte.",
+    "CALENDAR_NOT_CONFIGURED": "La connexion à Google Calendar n'est pas disponible sur ce serveur.",
+    "CALENDAR_NOT_CONNECTED": "Connectez d'abord votre compte Google Calendar.",
+    "CALENDAR_READ_ONLY": "Vous n'avez pas le droit de modifier ce calendrier.",
+    "CALENDAR_NOT_FOUND": "Ce calendrier est introuvable.",
+    "GOOGLE_REVOKED": "L'accès à Google Calendar a été retiré. Reconnectez votre compte Google."
   },
   "today": {
     "greeting": "Bonjour {name} 👋",
@@ -93,7 +98,10 @@
     "copy": "Copier le lien",
     "copied": "Lien copié",
     "continue": "Continuer",
-    "later": "Plus tard"
+    "later": "Plus tard",
+    "stepCalendar": "Connecter Google Calendar",
+    "calendarBody": "Facultatif : vos tâches planifiées apparaîtront dans votre calendrier partagé (par exemple « Commun G & N »).",
+    "connectCalendar": "Connecter Google Calendar"
   },
   "invite": {
     "title": "Rejoindre un foyer",
@@ -180,7 +188,10 @@
       "notes": "Notes",
       "personal": "Tâche personnelle",
       "personalHint": "Visible uniquement par vous.",
-      "occurrenceDate": "Date (cette fois)"
+      "occurrenceDate": "Date (cette fois)",
+      "syncToCalendar": "Ajouter au calendrier partagé",
+      "syncHint": "Visible dans « {calendar} ».",
+      "syncNeedsDate": "Choisissez une date pour l'ajouter au calendrier."
     },
     "recurring": "Tâche récurrente",
     "recurrenceNeedsDate": "Choisissez une date de début pour une tâche répétée."
@@ -357,5 +368,46 @@
     "confirmWord": "SUPPRIMER",
     "cancel": "Annuler",
     "confirmDelete": "Supprimer définitivement"
+  },
+  "calendarSync": {
+    "notConfigured": "La connexion à Google Calendar n'est pas activée sur ce serveur.",
+    "intro": "Connectez votre compte Google pour afficher vos tâches planifiées dans votre calendrier partagé.",
+    "connect": "Connecter Google Calendar",
+    "reconnect": "Reconnecter Google",
+    "privacyNote": "L'application ne lit que la liste de vos calendriers et n'écrit que ses propres événements. Votre mot de passe Google n'est jamais demandé.",
+    "connectedToast": "Google Calendar connecté.",
+    "linkedToast": "Calendrier partagé enregistré. Synchronisation en cours…",
+    "syncStarted": "Synchronisation lancée.",
+    "connected": "Google Calendar connecté",
+    "interrupted": "Synchronisation interrompue",
+    "via": "via {email} ({name})",
+    "stats": "{synced, plural, =0 {Aucune tâche synchronisée} one {# tâche synchronisée} other {# tâches synchronisées}}{pending, plural, =0 {} other { · # en attente}}{errors, plural, =0 {} one { · # erreur} other { · # erreurs}}",
+    "syncNow": "Synchroniser maintenant",
+    "change": "Changer de calendrier",
+    "unlink": "Déconnecter le calendrier",
+    "unlinkConfirm": "Déconnecter « {calendar} » ? Les événements créés par l'application y seront supprimés.",
+    "myAccount": "Votre compte Google : {email}.",
+    "disconnect": "Retirer l'accès",
+    "disconnectConfirm": "Retirer l'accès de l'application à votre compte Google Calendar ?",
+    "lastCheck": "Dernière vérification complète {date}.",
+    "pickTitle": "Choisissez le calendrier partagé",
+    "readOnly": "Lecture seule : impossible d'y ajouter des tâches.",
+    "notListed": "Votre calendrier commun n'apparaît pas ? Demandez à la personne qui l'a créé de le partager avec votre adresse Google, avec le droit « Apporter des modifications aux événements ».",
+    "useCalendar": "Utiliser ce calendrier",
+    "cancel": "Annuler",
+    "fix": "Voir les réglages du calendrier",
+    "state": {
+      "SYNCED": "Synchronisé",
+      "PENDING": "Synchronisation…",
+      "ERROR": "Synchronisation en attente",
+      "BLOCKED": "Synchronisation interrompue"
+    },
+    "errors": {
+      "CALENDAR_READ_ONLY": "Impossible de synchroniser les tâches avec Google Calendar. Le compte connecté n'a pas les droits d'écriture sur « {calendar} ».",
+      "CALENDAR_NOT_FOUND": "Le calendrier « {calendar} » est introuvable. Il a peut-être été supprimé ou n'est plus partagé avec vous.",
+      "GOOGLE_REVOKED": "L'accès à Google Calendar a été retiré. Reconnectez votre compte Google pour reprendre la synchronisation avec « {calendar} ».",
+      "CALENDAR_RATE_LIMITED": "Google limite temporairement les envois. La synchronisation reprendra automatiquement.",
+      "CALENDAR_UNAVAILABLE": "Google Calendar est momentanément indisponible. La synchronisation avec « {calendar} » reprendra automatiquement."
+    }
   }
 }

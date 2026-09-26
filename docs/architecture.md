@@ -121,13 +121,14 @@ explicitement modifiées (`isException = true`), qui ne sont jamais écrasées.
 
 Redis + **BullMQ** (demandé, et adapté : retries, backoff exponentiel, jobs répétables, déduplication par `jobId`).
 
-Files :
-- `calendar-sync` — un job par occurrence à synchroniser (`jobId = occ:<id>:v<syncVersion>` → dédoublonnage).
-- `calendar-reconcile` — toutes les 6 h par foyer + à la demande.
-- `occurrence-horizon` — quotidien : étend les séries (en attendant BullMQ, la matérialisation est faite paresseusement avant chaque lecture, cf. `roadmap.md` Phase 3).
-- `notifications` — rappels planifiés.
+File (implémentée en Phase 4) : **`calendar-sync`**, concurrence 1, jobs `sweep` (par foyer,
+regroupés sur 2 s), `reconcile` (à la demande), et planifications `sweep-all` (10 min, étend
+aussi l'horizon des séries) et `reconcile-all` (6 h). BullMQ n'est qu'un déclencheur : l'état
+de synchronisation vit en base (cf. `google-calendar.md` §5). Sans Redis (développement), des
+minuteries en mémoire prennent le relais (`CALENDAR_SYNC_MODE=inline`).
+À venir : `notifications` — rappels planifiés (Phase 6).
 
-**V1 : le worker tourne dans le même process que l'API** (variable `RUN_WORKERS=true`) pour réduire le coût (1 service). Séparation en service dédié = changement de config, pas de code.
+**V1 : le worker tourne dans le même process que l'API** pour réduire le coût (1 service). Séparation en service dédié le jour où ce serait utile.
 
 Pattern **transactional outbox** léger : la mutation métier incrémente `syncVersion` et
 passe `googleSyncStatus = PENDING` dans la même transaction ; l'enqueue BullMQ suit le commit. Le
@@ -193,7 +194,7 @@ portables vers A/B/D sans réécriture. Un seul domaine public (`agenda.fs0ciety
 `web`), API et base internes. Mode opératoire complet : [`deployment.md`](deployment.md).
 
 - CI/CD : GitHub Actions (lint, typecheck, tests, build ; job Android séparé).
-- Monitoring : Sentry (web + API + Android), logs pino JSON, `/health/live` et `/health/ready` (DB, puis Redis en Phase 4) exposé publiquement en `/healthz`, métriques BullMQ (taille des files, jobs en échec).
+- Monitoring : Sentry (web + API + Android), logs pino JSON, `/health/live` et `/health/ready` (DB ; Redis volontairement exclu : sa panne ne fait que retarder la synchro) exposé publiquement en `/healthz`, métriques BullMQ (taille des files, jobs en échec).
 - Sauvegardes : `pg_dump` quotidien (tâche planifiée Coolify) + copie hors serveur (cf. `deployment.md` §6).
 - Stockage S3 : non nécessaire en MVP (pas de pièces jointes) → reporté.
 

@@ -25,6 +25,8 @@ const taskFields = {
   durationMinutes: Duration.nullish(),
   /** Tâche récurrente : les responsables viennent alors de la rotation (assigneeIds ignoré). */
   recurrence: RecurrenceInput.nullish(),
+  /** « Ajouter au calendrier partagé ». Ignoré (faux) pour une tâche personnelle. */
+  syncToCalendar: z.boolean(),
 };
 
 const recurrenceNeedsDate = (v: { date?: string | null; recurrence?: unknown }) =>
@@ -39,6 +41,7 @@ export const CreateTaskInput = z
     priority: taskFields.priority.default('NORMAL'),
     visibility: taskFields.visibility.default('SHARED'),
     assigneeIds: taskFields.assigneeIds.default([]),
+    syncToCalendar: taskFields.syncToCalendar.default(false),
   })
   .refine(timeNeedsDate, { message: 'startMinute requires date', path: ['startMinute'] })
   .refine(recurrenceNeedsDate, { message: 'recurrence requires date', path: ['date'] });
@@ -95,6 +98,9 @@ export const OccurrenceDto = z.object({
   createdById: z.uuid(),
   isRecurring: z.boolean(),
   seriesId: z.uuid().nullable(),
+  syncToCalendar: z.boolean(),
+  /** État de l'événement Google (null = non synchronisée). */
+  calendarSync: z.enum(['SYNCED', 'PENDING', 'ERROR', 'BLOCKED']).nullable(),
   /** Occurrence modifiée individuellement dans une série. */
   isException: z.boolean(),
   completedAt: z.string().nullable(),
