@@ -92,7 +92,7 @@ export default function SettingsPage() {
                 setTheme(value);
               }}
               className={cn(
-                'h-9 rounded-sm px-4 text-sm text-text-muted transition-colors',
+                'min-h-9 rounded-sm px-4 py-1.5 text-sm text-text-muted transition-colors',
                 theme === value && 'bg-surface-muted font-medium text-text',
               )}
             >

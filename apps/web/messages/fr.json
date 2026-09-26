@@ -233,9 +233,9 @@
       "person": "Personne",
       "everyone": "Tout le monde",
       "category": "Catégorie",
-      "allCategories": "Toutes les catégories",
+      "allCategories": "Catégories",
       "priority": "Priorité",
-      "allPriorities": "Toutes priorités"
+      "allPriorities": "Priorités"
     },
     "noSeries": "Aucune tâche récurrente.",
     "noSeriesBody": "Créez une tâche et choisissez « Répéter » pour qu'elle revienne automatiquement.",

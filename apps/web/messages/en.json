@@ -233,9 +233,9 @@
       "person": "Person",
       "everyone": "Everyone",
       "category": "Category",
-      "allCategories": "All categories",
+      "allCategories": "Categories",
       "priority": "Priority",
-      "allPriorities": "All priorities"
+      "allPriorities": "Priorities"
     },
     "noSeries": "No recurring tasks.",
     "noSeriesBody": "Create a task and choose “Repeat” so it comes back automatically.",
