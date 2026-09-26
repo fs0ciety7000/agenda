@@ -1,11 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import type { CalendarErrorCode } from '@agenda/contracts';
-import { addDays, todayIn } from '@agenda/domain';
+import { addDays, todayIn, wallClock } from '@agenda/domain';
 import { fromDbDate, toDbDate } from '../common/dates';
 import { env } from '../config/env';
 import { PushService } from '../notifications/push.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { scheduleColumns } from '../tasks/schedule';
 import { SeriesService } from '../tasks/series.service';
 import { GoogleApiError, GoogleCalendarClient, type GoogleEvent } from './google-calendar.client';
 import { GoogleTokensService } from './google-tokens.service';
@@ -472,6 +473,140 @@ export class GoogleCalendarSyncService {
     return stats;
   }
 
+  // ───────────── Sens Google → app ─────────────
+
+  /**
+   * Relève les modifications faites DANS Google Calendar sur les événements créés par l'app
+   * (jamais les autres : filtre sur la propriété privée du foyer) et les reporte sur la tâche :
+   * date, heure, durée, titre. Un événement déplacé dans une série devient une exception
+   * (comme un déplacement dans l'app). Si l'app a elle-même une modification en attente pour
+   * cette occurrence, l'app l'emporte (elle sera republiée). Suppression dans Google : la tâche
+   * reste dans l'app mais n'est plus republiée (comme la réconciliation).
+   */
+  async pull(householdId: string): Promise<{ updated: number; detached: number }> {
+    const stats = { updated: 0, detached: 0 };
+    const link = await this.prisma.householdCalendarLink.findUnique({
+      where: { householdId },
+      include: { household: true },
+    });
+    if (!link || link.status !== 'ACTIVE') return stats;
+    const startedAt = new Date();
+    // Première relève : on ne remonte pas l'historique, seulement ce qui change désormais.
+    if (!link.lastPulledAt) {
+      await this.prisma.householdCalendarLink.update({
+        where: { id: link.id },
+        data: { lastPulledAt: startedAt },
+      });
+      return stats;
+    }
+    const tz = link.household.timezone;
+    const today = todayIn(tz);
+    // Marge de 2 minutes : horloges et délais de propagation de Google.
+    const updatedMin = new Date(link.lastPulledAt.getTime() - 2 * 60_000).toISOString();
+
+    let events: GoogleEvent[];
+    try {
+      events = await this.tokens.withToken(link.connectionId, (token) =>
+        this.google.listAppEvents(token, link.googleCalendarId, {
+          householdId,
+          timeMin: new Date(`${addDays(today, -SYNC_PAST_DAYS - 1)}T00:00:00Z`).toISOString(),
+          timeMax: new Date(`${addDays(today, SYNC_FUTURE_DAYS + 30)}T23:59:59Z`).toISOString(),
+          updatedMin,
+        }),
+      );
+    } catch (e) {
+      const err = asGoogleError(e);
+      const blocked = err.kind === 'not_found' ? 'CALENDAR_NOT_FOUND' : blockingCode(err);
+      if (blocked) await this.block(link.id, blocked);
+      throw err;
+    }
+
+    for (const ev of events) {
+      const l = await this.prisma.calendarEventLink.findUnique({
+        where: {
+          googleCalendarId_googleEventId: {
+            googleCalendarId: link.googleCalendarId,
+            googleEventId: ev.id,
+          },
+        },
+        include: {
+          occurrence: {
+            include: {
+              task: true,
+              assignees: { select: { member: { select: { displayName: true } } } },
+            },
+          },
+        },
+      });
+      // Inconnu, pas encore publié, ou modification que l'app vient elle-même d'envoyer.
+      if (!l?.occurrence || l.syncStatus !== 'SYNCED' || (ev.etag && ev.etag === l.etag)) continue;
+      const occ = l.occurrence;
+      if (occ.householdId !== householdId || occ.task.deletedAt) continue;
+
+      if (ev.status === 'cancelled') {
+        await this.prisma.calendarEventLink.update({
+          where: { id: l.id },
+          data: { syncStatus: 'DELETED', lastErrorCode: DELETED_IN_GOOGLE, etag: ev.etag ?? null },
+        });
+        stats.detached++;
+        continue;
+      }
+      // Modification locale pas encore publiée : l'app gagne, Google sera réécrit au balayage.
+      if (occ.syncVersion > l.syncedVersion) continue;
+
+      const schedule = scheduleFromEvent(ev, tz, occ.durationMinutes);
+      const title = titleFromSummary(
+        ev.summary,
+        occ.assignees.map((a) => a.member.displayName),
+      );
+      const currentTitle = occ.titleOverride ?? occ.task.title;
+      const scheduleChanged =
+        schedule !== null &&
+        (fromDbDate(occ.date) !== schedule.date ||
+          occ.startMinute !== schedule.startMinute ||
+          occ.durationMinutes !== schedule.durationMinutes);
+      const titleChanged = title !== null && title !== currentTitle;
+
+      await this.prisma.$transaction(async (tx) => {
+        if (scheduleChanged || titleChanged) {
+          const inSeries = occ.seriesId !== null;
+          await tx.taskOccurrence.update({
+            where: { id: occ.id },
+            data: {
+              ...(scheduleChanged ? scheduleColumns(schedule!, tz) : {}),
+              ...(titleChanged && inSeries ? { titleOverride: title } : {}),
+              // Dans une série : cette occurrence seulement (comme « celle-ci » dans l'app).
+              ...(inSeries ? { isException: true } : {}),
+              version: { increment: 1 },
+            },
+          });
+          if (titleChanged && !inSeries) {
+            await tx.task.update({ where: { id: occ.taskId }, data: { title: title! } });
+          }
+          await tx.activityLog.create({
+            data: {
+              householdId,
+              action: 'occurrence.updated_in_google',
+              entityType: 'TaskOccurrence',
+              entityId: occ.id,
+            },
+          });
+          stats.updated++;
+        }
+        // Événement vu : on retient son etag pour ne pas le retraiter.
+        await tx.calendarEventLink.update({
+          where: { id: l.id },
+          data: { etag: ev.etag ?? null },
+        });
+      });
+    }
+    await this.prisma.householdCalendarLink.update({
+      where: { id: link.id },
+      data: { lastPulledAt: startedAt },
+    });
+    return stats;
+  }
+
   private async deleteRemote(connectionId: string, calendarId: string, eventId: string) {
     await this.tokens.withToken(connectionId, async (token) => {
       try {
@@ -568,4 +703,47 @@ export class GoogleCalendarSyncService {
       },
     };
   }
+}
+
+/**
+ * Date / heure / durée d'un événement Google, dans le fuseau du foyer. Journée entière : sans heure.
+ * Durée de 30 min sur une tâche sans durée : c'est la valeur par défaut publiée, on ne l'invente pas.
+ */
+export function scheduleFromEvent(
+  ev: GoogleEvent,
+  tz: string,
+  currentDuration: number | null,
+): { date: string; startMinute: number | null; durationMinutes: number | null } | null {
+  if (ev.start?.date) {
+    return { date: ev.start.date, startMinute: null, durationMinutes: currentDuration };
+  }
+  if (!ev.start?.dateTime) return null;
+  const start = new Date(ev.start.dateTime);
+  const at = wallClock(start, tz);
+  let duration: number | null = currentDuration;
+  if (ev.end?.dateTime) {
+    const minutes = Math.round((new Date(ev.end.dateTime).getTime() - start.getTime()) / 60_000);
+    if (minutes >= 1 && minutes <= 1440) {
+      duration = minutes === 30 && currentDuration === null ? null : minutes;
+    }
+  }
+  return { date: at.date, startMinute: at.minute, durationMinutes: duration };
+}
+
+/**
+ * Titre d'une tâche d'après le titre de l'événement : on retire ce que l'app ajoute elle-même
+ * (« ✓ » d'une tâche faite, « · Grace » / « · à deux » / « · together »). null = titre vide.
+ */
+export function titleFromSummary(summary: string | undefined, people: string[]): string | null {
+  let title = (summary ?? '').trim().replace(/^✓\s*/, '');
+  const suffixes = people.length > 1 ? ['à deux', 'together', people.join(' & ')] : people;
+  for (const who of suffixes) {
+    const suffix = ` · ${who}`;
+    if (title.endsWith(suffix)) {
+      title = title.slice(0, -suffix.length);
+      break;
+    }
+  }
+  title = title.trim().slice(0, 200);
+  return title || null;
 }

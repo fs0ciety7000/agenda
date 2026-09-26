@@ -419,6 +419,8 @@ model HouseholdCalendarLink {
   status           CalendarLinkStatus @default(ACTIVE)
   lastErrorCode    String?            @db.VarChar(64)
   lastReconciledAt DateTime?
+  /// Dernière relève des modifications faites dans Google (sens Google → app).
+  lastPulledAt     DateTime?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
 

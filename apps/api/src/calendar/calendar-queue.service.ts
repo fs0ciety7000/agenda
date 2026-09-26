@@ -11,6 +11,8 @@ const QUEUE = 'calendar-sync';
 const DEBOUNCE_MS = 2_000;
 const SWEEP_ALL_EVERY_MS = 10 * 60_000;
 const RECONCILE_ALL_EVERY_MS = 6 * 60 * 60_000;
+/** Relève des modifications faites dans Google (sens Google → app). */
+const PULL_ALL_EVERY_MS = 5 * 60_000;
 
 export type SyncMode = 'queue' | 'inline' | 'off';
 
@@ -74,11 +76,17 @@ export class CalendarQueueService implements OnModuleInit, OnModuleDestroy {
         { every: RECONCILE_ALL_EVERY_MS },
         { name: 'reconcile-all' },
       );
+      await this.queue.upsertJobScheduler(
+        'pull-all',
+        { every: PULL_ALL_EVERY_MS },
+        { name: 'pull-all' },
+      );
     } else if (mode === 'inline') {
       this.intervals.push(setInterval(() => void this.runAll('sweep'), SWEEP_ALL_EVERY_MS).unref());
       this.intervals.push(
         setInterval(() => void this.runAll('reconcile'), RECONCILE_ALL_EVERY_MS).unref(),
       );
+      this.intervals.push(setInterval(() => void this.runAll('pull'), PULL_ALL_EVERY_MS).unref());
     }
     this.logger.log(`Calendar sync mode: ${mode}`);
   }
@@ -118,7 +126,9 @@ export class CalendarQueueService implements OnModuleInit, OnModuleDestroy {
         .catch((e: Error) => this.logger.warn(`Could not enqueue reconcile: ${e.message}`));
     } else if (syncMode() === 'inline') {
       void this.sync
-        .reconcile(householdId)
+        .pull(householdId)
+        .catch(() => undefined)
+        .then(() => this.sync.reconcile(householdId))
         .catch(() => undefined)
         .then(() => this.runSweep(householdId));
     }
@@ -129,6 +139,10 @@ export class CalendarQueueService implements OnModuleInit, OnModuleDestroy {
       case 'sweep':
         return this.runSweep(job.data.householdId!);
       case 'reconcile':
+        // « Synchroniser maintenant » : d'abord ce qui a changé dans Google, puis la réconciliation.
+        await this.sync
+          .pull(job.data.householdId!)
+          .catch((e: Error) => this.logger.warn(`Pull failed: ${e.message}`));
         await this.sync
           .reconcile(job.data.householdId!)
           .catch((e: Error) => this.logger.warn(`Reconcile failed: ${e.message}`));
@@ -137,6 +151,8 @@ export class CalendarQueueService implements OnModuleInit, OnModuleDestroy {
         return this.runAll('sweep');
       case 'reconcile-all':
         return this.runAll('reconcile');
+      case 'pull-all':
+        return this.runAll('pull');
     }
   }
 
@@ -150,13 +166,20 @@ export class CalendarQueueService implements OnModuleInit, OnModuleDestroy {
       await this.scheduleSweep(householdId, result.retryInMs);
   }
 
-  private async runAll(kind: 'sweep' | 'reconcile'): Promise<void> {
+  private async runAll(kind: 'sweep' | 'reconcile' | 'pull'): Promise<void> {
     const links = await this.prisma.householdCalendarLink.findMany({
       where: { status: 'ACTIVE' },
       select: { householdId: true },
     });
     for (const { householdId } of links) {
       try {
+        if (kind === 'pull') {
+          const pulled = await this.sync.pull(householdId);
+          if (pulled.updated || pulled.detached) {
+            this.logger.log(`Pull ${householdId}: ${JSON.stringify(pulled)}`);
+          }
+          continue;
+        }
         if (kind === 'reconcile') await this.sync.reconcile(householdId);
         await this.runSweep(householdId);
       } catch (e) {

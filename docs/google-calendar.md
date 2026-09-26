@@ -77,6 +77,29 @@ Google Calendar connecté · via foyer@example.be
 (inférieure à l'horizon de matérialisation de 90 j). Le passé n'est jamais réécrit (historique
 Google préservé).
 
+### Sens Google → app
+
+Toutes les 5 minutes (et au clic sur « Synchroniser maintenant »), l'API relit **uniquement les
+événements qu'elle a créés** pour le foyer et modifiés depuis la relève précédente
+(`privateExtendedProperty=gnHouseholdId=…` + `updatedMin`) : les autres événements du calendrier
+ne sont jamais lus.
+
+| Modifié dans Google | Effet dans l'app |
+|---|---|
+| Date, heure, durée (glisser l'événement, l'allonger), journée entière | Reportés sur la tâche ; dans une série : cette occurrence seulement (exception) |
+| Titre | Reporté (sans le « ✓ » ni le « · Grace » que l'app ajoute elle-même) |
+| Supprimé | La tâche reste dans l'app, elle n'est plus republiée (cf. A7) |
+| Description, rappels, couleur, invités | Ignorés (réécrits à la prochaine publication) |
+
+- **Pas d'écho** : l'`etag` de chaque événement publié par l'app est mémorisé ; seuls les
+  événements dont l'etag a changé ailleurs sont traités, et reporter une modification Google ne
+  republie rien.
+- **Conflit** : si la même occurrence a aussi été modifiée dans l'app et pas encore publiée,
+  **l'app l'emporte** (elle republie sa version).
+- Première relève après connexion : point de départ, l'historique n'est pas rejoué.
+- Pas de notifications *push* de Google (webhooks `events.watch`) : elles exigent un domaine
+  vérifié et un renouvellement des canaux ; 5 minutes suffisent pour un foyer.
+
 ### Idempotence & anti-doublons (triple protection)
 
 1. **ID d'événement déterministe** : Google accepte un `id` fourni par le client (caractères base32hex `a–v0–9`, 5–1024). On utilise `"gn" + uuidOccurrenceSansTirets` (hex ⊂ base32hex). Recréer ⇒ `409 Conflict` ⇒ on bascule en `update` : **impossible de créer deux fois le même événement**, même après un crash entre l'appel Google et l'écriture en base.
