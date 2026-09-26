@@ -206,7 +206,8 @@
     "recurring": "Tâche récurrente",
     "recurrenceNeedsDate": "Choisissez une date de début pour une tâche répétée.",
     "suggestion": "Suggestion : {name}, la moins chargée cette semaine ({count, plural, =0 {aucune tâche} one {# tâche} other {# tâches}}{load, select, other { · {load}} none {}}).",
-    "suggestionPick": "Confier à {name}"
+    "suggestionPick": "Confier à {name}",
+    "checklistError": "La liste n'a pas pu être mise à jour. Réessayez."
   },
   "balance": {
     "bothOfUs": "À deux",
@@ -550,5 +551,14 @@
     "memberHint": "Une tâche « à deux » compte pour la personne qui l'a cochée.",
     "minutes": "{m} min",
     "hours": "{h} h {m}"
+  },
+  "checklist": {
+    "title": "Liste",
+    "progress": "{done} sur {total}",
+    "newItem": "Nouvel élément de la liste",
+    "placeholder": "Ajouter un élément (ex. lait, pain…)",
+    "add": "Mettre dans la liste",
+    "remove": "Retirer « {text} »",
+    "rowProgress": "Liste : {done} sur {total} cochés"
   }
 }

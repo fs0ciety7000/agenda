@@ -1,6 +1,9 @@
 package be.agendagn.app.data.local
 
 import be.agendagn.app.data.remote.CategoryDto
+import be.agendagn.app.data.remote.ChecklistItemDto
+import be.agendagn.app.data.remote.json
+import be.agendagn.app.domain.model.ChecklistItem
 import be.agendagn.app.data.remote.MemberDto
 import be.agendagn.app.data.remote.OccurrenceDto
 import be.agendagn.app.domain.model.CalendarSync
@@ -40,6 +43,7 @@ fun OccurrenceDto.toEntity(householdId: String) = OccurrenceEntity(
     calendarSync = calendarSync,
     completedAt = completedAt,
     version = version,
+    checklist = json.encodeToString(checklist),
 )
 
 fun OccurrenceEntity.toDomain(pending: Boolean) = Occurrence(
@@ -63,6 +67,8 @@ fun OccurrenceEntity.toDomain(pending: Boolean) = Occurrence(
     version = version,
     pending = pending || isLocal,
     isLocal = isLocal,
+    checklist = runCatching { json.decodeFromString<List<ChecklistItemDto>>(checklist) }.getOrDefault(emptyList())
+        .map { ChecklistItem(it.id, it.text, it.done) },
 )
 
 fun MemberDto.toEntity(householdId: String, position: Int) =

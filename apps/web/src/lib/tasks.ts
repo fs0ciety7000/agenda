@@ -147,6 +147,51 @@ export function useMoveOccurrence(hid: string) {
   });
 }
 
+/**
+ * Sous-tâches : chaque action renvoie l'occurrence à jour, reportée dans toutes les listes.
+ * Cocher est optimiste (affichage immédiat, annulé en cas d'erreur).
+ */
+export function useChecklist(hid: string) {
+  const qc = useQueryClient();
+  const key = ['households', hid, 'occurrences'];
+  const put = (o: OccurrenceDto) =>
+    qc.setQueriesData<OccurrenceDto[]>({ queryKey: key }, (list) =>
+      list?.map((x) => (x.id === o.id ? o : x)),
+    );
+  const base = (id: string) => `/v1/households/${hid}/occurrences/${id}/checklist`;
+  return {
+    add: useMutation({
+      mutationFn: ({ id, text }: { id: string; text: string }) =>
+        api<OccurrenceDto>(base(id), { method: 'POST', json: { text } }),
+      onSuccess: put,
+    }),
+    toggle: useMutation({
+      mutationFn: ({ id, itemId, done }: { id: string; itemId: string; done: boolean }) =>
+        api<OccurrenceDto>(`${base(id)}/${itemId}`, { method: 'PATCH', json: { done } }),
+      onMutate: async ({ id, itemId, done }) => {
+        await qc.cancelQueries({ queryKey: key });
+        const snapshot = qc.getQueriesData<OccurrenceDto[]>({ queryKey: key });
+        qc.setQueriesData<OccurrenceDto[]>({ queryKey: key }, (list) =>
+          list?.map((o) =>
+            o.id === id
+              ? { ...o, checklist: o.checklist.map((i) => (i.id === itemId ? { ...i, done } : i)) }
+              : o,
+          ),
+        );
+        return { snapshot };
+      },
+      onError: (_e, _v, context) =>
+        context?.snapshot.forEach(([k, data]) => qc.setQueryData(k, data)),
+      onSuccess: put,
+    }),
+    remove: useMutation({
+      mutationFn: ({ id, itemId }: { id: string; itemId: string }) =>
+        api<OccurrenceDto>(`${base(id)}/${itemId}`, { method: 'DELETE' }),
+      onSuccess: put,
+    }),
+  };
+}
+
 export function useDeleteOccurrence(hid: string) {
   const invalidate = useInvalidateTasks(hid);
   return useMutation({

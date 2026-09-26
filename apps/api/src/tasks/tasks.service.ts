@@ -1,21 +1,24 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import type {
-  BalanceDto,
-  BalanceQuery,
-  CreateTaskInput,
-  EditScope,
-  OccurrenceDto,
-  OccurrenceQuery,
-  QuickAddPreview,
-  RecurrenceInput,
-  RecurrencePreviewInput,
-  RecurrencePreviewItem,
-  RotationInput,
-  SeriesDto,
-  StatsDto,
-  StatsQuery,
-  UpdateOccurrenceInput,
+import {
+  type BalanceDto,
+  type BalanceQuery,
+  type ChecklistItemInput,
+  type CreateTaskInput,
+  type EditScope,
+  type OccurrenceDto,
+  type OccurrenceQuery,
+  type QuickAddPreview,
+  type RecurrenceInput,
+  type RecurrencePreviewInput,
+  type RecurrencePreviewItem,
+  type RotationInput,
+  type SeriesDto,
+  type StatsDto,
+  type StatsQuery,
+  type UpdateChecklistItemInput,
+  type UpdateOccurrenceInput,
+  MAX_CHECKLIST_ITEMS,
 } from '@agenda/contracts';
 import {
   addDays,
@@ -42,6 +45,10 @@ const occurrenceInclude = {
   task: { include: { category: true } },
   assignees: { select: { memberId: true } },
   eventLink: { select: { syncStatus: true, syncedVersion: true, lastErrorCode: true } },
+  checklist: {
+    orderBy: { position: 'asc' },
+    select: { id: true, text: true, done: true, doneById: true },
+  },
 } satisfies Prisma.TaskOccurrenceInclude;
 
 type OccurrenceRow = Prisma.TaskOccurrenceGetPayload<{ include: typeof occurrenceInclude }>;
@@ -283,6 +290,7 @@ export class TasksService {
             assignees: { create: dedupe(assigneeIds).map((memberId) => ({ memberId })) },
           },
         });
+        await this.createChecklist(tx, ctx, occ.id, input.checklist);
         return occ.id;
       }
 
@@ -294,7 +302,9 @@ export class TasksService {
         recurrence,
       });
       await this.series.materialize(tx, seriesId, this.horizonFor(tz, input.date!));
-      return this.firstOccurrenceId(tx, seriesId);
+      const firstId = await this.firstOccurrenceId(tx, seriesId);
+      await this.createChecklist(tx, ctx, firstId, input.checklist);
+      return firstId;
     });
     this.events.householdChanged(ctx.householdId);
     const created = await this.get(ctx, occurrenceId);
@@ -304,6 +314,89 @@ export class TasksService {
       recurrence ? rotationMemberIds(recurrence.rotation) : assigneeIds,
     );
     return created;
+  }
+
+  // ───────────── Sous-tâches / liste ─────────────
+
+  private async createChecklist(
+    tx: Tx,
+    ctx: HouseholdContext,
+    occurrenceId: string,
+    texts: string[] | undefined,
+  ): Promise<void> {
+    if (!texts?.length) return;
+    await tx.checklistItem.createMany({
+      data: texts.map((text, position) => ({
+        householdId: ctx.householdId,
+        occurrenceId,
+        text,
+        position,
+      })),
+    });
+  }
+
+  /**
+   * Ajouter, cocher, renommer ou retirer une sous-tâche. Ne touche pas à `version` : cocher un
+   * article de la liste pendant que l'autre modifie la tâche ne crée pas de conflit.
+   */
+  async addChecklistItem(
+    ctx: HouseholdContext,
+    occurrenceId: string,
+    input: ChecklistItemInput,
+  ): Promise<OccurrenceDto> {
+    const occ = await this.findVisible(ctx, occurrenceId);
+    if (occ.checklist.length >= MAX_CHECKLIST_ITEMS) {
+      throw validation('checklist', `At most ${MAX_CHECKLIST_ITEMS} items`);
+    }
+    const last = await this.prisma.checklistItem.aggregate({
+      where: { occurrenceId },
+      _max: { position: true },
+    });
+    await this.prisma.checklistItem.create({
+      data: {
+        householdId: ctx.householdId,
+        occurrenceId,
+        text: input.text,
+        position: (last._max.position ?? -1) + 1,
+      },
+    });
+    this.events.householdChanged(ctx.householdId);
+    return this.get(ctx, occurrenceId);
+  }
+
+  async updateChecklistItem(
+    ctx: HouseholdContext,
+    occurrenceId: string,
+    itemId: string,
+    input: UpdateChecklistItemInput,
+  ): Promise<OccurrenceDto> {
+    await this.findVisible(ctx, occurrenceId);
+    const { count } = await this.prisma.checklistItem.updateMany({
+      where: { id: itemId, occurrenceId, householdId: ctx.householdId },
+      data: {
+        ...(input.text !== undefined ? { text: input.text } : {}),
+        ...(input.done !== undefined
+          ? { done: input.done, doneById: input.done ? ctx.memberId : null }
+          : {}),
+      },
+    });
+    if (!count) throw notFound();
+    this.events.householdChanged(ctx.householdId);
+    return this.get(ctx, occurrenceId);
+  }
+
+  async removeChecklistItem(
+    ctx: HouseholdContext,
+    occurrenceId: string,
+    itemId: string,
+  ): Promise<OccurrenceDto> {
+    await this.findVisible(ctx, occurrenceId);
+    // Idempotent : retirer un article déjà retiré (autre téléphone) n'est pas une erreur.
+    await this.prisma.checklistItem.deleteMany({
+      where: { id: itemId, occurrenceId, householdId: ctx.householdId },
+    });
+    this.events.householdChanged(ctx.householdId);
+    return this.get(ctx, occurrenceId);
   }
 
   async previewQuickAdd(ctx: HouseholdContext, text: string): Promise<QuickAddPreview> {
@@ -1098,6 +1191,7 @@ function toDto(o: OccurrenceRow): OccurrenceDto {
     completedAt: o.completedAt?.toISOString() ?? null,
     completedById: o.completedById,
     version: o.version,
+    checklist: o.checklist,
   };
 }
 

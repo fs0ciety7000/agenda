@@ -69,6 +69,7 @@ export class PrivacyService {
               durationMinutes: true,
               status: true,
               completedAt: true,
+              checklist: { select: { text: true, done: true }, orderBy: { position: 'asc' } },
             },
           },
         },

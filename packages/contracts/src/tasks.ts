@@ -35,6 +35,26 @@ const recurrenceNeedsDate = (v: { date?: string | null; recurrence?: unknown }) 
 const timeNeedsDate = (v: { date?: string | null; startMinute?: number | null }) =>
   v.startMinute == null || v.date != null;
 
+/** Sous-tâches / liste d'une occurrence (ex. « Courses » : lait, pain…). */
+export const MAX_CHECKLIST_ITEMS = 100;
+const ChecklistText = z.string().trim().min(1).max(200);
+
+export const ChecklistItemDto = z.object({
+  id: z.uuid(),
+  text: z.string(),
+  done: z.boolean(),
+  doneById: z.uuid().nullable(),
+});
+export type ChecklistItemDto = z.infer<typeof ChecklistItemDto>;
+
+export const ChecklistItemInput = z.object({ text: ChecklistText });
+export type ChecklistItemInput = z.infer<typeof ChecklistItemInput>;
+
+export const UpdateChecklistItemInput = z
+  .object({ text: ChecklistText.optional(), done: z.boolean().optional() })
+  .refine((v) => v.text !== undefined || v.done !== undefined, { message: 'nothing to update' });
+export type UpdateChecklistItemInput = z.infer<typeof UpdateChecklistItemInput>;
+
 export const CreateTaskInput = z
   .object({
     ...taskFields,
@@ -42,6 +62,8 @@ export const CreateTaskInput = z
     visibility: taskFields.visibility.default('SHARED'),
     assigneeIds: taskFields.assigneeIds.default([]),
     syncToCalendar: taskFields.syncToCalendar.default(false),
+    /** Sous-tâches / liste (ex. courses), ajoutées à la première occurrence. */
+    checklist: z.array(ChecklistText).max(MAX_CHECKLIST_ITEMS).optional(),
   })
   .refine(timeNeedsDate, { message: 'startMinute requires date', path: ['startMinute'] })
   .refine(recurrenceNeedsDate, { message: 'recurrence requires date', path: ['date'] });
@@ -106,6 +128,8 @@ export const OccurrenceDto = z.object({
   completedAt: z.string().nullable(),
   completedById: z.uuid().nullable(),
   version: z.number().int(),
+  /** Sous-tâches, dans l'ordre. */
+  checklist: z.array(ChecklistItemDto),
 });
 export type OccurrenceDto = z.infer<typeof OccurrenceDto>;
 

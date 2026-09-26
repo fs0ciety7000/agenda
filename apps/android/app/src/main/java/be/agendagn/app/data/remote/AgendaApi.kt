@@ -66,6 +66,28 @@ interface AgendaApi {
     @POST("v1/households/{h}/quick-add/parse")
     suspend fun parseQuickAdd(@Path("h") householdId: String, @Body body: QuickAddRequest): Response<QuickAddPreviewDto>
 
+    @POST("v1/households/{h}/occurrences/{id}/checklist")
+    suspend fun addChecklistItem(
+        @Path("h") householdId: String,
+        @Path("id") id: String,
+        @Body body: ChecklistItemRequest,
+    ): Response<OccurrenceDto>
+
+    @PATCH("v1/households/{h}/occurrences/{id}/checklist/{item}")
+    suspend fun updateChecklistItem(
+        @Path("h") householdId: String,
+        @Path("id") id: String,
+        @Path("item") itemId: String,
+        @Body body: ChecklistUpdateRequest,
+    ): Response<OccurrenceDto>
+
+    @DELETE("v1/households/{h}/occurrences/{id}/checklist/{item}")
+    suspend fun removeChecklistItem(
+        @Path("h") householdId: String,
+        @Path("id") id: String,
+        @Path("item") itemId: String,
+    ): Response<OccurrenceDto>
+
     @PATCH("v1/households/{h}/occurrences/{id}")
     suspend fun updateOccurrence(
         @Path("h") householdId: String,

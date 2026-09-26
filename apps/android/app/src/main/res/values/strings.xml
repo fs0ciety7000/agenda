@@ -187,4 +187,12 @@
     <string name="widget_empty">Rien pour aujourd\'hui 🎉</string>
     <string name="widget_signed_out">Ouvrez l\'app pour vous connecter.</string>
     <string name="assignee_suggestion_pick">Confier à %1$s</string>
+    <string name="checklist_title">Liste</string>
+    <string name="checklist_progress">%1$d sur %2$d</string>
+    <string name="checklist_new">Ajouter un élément (ex. lait, pain…)</string>
+    <string name="checklist_add">Mettre dans la liste</string>
+    <string name="checklist_remove">Retirer « %1$s »</string>
+    <string name="checklist_offline">Hors ligne : la liste se modifie avec une connexion.</string>
+    <string name="checklist_error">La liste n\'a pas pu être mise à jour. Réessayez.</string>
+    <string name="checklist_row">liste %1$d/%2$d</string>
 </resources>

@@ -107,13 +107,14 @@ model Household {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  members      HouseholdMember[]
-  invitations  HouseholdInvitation[]
-  categories   Category[]
-  tasks        Task[]
-  occurrences  TaskOccurrence[]
-  calendarLink HouseholdCalendarLink?
-  activity     ActivityLog[]
+  members        HouseholdMember[]
+  invitations    HouseholdInvitation[]
+  categories     Category[]
+  tasks          Task[]
+  occurrences    TaskOccurrence[]
+  checklistItems ChecklistItem[]
+  calendarLink   HouseholdCalendarLink?
+  activity       ActivityLog[]
 }
 
 enum HouseholdRole {
@@ -329,11 +330,32 @@ model TaskOccurrence {
   completedBy HouseholdMember?     @relation("OccurrenceCompletedBy", fields: [completedById], references: [id], onDelete: SetNull)
   assignees   OccurrenceAssignee[]
   eventLink   CalendarEventLink?
+  checklist   ChecklistItem[]
 
   @@unique([seriesId, originalDate])
   @@index([householdId, date])
   @@index([householdId, status, startsAt])
   @@index([taskId])
+}
+
+/// Sous-tâches / liste (ex. courses) d'une occurrence : cochées à deux, ordre libre.
+model ChecklistItem {
+  id           String   @id @default(uuid()) @db.Uuid
+  /// Dénormalisé pour l'isolation (toujours = occurrence.householdId).
+  householdId  String   @db.Uuid
+  occurrenceId String   @db.Uuid
+  text         String   @db.VarChar(200)
+  done         Boolean  @default(false)
+  /// Membre qui a coché (pas de clé étrangère : un ancien membre reste lisible comme « quelqu'un »).
+  doneById     String?  @db.Uuid
+  position     Int
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  household  Household      @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  occurrence TaskOccurrence @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
+
+  @@index([occurrenceId, position])
 }
 
 model OccurrenceAssignee {

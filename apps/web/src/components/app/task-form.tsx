@@ -1,6 +1,7 @@
 'use client';
 
 import type {
+  ChecklistItemDto,
   EditScope,
   OccurrenceDto,
   TaskPriority,
@@ -31,12 +32,14 @@ import {
 } from '@/lib/recurrence';
 import {
   useBalance,
+  useChecklist,
   useCategories,
   useCreateTask,
   useDeleteOccurrence,
   useSeriesDetail,
   useUpdateOccurrence,
 } from '@/lib/tasks';
+import { ChecklistEditor, type ChecklistRow } from './checklist';
 import { useSession } from './household-context';
 import { RecurrenceFields } from './recurrence-fields';
 
@@ -106,6 +109,10 @@ export function TaskFormDialog({
   const [error, setError] = useState<string | null>(null);
   const [version, setVersion] = useState(occurrence?.version ?? 1);
   const [pending, setPending] = useState<PendingScope | null>(null);
+  const checklist = useChecklist(household.id);
+  /** Sous-tâches : enregistrées à chaque action en modification, envoyées à la création sinon. */
+  const [items, setItems] = useState<ChecklistItemDto[]>(occurrence?.checklist ?? []);
+  const [draftItems, setDraftItems] = useState<ChecklistRow[]>([]);
 
   const initialForm = (o?: OccurrenceDto | null, d?: TaskDraft): FormState => {
     const ids = o?.assigneeIds ?? d?.assigneeIds ?? [myMemberId];
@@ -138,6 +145,8 @@ export function TaskFormDialog({
     setVersion(occurrence?.version ?? 1);
     setError(null);
     setPending(null);
+    setItems(occurrence?.checklist ?? []);
+    setDraftItems([]);
     setRec(defaultRecurrence(f.date, household.members));
     setInitialRecKey('null');
     // eslint-disable-next-line react-hooks/exhaustive-deps -- réinitialisation à l'ouverture uniquement
@@ -217,7 +226,12 @@ export function TaskFormDialog({
     const payload = basePayload();
     try {
       if (!occurrence) {
-        await create.mutateAsync({ ...payload, assigneeIds, recurrence: recurrenceInput });
+        await create.mutateAsync({
+          ...payload,
+          assigneeIds,
+          recurrence: recurrenceInput,
+          checklist: draftItems.length ? draftItems.map((i) => i.text) : undefined,
+        });
       } else if (!recurring) {
         await update.mutateAsync({
           id: occurrence.id,
@@ -408,6 +422,59 @@ export function TaskFormDialog({
                 className="min-h-11 rounded-md border border-border bg-surface px-3 py-2.5 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
               />
             </div>
+
+            {occurrence ? (
+              <ChecklistEditor
+                items={items.map((i) => ({ key: i.id, text: i.text, done: i.done }))}
+                busy={checklist.add.isPending}
+                onAdd={(text) =>
+                  checklist.add.mutate(
+                    { id: occurrence.id, text },
+                    {
+                      onSuccess: (o) => setItems(o.checklist),
+                      onError: () => toast({ message: t('checklistError'), tone: 'error' }),
+                    },
+                  )
+                }
+                onToggle={(itemId, done) => {
+                  setItems((list) => list.map((i) => (i.id === itemId ? { ...i, done } : i)));
+                  checklist.toggle.mutate(
+                    { id: occurrence.id, itemId, done },
+                    {
+                      onSuccess: (o) => setItems(o.checklist),
+                      onError: () => {
+                        setItems((list) =>
+                          list.map((i) => (i.id === itemId ? { ...i, done: !done } : i)),
+                        );
+                        toast({ message: t('checklistError'), tone: 'error' });
+                      },
+                    },
+                  );
+                }}
+                onRemove={(itemId) =>
+                  checklist.remove.mutate(
+                    { id: occurrence.id, itemId },
+                    {
+                      onSuccess: (o) => setItems(o.checklist),
+                      onError: () => toast({ message: t('checklistError'), tone: 'error' }),
+                    },
+                  )
+                }
+              />
+            ) : (
+              <ChecklistEditor
+                items={draftItems}
+                canToggle={false}
+                onAdd={(text) =>
+                  setDraftItems((list) => [
+                    ...list,
+                    { key: crypto.randomUUID(), text, done: false },
+                  ])
+                }
+                onToggle={() => {}}
+                onRemove={(key) => setDraftItems((list) => list.filter((i) => i.key !== key))}
+              />
+            )}
 
             {calendarLink && !form.personal && (
               <label className="flex min-h-11 cursor-pointer items-center gap-3 text-[0.9375rem]">

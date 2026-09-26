@@ -88,6 +88,20 @@ class SyncEngineTest {
                         }
                         json(rows.joinToString(",", "[", "]"))
                     }
+                    path.contains("/checklist") -> {
+                        val id = path.split('/')[5]
+                        val row = serverRows[id] ?: return MockResponse().setResponseCode(404)
+                        val body = request.body.readUtf8()
+                        val text = Regex("\"text\":\"([^\"]+)\"").find(body)?.groupValues?.get(1)
+                        val items = when (request.method) {
+                            "POST" -> "[{\"id\":\"i1\",\"text\":\"$text\",\"done\":false}]"
+                            "PATCH" -> "[{\"id\":\"i1\",\"text\":\"Lait\",\"done\":${body.contains("true")}}]"
+                            else -> "[]"
+                        }
+                        val updated = row.substringBefore(",\"checklist\"").removeSuffix("}") + ",\"checklist\":$items}"
+                        serverRows[id] = updated
+                        json(updated).setResponseCode(if (request.method == "POST") 201 else 200)
+                    }
                     request.method == "PATCH" && path.contains("/occurrences/") -> {
                         val id = path.substringAfterLast('/')
                         val row = serverRows[id] ?: return MockResponse().setResponseCode(404)
@@ -247,6 +261,21 @@ class SyncEngineTest {
             .replace("2026-09-29", "2026-09-30")
         assertEquals(OpResult.Conflict, repo.move("o1", java.time.LocalDate.parse("2026-10-01")))
         assertEquals(java.time.LocalDate.parse("2026-09-30"), repo.occurrence("o1").first()!!.date)
+    }
+
+    @Test
+    fun `liste - ajout enregistre dans le cache, cocher hors ligne affiche puis retabli`() = runBlocking {
+        repo.refresh()
+        assertEquals(OpResult.Ok, repo.addChecklistItem("o1", "  Lait "))
+        assertEquals(listOf("Lait"), repo.occurrence("o1").first()!!.checklist.map { it.text })
+        assertEquals(OpResult.Ok, repo.setChecklistItemDone("o1", "i1", true))
+        assertTrue(repo.occurrence("o1").first()!!.checklist.single().done)
+        offline = true
+        assertEquals(OpResult.Offline, repo.setChecklistItemDone("o1", "i1", false))
+        assertTrue(repo.occurrence("o1").first()!!.checklist.single().done) // rétabli
+        offline = false
+        assertEquals(OpResult.Ok, repo.removeChecklistItem("o1", "i1"))
+        assertEquals(emptyList<Any>(), repo.occurrence("o1").first()!!.checklist)
     }
 
     @Test

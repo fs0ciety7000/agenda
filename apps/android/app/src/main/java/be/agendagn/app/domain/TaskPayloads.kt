@@ -43,6 +43,9 @@ object TaskPayloads {
             }
             put("syncToCalendar", !personal && draft.date != null && draft.syncToCalendar)
             recurrence(draft, assignees)?.let { put("recurrence", it) }
+            draft.checklist.map { it.trim() }.filter { it.isNotEmpty() }.takeIf { it.isNotEmpty() }?.let {
+                put("checklist", JsonArray(it.map(::JsonPrimitive)))
+            }
         }
     }
 
