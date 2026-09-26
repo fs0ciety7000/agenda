@@ -30,7 +30,7 @@ jobs:
       RELEASE_BASE: https://github.com/${{ github.repository }}/releases/download/android-latest
       PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Clé de signature (secret)
         env:
           KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
@@ -40,11 +40,11 @@ jobs:
             exit 1
           fi
           echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/agenda.jks"
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '21'
-      - uses: gradle/actions/setup-gradle@v4
+      - uses: gradle/actions/setup-gradle@v6
       - name: Vérifier la configuration Firebase (facultative)
         env:
           FCM_APP_ID: ${{ vars.FCM_APP_ID }}
