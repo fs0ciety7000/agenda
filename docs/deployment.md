@@ -305,13 +305,30 @@ Sécurité : un compte Google n'est jamais rattaché automatiquement à un compt
 même adresse (prise de contrôle possible). Pour lier Google à un compte créé avec un mot de passe :
 **Réglages → Données & confidentialité → Lier Google**.
 
-## 10. Surveillance
+## 10. Surveillance et maintenance
 
-- **Santé** : `https://agenda.fs0ciety.org/healthz` (web → API → base). À brancher sur un
-  moniteur externe (UptimeRobot, Better Stack…) ou les notifications Coolify.
+- **Disponibilité** : le workflow GitHub `Disponibilité` (`.github/workflows/uptime.yml`) appelle
+  `https://agenda.fs0ciety.org/healthz` (web → API → base) toutes les 10 minutes, **depuis
+  l'extérieur du serveur**. Après 3 échecs d'affilée, il ouvre un ticket « Site indisponible »
+  (étiquette `panne`) : GitHub vous prévient par email / sur l'appli mobile (*Watch* le dépôt ou
+  être propriétaire suffit). Le ticket se ferme tout seul au retour du site.
+  - Autre adresse : variable de dépôt `UPTIME_URL` (*Settings → Secrets and variables → Actions →
+    Variables*).
+  - GitHub peut retarder les tâches planifiées de quelques minutes, et les suspend après 60 jours
+    sans activité sur le dépôt (un clic sur *Enable workflow* les relance).
+  - Alternative avec alerte SMS / appli dédiée : UptimeRobot ou Better Stack (gratuits) sur la
+    même URL `/healthz`. Uptime Kuma est possible, mais **sur une autre machine** : installé sur le
+    même serveur, il tomberait avec lui.
+- **Sauvegardes** : service `backup` *unhealthy* s'il n'y a pas eu de sauvegarde réussie depuis
+  26 h → activer les notifications Coolify (*Settings → Notifications*, email ou Telegram).
+- **Mises à jour des dépendances** : Dependabot (`.github/dependabot.yml`) ouvre chaque lundi un
+  PR groupé par écosystème (npm, Gradle, images Docker ; actions GitHub chaque mois) pour les
+  versions mineures et correctifs, et un PR par version majeure. Activer aussi *Settings → Code
+  security → Dependabot security updates* : une faille connue ouvre un PR immédiatement. La CI
+  valide chaque PR ; fusionner quand elle est verte (les majeures : lire le changelog).
 - **Logs** : Coolify → ressource → *Logs* (JSON structuré pino côté API ; aucun token ni cookie
   n'y figure).
-- **Erreurs** : Sentry en Phase 7 (`SENTRY_DSN`).
+- **Erreurs** : remontées dans les logs, et dans Sentry / GlitchTip si `SENTRY_DSN` est défini.
 
 ## 11. Checklist de sécurité
 
