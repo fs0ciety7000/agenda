@@ -21,6 +21,14 @@ android {
 
     signingConfigs {
         // Clé de publication (docs/android.md) : jamais dans le dépôt, passée en propriétés Gradle.
+        // Clé de RECETTE, versionnée (dépôt privé) : APK installables et mis à jour par-dessus
+        // (même signature d'une version à l'autre). Jamais pour le Play Store (Phase 7 : clé secrète).
+        create("recette") {
+            storeFile = file("signing/recette.jks")
+            storePassword = "recette"
+            keyAlias = "recette"
+            keyPassword = "recette"
+        }
         create("release") {
             providers.gradleProperty("agenda.keystore").orNull?.let { path ->
                 storeFile = file(path)
@@ -41,8 +49,7 @@ android {
         release {
             signingConfig = when {
                 providers.gradleProperty("agenda.keystore").isPresent -> signingConfigs.getByName("release")
-                // APK de recette installable (CI) : signé avec la clé de debug, jamais pour le Play Store.
-                providers.gradleProperty("agenda.debugSigned").isPresent -> signingConfigs.getByName("debug")
+                providers.gradleProperty("agenda.recette").isPresent -> signingConfigs.getByName("recette")
                 else -> null
             }
             isMinifyEnabled = true
