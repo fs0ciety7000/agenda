@@ -1,6 +1,6 @@
 # Image du web Next.js (sortie standalone). Contexte de build : racine du monorepo.
 
-FROM node:22-alpine AS base
+FROM node:26-alpine AS base
 RUN corepack enable
 WORKDIR /repo
 
@@ -16,7 +16,7 @@ COPY . .
 RUN pnpm install --offline --frozen-lockfile
 RUN pnpm turbo run build --filter=@agenda/web
 
-FROM node:22-alpine AS runtime
+FROM node:26-alpine AS runtime
 RUN apk add --no-cache tini
 ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 HOSTNAME=0.0.0.0 PORT=3000
 WORKDIR /app
