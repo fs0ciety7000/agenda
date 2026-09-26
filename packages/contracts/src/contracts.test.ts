@@ -39,3 +39,37 @@ describe('contracts', () => {
     });
   });
 });
+
+describe('tâches', async () => {
+  const { CreateTaskInput, UpdateOccurrenceInput, OccurrenceQuery } = await import('./tasks');
+
+  it('titre seul suffit (création en quelques secondes)', () => {
+    expect(CreateTaskInput.parse({ title: ' Sortir les poubelles ' })).toEqual({
+      title: 'Sortir les poubelles',
+      priority: 'NORMAL',
+      visibility: 'SHARED',
+      assigneeIds: [],
+    });
+  });
+
+  it('une heure exige une date ; dates impossibles refusées', () => {
+    expect(CreateTaskInput.safeParse({ title: 'x', startMinute: 600 }).success).toBe(false);
+    expect(CreateTaskInput.safeParse({ title: 'x', date: '2026-02-30' }).success).toBe(false);
+    expect(
+      CreateTaskInput.safeParse({ title: 'x', date: '2026-09-26', startMinute: 1440 }).success,
+    ).toBe(false);
+  });
+
+  it('modification : version obligatoire', () => {
+    expect(UpdateOccurrenceInput.safeParse({ title: 'x' }).success).toBe(false);
+    expect(UpdateOccurrenceInput.parse({ version: 2, date: null })).toEqual({
+      version: 2,
+      date: null,
+    });
+  });
+
+  it('filtres : valeurs spéciales de responsable', () => {
+    expect(OccurrenceQuery.parse({ assignee: 'together' }).view).toBe('all');
+    expect(OccurrenceQuery.safeParse({ assignee: 'grace' }).success).toBe(false);
+  });
+});

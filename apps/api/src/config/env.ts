@@ -26,6 +26,11 @@ const EnvSchema = z.object({
     .toLowerCase()
     .optional()
     .transform((v) => v || undefined),
+  /**
+   * Requêtes/minute/IP sur l'ensemble de l'API. Généreux : les membres d'un foyer partagent
+   * souvent la même IP publique (box internet) et l'interface fait plusieurs requêtes par écran.
+   */
+  GLOBAL_RATE_LIMIT: z.coerce.number().int().min(1).default(600),
   /** Requêtes/minute/IP sur login, inscription, refresh. */
   AUTH_RATE_LIMIT: z.coerce.number().int().min(1).default(10),
   /** Inscriptions ouvertes. À passer à false une fois les membres du foyer inscrits. */

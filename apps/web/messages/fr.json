@@ -1,5 +1,8 @@
 {
-  "app": { "name": "Agenda G & N", "skipToContent": "Aller au contenu" },
+  "app": {
+    "name": "Agenda G & N",
+    "skipToContent": "Aller au contenu"
+  },
   "nav": {
     "today": "Aujourd'hui",
     "tasks": "Tâches",
@@ -39,7 +42,10 @@
     "retry": "Réessayer",
     "email": "Adresse email invalide.",
     "passwordMin": "10 caractères minimum.",
-    "required": "Champ requis."
+    "required": "Champ requis.",
+    "CATEGORY_NAME_TAKEN": "Une catégorie porte déjà ce nom.",
+    "TASK_TITLE_REQUIRED": "Ajoutez un titre à la tâche.",
+    "VERSION_CONFLICT": "Cette tâche a été modifiée entre-temps."
   },
   "today": {
     "greeting": "Bonjour {name} 👋",
@@ -47,7 +53,9 @@
     "sectionWeek": "Cette semaine",
     "sectionBalance": "Répartition",
     "emptyTitle": "Rien pour aujourd'hui.",
-    "emptyBody": "Profitez-en. La création de tâches arrive dans la prochaine version."
+    "emptyBody": "Profitez-en, ou ajoutez une tâche ci-dessus.",
+    "sectionOverdue": "À rattraper ({count})",
+    "weekEmpty": "Rien de prévu les prochains jours."
   },
   "placeholder": {
     "title": "Bientôt disponible",
@@ -81,12 +89,124 @@
     "members": "Membres",
     "owner": "Propriétaire",
     "appearance": "Apparence",
-    "theme": { "system": "Système", "light": "Clair", "dark": "Sombre" },
+    "theme": {
+      "system": "Système",
+      "light": "Clair",
+      "dark": "Sombre"
+    },
     "calendar": "Calendrier partagé",
     "calendarSoon": "La connexion à Google Calendar arrive en phase 4.",
     "account": "Compte",
     "logout": "Se déconnecter",
-    "logoutAll": "Se déconnecter de tous les appareils"
+    "logoutAll": "Se déconnecter de tous les appareils",
+    "categories": "Catégories"
   },
-  "common": { "loading": "Chargement…" }
+  "common": {
+    "loading": "Chargement…",
+    "close": "Fermer"
+  },
+  "dates": {
+    "today": "aujourd'hui",
+    "tomorrow": "demain",
+    "yesterday": "hier"
+  },
+  "quickAdd": {
+    "label": "Ajouter une tâche rapidement",
+    "placeholder": "Sortir les poubelles demain 19h @nicolas",
+    "moreOptions": "Plus d'options",
+    "previewLabel": "Détecté :",
+    "added": "« {title} » ajoutée",
+    "priority": {
+      "HIGH": "Priorité haute",
+      "URGENT": "Urgente"
+    }
+  },
+  "tasks": {
+    "unassigned": "À définir",
+    "bothOfUs": "Tous les deux",
+    "everyone": "Tout le monde",
+    "personal": "Personnel",
+    "markDone": "Marquer « {title} » comme faite",
+    "markTodo": "Marquer « {title} » comme à faire",
+    "completedToast": "« {title} » terminée",
+    "undo": "Annuler",
+    "toggleError": "Impossible de mettre à jour la tâche. Réessayez.",
+    "newTitle": "Nouvelle tâche",
+    "editTitle": "Modifier la tâche",
+    "create": "Ajouter",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "confirmDelete": "Supprimer « {title} » ?",
+    "createdToast": "Tâche ajoutée",
+    "savedToast": "Modifications enregistrées",
+    "deletedToast": "Tâche supprimée",
+    "conflict": "Cette tâche a été modifiée entre-temps par quelqu'un d'autre. Voici sa version actuelle : vérifiez puis enregistrez à nouveau.",
+    "priority": {
+      "LOW": "Basse",
+      "NORMAL": "Normale",
+      "HIGH": "Haute",
+      "URGENT": "Urgente"
+    },
+    "fields": {
+      "title": "Titre",
+      "titlePlaceholder": "Nettoyer la salle de bain",
+      "assignee": "Responsable",
+      "date": "Date",
+      "time": "Heure",
+      "timeNeedsDate": "Choisissez d'abord une date.",
+      "duration": "Durée",
+      "category": "Catégorie",
+      "noCategory": "Aucune",
+      "priority": "Priorité",
+      "notes": "Notes",
+      "personal": "Tâche personnelle",
+      "personalHint": "Visible uniquement par vous."
+    }
+  },
+  "balance": {
+    "bothOfUs": "À deux",
+    "together": "Ensemble",
+    "unassigned": "À définir",
+    "count": "{count, plural, =0 {aucune tâche} one {# tâche} other {# tâches}}",
+    "empty": "Aucune tâche partagée prévue cette semaine."
+  },
+  "tasksPage": {
+    "title": "Tâches",
+    "new": "Nouvelle tâche",
+    "views": "Vues",
+    "search": "Rechercher",
+    "noDate": "Sans date",
+    "emptyTitle": "Aucune tâche ici.",
+    "emptyFiltered": "Essayez d'élargir les filtres.",
+    "tabs": {
+      "all": "Toutes",
+      "today": "Aujourd'hui",
+      "upcoming": "À venir",
+      "overdue": "En retard",
+      "unscheduled": "Sans date",
+      "done": "Terminées",
+      "personal": "Personnelles",
+      "shared": "Partagées",
+      "together": "À deux"
+    },
+    "filters": {
+      "person": "Personne",
+      "everyone": "Tout le monde",
+      "category": "Catégorie",
+      "allCategories": "Toutes les catégories",
+      "priority": "Priorité",
+      "allPriorities": "Toutes priorités"
+    }
+  },
+  "categories": {
+    "emoji": "Emoji",
+    "name": "Nom",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "rename": "Modifier {name}",
+    "delete": "Supprimer {name}",
+    "confirmDelete": "Supprimer la catégorie « {name} » ? Les tâches concernées resteront, sans catégorie.",
+    "add": "Nouvelle catégorie",
+    "addButton": "Ajouter"
+  }
 }

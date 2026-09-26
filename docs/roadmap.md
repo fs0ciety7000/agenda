@@ -7,7 +7,8 @@ Une phase n'est « terminée » que si la CI est verte et la documentation à jo
 |---|---|---|---|
 | **0 — Discovery** | PRD, architecture, BDD, Google Calendar, design system, roadmap, risques | Docs relus et validés par Grace & Nicolas | ✅ Livré (à valider) |
 | **1 — Foundation** | Monorepo, CI, Docker Compose (Postgres/Redis), API NestJS + Prisma (schéma complet), auth email/mdp (sessions, refresh rotatif), foyers + isolation, web Next.js (tokens, i18n, login/inscription, shell), squelette Android | `pnpm test` vert (unit + intégration), `pnpm build` vert, CI verte | ✅ Livré (cf. §Phase 1) |
-| **2 — Core Tasks** | CRUD tâches ponctuelles, catégories, attribution, statuts, dashboard « Aujourd'hui », vue Tâches + filtres + recherche, quick add (parseur FR déterministe), client API typé (OpenAPI), Google Sign-In | E2E Playwright : créer → cocher | ⏳ |
+| **2 — Core Tasks** | CRUD tâches ponctuelles, catégories, attribution, statuts, dashboard « Aujourd'hui », vue Tâches + filtres + recherche, quick add (parseur FR/EN déterministe) | E2E Playwright : créer → cocher | ✅ Livré (cf. §Phase 2) |
+| **2b — Compte & RGPD** | Google Sign-In, réinitialisation du mot de passe (fournisseur d'emails à choisir), export / suppression de compte, client API typé généré depuis l'OpenAPI | Tests d'intégration + E2E | ⏳ |
 | **3 — Récurrence & rotation** | `packages/domain` : moteur RRULE-subset, DST, rotation (slots, par semaine, par jour), matérialisation 90 j, exceptions, split de série, 3 modes d'édition | Couverture domaine ≥ 95 %, tests critiques §29 | ⏳ |
 | **4 — Google Calendar** | OAuth calendrier, sélection « Commun G & N », `GoogleCalendarSyncService`, BullMQ, retry/backoff, réconciliation, erreurs humaines | Suite fake Google verte + recette manuelle sur « Commun G & N » | ⏳ |
 | **5 — Android** | Compose : navigation, dashboard, tâches, calendrier, création rapide, Room + outbox + WorkManager, notifications locales | Tests Compose + instrumentation ; APK de recette | ⏳ |
@@ -43,3 +44,34 @@ Vérifié localement : lint + typecheck + build (tous paquets), 5 tests contract
 Reporté explicitement de la Phase 1 vers la Phase 2 : Google Sign-In, réinitialisation du mot
 de passe par email (nécessite un fournisseur d'emails), export / suppression de compte (RGPD),
 client API généré depuis l'OpenAPI, onboarding complet (étapes Google et notifications).
+
+## Phase 2 — détail de ce qui est livré
+
+- `packages/domain` (logique pure, sans I/O) : dates « murales » et fuseaux (conversion heure locale → UTC,
+  changements d'heure : heure inexistante décalée, heure ambiguë = première occurrence), parseur quick add FR/EN.
+- API :
+  - `POST /households/:id/tasks` (seul le titre est obligatoire), `POST …/tasks/quick` et `POST …/quick-add/parse` (aperçu) ;
+  - `GET …/occurrences` : vues `today`, `upcoming`, `overdue`, `unscheduled`, `done`, `all` + filtres personne
+    (`me`, id, `together`, `unassigned`), catégorie, priorité, statut, visibilité, recherche ;
+  - `PATCH …/occurrences/:id` avec concurrence optimiste (`version` → 409 `VERSION_CONFLICT` + état actuel),
+    `POST …/complete` / `…/reopen` idempotents, `DELETE` (suppression douce) ;
+  - `GET …/balance` : répartition de la semaine (par personne, à deux, à définir, minutes estimées),
+    tâches personnelles exclues ;
+  - catégories : créer, renommer, emoji, supprimer (les tâches perdent leur catégorie) ;
+  - journal d'activité (noms de champs uniquement, jamais le contenu).
+- Règles de vie privée : une tâche personnelle n'est visible, modifiable et comptée que pour son créateur ;
+  seul le créateur peut changer la visibilité ; une référence (catégorie, responsable) d'un autre foyer est refusée.
+- Web : dashboard (Aujourd'hui, À rattraper, Cette semaine, Répartition), quick add avec aperçu en puces
+  (raccourci `N`), formulaire de tâche adaptatif (feuille sur mobile, dialogue sur desktop) avec gestion
+  des conflits, cocher avec « Annuler », vue Tâches (9 onglets, filtres, recherche, URL partageable),
+  gestion des catégories dans les Réglages.
+- Rate limiting global relevé à 600 req/min/IP (`GLOBAL_RATE_LIMIT`) : les deux membres partagent souvent
+  la même IP publique à la maison.
+
+Vérifié : 48 tests domaine, 9 tests contracts, 43 tests API (dont vie privée, isolation inter-foyers,
+conflit de version, fuseaux), 8 E2E Playwright (desktop + mobile).
+
+Syntaxe du quick add : `demain`, `après-demain`, `lundi`…`dimanche [prochain]`, `dans 3 jours`, `le 12`,
+`12/10`, `12 octobre`, `19h`, `19h30`, `19:30`, `midi`, `ce soir` (19:00), `pendant 45 min`, `30 min`,
+`@grace`, `@nicolas`, `@nous`, `#courses`, `!` (haute), `!!` (urgente) — et l'équivalent anglais.
+La récurrence (« chaque samedi ») arrive avec le moteur de la Phase 3.

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 import { useSession } from '@/components/app/household-context';
+import { CategoriesSettings } from '@/components/app/categories-settings';
 import { InviteLink } from '@/components/app/invite-link';
 import { MemberAvatar } from '@/components/app/member-avatar';
 import { Button } from '@/components/ui/button';
@@ -53,6 +54,13 @@ export default function SettingsPage() {
             ))}
           </ul>
           {household.members.length < 2 && <InviteLink householdId={household.id} />}
+        </Card>
+      </section>
+
+      <section className="flex flex-col gap-3" aria-labelledby="s-categories">
+        <SectionTitle id="s-categories">{t('categories')}</SectionTitle>
+        <Card>
+          <CategoriesSettings />
         </Card>
       </section>
 
