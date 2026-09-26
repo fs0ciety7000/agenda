@@ -1,6 +1,6 @@
-import { Body, Controller, Delete, HttpCode, Param, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Put } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { PushTokenInput } from '@agenda/contracts';
+import { PushTokenInput, type PushStatusDto } from '@agenda/contracts';
 import { AuthUser, CurrentUser } from '../common/request-context';
 import { ZodPipe } from '../common/zod.pipe';
 import { PushService } from './push.service';
@@ -10,6 +10,12 @@ import { PushService } from './push.service';
 @Controller({ path: 'me/push-tokens', version: '1' })
 export class PushController {
   constructor(private readonly push: PushService) {}
+
+  /** Diagnostic affiché dans les Réglages (site et app). */
+  @Get('status')
+  status(@CurrentUser() user: AuthUser): Promise<PushStatusDto> {
+    return this.push.status(user.userId);
+  }
 
   @Put()
   @HttpCode(204)

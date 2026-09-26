@@ -526,6 +526,15 @@
     "types": {
       "TASK_ASSIGNED": "Quelqu'un me confie une tâche",
       "CALENDAR_SYNC_FAILED": "Problème de synchronisation Google Calendar"
+    },
+    "status": {
+      "title": "Notifications instantanées sur le téléphone : pas encore actives",
+      "ok": "Notifications instantanées sur le téléphone : actives",
+      "server": "✓ Serveur : envoi configuré (Firebase).",
+      "serverOff": "✗ Serveur : non configuré (variable FCM_SERVICE_ACCOUNT vide). Les téléphones vérifient leurs notifications à l'ouverture et régulièrement.",
+      "serverInvalid": "✗ Serveur : clé Firebase illisible (FCM_SERVICE_ACCOUNT). Recoller le fichier JSON du compte de service.",
+      "devices": "✓ {count, plural, one {# téléphone enregistré} other {# téléphones enregistrés}} pour votre compte (dernier : {date}).",
+      "noDevice": "✗ Aucun téléphone enregistré pour votre compte : mettre l'app Android à jour, puis l'ouvrir une fois."
     }
   },
   "stats": {

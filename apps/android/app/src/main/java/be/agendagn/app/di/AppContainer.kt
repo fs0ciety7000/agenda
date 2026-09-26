@@ -48,9 +48,8 @@ class AppContainer(context: Context) {
     val crashReporter = CrashReporter(app, api, BuildConfig.VERSION_NAME)
     val activityNotifier = ActivityNotifier(app, api)
     /** Notifications instantanées : actives seulement si la build contient la configuration Firebase. */
-    val push = PushRegistrar(
-        api,
-        PushRegistrar.firebase(app, BuildConfig.FCM_APP_ID, BuildConfig.FCM_API_KEY, BuildConfig.FCM_PROJECT_ID, BuildConfig.FCM_SENDER_ID),
+    val push = PushRegistrar.create(
+        api, app, BuildConfig.FCM_APP_ID, BuildConfig.FCM_API_KEY, BuildConfig.FCM_PROJECT_ID, BuildConfig.FCM_SENDER_ID,
     )
     val webBaseUrl: String = BuildConfig.WEB_BASE_URL
 }

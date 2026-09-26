@@ -3,6 +3,7 @@ package be.agendagn.app.data
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import be.agendagn.app.data.remote.ApiClient
 import be.agendagn.app.notifications.PushRegistrar
+import be.agendagn.app.notifications.PushState
 import be.agendagn.app.notifications.PushTokenSource
 import be.agendagn.app.testing.FakeTokenStore
 import kotlinx.coroutines.runBlocking
@@ -35,7 +36,9 @@ class PushRegistrarTest {
         assertTrue(push.enabled)
 
         server.enqueue(MockResponse().setResponseCode(204))
+        assertEquals(PushState.Pending, push.state.value)
         push.register()
+        assertEquals(PushState.Registered, push.state.value)
         val put = server.takeRequest()
         assertEquals("PUT", put.method)
         assertEquals("/v1/me/push-tokens", put.path)
@@ -56,8 +59,16 @@ class PushRegistrarTest {
         disabled.register()
         disabled.unregister()
         assertEquals(0, server.requestCount)
+        assertEquals(PushState.NotInBuild, disabled.state.value)
+
+        val refused = PushRegistrar(api, FakeSource())
+        server.enqueue(MockResponse().setResponseCode(401))
+        refused.register()
+        assertEquals(PushState.ServerError(401), refused.state.value)
 
         server.shutdown() // hors ligne
-        PushRegistrar(api, FakeSource()).register()
+        val offline = PushRegistrar(api, FakeSource())
+        offline.register()
+        assertEquals(PushState.Offline, offline.state.value)
     }
 }
