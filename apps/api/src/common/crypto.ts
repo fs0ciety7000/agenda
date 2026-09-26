@@ -23,15 +23,29 @@ export function safeEqual(a: string, b: string): boolean {
 }
 
 /**
+ * Clé de chiffrement : 32 octets, en base64 (`openssl rand -base64 32`, recommandé) ou en
+ * hexadécimal (`openssl rand -hex 32`). Toute autre valeur est refusée au démarrage.
+ */
+export function decodeEncryptionKey(value: string): Buffer {
+  const v = value.trim();
+  const key = /^[0-9a-f]{64}$/i.test(v) ? Buffer.from(v, 'hex') : Buffer.from(v, 'base64');
+  if (key.length !== 32 || (!/^[0-9a-f]{64}$/i.test(v) && !/^[A-Za-z0-9+/_-]{43}=?$/.test(v))) {
+    throw new Error(
+      'TOKEN_ENCRYPTION_KEY must be 32 random bytes: generate one with `openssl rand -base64 32`',
+    );
+  }
+  return key;
+}
+
+/**
  * Chiffrement AES-256-GCM des secrets tiers (tokens OAuth Google).
  * Format versionné `v1:<iv>:<tag>:<ciphertext>` pour permettre une rotation de clé.
  */
 export class SecretBox {
   private readonly key: Buffer;
 
-  constructor(base64Key: string) {
-    this.key = Buffer.from(base64Key, 'base64');
-    if (this.key.length !== 32) throw new Error('TOKEN_ENCRYPTION_KEY must be 32 bytes (base64)');
+  constructor(encodedKey: string) {
+    this.key = decodeEncryptionKey(encodedKey);
   }
 
   encrypt(plaintext: string): string {
