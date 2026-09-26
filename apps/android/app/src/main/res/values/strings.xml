@@ -98,7 +98,6 @@
     <string name="field_priority">Priorité</string>
     <string name="field_repeat">Répétition</string>
     <string name="field_personal">Tâche personnelle (visible par moi seul)</string>
-    <string name="field_alternate">Chacun son tour</string>
     <string name="field_sync">Ajouter au calendrier partagé</string>
     <string name="field_sync_needs_date">Choisissez une date pour l\'ajouter au calendrier.</string>
     <string name="none">Aucune</string>
@@ -113,7 +112,42 @@
     <string name="repeat_weekly">Chaque semaine</string>
     <string name="repeat_biweekly">Toutes les 2 semaines</string>
     <string name="repeat_monthly">Chaque mois</string>
-    <string name="repeat_web_hint">Rotations avancées (séquences, jours fixes) : sur le site.</string>
+    <string name="repeat_weekdays">Chaque jour ouvré</string>
+    <string name="repeat_quarterly">Tous les 3 mois</string>
+    <string name="repeat_yearly">Chaque année</string>
+    <string name="repeat_custom">Personnalisé</string>
+    <string name="repeat_every">Tous les</string>
+    <string name="repeat_interval">Intervalle</string>
+    <plurals name="repeat_unit_day"><item quantity="one">jour</item><item quantity="many">jours</item><item quantity="other">jours</item></plurals>
+    <plurals name="repeat_unit_week"><item quantity="one">semaine</item><item quantity="many">semaines</item><item quantity="other">semaines</item></plurals>
+    <string name="repeat_unit_month">mois</string>
+    <plurals name="repeat_unit_year"><item quantity="one">an</item><item quantity="many">ans</item><item quantity="other">ans</item></plurals>
+    <string name="repeat_on_day">Le %1$d</string>
+    <string name="repeat_last_day">Le dernier jour du mois</string>
+    <string name="repeat_ends">Fin</string>
+    <string name="repeat_end_never">Jamais</string>
+    <string name="repeat_end_until">À une date</string>
+    <string name="repeat_end_count">Après un nombre de fois</string>
+    <string name="repeat_until">Jusqu\'au %1$s</string>
+    <string name="repeat_times">Nombre de fois</string>
+    <string name="repeat_next">Prochaines fois</string>
+    <string name="repeat_no_occurrence">Cette répétition ne produit aucune date.</string>
+    <string name="repeat_offline">Répétition modifiable une fois connecté.</string>
+    <string name="repeat_loading">Chargement de la répétition…</string>
+    <string name="rotation_title">Qui s\'en occupe ?</string>
+    <string name="rotation_fixed">Responsable fixe</string>
+    <string name="rotation_fixed_hint">Les personnes choisies dans « Qui ? » à chaque fois.</string>
+    <string name="rotation_alternate">Chacun son tour</string>
+    <string name="rotation_sequence">Rotation personnalisée</string>
+    <string name="rotation_weekday">Selon le jour</string>
+    <string name="rotation_starts_with">Commence par</string>
+    <string name="rotation_both">Nous deux</string>
+    <string name="rotation_everyone">Tout le monde</string>
+    <string name="rotation_add_step">Ajouter un tour</string>
+    <string name="rotation_remove_step">Retirer le tour %1$d</string>
+    <string name="rotation_per_week">Changer de responsable chaque semaine plutôt qu\'à chaque fois</string>
+    <string name="decrease">Diminuer : %1$s</string>
+    <string name="increase">Augmenter : %1$s</string>
     <string name="save">Enregistrer</string>
     <string name="cancel">Annuler</string>
     <string name="ok">OK</string>

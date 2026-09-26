@@ -68,7 +68,8 @@ import be.agendagn.app.domain.model.ChecklistItem
 import be.agendagn.app.domain.model.EditScope
 import be.agendagn.app.domain.model.Member
 import be.agendagn.app.domain.model.Priority
-import be.agendagn.app.domain.model.Repeat
+import be.agendagn.app.domain.RepeatPreset
+import be.agendagn.app.domain.RotationKind
 import be.agendagn.app.domain.model.TaskDraft
 import be.agendagn.app.ui.components.MemberAvatar
 import be.agendagn.app.ui.components.currentLocale
@@ -98,6 +99,7 @@ fun TaskFormScreen(
     onAddItem: (String) -> Unit = {},
     onToggleItem: (ChecklistItem) -> Unit = {},
     onRemoveItem: (ChecklistItem) -> Unit = {},
+    onRetrySeries: () -> Unit = {},
 ) {
     LaunchedEffect(state.done) { if (state.done) onBack() }
     Scaffold(
@@ -143,8 +145,10 @@ fun TaskFormScreen(
             )
             DateTimeFields(d, onEdit, enabled = !state.readOnly)
 
-            Label(stringResource(R.string.field_who))
-            Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            // Rotation (chacun son tour…) : les responsables viennent de la répétition.
+            val rotating = d.recurrence.repeating && d.recurrence.rotation != RotationKind.FIXED && !d.personal
+            if (!rotating) Label(stringResource(R.string.field_who))
+            if (!rotating) Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 members.forEach { m ->
                     FilterChip(
                         selected = m.id in d.assigneeIds,
@@ -159,7 +163,7 @@ fun TaskFormScreen(
                     )
                 }
             }
-            if (suggestion != null && d.assigneeIds.isEmpty() && !d.personal && !state.readOnly) {
+            if (suggestion != null && !rotating && d.assigneeIds.isEmpty() && !d.personal && !state.readOnly) {
                 val (member, share) = suggestion
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Hint(
@@ -172,20 +176,25 @@ fun TaskFormScreen(
                 }
             }
 
-            if (!state.isEdit) {
+            if (state.canEditRecurrence) {
+                RecurrenceSection(
+                    spec = d.recurrence,
+                    date = d.date,
+                    members = members,
+                    personal = d.personal,
+                    allowNone = !state.isSeries,
+                    preview = state.preview,
+                ) { spec -> onEdit { it.copy(recurrence = spec) } }
+            } else if (state.isSeries) {
                 Label(stringResource(R.string.field_repeat))
-                ChipRow(
-                    listOf(
-                        Repeat.NONE to R.string.repeat_none, Repeat.DAILY to R.string.repeat_daily,
-                        Repeat.WEEKLY to R.string.repeat_weekly, Repeat.BIWEEKLY to R.string.repeat_biweekly,
-                        Repeat.MONTHLY to R.string.repeat_monthly,
-                    ).map { (v, res) -> v to stringResource(res) },
-                    d.repeat,
-                ) { r -> onEdit { it.copy(repeat = r) } }
-                if (d.repeat != Repeat.NONE && d.assigneeIds.size >= 2 && !d.personal) {
-                    CheckRow(stringResource(R.string.field_alternate), d.alternate) { v -> onEdit { it.copy(alternate = v) } }
+                if (state.seriesUnavailable) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Hint(stringResource(R.string.repeat_offline), Modifier.weight(1f))
+                        TextButton(onClick = onRetrySeries) { Text(stringResource(R.string.push_retry)) }
+                    }
+                } else {
+                    Hint(stringResource(R.string.repeat_loading))
                 }
-                if (d.repeat != Repeat.NONE) Hint(stringResource(R.string.repeat_web_hint))
             }
 
             if (categories.isNotEmpty()) {
@@ -293,7 +302,7 @@ fun TaskFormScreen(
                         EditScope.THIS to R.string.scope_this,
                         EditScope.FOLLOWING to R.string.scope_following,
                         EditScope.ALL to R.string.scope_all,
-                    ).forEach { (scope, label) ->
+                    ).filter { it.first in state.scopeOptions }.forEach { (scope, label) ->
                         TextButton(onClick = { onScope(scope) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
                             Text(stringResource(label), modifier = Modifier.fillMaxWidth())
                         }
@@ -343,7 +352,7 @@ private fun DateTimeFields(d: TaskDraft, onEdit: ((TaskDraft) -> TaskDraft) -> U
             },
             dismissButton = {
                 TextButton(onClick = {
-                    onEdit { it.copy(date = null, startMinute = null, durationMinutes = null, repeat = Repeat.NONE) }
+                    onEdit { it.copy(date = null, startMinute = null, durationMinutes = null, recurrence = it.recurrence.copy(preset = RepeatPreset.NONE)) }
                     pickDate = false
                 }) { Text(stringResource(R.string.clear)) }
             },
@@ -375,15 +384,15 @@ private fun DateTimeFields(d: TaskDraft, onEdit: ((TaskDraft) -> TaskDraft) -> U
 }
 
 @Composable
-private fun Label(text: String) =
+internal fun Label(text: String) =
     Text(text, style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
 
 @Composable
-private fun Hint(text: String, modifier: Modifier = Modifier) =
+internal fun Hint(text: String, modifier: Modifier = Modifier) =
     Text(text, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, modifier = modifier)
 
 @Composable
-private fun <T> ChipRow(
+internal fun <T> ChipRow(
     options: List<Pair<T, String>>,
     selected: T,
     enabled: Boolean = true,
@@ -402,7 +411,7 @@ private fun <T> ChipRow(
 }
 
 @Composable
-private fun CheckRow(label: String, checked: Boolean, enabled: Boolean = true, onChange: (Boolean) -> Unit) {
+internal fun CheckRow(label: String, checked: Boolean, enabled: Boolean = true, onChange: (Boolean) -> Unit) {
     Row(
         Modifier.fillMaxWidth().heightIn(min = 48.dp)
             .toggleable(value = checked, enabled = enabled, role = Role.Checkbox, onValueChange = onChange),

@@ -61,6 +61,7 @@ fun OccurrenceEntity.toDomain(pending: Boolean) = Occurrence(
     assigneeIds = assigneeIds.split(',').filter { it.isNotBlank() },
     createdById = createdById,
     isRecurring = isRecurring,
+    seriesId = seriesId,
     syncToCalendar = syncToCalendar,
     calendarSync = calendarSync?.let { enumOr<CalendarSync>(it, CalendarSync.PENDING) },
     completedAt = completedAt?.let { runCatching { Instant.parse(it) }.getOrNull() },

@@ -1,5 +1,7 @@
 package be.agendagn.app.testing
 
+import be.agendagn.app.domain.PreviewItem
+import be.agendagn.app.domain.SeriesInfo
 import be.agendagn.app.domain.model.CalendarStatus
 import be.agendagn.app.domain.model.Category
 import be.agendagn.app.domain.model.EditScope
@@ -16,6 +18,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.json.JsonObject
 
 class FakeAgendaRepository(
     occurrences: List<Occurrence> = Fixtures.week(),
@@ -47,9 +50,19 @@ class FakeAgendaRepository(
     override suspend fun create(draft: TaskDraft) { created += draft }
     override suspend fun quickAdd(text: String) { quickAdds += text }
     override suspend fun previewQuickAdd(text: String) = preview
-    override suspend fun update(occurrence: Occurrence, draft: TaskDraft, scope: EditScope): OpResult {
+    val recurrenceUpdates = mutableListOf<JsonObject?>()
+    override suspend fun update(occurrence: Occurrence, draft: TaskDraft, scope: EditScope, recurrence: JsonObject?): OpResult {
         updates += draft to scope
+        recurrenceUpdates += recurrence
         return updateResult
+    }
+    var seriesInfo: SeriesInfo? = null
+    override suspend fun series(seriesId: String): SeriesInfo? = seriesInfo
+    var previewItems: List<PreviewItem>? = null
+    val previews = mutableListOf<JsonObject>()
+    override suspend fun previewRecurrence(startDate: java.time.LocalDate, recurrence: JsonObject): List<PreviewItem>? {
+        previews += recurrence
+        return previewItems
     }
     override suspend fun delete(occurrence: Occurrence, scope: EditScope): OpResult { deletes += scope; return OpResult.Ok }
     val moves = mutableListOf<Pair<String, java.time.LocalDate>>()

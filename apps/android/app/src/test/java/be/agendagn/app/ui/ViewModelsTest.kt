@@ -2,7 +2,8 @@ package be.agendagn.app.ui
 
 import be.agendagn.app.domain.model.EditScope
 import be.agendagn.app.domain.model.OccurrenceStatus
-import be.agendagn.app.domain.model.Repeat
+import be.agendagn.app.domain.RecurrenceSpec
+import be.agendagn.app.domain.RepeatPreset
 import be.agendagn.app.domain.repository.OpResult
 import be.agendagn.app.testing.FakeAgendaRepository
 import be.agendagn.app.testing.Fixtures
@@ -97,7 +98,7 @@ class ViewModelsTest {
         advanceUntilIdle()
         vm.save()
         assertEquals(FormError.TITLE_REQUIRED, vm.state.value.error)
-        vm.edit { it.copy(title = "Poubelles", repeat = Repeat.WEEKLY) }
+        vm.edit { it.copy(title = "Poubelles", recurrence = RecurrenceSpec(preset = RepeatPreset.WEEKLY)) }
         assertNotNull(vm.state.value.draft.date)
         assertNull(vm.state.value.error)
         vm.save()
@@ -119,6 +120,49 @@ class ViewModelsTest {
         advanceUntilIdle()
         assertEquals(EditScope.FOLLOWING, repo.updates.single().second)
         assertTrue(vm.state.value.done)
+    }
+
+    @Test
+    fun `formulaire - serie - repetition pre-remplie, modifiee pour les suivantes seulement`() = runTest(dispatcher) {
+        val repo = FakeAgendaRepository()
+        val recurring = Fixtures.week().first { it.isRecurring }
+        val weekly = be.agendagn.app.domain.Recurrences.toJson(
+            RecurrenceSpec(preset = RepeatPreset.WEEKLY), recurring.date, recurring.assigneeIds, Fixtures.household.members, false,
+        )!!
+        repo.seriesInfo = be.agendagn.app.domain.SeriesInfo(
+            "s", recurring.date!!, null, null,
+            weekly["rule"] as kotlinx.serialization.json.JsonObject, weekly["rotation"] as kotlinx.serialization.json.JsonObject,
+            "PER_OCCURRENCE",
+        )
+        val vm = TaskFormViewModel(repo, recurring.id, null)
+        advanceUntilIdle()
+        assertEquals(RepeatPreset.WEEKLY, vm.state.value.draft.recurrence.preset)
+        assertTrue(vm.state.value.canEditRecurrence)
+        assertFalse(vm.state.value.seriesChanged)
+
+        vm.edit { it.copy(recurrence = it.recurrence.copy(rotation = be.agendagn.app.domain.RotationKind.ALTERNATE)) }
+        advanceUntilIdle()
+        assertTrue(vm.state.value.seriesChanged)
+        assertTrue(repo.previews.isNotEmpty()) // aperçu demandé au serveur
+        vm.save()
+        assertEquals(listOf(EditScope.FOLLOWING, EditScope.ALL), vm.state.value.scopeOptions)
+        vm.onScope(EditScope.ALL)
+        advanceUntilIdle()
+        assertEquals("ALTERNATE", repo.recurrenceUpdates.single()!!["rotation"]!!.let { it as kotlinx.serialization.json.JsonObject }["mode"].toString().trim('"'))
+    }
+
+    @Test
+    fun `formulaire - tache ponctuelle rendue recurrente`() = runTest(dispatcher) {
+        val repo = FakeAgendaRepository()
+        val one = Fixtures.week().first { !it.isRecurring && it.date != null }
+        val vm = TaskFormViewModel(repo, one.id, null)
+        advanceUntilIdle()
+        vm.edit { it.copy(recurrence = RecurrenceSpec(preset = RepeatPreset.MONTHLY)) }
+        vm.save()
+        advanceUntilIdle()
+        assertNull(vm.state.value.askScopeFor)
+        assertEquals(EditScope.THIS, repo.updates.single().second)
+        assertNotNull(repo.recurrenceUpdates.single())
     }
 
     @Test
