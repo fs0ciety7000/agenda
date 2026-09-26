@@ -71,6 +71,13 @@ android {
                 "\"${providers.gradleProperty("agenda.webBaseUrl").orElse(providers.gradleProperty("agenda.apiBaseUrl")).getOrElse("https://api.example.invalid/")}\"",
             )
         }
+        // Google Play (docs/play-store.md) : même build que la release, sans la mise à jour
+        // automatique (interdite hors Play Store) ni la permission d'installer des APK.
+        create("play") {
+            initWith(getByName("release"))
+            matchingFallbacks += "release"
+            buildConfigField("String", "UPDATE_MANIFEST_URL", "\"\"")
+        }
     }
 
     compileOptions {

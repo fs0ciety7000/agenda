@@ -13,7 +13,7 @@ Une phase n'est « terminée » que si la CI est verte et la documentation à jo
 | **4 — Google Calendar** | OAuth calendrier, sélection « Commun G & N », `GoogleCalendarSyncService`, BullMQ, retry/backoff, réconciliation, erreurs humaines | Suite fake Google verte + recette manuelle sur « Commun G & N » | ✅ Livré, recette manuelle à faire (cf. §Phase 4) |
 | **5 — Android** | Compose : navigation, dashboard, tâches, calendrier, création rapide, Room + outbox + WorkManager, notifications locales | Tests Compose + instrumentation ; APK de recette | ✅ Livré, recette sur téléphone à faire (cf. §Phase 5) |
 | **6 — Polish** | Drag & drop calendrier, animations, accessibilité (audit axe + TalkBack), dark mode fin, onboarding complet, statistiques, notifications & préférences | Audit a11y sans violation AA | ✅ Livré (cf. §Phase 6) ; TalkBack à vérifier en recette |
-| **7 — Production** | Coolify + Cloudflare (`docs/deployment.md`), Sentry, backups vérifiés (restauration testée), passage de l'app OAuth Google en production, politique de confidentialité, AAB Play Store (test interne) | Checklist de mise en production signée | ✅ Essentiel livré (cf. §Phase 7) ; Play Store optionnel |
+| **7 — Production** | Coolify + Cloudflare (`docs/deployment.md`), Sentry, backups vérifiés (restauration testée), passage de l'app OAuth Google en production, politique de confidentialité, AAB Play Store (test interne) | Checklist de mise en production signée | ✅ Livré (cf. §Phase 7) ; Play Store prêt, publication dans la console à faire |
 
 ## Risques principaux
 
@@ -258,5 +258,7 @@ Non automatisable, en recette : TalkBack (Android) et lecteur d'écran sur le we
 - **Politique de confidentialité** publique (`/privacy`, FR/EN), conforme aux exigences Google
   (Limited Use), liée depuis la connexion, les Réglages et l'app Android.
 
-Reste pour la Phase 7 complète : publication Play Store (test interne), optionnelle.
+Play Store : AAB `play` construit par la CI (sans mise à jour automatique), fiche FR/EN, captures
+et image de présentation prêtes (`apps/android/fastlane/metadata`), envoi automatique en test
+interne avec un compte de service. Reste à faire dans la Play Console : [play-store.md](play-store.md).
 

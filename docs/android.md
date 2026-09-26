@@ -119,6 +119,9 @@ cd apps/android
   -Pagenda.keystorePassword=… -Pagenda.keyPassword=…
 ```
 
+**Google Play** : la même CI produit `agenda-gn-play.aab` (build `play`, sans mise à jour
+automatique) ; publication pas à pas dans [play-store.md](play-store.md).
+
 Développement : `./gradlew installDebug` (émulateur ; l'API locale est vue en `10.0.2.2:4000`).
 
 ### 4.1 Notifications instantanées (Firebase, facultatif)

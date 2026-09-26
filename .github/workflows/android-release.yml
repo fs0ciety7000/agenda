@@ -4,6 +4,8 @@ name: Android — APK à installer
 # L'app et le site les lisent via l'API (relais /v1/app/android/*), dépôt public ou privé.
 # Secrets requis (Settings → Secrets and variables → Actions) : ANDROID_KEYSTORE_B64,
 # ANDROID_KEYSTORE_PASSWORD — cf. docs/android.md §4. Sans eux, rien n'est publié.
+# Google Play (facultatif, docs/play-store.md) : l'AAB est joint à la release ; avec le secret
+# PLAY_SERVICE_ACCOUNT_JSON, il est aussi envoyé en « Test interne ».
 on:
   push:
     branches: [main]
@@ -26,6 +28,7 @@ jobs:
     env:
       API_BASE_URL: ${{ vars.AGENDA_API_BASE_URL || 'https://agenda.fs0ciety.org/' }}
       RELEASE_BASE: https://github.com/${{ github.repository }}/releases/download/android-latest
+      PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
     steps:
       - uses: actions/checkout@v4
       - name: Clé de signature (secret)
@@ -61,7 +64,7 @@ jobs:
           [[ "$FCM_SENDER_ID" =~ ^[0-9]+$ ]] || { echo "::error::FCM_SENDER_ID doit être un nombre (project_number)"; ok=false; }
           [[ "$FCM_APP_ID" == "1:$FCM_SENDER_ID:"* ]] || { echo "::error::FCM_APP_ID et FCM_SENDER_ID ne viennent pas du même projet"; ok=false; }
           $ok
-      - name: Construire l'APK (production)
+      - name: Construire l'APK (production) et l'AAB (Google Play)
         env:
           KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           # Notifications instantanées (facultatif, docs/android.md) : variables du dépôt (identifiants
@@ -75,7 +78,9 @@ jobs:
           code=$((GITHUB_RUN_NUMBER + 10))
           echo "VERSION_CODE=$code" >> "$GITHUB_ENV"
           echo "VERSION_NAME=0.3.$code" >> "$GITHUB_ENV"
-          ./gradlew assembleRelease --console=plain \
+          # assembleRelease : APK installé depuis le site (mise à jour automatique).
+          # bundlePlay : AAB pour Google Play (sans mise à jour automatique ni permission d'installer).
+          ./gradlew assembleRelease bundlePlay --console=plain \
             -Pagenda.apiBaseUrl="$API_BASE_URL" \
             -Pagenda.versionCode="$code" -Pagenda.versionName="0.3.$code" \
             -Pagenda.updateUrl="${API_BASE_URL}v1/app/android/version.json" \
@@ -89,12 +94,13 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           cp app/build/outputs/apk/release/app-release.apk agenda-gn.apk
+          cp app/build/outputs/bundle/play/app-play.aab agenda-gn-play.aab
           sha=$(sha256sum agenda-gn.apk | cut -d' ' -f1)
           printf '{"versionCode":%s,"versionName":"%s","apkUrl":"%s/agenda-gn.apk","sha256":"%s"}\n' \
             "$VERSION_CODE" "$VERSION_NAME" "$RELEASE_BASE" "$sha" > version.json
           cat version.json
           gh release delete android-latest --yes --cleanup-tag || true
-          gh release create android-latest agenda-gn.apk version.json \
+          gh release create android-latest agenda-gn.apk version.json agenda-gn-play.aab \
             --prerelease \
             --target "$GITHUB_SHA" \
             --title "Android — dernière version ($VERSION_NAME)" \
@@ -104,4 +110,23 @@ jobs:
 
           **Mises à jour** : l'app les propose d'elle-même (notification + bandeau « Nouvelle version disponible »).
 
+          **Google Play** : \`agenda-gn-play.aab\` est la version à envoyer dans la Play Console (docs/play-store.md).
+
           Version $VERSION_NAME · commit ${GITHUB_SHA::7}"
+      - name: Notes de version pour Google Play
+        if: env.PLAY_SERVICE_ACCOUNT_JSON != ''
+        run: |
+          mkdir -p whatsnew
+          cp fastlane/metadata/android/fr-FR/changelogs/default.txt whatsnew/whatsnew-fr-FR
+          cp fastlane/metadata/android/en-US/changelogs/default.txt whatsnew/whatsnew-en-US
+      - name: Envoyer sur Google Play (test interne)
+        if: env.PLAY_SERVICE_ACCOUNT_JSON != ''
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: be.agendagn.app
+          releaseFiles: apps/android/agenda-gn-play.aab
+          track: internal
+          status: completed
+          whatsNewDirectory: apps/android/whatsnew
+          mappingFile: apps/android/app/build/outputs/mapping/play/mapping.txt
