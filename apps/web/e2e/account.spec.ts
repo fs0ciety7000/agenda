@@ -22,3 +22,14 @@ test('changer son mot de passe depuis les Réglages, puis se reconnecter avec', 
   await page.getByRole('button', { name: 'Se connecter' }).click();
   await expect(page.getByRole('heading', { name: 'Bonjour Grace 👋' })).toBeVisible();
 });
+
+test('politique de confidentialité : publique, liée depuis la connexion', async ({ page }) => {
+  await page.goto('/login');
+  await page.getByRole('link', { name: 'Politique de confidentialité' }).click();
+  await expect(page).toHaveURL(/\/privacy$/);
+  await expect(
+    page.getByRole('heading', { name: 'Politique de confidentialité', level: 1 }),
+  ).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Données Google' })).toBeVisible();
+  await expect(page.getByText('Limited Use', { exact: false })).toBeVisible();
+});

@@ -7,6 +7,7 @@ const PUBLIC_PATHS = [
   '/healthz',
   '/forgot-password',
   '/reset-password',
+  '/privacy',
 ];
 
 /**

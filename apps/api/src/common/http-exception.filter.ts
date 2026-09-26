@@ -8,7 +8,8 @@ import {
 } from '@nestjs/common';
 import { ThrottlerException } from '@nestjs/throttler';
 import type { ApiErrorBody, ErrorCode } from '@agenda/contracts';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
+import { reportServerError } from './error-reporter';
 
 const STATUS_TO_CODE: Record<number, ErrorCode> = {
   400: 'VALIDATION_FAILED',
@@ -48,6 +49,7 @@ export class HttpExceptionFilter implements ExceptionFilter {
     }
 
     this.logger.error(exception instanceof Error ? exception.stack : String(exception));
+    reportServerError(exception, host.switchToHttp().getRequest<Request>().route?.path as string);
     const payload: ApiErrorBody = { error: { code: 'INTERNAL', message: 'Internal error' } };
     res.status(HttpStatus.INTERNAL_SERVER_ERROR).json(payload);
   }

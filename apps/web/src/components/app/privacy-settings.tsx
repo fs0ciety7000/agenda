@@ -129,6 +129,12 @@ export function PrivacySettings() {
         </DialogContent>
       </Dialog>
 
+      <p className="text-[0.8125rem] text-text-muted">
+        <a href="/privacy" className="text-accent underline-offset-4 hover:underline">
+          {t('policyLink')}
+        </a>
+      </p>
+
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <p className="text-[0.9375rem]">{t('export')}</p>

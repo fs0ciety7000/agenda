@@ -28,7 +28,8 @@ Serveur Coolify ── Traefik :443 ── agenda.fs0ciety.org
 |---|---|---|
 | `web` | **seul service public** (domaine Coolify) | Pages + proxy same-origin `/v1/*` → API |
 | `api` | interne (réseau Docker) | API REST ; applique les migrations au démarrage |
-| `postgres` | interne | Données (volume `agenda_postgres_data`) + dumps (`agenda_postgres_backups`) |
+| `postgres` | interne | Données (volume `agenda_postgres_data`) |
+| `backup` | interne | Sauvegarde nuitière vérifiée par restauration (`agenda_postgres_backups`, copie R2) |
 | `redis` | interne | File BullMQ de la synchro Google Calendar (volume `agenda_redis_data`) |
 
 Redis ne contient que des déclencheurs : l'état de synchronisation vit dans PostgreSQL. Perdre
@@ -177,39 +178,54 @@ curl -sI https://agenda.fs0ciety.org/ | head -3     # 307 → /login
 
 ## 6. Sauvegardes
 
-Le volume Postgres vit sur le disque du serveur : il faut des **dumps réguliers**, et une copie
-**hors du serveur**.
+Le service **`backup`** du compose s'en charge, sans configuration dans Coolify :
 
-### 6.1 Dump quotidien (Coolify → ressource → *Scheduled Tasks*)
+- chaque nuit (`BACKUP_HOUR`, UTC, défaut 2 h 15) et au premier démarrage : `pg_dump` compressé
+  dans le volume `agenda_postgres_backups`, conservé 14 jours (`BACKUP_RETENTION_DAYS`) ;
+- **chaque dump est restauré dans une base temporaire** et contrôlé (comptes, foyers,
+  occurrences) : un dump inutilisable est signalé le jour même (`ÉCHEC` dans les logs) ;
+- copie **hors serveur** si configurée (ci-dessous), conservée 30 jours ;
+- le conteneur passe **unhealthy** sans sauvegarde réussie depuis 26 h : activer les
+  notifications Coolify (*Settings → Notifications*, e-mail ou Discord) pour être prévenu.
 
-| Champ | Valeur |
+Logs : Coolify → service `backup` → *Logs*, ligne
+`backup: OK …/agenda-AAAA-MM-JJTHHMM.dump (…) — restauration vérifiée : N comptes, …`.
+
+### 6.1 Copie hors serveur (recommandé) — Cloudflare R2
+
+Un disque qui lâche ou un serveur perdu emporte aussi les dumps locaux.
+
+1. Cloudflare → **R2** → *Create bucket* `agenda-backups` (région automatique, privé). Le plan
+   gratuit (10 Go) suffit largement (un dump fait quelques centaines de Ko).
+2. R2 → *Manage API tokens* → *Create API token* : permission **Object Read & Write**, limité au
+   bucket `agenda-backups`. Noter *Access Key ID*, *Secret Access Key* et l'*endpoint*
+   (`https://<id-compte>.r2.cloudflarestorage.com`).
+3. Dans Coolify (variables de la ressource), puis redéployer :
+
+| Variable | Valeur |
 |---|---|
-| Name | `pg-dump` |
-| Container | `postgres` |
-| Frequency | `15 3 * * *` (03:15 chaque nuit) |
-| Command | voir ci-dessous |
+| `BACKUP_OFFSITE_REMOTE` | `offsite:agenda-backups` |
+| `BACKUP_S3_ENDPOINT` | `https://<id-compte>.r2.cloudflarestorage.com` |
+| `BACKUP_S3_ACCESS_KEY_ID` | clé du jeton |
+| `BACKUP_S3_SECRET_ACCESS_KEY` | secret du jeton |
+
+Autre stockage S3 (Backblaze B2, Scaleway…) : `BACKUP_S3_PROVIDER` (valeur rclone) + mêmes variables.
+Vérifier dans les logs : `copie hors serveur : offsite:agenda-backups/agenda-….dump`.
+
+### 6.2 Sauvegarde immédiate
+
+Coolify → service `backup` → *Terminal* : `backup.sh once`.
+
+### 6.3 Restauration
 
 ```sh
-sh -c 'pg_dump -U "$POSTGRES_USER" -d "$POSTGRES_DB" -Fc -f /backups/agenda-$(date +%F).dump && find /backups -name "agenda-*.dump" -mtime +14 -delete'
-```
-
-Les dumps (format custom, compressé) sont conservés 14 jours dans le volume `agenda_postgres_backups`.
-
-### 6.2 Copie hors serveur
-
-À mettre en place avant d'y stocker des données importantes, au choix :
-- **Cloudflare R2** (même fournisseur que le DNS, sans frais de sortie) : `rclone copy` du volume vers un bucket privé, en tâche cron sur l'hôte ;
-- ou la sauvegarde du serveur proposée par l'hébergeur (snapshots), qui inclut les volumes Docker.
-
-### 6.3 Restauration (à tester une première fois à blanc)
-
-```sh
-# Dans le conteneur postgres (Coolify → Terminal, service postgres)
+# Coolify → service backup → Terminal
 ls /backups
-pg_restore -U "$POSTGRES_USER" -d "$POSTGRES_DB" --clean --if-exists /backups/agenda-AAAA-MM-JJ.dump
+backup.sh restore /backups/agenda-AAAA-MM-JJTHHMM.dump
 ```
 
-Puis redémarrer le service `api`.
+Puis redémarrer le service `api`. Depuis R2 : télécharger le fichier
+(`rclone copy offsite:agenda-backups/agenda-….dump /backups/`) puis même commande.
 
 ## 7. Android
 
@@ -266,6 +282,8 @@ compte occmons@gmail.com :
    email d'assistance, domaine autorisé `fs0ciety.org`. **Data access** : ajouter les scopes
    `openid`, `email`, `profile`, `…/auth/calendar.calendarlist.readonly` et
    `…/auth/calendar.events` — rien de plus (pas `…/auth/calendar`).
+   **Branding** : *Application privacy policy link* = `https://agenda.fs0ciety.org/privacy`
+   (renseigner `PRIVACY_CONTACT_EMAIL` dans Coolify pour y afficher une adresse de contact).
 3. **Audience → Publish app** : passer en **« In production »**. Indispensable : en *Testing*,
    Google invalide les autorisations au bout de 7 jours et la synchro s'arrêterait chaque semaine
    (risque R1). Sans vérification Google, l'écran de consentement affiche « Google n'a pas validé

@@ -197,3 +197,17 @@ Décision : l'instrumentation sur émulateur est remplacée par Robolectric (ren
 de test Compose) — les runners CI n'ont pas de virtualisation matérielle. Recette sur téléphone
 réel : `android.md` §7.
 
+## Phase 7 (essentiel) — détail de ce qui est livré
+
+- **Sauvegardes** : service `backup` du compose : dump nuitier **restauré dans une base
+  temporaire et contrôlé** à chaque fois, rétention 14 jours, copie hors serveur (Cloudflare R2 /
+  S3 via rclone, 30 jours), conteneur *unhealthy* sans sauvegarde réussie depuis 26 h,
+  commandes `backup.sh once|restore`. Vérifié en CI (stack réelle : API + base + backup).
+- **Suivi des erreurs** : erreurs serveur, du navigateur (erreurs non interceptées, pages
+  d'erreur) et plantages Android remontés à l'API (`/v1/client-errors`) → logs Coolify, et Sentry /
+  GlitchTip si `SENTRY_DSN`. Aucune donnée personnelle transmise.
+- **Politique de confidentialité** publique (`/privacy`, FR/EN), conforme aux exigences Google
+  (Limited Use), liée depuis la connexion, les Réglages et l'app Android.
+
+Reste pour la Phase 7 complète : publication Play Store (test interne), optionnelle.
+

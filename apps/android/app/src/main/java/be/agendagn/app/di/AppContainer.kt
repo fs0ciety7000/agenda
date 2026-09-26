@@ -8,6 +8,7 @@ import be.agendagn.app.data.auth.DataStoreTokenStore
 import be.agendagn.app.data.auth.KeystoreCipher
 import be.agendagn.app.data.auth.SharedPrefsPkceStore
 import be.agendagn.app.data.local.AgendaDatabase
+import be.agendagn.app.data.monitoring.CrashReporter
 import be.agendagn.app.data.observeOnline
 import be.agendagn.app.data.remote.ApiClient
 import be.agendagn.app.data.repository.AgendaRepositoryImpl
@@ -42,5 +43,6 @@ class AppContainer(context: Context) {
     )
     val online: Flow<Boolean> = app.observeOnline()
     val updater = AppUpdater(app, BuildConfig.UPDATE_MANIFEST_URL, BuildConfig.VERSION_CODE)
+    val crashReporter = CrashReporter(app, api, BuildConfig.VERSION_NAME)
     val webBaseUrl: String = BuildConfig.WEB_BASE_URL
 }

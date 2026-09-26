@@ -114,6 +114,18 @@ jobs:
       - run: docker compose -f docker-compose.prod.yml config --quiet
       - run: docker compose -f docker-compose.prod.yml build
       # L'image web sert-elle bien ses fichiers statiques (logo, icônes) et ses pages ?
+      # Sauvegarde réelle : API (migrations) + backup, qui doit restaurer son dump avec succès.
+      - name: Vérifier la sauvegarde et sa restauration
+        run: |
+          docker compose -f docker-compose.prod.yml up -d backup
+          for i in $(seq 1 60); do
+            docker compose -f docker-compose.prod.yml logs backup | grep -q 'restauration vérifiée' && break
+            sleep 3
+          done
+          docker compose -f docker-compose.prod.yml logs backup
+          docker compose -f docker-compose.prod.yml logs backup | grep -q 'restauration vérifiée'
+          docker compose -f docker-compose.prod.yml exec -T backup test -s /backups/last-success
+          docker compose -f docker-compose.prod.yml down -v
       - name: Vérifier l'image web (sans API)
         run: |
           docker run -d --name web-smoke -p 3000:3000 agenda-web
