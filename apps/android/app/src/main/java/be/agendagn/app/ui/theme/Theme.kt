@@ -7,6 +7,7 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.compositeOver
 
 /** Thème Material 3 alimenté par les tokens partagés avec le web (packages/design-tokens). */
 private val LightColors = lightColorScheme(
@@ -19,6 +20,11 @@ private val LightColors = lightColorScheme(
     surfaceVariant = Tokens.Light.surfaceMuted,
     onSurfaceVariant = Tokens.Light.textMuted,
     outline = Tokens.Light.border,
+    outlineVariant = Tokens.Light.border,
+    // Puces sélectionnées, indicateur d'onglet : teinte de l'accent (pas le violet Material par défaut).
+    secondaryContainer = Tokens.Light.accent.copy(alpha = 0.14f).compositeOver(Tokens.Light.bg),
+    onSecondaryContainer = Tokens.Light.text,
+    surfaceContainer = Tokens.Light.surfaceMuted,
     error = Tokens.Light.danger,
 )
 
@@ -32,6 +38,10 @@ private val DarkColors = darkColorScheme(
     surfaceVariant = Tokens.Dark.surfaceMuted,
     onSurfaceVariant = Tokens.Dark.textMuted,
     outline = Tokens.Dark.border,
+    outlineVariant = Tokens.Dark.border,
+    secondaryContainer = Tokens.Dark.accent.copy(alpha = 0.22f).compositeOver(Tokens.Dark.bg),
+    onSecondaryContainer = Tokens.Dark.text,
+    surfaceContainer = Tokens.Dark.surfaceMuted,
     error = Tokens.Dark.danger,
 )
 

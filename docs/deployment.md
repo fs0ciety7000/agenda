@@ -212,14 +212,9 @@ Puis redémarrer le service `api`.
 
 ## 7. Android
 
-L'app parle au **même domaine** que le web (le proxy `/v1/*` est public) :
-
-```bash
-cd apps/android
-./gradlew assembleRelease -Pagenda.apiBaseUrl=https://agenda.fs0ciety.org/
-```
-
-La signature de l'AAB/APK de production est traitée en Phase 7 (keystore hors dépôt).
+L'app parle au **même domaine** que le web (le proxy `/v1/*` est public) : rien à déployer côté
+serveur. APK de recette publié par la CI, ou APK signé avec votre clé : voir
+[`android.md`](android.md) §4.
 
 ## 8. Emails (mot de passe oublié)
 

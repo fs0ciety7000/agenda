@@ -17,6 +17,8 @@ import java.io.IOException
 class AuthRepositoryImpl(
     private val api: AgendaApi,
     private val tokens: TokenStore,
+    /** Efface le cache local et l'outbox à la déconnexion volontaire. */
+    private val clearLocalData: suspend () -> Unit = {},
 ) : AuthRepository {
     override val isSignedIn: Flow<Boolean> = tokens.hasSession
 
@@ -43,6 +45,7 @@ class AuthRepositoryImpl(
     override suspend fun logout() {
         val refresh = tokens.refreshToken()
         tokens.clear()
+        clearLocalData()
         if (refresh != null) runCatching { api.logout(RefreshRequest(refresh)) }
     }
 
