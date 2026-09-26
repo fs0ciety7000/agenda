@@ -157,4 +157,19 @@
     <string name="notification_channel_reminders_desc">Un rappel avant chaque tâche planifiée qui vous concerne.</string>
     <string name="reminder_body">Prévu à %1$s</string>
     <string name="reminder_done">Fait</string>
+    <string name="or">ou</string>
+    <string name="continue_with_google">Continuer avec Google</string>
+    <string name="error_google_failed">La connexion avec Google n\'a pas abouti. Réessayez.</string>
+    <string name="error_google_email_exists">Un compte existe déjà avec cette adresse. Connectez-vous avec votre mot de passe, puis liez Google dans les Réglages du site.</string>
+    <string name="error_registration_closed">Les inscriptions sont fermées. Demandez une invitation.</string>
+    <string name="update_channel">Mises à jour de l\'app</string>
+    <string name="update_available">Nouvelle version disponible (%1$s)</string>
+    <string name="update_tap">Touchez pour ouvrir l\'app et installer la mise à jour.</string>
+    <string name="update_hint">Téléchargement puis installation par-dessus : vos données sont conservées.</string>
+    <string name="update_permission_hint">Android vous demande une seule fois d\'autoriser l\'app à installer ses mises à jour. Activez l\'option, revenez, puis touchez « Mettre à jour ».</string>
+    <string name="update_failed">Le téléchargement a échoué. Vérifiez votre connexion et réessayez.</string>
+    <string name="update_downloading">Téléchargement… %1$d %%</string>
+    <string name="update_install">Mettre à jour</string>
+    <string name="update_allow">Autoriser les mises à jour</string>
+    <string name="up_to_date">L\'app est à jour.</string>
 </resources>

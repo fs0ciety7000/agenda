@@ -1,10 +1,29 @@
-import { Controller, Get, Logger, Query, Req, Res } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Logger,
+  Post,
+  Query,
+  Req,
+  Res,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import type { AuthProvidersDto } from '@agenda/contracts';
+import { Throttle } from '@nestjs/throttler';
+import {
+  ANDROID_AUTH_REDIRECT,
+  type AuthProvidersDto,
+  type AuthResponse,
+  MobileExchangeInput,
+} from '@agenda/contracts';
 import type { CookieOptions, Request, Response } from 'express';
 import { createHash } from 'node:crypto';
 import { SignJWT, jwtVerify } from 'jose';
-import { randomToken } from '../common/crypto';
+import { AppException } from '../common/app-exception';
+import { randomToken, safeEqual, sha256Hex } from '../common/crypto';
+import { ZodPipe } from '../common/zod.pipe';
 import { Public } from '../common/request-context';
 import { env } from '../config/env';
 import { MailService } from '../mail/mail.service';
@@ -15,6 +34,9 @@ import { GoogleOidcClient } from './google-oidc.client';
 import { TokenService } from './token.service';
 
 const FLOW_COOKIE = 'gn_oauth';
+const MOBILE_CODE_TTL_MS = 2 * 60_000;
+const PKCE_CHALLENGE = /^[A-Za-z0-9_-]{43}$/;
+const AUTH_THROTTLE = { default: { limit: () => env().AUTH_RATE_LIMIT, ttl: 60_000 } };
 const FLOW_PATH = '/v1/auth/google';
 
 /** Évite les redirections ouvertes : uniquement des chemins internes. */
@@ -67,16 +89,31 @@ export class GoogleSignInController {
     };
   }
 
+  /**
+   * `client=android&code_challenge=…` : flux lancé par l'app Android dans un Custom Tab. Google
+   * revient sur le web comme d'habitude ; l'API renvoie ensuite vers l'app avec un code à usage
+   * unique, échangeable uniquement avec le `code_verifier` resté dans l'app (PKCE).
+   */
   @Get('google/start')
   async start(
     @Query('next') next: string | undefined,
     @Query('mode') mode: string | undefined,
+    @Query('client') client: string | undefined,
+    @Query('code_challenge') mobileChallenge: string | undefined,
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<void> {
-    if (!this.google.configured) return res.redirect('/login?error=GOOGLE_NOT_CONFIGURED');
+    const android = client === 'android';
+    if (android && !PKCE_CHALLENGE.test(mobileChallenge ?? ''))
+      return res.redirect(`${ANDROID_AUTH_REDIRECT}?error=GOOGLE_FAILED`);
+    if (!this.google.configured)
+      return res.redirect(
+        android
+          ? `${ANDROID_AUTH_REDIRECT}?error=GOOGLE_NOT_CONFIGURED`
+          : '/login?error=GOOGLE_NOT_CONFIGURED',
+      );
     let linkUserId: string | undefined;
-    if (mode === 'link') {
+    if (mode === 'link' && !android) {
       const claims = await this.tokens.verifyAccess(
         (req.cookies as Record<string, string>)[ACCESS_COOKIE] ?? '',
       );
@@ -87,7 +124,14 @@ export class GoogleSignInController {
     const state = randomToken(16);
     const nonce = randomToken(16);
     const verifier = randomToken(32);
-    const flow = await new SignJWT({ state, nonce, verifier, next: safeNext(next), linkUserId })
+    const flow = await new SignJWT({
+      state,
+      nonce,
+      verifier,
+      next: safeNext(next),
+      linkUserId,
+      mobileChallenge: android ? mobileChallenge : undefined,
+    })
       .setProtectedHeader({ alg: 'HS256' })
       .setIssuedAt()
       .setExpirationTime('10m')
@@ -112,15 +156,23 @@ export class GoogleSignInController {
     @Res() res: Response,
   ): Promise<void> {
     res.clearCookie(FLOW_COOKIE, { ...this.cookieOptions(), maxAge: undefined });
-    const fail = (error: string, to = '/login') => res.redirect(`${to}?error=${error}`);
-    let flow: { state: string; nonce: string; verifier: string; next: string; linkUserId?: string };
+    let flow: {
+      state: string;
+      nonce: string;
+      verifier: string;
+      next: string;
+      linkUserId?: string;
+      mobileChallenge?: string;
+    };
     try {
       const raw = (req.cookies as Record<string, string>)[FLOW_COOKIE];
       flow = (await jwtVerify(raw ?? '', this.secret, { audience: 'google-sign-in' }))
         .payload as typeof flow;
     } catch {
-      return fail('GOOGLE_FAILED');
+      return res.redirect('/login?error=GOOGLE_FAILED');
     }
+    const fail = (error: string, to = '/login') =>
+      res.redirect(`${flow.mobileChallenge ? ANDROID_AUTH_REDIRECT : to}?error=${error}`);
     if (!code || !state || state !== flow.state) return fail('GOOGLE_FAILED');
 
     let profile;
@@ -171,8 +223,47 @@ export class GoogleSignInController {
         },
       });
     }
+    if (flow.mobileChallenge) {
+      const code = randomToken(32);
+      await this.prisma.mobileAuthCode.create({
+        data: {
+          userId: user.id,
+          codeHash: sha256Hex(code),
+          challenge: flow.mobileChallenge,
+          expiresAt: new Date(Date.now() + MOBILE_CODE_TTL_MS),
+        },
+      });
+      return res.redirect(`${ANDROID_AUTH_REDIRECT}?code=${code}`);
+    }
     const issued = await this.auth.startSession(user, req.headers['user-agent']);
     setAuthCookies(res, issued.accessToken, issued.refreshToken);
     res.redirect(flow.next);
+  }
+
+  /** App Android : code à usage unique + verifier PKCE → session (jetons dans la réponse). */
+  @Throttle(AUTH_THROTTLE)
+  @Post('google/mobile/exchange')
+  @HttpCode(200)
+  async mobileExchange(
+    @Body(new ZodPipe(MobileExchangeInput)) body: MobileExchangeInput,
+    @Req() req: Request,
+  ): Promise<AuthResponse> {
+    const invalid = () =>
+      new AppException('GOOGLE_FAILED', HttpStatus.BAD_REQUEST, 'Invalid or expired code');
+    const record = await this.prisma.mobileAuthCode.findUnique({
+      where: { codeHash: sha256Hex(body.code) },
+      include: { user: true },
+    });
+    if (!record || record.usedAt || record.expiresAt <= new Date() || record.user.deletedAt)
+      throw invalid();
+    const challenge = createHash('sha256').update(body.codeVerifier).digest('base64url');
+    if (!safeEqual(challenge, record.challenge)) throw invalid();
+    // Usage unique, même en cas de requêtes simultanées.
+    const { count } = await this.prisma.mobileAuthCode.updateMany({
+      where: { id: record.id, usedAt: null },
+      data: { usedAt: new Date() },
+    });
+    if (count !== 1) throw invalid();
+    return this.auth.startSession(record.user, req.headers['user-agent']);
   }
 }

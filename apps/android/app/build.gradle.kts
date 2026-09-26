@@ -14,21 +14,16 @@ android {
         applicationId = "be.agendagn.app"
         minSdk = 26
         targetSdk = 36
-        versionCode = 2
-        versionName = "0.2.0"
+        // Numéro croissant fourni par la CI (android-release.yml) : indispensable aux mises à jour.
+        versionCode = providers.gradleProperty("agenda.versionCode").orNull?.toInt() ?: 2
+        versionName = providers.gradleProperty("agenda.versionName").orNull ?: "0.2.0"
+        // Manifeste de mise à jour (version.json de la release) ; vide = pas de mise à jour auto.
+        buildConfigField("String", "UPDATE_MANIFEST_URL", "\"${providers.gradleProperty("agenda.updateUrl").getOrElse("")}\"")
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
         // Clé de publication (docs/android.md) : jamais dans le dépôt, passée en propriétés Gradle.
-        // Clé de RECETTE, versionnée (dépôt privé) : APK installables et mis à jour par-dessus
-        // (même signature d'une version à l'autre). Jamais pour le Play Store (Phase 7 : clé secrète).
-        create("recette") {
-            storeFile = file("signing/recette.jks")
-            storePassword = "recette"
-            keyAlias = "recette"
-            keyPassword = "recette"
-        }
         create("release") {
             providers.gradleProperty("agenda.keystore").orNull?.let { path ->
                 storeFile = file(path)
@@ -49,7 +44,6 @@ android {
         release {
             signingConfig = when {
                 providers.gradleProperty("agenda.keystore").isPresent -> signingConfigs.getByName("release")
-                providers.gradleProperty("agenda.recette").isPresent -> signingConfigs.getByName("recette")
                 else -> null
             }
             isMinifyEnabled = true

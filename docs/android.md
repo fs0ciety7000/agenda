@@ -53,42 +53,57 @@ UI (Compose) ──▶ ViewModel ──▶ AgendaRepository
 | Sujet | Choix | Pourquoi |
 |---|---|---|
 | Injection de dépendances | Manuelle (`AppContainer`) | Une dizaine d'objets ; Hilt n'apporterait que du code généré |
-| Connexion Google / choix du calendrier | Sur le site (bouton « Gérer sur le site ») | Même flux OAuth sécurisé que le web, aucun secret dans l'APK |
+| Google Calendar (connexion, choix du calendrier) | Sur le site (bouton « Gérer sur le site ») | Même flux OAuth sécurisé que le web, aucun secret dans l'APK |
 | Inscription, mot de passe oublié | Ouvrent le site (Custom Tab) | Mêmes écrans, e-mails et protections anti-énumération |
-| Google Sign-In natif | Non (Phase 7 si besoin) | Un compte Google seul peut définir un mot de passe via « Mot de passe oublié » |
+| « Continuer avec Google » | Custom Tab sur le site + retour `be.agendagn.app://auth?code=…`, code à usage unique (2 min) échangé avec un verifier PKCE resté dans l'app | Aucun nouveau client OAuth ni URI dans la console Google ; une app qui intercepterait le lien ne peut rien en faire sans le verifier |
 | Récurrence sur mobile | Préréglages + « chacun son tour » | Rotations avancées (séquences, jours fixes) restent sur le web |
 | Base locale | Room, migration destructive | C'est un cache ; migrations obligatoires dès que le schéma change en production (sinon l'outbox non envoyée serait perdue) |
 | Tests d'interface | Robolectric (JVM) | Pas d'émulateur en CI ; rendu natif réel + captures d'écran |
 
 ## 4. Construire et installer
 
-**Installer sur le téléphone (le plus simple)** : à chaque mise à jour de `main`, le workflow
-`android-release.yml` publie l'APK à une adresse fixe :
+**Installer sur le téléphone** : sur le site, **Réglages → Compte → Application Android →
+Télécharger** (ou directement `https://agenda.fs0ciety.org/v1/app/android/agenda-gn.apk`), puis
+*Installer* (autoriser Chrome à « installer des applications inconnues » la première fois).
 
-> GitHub → dépôt → **Releases** → « Android — dernière version » → **agenda-gn.apk**
-> (`https://github.com/fs0ciety7000/agenda/releases/tag/android-latest`)
+**D'où vient l'APK** : à chaque mise à jour de `main`, le workflow `android-release.yml` publie
+l'APK et un `version.json` dans la release GitHub `android-latest`. L'API les **relaie**
+(`/v1/app/android/version.json`, `/v1/app/android/agenda-gn.apk`, cache 5 min) : l'app et le site
+ne parlent qu'à `agenda.fs0ciety.org`, que le dépôt soit public ou privé.
 
-Sur le téléphone, ouvrir ce lien dans Chrome en étant connecté à GitHub (dépôt privé), toucher
-`agenda-gn.apk`, puis *Installer* ; la première fois, autoriser Chrome à « installer des applications
-inconnues ». Pour mettre à jour : même lien, l'app s'installe par-dessus (données conservées).
+**Dépôt privé** : créer un jeton GitHub *fine-grained* (GitHub → *Settings* → *Developer settings*
+→ *Fine-grained tokens*) limité à ce dépôt, permission **Contents : Read-only**, et le renseigner
+dans Coolify : `GITHUB_RELEASES_TOKEN` (puis redéployer). Sans jeton, un dépôt privé rend le
+lien de téléchargement et les mises à jour indisponibles (404, sans erreur dans l'app).
 
-Il pointe vers `https://agenda.fs0ciety.org/` (variable de dépôt `AGENDA_API_BASE_URL` pour changer)
-et il est signé avec la **clé de recette** versionnée (`apps/android/app/signing/recette.jks`) :
-même signature à chaque version, donc mises à jour sans désinstaller. Cette clé est dans le dépôt
-(privé) : elle ne doit jamais servir au Play Store (Phase 7 : clé secrète, ci-dessous).
+**Mises à jour automatiques** : l'app consulte `version.json` au lancement, au retour dans l'app et
+toutes les heures (WorkManager). Nouvelle version ⇒ notification + bandeau « Nouvelle version
+disponible » ⇒ « Mettre à jour » : téléchargement, contrôle SHA-256, installeur Android par-dessus
+(données conservées). Android impose une confirmation « Installer » (pas de mise à jour silencieuse
+hors Play Store) et, la première fois, l'autorisation « installer des applications » pour l'app.
+Le numéro de version (`versionCode`) est celui de l'exécution du workflow + 10 : toujours croissant.
 
-**APK signé avec votre propre clé** (Play Store, Phase 7) :
+**Clé de signature (secrète)** : Android n'installe une mise à jour que si elle est signée par la
+même clé. Le dépôt étant public, la clé n'y est jamais : elle vit dans les secrets GitHub.
 
 ```bash
-# Une seule fois ; conserver le fichier et les mots de passe (gestionnaire de mots de passe).
-keytool -genkeypair -v -keystore ~/agenda-release.jks -alias agenda -keyalg RSA -keysize 4096 -validity 10000
+# Une seule fois (JDK : keytool). Conserver le fichier et le mot de passe (gestionnaire de mots de passe).
+keytool -genkeypair -keystore agenda.jks -alias agenda -keyalg RSA -keysize 4096 -validity 10000 \
+  -storepass "MOT_DE_PASSE" -keypass "MOT_DE_PASSE" -dname "CN=Agenda G et N"
+base64 -w0 agenda.jks   # → secret ANDROID_KEYSTORE_B64
+```
 
+GitHub → dépôt → *Settings* → *Secrets and variables* → *Actions* → *New repository secret* :
+`ANDROID_KEYSTORE_B64` (sortie de `base64`) et `ANDROID_KEYSTORE_PASSWORD`. Sans ces secrets, le
+workflow échoue explicitement et ne publie rien. Perdre la clé = désinstaller / réinstaller l'app.
+
+**APK signé en local avec la même clé** :
+
+```bash
 cd apps/android
-./gradlew assembleRelease \
-  -Pagenda.apiBaseUrl=https://agenda.fs0ciety.org/ \
-  -Pagenda.keystore=$HOME/agenda-release.jks -Pagenda.keyAlias=agenda \
+./gradlew assembleRelease -Pagenda.apiBaseUrl=https://agenda.fs0ciety.org/ \
+  -Pagenda.keystore=/chemin/agenda.jks -Pagenda.keyAlias=agenda \
   -Pagenda.keystorePassword=… -Pagenda.keyPassword=…
-# → app/build/outputs/apk/release/app-release.apk
 ```
 
 Développement : `./gradlew installDebug` (émulateur ; l'API locale est vue en `10.0.2.2:4000`).

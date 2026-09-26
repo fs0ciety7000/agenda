@@ -55,6 +55,8 @@ fun SettingsScreen(
     onOpenWeb: (path: String) -> Unit,
     onSignOut: () -> Unit,
     contentPadding: PaddingValues = PaddingValues(),
+    /** Zone « À propos » : mise à jour de l'app. */
+    update: @Composable () -> Unit = {},
 ) {
     var confirmSignOut by remember { mutableStateOf(false) }
     Column(
@@ -182,6 +184,7 @@ fun SettingsScreen(
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(top = 24.dp),
         )
+        update()
     }
     if (confirmSignOut) {
         AlertDialog(

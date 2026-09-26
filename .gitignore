@@ -18,8 +18,6 @@ apps/android/.idea/
 *.aab
 *.keystore
 *.jks
-# Clé de RECETTE uniquement (APK installés à la main) — cf. docs/android.md §4.
-!apps/android/app/signing/recette.jks
 .DS_Store
 apps/android/.kotlin/
 apps/web/test-results/

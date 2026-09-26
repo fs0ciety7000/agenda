@@ -1,7 +1,9 @@
 name: Android — APK à installer
 
-# À chaque mise à jour de main, l'APK est publié à une adresse fixe :
-# https://github.com/<dépôt>/releases/tag/android-latest  (fichier agenda-gn.apk)
+# À chaque mise à jour de main, l'APK et version.json sont publiés dans la release `android-latest`.
+# L'app et le site les lisent via l'API (relais /v1/app/android/*), dépôt public ou privé.
+# Secrets requis (Settings → Secrets and variables → Actions) : ANDROID_KEYSTORE_B64,
+# ANDROID_KEYSTORE_PASSWORD — cf. docs/android.md §4. Sans eux, rien n'est publié.
 on:
   push:
     branches: [main]
@@ -21,30 +23,58 @@ jobs:
     defaults:
       run:
         working-directory: apps/android
+    env:
+      API_BASE_URL: ${{ vars.AGENDA_API_BASE_URL || 'https://agenda.fs0ciety.org/' }}
+      RELEASE_BASE: https://github.com/${{ github.repository }}/releases/download/android-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Clé de signature (secret)
+        env:
+          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_B64 }}
+        run: |
+          if [ -z "$KEYSTORE_B64" ]; then
+            echo "::error::Secret ANDROID_KEYSTORE_B64 absent : voir docs/android.md §4."
+            exit 1
+          fi
+          echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/agenda.jks"
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
-      - name: Construire l'APK (production, clé de recette)
-        run: >-
-          ./gradlew assembleRelease --console=plain -Pagenda.recette
-          -Pagenda.apiBaseUrl=${{ vars.AGENDA_API_BASE_URL || 'https://agenda.fs0ciety.org/' }}
+      - name: Construire l'APK (production)
+        env:
+          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+        run: |
+          # Numéro de version strictement croissant (condition des mises à jour Android).
+          code=$((GITHUB_RUN_NUMBER + 10))
+          echo "VERSION_CODE=$code" >> "$GITHUB_ENV"
+          echo "VERSION_NAME=0.3.$code" >> "$GITHUB_ENV"
+          ./gradlew assembleRelease --console=plain \
+            -Pagenda.apiBaseUrl="$API_BASE_URL" \
+            -Pagenda.versionCode="$code" -Pagenda.versionName="0.3.$code" \
+            -Pagenda.updateUrl="${API_BASE_URL}v1/app/android/version.json" \
+            -Pagenda.keystore="$RUNNER_TEMP/agenda.jks" -Pagenda.keyAlias=agenda \
+            -Pagenda.keystorePassword="$KEYSTORE_PASSWORD" -Pagenda.keyPassword="$KEYSTORE_PASSWORD"
+          rm -f "$RUNNER_TEMP/agenda.jks"
       - name: Publier (remplace la version précédente)
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           cp app/build/outputs/apk/release/app-release.apk agenda-gn.apk
-          version=$(grep -oP 'versionName = "\K[^"]+' app/build.gradle.kts)
+          sha=$(sha256sum agenda-gn.apk | cut -d' ' -f1)
+          printf '{"versionCode":%s,"versionName":"%s","apkUrl":"%s/agenda-gn.apk","sha256":"%s"}\n' \
+            "$VERSION_CODE" "$VERSION_NAME" "$RELEASE_BASE" "$sha" > version.json
+          cat version.json
           gh release delete android-latest --yes --cleanup-tag || true
-          gh release create android-latest agenda-gn.apk \
+          gh release create android-latest agenda-gn.apk version.json \
             --prerelease \
             --target "$GITHUB_SHA" \
-            --title "Android — dernière version ($version)" \
-            --notes "Application Android d'Agenda G & N, connectée à ${{ vars.AGENDA_API_BASE_URL || 'https://agenda.fs0ciety.org/' }}.
+            --title "Android — dernière version ($VERSION_NAME)" \
+            --notes "Application Android d'Agenda G & N, connectée à $API_BASE_URL.
 
-          **Installer / mettre à jour** : sur le téléphone, ouvrir cette page (connecté à GitHub), toucher **agenda-gn.apk**, puis *Installer*. La première fois, autoriser le navigateur à « installer des applications inconnues ».
+          **Première installation** : sur le téléphone, ouvrir cette page, toucher **agenda-gn.apk**, puis *Installer* (autoriser Chrome à « installer des applications inconnues » la première fois).
 
-          Version $version · commit ${GITHUB_SHA::7}"
+          **Mises à jour** : l'app les propose d'elle-même (notification + bandeau « Nouvelle version disponible »).
+
+          Version $VERSION_NAME · commit ${GITHUB_SHA::7}"

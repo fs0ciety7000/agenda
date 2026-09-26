@@ -42,6 +42,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
@@ -62,6 +64,7 @@ import be.agendagn.app.domain.model.CalendarLinkState
 import be.agendagn.app.domain.model.CalendarStatus
 import be.agendagn.app.domain.model.User
 import be.agendagn.app.ui.calendar.CalendarScreen
+import be.agendagn.app.ui.components.UpdateBanner
 import be.agendagn.app.ui.login.LoginScreen
 import be.agendagn.app.ui.login.LoginViewModel
 import be.agendagn.app.ui.main.AgendaViewModel
@@ -77,7 +80,12 @@ import java.time.YearMonth
 
 /** Racine : l'état de session décide de l'écran (connexion ou application). */
 @Composable
-fun AppNavHost(container: AppContainer, openOccurrenceId: String? = null) {
+fun AppNavHost(
+    container: AppContainer,
+    openOccurrenceId: String? = null,
+    googleCallback: Uri? = null,
+    onGoogleCallbackHandled: () -> Unit = {},
+) {
     val signedIn by container.authRepository.isSignedIn.collectAsStateWithLifecycle(initialValue = null)
     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         when (signedIn) {
@@ -85,10 +93,18 @@ fun AppNavHost(container: AppContainer, openOccurrenceId: String? = null) {
             false -> {
                 val vm: LoginViewModel = viewModel(factory = viewModelFactory { initializer { LoginViewModel(container.authRepository) } })
                 val context = LocalContext.current
+                val scope = rememberCoroutineScope()
+                LaunchedEffect(googleCallback) {
+                    googleCallback?.let {
+                        vm.onGoogleCallback(it.getQueryParameter("code"), it.getQueryParameter("error"))
+                        onGoogleCallbackHandled()
+                    }
+                }
                 LoginScreen(
                     viewModel = vm,
                     onSignedIn = {},
                     onOpenWeb = { path -> openWeb(context, container.webBaseUrl, path) },
+                    onGoogle = { scope.launch { openWeb(context, vm.googleUrl(container.webBaseUrl), "") } },
                 )
             }
             true -> MainScaffold(container, openOccurrenceId)
@@ -142,6 +158,28 @@ private fun MainScaffold(container: AppContainer, openOccurrenceId: String?) {
     }
     LaunchedEffect(openOccurrenceId) { openOccurrenceId?.let { nav.navigate("task/$it") } }
 
+    // Mise à jour de l'app : vérifiée au lancement et au retour dans l'app (ex. après avoir
+    // autorisé l'installation dans les réglages Android).
+    val updater = container.updater
+    val update by updater.available.collectAsStateWithLifecycle()
+    val updateState by updater.state.collectAsStateWithLifecycle()
+    var canInstall by remember { mutableStateOf(updater.canInstall()) }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        canInstall = updater.canInstall()
+        scope.launch { updater.check() }
+    }
+    val onUpdate: () -> Unit = {
+        val manifest = update
+        when {
+            manifest == null -> Unit
+            !updater.canInstall() -> context.startActivity(updater.permissionIntent())
+            else -> scope.launch { updater.download(manifest)?.let(context::startActivity) }
+        }
+    }
+    val updateBanner: @Composable () -> Unit = {
+        update?.let { UpdateBanner(it, updateState, canInstall, onUpdate) }
+    }
+
     val tabs = Tab.entries
     val onTab = route in tabs.map { it.route }
     val open = { id: String -> nav.navigate("task/$id") }
@@ -194,6 +232,7 @@ private fun MainScaffold(container: AppContainer, openOccurrenceId: String?) {
             composable(Tab.TODAY.route) {
                 TodayScreen(
                     state, vm::refresh, vm::toggle, { open(it.id) },
+                    banner = updateBanner,
                     onShowUnscheduled = {
                         filter = filter.copy(view = Agenda.View.UNSCHEDULED)
                         nav.navigate(Tab.TASKS.route) { launchSingleTop = true }
@@ -233,6 +272,7 @@ private fun MainScaffold(container: AppContainer, openOccurrenceId: String?) {
                     onOpenWeb = { openWeb(context, container.webBaseUrl, it) },
                     onSignOut = { scope.launch { container.authRepository.logout() } },
                     contentPadding = padding,
+                    update = updateBanner,
                 )
             }
             composable("task/{id}", arguments = listOf(navArgument("id") { type = NavType.StringType })) { entry ->

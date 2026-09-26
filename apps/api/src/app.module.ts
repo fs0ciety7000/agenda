@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { LoggerModule } from 'nestjs-pino';
+import { AppDistributionModule } from './app-distribution/app-distribution.module';
 import { AuthModule } from './auth/auth.module';
 import { ClientIpThrottlerGuard } from './common/client-ip-throttler.guard';
 import { HttpExceptionFilter } from './common/http-exception.filter';
@@ -39,6 +40,7 @@ import { TasksModule } from './tasks/tasks.module';
     TasksModule,
     PrivacyModule,
     CalendarModule,
+    AppDistributionModule,
   ],
   controllers: [HealthController],
   providers: [

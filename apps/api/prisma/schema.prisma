@@ -30,6 +30,7 @@ model User {
   memberships       HouseholdMember[]
   googleConnections GoogleConnection[]
   resetTokens       PasswordResetToken[]
+  mobileAuthCodes   MobileAuthCode[]
 }
 
 enum AuthProvider {
@@ -67,6 +68,21 @@ model Session {
 
   @@index([userId])
   @@index([familyId])
+}
+
+/// Code à usage unique remis à l'app Android après « Continuer avec Google » (2 min).
+/// Échangé contre une session uniquement avec le `code_verifier` PKCE resté dans l'app.
+model MobileAuthCode {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  codeHash  String    @unique @db.Char(64)
+  challenge String    @db.VarChar(64)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }
 
 model PasswordResetToken {
@@ -449,14 +465,14 @@ model Notification {
 }
 
 model NotificationPreference {
-  id                   String           @id @default(uuid()) @db.Uuid
-  memberId             String           @db.Uuid
-  type                 NotificationType
-  inApp                Boolean          @default(true)
-  push                 Boolean          @default(true)
-  email                Boolean          @default(false)
+  id          String           @id @default(uuid()) @db.Uuid
+  memberId    String           @db.Uuid
+  type        NotificationType
+  inApp       Boolean          @default(true)
+  push        Boolean          @default(true)
+  email       Boolean          @default(false)
   /// Délai de rappel avant l'échéance (TASK_UPCOMING).
-  leadMinutes          Int?
+  leadMinutes Int?
 
   member HouseholdMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
 

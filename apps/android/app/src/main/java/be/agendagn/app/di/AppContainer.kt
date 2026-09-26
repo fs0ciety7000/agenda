@@ -6,12 +6,14 @@ import be.agendagn.app.data.DataStoreSettingsStore
 import be.agendagn.app.data.SettingsStore
 import be.agendagn.app.data.auth.DataStoreTokenStore
 import be.agendagn.app.data.auth.KeystoreCipher
+import be.agendagn.app.data.auth.SharedPrefsPkceStore
 import be.agendagn.app.data.local.AgendaDatabase
 import be.agendagn.app.data.observeOnline
 import be.agendagn.app.data.remote.ApiClient
 import be.agendagn.app.data.repository.AgendaRepositoryImpl
 import be.agendagn.app.data.repository.AuthRepositoryImpl
 import be.agendagn.app.data.sync.SyncEngine
+import be.agendagn.app.data.update.AppUpdater
 import be.agendagn.app.data.sync.WorkManagerSyncScheduler
 import be.agendagn.app.domain.repository.AgendaRepository
 import be.agendagn.app.domain.repository.AuthRepository
@@ -32,7 +34,13 @@ class AppContainer(context: Context) {
     private val repositoryImpl = AgendaRepositoryImpl(api, database, SyncEngine(api, database, settings), syncScheduler)
     val repository: AgendaRepository = repositoryImpl
     val reminders = ReminderScheduler(app, repository, settings)
-    val authRepository: AuthRepository = AuthRepositoryImpl(api, tokenStore) { repositoryImpl.clearLocalData() }
+    val authRepository: AuthRepository = AuthRepositoryImpl(
+        api,
+        tokenStore,
+        clearLocalData = { repositoryImpl.clearLocalData() },
+        pkce = SharedPrefsPkceStore(app),
+    )
     val online: Flow<Boolean> = app.observeOnline()
+    val updater = AppUpdater(app, BuildConfig.UPDATE_MANIFEST_URL, BuildConfig.VERSION_CODE)
     val webBaseUrl: String = BuildConfig.WEB_BASE_URL
 }

@@ -25,6 +25,12 @@ interface AgendaApi {
     @GET("v1/me")
     suspend fun me(): Response<MeDto>
 
+    @GET("v1/auth/providers")
+    suspend fun providers(): Response<ProvidersDto>
+
+    @POST("v1/auth/google/mobile/exchange")
+    suspend fun googleMobileExchange(@Body body: MobileExchangeRequest): Response<AuthResponseDto>
+
     @GET("v1/households")
     suspend fun households(): Response<List<HouseholdDto>>
 

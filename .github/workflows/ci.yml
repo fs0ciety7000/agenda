@@ -139,14 +139,8 @@ jobs:
           java-version: '21'
       - uses: gradle/actions/setup-gradle@v4
       - run: ./gradlew lintDebug testDebugUnitTest assembleDebug --console=plain
-      # APK de recette : pointe vers la production, clé de recette (publié par android-release.yml).
-      - run: >-
-          ./gradlew assembleRelease --console=plain -Pagenda.recette
-          -Pagenda.apiBaseUrl=${{ vars.AGENDA_API_BASE_URL || 'https://agenda.fs0ciety.org/' }}
-      - uses: actions/upload-artifact@v4
-        with:
-          name: agenda-recette-apk
-          path: apps/android/app/build/outputs/apk/release/app-release.apk
+      # Build release (R8) vérifié ; l'APK signé et publié vient d'android-release.yml.
+      - run: ./gradlew assembleRelease --console=plain -Pagenda.apiBaseUrl=https://agenda.example.invalid/
       - if: failure()
         uses: actions/upload-artifact@v4
         with:

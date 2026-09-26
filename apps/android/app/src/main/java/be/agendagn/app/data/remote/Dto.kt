@@ -10,6 +10,12 @@ data class LoginRequest(val email: String, val password: String)
 data class RefreshRequest(val refreshToken: String)
 
 @Serializable
+data class MobileExchangeRequest(val code: String, val codeVerifier: String)
+
+@Serializable
+data class ProvidersDto(val google: Boolean = false, val registration: Boolean = true, val passwordReset: Boolean = false)
+
+@Serializable
 data class MeDto(val id: String, val email: String, val displayName: String, val locale: String)
 
 @Serializable
