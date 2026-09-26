@@ -67,6 +67,12 @@ interface AgendaApi {
     @POST("v1/households/{h}/quick-add/parse")
     suspend fun parseQuickAdd(@Path("h") householdId: String, @Body body: QuickAddRequest): Response<QuickAddPreviewDto>
 
+    @GET("v1/households/{h}/series/{id}")
+    suspend fun series(@Path("h") householdId: String, @Path("id") id: String): Response<SeriesDto>
+
+    @POST("v1/households/{h}/recurrence/preview")
+    suspend fun previewRecurrence(@Path("h") householdId: String, @Body body: JsonObject): Response<List<RecurrencePreviewItemDto>>
+
     @PUT("v1/me/push-tokens")
     suspend fun registerPushToken(@Body body: PushTokenRequest): Response<Unit>
 

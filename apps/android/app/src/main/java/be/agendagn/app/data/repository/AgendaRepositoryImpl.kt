@@ -14,6 +14,8 @@ import be.agendagn.app.data.remote.QuickAddRequest
 import be.agendagn.app.data.remote.json
 import be.agendagn.app.data.sync.SyncEngine
 import be.agendagn.app.data.sync.SyncScheduler
+import be.agendagn.app.domain.PreviewItem
+import be.agendagn.app.domain.SeriesInfo
 import be.agendagn.app.domain.TaskPayloads
 import be.agendagn.app.domain.model.CalendarLinkState
 import be.agendagn.app.domain.model.CalendarStatus
@@ -23,7 +25,6 @@ import be.agendagn.app.domain.model.Household
 import be.agendagn.app.domain.model.Occurrence
 import be.agendagn.app.domain.model.Priority
 import be.agendagn.app.domain.model.QuickAddPreview
-import be.agendagn.app.domain.model.Repeat
 import be.agendagn.app.domain.model.TaskDraft
 import be.agendagn.app.domain.model.Visibility
 import be.agendagn.app.domain.repository.AgendaRepository
@@ -40,6 +41,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.launchIn
@@ -47,6 +49,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 import java.io.IOException
@@ -116,7 +119,8 @@ class AgendaRepositoryImpl(
 
     override suspend fun create(draft: TaskDraft) = withContext(io) {
         val h = db.households().current() ?: return@withContext
-        val payload = TaskPayloads.create(draft, h.myMemberId)
+        val members = db.households().observeMembers(h.id).first().map { it.toDomain() }
+        val payload = TaskPayloads.create(draft, h.myMemberId, members)
         val localId = "local-${UUID.randomUUID()}"
         db.occurrences().upsert(
             localRow(localId, h.id, h.myMemberId, draft.title.trim()).copy(
@@ -128,7 +132,7 @@ class AgendaRepositoryImpl(
                 startMinute = draft.startMinute.takeIf { draft.date != null },
                 durationMinutes = draft.durationMinutes.takeIf { draft.date != null && draft.startMinute != null },
                 assigneeIds = (if (draft.personal) listOfNotNull(h.myMemberId) else draft.assigneeIds).joinToString(","),
-                isRecurring = draft.repeat != Repeat.NONE,
+                isRecurring = draft.recurrence.repeating && draft.date != null,
                 checklist = json.encodeToString(
                     draft.checklist.mapIndexed { i, t -> ChecklistItemDto("$localId-$i", t.trim(), false) },
                 ),
@@ -186,16 +190,56 @@ class AgendaRepositoryImpl(
         }
     }
 
-    override suspend fun update(occurrence: Occurrence, draft: TaskDraft, scope: EditScope): OpResult = withContext(io) {
+    override suspend fun series(seriesId: String): SeriesInfo? = withContext(io) {
+        val h = db.households().current() ?: return@withContext null
+        try {
+            api.series(h.id, seriesId).body()?.let { s ->
+                SeriesInfo(
+                    id = s.id,
+                    startDate = LocalDate.parse(s.startDate),
+                    untilDate = s.untilDate?.let(LocalDate::parse),
+                    count = s.count,
+                    rule = s.rule,
+                    rotation = s.rotation,
+                    advance = s.advance,
+                )
+            }
+        } catch (_: IOException) {
+            null
+        }
+    }
+
+    override suspend fun previewRecurrence(startDate: LocalDate, recurrence: JsonObject): List<PreviewItem>? =
+        withContext(io) {
+            val h = db.households().current() ?: return@withContext null
+            val body = buildJsonObject {
+                put("startDate", startDate.toString())
+                put("recurrence", recurrence)
+                put("limit", 5)
+            }
+            try {
+                api.previewRecurrence(h.id, body).takeIf { it.isSuccessful }?.body()
+                    ?.map { PreviewItem(LocalDate.parse(it.date), it.assigneeIds) }
+            } catch (_: IOException) {
+                null
+            }
+        }
+
+    override suspend fun update(
+        occurrence: Occurrence,
+        draft: TaskDraft,
+        scope: EditScope,
+        recurrence: JsonObject?,
+    ): OpResult = withContext(io) {
         val h = db.households().current() ?: return@withContext OpResult.NotFound
-        val body = TaskPayloads.update(occurrence, draft) ?: return@withContext OpResult.Ok
+        val body = TaskPayloads.update(occurrence, draft, recurrence) ?: return@withContext OpResult.Ok
         try {
             val res = api.updateOccurrence(h.id, occurrence.id, scope.wire, body)
             when {
                 res.isSuccessful -> {
                     res.body()?.let { db.occurrences().upsert(it.toEntity(h.id)) }
                     // Une modification de série touche d'autres occurrences : on recharge tout.
-                    if (occurrence.isRecurring && scope != EditScope.THIS) engine.refresh()
+                    if ((occurrence.isRecurring && scope != EditScope.THIS) || recurrence != null) engine.refresh()
                     OpResult.Ok
                 }
                 res.code() == 409 -> {

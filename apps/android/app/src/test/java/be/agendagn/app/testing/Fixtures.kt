@@ -39,7 +39,8 @@ object Fixtures {
     ) = Occurrence(
         id = id, taskId = "task-$id", title = title, notes = null, category = category, priority = priority,
         visibility = visibility, status = status, date = date, startMinute = startMinute, durationMinutes = duration,
-        assigneeIds = assignees, createdById = GRACE, isRecurring = recurring, syncToCalendar = false,
+        assigneeIds = assignees, createdById = GRACE, isRecurring = recurring,
+        seriesId = if (recurring) "series-${title.hashCode()}" else null, syncToCalendar = false,
         calendarSync = null, completedAt = null, version = 1,
     )
 

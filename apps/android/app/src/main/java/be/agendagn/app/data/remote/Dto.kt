@@ -150,3 +150,17 @@ data class CalendarStatusDto(
 
 /** Corps de création : construit par `TaskPayloads` (récurrence en JSON libre, cf. contracts). */
 typealias CreateTaskBody = JsonObject
+
+@Serializable
+data class SeriesDto(
+    val id: String,
+    val startDate: String,
+    val untilDate: String? = null,
+    val count: Int? = null,
+    val rule: kotlinx.serialization.json.JsonObject,
+    val rotation: kotlinx.serialization.json.JsonObject,
+    val advance: String = "PER_OCCURRENCE",
+)
+
+@Serializable
+data class RecurrencePreviewItemDto(val date: String, val assigneeIds: List<String>)

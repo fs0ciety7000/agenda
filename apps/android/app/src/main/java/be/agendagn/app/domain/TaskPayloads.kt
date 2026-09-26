@@ -1,7 +1,7 @@
 package be.agendagn.app.domain
 
 import be.agendagn.app.domain.model.Occurrence
-import be.agendagn.app.domain.model.Repeat
+import be.agendagn.app.domain.model.Member
 import be.agendagn.app.domain.model.TaskDraft
 import be.agendagn.app.domain.model.Visibility
 import kotlinx.serialization.json.JsonArray
@@ -10,23 +10,16 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
-import java.time.DayOfWeek
-import java.time.LocalDate
 
 /** Corps JSON des requêtes, conformes à `packages/contracts` (CreateTaskInput, UpdateOccurrenceInput). */
 object TaskPayloads {
-    private val weekdays = mapOf(
-        DayOfWeek.MONDAY to "MO", DayOfWeek.TUESDAY to "TU", DayOfWeek.WEDNESDAY to "WE",
-        DayOfWeek.THURSDAY to "TH", DayOfWeek.FRIDAY to "FR", DayOfWeek.SATURDAY to "SA", DayOfWeek.SUNDAY to "SU",
-    )
-
     private fun ids(list: List<String>) = JsonArray(list.map(::JsonPrimitive))
 
     private fun String?.orNullJson() = this?.let(::JsonPrimitive) ?: JsonNull
 
     private fun Int?.orNullJson() = this?.let(::JsonPrimitive) ?: JsonNull
 
-    fun create(draft: TaskDraft, myMemberId: String?): JsonObject {
+    fun create(draft: TaskDraft, myMemberId: String?, members: List<Member>): JsonObject {
         val personal = draft.personal
         val assignees = if (personal) listOfNotNull(myMemberId) else draft.assigneeIds
         return buildJsonObject {
@@ -42,45 +35,12 @@ object TaskPayloads {
                 if (draft.startMinute != null) draft.durationMinutes?.let { put("durationMinutes", it) }
             }
             put("syncToCalendar", !personal && draft.date != null && draft.syncToCalendar)
-            recurrence(draft, assignees)?.let { put("recurrence", it) }
+            Recurrences.toJson(draft.recurrence, draft.date, assignees, members, personal)?.let { put("recurrence", it) }
             draft.checklist.map { it.trim() }.filter { it.isNotEmpty() }.takeIf { it.isNotEmpty() }?.let {
                 put("checklist", JsonArray(it.map(::JsonPrimitive)))
             }
         }
     }
-
-    /** Règle simple : répétition + rotation (fixe, à deux, chacun son tour). null = tâche ponctuelle. */
-    fun recurrence(draft: TaskDraft, assignees: List<String>): JsonObject? {
-        val date = draft.date ?: return null
-        val rule = when (draft.repeat) {
-            Repeat.NONE -> return null
-            Repeat.DAILY -> buildJsonObject { put("freq", "DAILY"); put("interval", 1) }
-            Repeat.WEEKLY, Repeat.BIWEEKLY -> buildJsonObject {
-                put("freq", "WEEKLY")
-                put("interval", if (draft.repeat == Repeat.BIWEEKLY) 2 else 1)
-                put("byWeekday", JsonArray(listOf(JsonPrimitive(weekdays.getValue(date.dayOfWeek)))))
-            }
-            Repeat.MONTHLY -> buildJsonObject {
-                put("freq", "MONTHLY")
-                put("interval", 1)
-                // Le 31 (ou le 30 février…) : « dernier jour du mois » plutôt que des mois sautés.
-                put("byMonthDay", if (date.dayOfMonth > 28 && date == lastDayOfMonth(date)) -1 else date.dayOfMonth)
-            }
-        }
-        val rotation = when {
-            assignees.isEmpty() -> buildJsonObject { put("mode", "UNASSIGNED") }
-            assignees.size == 1 -> buildJsonObject { put("mode", "FIXED"); put("memberIds", ids(assignees)) }
-            draft.alternate -> buildJsonObject { put("mode", "ALTERNATE"); put("memberIds", ids(assignees)) }
-            else -> buildJsonObject { put("mode", "TOGETHER"); put("memberIds", ids(assignees)) }
-        }
-        return buildJsonObject {
-            put("rule", rule)
-            put("rotation", rotation)
-            put("advance", "PER_OCCURRENCE")
-        }
-    }
-
-    private fun lastDayOfMonth(d: LocalDate) = d.withDayOfMonth(d.lengthOfMonth())
 
     fun draftOf(o: Occurrence) = TaskDraft(
         title = o.title,
@@ -98,8 +58,9 @@ object TaskPayloads {
     /**
      * Modification : uniquement les champs changés (une série ne reçoit pas de valeurs non modifiées)
      * + `version` (concurrence optimiste). null = rien à envoyer.
+     * [recurrence] : nouvelle répétition à appliquer (tâche ponctuelle rendue récurrente, ou série modifiée).
      */
-    fun update(original: Occurrence, draft: TaskDraft): JsonObject? {
+    fun update(original: Occurrence, draft: TaskDraft, recurrence: JsonObject? = null): JsonObject? {
         val before = draftOf(original)
         val changes = buildJsonObject {
             if (draft.title.trim() != before.title) put("title", draft.title.trim())
@@ -119,6 +80,7 @@ object TaskPayloads {
             }
             val sync = !draft.personal && draft.date != null && draft.syncToCalendar
             if (sync != before.syncToCalendar) put("syncToCalendar", sync)
+            recurrence?.let { put("recurrence", it) }
         }
         if (changes.isEmpty()) return null
         return JsonObject(changes + ("version" to JsonPrimitive(original.version)))

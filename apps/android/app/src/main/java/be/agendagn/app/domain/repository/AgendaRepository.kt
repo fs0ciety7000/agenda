@@ -1,5 +1,7 @@
 package be.agendagn.app.domain.repository
 
+import be.agendagn.app.domain.PreviewItem
+import be.agendagn.app.domain.SeriesInfo
 import be.agendagn.app.domain.model.CalendarStatus
 import be.agendagn.app.domain.model.Category
 import be.agendagn.app.domain.model.EditScope
@@ -9,6 +11,8 @@ import be.agendagn.app.domain.model.QuickAddPreview
 import be.agendagn.app.domain.model.TaskDraft
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.serialization.json.JsonObject
+import java.time.LocalDate
 
 /** Résultat d'une action qui exige le réseau (modifier, supprimer). */
 sealed interface OpResult {
@@ -48,7 +52,16 @@ interface AgendaRepository {
     suspend fun create(draft: TaskDraft)
     suspend fun quickAdd(text: String)
     suspend fun previewQuickAdd(text: String): QuickAddPreview?
-    suspend fun update(occurrence: Occurrence, draft: TaskDraft, scope: EditScope): OpResult
+    /**
+     * [recurrence] : nouvelle répétition (contrat `RecurrenceInput`) à appliquer, null = inchangée.
+     */
+    suspend fun update(occurrence: Occurrence, draft: TaskDraft, scope: EditScope, recurrence: JsonObject? = null): OpResult
+
+    /** Série d'une tâche récurrente (en ligne uniquement), null si indisponible. */
+    suspend fun series(seriesId: String): SeriesInfo?
+
+    /** Prochaines dates et responsables d'une répétition (en ligne uniquement). */
+    suspend fun previewRecurrence(startDate: LocalDate, recurrence: JsonObject): List<PreviewItem>?
     suspend fun delete(occurrence: Occurrence, scope: EditScope): OpResult
     /** Glisser-déposer du calendrier : change le jour d'UNE occurrence (heure conservée). */
     suspend fun move(occurrenceId: String, date: java.time.LocalDate): OpResult

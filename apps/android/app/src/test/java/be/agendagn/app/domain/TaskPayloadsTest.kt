@@ -1,11 +1,11 @@
 package be.agendagn.app.domain
 
 import be.agendagn.app.domain.model.Priority
-import be.agendagn.app.domain.model.Repeat
 import be.agendagn.app.domain.model.TaskDraft
 import be.agendagn.app.testing.Fixtures.GRACE
 import be.agendagn.app.testing.Fixtures.NICOLAS
 import be.agendagn.app.testing.Fixtures.TODAY
+import be.agendagn.app.testing.Fixtures.household
 import be.agendagn.app.testing.Fixtures.occ
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonObject
@@ -22,7 +22,7 @@ class TaskPayloadsTest {
     fun `creation minimale - titre seul, pas de synchro sans date`() {
         assertEquals(
             json("""{"title":"Appeler le plombier","priority":"NORMAL","visibility":"SHARED","assigneeIds":[],"syncToCalendar":false}"""),
-            TaskPayloads.create(TaskDraft(title = "  Appeler le plombier ", syncToCalendar = true), GRACE),
+            TaskPayloads.create(TaskDraft(title = "  Appeler le plombier ", syncToCalendar = true), GRACE, household.members),
         )
     }
 
@@ -31,9 +31,11 @@ class TaskPayloadsTest {
         val body = TaskPayloads.create(
             TaskDraft(
                 title = "Sortir les poubelles", date = TODAY, startMinute = 1200, durationMinutes = 10,
-                assigneeIds = listOf(NICOLAS, GRACE), repeat = Repeat.WEEKLY, alternate = true, syncToCalendar = true,
+                assigneeIds = listOf(NICOLAS, GRACE), syncToCalendar = true,
+                recurrence = RecurrenceSpec(preset = RepeatPreset.WEEKLY, rotation = RotationKind.ALTERNATE),
             ),
             GRACE,
+            household.members,
         )
         assertEquals(
             json(
@@ -49,16 +51,19 @@ class TaskPayloadsTest {
 
     @Test
     fun `rotations - personne, une personne, a deux, le 31 devient dernier jour du mois`() {
-        fun rotation(ids: List<String>, alternate: Boolean = false) =
-            TaskPayloads.recurrence(TaskDraft(date = TODAY, repeat = Repeat.DAILY, alternate = alternate), ids)!!["rotation"].toString()
+        val members = household.members
+        fun rotation(ids: List<String>, spec: RecurrenceSpec = RecurrenceSpec(preset = RepeatPreset.DAILY)) =
+            Recurrences.toJson(spec, TODAY, ids, members, personal = false)!!["rotation"].toString()
         assertEquals("""{"mode":"UNASSIGNED"}""", rotation(emptyList()))
         assertEquals("""{"mode":"FIXED","memberIds":["$GRACE"]}""", rotation(listOf(GRACE)))
         assertEquals("""{"mode":"TOGETHER","memberIds":["$GRACE","$NICOLAS"]}""", rotation(listOf(GRACE, NICOLAS)))
-        val monthly = TaskPayloads.recurrence(TaskDraft(date = LocalDate.of(2026, 10, 31), repeat = Repeat.MONTHLY), emptyList())!!
+        val monthly = Recurrences.toJson(
+            RecurrenceSpec(preset = RepeatPreset.MONTHLY, lastDayOfMonth = true), LocalDate.of(2026, 10, 31), emptyList(), members, false,
+        )!!
         assertEquals("""{"freq":"MONTHLY","interval":1,"byMonthDay":-1}""", monthly["rule"].toString())
-        val biweekly = TaskPayloads.recurrence(TaskDraft(date = TODAY, repeat = Repeat.BIWEEKLY), emptyList())!!
+        val biweekly = Recurrences.toJson(RecurrenceSpec(preset = RepeatPreset.BIWEEKLY), TODAY, emptyList(), members, false)!!
         assertEquals("""{"freq":"WEEKLY","interval":2,"byWeekday":["TU"]}""", biweekly["rule"].toString())
-        assertNull(TaskPayloads.recurrence(TaskDraft(date = null, repeat = Repeat.DAILY), emptyList()))
+        assertNull(Recurrences.toJson(RecurrenceSpec(preset = RepeatPreset.DAILY), null, emptyList(), members, false))
     }
 
     @Test
@@ -66,6 +71,7 @@ class TaskPayloadsTest {
         val body = TaskPayloads.create(
             TaskDraft(title = "Dentiste", date = TODAY, personal = true, assigneeIds = listOf(NICOLAS), syncToCalendar = true),
             GRACE,
+            household.members,
         )
         assertEquals("PERSONAL", body["visibility"].toString().trim('"'))
         assertEquals("""["$GRACE"]""", body["assigneeIds"].toString())

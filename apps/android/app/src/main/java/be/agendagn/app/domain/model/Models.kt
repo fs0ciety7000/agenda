@@ -1,5 +1,6 @@
 package be.agendagn.app.domain.model
 
+import be.agendagn.app.domain.RecurrenceSpec
 import java.time.Instant
 import java.time.LocalDate
 
@@ -47,6 +48,7 @@ data class Occurrence(
     val assigneeIds: List<String>,
     val createdById: String,
     val isRecurring: Boolean,
+    val seriesId: String? = null,
     val syncToCalendar: Boolean,
     val calendarSync: CalendarSync?,
     val completedAt: Instant?,
@@ -63,9 +65,6 @@ data class Occurrence(
 
 data class ChecklistItem(val id: String, val text: String, val done: Boolean)
 
-/** Répétitions proposées sur mobile (la configuration avancée reste sur le web). */
-enum class Repeat { NONE, DAILY, WEEKLY, BIWEEKLY, MONTHLY }
-
 /** Saisie du formulaire de création / modification. */
 data class TaskDraft(
     val title: String = "",
@@ -77,9 +76,8 @@ data class TaskDraft(
     val categoryId: String? = null,
     val priority: Priority = Priority.NORMAL,
     val personal: Boolean = false,
-    val repeat: Repeat = Repeat.NONE,
-    /** Répétition : les responsables sélectionnés alternent (« chacun son tour »). */
-    val alternate: Boolean = false,
+    /** Répétition et rotation des responsables (aucune par défaut). */
+    val recurrence: RecurrenceSpec = RecurrenceSpec(),
     val syncToCalendar: Boolean = false,
     /** Création : éléments de la liste (envoyés avec la tâche). */
     val checklist: List<String> = emptyList(),

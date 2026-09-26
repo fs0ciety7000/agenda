@@ -10,7 +10,8 @@ import be.agendagn.app.data.repository.AuthRepositoryImpl
 import be.agendagn.app.data.sync.SyncEngine
 import be.agendagn.app.domain.model.EditScope
 import be.agendagn.app.domain.model.OccurrenceStatus
-import be.agendagn.app.domain.model.Repeat
+import be.agendagn.app.domain.RecurrenceSpec
+import be.agendagn.app.domain.RepeatPreset
 import be.agendagn.app.domain.model.TaskDraft
 import be.agendagn.app.domain.repository.AuthResult
 import be.agendagn.app.domain.repository.OpResult
@@ -83,7 +84,7 @@ class LiveApiTest {
         offline = true
         repo.create(
             TaskDraft(title = "Sortir les poubelles", date = today, startMinute = 1200, durationMinutes = 10,
-                assigneeIds = listOf(household.members.single().id), repeat = Repeat.WEEKLY),
+                assigneeIds = listOf(household.members.single().id), recurrence = RecurrenceSpec(preset = RepeatPreset.WEEKLY)),
         )
         repo.quickAdd("Acheter du pain demain")
         assertEquals(RefreshOutcome.OFFLINE, repo.refresh())

@@ -389,6 +389,7 @@ private fun TaskForm(
         onAddItem = vm::addItem,
         onToggleItem = vm::toggleItem,
         onRemoveItem = vm::removeItem,
+        onRetrySeries = vm::retrySeries,
         suggestion = state.household?.let { h ->
             Agenda.suggestAssignee(Agenda.weekBalance(state.occurrences, form.draft.date ?: state.today, h.members))
         },

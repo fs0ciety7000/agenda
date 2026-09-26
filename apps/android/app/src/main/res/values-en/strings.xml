@@ -87,7 +87,6 @@
     <string name="field_priority">Priority</string>
     <string name="field_repeat">Repeat</string>
     <string name="field_personal">Personal task (only visible to me)</string>
-    <string name="field_alternate">Take turns</string>
     <string name="field_sync">Add to the shared calendar</string>
     <string name="field_sync_needs_date">Pick a date to add it to the calendar.</string>
     <string name="none">None</string>
@@ -102,7 +101,42 @@
     <string name="repeat_weekly">Every week</string>
     <string name="repeat_biweekly">Every 2 weeks</string>
     <string name="repeat_monthly">Every month</string>
-    <string name="repeat_web_hint">Advanced rotations (sequences, fixed days): on the website.</string>
+    <string name="repeat_weekdays">Every weekday</string>
+    <string name="repeat_quarterly">Every 3 months</string>
+    <string name="repeat_yearly">Every year</string>
+    <string name="repeat_custom">Custom</string>
+    <string name="repeat_every">Every</string>
+    <string name="repeat_interval">Interval</string>
+    <plurals name="repeat_unit_day"><item quantity="one">day</item><item quantity="other">days</item></plurals>
+    <plurals name="repeat_unit_week"><item quantity="one">week</item><item quantity="other">weeks</item></plurals>
+    <string name="repeat_unit_month">months</string>
+    <plurals name="repeat_unit_year"><item quantity="one">year</item><item quantity="other">years</item></plurals>
+    <string name="repeat_on_day">On the %1$d</string>
+    <string name="repeat_last_day">On the last day of the month</string>
+    <string name="repeat_ends">Ends</string>
+    <string name="repeat_end_never">Never</string>
+    <string name="repeat_end_until">On a date</string>
+    <string name="repeat_end_count">After a number of times</string>
+    <string name="repeat_until">Until %1$s</string>
+    <string name="repeat_times">Number of times</string>
+    <string name="repeat_next">Next times</string>
+    <string name="repeat_no_occurrence">This repetition produces no date.</string>
+    <string name="repeat_offline">Repetition can be edited once online.</string>
+    <string name="repeat_loading">Loading repetition…</string>
+    <string name="rotation_title">Who takes care of it?</string>
+    <string name="rotation_fixed">Fixed</string>
+    <string name="rotation_fixed_hint">The people chosen in “Who?” every time.</string>
+    <string name="rotation_alternate">Take turns</string>
+    <string name="rotation_sequence">Custom rotation</string>
+    <string name="rotation_weekday">By day</string>
+    <string name="rotation_starts_with">Starts with</string>
+    <string name="rotation_both">Both of us</string>
+    <string name="rotation_everyone">Everyone</string>
+    <string name="rotation_add_step">Add a turn</string>
+    <string name="rotation_remove_step">Remove turn %1$d</string>
+    <string name="rotation_per_week">Change who is responsible every week rather than every time</string>
+    <string name="decrease">Decrease: %1$s</string>
+    <string name="increase">Increase: %1$s</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
     <string name="ok">OK</string>

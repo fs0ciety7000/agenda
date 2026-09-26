@@ -163,17 +163,21 @@ class ScreensTest {
     fun formulaire_creation() {
         val draft = be.agendagn.app.domain.model.TaskDraft(
             title = "Sortir les poubelles", date = TODAY, startMinute = 1200, durationMinutes = 15,
-            assigneeIds = listOf(Fixtures.NICOLAS, Fixtures.GRACE), repeat = be.agendagn.app.domain.model.Repeat.WEEKLY,
-            alternate = true, syncToCalendar = true,
+            assigneeIds = listOf(Fixtures.NICOLAS, Fixtures.GRACE), syncToCalendar = true,
+            recurrence = be.agendagn.app.domain.RecurrenceSpec(
+                preset = be.agendagn.app.domain.RepeatPreset.WEEKLY,
+                rotation = be.agendagn.app.domain.RotationKind.ALTERNATE,
+            ),
         )
         screen {
             TaskFormScreen(
-                TaskFormState(loading = false, draft = draft), Fixtures.household.members, listOf(Fixtures.cleaning),
+                TaskFormState(loading = false, draft = draft, members = Fixtures.household.members), Fixtures.household.members, listOf(Fixtures.cleaning),
                 calendarAvailable = true, onEdit = {}, onSave = {}, onDelete = {}, onConfirmDelete = {}, onScope = {},
                 onDismissDialogs = {}, onBack = {},
             )
         }
-        compose.onNodeWithText("Chacun son tour").assertIsDisplayed()
+        compose.onNodeWithText("Chacun son tour").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Commence par").performScrollTo().assertIsDisplayed()
         shot("task-form")
         compose.onNodeWithText("Ajouter au calendrier partagé").performScrollTo().assertIsDisplayed()
         compose.onNode(hasText("Ajouter au calendrier partagé") and isToggleable()).assertIsOn()
