@@ -7,8 +7,8 @@ export default function manifest(): MetadataRoute.Manifest {
     short_name: 'Agenda G&N',
     start_url: '/',
     display: 'standalone',
-    background_color: '#FBFAF8',
-    theme_color: '#FBFAF8',
+    background_color: '#FAF6F2',
+    theme_color: '#FAF6F2',
     lang: 'fr',
     icons: [
       { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },

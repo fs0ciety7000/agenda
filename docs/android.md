@@ -62,15 +62,22 @@ UI (Compose) ──▶ ViewModel ──▶ AgendaRepository
 
 ## 4. Construire et installer
 
-**APK de recette (le plus simple)** : chaque exécution de la CI publie l'artefact
-`agenda-recette-apk` (GitHub → Actions → exécution → *Artifacts*), qui pointe vers
-`https://agenda.fs0ciety.org/` (variable de dépôt `AGENDA_API_BASE_URL` pour changer).
-Installation : autoriser « Installer des applis inconnues » pour le navigateur / Fichiers.
-Il est signé avec une clé de debug **différente à chaque exécution** : pour installer une
-version plus récente, désinstaller l'ancienne d'abord (les actions hors ligne non envoyées seraient
-perdues : ouvrir l'app en ligne avant).
+**Installer sur le téléphone (le plus simple)** : à chaque mise à jour de `main`, le workflow
+`android-release.yml` publie l'APK à une adresse fixe :
 
-**APK signé avec votre clé** (mises à jour sans désinstaller) :
+> GitHub → dépôt → **Releases** → « Android — dernière version » → **agenda-gn.apk**
+> (`https://github.com/fs0ciety7000/agenda/releases/tag/android-latest`)
+
+Sur le téléphone, ouvrir ce lien dans Chrome en étant connecté à GitHub (dépôt privé), toucher
+`agenda-gn.apk`, puis *Installer* ; la première fois, autoriser Chrome à « installer des applications
+inconnues ». Pour mettre à jour : même lien, l'app s'installe par-dessus (données conservées).
+
+Il pointe vers `https://agenda.fs0ciety.org/` (variable de dépôt `AGENDA_API_BASE_URL` pour changer)
+et il est signé avec la **clé de recette** versionnée (`apps/android/app/signing/recette.jks`) :
+même signature à chaque version, donc mises à jour sans désinstaller. Cette clé est dans le dépôt
+(privé) : elle ne doit jamais servir au Play Store (Phase 7 : clé secrète, ci-dessous).
+
+**APK signé avec votre propre clé** (Play Store, Phase 7) :
 
 ```bash
 # Une seule fois ; conserver le fichier et les mots de passe (gestionnaire de mots de passe).

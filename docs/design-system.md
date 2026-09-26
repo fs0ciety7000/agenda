@@ -13,21 +13,22 @@
 
 ## 2. Couleurs
 
-Neutres légèrement chauds (évite le gris « bureautique »), un accent encre, des couleurs de
-membres désaturées. Toutes les paires texte/fond respectent **4.5:1** (texte) et **3:1** (UI).
+Palette tirée du logo (`docs/brand/`) : neutres beige rosé, accent **prune** (cœur et coches du
+logo), accent rose poudré en mode sombre. Toutes les paires texte/fond respectent **4.5:1**
+(texte) et **3:1** (UI), vérifiées sur `bg`, `surface` et `surface-muted`.
 
 | Token | Light | Dark | Usage |
 |---|---|---|---|
-| `bg` | `#FBFAF8` | `#111110` | Fond d'app |
-| `surface` | `#FFFFFF` | `#1A1A18` | Cartes, feuilles |
-| `surface-muted` | `#F3F2EF` | `#222220` | Zones secondaires, hover |
-| `border` | `#E6E4DF` | `#2E2D2A` | Séparateurs |
-| `text` | `#1C1B19` | `#EDECE9` | Texte principal |
-| `text-muted` | `#6B6862` | `#A3A09A` | Métadonnées |
-| `accent` | `#3552C9` | `#8EA2F2` | Actions primaires, focus, liens |
-| `accent-fg` | `#FFFFFF` | `#0E1330` | Texte sur accent |
-| `success` | `#2F7D4F` | `#6FCF97` | Terminé, synchronisé |
-| `warning` | `#9A6400` | `#F2C46D` | En retard, sync en attente |
+| `bg` | `#FAF6F2` | `#141012` | Fond d'app |
+| `surface` | `#FFFFFF` | `#1D171A` | Cartes, feuilles |
+| `surface-muted` | `#F2EAE4` | `#261F23` | Zones secondaires, hover |
+| `border` | `#E6DAD2` | `#372C32` | Séparateurs |
+| `text` | `#24181D` | `#F1E9EC` | Texte principal |
+| `text-muted` | `#6F5F66` | `#B3A5AB` | Métadonnées |
+| `accent` | `#7D4460` | `#E0A9C3` | Actions primaires, focus, liens |
+| `accent-fg` | `#FFFFFF` | `#2B1220` | Texte sur accent |
+| `success` | `#2B7349` | `#6FCF97` | Terminé, synchronisé |
+| `warning` | `#8C5A00` | `#F2C46D` | En retard, sync en attente |
 | `danger` | `#B3261E` | `#F28B82` | Erreurs, suppression |
 
 **Couleurs de membres** (attribuées à l'arrivée dans le foyer, modifiables) :
