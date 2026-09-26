@@ -190,3 +190,18 @@ describe('quick add — prénoms sans @', () => {
     expect(p('Courses demain @nicolas Grace')).toMatchObject({ assigneeIds: ['n'] });
   });
 });
+
+describe('quick add — cas remontés à l’usage', () => {
+  it('« Sortir les poubelles mardi @21h Grace et Nicolas »', () => {
+    expect(p('Sortir les poubelles mardi @21h Grace et Nicolas')).toMatchObject({
+      title: 'Sortir les poubelles',
+      date: '2026-09-29',
+      startMinute: 21 * 60,
+      assigneeIds: ['g', 'n'],
+    });
+  });
+
+  it('un @ inconnu ne masque pas une date qui le suit', () => {
+    expect(p('Appeler @paul demain')).toMatchObject({ title: 'Appeler @paul', date: '2026-09-27' });
+  });
+});
