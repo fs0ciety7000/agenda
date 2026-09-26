@@ -90,3 +90,49 @@ test('calendrier mois : glisser une tâche vers un autre jour', async ({ page })
   await expect(page.locator(`[data-date="${target}"]`)).toContainText('Payer le loyer');
   await expect.poll(async () => (await task.get()).date).toBe(target);
 });
+
+test('calendrier au doigt : appui long, puis glisser malgré le menu contextuel du navigateur', async ({
+  page,
+}, info) => {
+  test.skip(info.project.name !== 'mobile', 'Gestes tactiles');
+  await signUpWithHousehold(page, 'Grace');
+  const today = todayBrussels();
+  const task = await createTask(page, {
+    title: 'Étendre le linge',
+    date: today,
+    startMinute: 10 * 60,
+    durationMinutes: 60,
+  });
+  await page.goto(`/calendar?view=day&date=${today}`);
+  const block = page.getByRole('button', { name: /Étendre le linge/ });
+  const box = (await block.boundingBox())!;
+  const x = box.x + box.width / 2;
+  const y = box.y + 12;
+  await page.evaluate(() => {
+    window.addEventListener('pointerdown', (e) => {
+      (window as unknown as { lastPointer: number }).lastPointer = e.pointerId;
+    });
+  });
+
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
+  await page.waitForTimeout(600); // appui long
+  // Ce que fait Chrome Android sur un appui long : menu contextuel puis annulation du pointeur.
+  const menuBlocked = await page.evaluate(() => {
+    const menu = new MouseEvent('contextmenu', { bubbles: true, cancelable: true });
+    document.body.dispatchEvent(menu);
+    const pointerId = (window as unknown as { lastPointer: number }).lastPointer;
+    window.dispatchEvent(new PointerEvent('pointercancel', { pointerId, pointerType: 'touch' }));
+    return menu.defaultPrevented;
+  });
+  expect(menuBlocked).toBe(true);
+  for (let i = 1; i <= 10; i++) {
+    await cdp.send('Input.dispatchTouchEvent', {
+      type: 'touchMove',
+      touchPoints: [{ x, y: y + i * 4.8 }],
+    });
+  }
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await expect(page.getByText('« Étendre le linge » déplacée', { exact: false })).toBeVisible();
+  await expect.poll(async () => (await task.get()).startMinute).toBe(11 * 60);
+});
