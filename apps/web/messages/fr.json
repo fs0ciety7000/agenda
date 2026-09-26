@@ -68,7 +68,11 @@
     "CALENDAR_NOT_CONNECTED": "Connectez d'abord votre compte Google Calendar.",
     "CALENDAR_READ_ONLY": "Vous n'avez pas le droit de modifier ce calendrier.",
     "CALENDAR_NOT_FOUND": "Ce calendrier est introuvable.",
-    "GOOGLE_REVOKED": "L'accès à Google Calendar a été retiré. Reconnectez votre compte Google."
+    "GOOGLE_REVOKED": "L'accès à Google Calendar a été retiré. Reconnectez votre compte Google.",
+    "GOOGLE_FLOW_EXPIRED": "La connexion avec Google a expiré ou a été ouverte dans un autre navigateur. Relancez « Connecter Google Calendar » depuis ce navigateur.",
+    "GOOGLE_DENIED": "Vous avez annulé l'autorisation sur l'écran Google. Rien n'a été connecté.",
+    "GOOGLE_SCOPES_MISSING": "Google n'a pas donné accès à votre calendrier. Relancez la connexion et cochez les deux cases (voir vos calendriers, gérer les événements) sur l'écran Google.",
+    "GOOGLE_CALENDAR_FAILED": "Google a refusé la connexion. Réessayez ; si cela persiste, la configuration du serveur est à vérifier (journaux de l'API)."
   },
   "today": {
     "greeting": "Bonjour {name} 👋",

@@ -1,4 +1,5 @@
 import {
+  CALENDAR_SCOPES,
   type CalendarListEntry,
   GoogleApiError,
   GoogleCalendarClient,
@@ -154,6 +155,9 @@ export class FakeGoogleCalendar extends GoogleCalendarClient {
     return `https://accounts.google.test/o/oauth2/v2/auth?state=${p.state}&redirect_uri=${encodeURIComponent(p.redirectUri)}`;
   }
 
+  /** Droits décochés par l'utilisateur sur l'écran de consentement granulaire de Google. */
+  uncheckedScopes: string[] = [];
+
   /** Le « code » encode le compte Google : `sub|email`. */
   async exchangeCode({ code }: { code: string }): Promise<TokenSet> {
     this.step('token.exchange');
@@ -167,6 +171,10 @@ export class FakeGoogleCalendar extends GoogleCalendarClient {
       expiresIn: this.accessTtlSeconds,
       refreshToken: refresh,
       idToken: `${b64({ alg: 'RS256' })}.${b64({ sub, email, email_verified: true })}.sig`,
+      // Comme Google : `email` est renvoyé sous sa forme longue.
+      scope: CALENDAR_SCOPES.filter((sc) => !this.uncheckedScopes.includes(sc))
+        .map((sc) => (sc === 'email' ? 'https://www.googleapis.com/auth/userinfo.email' : sc))
+        .join(' '),
     };
   }
 

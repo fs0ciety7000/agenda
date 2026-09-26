@@ -7,7 +7,7 @@ import { env } from '../config/env';
 import { PrismaService } from '../prisma/prisma.service';
 import { CalendarQueueService } from './calendar-queue.service';
 import { GoogleCalendarSyncService } from './calendar-sync.service';
-import { GoogleApiError, GoogleCalendarClient } from './google-calendar.client';
+import { CALENDAR_SCOPES, GoogleApiError, GoogleCalendarClient } from './google-calendar.client';
 import { GoogleTokensService } from './google-tokens.service';
 
 const WRITABLE = new Set(['owner', 'writer']);
@@ -16,6 +16,15 @@ const WRITABLE = new Set(['owner', 'writer']);
  * Connexion Google Calendar (distincte de Google Sign-In) et choix du calendrier partagé du foyer.
  * Le calendrier est toujours désigné par son `calendarId`, jamais par son nom.
  */
+/** Droits indispensables : sans eux, la synchronisation échouerait plus tard avec un 403. */
+const REQUIRED_SCOPES = CALENDAR_SCOPES.filter((sc) => sc.startsWith('https://'));
+
+export class CalendarScopesMissing extends Error {
+  constructor(granted: string) {
+    super(`Calendar scopes not granted (granted: ${granted || 'none'})`);
+  }
+}
+
 @Injectable()
 export class CalendarConnectionService {
   private readonly logger = new Logger(CalendarConnectionService.name);
@@ -61,6 +70,12 @@ export class CalendarConnectionService {
     const sub = String(claims.sub ?? '');
     const email = String(claims.email ?? '');
     if (!sub) throw new GoogleApiError('bad_request', 400, 'missing id_token');
+    // Écran de consentement granulaire : l'utilisateur peut décocher l'accès au calendrier.
+    const granted = new Set((tokens.scope ?? '').split(' '));
+    if (tokens.scope !== undefined && REQUIRED_SCOPES.some((sc) => !granted.has(sc))) {
+      // Rien n'est enregistré ; pas de révocation (elle couperait aussi une connexion existante).
+      throw new CalendarScopesMissing([...granted].join(' '));
+    }
     const box = this.tokens.secretBox();
     const existing = await this.prisma.googleConnection.findUnique({
       where: { userId_googleSubject: { userId, googleSubject: sub } },

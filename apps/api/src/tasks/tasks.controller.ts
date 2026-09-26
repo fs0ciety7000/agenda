@@ -9,6 +9,7 @@ import {
   Post,
   Query,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import {
@@ -25,6 +26,7 @@ import {
   type SeriesDto,
   UpdateOccurrenceInput,
 } from '@agenda/contracts';
+import { IdempotencyInterceptor } from '../common/idempotency.interceptor';
 import { CurrentHousehold, HouseholdContext } from '../common/request-context';
 import { assertUuid } from '../common/uuid';
 import { ZodPipe } from '../common/zod.pipe';
@@ -38,6 +40,7 @@ export class TasksController {
   constructor(private readonly tasks: TasksService) {}
 
   @Post('tasks')
+  @UseInterceptors(IdempotencyInterceptor)
   create(
     @CurrentHousehold() ctx: HouseholdContext,
     @Body(new ZodPipe(CreateTaskInput)) body: CreateTaskInput,
@@ -46,6 +49,7 @@ export class TasksController {
   }
 
   @Post('tasks/quick')
+  @UseInterceptors(IdempotencyInterceptor)
   quickAdd(
     @CurrentHousehold() ctx: HouseholdContext,
     @Body(new ZodPipe(QuickAddInput)) body: QuickAddInput,

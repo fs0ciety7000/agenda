@@ -179,6 +179,8 @@ export class PrivacyService {
           data: { userId: null, displayName: formerName, role: 'MEMBER', leftAt: new Date() },
         });
       }
+      // Réponses mémorisées pour le rejeu hors ligne (contiennent des titres de tâches).
+      await tx.idempotencyKey.deleteMany({ where: { userId } });
       // Compte, sessions, identités Google, jetons : suppression définitive (cascade).
       await tx.user.delete({ where: { id: userId } });
     });
