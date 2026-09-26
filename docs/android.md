@@ -135,12 +135,25 @@ nom) : l'app relit ensuite ses notifications auprès de l'API, avec les mêmes r
 3. GitHub → *Settings → Secrets and variables → Actions → **Variables*** (pas des secrets : ce sont
    des identifiants publics, déjà présents dans tout APK Firebase) :
 
-   | Variable | Valeur dans `google-services.json` |
-   |---|---|
-   | `FCM_APP_ID` | `client[0].client_info.mobilesdk_app_id` (`1:…:android:…`) |
-   | `FCM_API_KEY` | `client[0].api_key[0].current_key` (`AIza…`) |
-   | `FCM_PROJECT_ID` | `project_info.project_id` |
-   | `FCM_SENDER_ID` | `project_info.project_number` |
+   Recopier les **valeurs** (pas les chemins) depuis `google-services.json` :
+
+   ```jsonc
+   {
+     "project_info": {
+       "project_number": "123456789012",        // → FCM_SENDER_ID = 123456789012
+       "project_id": "agenda-gn"                // → FCM_PROJECT_ID = agenda-gn
+     },
+     "client": [{
+       "client_info": {
+         "mobilesdk_app_id": "1:123456789012:android:0a1b2c3d4e5f6a7b"  // → FCM_APP_ID
+       },
+       "api_key": [{ "current_key": "AIzaSy…" }]                        // → FCM_API_KEY
+     }]
+   }
+   ```
+
+   Le workflow *Android release* vérifie le format de ces valeurs et échoue avec un message clair
+   si l'une d'elles est mal copiée.
 
 4. Firebase → ⚙ *Paramètres du projet → Comptes de service* → **Générer une nouvelle clé privée**
    (fichier JSON). Coolify → variable `FCM_SERVICE_ACCOUNT` = contenu du fichier (tel quel, ou en
