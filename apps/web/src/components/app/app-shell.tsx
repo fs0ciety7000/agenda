@@ -73,7 +73,13 @@ export function AppShell({ children }: { children: ReactNode }) {
         ))}
       </nav>
 
-      <main id="main" className="mx-auto w-full max-w-3xl flex-1 px-4 pb-28 pt-8 md:px-8 md:pb-12">
+      <main
+        id="main"
+        className={cn(
+          'mx-auto w-full flex-1 px-4 pb-28 pt-8 md:px-8 md:pb-12',
+          pathname.startsWith('/calendar') ? 'max-w-6xl' : 'max-w-3xl',
+        )}
+      >
         {me.data && household ? (
           <SessionContext.Provider value={{ me: me.data, household }}>
             {children}

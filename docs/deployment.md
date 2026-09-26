@@ -125,7 +125,8 @@ manquent. Modèle complet : `.env.prod.example`.
 | `AUTH_RATE_LIMIT` | `10` | défaut (connexion, inscription, refresh) |
 | `GLOBAL_RATE_LIMIT` | `600` | défaut (toute l'API, par IP) |
 | `POSTGRES_USER` / `POSTGRES_DB` | `agenda` | défaut |
-| `GOOGLE_*` | vide jusqu'en Phase 4 | cf. §8 |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | facultatif : active « Continuer avec Google » | cf. §9 |
+| `SMTP_*`, `EMAIL_FROM` | facultatif : active « Mot de passe oublié » | cf. §8 |
 | `SENTRY_DSN` | vide jusqu'en Phase 7 | — |
 
 ⚠️ **`TOKEN_ENCRYPTION_KEY` ne doit jamais changer** une fois des comptes Google connectés
@@ -215,18 +216,67 @@ cd apps/android
 
 La signature de l'AAB/APK de production est traitée en Phase 7 (keystore hors dépôt).
 
-## 8. Google Calendar (Phase 4)
+## 8. Emails (mot de passe oublié)
 
-Dans la Google Cloud Console (client OAuth « Application Web ») :
+L'API envoie ses emails en **SMTP standard** : n'importe quel fournisseur convient, sans changer
+le code. Sans `SMTP_HOST`, rien n'est envoyé (le lien « Mot de passe oublié » est alors masqué).
 
-- Origine JavaScript autorisée : `https://agenda.fs0ciety.org`
-- URI de redirection autorisée : `https://agenda.fs0ciety.org/v1/calendar/google/callback`
-- Publier l'app OAuth en **In production** (sinon les refresh tokens expirent au bout de 7 jours, cf. `google-calendar.md`).
+| Fournisseur | Offre gratuite | + | − |
+|---|---|---|---|
+| **Brevo** (recommandé) | 300 emails/jour, sans carte bancaire | Société française, données dans l'UE (RGPD), SMTP simple | Interface un peu chargée |
+| Resend | 3 000/mois (100/jour) | Très simple, bonne délivrabilité | Société américaine |
+| Mailjet | 200/jour | Européen | Quota plus faible |
+| Gmail + mot de passe d'application | 500/jour | Rien à créer | Lie l'app à un compte personnel, délivrabilité moyenne |
 
-Puis renseigner `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `GOOGLE_OAUTH_REDIRECT_URI` dans
-Coolify, et ajouter le service Redis au compose.
+Pour un foyer (quelques emails par an), Brevo est largement suffisant.
 
-## 9. Surveillance
+### 8.1 Brevo, pas à pas
+
+1. Créer un compte gratuit sur brevo.com.
+2. **Senders, Domains & Dedicated IPs → Domains → Add a domain** : `fs0ciety.org`.
+3. Brevo affiche des enregistrements DNS (code Brevo, DKIM, DMARC). Les ajouter dans **Cloudflare →
+   DNS** en **DNS only** (nuage gris : les TXT/CNAME de messagerie ne se proxifient pas), puis
+   « Authenticate » dans Brevo. Si un enregistrement SPF (`v=spf1 …`) existe déjà sur `fs0ciety.org`,
+   y ajouter `include:spf.brevo.com` plutôt que d'en créer un second.
+4. **Senders** : ajouter l'expéditeur `no-reply@fs0ciety.org`.
+5. **SMTP & API → SMTP** : générer une clé SMTP. Renseigner dans Coolify :
+
+| Variable | Valeur |
+|---|---|
+| `SMTP_HOST` | `smtp-relay.brevo.com` |
+| `SMTP_PORT` | `587` |
+| `SMTP_USER` | l'identifiant SMTP affiché par Brevo (`…@smtp-brevo.com`) |
+| `SMTP_PASSWORD` | la clé SMTP |
+| `EMAIL_FROM` | `Agenda G & N <no-reply@fs0ciety.org>` |
+
+6. Redéployer, puis tester « Mot de passe oublié » avec votre adresse.
+
+Resend : `SMTP_HOST=smtp.resend.com`, `SMTP_USER=resend`, `SMTP_PASSWORD=<clé API>`, après
+vérification du domaine de la même façon.
+
+## 9. Google : connexion (Sign-In) et calendrier (Phase 4)
+
+Un seul client OAuth pour les deux usages. Dans la **Google Cloud Console** :
+
+1. Créer un projet (ex. « Agenda G & N »), puis **APIs & Services → OAuth consent screen** :
+   type *External*, nom, logo facultatif, domaine autorisé `fs0ciety.org`, scopes `openid`, `email`,
+   `profile` (Phase 4 : ajouter `calendar.calendarlist.readonly` et `calendar.events`).
+2. **Publier l'application en « In production »** (sinon les refresh tokens expirent au bout de
+   7 jours ; cf. `google-calendar.md`, risque R1). Pour `openid email profile` seuls, aucune
+   vérification Google n'est requise.
+3. **Credentials → Create credentials → OAuth client ID → Web application** :
+   - Authorized JavaScript origins : `https://agenda.fs0ciety.org`
+   - Authorized redirect URIs :
+     - `https://agenda.fs0ciety.org/v1/auth/google/callback` (connexion)
+     - `https://agenda.fs0ciety.org/v1/calendar/google/callback` (Phase 4)
+4. Renseigner `GOOGLE_CLIENT_ID` et `GOOGLE_CLIENT_SECRET` dans Coolify et redéployer : le bouton
+   « Continuer avec Google » apparaît sur les pages de connexion et d'inscription.
+
+Sécurité : un compte Google n'est jamais rattaché automatiquement à un compte existant ayant la
+même adresse (prise de contrôle possible). Pour lier Google à un compte créé avec un mot de passe :
+**Réglages → Données & confidentialité → Lier Google**.
+
+## 10. Surveillance
 
 - **Santé** : `https://agenda.fs0ciety.org/healthz` (web → API → base). À brancher sur un
   moniteur externe (UptimeRobot, Better Stack…) ou les notifications Coolify.
@@ -234,17 +284,18 @@ Coolify, et ajouter le service Redis au compose.
   n'y figure).
 - **Erreurs** : Sentry en Phase 7 (`SENTRY_DSN`).
 
-## 10. Checklist de sécurité
+## 11. Checklist de sécurité
 
 - [ ] Nuage orange actif, SSL **Full (strict)**, Always Use HTTPS.
 - [ ] Seul `web` a un domaine ; `api` et `postgres` n'ont ni domaine ni port publié.
 - [ ] Secrets générés aléatoirement, stockés uniquement dans Coolify (+ gestionnaire de mots de passe).
-- [ ] `REGISTRATION_ENABLED=false` après l'inscription du foyer.
+- [ ] `REGISTRATION_ENABLED=false` après l'inscription du foyer (vaut aussi pour Google Sign-In).
+- [ ] Domaine d'envoi authentifié (DKIM/SPF/DMARC) si les emails sont activés.
 - [ ] Pare-feu : 80/443 limités aux IP Cloudflare ; SSH par clé uniquement.
 - [ ] Dump quotidien actif **et** copie hors serveur ; restauration testée une fois.
 - [ ] Mises à jour de sécurité du serveur et de Coolify planifiées.
 
-## 11. Dépannage
+## 12. Dépannage
 
 | Symptôme | Cause probable | Solution |
 |---|---|---|

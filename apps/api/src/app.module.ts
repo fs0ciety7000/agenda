@@ -9,7 +9,9 @@ import { env } from './config/env';
 import { HealthController } from './health/health.controller';
 import { CategoriesModule } from './categories/categories.module';
 import { HouseholdsModule } from './households/households.module';
+import { MailModule } from './mail/mail.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { PrivacyModule } from './privacy/privacy.module';
 import { TasksModule } from './tasks/tasks.module';
 
 @Module({
@@ -27,10 +29,12 @@ import { TasksModule } from './tasks/tasks.module';
       { name: 'default', ttl: 60_000, limit: () => env().GLOBAL_RATE_LIMIT },
     ]),
     PrismaModule,
+    MailModule,
     AuthModule,
     HouseholdsModule,
     CategoriesModule,
     TasksModule,
+    PrivacyModule,
   ],
   controllers: [HealthController],
   providers: [

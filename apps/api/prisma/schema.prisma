@@ -108,7 +108,8 @@ enum HouseholdRole {
 model HouseholdMember {
   id          String        @id @default(uuid()) @db.Uuid
   householdId String        @db.Uuid
-  userId      String        @db.Uuid
+  /// null = compte supprimé (RGPD) : le membre reste, anonymisé, pour l'historique partagé.
+  userId      String?       @db.Uuid
   role        HouseholdRole @default(MEMBER)
   displayName String        @db.VarChar(40)
   /// Nom d'un token de couleur (sage, ocean…), jamais un hex libre.
@@ -117,7 +118,7 @@ model HouseholdMember {
   leftAt      DateTime?
 
   household            Household                @relation(fields: [householdId], references: [id], onDelete: Cascade)
-  user                 User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user                 User?                    @relation(fields: [userId], references: [id], onDelete: SetNull)
   createdTasks         Task[]                   @relation("TaskCreatedBy")
   rotationSlots        RotationSlot[]
   assignments          OccurrenceAssignee[]

@@ -132,10 +132,18 @@ export class AuthService {
     return !!session && session.userId === userId && !session.revokedAt;
   }
 
+  /** Nouvelle session pour un utilisateur déjà authentifié (Google Sign-In). */
+  startSession(user: User, userAgent?: string): Promise<IssuedTokens> {
+    return this.issue(user, randomUUID(), userAgent);
+  }
+
   async me(userId: string): Promise<MeResponse> {
-    const user = await this.prisma.user.findFirst({ where: { id: userId, deletedAt: null } });
+    const user = await this.prisma.user.findFirst({
+      where: { id: userId, deletedAt: null },
+      include: { identities: { where: { provider: 'GOOGLE' }, select: { id: true } } },
+    });
     if (!user) throw new AppException('UNAUTHENTICATED', HttpStatus.UNAUTHORIZED, 'Unknown user');
-    return toMe(user);
+    return toMe(user, user.identities.length > 0);
   }
 
   private async revokeFamily(familyId: string): Promise<void> {
@@ -166,11 +174,13 @@ export class AuthService {
   }
 }
 
-function toMe(user: User): MeResponse {
+function toMe(user: User, googleLinked = false): MeResponse {
   return {
     id: user.id,
     email: user.email,
     displayName: user.displayName,
     locale: user.locale === 'en' ? 'en' : 'fr',
+    hasPassword: user.passwordHash !== null,
+    googleLinked,
   };
 }

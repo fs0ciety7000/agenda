@@ -124,7 +124,7 @@ Redis + **BullMQ** (demandé, et adapté : retries, backoff exponentiel, jobs r�
 Files :
 - `calendar-sync` — un job par occurrence à synchroniser (`jobId = occ:<id>:v<syncVersion>` → dédoublonnage).
 - `calendar-reconcile` — toutes les 6 h par foyer + à la demande.
-- `occurrence-horizon` — quotidien : étend les séries.
+- `occurrence-horizon` — quotidien : étend les séries (en attendant BullMQ, la matérialisation est faite paresseusement avant chaque lecture, cf. `roadmap.md` Phase 3).
 - `notifications` — rappels planifiés.
 
 **V1 : le worker tourne dans le même process que l'API** (variable `RUN_WORKERS=true`) pour réduire le coût (1 service). Séparation en service dédié = changement de config, pas de code.

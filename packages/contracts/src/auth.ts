@@ -31,6 +31,9 @@ export const MeResponse = z.object({
   email: z.string(),
   displayName: z.string(),
   locale: Locale,
+  /** Faux pour un compte créé via Google uniquement. */
+  hasPassword: z.boolean(),
+  googleLinked: z.boolean(),
 });
 export type MeResponse = z.infer<typeof MeResponse>;
 
@@ -42,3 +45,26 @@ export const AuthResponse = z.object({
   accessTokenExpiresIn: z.number().int(),
 });
 export type AuthResponse = z.infer<typeof AuthResponse>;
+
+export const ForgotPasswordInput = z.object({ email: Email });
+export type ForgotPasswordInput = z.infer<typeof ForgotPasswordInput>;
+
+export const ResetPasswordInput = z.object({
+  token: z.string().min(20).max(200),
+  password: Password,
+});
+export type ResetPasswordInput = z.infer<typeof ResetPasswordInput>;
+
+export const AuthProvidersDto = z.object({
+  google: z.boolean(),
+  registration: z.boolean(),
+  passwordReset: z.boolean(),
+});
+export type AuthProvidersDto = z.infer<typeof AuthProvidersDto>;
+
+/** Suppression du compte : mot de passe (comptes avec mot de passe) ou confirmation explicite. */
+export const DeleteAccountInput = z.object({
+  password: z.string().max(128).optional(),
+  confirm: z.literal('SUPPRIMER').or(z.literal('DELETE')).optional(),
+});
+export type DeleteAccountInput = z.infer<typeof DeleteAccountInput>;

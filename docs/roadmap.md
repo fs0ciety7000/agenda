@@ -8,8 +8,8 @@ Une phase n'est « terminée » que si la CI est verte et la documentation à jo
 | **0 — Discovery** | PRD, architecture, BDD, Google Calendar, design system, roadmap, risques | Docs relus et validés par Grace & Nicolas | ✅ Livré (à valider) |
 | **1 — Foundation** | Monorepo, CI, Docker Compose (Postgres/Redis), API NestJS + Prisma (schéma complet), auth email/mdp (sessions, refresh rotatif), foyers + isolation, web Next.js (tokens, i18n, login/inscription, shell), squelette Android | `pnpm test` vert (unit + intégration), `pnpm build` vert, CI verte | ✅ Livré (cf. §Phase 1) |
 | **2 — Core Tasks** | CRUD tâches ponctuelles, catégories, attribution, statuts, dashboard « Aujourd'hui », vue Tâches + filtres + recherche, quick add (parseur FR/EN déterministe) | E2E Playwright : créer → cocher | ✅ Livré (cf. §Phase 2) |
-| **2b — Compte & RGPD** | Google Sign-In, réinitialisation du mot de passe (fournisseur d'emails à choisir), export / suppression de compte, client API typé généré depuis l'OpenAPI | Tests d'intégration + E2E | ⏳ |
-| **3 — Récurrence & rotation** | `packages/domain` : moteur RRULE-subset, DST, rotation (slots, par semaine, par jour), matérialisation 90 j, exceptions, split de série, 3 modes d'édition | Couverture domaine ≥ 95 %, tests critiques §29 | ⏳ |
+| **2b — Compte & RGPD** | Google Sign-In, réinitialisation du mot de passe (SMTP générique, Brevo recommandé), export / suppression de compte | Tests d'intégration + E2E | ✅ Livré (cf. §Phase 3 & 2b) |
+| **3 — Récurrence & rotation** | `packages/domain` : moteur RRULE-subset, DST, rotation (slots, par semaine, par jour), matérialisation 90 j, exceptions, split de série, 3 modes d'édition | Couverture domaine ≥ 95 %, tests critiques §29 | ✅ Livré (98,6 % des lignes) |
 | **4 — Google Calendar** | OAuth calendrier, sélection « Commun G & N », `GoogleCalendarSyncService`, BullMQ, retry/backoff, réconciliation, erreurs humaines | Suite fake Google verte + recette manuelle sur « Commun G & N » | ⏳ |
 | **5 — Android** | Compose : navigation, dashboard, tâches, calendrier, création rapide, Room + outbox + WorkManager, notifications locales | Tests Compose + instrumentation ; APK de recette | ⏳ |
 | **6 — Polish** | Drag & drop calendrier, animations, accessibilité (audit axe + TalkBack), dark mode fin, onboarding complet, statistiques, notifications & préférences | Audit a11y sans violation AA | ⏳ |
@@ -75,3 +75,58 @@ Syntaxe du quick add : `demain`, `après-demain`, `lundi`…`dimanche [prochain]
 `12/10`, `12 octobre`, `19h`, `19h30`, `19:30`, `midi`, `ce soir` (19:00), `pendant 45 min`, `30 min`,
 `@grace`, `@nicolas`, `@nous`, `#courses`, `!` (haute), `!!` (urgente) — et l'équivalent anglais.
 La récurrence (« chaque samedi ») arrive avec le moteur de la Phase 3.
+
+## Phase 3 & 2b — détail de ce qui est livré
+
+**Récurrence & rotation** (`packages/domain`, 81 tests, couverture 98,6 % des lignes, seuil 95 % en CI)
+- Règles : chaque jour / tous les N jours, jours ouvrés, chaque semaine ou toutes les N semaines sur
+  des jours choisis, chaque mois le J ou le dernier jour, tous les N mois, chaque année ; fin à une
+  date ou après N fois. Les mois sans le 31 et les 29 février hors années bissextiles sont ignorés
+  (RFC 5545).
+- Rotation déterministe : fixe, à deux, chacun son tour, séquence personnalisée (G, G, N, N),
+  selon le jour de la semaine, avance par occurrence ou par semaine ; reprise au même tour après un
+  découpage de série.
+
+**API des séries**
+- Matérialisation **paresseuse** (horizon 90 jours, jusqu'à 400 jours à la demande) : avant chaque
+  lecture, verrou consultatif PostgreSQL par série, génération idempotente. Remplace le job quotidien
+  prévu (ADR-004) tant qu'aucune file de jobs n'existe ; un job BullMQ s'y ajoutera en Phase 4.
+- Modifier / supprimer : *cette occurrence* (exception, jamais recalculée), *celle-ci et les
+  suivantes* (la série est coupée, une nouvelle tâche prend le relais, l'historique reste intact),
+  *toute la série* (régénération **en conservant les identifiants** des occurrences : indispensable
+  pour ne pas recréer les événements Google en Phase 4).
+- Liste des tâches récurrentes avec prochaine date, aperçu de rotation, conversion d'une tâche
+  ponctuelle en tâche récurrente, concurrence optimiste.
+
+**Compte & RGPD (2b)**
+- Mot de passe oublié : lien à usage unique valable 30 min, les précédents invalidés, toutes les
+  sessions révoquées après changement, aucune énumération des comptes.
+- Google Sign-In (OIDC, code + PKCE, `state`, `nonce`, jeton d'identité vérifié) ; jamais de
+  rattachement automatique par email, liaison explicite depuis les Réglages.
+- Export JSON des données ; suppression immédiate du compte : données personnelles effacées,
+  membre anonymisé (« Ancien membre ») dans les foyers partagés, propriété transférée, foyer
+  supprimé si l'utilisateur en était le seul membre.
+
+**Web**
+- Formulaire : répétition (préréglages + personnalisé), jours de la semaine, fin, rotation
+  (fixe, chacun son tour, personnalisée, selon le jour, par semaine) avec aperçu des 5 prochaines
+  occurrences calculé par l'API ; choix de la portée à l'enregistrement et à la suppression.
+- Onglet « Récurrentes », indicateur ↻ sur les tâches, vue **Calendrier** jour / semaine / mois
+  (blocs horaires, chevauchements, ligne de l'heure actuelle, création en cliquant sur un créneau).
+- Pages « Mot de passe oublié » et « Nouveau mot de passe », bouton « Continuer avec Google »,
+  Réglages « Données & confidentialité » (lier Google, exporter, supprimer le compte).
+- Sécurité : Next.js 15.5.26 et React 19.2.8 (correctif CVE-2025-66478).
+
+Vérifié : 81 tests domaine, 12 contracts, 65 API (dont récurrence, portées, concurrence,
+Google Sign-In simulé, RGPD, pas d'énumération des comptes), 14 E2E Playwright (desktop + mobile),
+rejoués aussi contre les images Docker de production.
+
+Trouvé et corrigé pendant les tests : le jour de répétition ne suivait pas la date choisie après
+ouverture du formulaire ; « mot de passe oublié » révélait l'existence d'un compte (réponse 500 en
+cas de panne SMTP, temps de réponse plus long) — tout le traitement est désormais en arrière-plan ;
+la directive `# syntax=` des Dockerfiles, inutile, imposait un téléchargement Docker Hub à chaque
+build (retirée).
+
+Décision : le client API généré depuis l'OpenAPI est abandonné pour l'instant (les schémas Zod
+de `packages/contracts` typent déjà le web ; l'OpenAPI actuel est pauvre car l'API valide par Zod
+et non par classes). À réévaluer pour Android en Phase 5.

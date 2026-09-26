@@ -1,6 +1,13 @@
 import { NextResponse, type NextRequest } from 'next/server';
 
-const PUBLIC_PATHS = ['/login', '/register', '/invite', '/healthz'];
+const PUBLIC_PATHS = [
+  '/login',
+  '/register',
+  '/invite',
+  '/healthz',
+  '/forgot-password',
+  '/reset-password',
+];
 
 /**
  * Garde-fou de navigation uniquement (l'autorisation réelle est faite par l'API) :

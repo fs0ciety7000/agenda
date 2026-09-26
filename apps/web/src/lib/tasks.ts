@@ -7,7 +7,11 @@ import type {
   CreateTaskInput,
   OccurrenceDto,
   OccurrenceQuery,
+  EditScope,
   QuickAddPreview,
+  RecurrencePreviewInput,
+  RecurrencePreviewItem,
+  SeriesDto,
   UpdateCategoryInput,
   UpdateOccurrenceInput,
 } from '@agenda/contracts';
@@ -21,6 +25,8 @@ export const taskKeys = {
   occurrences: (hid: string, q?: ListQuery) => ['households', hid, 'occurrences', q ?? {}] as const,
   balance: (hid: string) => ['households', hid, 'balance'] as const,
   categories: (hid: string) => ['households', hid, 'categories'] as const,
+  series: (hid: string) => ['households', hid, 'series'] as const,
+  seriesDetail: (hid: string, id: string) => ['households', hid, 'series', id] as const,
 };
 
 function qs(q: ListQuery): string {
@@ -59,6 +65,7 @@ function useInvalidateTasks(hid: string) {
     Promise.all([
       qc.invalidateQueries({ queryKey: ['households', hid, 'occurrences'] }),
       qc.invalidateQueries({ queryKey: taskKeys.balance(hid) }),
+      qc.invalidateQueries({ queryKey: taskKeys.series(hid) }),
     ]);
 }
 
@@ -87,11 +94,17 @@ export const parseQuickAdd = (hid: string, text: string, signal?: AbortSignal) =
     signal,
   });
 
+const scopeQs = (scope?: EditScope) => (scope ? `?scope=${scope}` : '');
+
 export function useUpdateOccurrence(hid: string) {
   const invalidate = useInvalidateTasks(hid);
   return useMutation({
-    mutationFn: ({ id, ...input }: UpdateOccurrenceInput & { id: string }) =>
-      api<OccurrenceDto>(`/v1/households/${hid}/occurrences/${id}`, {
+    mutationFn: ({
+      id,
+      scope,
+      ...input
+    }: UpdateOccurrenceInput & { id: string; scope?: EditScope }) =>
+      api<OccurrenceDto>(`/v1/households/${hid}/occurrences/${id}${scopeQs(scope)}`, {
         method: 'PATCH',
         json: input,
       }),
@@ -102,11 +115,36 @@ export function useUpdateOccurrence(hid: string) {
 export function useDeleteOccurrence(hid: string) {
   const invalidate = useInvalidateTasks(hid);
   return useMutation({
-    mutationFn: (id: string) =>
-      api<void>(`/v1/households/${hid}/occurrences/${id}`, { method: 'DELETE' }),
+    mutationFn: ({ id, scope }: { id: string; scope?: EditScope }) =>
+      api<void>(`/v1/households/${hid}/occurrences/${id}${scopeQs(scope)}`, { method: 'DELETE' }),
     onSettled: invalidate,
   });
 }
+
+export const useSeriesList = (hid: string) =>
+  useQuery({
+    queryKey: taskKeys.series(hid),
+    queryFn: () => api<SeriesDto[]>(`/v1/households/${hid}/series`),
+  });
+
+export const useSeriesDetail = (hid: string, id: string | null | undefined) =>
+  useQuery({
+    queryKey: taskKeys.seriesDetail(hid, id ?? ''),
+    queryFn: () => api<SeriesDto>(`/v1/households/${hid}/series/${id}`),
+    enabled: Boolean(id),
+    staleTime: 0,
+  });
+
+export const previewRecurrence = (
+  hid: string,
+  input: RecurrencePreviewInput,
+  signal?: AbortSignal,
+) =>
+  api<RecurrencePreviewItem[]>(`/v1/households/${hid}/recurrence/preview`, {
+    method: 'POST',
+    json: input,
+    signal,
+  });
 
 /** Cocher / décocher : mise à jour optimiste immédiate de toutes les listes affichées. */
 export function useToggleDone(hid: string) {

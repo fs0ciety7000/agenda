@@ -39,7 +39,8 @@ export type AcceptInvitationInput = z.infer<typeof AcceptInvitationInput>;
 
 export const HouseholdMemberDto = z.object({
   id: z.uuid(),
-  userId: z.uuid(),
+  /** null = ancien membre dont le compte a été supprimé. */
+  userId: z.uuid().nullable(),
   displayName: z.string(),
   role: HouseholdRole,
   color: MemberColor,

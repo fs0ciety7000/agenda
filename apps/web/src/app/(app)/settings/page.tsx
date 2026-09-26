@@ -4,10 +4,11 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CalendarDays } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useSession } from '@/components/app/household-context';
 import { CategoriesSettings } from '@/components/app/categories-settings';
 import { InviteLink } from '@/components/app/invite-link';
+import { PrivacySettings } from '@/components/app/privacy-settings';
 import { MemberAvatar } from '@/components/app/member-avatar';
 import { Button } from '@/components/ui/button';
 import { Card, SectionTitle } from '@/components/ui/card';
@@ -97,6 +98,15 @@ export default function SettingsPage() {
             </button>
           ))}
         </div>
+      </section>
+
+      <section className="flex flex-col gap-3" aria-labelledby="s-privacy">
+        <SectionTitle id="s-privacy">{t('privacy')}</SectionTitle>
+        <Card>
+          <Suspense>
+            <PrivacySettings />
+          </Suspense>
+        </Card>
       </section>
 
       <section className="flex flex-col gap-3" aria-labelledby="s-account">

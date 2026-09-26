@@ -24,7 +24,19 @@
     "noAccount": "Pas encore de compte ?",
     "hasAccount": "Déjà un compte ?",
     "toRegister": "Créer un compte",
-    "toLogin": "Se connecter"
+    "toLogin": "Se connecter",
+    "forgot": "Mot de passe oublié ?",
+    "or": "ou",
+    "google": "Continuer avec Google",
+    "forgotTitle": "Mot de passe oublié",
+    "forgotSubtitle": "Indiquez votre adresse : si un compte existe, vous recevrez un lien pour choisir un nouveau mot de passe.",
+    "forgotSent": "Si un compte existe pour cette adresse, un email vient de partir. Le lien est valable 30 minutes.",
+    "forgotSubmit": "Envoyer le lien",
+    "backToLogin": "Retour à la connexion",
+    "resetTitle": "Nouveau mot de passe",
+    "resetDone": "Mot de passe modifié. Par sécurité, vous avez été déconnecté·e de tous vos appareils.",
+    "newPassword": "Nouveau mot de passe",
+    "resetSubmit": "Enregistrer"
   },
   "errors": {
     "VALIDATION_FAILED": "Certains champs sont invalides.",
@@ -45,7 +57,13 @@
     "required": "Champ requis.",
     "CATEGORY_NAME_TAKEN": "Une catégorie porte déjà ce nom.",
     "TASK_TITLE_REQUIRED": "Ajoutez un titre à la tâche.",
-    "VERSION_CONFLICT": "Cette tâche a été modifiée entre-temps."
+    "VERSION_CONFLICT": "Cette tâche a été modifiée entre-temps.",
+    "GOOGLE_FAILED": "La connexion avec Google n'a pas abouti. Réessayez.",
+    "GOOGLE_EMAIL_EXISTS": "Un compte existe déjà avec cette adresse. Connectez-vous avec votre mot de passe, puis liez Google dans les Réglages.",
+    "GOOGLE_NOT_CONFIGURED": "La connexion avec Google n'est pas disponible.",
+    "GOOGLE_ALREADY_LINKED": "Ce compte Google est déjà lié à un autre compte.",
+    "RESET_TOKEN_INVALID": "Ce lien n'est plus valable. Demandez-en un nouveau.",
+    "CONFIRMATION_REQUIRED": "Confirmation incorrecte."
   },
   "today": {
     "greeting": "Bonjour {name} 👋",
@@ -99,7 +117,8 @@
     "account": "Compte",
     "logout": "Se déconnecter",
     "logoutAll": "Se déconnecter de tous les appareils",
-    "categories": "Catégories"
+    "categories": "Catégories",
+    "privacy": "Données & confidentialité"
   },
   "common": {
     "loading": "Chargement…",
@@ -160,8 +179,11 @@
       "priority": "Priorité",
       "notes": "Notes",
       "personal": "Tâche personnelle",
-      "personalHint": "Visible uniquement par vous."
-    }
+      "personalHint": "Visible uniquement par vous.",
+      "occurrenceDate": "Date (cette fois)"
+    },
+    "recurring": "Tâche récurrente",
+    "recurrenceNeedsDate": "Choisissez une date de début pour une tâche répétée."
   },
   "balance": {
     "bothOfUs": "À deux",
@@ -187,7 +209,8 @@
       "done": "Terminées",
       "personal": "Personnelles",
       "shared": "Partagées",
-      "together": "À deux"
+      "together": "À deux",
+      "recurring": "Récurrentes"
     },
     "filters": {
       "person": "Personne",
@@ -196,7 +219,10 @@
       "allCategories": "Toutes les catégories",
       "priority": "Priorité",
       "allPriorities": "Toutes priorités"
-    }
+    },
+    "noSeries": "Aucune tâche récurrente.",
+    "noSeriesBody": "Créez une tâche et choisissez « Répéter » pour qu'elle revienne automatiquement.",
+    "next": "prochaine : {date}"
   },
   "categories": {
     "emoji": "Emoji",
@@ -208,5 +234,128 @@
     "confirmDelete": "Supprimer la catégorie « {name} » ? Les tâches concernées resteront, sans catégorie.",
     "add": "Nouvelle catégorie",
     "addButton": "Ajouter"
+  },
+  "recurrence": {
+    "legend": "Répétition",
+    "repeat": "Répéter",
+    "needsDate": "Choisissez d'abord une date de début.",
+    "every": "Tous les",
+    "unit": "Unité",
+    "days": "Jours",
+    "monthDay": "Jour du mois",
+    "onDay": "Le {day}",
+    "lastDay": "Le dernier jour du mois",
+    "ends": "Fin",
+    "endNever": "Jamais",
+    "endUntil": "À une date",
+    "endCount": "Après un nombre de fois",
+    "untilDate": "Jusqu'au",
+    "times": "Nombre de fois",
+    "rotation": "Qui s'en occupe ?",
+    "startsWith": "Commence par",
+    "steps": "Ordre de rotation",
+    "step": "Tour {n}",
+    "removeStep": "Retirer le tour {n}",
+    "addStep": "Ajouter un tour",
+    "perWeek": "Changer de responsable chaque semaine plutôt qu'à chaque fois",
+    "next": "Prochaines fois",
+    "noOccurrence": "Cette répétition ne produit aucune date.",
+    "bothOfUs": "Nous deux",
+    "everyone": "Tout le monde",
+    "eachInTurn": "Chacun son tour",
+    "presets": {
+      "none": "Ne pas répéter",
+      "daily": "Chaque jour",
+      "weekdays": "Chaque jour ouvré",
+      "weekly": "Chaque semaine",
+      "biweekly": "Toutes les 2 semaines",
+      "monthly": "Chaque mois",
+      "quarterly": "Tous les 3 mois",
+      "yearly": "Chaque année",
+      "custom": "Personnalisé…"
+    },
+    "units": {
+      "day": "{n, plural, one {jour} other {jours}}",
+      "week": "{n, plural, one {semaine} other {semaines}}",
+      "month": "mois",
+      "year": "{n, plural, one {an} other {ans}}"
+    },
+    "rotationKinds": {
+      "fixed": "Responsable fixe (ci-dessus)",
+      "alternate": "Chacun son tour",
+      "sequence": "Rotation personnalisée",
+      "weekday": "Selon le jour"
+    },
+    "summary": {
+      "daily": "{n, plural, one {Chaque jour} other {Tous les # jours}}",
+      "weekdays": "Chaque jour ouvré",
+      "weekly": "{n, plural, one {Chaque semaine} other {Toutes les # semaines}} le {days}",
+      "monthly": "{n, plural, one {Chaque mois} other {Tous les # mois}} le {day}",
+      "monthlyLast": "{n, plural, one {Chaque mois} other {Tous les # mois}}, le dernier jour",
+      "yearly": "{n, plural, one {Chaque année} other {Tous les # ans}}"
+    },
+    "rotationSummary": {
+      "unassigned": "à définir",
+      "fixed": "{name}",
+      "together": "{names} ensemble",
+      "alternate": "chacun son tour : {names}",
+      "sequence": "rotation : {steps}",
+      "weekday": "selon le jour"
+    }
+  },
+  "scope": {
+    "saveQuestion": "Cette tâche se répète. Que voulez-vous modifier ?",
+    "deleteQuestion": "Cette tâche se répète. Que voulez-vous supprimer ?",
+    "save": {
+      "this": "Uniquement cette occurrence",
+      "following": "Cette occurrence et les suivantes",
+      "all": "Toute la série"
+    },
+    "delete": {
+      "this": "Uniquement cette occurrence",
+      "following": "Cette occurrence et les suivantes",
+      "all": "Toute la série"
+    },
+    "cancel": "Annuler",
+    "confirmSave": "Enregistrer",
+    "confirmDelete": "Supprimer"
+  },
+  "calendar": {
+    "today": "Aujourd'hui",
+    "previous": "Période précédente",
+    "next": "Période suivante",
+    "view": "Vue",
+    "views": {
+      "day": "Jour",
+      "week": "Semaine",
+      "month": "Mois"
+    },
+    "weekOf": "Semaine du {date}",
+    "allDay": "Journée",
+    "createAt": "Nouvelle tâche à {time}",
+    "openDay": "Voir le {date}",
+    "more": "+{count} autres"
+  },
+  "privacy": {
+    "google": "Connexion avec Google",
+    "googleOn": "Votre compte Google est lié.",
+    "googleOff": "Liez votre compte Google pour vous connecter en un clic.",
+    "linkGoogle": "Lier Google",
+    "googleLinked": "Compte Google lié.",
+    "export": "Exporter mes données",
+    "exportHint": "Toutes vos données dans un fichier JSON lisible.",
+    "exportButton": "Télécharger",
+    "delete": "Supprimer mon compte",
+    "deleteHint": "Définitif. Le foyer reste disponible pour les autres membres.",
+    "deleteButton": "Supprimer…",
+    "deleteTitle": "Supprimer votre compte ?",
+    "deleteWhat1": "Votre compte, vos sessions et vos tâches personnelles sont effacés immédiatement.",
+    "deleteWhat2": "Les tâches partagées restent au foyer ; vous y apparaîtrez comme « Ancien membre ».",
+    "deleteWhat3": "Cette action est irréversible. Pensez à exporter vos données avant.",
+    "password": "Votre mot de passe",
+    "typeToConfirm": "Tapez {word} pour confirmer",
+    "confirmWord": "SUPPRIMER",
+    "cancel": "Annuler",
+    "confirmDelete": "Supprimer définitivement"
   }
 }

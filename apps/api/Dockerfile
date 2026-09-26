@@ -1,4 +1,3 @@
-# syntax=docker/dockerfile:1
 # Image de l'API NestJS. Contexte de build : racine du monorepo.
 
 FROM node:22-alpine AS base
