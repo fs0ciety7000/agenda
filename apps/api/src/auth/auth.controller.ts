@@ -13,10 +13,12 @@ import { ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
 import {
   type AuthResponse,
+  ForgotPasswordInput,
   LoginInput,
   type MeResponse,
   RefreshInput,
   RegisterInput,
+  ResetPasswordInput,
 } from '@agenda/contracts';
 import type { Request, Response } from 'express';
 import { AppException } from '../common/app-exception';
@@ -25,6 +27,7 @@ import { AuthUser, CurrentUser, Public } from '../common/request-context';
 import { ZodPipe } from '../common/zod.pipe';
 import { AuthService, IssuedTokens } from './auth.service';
 import { clearAuthCookies, REFRESH_COOKIE, setAuthCookies } from './cookies';
+import { PasswordResetService } from './password-reset.service';
 
 /** `X-Client: mobile` → tokens dans le corps ; sinon cookies httpOnly (web). */
 const isMobile = (client?: string) => client === 'mobile';
@@ -33,7 +36,10 @@ const AUTH_THROTTLE = { default: { limit: () => env().AUTH_RATE_LIMIT, ttl: 60_0
 @ApiTags('auth')
 @Controller({ version: '1' })
 export class AuthController {
-  constructor(private readonly auth: AuthService) {}
+  constructor(
+    private readonly auth: AuthService,
+    private readonly passwordReset: PasswordResetService,
+  ) {}
 
   @Public()
   @Throttle(AUTH_THROTTLE)
@@ -101,6 +107,29 @@ export class AuthController {
     @Res({ passthrough: true }) res: Response,
   ): Promise<void> {
     await this.auth.logoutAll(user.userId);
+    clearAuthCookies(res);
+  }
+
+  /** Toujours 202 : ne révèle pas si un compte existe pour cet email. */
+  @Public()
+  @Throttle(AUTH_THROTTLE)
+  @Post('auth/password/forgot')
+  @HttpCode(202)
+  async forgotPassword(
+    @Body(new ZodPipe(ForgotPasswordInput)) body: ForgotPasswordInput,
+  ): Promise<void> {
+    await this.passwordReset.request(body.email);
+  }
+
+  @Public()
+  @Throttle(AUTH_THROTTLE)
+  @Post('auth/password/reset')
+  @HttpCode(204)
+  async resetPassword(
+    @Body(new ZodPipe(ResetPasswordInput)) body: ResetPasswordInput,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<void> {
+    await this.passwordReset.reset(body.token, body.password);
     clearAuthCookies(res);
   }
 

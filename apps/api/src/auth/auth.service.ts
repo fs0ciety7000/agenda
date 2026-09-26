@@ -132,6 +132,11 @@ export class AuthService {
     return !!session && session.userId === userId && !session.revokedAt;
   }
 
+  /** Nouvelle session pour un utilisateur déjà authentifié (Google Sign-In). */
+  startSession(user: User, userAgent?: string): Promise<IssuedTokens> {
+    return this.issue(user, randomUUID(), userAgent);
+  }
+
   async me(userId: string): Promise<MeResponse> {
     const user = await this.prisma.user.findFirst({ where: { id: userId, deletedAt: null } });
     if (!user) throw new AppException('UNAUTHENTICATED', HttpStatus.UNAUTHORIZED, 'Unknown user');

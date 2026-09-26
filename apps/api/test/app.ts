@@ -8,11 +8,15 @@ loadTestEnv();
 
 export const CSRF = { 'x-requested-with': 'agenda-gn' } as const;
 
-export async function createTestApp(): Promise<INestApplication> {
+export async function createTestApp(
+  overrides: { provide: unknown; useValue: unknown }[] = [],
+): Promise<INestApplication> {
   // Import après loadTestEnv() : env() est lu à l'initialisation des modules.
   const { AppModule } = await import('../src/app.module');
   const { configureApp } = await import('../src/bootstrap');
-  const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
+  let builder = Test.createTestingModule({ imports: [AppModule] });
+  for (const o of overrides) builder = builder.overrideProvider(o.provide).useValue(o.useValue);
+  const moduleRef = await builder.compile();
   const app = moduleRef.createNestApplication({ logger: false });
   configureApp(app);
   await app.init();

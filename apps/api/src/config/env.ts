@@ -33,6 +33,15 @@ const EnvSchema = z.object({
   GLOBAL_RATE_LIMIT: z.coerce.number().int().min(1).default(600),
   /** Requêtes/minute/IP sur login, inscription, refresh. */
   AUTH_RATE_LIMIT: z.coerce.number().int().min(1).default(10),
+  // ── Emails (SMTP générique : Brevo, Resend, Mailjet…). Sans SMTP_HOST : aucun envoi (journalisé). ──
+  SMTP_HOST: z.string().optional(),
+  SMTP_PORT: z.coerce.number().int().default(587),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASSWORD: z.string().optional(),
+  EMAIL_FROM: z.string().default('Agenda G & N <no-reply@example.invalid>'),
+  // ── Google Sign-In (OIDC). Sans identifiants : le bouton est masqué. ──
+  GOOGLE_CLIENT_ID: z.string().optional(),
+  GOOGLE_CLIENT_SECRET: z.string().optional(),
   /** Inscriptions ouvertes. À passer à false une fois les membres du foyer inscrits. */
   REGISTRATION_ENABLED: z
     .enum(['true', 'false'])
