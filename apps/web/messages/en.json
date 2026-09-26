@@ -72,7 +72,9 @@
     "GOOGLE_FLOW_EXPIRED": "The Google sign-in expired or was opened in another browser. Start “Connect Google Calendar” again from this browser.",
     "GOOGLE_DENIED": "You cancelled on the Google screen. Nothing was connected.",
     "GOOGLE_SCOPES_MISSING": "Google did not grant access to your calendar. Try again and tick both boxes (see your calendars, manage events) on the Google screen.",
-    "GOOGLE_CALENDAR_FAILED": "Google refused the connection. Try again; if it keeps failing, the server configuration needs checking (API logs)."
+    "GOOGLE_CALENDAR_FAILED": "Google refused the connection. Try again; if it keeps failing, the server configuration needs checking (API logs).",
+    "CURRENT_PASSWORD_INVALID": "Current password is incorrect.",
+    "PASSWORD_REQUIRED": "Set a password first."
   },
   "today": {
     "greeting": "Hello {name} 👋",
@@ -371,7 +373,13 @@
     "typeToConfirm": "Type {word} to confirm",
     "confirmWord": "DELETE",
     "cancel": "Cancel",
-    "confirmDelete": "Delete permanently"
+    "confirmDelete": "Delete permanently",
+    "unlinkGoogle": "Unlink",
+    "unlinkTitle": "Unlink this Google account?",
+    "unlinkBody": "You will no longer be able to sign in with this Google account. You can then link another one (“Link Google” button). Your account, tasks and Google Calendar are not affected.",
+    "unlinkConfirm": "Unlink",
+    "googleUnlinked": "Google account unlinked. You can now link the right one.",
+    "unlinkNeedsPassword": "To unlink Google, first set a password (Account section), otherwise you could no longer sign in."
   },
   "calendarSync": {
     "notConfigured": "Google Calendar is not enabled on this server.",
@@ -413,5 +421,20 @@
       "CALENDAR_RATE_LIMITED": "Google is temporarily limiting requests. Sync will resume automatically.",
       "CALENDAR_UNAVAILABLE": "Google Calendar is temporarily unavailable. Sync with “{calendar}” will resume automatically."
     }
+  },
+  "password": {
+    "changeTitle": "Password",
+    "changeHint": "Other signed-in devices will have to sign in again.",
+    "setTitle": "Set a password",
+    "setHint": "Your account signs in with Google. A password also lets you sign in without Google (and in the Android app).",
+    "current": "Current password",
+    "new": "New password",
+    "confirm": "Confirm new password",
+    "rule": "At least 10 characters. A short sentence works well.",
+    "mismatch": "The two passwords don't match.",
+    "submitChange": "Change password",
+    "submitSet": "Set password",
+    "changed": "Password changed. Other devices have been signed out.",
+    "set": "Password set."
   }
 }

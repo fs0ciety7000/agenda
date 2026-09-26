@@ -1,8 +1,9 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Prisma, type User } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
-import type { LoginInput, MeResponse, RegisterInput } from '@agenda/contracts';
+import type { ChangePasswordInput, LoginInput, MeResponse, RegisterInput } from '@agenda/contracts';
 import { AppException } from '../common/app-exception';
+import type { AuthUser } from '../common/request-context';
 import { randomToken, sha256Hex } from '../common/crypto';
 import { env } from '../config/env';
 import { PrismaService } from '../prisma/prisma.service';
@@ -130,6 +131,52 @@ export class AuthService {
       select: { userId: true, revokedAt: true },
     });
     return !!session && session.userId === userId && !session.revokedAt;
+  }
+
+  /**
+   * Changement de mot de passe depuis les Réglages. Les autres appareils sont déconnectés ;
+   * la session en cours reste ouverte.
+   */
+  async changePassword(user: AuthUser, input: ChangePasswordInput): Promise<void> {
+    const current = await this.prisma.user.findFirst({
+      where: { id: user.userId, deletedAt: null },
+    });
+    if (!current)
+      throw new AppException('UNAUTHENTICATED', HttpStatus.UNAUTHORIZED, 'Unknown user');
+    if (current.passwordHash) {
+      const ok =
+        input.currentPassword !== undefined &&
+        (await this.passwords.verify(current.passwordHash, input.currentPassword));
+      if (!ok) {
+        throw new AppException(
+          'CURRENT_PASSWORD_INVALID',
+          HttpStatus.BAD_REQUEST,
+          'Current password is incorrect',
+        );
+      }
+    }
+    const passwordHash = await this.passwords.hash(input.newPassword);
+    await this.prisma.$transaction([
+      this.prisma.user.update({ where: { id: current.id }, data: { passwordHash } }),
+      this.prisma.session.updateMany({
+        where: { userId: current.id, revokedAt: null, id: { not: user.sessionId } },
+        data: { revokedAt: new Date() },
+      }),
+    ]);
+  }
+
+  /** Délier « Continuer avec Google » (ex. mauvais compte). Impossible sans mot de passe. */
+  async unlinkGoogle(userId: string): Promise<void> {
+    const user = await this.prisma.user.findFirst({ where: { id: userId, deletedAt: null } });
+    if (!user) throw new AppException('UNAUTHENTICATED', HttpStatus.UNAUTHORIZED, 'Unknown user');
+    if (!user.passwordHash) {
+      throw new AppException(
+        'PASSWORD_REQUIRED',
+        HttpStatus.CONFLICT,
+        'Set a password before unlinking Google',
+      );
+    }
+    await this.prisma.authIdentity.deleteMany({ where: { userId, provider: 'GOOGLE' } });
   }
 
   /** Nouvelle session pour un utilisateur déjà authentifié (Google Sign-In). */

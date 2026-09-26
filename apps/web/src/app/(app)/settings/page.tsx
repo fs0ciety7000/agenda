@@ -8,6 +8,7 @@ import { useSession } from '@/components/app/household-context';
 import { CalendarSettings } from '@/components/app/calendar-settings';
 import { CategoriesSettings } from '@/components/app/categories-settings';
 import { InviteLink } from '@/components/app/invite-link';
+import { PasswordSettings } from '@/components/app/password-settings';
 import { PrivacySettings } from '@/components/app/privacy-settings';
 import { MemberAvatar } from '@/components/app/member-avatar';
 import { Button } from '@/components/ui/button';
@@ -112,6 +113,9 @@ export default function SettingsPage() {
 
       <section className="flex flex-col gap-3" aria-labelledby="s-account">
         <SectionTitle id="s-account">{t('account')}</SectionTitle>
+        <Card>
+          <PasswordSettings />
+        </Card>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button
             variant="secondary"
