@@ -76,6 +76,19 @@
                 android:resource="@xml/today_widget_info" />
         </receiver>
 
+        <!-- Widget « Courses » (Glance). -->
+        <receiver
+            android:name=".widget.ShoppingWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_shopping_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/shopping_widget_info" />
+        </receiver>
+
         <receiver
             android:name=".notifications.ReminderReceiver"
             android:exported="false" />

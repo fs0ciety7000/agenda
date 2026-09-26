@@ -14,14 +14,16 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         CategoryEntity::class,
         OccurrenceEntity::class,
         PendingOperationEntity::class,
+        ShoppingItemEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 abstract class AgendaDatabase : RoomDatabase() {
     abstract fun households(): HouseholdDao
     abstract fun occurrences(): OccurrenceDao
     abstract fun pendingOperations(): PendingOperationDao
+    abstract fun shopping(): ShoppingDao
 
     companion object {
         fun create(context: Context): AgendaDatabase =
@@ -39,6 +41,18 @@ abstract class AgendaDatabase : RoomDatabase() {
             }
         }
 
-        val MIGRATIONS = arrayOf(MIGRATION_1_2)
+        /** v3 : liste de courses du foyer. */
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `shopping_items` (`id` TEXT NOT NULL, `householdId` TEXT NOT NULL, " +
+                        "`text` TEXT NOT NULL, `done` INTEGER NOT NULL, `doneById` TEXT, `createdAt` TEXT NOT NULL, " +
+                        "`doneAt` TEXT, PRIMARY KEY(`id`))",
+                )
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_shopping_items_householdId` ON `shopping_items` (`householdId`)")
+            }
+        }
+
+        val MIGRATIONS = arrayOf(MIGRATION_1_2, MIGRATION_2_3)
     }
 }

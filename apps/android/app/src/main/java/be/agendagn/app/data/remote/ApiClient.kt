@@ -66,7 +66,15 @@ private class RefreshAuthenticator(
 
 object ApiClient {
     /** [networkInterceptor] : tests uniquement (simuler une coupure réseau). */
-    fun create(baseUrl: String, tokens: TokenStore, networkInterceptor: Interceptor? = null): AgendaApi {
+    fun create(baseUrl: String, tokens: TokenStore, networkInterceptor: Interceptor? = null): AgendaApi =
+        createWithClient(baseUrl, tokens, networkInterceptor).first
+
+    /** Même client HTTP (jetons, rafraîchissement) pour Retrofit et le flux temps réel. */
+    fun createWithClient(
+        baseUrl: String,
+        tokens: TokenStore,
+        networkInterceptor: Interceptor? = null,
+    ): Pair<AgendaApi, OkHttpClient> {
         val converter = json.asConverterFactory("application/json".toMediaType())
         val plain = OkHttpClient.Builder()
             .apply { networkInterceptor?.let(::addInterceptor) }
@@ -82,6 +90,6 @@ object ApiClient {
             .authenticator(RefreshAuthenticator(tokens) { refreshApi })
             .build()
         return Retrofit.Builder().baseUrl(baseUrl).client(client).addConverterFactory(converter).build()
-            .create(AgendaApi::class.java)
+            .create(AgendaApi::class.java) to client
     }
 }

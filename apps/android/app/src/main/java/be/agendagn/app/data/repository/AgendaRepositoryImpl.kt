@@ -3,6 +3,7 @@ package be.agendagn.app.data.repository
 import be.agendagn.app.data.local.AgendaDatabase
 import be.agendagn.app.data.local.OccurrenceEntity
 import be.agendagn.app.data.local.PendingOperationEntity
+import be.agendagn.app.data.local.ShoppingItemEntity
 import be.agendagn.app.data.local.toDomain
 import be.agendagn.app.data.local.toEntity
 import be.agendagn.app.data.remote.AgendaApi
@@ -25,6 +26,7 @@ import be.agendagn.app.domain.model.Household
 import be.agendagn.app.domain.model.Occurrence
 import be.agendagn.app.domain.model.Priority
 import be.agendagn.app.domain.model.QuickAddPreview
+import be.agendagn.app.domain.model.ShoppingItem
 import be.agendagn.app.domain.model.TaskDraft
 import be.agendagn.app.domain.model.Visibility
 import be.agendagn.app.domain.repository.AgendaRepository
@@ -351,6 +353,41 @@ class AgendaRepositoryImpl(
             OpResult.Offline
         }
     }
+
+    override val shopping: Flow<List<ShoppingItem>> = householdEntity.flatMapLatest { h ->
+        if (h == null) flowOf(emptyList()) else db.shopping().observe(h.id).map { l -> l.map { it.toDomain() } }
+    }
+
+    override suspend fun addShopping(texts: List<String>) = withContext(io) {
+        val h = db.households().current() ?: return@withContext
+        for (text in texts.map { it.trim().take(200) }.filter { it.isNotEmpty() }) {
+            // Identifiant choisi ici : l'ajout rejoué après une coupure ne crée pas de doublon.
+            val id = UUID.randomUUID().toString()
+            val now = Instant.now(clock).toString()
+            db.shopping().upsert(ShoppingItemEntity(id, h.id, text, false, null, now, null))
+            enqueue(h.id, PendingOperationEntity.SHOP_ADD, id, text)
+        }
+    }
+
+    override suspend fun setShoppingDone(item: ShoppingItem, done: Boolean) = withContext(io) {
+        val h = db.households().current() ?: return@withContext
+        db.shopping().setDone(item.id, done, if (done) h.myMemberId else null, if (done) Instant.now(clock).toString() else null)
+        enqueue(h.id, PendingOperationEntity.SHOP_SET, item.id, done.toString())
+    }
+
+    override suspend fun removeShopping(item: ShoppingItem) = withContext(io) {
+        val h = db.households().current() ?: return@withContext
+        db.shopping().delete(item.id)
+        enqueue(h.id, PendingOperationEntity.SHOP_DELETE, item.id, null)
+    }
+
+    override suspend fun clearShoppingDone() = withContext(io) {
+        val h = db.households().current() ?: return@withContext
+        db.shopping().deleteDone(h.id)
+        enqueue(h.id, PendingOperationEntity.SHOP_CLEAR, h.id, null)
+    }
+
+    override suspend fun refreshShopping(): RefreshOutcome = withContext(io) { engine.refreshShopping() }
 
     override suspend fun calendarStatus(): CalendarStatus? = withContext(io) {
         val h = db.households().current() ?: return@withContext null

@@ -17,6 +17,7 @@ import type {
 } from '@agenda/contracts';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from './api';
+import { pollInterval } from './realtime';
 
 type ListQuery = Partial<OccurrenceQuery>;
 
@@ -44,7 +45,7 @@ export const useOccurrences = (hid: string, q: ListQuery) =>
     // Deux personnes, pas de temps réel en V1 : rafraîchissement léger (cf. ADR-006),
     // plus fréquent tant qu'une synchronisation Google est en cours.
     refetchInterval: (query) =>
-      query.state.data?.some((o) => o.calendarSync === 'PENDING') ? 3_000 : 30_000,
+      query.state.data?.some((o) => o.calendarSync === 'PENDING') ? 3_000 : pollInterval(30_000),
   });
 
 /** Répartition de la semaine en cours, ou d'une autre période (`from` / `to`, YYYY-MM-DD). */

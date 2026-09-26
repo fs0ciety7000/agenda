@@ -17,6 +17,8 @@ import { MailModule } from './mail/mail.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { PrivacyModule } from './privacy/privacy.module';
+import { RealtimeModule } from './realtime/realtime.module';
+import { ShoppingModule } from './shopping/shopping.module';
 import { TasksModule } from './tasks/tasks.module';
 
 @Module({
@@ -44,6 +46,8 @@ import { TasksModule } from './tasks/tasks.module';
     CalendarModule,
     AppDistributionModule,
     NotificationsModule,
+    ShoppingModule,
+    RealtimeModule,
   ],
   controllers: [HealthController, ClientErrorsController],
   providers: [

@@ -9,6 +9,7 @@ import be.agendagn.app.domain.model.Household
 import be.agendagn.app.domain.model.Occurrence
 import be.agendagn.app.domain.model.OccurrenceStatus
 import be.agendagn.app.domain.model.QuickAddPreview
+import be.agendagn.app.domain.model.ShoppingItem
 import be.agendagn.app.domain.model.TaskDraft
 import be.agendagn.app.domain.repository.AgendaRepository
 import be.agendagn.app.domain.repository.OpResult
@@ -83,4 +84,20 @@ class FakeAgendaRepository(
         checklistOps += "remove:$itemId"; return OpResult.Ok
     }
     override suspend fun calendarStatus(): CalendarStatus? = null
+
+    val shoppingItems = MutableStateFlow<List<ShoppingItem>>(emptyList())
+    override val shopping: Flow<List<ShoppingItem>> = shoppingItems
+    override suspend fun addShopping(texts: List<String>) {
+        shoppingItems.value = shoppingItems.value + texts.map { ShoppingItem("s-$it", it, false) }
+    }
+    override suspend fun setShoppingDone(item: ShoppingItem, done: Boolean) {
+        shoppingItems.value = shoppingItems.value.map { if (it.id == item.id) it.copy(done = done) else it }
+    }
+    override suspend fun removeShopping(item: ShoppingItem) {
+        shoppingItems.value = shoppingItems.value.filter { it.id != item.id }
+    }
+    override suspend fun clearShoppingDone() {
+        shoppingItems.value = shoppingItems.value.filter { !it.done }
+    }
+    override suspend fun refreshShopping() = RefreshOutcome.OK
 }

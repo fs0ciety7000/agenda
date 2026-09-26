@@ -69,6 +69,7 @@ for (const scheme of ['light', 'dark'] as const) {
 
       for (const path of [
         '/tasks',
+        '/shopping',
         `/calendar?view=week&date=${today}`,
         `/calendar?view=day&date=${today}`,
         `/calendar?view=month&date=${today}`,
@@ -76,7 +77,9 @@ for (const scheme of ['light', 'dark'] as const) {
         '/settings',
       ]) {
         await page.goto(path);
-        await page.waitForLoadState('networkidle');
+        // Pas de « networkidle » : le flux temps réel reste ouvert. On attend la fin des chargements.
+        await page.waitForLoadState('load');
+        await expect(page.locator('[aria-busy="true"], [aria-busy=""]')).toHaveCount(0);
         await audit(page, path);
       }
 

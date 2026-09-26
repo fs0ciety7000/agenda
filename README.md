@@ -23,15 +23,17 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
   - tour de rôle : fixe, à deux, chacun son tour, rotation personnalisée, selon le jour, par semaine ;
   - aperçu des prochaines dates ;
   - modification « cette fois / les suivantes / toute la série ».
-- **Sous-tâches et listes** (courses…), catégories, priorités, tâches personnelles.
+- **Liste de courses partagée** permanente, cochée à deux au magasin, hors ligne sur Android.
+- **Temps réel** : ce que l'autre change apparaît aussitôt sur le site et dans l'app (Server-Sent Events).
+- **Sous-tâches et listes** attachées à une tâche, catégories, priorités, tâches personnelles.
 - **Calendrier** : vues mois, semaine et jour ; glisser-déposer (souris, doigt, clavier, TalkBack).
 - **Suggestion d'attribution** : la personne la moins chargée de la semaine.
 - **Google Calendar** : publication des tâches dans le calendrier partagé du foyer. Les
   déplacements et renommages faits dans Google sont repris dans l'app.
 - **Notifications** : centre de notifications, préférences, rappels locaux sur Android, notifications
   instantanées (Firebase) quand l'autre vous confie une tâche.
-- **Android** : hors ligne (cocher et créer sans réseau), widget « Aujourd'hui », mises à jour
-  automatiques (APK du site) ou via Google Play.
+- **Android** : hors ligne (cocher et créer sans réseau), mises à jour
+  automatiques (APK du site) ou via Google Play, widgets « Aujourd'hui » et « Courses ».
 - **Compte & RGPD** :
   - connexion par e-mail ou avec Google ;
   - mot de passe oublié ;

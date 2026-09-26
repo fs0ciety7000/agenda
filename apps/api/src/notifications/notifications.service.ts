@@ -1,3 +1,4 @@
+import { DomainEvents } from '../common/domain-events';
 import { Injectable } from '@nestjs/common';
 import type {
   NotificationDto,
@@ -29,6 +30,7 @@ export class NotificationsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly push: PushService,
+    private readonly events: DomainEvents,
   ) {}
 
   /** « Nicolas vous a attribué une tâche » : jamais pour ses propres actions. */
@@ -60,6 +62,7 @@ export class NotificationsService {
       }));
     if (!data.length) return;
     await this.prisma.notification.createMany({ data });
+    this.events.publish(ctx.householdId, 'notifications');
     // Téléphones réveillés tout de suite (sans contenu) pour ceux qui veulent la notification.
     void this.push.wakeMembers(
       ctx.householdId,

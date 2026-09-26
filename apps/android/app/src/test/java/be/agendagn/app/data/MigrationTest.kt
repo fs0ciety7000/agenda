@@ -41,7 +41,27 @@ class MigrationTest {
         }
     }
 
+    @Test
+    fun `v2 vers v3 - table des courses creee, outbox conservee`() {
+        helper.createDatabase(DB3, 2).use { db ->
+            db.execSQL(
+                """INSERT INTO pending_operations (householdId, type, occurrenceId, payload, idempotencyKey, createdAt, attempts)
+                VALUES ('h1', 'COMPLETE', 'o1', NULL, 'k1', 0, 0)""",
+            )
+        }
+        helper.runMigrationsAndValidate(DB3, 3, true, *AgendaDatabase.MIGRATIONS).use { db ->
+            db.execSQL(
+                "INSERT INTO shopping_items (id, householdId, text, done, createdAt) VALUES ('s1', 'h1', 'Lait', 0, '2026-09-29')",
+            )
+            db.query("SELECT COUNT(*) FROM pending_operations").use { c ->
+                c.moveToFirst()
+                assertEquals(1, c.getInt(0))
+            }
+        }
+    }
+
     private companion object {
+        const val DB3 = "migration-test-3.db"
         const val DB = "migration-test.db"
     }
 }

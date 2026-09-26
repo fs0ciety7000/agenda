@@ -2,6 +2,8 @@ package be.agendagn.app.data.local
 
 import be.agendagn.app.data.remote.CategoryDto
 import be.agendagn.app.data.remote.ChecklistItemDto
+import be.agendagn.app.data.remote.ShoppingItemDto
+import be.agendagn.app.domain.model.ShoppingItem
 import be.agendagn.app.data.remote.json
 import be.agendagn.app.domain.model.ChecklistItem
 import be.agendagn.app.data.remote.MemberDto
@@ -80,3 +82,8 @@ fun MemberEntity.toDomain() = Member(id, userId, displayName, enumOr(color, Memb
 fun CategoryDto.toEntity(householdId: String) = CategoryEntity(id, householdId, name, emoji, position)
 
 fun CategoryEntity.toDomain() = Category(id, name, emoji)
+
+fun ShoppingItemDto.toEntity(householdId: String) =
+    ShoppingItemEntity(id, householdId, text, done, doneById, createdAt, doneAt)
+
+fun ShoppingItemEntity.toDomain() = ShoppingItem(id, text, done, doneById)

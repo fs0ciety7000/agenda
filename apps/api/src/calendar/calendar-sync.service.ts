@@ -3,6 +3,7 @@ import { Prisma } from '@prisma/client';
 import type { CalendarErrorCode } from '@agenda/contracts';
 import { addDays, todayIn, wallClock } from '@agenda/domain';
 import { fromDbDate, toDbDate } from '../common/dates';
+import { DomainEvents } from '../common/domain-events';
 import { env } from '../config/env';
 import { PushService } from '../notifications/push.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -89,6 +90,7 @@ export class GoogleCalendarSyncService {
     private readonly tokens: GoogleTokensService,
     private readonly series: SeriesService,
     private readonly push: PushService,
+    private readonly events: DomainEvents,
   ) {}
 
   // ───────────── Balayage ─────────────
@@ -604,6 +606,7 @@ export class GoogleCalendarSyncService {
       where: { id: link.id },
       data: { lastPulledAt: startedAt },
     });
+    if (stats.updated || stats.detached) this.events.publish(householdId, 'tasks');
     return stats;
   }
 

@@ -56,6 +56,13 @@ class SyncEngineTest {
     private var failNext: Int? = null
     /** La prochaine création est traitée par le serveur, mais la réponse se perd (500). */
     private var loseNextCreateResponse = false
+    /** Liste de courses « serveur » : id → (texte, coché). */
+    private val shoppingRows = linkedMapOf<String, Pair<String, Boolean>>()
+    private var loseNextShoppingResponse = false
+
+    private fun shoppingJson(id: String) = shoppingRows.getValue(id).let { (text, done) ->
+        """{"id":"$id","text":"$text","done":$done,"createdAt":"2026-09-29T08:00:00Z"}"""
+    }
 
     private fun occurrenceJson(id: String, title: String, status: String = "TODO", date: String? = "2026-09-29") =
         """{"id":"$id","taskId":"t-$id","title":"$title","priority":"NORMAL","visibility":"SHARED","status":"$status",
@@ -76,6 +83,36 @@ class SyncEngineTest {
                         {"id":"m-grace","userId":"u-grace","displayName":"Grace","role":"OWNER","color":"sage"},
                         {"id":"m-nicolas","userId":"u-nicolas","displayName":"Nicolas","role":"MEMBER","color":"ocean"}]}]""",
                     )
+                    path.contains("/shopping") -> {
+                        val id = path.substringAfter("/shopping").removePrefix("/")
+                        val body = request.body.readUtf8()
+                        when {
+                            request.method == "GET" -> json(shoppingRows.keys.joinToString(",", "[", "]") { shoppingJson(it) })
+                            id == "clear-done" -> {
+                                shoppingRows.entries.removeIf { it.value.second }
+                                MockResponse().setResponseCode(204)
+                            }
+                            request.method == "POST" -> {
+                                val newId = Regex("\"id\":\"([^\"]+)\"").find(body)!!.groupValues[1]
+                                val text = Regex("\"text\":\"([^\"]+)\"").find(body)!!.groupValues[1]
+                                shoppingRows.putIfAbsent(newId, text to false) // idempotent, comme l'API
+                                if (loseNextShoppingResponse) {
+                                    loseNextShoppingResponse = false
+                                    return MockResponse().setResponseCode(500)
+                                }
+                                json(shoppingJson(newId)).setResponseCode(201)
+                            }
+                            request.method == "PATCH" -> {
+                                val row = shoppingRows[id] ?: return MockResponse().setResponseCode(404)
+                                shoppingRows[id] = row.first to body.contains("true")
+                                json(shoppingJson(id))
+                            }
+                            else -> {
+                                shoppingRows.remove(id)
+                                MockResponse().setResponseCode(204)
+                            }
+                        }
+                    }
                     path.endsWith("/categories") -> json("""[{"id":"c1","name":"Ménage","emoji":"🧹","position":0}]""")
                     path.endsWith("/occurrences") -> {
                         val view = request.requestUrl!!.queryParameter("view")
@@ -276,6 +313,49 @@ class SyncEngineTest {
         offline = false
         assertEquals(OpResult.Ok, repo.removeChecklistItem("o1", "i1"))
         assertEquals(emptyList<Any>(), repo.occurrence("o1").first()!!.checklist)
+    }
+
+    @Test
+    fun `courses hors ligne - ajout, coche et retrait affiches, envoyes au retour sans doublon`() = runBlocking {
+        repo.refresh()
+        shoppingRows["s-bread"] = "Pain" to false
+        assertEquals(RefreshOutcome.OK, repo.refreshShopping())
+        assertEquals(listOf("Pain"), repo.shopping.first().map { it.text })
+
+        offline = true
+        repo.addShopping(listOf("Lait", " Œufs "))
+        val milk = repo.shopping.first().first { it.text == "Lait" }
+        repo.setShoppingDone(milk, true)
+        repo.removeShopping(repo.shopping.first().first { it.text == "Pain" })
+        // Hors ligne : l'écran montre déjà le résultat, même après une tentative de synchro.
+        assertEquals(RefreshOutcome.OFFLINE, repo.refreshShopping())
+        assertEquals(listOf("Œufs" to false, "Lait" to true), repo.shopping.first().map { it.text to it.done })
+
+        offline = false
+        assertEquals(RefreshOutcome.OK, repo.refreshShopping())
+        assertEquals(mapOf("Lait" to true, "Œufs" to false), shoppingRows.values.associate { it })
+        assertEquals(0, db.pendingOperations().count())
+        assertEquals(listOf("Œufs" to false, "Lait" to true), repo.shopping.first().map { it.text to it.done })
+
+        // L'autre vide le panier : la liste se met à jour au prochain signal.
+        shoppingRows.entries.removeIf { it.value.second }
+        repo.refreshShopping()
+        assertEquals(listOf("Œufs"), repo.shopping.first().map { it.text })
+        repo.clearShoppingDone()
+        repo.refreshShopping()
+        assertEquals(1, requests.count { it.path!!.endsWith("/shopping/clear-done") })
+    }
+
+    @Test
+    fun `courses - ajout rejoue apres une reponse perdue - un seul article`() = runBlocking {
+        repo.refresh()
+        repo.addShopping(listOf("Café"))
+        loseNextShoppingResponse = true // créé côté serveur, mais la réponse n'arrive pas
+        repo.refreshShopping()
+        assertEquals(1, db.pendingOperations().count())
+        repo.refreshShopping()
+        assertEquals(listOf("Café"), shoppingRows.values.map { it.first })
+        assertEquals(0, db.pendingOperations().count())
     }
 
     @Test

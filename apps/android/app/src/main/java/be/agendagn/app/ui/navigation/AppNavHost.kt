@@ -43,6 +43,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -78,6 +79,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import be.agendagn.app.ui.quickadd.QuickAddSheet
 import be.agendagn.app.ui.settings.SettingsScreen
+import be.agendagn.app.ui.shopping.ShoppingScreen
+import be.agendagn.app.data.remote.RealtimeClient
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.compose.material.icons.filled.ShoppingCart
 import be.agendagn.app.ui.taskform.TaskFormScreen
 import be.agendagn.app.ui.taskform.TaskFormViewModel
 import be.agendagn.app.ui.tasks.TasksScreen
@@ -92,6 +97,7 @@ fun AppNavHost(
     container: AppContainer,
     openOccurrenceId: String? = null,
     quickAddRequest: Int = 0,
+    tabRequest: Pair<String, Int>? = null,
     googleCallback: Uri? = null,
     onGoogleCallbackHandled: () -> Unit = {},
 ) {
@@ -116,7 +122,7 @@ fun AppNavHost(
                     onGoogle = { scope.launch { openWeb(context, vm.googleUrl(container.webBaseUrl), "") } },
                 )
             }
-            true -> MainScaffold(container, openOccurrenceId, quickAddRequest)
+            true -> MainScaffold(container, openOccurrenceId, quickAddRequest, tabRequest)
         }
     }
 }
@@ -128,12 +134,18 @@ fun openWeb(context: Context, base: String, path: String) {
 private enum class Tab(val route: String, val label: Int) {
     TODAY("today", R.string.nav_today),
     TASKS("tasks", R.string.nav_tasks),
+    SHOPPING("shopping", R.string.nav_shopping),
     CALENDAR("calendar", R.string.nav_calendar),
     SETTINGS("settings", R.string.nav_settings),
 }
 
 @Composable
-private fun MainScaffold(container: AppContainer, openOccurrenceId: String?, quickAddRequest: Int) {
+private fun MainScaffold(
+    container: AppContainer,
+    openOccurrenceId: String?,
+    quickAddRequest: Int,
+    tabRequest: Pair<String, Int>? = null,
+) {
     val context = LocalContext.current
     val vm: AgendaViewModel = viewModel(
         factory = viewModelFactory { initializer { AgendaViewModel(container.repository, container.online) } },
@@ -169,6 +181,41 @@ private fun MainScaffold(container: AppContainer, openOccurrenceId: String?, qui
     }
     LaunchedEffect(openOccurrenceId) { openOccurrenceId?.let { nav.navigate("task/$it") } }
     LaunchedEffect(quickAddRequest) { if (quickAddRequest > 0) showQuickAdd = true }
+    LaunchedEffect(tabRequest) {
+        val tab = Tab.entries.firstOrNull { it.route == tabRequest?.first } ?: return@LaunchedEffect
+        nav.navigate(tab.route) {
+            popUpTo(nav.graph.findStartDestination().id) { saveState = true }
+            launchSingleTop = true
+        }
+    }
+
+    // Temps réel tant que l'app est à l'écran : l'autre coche, ajoute, attribue → visible aussitôt.
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    var live by remember { mutableStateOf(false) }
+    var shoppingRefreshing by remember { mutableStateOf(false) }
+    val shopping by container.repository.shopping.collectAsStateWithLifecycle(initialValue = emptyList())
+    LaunchedEffect(state.household?.id) {
+        val hid = state.household?.id ?: return@LaunchedEffect
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+            try {
+                container.realtime.topics(hid).collect { topic ->
+                    when (topic) {
+                        RealtimeClient.CONNECTED -> {
+                            live = true
+                            // Ce qui a changé avant (ou pendant une coupure) n'a pas été signalé.
+                            launch { container.repository.refreshShopping() }
+                            launch { container.repository.refresh() }
+                        }
+                        "shopping" -> launch { container.repository.refreshShopping() }
+                        "tasks" -> launch { container.repository.refresh() }
+                        "notifications" -> launch { container.activityNotifier.poll(hid) }
+                    }
+                }
+            } finally {
+                live = false
+            }
+        }
+    }
 
     // Mise à jour de l'app : vérifiée au lancement et au retour dans l'app (ex. après avoir
     // autorisé l'installation dans les réglages Android).
@@ -253,6 +300,7 @@ private fun MainScaffold(container: AppContainer, openOccurrenceId: String?, qui
                                     when (tab) {
                                         Tab.TODAY -> Icons.Filled.Home
                                         Tab.TASKS -> Icons.AutoMirrored.Filled.List
+                                        Tab.SHOPPING -> Icons.Filled.ShoppingCart
                                         Tab.CALENDAR -> Icons.Filled.DateRange
                                         Tab.SETTINGS -> Icons.Filled.Settings
                                     },
@@ -266,7 +314,7 @@ private fun MainScaffold(container: AppContainer, openOccurrenceId: String?, qui
             }
         },
         floatingActionButton = {
-            if (onTab && route != Tab.SETTINGS.route) {
+            if (onTab && route != Tab.SETTINGS.route && route != Tab.SHOPPING.route) {
                 FloatingActionButton(onClick = { showQuickAdd = true }) {
                     Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.quick_add))
                 }
@@ -287,6 +335,28 @@ private fun MainScaffold(container: AppContainer, openOccurrenceId: String?, qui
             }
             composable(Tab.TASKS.route) {
                 TasksScreen(state, filter, { filter = it }, vm::refresh, vm::toggle, { open(it.id) }, contentPadding = padding)
+            }
+            composable(Tab.SHOPPING.route) {
+                ShoppingScreen(
+                    items = shopping,
+                    members = state.members,
+                    online = state.online,
+                    live = live,
+                    sync = state.sync,
+                    refreshing = shoppingRefreshing,
+                    onRefresh = {
+                        scope.launch {
+                            shoppingRefreshing = true
+                            container.repository.refreshShopping()
+                            shoppingRefreshing = false
+                        }
+                    },
+                    onAdd = { scope.launch { container.repository.addShopping(it) } },
+                    onToggle = { scope.launch { container.repository.setShoppingDone(it, !it.done) } },
+                    onRemove = { scope.launch { container.repository.removeShopping(it) } },
+                    onClearDone = { scope.launch { container.repository.clearShoppingDone() } },
+                    contentPadding = padding,
+                )
             }
             composable(Tab.CALENDAR.route) {
                 CalendarScreen(

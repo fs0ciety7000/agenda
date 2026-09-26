@@ -101,3 +101,31 @@ interface PendingOperationDao {
     @Query("UPDATE pending_operations SET occurrenceId = :serverId WHERE occurrenceId = :localId")
     suspend fun remap(localId: String, serverId: String)
 }
+
+@Dao
+interface ShoppingDao {
+    /** À acheter (ordre d'ajout), puis dans le panier (les plus récents d'abord), comme l'API. */
+    @Query(
+        "SELECT * FROM shopping_items WHERE householdId = :householdId " +
+            "ORDER BY done, CASE WHEN done THEN doneAt END DESC, createdAt",
+    )
+    fun observe(householdId: String): Flow<List<ShoppingItemEntity>>
+
+    @Upsert suspend fun upsert(item: ShoppingItemEntity)
+
+    @Query("UPDATE shopping_items SET done = :done, doneById = :by, doneAt = :at WHERE id = :id")
+    suspend fun setDone(id: String, done: Boolean, by: String?, at: String?)
+
+    @Query("DELETE FROM shopping_items WHERE id = :id") suspend fun delete(id: String)
+
+    @Query("DELETE FROM shopping_items WHERE householdId = :householdId AND done = 1")
+    suspend fun deleteDone(householdId: String)
+
+    @Query("DELETE FROM shopping_items WHERE householdId = :householdId") suspend fun clear(householdId: String)
+
+    @Transaction
+    suspend fun replace(householdId: String, items: List<ShoppingItemEntity>) {
+        clear(householdId)
+        items.forEach { upsert(it) }
+    }
+}

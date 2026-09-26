@@ -89,5 +89,23 @@ data class PendingOperationEntity(
         const val REOPEN = "REOPEN"
         const val CREATE = "CREATE"
         const val QUICK_ADD = "QUICK_ADD"
+
+        // Liste de courses (occurrenceId = id de l'article, choisi par le téléphone).
+        const val SHOP_ADD = "SHOP_ADD"
+        const val SHOP_SET = "SHOP_SET"
+        const val SHOP_DELETE = "SHOP_DELETE"
+        const val SHOP_CLEAR = "SHOP_CLEAR"
     }
 }
+
+/** Liste de courses du foyer (copie serveur + ajouts / coches pas encore envoyés). */
+@Entity(tableName = "shopping_items", indices = [Index("householdId")])
+data class ShoppingItemEntity(
+    @PrimaryKey val id: String,
+    val householdId: String,
+    val text: String,
+    val done: Boolean,
+    val doneById: String?,
+    val createdAt: String,
+    val doneAt: String?,
+)

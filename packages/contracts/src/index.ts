@@ -6,3 +6,4 @@ export * from './recurrence';
 export * from './tasks';
 export * from './calendar';
 export * from './notifications';
+export * from './shopping';

@@ -8,6 +8,7 @@ import type {
 } from '@agenda/contracts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from './api';
+import { pollInterval } from './realtime';
 
 export const notificationKeys = {
   list: (hid: string) => ['households', hid, 'notifications'] as const,
@@ -19,7 +20,7 @@ export const useNotifications = (hid: string) =>
   useQuery({
     queryKey: notificationKeys.list(hid),
     queryFn: () => api<NotificationListDto>(`/v1/households/${hid}/notifications?limit=30`),
-    refetchInterval: 60_000,
+    refetchInterval: () => pollInterval(60_000),
   });
 
 export function useMarkNotificationsRead(hid: string) {

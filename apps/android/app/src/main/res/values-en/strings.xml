@@ -226,4 +226,21 @@
     <string name="push_token_error">Firebase refused the registration: %1$s</string>
     <string name="push_server_error">The server refused the registration (error %1$d).</string>
     <string name="push_retry">Try again</string>
+    <string name="nav_shopping">Shopping</string>
+    <string name="shopping_title">Shopping</string>
+    <string name="shopping_add">Add to the list</string>
+    <string name="shopping_placeholder">Milk, bread, eggs…</string>
+    <string name="shopping_live">Live</string>
+    <string name="shopping_not_live">Offline</string>
+    <string name="shopping_empty_title">The list is empty</string>
+    <string name="shopping_empty_body">Add what\'s missing: the other person sees it right away, even at the shop.</string>
+    <string name="shopping_to_buy">To buy (%1$d)</string>
+    <string name="shopping_in_cart">In the basket (%1$d)</string>
+    <string name="shopping_all_done">Everything is in the basket 🎉</string>
+    <string name="shopping_clear">Empty the basket</string>
+    <string name="shopping_remove">Remove “%1$s”</string>
+    <string name="shopping_taken_by">Picked up by %1$s</string>
+    <string name="widget_shopping_name">Shopping</string>
+    <string name="widget_shopping_description">The household shopping list, to tick off at the shop.</string>
+    <string name="widget_shopping_empty">Nothing to buy.</string>
 </resources>

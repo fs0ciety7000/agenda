@@ -239,4 +239,21 @@
     <string name="push_token_error">Firebase a refusé l\'enregistrement : %1$s</string>
     <string name="push_server_error">Le serveur a refusé l\'enregistrement (erreur %1$d).</string>
     <string name="push_retry">Réessayer</string>
+    <string name="nav_shopping">Courses</string>
+    <string name="shopping_title">Courses</string>
+    <string name="shopping_add">Ajouter à la liste</string>
+    <string name="shopping_placeholder">Lait, pain, œufs…</string>
+    <string name="shopping_live">En direct</string>
+    <string name="shopping_not_live">Hors ligne</string>
+    <string name="shopping_empty_title">La liste est vide</string>
+    <string name="shopping_empty_body">Ajoutez ce qui manque : l\'autre le voit tout de suite, même au magasin.</string>
+    <string name="shopping_to_buy">À acheter (%1$d)</string>
+    <string name="shopping_in_cart">Dans le panier (%1$d)</string>
+    <string name="shopping_all_done">Tout est dans le panier 🎉</string>
+    <string name="shopping_clear">Vider le panier</string>
+    <string name="shopping_remove">Retirer « %1$s »</string>
+    <string name="shopping_taken_by">Pris par %1$s</string>
+    <string name="widget_shopping_name">Courses</string>
+    <string name="widget_shopping_description">La liste de courses du foyer, à cocher au magasin.</string>
+    <string name="widget_shopping_empty">Rien à acheter.</string>
 </resources>
