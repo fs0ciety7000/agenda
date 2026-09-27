@@ -4,7 +4,7 @@ import type { StatsDto } from '@agenda/contracts';
 import { useFormatter, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { useSession } from '@/components/app/household-context';
-import { MemberAvatar } from '@/components/app/member-avatar';
+import { MemberAvatar, memberBgClass } from '@/components/app/member-avatar';
 import { Card, SectionTitle } from '@/components/ui/card';
 import { Segmented } from '@/components/ui/segmented';
 import { Skeleton } from '@/components/ui/states';
@@ -161,6 +161,7 @@ function StatsContent({ data }: { data: StatsDto }) {
                 key={m.memberId}
                 label={member?.displayName ?? '?'}
                 icon={member ? <MemberAvatar member={member} size="sm" /> : null}
+                barClass={member ? memberBgClass(member.color) : undefined}
                 value={m.done}
                 max={maxMember}
                 detail={`${t('doneCount', { count: m.done })}${m.minutes ? ` · ${hours(m.minutes)}` : ''}`}
@@ -184,19 +185,22 @@ function Tile({ label, value, hint }: { label: string; value: string; hint?: str
   );
 }
 
-/** Barre horizontale d'une seule couleur ; l'identité est portée par le libellé, jamais par la couleur. */
+/** Barre horizontale ; l'identité est portée par le libellé (nom, initiale), jamais par la couleur seule. */
 function BarRow({
   label,
   icon,
   value,
   max,
   detail,
+  barClass = 'bg-accent',
 }: {
   label: string;
   icon?: React.ReactNode;
   value: number;
   max: number;
   detail: string;
+  /** Couleur de la barre (celle du membre, avec son nom et son initiale à côté). */
+  barClass?: string;
 }) {
   return (
     <div className="flex flex-col gap-1">
@@ -209,7 +213,7 @@ function BarRow({
       </div>
       <div className="h-2 rounded-full bg-surface-muted" aria-hidden>
         <div
-          className="h-2 rounded-full bg-accent"
+          className={`h-2 rounded-full ${barClass}`}
           style={{ width: `${(value / max) * 100}%`, minWidth: value ? 8 : 0 }}
         />
       </div>

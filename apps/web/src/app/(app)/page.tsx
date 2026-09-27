@@ -5,7 +5,7 @@ import { CalendarCheck, Sun } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Balance } from '@/components/app/balance';
 import { CalendarBanner } from '@/components/app/calendar-banner';
 import { useSession } from '@/components/app/household-context';
@@ -15,6 +15,8 @@ import { ApplyTemplateButton } from '@/components/app/templates';
 import { TaskList } from '@/components/app/task-row';
 import { useTaskDialog } from '@/components/app/use-task-dialog';
 import { SectionTitle } from '@/components/ui/card';
+import { Confetti } from '@/components/ui/confetti';
+import { useToast } from '@/components/ui/toast';
 import { EmptyState, ErrorState, Skeleton } from '@/components/ui/states';
 import { api, errorKey } from '@/lib/api';
 import { addDays, useDayLabel, useToday } from '@/lib/format';
@@ -24,6 +26,7 @@ import { endOfWeek } from '@agenda/domain';
 /** Dashboard : ouvrir → voir ce qu'il y a à faire aujourd'hui → cocher → passer à autre chose. */
 export default function TodayPage() {
   const t = useTranslations('today');
+  const toast = useToast();
   const te = useTranslations('errors');
   const { me, household } = useSession();
   const member = household.members.find((m) => m.userId === me.id);
@@ -59,6 +62,20 @@ export default function TodayPage() {
   );
   const weekByDay = groupByDate(weekQ.data ?? []);
 
+  // Tout est fait pour aujourd'hui : confettis (seulement au moment où ça arrive).
+  const allDone = todayItems.length > 0 && todayItems.every((o) => o.status === 'DONE');
+  const wasAllDone = useRef<boolean | null>(null);
+  const [party, setParty] = useState(0);
+  useEffect(() => {
+    if (!todayQ.data) return;
+    if (wasAllDone.current === false && allDone) {
+      setParty(Date.now());
+      toast({ message: t('allDone') });
+    }
+    wasAllDone.current = allDone;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [allDone, todayQ.data]);
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex items-start justify-between gap-3">
@@ -68,12 +85,10 @@ export default function TodayPage() {
         <NotificationBell className="mt-1 shrink-0" />
       </div>
 
+      {party > 0 && <Confetti key={party} />}
       <CalendarBanner />
 
-      <div className="flex flex-col gap-1">
-        <QuickAdd onMoreOptions={dialog.openNew} />
-        <ApplyTemplateButton />
-      </div>
+      <QuickAdd onMoreOptions={dialog.openNew} extra={<ApplyTemplateButton />} />
 
       {(overdueQ.data?.length ?? 0) > 0 && (
         <section aria-labelledby="overdue-heading" className="flex flex-col gap-3">

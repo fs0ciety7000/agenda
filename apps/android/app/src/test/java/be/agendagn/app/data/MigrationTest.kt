@@ -77,7 +77,25 @@ class MigrationTest {
         }
     }
 
+    @Test
+    fun `v4 vers v5 - pieces jointes ajoutees, liste vide pour les taches existantes`() {
+        helper.createDatabase(DB5, 4).use { db ->
+            db.execSQL(
+                """INSERT INTO occurrences (id, householdId, taskId, title, priority, visibility, status, date,
+                assigneeIds, createdById, isRecurring, syncToCalendar, version, isLocal, checklist)
+                VALUES ('o1', 'h1', 't1', 'Facture', 'NORMAL', 'SHARED', 'TODO', NULL, '', 'm1', 0, 0, 1, 0, '[]')""",
+            )
+        }
+        helper.runMigrationsAndValidate(DB5, 5, true, *AgendaDatabase.MIGRATIONS).use { db ->
+            db.query("SELECT attachments FROM occurrences WHERE id = 'o1'").use { c ->
+                c.moveToFirst()
+                assertEquals("[]", c.getString(0))
+            }
+        }
+    }
+
     private companion object {
+        const val DB5 = "migration-test-5.db"
         const val DB4 = "migration-test-4.db"
         const val DB3 = "migration-test-3.db"
         const val DB = "migration-test.db"

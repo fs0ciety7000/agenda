@@ -1,5 +1,6 @@
 package be.agendagn.app.data.local
 
+import be.agendagn.app.data.remote.AttachmentDto
 import be.agendagn.app.data.remote.CategoryDto
 import be.agendagn.app.data.remote.ChecklistItemDto
 import be.agendagn.app.data.remote.ShoppingItemDto
@@ -8,6 +9,7 @@ import be.agendagn.app.data.remote.json
 import be.agendagn.app.domain.model.ChecklistItem
 import be.agendagn.app.data.remote.MemberDto
 import be.agendagn.app.data.remote.OccurrenceDto
+import be.agendagn.app.domain.model.Attachment
 import be.agendagn.app.domain.model.CalendarSync
 import be.agendagn.app.domain.model.Category
 import be.agendagn.app.domain.model.Member
@@ -47,6 +49,7 @@ fun OccurrenceDto.toEntity(householdId: String) = OccurrenceEntity(
     completedAt = completedAt,
     version = version,
     checklist = json.encodeToString(checklist),
+    attachments = json.encodeToString(attachments),
 )
 
 fun OccurrenceEntity.toDomain(pending: Boolean) = Occurrence(
@@ -74,6 +77,8 @@ fun OccurrenceEntity.toDomain(pending: Boolean) = Occurrence(
     isLocal = isLocal,
     checklist = runCatching { json.decodeFromString<List<ChecklistItemDto>>(checklist) }.getOrDefault(emptyList())
         .map { ChecklistItem(it.id, it.text, it.done) },
+    attachments = runCatching { json.decodeFromString<List<AttachmentDto>>(attachments) }.getOrDefault(emptyList())
+        .map { Attachment(it.id, it.filename, it.contentType, it.size) },
 )
 
 fun MemberDto.toEntity(householdId: String, position: Int) =

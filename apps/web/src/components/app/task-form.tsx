@@ -48,6 +48,7 @@ import {
   useSeriesDetail,
   useUpdateOccurrence,
 } from '@/lib/tasks';
+import { Attachments } from './attachments';
 import { ChecklistEditor, type ChecklistRow } from './checklist';
 import { useSession } from './household-context';
 import { RecurrenceFields } from './recurrence-fields';
@@ -514,6 +515,8 @@ export function TaskFormDialog({
                 onRemove={(key) => setDraftItems((list) => list.filter((i) => i.key !== key))}
               />
             )}
+
+            {occurrence && <Attachments hid={household.id} occurrence={occurrence} />}
 
             {calendarLink && !form.personal && (
               <label className="flex min-h-11 cursor-pointer items-center gap-3 text-[0.9375rem]">

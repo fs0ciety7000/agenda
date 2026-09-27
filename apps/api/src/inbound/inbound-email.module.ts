@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { HouseholdsModule } from '../households/households.module';
+import { MailModule } from '../mail/mail.module';
 import { TasksModule } from '../tasks/tasks.module';
 import {
   InboundEmailSettingsController,
@@ -9,7 +10,7 @@ import { ResendReceivingClient } from './resend-receiving.client';
 import { InboundEmailService } from './inbound-email.service';
 
 @Module({
-  imports: [HouseholdsModule, TasksModule],
+  imports: [HouseholdsModule, TasksModule, MailModule],
   controllers: [InboundEmailSettingsController, ResendWebhookController],
   providers: [InboundEmailService, ResendReceivingClient],
 })

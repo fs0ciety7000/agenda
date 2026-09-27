@@ -11,6 +11,8 @@ import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.http.Streaming
+import okhttp3.ResponseBody
 
 /** Même API REST que le web : aucune logique métier propre à Android. */
 interface AgendaApi {
@@ -146,6 +148,11 @@ interface AgendaApi {
 
     @POST("v1/households/{h}/occurrences/{id}/reopen")
     suspend fun reopen(@Path("h") householdId: String, @Path("id") id: String): Response<OccurrenceDto>
+
+    /** Contenu d'une pièce jointe (téléchargé à la demande, puis ouvert par une autre app). */
+    @Streaming
+    @GET("v1/households/{h}/attachments/{id}")
+    suspend fun attachment(@Path("h") householdId: String, @Path("id") id: String): Response<ResponseBody>
 
     /** Annule la dernière suppression de cette occurrence (corbeille, 30 jours). */
     @POST("v1/households/{h}/occurrences/{id}/restore")

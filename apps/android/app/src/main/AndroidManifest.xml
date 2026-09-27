@@ -56,6 +56,13 @@
                 android:resource="@xml/update_paths" />
         </provider>
 
+        <!-- Pièces jointes téléchargées, ouvertes par une autre app (lecture seule). -->
+        <provider
+            android:name=".data.files.AttachmentFileProvider"
+            android:authorities="${applicationId}.attachments"
+            android:exported="false"
+            android:grantUriPermissions="true" />
+
         <!-- Notifications instantanées : réveil sans contenu envoyé par le serveur (Firebase). -->
         <service
             android:name=".notifications.AgendaMessagingService"

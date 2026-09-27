@@ -106,6 +106,19 @@ export const OccurrenceQuery = z.object({
 });
 export type OccurrenceQuery = z.infer<typeof OccurrenceQuery>;
 
+/** Fichier joint (métadonnées ; contenu : GET …/attachments/:id). */
+export const AttachmentDto = z.object({
+  id: z.uuid(),
+  filename: z.string(),
+  contentType: z.string(),
+  size: z.number().int(),
+});
+export type AttachmentDto = z.infer<typeof AttachmentDto>;
+
+/** Limites des pièces jointes (octets). */
+export const ATTACHMENT_MAX_BYTES = 10 * 1024 * 1024;
+export const HOUSEHOLD_ATTACHMENTS_MAX_BYTES = 200 * 1024 * 1024;
+
 export const OccurrenceDto = z.object({
   id: z.uuid(),
   taskId: z.uuid(),
@@ -134,6 +147,8 @@ export const OccurrenceDto = z.object({
   version: z.number().int(),
   /** Sous-tâches, dans l'ordre. */
   checklist: z.array(ChecklistItemDto),
+  /** Fichiers joints à la tâche. */
+  attachments: z.array(AttachmentDto),
 });
 export type OccurrenceDto = z.infer<typeof OccurrenceDto>;
 

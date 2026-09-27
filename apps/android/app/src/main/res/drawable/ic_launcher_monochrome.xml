@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Icône thématique (Android 13+) : le logo est une illustration, redessinée ici en silhouette
+  d'une seule couleur (bloc-notes coché + cœur), teintée par le système selon le fond d'écran.
+  Tout reste dans la zone sûre de 66 dp au centre des 108 dp.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <group
+        android:pivotX="54"
+        android:pivotY="54"
+        android:scaleX="1.15"
+        android:scaleY="1.15">
+    <!-- Bloc-notes (cadre). -->
+    <path
+        android:fillColor="#FF000000"
+        android:fillType="evenOdd"
+        android:pathData="M39,30H69A5,5 0,0 1,74 35V77A5,5 0,0 1,69 82H39A5,5 0,0 1,34 77V35A5,5 0,0 1,39 30ZM41,34H67A3,3 0,0 1,70 37V75A3,3 0,0 1,67 78H41A3,3 0,0 1,38 75V37A3,3 0,0 1,41 34Z" />
+    <!-- Pince. -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M48,26H60A2,2 0,0 1,62 28V35H46V28A2,2 0,0 1,48 26Z" />
+    <!-- Deux lignes cochées. -->
+    <path
+        android:strokeColor="#FF000000"
+        android:strokeWidth="3"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:pathData="M42,45L45,48L50,42M54,45H65M42,56L45,59L50,53M54,56H65" />
+    <!-- Cœur. -->
+    <path
+        android:fillColor="#FF000000"
+        android:pathData="M54,74C54,74 47,70 47,66.5C47,64.5 48.6,63 50.5,63C52,63 53.3,63.9 54,65C54.7,63.9 56,63 57.5,63C59.4,63 61,64.5 61,66.5C61,70 54,74 54,74Z" />
+    </group>
+</vector>

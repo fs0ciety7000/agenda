@@ -61,11 +61,15 @@ data class Occurrence(
     val checklist: List<ChecklistItem> = emptyList(),
     /** Tâche sans date : à faire au plus tard ce jour-là (« cette semaine » = dimanche). */
     val dueDate: LocalDate? = null,
+    /** Fichiers joints (factures, photos…). */
+    val attachments: List<Attachment> = emptyList(),
 ) {
     val isDone: Boolean get() = status == OccurrenceStatus.DONE
 }
 
 data class ChecklistItem(val id: String, val text: String, val done: Boolean)
+
+data class Attachment(val id: String, val filename: String, val contentType: String, val size: Long)
 
 /** Article de la liste de courses du foyer ([doneById] : qui l'a mis dans le panier). */
 data class ShoppingItem(val id: String, val text: String, val done: Boolean, val doneById: String? = null)

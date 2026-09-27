@@ -8,6 +8,13 @@ transféré à cette adresse devient une tâche du foyer, créée au nom de ce m
 - l'**expéditeur**, le sujet et le **message** (texte brut, 5 000 caractères au plus) vont dans
   les notes ;
 - sans sujet, la première ligne du message sert de titre.
+- le sujet peut aussi confier la tâche : « Faire la lessive mercredi 11h30 @grace » ;
+- les **pièces jointes** (facture PDF, photo…) sont jointes à la tâche (10 Mo par fichier ; les
+  images intégrées au message, comme les logos de signature, sont ignorées) ;
+- un **accusé de réception** est envoyé à l'adresse du compte (jamais à l'expéditeur, qui peut
+  être falsifié) : « ✓ Tâche créée : … », avec la date, qui s'en charge et un lien vers la
+  tâche. Un e-mail vide donne un message « Aucune tâche créée ». L'accusé part par le SMTP de
+  l'app (`SMTP_*`, cf. docs/deployment.md §8).
 
 L'adresse se crée dans **Réglages → Ajouter par e-mail**, où l'on peut aussi la remplacer
 (l'ancienne cesse de fonctionner) ou la désactiver. Elle est **secrète** : quiconque la connaît
@@ -26,7 +33,8 @@ Gmail, Outlook…  ──►  Resend (MX de tasks.fs0ciety.org)  ──►  webh
   5 minutes). Il ne contient pas le message : l'API le lit ensuite avec la clé Resend.
 - Un même e-mail livré deux fois ne crée qu'une tâche. Adresse inconnue ou désactivée : ignoré.
   API Resend indisponible : erreur, Resend réessaie plus tard.
-- Pièces jointes ignorées. L'API ne garde que la tâche créée.
+- L'API ne garde que la tâche créée et ses pièces jointes (stockées en base, donc dans les
+  sauvegardes ; 200 Mo au plus par foyer).
 
 ## Installation (une fois)
 

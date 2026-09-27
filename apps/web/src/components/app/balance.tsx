@@ -5,7 +5,8 @@ import { formatDuration } from '@/lib/format';
 import { useBalance } from '@/lib/tasks';
 import { Skeleton } from '@/components/ui/states';
 import { useSession } from './household-context';
-import { MemberAvatar } from './member-avatar';
+import { cn } from '@/lib/cn';
+import { MemberAvatar, memberBgClass } from './member-avatar';
 
 /**
  * Répartition factuelle des tâches partagées de la semaine.
@@ -53,7 +54,10 @@ export function Balance() {
           </dt>
           <div aria-hidden className="h-1.5 overflow-hidden rounded-full bg-surface-muted">
             <div
-              className="h-full rounded-full bg-text-muted/50"
+              className={cn(
+                'h-full rounded-full',
+                r.avatar ? memberBgClass(r.avatar.color) : 'bg-text-muted/50',
+              )}
               style={{ width: `${(r.count / max) * 100}%` }}
             />
           </div>

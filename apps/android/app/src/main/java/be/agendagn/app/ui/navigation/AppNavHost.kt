@@ -1,5 +1,7 @@
 package be.agendagn.app.ui.navigation
 
+import be.agendagn.app.domain.model.Attachment
+import androidx.core.content.FileProvider
 import java.util.Locale
 import android.speech.RecognizerIntent
 import android.content.Intent
@@ -309,6 +311,27 @@ private fun MainScaffold(
             }
         }
     }
+    val attachmentError = stringResource(R.string.attachment_error)
+    val attachmentNoApp = stringResource(R.string.attachment_no_app)
+    // Pièce jointe : téléchargée puis ouverte par l'app adaptée (lecteur PDF, galerie…).
+    val onOpenAttachment: (Attachment) -> Unit = { a ->
+        scope.launch {
+            val file = container.attachments.download(a)
+            if (file == null) {
+                snackbar.showSnackbar(attachmentError)
+                return@launch
+            }
+            val uri = FileProvider.getUriForFile(context, "${context.packageName}.attachments", file)
+            val intent = Intent(Intent.ACTION_VIEW)
+                .setDataAndType(uri, a.contentType)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            try {
+                context.startActivity(intent)
+            } catch (_: ActivityNotFoundException) {
+                snackbar.showSnackbar(attachmentNoApp)
+            }
+        }
+    }
     LaunchedEffect(vm) {
         vm.events.collect { event ->
             when (event) {
@@ -470,11 +493,11 @@ private fun MainScaffold(
             }
             composable("task/{id}", arguments = listOf(navArgument("id") { type = NavType.StringType })) { entry ->
                 val id = entry.arguments?.getString("id")
-                TaskForm(container, id, null, state, calendar, onDeleted) { nav.popBackStack() }
+                TaskForm(container, id, null, state, calendar, onDeleted, onOpenAttachment) { nav.popBackStack() }
             }
             composable("new?date={date}", arguments = listOf(navArgument("date") { type = NavType.StringType; nullable = true })) { entry ->
                 val date = entry.arguments?.getString("date")?.let(LocalDate::parse)
-                TaskForm(container, null, date, state, calendar, onDeleted) { nav.popBackStack() }
+                TaskForm(container, null, date, state, calendar, onDeleted, onOpenAttachment) { nav.popBackStack() }
             }
         }
     }
@@ -522,6 +545,7 @@ private fun TaskForm(
     state: be.agendagn.app.ui.main.AgendaUiState,
     calendar: CalendarStatus?,
     onDeleted: (occurrenceId: String) -> Unit,
+    onOpenAttachment: (Attachment) -> Unit,
     onBack: () -> Unit,
 ) {
     val vm: TaskFormViewModel = viewModel(
@@ -551,6 +575,7 @@ private fun TaskForm(
         onRemoveItem = vm::removeItem,
         onRetrySeries = vm::retrySeries,
         onPostpone = vm::postpone,
+        onOpenAttachment = onOpenAttachment,
         suggestion = state.household?.let { h ->
             Agenda.suggestAssignee(Agenda.weekBalance(state.occurrences, form.draft.date ?: state.today, h.members))
         },

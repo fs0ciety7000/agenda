@@ -300,4 +300,8 @@
     <string name="task_deleted">Tâche supprimée</string>
     <string name="task_restored">Tâche restaurée</string>
     <string name="task_restore_failed">Impossible d\'annuler la suppression.</string>
+    <string name="attachments_title">Pièces jointes</string>
+    <string name="attachment_open">Ouvrir %1$s</string>
+    <string name="attachment_error">Impossible d\'ouvrir la pièce jointe (hors ligne ?).</string>
+    <string name="attachment_no_app">Aucune app ne sait ouvrir ce fichier.</string>
 </resources>

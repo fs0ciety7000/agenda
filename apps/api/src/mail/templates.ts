@@ -40,3 +40,39 @@ export function passwordResetEmail(locale: Locale, name: string, url: string) {
     html: layout(t.title, t.body, { label: t.cta, url }),
   };
 }
+
+/** Accusé de réception d'une tâche créée par e-mail. */
+export function inboundTaskCreatedEmail(
+  locale: Locale,
+  p: { title: string; when: string | null; assignees: string | null; files: string[]; url: string },
+) {
+  const fr = locale !== 'en';
+  const subject = `${fr ? '✓ Tâche créée' : '✓ Task created'} : ${p.title}`;
+  const lines = [
+    p.when ? `${fr ? 'Quand' : 'When'} : ${p.when}` : fr ? 'Sans date' : 'No date',
+    p.assignees ? `${fr ? 'Qui' : 'Who'} : ${p.assignees}` : null,
+    p.files.length ? `${fr ? 'Pièces jointes' : 'Attachments'} : ${p.files.join(', ')}` : null,
+  ].filter((l): l is string => l !== null);
+  const cta = fr ? 'Ouvrir la tâche' : 'Open the task';
+  return {
+    subject,
+    text: `${p.title}\n\n${lines.join('\n')}\n\n${cta} : ${p.url}\n`,
+    html: layout(p.title, lines, { label: cta, url: p.url }),
+  };
+}
+
+/** E-mail reçu mais sans rien pour faire un titre (sujet et message vides). */
+export function inboundTaskEmptyEmail(locale: Locale) {
+  const fr = locale !== 'en';
+  const title = fr ? 'Aucune tâche créée' : 'No task created';
+  const body = [
+    fr
+      ? "L'e-mail transféré n'avait ni sujet ni texte : impossible d'en faire une tâche. Écrivez la tâche dans le sujet (par exemple « Payer la facture vendredi »)."
+      : 'The forwarded e-mail had neither subject nor text, so no task could be created. Write the task in the subject (e.g. “Pay the bill friday”).',
+  ];
+  return {
+    subject: title,
+    text: `${title}\n\n${body.join('\n\n')}\n`,
+    html: layout(title, body),
+  };
+}

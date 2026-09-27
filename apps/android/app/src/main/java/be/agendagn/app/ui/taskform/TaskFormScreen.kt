@@ -80,6 +80,10 @@ import be.agendagn.app.ui.components.formatShortDate
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
+import androidx.compose.ui.text.style.TextOverflow
+import be.agendagn.app.domain.model.Attachment
+import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.clickable
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,6 +106,7 @@ fun TaskFormScreen(
     onRemoveItem: (ChecklistItem) -> Unit = {},
     onRetrySeries: () -> Unit = {},
     onPostpone: (LocalDate) -> Unit = {},
+    onOpenAttachment: (Attachment) -> Unit = {},
 ) {
     LaunchedEffect(state.done) { if (state.done) onBack() }
     Scaffold(
@@ -267,6 +272,8 @@ fun TaskFormScreen(
                 ) { v -> onEdit { it.copy(syncToCalendar = v) } }
                 if (d.date == null) Hint(stringResource(R.string.field_sync_needs_date))
             }
+
+            state.original?.attachments?.takeIf { it.isNotEmpty() }?.let { AttachmentsSection(it, onOpenAttachment) }
 
             state.history?.takeIf { it.items.isNotEmpty() }?.let { HistorySection(it, members) }
 
@@ -581,6 +588,54 @@ private fun PostponeRow(current: LocalDate, onPostpone: (LocalDate) -> Unit) {
 }
 
 /** « Fait par » : les dernières fois, et combien de fois chacun l'a faite. */
+@Composable
+private fun AttachmentsSection(files: List<Attachment>, onOpen: (Attachment) -> Unit) {
+    val locale = currentLocale()
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Label(stringResource(R.string.attachments_title))
+        files.forEach { a ->
+            val open = stringResource(R.string.attachment_open, a.filename)
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .heightIn(min = 48.dp)
+                    .clickable(onClickLabel = open) { onOpen(a) }
+                    .semantics(mergeDescendants = true) {},
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Icon(
+                    painterResource(R.drawable.ic_attachment),
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Text(
+                    a.filename,
+                    style = MaterialTheme.typography.bodyLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    formatFileSize(a.size, locale),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+}
+
+/** « 12 Ko », « 1,4 Mo ». */
+internal fun formatFileSize(bytes: Long, locale: java.util.Locale): String {
+    val fr = locale.language == "fr"
+    return if (bytes < 1024 * 1024) {
+        "${maxOf(1, bytes / 1024)} ${if (fr) "Ko" else "KB"}"
+    } else {
+        String.format(locale, "%.1f %s", bytes / 1024.0 / 1024.0, if (fr) "Mo" else "MB")
+    }
+}
+
 @Composable
 private fun HistorySection(history: be.agendagn.app.domain.model.SeriesHistory, members: List<Member>) {
     val locale = currentLocale()

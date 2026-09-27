@@ -43,7 +43,16 @@ import { type Schedule, scheduleColumns } from './schedule';
 import { boundsOf, rotationConfig, rotationMemberIds, SeriesService } from './series.service';
 
 const occurrenceInclude = {
-  task: { include: { category: true } },
+  task: {
+    include: {
+      category: true,
+      // Métadonnées seulement : jamais le contenu des fichiers.
+      attachments: {
+        orderBy: { createdAt: 'asc' },
+        select: { id: true, filename: true, contentType: true, size: true },
+      },
+    },
+  },
   assignees: { select: { memberId: true } },
   eventLink: { select: { syncStatus: true, syncedVersion: true, lastErrorCode: true } },
   checklist: {
@@ -1342,6 +1351,7 @@ function toDto(o: OccurrenceRow): OccurrenceDto {
     completedById: o.completedById,
     version: o.version,
     checklist: o.checklist,
+    attachments: o.task.attachments,
   };
 }
 

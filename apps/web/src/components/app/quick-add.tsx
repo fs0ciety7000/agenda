@@ -17,7 +17,14 @@ import type { TaskDraft } from './task-form';
  * « + Sortir les poubelles demain 19h » → Entrée. L'analyse est faite par l'API (même résultat
  * sur Android) ; l'aperçu s'affiche pendant la frappe, sous forme de puces.
  */
-export function QuickAdd({ onMoreOptions }: { onMoreOptions: (draft: TaskDraft) => void }) {
+export function QuickAdd({
+  onMoreOptions,
+  extra,
+}: {
+  onMoreOptions: (draft: TaskDraft) => void;
+  /** Action secondaire affichée à droite, sous le champ (ex. « Utiliser un modèle »). */
+  extra?: React.ReactNode;
+}) {
   const t = useTranslations('quickAdd');
   const te = useTranslations('errors');
   const { household } = useSession();
@@ -139,24 +146,27 @@ export function QuickAdd({ onMoreOptions }: { onMoreOptions: (draft: TaskDraft) 
           <SlidersHorizontal aria-hidden className="size-4" />
         </button>
       </div>
-      <div
-        id="quick-add-preview"
-        aria-live="polite"
-        className="flex min-h-6 flex-wrap gap-1.5 px-1"
-      >
-        {chips.length > 0 && (
-          <>
-            <span className="sr-only">{t('previewLabel')}</span>
-            {chips.map((chip) => (
-              <span
-                key={chip}
-                className="rounded-full bg-surface-muted px-2.5 py-0.5 text-[0.8125rem] text-text-muted"
-              >
-                {chip}
-              </span>
-            ))}
-          </>
-        )}
+      <div className="flex min-h-6 items-start justify-between gap-2">
+        <div
+          id="quick-add-preview"
+          aria-live="polite"
+          className="flex flex-wrap gap-1.5 px-1 pt-0.5"
+        >
+          {chips.length > 0 && (
+            <>
+              <span className="sr-only">{t('previewLabel')}</span>
+              {chips.map((chip) => (
+                <span
+                  key={chip}
+                  className="rounded-full bg-surface-muted px-2.5 py-0.5 text-[0.8125rem] text-text-muted"
+                >
+                  {chip}
+                </span>
+              ))}
+            </>
+          )}
+        </div>
+        {extra}
       </div>
     </form>
   );
