@@ -1,6 +1,6 @@
 name: Android — APK à installer
 
-# À chaque mise à jour de main, l'APK et version.json sont publiés dans la release `android-latest`.
+# À chaque mise à jour de l'app Android sur main (apps/android/**), l'APK et version.json sont publiés dans la release `android-latest`.
 # L'app et le site les lisent via l'API (relais /v1/app/android/*), dépôt public ou privé.
 # Secrets requis (Settings → Secrets and variables → Actions) : ANDROID_KEYSTORE_B64,
 # ANDROID_KEYSTORE_PASSWORD — cf. docs/android.md §4. Sans eux, rien n'est publié.
@@ -9,6 +9,9 @@ name: Android — APK à installer
 on:
   push:
     branches: [main]
+    paths:
+      - 'apps/android/**'
+      - '.github/workflows/android-release.yml'
   workflow_dispatch:
 
 concurrency:

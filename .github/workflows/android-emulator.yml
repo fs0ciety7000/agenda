@@ -1,17 +1,11 @@
 # Tests Android sur un vrai émulateur (SQLite, Keystore, FileProvider, lancement de l'app) : ce que
-# Robolectric ne couvre pas. Lancé quand l'app Android change, pour ne pas ralentir le reste.
+# Robolectric ne couvre pas. ~10 min de runner : lancé à la demande (onglet Actions → « Android
+# (émulateur) » → Run workflow), ou sur une PR portant l'étiquette `emulateur`.
 name: Android (émulateur)
 
 on:
   pull_request:
-    paths:
-      - 'apps/android/**'
-      - '.github/workflows/android-emulator.yml'
-  push:
-    branches: [main]
-    paths:
-      - 'apps/android/**'
-      - '.github/workflows/android-emulator.yml'
+    types: [labeled, synchronize]
   workflow_dispatch:
 
 concurrency:
@@ -24,6 +18,7 @@ permissions:
 jobs:
   instrumented:
     name: Tests instrumentés (API 34)
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'emulateur')
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:

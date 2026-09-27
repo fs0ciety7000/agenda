@@ -97,7 +97,7 @@ UI (Compose) ──▶ ViewModel ──▶ AgendaRepository
 | « Continuer avec Google » | Custom Tab sur le site + retour `be.agendagn.app://auth?code=…`, code à usage unique (2 min) échangé avec un verifier PKCE resté dans l'app | Aucun nouveau client OAuth ni URI dans la console Google ; une app qui intercepterait le lien ne peut rien en faire sans le verifier |
 | Récurrence sur mobile | Préréglages + « chacun son tour » | Rotations avancées (séquences, jours fixes) restent sur le web |
 | Base locale | Room, migration destructive | C'est un cache ; migrations obligatoires dès que le schéma change en production (sinon l'outbox non envoyée serait perdue) |
-| Tests d'interface | Robolectric (JVM) + émulateur | Robolectric à chaque PR (rapide, captures) ; émulateur quand l'app change (SQLite, Keystore, lancement réels) |
+| Tests d'interface | Robolectric (JVM) + émulateur | Robolectric à chaque PR Android (rapide, captures) ; émulateur à la demande (SQLite, Keystore, lancement réels) |
 
 ## 4. Construire et installer
 
@@ -216,8 +216,10 @@ cd apps/android
 - `LiveApiTest` : connexion, synchro, créations hors ligne rejouées, série « les suivantes »,
   conflit, suppression — contre la vraie API.
 
-**Sur émulateur** (`app/src/androidTest`, workflow `android-emulator.yml`, API 34, lancé quand
-`apps/android` change) : ce que Robolectric simule seulement.
+**Sur émulateur** (`app/src/androidTest`, workflow `android-emulator.yml`, API 34) : ce que
+Robolectric simule seulement. Une dizaine de minutes de runner, donc **à la demande** : onglet
+*Actions → Android (émulateur) → Run workflow*, ou étiquette `emulateur` sur la PR (à poser avant
+une version qui touche la base, les fichiers ou le démarrage de l'app).
 
 - `DeviceMigrationTest` : base installée en v1, toutes les migrations jusqu'à la dernière sur le
   SQLite de l'appareil, puis ouverture par Room ; actions hors ligne conservées.

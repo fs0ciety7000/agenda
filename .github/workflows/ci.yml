@@ -1,9 +1,27 @@
 name: CI
 
+# L'app Android a son propre workflow (android.yml) ; une PR qui ne touche que la doc ou l'app
+# Android ne lance pas ce CI (minutes GitHub Actions comptées sur un dépôt privé).
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'apps/android/**'
+      - 'docs/**'
+      - 'apps/docs/**'
+      - '**/*.md'
+      - '.github/workflows/android*.yml'
+      - '.github/workflows/uptime.yml'
+      - '.github/workflows/docs.yml'
   pull_request:
+    paths-ignore:
+      - 'apps/android/**'
+      - 'docs/**'
+      - 'apps/docs/**'
+      - '**/*.md'
+      - '.github/workflows/android*.yml'
+      - '.github/workflows/uptime.yml'
+      - '.github/workflows/docs.yml'
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -50,6 +68,14 @@ jobs:
       - name: Couverture du moteur métier (≥ 95 %)
         run: pnpm --filter @agenda/domain coverage
       - run: pnpm build
+      # La référence de l'API (site de documentation) doit suivre le code.
+      - name: Documentation OpenAPI à jour
+        run: |
+          pnpm --filter @agenda/api openapi
+          git diff --exit-code apps/docs/static/openapi.json || {
+            echo "::error::apps/docs/static/openapi.json n'est pas à jour : pnpm --filter @agenda/api build && pnpm --filter @agenda/api openapi"
+            exit 1
+          }
 
   e2e:
     name: E2E web (Playwright)
@@ -130,6 +156,15 @@ jobs:
           docker compose -f docker-compose.prod.yml logs backup | grep -q 'restauration vérifiée'
           docker compose -f docker-compose.prod.yml exec -T backup test -s /backups/last-success
           docker compose -f docker-compose.prod.yml down -v
+      - name: Vérifier l'image de documentation
+        run: |
+          docker run -d --name docs-smoke -p 8080:80 agenda-docs
+          for i in $(seq 1 20); do curl -sf http://127.0.0.1:8080/healthz >/dev/null && break; sleep 1; done
+          for path in / /guide/premiers-pas /rgpd /api /api-reference /changelog /openapi.json; do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:8080$path")
+            echo "$path → $code"
+            test "$code" = 200
+          done
       - name: Vérifier l'image web (sans API)
         run: |
           docker run -d --name web-smoke -p 3000:3000 agenda-web
@@ -139,26 +174,3 @@ jobs:
             echo "$path → $code"
             test "$code" = 200
           done
-
-  android:
-    name: Android (lint · tests · APK debug)
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    defaults:
-      run:
-        working-directory: apps/android
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/setup-java@v6
-        with:
-          distribution: temurin
-          java-version: '21'
-      - uses: gradle/actions/setup-gradle@v6
-      - run: ./gradlew lintDebug testDebugUnitTest assembleDebug --console=plain
-      # Build release (R8) vérifié ; l'APK signé et publié vient d'android-release.yml.
-      - run: ./gradlew assembleRelease bundlePlay --console=plain -Pagenda.apiBaseUrl=https://agenda.example.invalid/
-      - if: failure()
-        uses: actions/upload-artifact@v7
-        with:
-          name: android-test-reports
-          path: apps/android/app/build/reports

@@ -1,0 +1,45 @@
+# App Android : lint, tests (JVM + Robolectric), APK debug et build release (R8).
+# Seulement quand l'app Android change (minutes GitHub Actions comptées sur un dépôt privé).
+name: Android
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/android/**'
+      - '.github/workflows/android.yml'
+  pull_request:
+    paths:
+      - 'apps/android/**'
+      - '.github/workflows/android.yml'
+
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  android:
+    name: Android (lint · tests · APK debug)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: apps/android
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - uses: gradle/actions/setup-gradle@v6
+      - run: ./gradlew lintDebug testDebugUnitTest assembleDebug --console=plain
+      # Build release (R8) vérifié ; l'APK signé et publié vient d'android-release.yml.
+      - run: ./gradlew assembleRelease bundlePlay --console=plain -Pagenda.apiBaseUrl=https://agenda.example.invalid/
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: android-test-reports
+          path: apps/android/app/build/reports

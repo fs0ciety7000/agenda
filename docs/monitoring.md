@@ -6,7 +6,7 @@ installer ; le troisième ajoute des alertes rapides depuis l'extérieur.
 | Niveau | Ce qu'il voit | Où | Alerte |
 |---|---|---|---|
 | 1. Sondes internes | Base, Redis, synchro Google, SMTP, sauvegardes (chaque minute) | page publique `/status`, Administration → Surveillance | e-mail + notification navigateur aux `ADMIN_EMAILS` |
-| 2. Workflow GitHub `Disponibilité` | le site entier depuis Internet (toutes les 10 min) | onglet *Actions* | ticket « Site indisponible » (e-mail GitHub) |
+| 2. Workflow GitHub `Disponibilité` | le site entier depuis Internet (toutes les 2 h) | onglet *Actions* | ticket « Site indisponible » (e-mail GitHub) |
 | 3. Uptime Kuma (recommandé) | le site, l'état détaillé, le certificat, les sauvegardes (chaque minute) | son tableau de bord | Telegram, e-mail, ntfy, Discord, SMS… |
 
 > Les sondes internes tournent **dans** l'API : si le serveur s'arrête, elles s'arrêtent aussi.
@@ -49,7 +49,11 @@ un Prometheus externe, l'exposer via Coolify ou le scraper depuis le même rése
 
 ## 2. Workflow GitHub `Disponibilité`
 
-Déjà en place (`.github/workflows/uptime.yml`, cf. `deployment.md` §10) : rien à faire.
+Déjà en place (`.github/workflows/uptime.yml`, cf. `deployment.md` §10) : rien à faire. Il passe
+toutes les 2 heures seulement : sur un dépôt privé, chaque passage consomme une minute du quota
+GitHub Actions (2 000 min/mois en offre gratuite). C'est un filet de sécurité ; l'alerte rapide
+vient d'Uptime Kuma. Une fois Uptime Kuma en place, le workflow peut être désactivé (*Actions →
+Disponibilité → ⋯ → Disable workflow*).
 
 ## 3. Uptime Kuma (recommandé)
 
