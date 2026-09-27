@@ -63,6 +63,7 @@ fun SettingsScreen(
     morningRecap: Boolean = true,
     onMorningRecap: (Boolean) -> Unit = {},
     onRetryPush: () -> Unit = {},
+    onOpenHistory: () -> Unit = {},
 ) {
     var confirmSignOut by remember { mutableStateOf(false) }
     Column(
@@ -121,6 +122,15 @@ fun SettingsScreen(
                     Text(stringResource(R.string.calendar_manage_web))
                 }
             }
+        }
+
+        SectionHeader(stringResource(R.string.settings_history))
+        OutlinedCard(onClick = onOpenHistory, modifier = Modifier.fillMaxWidth()) {
+            Text(
+                stringResource(R.string.settings_history_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp),
+            )
         }
 
         SectionHeader(stringResource(R.string.settings_reminders))

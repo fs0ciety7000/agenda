@@ -6,8 +6,13 @@ export const InboundEmailSettingsDto = z.object({
   available: z.boolean(),
   /** Adresse personnelle ; null tant qu'elle n'a pas été créée (ou après désactivation). */
   address: z.string().nullable(),
+  /** Accusé de réception « ✓ Tâche créée » envoyé à chaque e-mail. */
+  acknowledge: z.boolean(),
 });
 export type InboundEmailSettingsDto = z.infer<typeof InboundEmailSettingsDto>;
+
+export const InboundEmailSettingsInput = z.object({ acknowledge: z.boolean() });
+export type InboundEmailSettingsInput = z.infer<typeof InboundEmailSettingsInput>;
 
 /** Webhook Resend (réception d'e-mails) : seuls les champs utilisés sont validés. */
 export const ResendWebhookEvent = z.object({

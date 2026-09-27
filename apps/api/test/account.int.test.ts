@@ -390,10 +390,15 @@ describe('Compte : mot de passe oublié, Google Sign-In, RGPD (intégration)', (
   describe('RGPD', () => {
     it('export : mes données, dont mes tâches personnelles, jamais celles du partenaire', async () => {
       const h = await coupleHousehold(app);
-      await http()
+      const perso = await http()
         .post(`${h.base}/tasks`)
         .set(h.grace.auth)
         .send({ title: 'Ma note perso', visibility: 'PERSONAL' })
+        .expect(201);
+      await http()
+        .post(`${h.base}/occurrences/${perso.body.id}/attachments`)
+        .set(h.grace.auth)
+        .attach('file', Buffer.from('%PDF'), 'ticket.pdf')
         .expect(201);
       await http()
         .post(`${h.base}/tasks`)
@@ -416,6 +421,9 @@ describe('Compte : mot de passe oublié, Google Sign-In, RGPD (intégration)', (
       expect(res.body.assignedOccurrences.map((o: { title: string }) => o.title)).toEqual(
         expect.arrayContaining(['Ma note perso', 'Courses']),
       );
+      expect(res.body.attachmentsAdded).toEqual([
+        expect.objectContaining({ task: 'Ma note perso', filename: 'ticket.pdf', size: 4 }),
+      ]);
       expect(JSON.stringify(res.body)).not.toContain('Secret de Nicolas');
       expect(JSON.stringify(res.body)).not.toMatch(/passwordHash|refreshTokenHash/);
     });

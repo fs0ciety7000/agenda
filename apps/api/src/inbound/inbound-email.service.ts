@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import {
   ATTACHMENT_MAX_BYTES,
   type InboundEmailSettingsDto,
+  type InboundEmailSettingsInput,
   type OccurrenceDto,
   type ResendWebhookEvent,
 } from '@agenda/contracts';
@@ -87,23 +88,37 @@ export class InboundEmailService {
   ) {}
 
   async settings(ctx: HouseholdContext): Promise<InboundEmailSettingsDto> {
-    if (!inboundAvailable()) return { available: false, address: null };
     const m = await this.prisma.householdMember.findUniqueOrThrow({
       where: { id: ctx.memberId },
-      select: { inboundToken: true },
+      select: { inboundToken: true, inboundAck: true },
     });
-    return { available: true, address: m.inboundToken ? addressFor(m.inboundToken) : null };
+    if (!inboundAvailable()) return { available: false, address: null, acknowledge: m.inboundAck };
+    return {
+      available: true,
+      address: m.inboundToken ? addressFor(m.inboundToken) : null,
+      acknowledge: m.inboundAck,
+    };
   }
 
   /** Crée l'adresse, ou la remplace (l'ancienne cesse de fonctionner). */
   async regenerate(ctx: HouseholdContext): Promise<InboundEmailSettingsDto> {
     if (!inboundAvailable()) throw notFound();
-    const token = randomBytes(16).toString('hex');
     await this.prisma.householdMember.update({
       where: { id: ctx.memberId },
-      data: { inboundToken: token },
+      data: { inboundToken: randomBytes(16).toString('hex') },
     });
-    return { available: true, address: addressFor(token) };
+    return this.settings(ctx);
+  }
+
+  async update(
+    ctx: HouseholdContext,
+    input: InboundEmailSettingsInput,
+  ): Promise<InboundEmailSettingsDto> {
+    await this.prisma.householdMember.update({
+      where: { id: ctx.memberId },
+      data: { inboundAck: input.acknowledge },
+    });
+    return this.settings(ctx);
   }
 
   async disable(ctx: HouseholdContext): Promise<void> {
@@ -215,13 +230,14 @@ export class InboundEmailService {
     const m = await this.prisma.householdMember.findUniqueOrThrow({
       where: { id: memberId },
       select: {
+        inboundAck: true,
         user: { select: { email: true, locale: true } },
         household: {
           select: { members: { where: { leftAt: null }, select: { id: true, displayName: true } } },
         },
       },
     });
-    if (!m.user) return;
+    if (!m.user || !m.inboundAck) return;
     const locale = m.user.locale === 'en' ? 'en' : 'fr';
     const mail = created
       ? inboundTaskCreatedEmail(locale, {

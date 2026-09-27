@@ -70,7 +70,7 @@ describe('Tâches par e-mail (Resend)', () => {
   it('adresse personnelle ; un e-mail transféré devient une tâche (sujet analysé, message en notes)', async () => {
     const h = await coupleHousehold(app);
     const initial = await http().get(`${h.base}/inbound-email`).set(h.grace.auth).expect(200);
-    expect(initial.body).toEqual({ available: true, address: null });
+    expect(initial.body).toEqual({ available: true, address: null, acknowledge: true });
     const created = await http().post(`${h.base}/inbound-email`).set(h.grace.auth).expect(200);
     const address = created.body.address as string;
     expect(address).toMatch(/^[a-f0-9]{32}@tasks\.example\.test$/);
@@ -190,6 +190,21 @@ describe('Tâches par e-mail (Resend)', () => {
     expect(ack.text).toContain('Qui : Nicolas');
     expect(ack.text).toContain('Pièces jointes : facture.pdf');
     expect(ack.text).toContain(`/?open=${o.id}`);
+
+    // Accusé désactivable.
+    await http()
+      .patch(`${h.base}/inbound-email`)
+      .set(h.grace.auth)
+      .send({ acknowledge: false })
+      .expect(200);
+    const quiet = mail.outbox.length;
+    await deliver(address, { subject: 'Sans accusé' }).expect(200);
+    expect(mail.outbox.length).toBe(quiet);
+    await http()
+      .patch(`${h.base}/inbound-email`)
+      .set(h.grace.auth)
+      .send({ acknowledge: true })
+      .expect(200);
 
     // E-mail vide : pas de tâche, mais un message pour le dire.
     const count = mail.outbox.length;

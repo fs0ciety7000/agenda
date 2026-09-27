@@ -749,7 +749,9 @@
     "confirmRegenerate": "Create a new address? The old one will stop working.",
     "disable": "Turn off",
     "confirmDisable": "Turn off adding by e-mail? The address will stop working.",
-    "error": "Couldn't do that. Please try again."
+    "error": "Couldn't do that. Please try again.",
+    "acknowledge": "Send me a confirmation",
+    "acknowledgeHint": "A “✓ Task created” e-mail for each task added by e-mail."
   },
   "offline": {
     "offline": "Offline: you're seeing the latest data received. Tick tasks, add some or do the shopping: everything will be sent when you're back online.",

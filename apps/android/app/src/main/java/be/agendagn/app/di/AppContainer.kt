@@ -41,6 +41,7 @@ class AppContainer(context: Context) {
     val attachments = be.agendagn.app.data.files.AttachmentFiles(api, database, app.cacheDir)
     private val repositoryImpl = AgendaRepositoryImpl(api, database, SyncEngine(api, database, settings), syncScheduler)
     val repository: AgendaRepository = repositoryImpl
+    val activity = be.agendagn.app.data.ActivityRemote(api, database) { repositoryImpl.refresh() }
     val reminders = ReminderScheduler(app, repository, settings)
     val recap = RecapScheduler(app, settings)
     val authRepository: AuthRepository = AuthRepositoryImpl(

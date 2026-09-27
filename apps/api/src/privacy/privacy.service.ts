@@ -48,7 +48,7 @@ export class PrivacyService {
       },
     });
     const memberIds = user.memberships.map((m) => m.id);
-    const [createdTasks, assigned, shopping] = await Promise.all([
+    const [createdTasks, assigned, shopping, attachments] = await Promise.all([
       this.prisma.task.findMany({
         where: { createdById: { in: memberIds }, deletedAt: null },
         include: {
@@ -83,6 +83,18 @@ export class PrivacyService {
       this.prisma.shoppingItem.findMany({
         where: { createdById: { in: memberIds } },
         select: { text: true, done: true, createdAt: true, doneAt: true },
+        orderBy: { createdAt: 'asc' },
+      }),
+      // Fichiers joints : la liste (le contenu se télécharge depuis chaque tâche).
+      this.prisma.taskAttachment.findMany({
+        where: { createdById: { in: memberIds } },
+        select: {
+          filename: true,
+          contentType: true,
+          size: true,
+          createdAt: true,
+          task: { select: { title: true } },
+        },
         orderBy: { createdAt: 'asc' },
       }),
     ]);
@@ -128,6 +140,13 @@ export class PrivacyService {
         completedAt: o.completedAt,
       })),
       shoppingItemsAdded: shopping,
+      attachmentsAdded: attachments.map((a) => ({
+        task: a.task.title,
+        filename: a.filename,
+        contentType: a.contentType,
+        size: a.size,
+        createdAt: a.createdAt,
+      })),
     };
   }
 

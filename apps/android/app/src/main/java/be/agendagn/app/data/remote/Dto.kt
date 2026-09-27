@@ -102,6 +102,32 @@ data class OccurrenceDto(
     val attachments: List<AttachmentDto> = emptyList(),
 )
 
+/** Journal d'activité (cf. packages/contracts/src/activity.ts). */
+@Serializable
+data class ActivityDto(
+    val id: String,
+    val action: String,
+    val at: String,
+    val actorId: String? = null,
+    val title: String? = null,
+    val date: String? = null,
+    val fields: List<String> = emptyList(),
+)
+
+@Serializable
+data class ActivityPageDto(val items: List<ActivityDto>, val next: String? = null)
+
+@Serializable
+data class TrashItemDto(
+    val id: String,
+    val kind: String,
+    val title: String,
+    val date: String? = null,
+    val deletedAt: String,
+    val deletedById: String? = null,
+    val purgeAt: String,
+)
+
 @Serializable
 data class AttachmentDto(val id: String, val filename: String, val contentType: String, val size: Long)
 
