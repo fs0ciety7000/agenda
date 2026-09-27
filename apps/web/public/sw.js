@@ -67,3 +67,38 @@ async function networkFirstPage(req, url) {
     throw err;
   }
 }
+
+// ── Notifications du site (Web Push) : message chiffré envoyé par l'API. ──
+self.addEventListener('push', (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch {
+    // Message illisible : notification générique.
+  }
+  event.waitUntil(
+    self.registration.showNotification(data.title || 'Agenda G & N', {
+      body: data.body || '',
+      icon: '/icons/icon-192.png',
+      badge: '/icons/icon-192.png',
+      tag: data.tag,
+      data: { url: data.url || '/' },
+    }),
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const url = new URL(event.notification.data?.url || '/', self.location.origin).href;
+  event.waitUntil(
+    (async () => {
+      const windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+      const open = windows.find((w) => new URL(w.url).origin === self.location.origin);
+      if (open) {
+        await open.focus();
+        return open.navigate(url);
+      }
+      return self.clients.openWindow(url);
+    })(),
+  );
+});

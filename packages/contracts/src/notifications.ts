@@ -71,3 +71,20 @@ export const PushTokenInput = z.object({
   platform: z.enum(['android']).default('android'),
 });
 export type PushTokenInput = z.infer<typeof PushTokenInput>;
+
+/** Notifications du site : clé publique VAPID (null = non configuré sur le serveur). */
+export const WebPushKeyDto = z.object({ publicKey: z.string().nullable() });
+export type WebPushKeyDto = z.infer<typeof WebPushKeyDto>;
+
+/** `PushSubscription.toJSON()` du navigateur. */
+export const WebPushSubscriptionInput = z.object({
+  endpoint: z
+    .url()
+    .max(2048)
+    .refine((u) => u.startsWith('https://'), 'https required'),
+  keys: z.object({ p256dh: z.string().min(1).max(200), auth: z.string().min(1).max(100) }),
+});
+export type WebPushSubscriptionInput = z.infer<typeof WebPushSubscriptionInput>;
+
+export const WebPushUnsubscribeInput = z.object({ endpoint: z.string().max(2048) });
+export type WebPushUnsubscribeInput = z.infer<typeof WebPushUnsubscribeInput>;

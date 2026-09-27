@@ -58,6 +58,10 @@ services:
       SENTRY_DSN: ${SENTRY_DSN:-}
       # Notifications instantanées Android (compte de service Firebase, JSON ou base64) — docs/android.md.
       FCM_SERVICE_ACCOUNT: ${FCM_SERVICE_ACCOUNT:-}
+      # Notifications du site (Web Push) : clés VAPID, cf. docs/deployment.md §4.3.
+      WEB_PUSH_PUBLIC_KEY: ${WEB_PUSH_PUBLIC_KEY:-}
+      WEB_PUSH_PRIVATE_KEY: ${WEB_PUSH_PRIVATE_KEY:-}
+      WEB_PUSH_SUBJECT: ${WEB_PUSH_SUBJECT:-}
       # App Android : release GitHub relayée par l'API (jeton lecture seule si dépôt privé).
       ANDROID_RELEASE_REPO: ${ANDROID_RELEASE_REPO:-fs0ciety7000/agenda}
       GITHUB_RELEASES_TOKEN: ${GITHUB_RELEASES_TOKEN:-}

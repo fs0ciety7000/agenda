@@ -90,6 +90,18 @@ const EnvSchema = z.object({
   /** JSON du compte de service Firebase (brut ou en base64). */
   FCM_SERVICE_ACCOUNT: z.preprocess((v) => (v === '' ? undefined : v), z.string().optional()),
   FCM_API_URL: z.string().url().default('https://fcm.googleapis.com'),
+  // ── Notifications du site (Web Push, docs/deployment.md). Sans clés : désactivées. ──
+  /** Clés VAPID (`npx web-push generate-vapid-keys`). La clé publique est donnée aux navigateurs. */
+  WEB_PUSH_PUBLIC_KEY: z.preprocess(
+    (v) => (v === '' ? undefined : v),
+    z.string().trim().optional(),
+  ),
+  WEB_PUSH_PRIVATE_KEY: z.preprocess(
+    (v) => (v === '' ? undefined : v),
+    z.string().trim().optional(),
+  ),
+  /** Contact transmis aux services de push (mailto: ou https:). Défaut : l'adresse du site. */
+  WEB_PUSH_SUBJECT: z.preprocess((v) => (v === '' ? undefined : v), z.string().trim().optional()),
   // ── Distribution de l'app Android (docs/android.md §4) ──
   /** Dépôt GitHub dont la release `android-latest` contient l'APK et version.json. */
   ANDROID_RELEASE_REPO: z.string().trim().default('fs0ciety7000/agenda'),
