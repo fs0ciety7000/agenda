@@ -4,3 +4,9 @@ apps/android
 **/.next
 **/migrations/**/*.sql
 docs
+apps/docs/build
+apps/docs/.docusaurus
+apps/docs/package-lock.json
+# Généré par `pnpm --filter @agenda/api openapi` (vérifié en CI).
+apps/docs/static/openapi.json
+apps/docs/static/swagger

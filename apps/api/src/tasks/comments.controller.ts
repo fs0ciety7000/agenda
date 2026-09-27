@@ -13,6 +13,7 @@ import { CommentsService } from './comments.service';
 export class CommentsController {
   constructor(private readonly comments: CommentsService) {}
 
+  /** Commentaires d'une tâche. */
   @Get('occurrences/:occurrenceId/comments')
   list(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -21,6 +22,7 @@ export class CommentsController {
     return this.comments.list(ctx, assertUuid(id));
   }
 
+  /** Commenter une tâche. */
   @Post('occurrences/:occurrenceId/comments')
   create(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -30,6 +32,7 @@ export class CommentsController {
     return this.comments.create(ctx, assertUuid(id), input);
   }
 
+  /** Supprimer son commentaire. */
   @Delete('comments/:id')
   @HttpCode(204)
   remove(@CurrentHousehold() ctx: HouseholdContext, @Param('id') id: string): Promise<void> {

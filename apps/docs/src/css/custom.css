@@ -1,0 +1,87 @@
+/* Couleurs du design system « Calme » (packages/design-tokens/tokens.json). */
+:root {
+  --ifm-color-primary: #7d4460;
+  --ifm-color-primary-dark: #713d56;
+  --ifm-color-primary-darker: #6a3a52;
+  --ifm-color-primary-darkest: #573043;
+  --ifm-color-primary-light: #894b6a;
+  --ifm-color-primary-lighter: #904e6e;
+  --ifm-color-primary-lightest: #a3597d;
+  --ifm-background-color: #faf6f2;
+  --ifm-background-surface-color: #ffffff;
+  --ifm-font-color-base: #24181d;
+  --ifm-color-emphasis-600: #6f5f66;
+  --ifm-toc-border-color: #e6dad2;
+  --ifm-hr-border-color: #e6dad2;
+  --ifm-code-font-size: 92%;
+  --ifm-global-radius: 10px;
+  --ifm-navbar-background-color: #ffffff;
+  --ifm-footer-background-color: #24181d;
+  --ifm-font-family-base:
+    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --docusaurus-highlighted-code-line-bg: rgba(125, 68, 96, 0.1);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #e0a9c3;
+  --ifm-color-primary-dark: #d78fb1;
+  --ifm-color-primary-darker: #d282a8;
+  --ifm-color-primary-darkest: #c35c8c;
+  --ifm-color-primary-light: #e9c3d5;
+  --ifm-color-primary-lighter: #eed0de;
+  --ifm-color-primary-lightest: #f8ecf2;
+  --ifm-background-color: #141012;
+  --ifm-background-surface-color: #1d171a;
+  --ifm-font-color-base: #f1e9ec;
+  --ifm-color-emphasis-600: #b3a5ab;
+  --ifm-toc-border-color: #372c32;
+  --ifm-hr-border-color: #372c32;
+  --ifm-navbar-background-color: #1d171a;
+  --ifm-footer-background-color: #1d171a;
+  --docusaurus-highlighted-code-line-bg: rgba(224, 169, 195, 0.15);
+}
+
+.markdown img {
+  border-radius: 14px;
+}
+
+.markdown table {
+  font-size: 0.9375rem;
+}
+
+/* Captures d'écran côte à côte (guide). */
+.screens,
+.screens > p {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 1rem 0 1.5rem;
+}
+.screens img,
+.screens p img {
+  width: calc(25% - 12px);
+  min-width: 140px;
+  max-width: 220px;
+  box-shadow: 0 2px 12px rgba(36, 24, 29, 0.12);
+}
+
+/* Référence de l'API (Swagger UI) : lisible en thème sombre. */
+.api-reference {
+  padding: 1rem 0 3rem;
+}
+/* Les styles globaux de Docusaurus (pre, small) déforment les pastilles de version. */
+.api-reference .swagger-ui .info .title small pre {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #fff;
+  font-size: inherit;
+  line-height: inherit;
+}
+[data-theme='dark'] .api-reference .swagger-ui {
+  filter: invert(0.88) hue-rotate(180deg);
+}
+[data-theme='dark'] .api-reference .swagger-ui .microlight {
+  filter: invert(1) hue-rotate(180deg);
+}

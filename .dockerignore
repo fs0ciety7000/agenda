@@ -12,3 +12,5 @@ apps/android
 docs
 .git
 .github
+# Site de documentation : image à part (apps/docs/Dockerfile.dockerignore).
+apps/docs

@@ -22,6 +22,7 @@ export const HEARTBEAT_MS = 25_000;
 export class RealtimeController {
   constructor(private readonly events: DomainEvents) {}
 
+  /** Flux temps réel (Server-Sent Events). */
   @Sse('events')
   stream(@CurrentHousehold() ctx: HouseholdContext): Observable<MessageEvent> {
     const changes = new Observable<RealtimeTopic>((subscriber) =>

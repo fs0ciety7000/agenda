@@ -15,11 +15,13 @@ import { WebPushService } from './web-push.service';
 export class WebPushController {
   constructor(private readonly webPush: WebPushService) {}
 
+  /** Clé publique VAPID (notifications du navigateur). */
   @Get('key')
   key(): WebPushKeyDto {
     return { publicKey: this.webPush.publicKey };
   }
 
+  /** Abonner ce navigateur aux notifications. */
   @Put()
   @HttpCode(204)
   subscribe(
@@ -29,6 +31,7 @@ export class WebPushController {
     return this.webPush.subscribe(user.userId, body);
   }
 
+  /** Désabonner ce navigateur. */
   @Post('unsubscribe')
   @HttpCode(204)
   unsubscribe(

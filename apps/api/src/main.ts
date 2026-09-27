@@ -3,9 +3,10 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule } from '@nestjs/swagger';
 import { Logger } from 'nestjs-pino';
 import { AppModule } from './app.module';
-import { buildOpenApi, configureApp } from './bootstrap';
+import { configureApp } from './bootstrap';
 import { initErrorReporting } from './common/error-reporter';
 import { env } from './config/env';
+import { buildOpenApi } from './openapi/openapi';
 
 async function main(): Promise<void> {
   const config = env();

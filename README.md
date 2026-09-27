@@ -76,8 +76,19 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
 
 ## Documentation
 
+Le **site de documentation** ([`apps/docs`](apps/docs), Docusaurus) rassemble tout le dossier
+[`docs/`](docs) : guide d'utilisation, technique, confidentialité & RGPD, nouveautés et
+**référence de l'API** (Swagger, générée depuis le code). En production :
+`https://agenda-docs.fs0ciety.org` ([déploiement](docs/deployment.md#13-site-de-documentation)) ;
+en local : `cd apps/docs && npm ci && npm start`.
+
 | Document                                                | Contenu                                                   |
 | ------------------------------------------------------- | --------------------------------------------------------- |
+| [Guide d'utilisation](docs/guide/premiers-pas.md)       | Premiers pas, tâches, répétitions, courses, Android…      |
+| [Confidentialité & RGPD](docs/rgpd.md)                  | Registre des traitements, prestataires, droits            |
+| [Nouveautés](docs/changelog.md)                         | Historique des changements                                |
+| [Stack technique](docs/stack.md)                        | Technologies, dépôt, qualité, exploitation                |
+| [Guide de l'API](docs/api.md)                           | Authentification, erreurs, idempotence, temps réel        |
 | [Exigences produit](docs/product-requirements.md)       | Vision, user stories, décisions                           |
 | [Architecture](docs/architecture.md)                    | Choix techniques (ADR), sécurité, RGPD, infra             |
 | [Surveillance](docs/monitoring.md)                      | Sondes, `/status`, alertes, Uptime Kuma, Prometheus       |
@@ -89,6 +100,7 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
 | [Google Play](docs/play-store.md)                       | Publication, fiche, sécurité des données                  |
 | [Tâches par e-mail](docs/email-to-task.md)              | Adresse personnelle, réception par Resend                 |
 | [Déploiement](docs/deployment.md)                       | Coolify (Docker Compose) + Cloudflare, sauvegardes        |
+| [Contribuer](docs/contribuer.md)                        | Démarrage, conventions, changelog, CI                     |
 | [Roadmap](docs/roadmap.md)                              | Phases livrées, risques                                   |
 
 ## Structure
@@ -97,6 +109,7 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
 apps/api       NestJS 11 + Prisma 6 (PostgreSQL 16) + BullMQ (Redis)
 apps/web       Next.js 15 (App Router) + Tailwind 4 + TanStack Query + next-intl
 apps/android   Kotlin + Jetpack Compose, Room, WorkManager, Glance (Gradle autonome)
+apps/docs      Site de documentation Docusaurus (contenu : docs/) + référence Swagger
   └ fastlane/metadata   Fiche Google Play (textes FR/EN, icône, captures)
 packages/domain         Récurrence, rotation, ajout rapide, répartition (partagé API ↔ web)
 packages/contracts      Schémas Zod partagés API ↔ web
@@ -134,7 +147,7 @@ cd apps/android && ./gradlew lintDebug testDebugUnitTest assembleDebug
 
 - **Serveur** : `docker-compose.prod.yml` sur Coolify derrière Cloudflare ;
   voir [docs/deployment.md](docs/deployment.md).
-- **Android** : à chaque mise à jour de `main`, `android-release.yml` publie dans la release GitHub
+- **Android** : à chaque mise à jour de l'app sur `main`, `android-release.yml` publie dans la release GitHub
   `android-latest` :
   - l'APK du site (`agenda-gn.apk`, qui se met à jour lui-même) ;
   - l'AAB Google Play (`agenda-gn-play.aab`).

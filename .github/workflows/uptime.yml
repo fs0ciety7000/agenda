@@ -1,12 +1,14 @@
 # Surveillance de disponibilité, depuis l'extérieur du serveur (docs/deployment.md §10).
-# Toutes les 10 minutes : /healthz (web → API → PostgreSQL). En cas de panne, un ticket
+# Toutes les 2 heures : /healthz (web → API → PostgreSQL). Filet de sécurité gratuit : pour une
+# alerte en une minute, Uptime Kuma (docs/monitoring.md). Dépôt privé : chaque passage consomme
+# une minute du quota GitHub Actions (toutes les 10 min, c'était 4 300 min/mois). En cas de panne, un ticket
 # « Site indisponible » est ouvert (notification GitHub par email / appli) ; il est fermé
 # automatiquement au retour du site. Aucun compte tiers nécessaire.
 name: Disponibilité
 
 on:
   schedule:
-    - cron: '*/10 * * * *'
+    - cron: '7 */2 * * *'
   workflow_dispatch:
 
 permissions:

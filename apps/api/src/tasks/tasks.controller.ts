@@ -44,6 +44,7 @@ import { TasksService } from './tasks.service';
 export class TasksController {
   constructor(private readonly tasks: TasksService) {}
 
+  /** Créer une tâche (ponctuelle ou répétée). */
   @Post('tasks')
   @UseInterceptors(IdempotencyInterceptor)
   create(
@@ -53,6 +54,7 @@ export class TasksController {
     return this.tasks.create(ctx, body);
   }
 
+  /** Ajout rapide en langage naturel (« Sortir les poubelles mardi 20h @Grace »). */
   @Post('tasks/quick')
   @UseInterceptors(IdempotencyInterceptor)
   quickAdd(
@@ -72,6 +74,7 @@ export class TasksController {
     return this.tasks.previewQuickAdd(ctx, body.text);
   }
 
+  /** Lister les occurrences (vue, période, filtres). */
   @Get('occurrences')
   list(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -80,6 +83,7 @@ export class TasksController {
     return this.tasks.list(ctx, query);
   }
 
+  /** Détail d'une occurrence. */
   @Get('occurrences/:occurrenceId')
   get(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -88,6 +92,7 @@ export class TasksController {
     return this.tasks.get(ctx, assertUuid(id));
   }
 
+  /** Modifier une occurrence (portée : celle-ci, les suivantes, toutes). */
   @Patch('occurrences/:occurrenceId')
   update(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -98,6 +103,7 @@ export class TasksController {
     return this.tasks.update(ctx, assertUuid(id), body, scope);
   }
 
+  /** Marquer comme faite. */
   @Post('occurrences/:occurrenceId/complete')
   @HttpCode(200)
   complete(
@@ -107,6 +113,7 @@ export class TasksController {
     return this.tasks.complete(ctx, assertUuid(id));
   }
 
+  /** Marquer comme à faire. */
   @Post('occurrences/:occurrenceId/reopen')
   @HttpCode(200)
   reopen(
@@ -116,6 +123,7 @@ export class TasksController {
     return this.tasks.reopen(ctx, assertUuid(id));
   }
 
+  /** Ajouter une sous-tâche. */
   @Post('occurrences/:occurrenceId/checklist')
   addChecklistItem(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -125,6 +133,7 @@ export class TasksController {
     return this.tasks.addChecklistItem(ctx, assertUuid(id), body);
   }
 
+  /** Modifier ou cocher une sous-tâche. */
   @Patch('occurrences/:occurrenceId/checklist/:itemId')
   updateChecklistItem(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -135,6 +144,7 @@ export class TasksController {
     return this.tasks.updateChecklistItem(ctx, assertUuid(id), assertUuid(itemId), body);
   }
 
+  /** Supprimer une sous-tâche. */
   @Delete('occurrences/:occurrenceId/checklist/:itemId')
   removeChecklistItem(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -144,6 +154,7 @@ export class TasksController {
     return this.tasks.removeChecklistItem(ctx, assertUuid(id), assertUuid(itemId));
   }
 
+  /** Supprimer une occurrence (vers la corbeille). */
   @Delete('occurrences/:occurrenceId')
   @HttpCode(204)
   remove(
@@ -160,6 +171,7 @@ export class TasksController {
     return this.tasks.listSeries(ctx);
   }
 
+  /** Historique d'une série répétée (qui l'a faite, quand). */
   @Get('series/:seriesId/history')
   seriesHistory(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -168,6 +180,7 @@ export class TasksController {
     return this.tasks.seriesHistory(ctx, assertUuid(id));
   }
 
+  /** Détail d'une série répétée. */
   @Get('series/:seriesId')
   getSeries(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -186,6 +199,7 @@ export class TasksController {
     return this.tasks.preview(ctx, body);
   }
 
+  /** Statistiques du foyer sur une période. */
   @Get('stats')
   stats(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -194,6 +208,7 @@ export class TasksController {
     return this.tasks.stats(ctx, query);
   }
 
+  /** Répartition de la charge entre les membres. */
   @Get('balance')
   balance(
     @CurrentHousehold() ctx: HouseholdContext,

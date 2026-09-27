@@ -37,17 +37,20 @@ import { verifySvix } from './svix';
 export class InboundEmailSettingsController {
   constructor(private readonly inbound: InboundEmailService) {}
 
+  /** Adresse personnelle « tâche par e-mail ». */
   @Get()
   get(@CurrentHousehold() ctx: HouseholdContext): Promise<InboundEmailSettingsDto> {
     return this.inbound.settings(ctx);
   }
 
+  /** Créer ou remplacer l'adresse personnelle. */
   @Post()
   @HttpCode(200)
   regenerate(@CurrentHousehold() ctx: HouseholdContext): Promise<InboundEmailSettingsDto> {
     return this.inbound.regenerate(ctx);
   }
 
+  /** Réglages de la tâche par e-mail (accusé de réception). */
   @Patch()
   update(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -56,6 +59,7 @@ export class InboundEmailSettingsController {
     return this.inbound.update(ctx, body);
   }
 
+  /** Désactiver l'adresse personnelle. */
   @Delete()
   @HttpCode(204)
   disable(@CurrentHousehold() ctx: HouseholdContext): Promise<void> {
@@ -71,6 +75,7 @@ export class InboundEmailSettingsController {
 export class ResendWebhookController {
   constructor(private readonly inbound: InboundEmailService) {}
 
+  /** Webhook Resend : e-mail reçu → tâche (signature vérifiée). */
   @Post()
   @HttpCode(200)
   @Throttle({ default: { limit: 60, ttl: 60_000 } })

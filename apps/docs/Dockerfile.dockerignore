@@ -1,0 +1,9 @@
+# Contexte de l'image de documentation (prioritaire sur le .dockerignore racine, BuildKit) :
+# seulement le contenu (docs/) et le site (apps/docs/).
+*
+!docs
+!apps/docs
+apps/docs/node_modules
+apps/docs/build
+apps/docs/.docusaurus
+apps/docs/static/swagger

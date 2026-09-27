@@ -62,6 +62,7 @@ export class AttachmentsController {
     return this.tasks.get(ctx, occurrenceId);
   }
 
+  /** Télécharger une pièce jointe. */
   @Get('attachments/:id')
   async download(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -86,6 +87,7 @@ export class AttachmentsController {
     res.end(file.data);
   }
 
+  /** Supprimer une pièce jointe. */
   @Delete('attachments/:id')
   @HttpCode(204)
   remove(@CurrentHousehold() ctx: HouseholdContext, @Param('id') id: string): Promise<void> {

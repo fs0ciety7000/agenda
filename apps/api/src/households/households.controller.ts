@@ -21,6 +21,7 @@ import { HouseholdsService } from './households.service';
 export class HouseholdsController {
   constructor(private readonly households: HouseholdsService) {}
 
+  /** Créer un foyer. */
   @Post('households')
   create(
     @CurrentUser() user: AuthUser,
@@ -29,17 +30,20 @@ export class HouseholdsController {
     return this.households.create(user.userId, body);
   }
 
+  /** Foyers de l'utilisateur. */
   @Get('households')
   list(@CurrentUser() user: AuthUser): Promise<HouseholdDto[]> {
     return this.households.listForUser(user.userId);
   }
 
+  /** Détail d'un foyer et de ses membres. */
   @Get('households/:householdId')
   @UseGuards(HouseholdMemberGuard)
   get(@CurrentHousehold() ctx: HouseholdContext): Promise<HouseholdDto> {
     return this.households.get(ctx);
   }
 
+  /** Créer un lien d'invitation. */
   @Post('households/:householdId/invitations')
   @UseGuards(HouseholdMemberGuard)
   invite(
@@ -49,6 +53,7 @@ export class HouseholdsController {
     return this.households.createInvitation(ctx, body);
   }
 
+  /** Rejoindre un foyer avec un lien d'invitation. */
   @Post('invitations/accept')
   accept(
     @CurrentUser() user: AuthUser,

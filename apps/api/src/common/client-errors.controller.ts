@@ -11,6 +11,7 @@ import { ZodPipe } from './zod.pipe';
 @Public()
 @Controller({ path: 'client-errors', version: '1' })
 export class ClientErrorsController {
+  /** Signaler une erreur survenue dans le navigateur ou l'app (logs + Sentry). */
   @Post()
   @HttpCode(204)
   @Throttle({ default: { limit: 20, ttl: 60_000 } })

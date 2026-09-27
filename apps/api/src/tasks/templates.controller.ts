@@ -28,11 +28,13 @@ import { TemplatesService } from './templates.service';
 export class TemplatesController {
   constructor(private readonly templates: TemplatesService) {}
 
+  /** Modèles de tâches. */
   @Get()
   list(@CurrentHousehold() ctx: HouseholdContext): Promise<TaskTemplateDto[]> {
     return this.templates.list(ctx);
   }
 
+  /** Créer un modèle. */
   @Post()
   create(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -41,6 +43,7 @@ export class TemplatesController {
     return this.templates.create(ctx, body);
   }
 
+  /** Modifier un modèle. */
   @Put(':templateId')
   update(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -50,6 +53,7 @@ export class TemplatesController {
     return this.templates.update(ctx, assertUuid(id), body);
   }
 
+  /** Supprimer un modèle. */
   @Delete(':templateId')
   @HttpCode(204)
   remove(
@@ -59,6 +63,7 @@ export class TemplatesController {
     return this.templates.remove(ctx, assertUuid(id));
   }
 
+  /** Créer une tâche à partir d'un modèle. */
   @Post(':templateId/apply')
   apply(
     @CurrentHousehold() ctx: HouseholdContext,

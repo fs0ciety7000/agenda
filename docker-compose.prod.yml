@@ -1,6 +1,6 @@
 # Déploiement Coolify (Docker Compose) — voir docs/deployment.md.
 # Domaines + HTTPS : attribués dans l'interface Coolify. TOUT le routage Traefik est géré par
-# Coolify — AUCUN label ici. Seul `web` reçoit un domaine public ; l'API est interne.
+# Coolify — AUCUN label ici. Seuls `web` et `docs` reçoivent un domaine public ; l'API est interne.
 name: agenda
 
 services:
@@ -79,6 +79,19 @@ services:
       redis:
         condition: service_healthy
     # Interne uniquement — pas de domaine (le web la proxifie sous /v1/*).
+
+  # Site de documentation (guide, technique, RGPD, référence de l’API) — docs/deployment.md §13.
+  docs:
+    build:
+      context: .
+      dockerfile: apps/docs/Dockerfile
+      args:
+        DOCS_URL: ${DOCS_URL:-https://agenda-docs.fs0ciety.org}
+        APP_URL: ${WEB_ORIGIN:-https://agenda.fs0ciety.org}
+    restart: unless-stopped
+    expose:
+      - '80'
+    # Domaine : https://agenda-docs.fs0ciety.org (port 80) — dans l'UI Coolify.
 
   postgres:
     image: postgres:16-alpine
