@@ -287,4 +287,8 @@
     <string name="task_deleted">Task deleted</string>
     <string name="task_restored">Task restored</string>
     <string name="task_restore_failed">Couldn\'t undo the deletion.</string>
+    <string name="attachments_title">Attachments</string>
+    <string name="attachment_open">Open %1$s</string>
+    <string name="attachment_error">Couldn\'t open the attachment (offline?).</string>
+    <string name="attachment_no_app">No app can open this file.</string>
 </resources>

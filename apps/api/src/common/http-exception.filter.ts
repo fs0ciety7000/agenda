@@ -17,6 +17,7 @@ const STATUS_TO_CODE: Record<number, ErrorCode> = {
   403: 'FORBIDDEN',
   404: 'NOT_FOUND',
   409: 'VERSION_CONFLICT',
+  413: 'ATTACHMENT_TOO_LARGE',
   429: 'RATE_LIMITED',
 };
 
@@ -37,7 +38,14 @@ export class HttpExceptionFilter implements ExceptionFilter {
           ? HttpStatus.TOO_MANY_REQUESTS
           : exception.getStatus();
       const body = exception.getResponse();
-      if (typeof body === 'object' && body !== null && 'error' in body) {
+      // Déjà au format de l'API (AppException). Le format par défaut de Nest a aussi une clé
+      // `error`, mais c'est une chaîne (« Payload Too Large ») : on le convertit.
+      if (
+        typeof body === 'object' &&
+        body !== null &&
+        'error' in body &&
+        typeof body.error === 'object'
+      ) {
         res.status(status).json(body);
         return;
       }

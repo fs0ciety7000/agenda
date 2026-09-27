@@ -99,7 +99,11 @@ data class OccurrenceDto(
     val completedAt: String? = null,
     val version: Int,
     val checklist: List<ChecklistItemDto> = emptyList(),
+    val attachments: List<AttachmentDto> = emptyList(),
 )
+
+@Serializable
+data class AttachmentDto(val id: String, val filename: String, val contentType: String, val size: Long)
 
 @Serializable
 data class ChecklistItemDto(val id: String, val text: String, val done: Boolean, val doneById: String? = null)

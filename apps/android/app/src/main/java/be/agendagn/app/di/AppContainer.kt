@@ -38,6 +38,7 @@ class AppContainer(context: Context) {
     val database: AgendaDatabase = AgendaDatabase.create(app)
     val settings: SettingsStore = DataStoreSettingsStore(app)
     val syncScheduler = WorkManagerSyncScheduler(app)
+    val attachments = be.agendagn.app.data.files.AttachmentFiles(api, database, app.cacheDir)
     private val repositoryImpl = AgendaRepositoryImpl(api, database, SyncEngine(api, database, settings), syncScheduler)
     val repository: AgendaRepository = repositoryImpl
     val reminders = ReminderScheduler(app, repository, settings)

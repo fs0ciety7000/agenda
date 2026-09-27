@@ -78,7 +78,9 @@
     "GOOGLE_SCOPES_MISSING": "Google did not grant access to your calendar. Try again and tick both boxes (see your calendars, manage events) on the Google screen.",
     "GOOGLE_CALENDAR_FAILED": "Google refused the connection. Try again; if it keeps failing, the server configuration needs checking (API logs).",
     "CURRENT_PASSWORD_INVALID": "Current password is incorrect.",
-    "PASSWORD_REQUIRED": "Set a password first."
+    "PASSWORD_REQUIRED": "Set a password first.",
+    "ATTACHMENT_TOO_LARGE": "File too large (10 MB max).",
+    "ATTACHMENTS_QUOTA": "Household storage is full (200 MB): delete old attachments."
   },
   "today": {
     "greeting": "Hello {name} 👋",
@@ -500,7 +502,7 @@
     },
     "data": {
       "title": "Data processed",
-      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, activity history (who did what, when).\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; attachments are ignored."
+      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, activity history (who did what, when).\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; attachments are ignored.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it."
     },
     "google": {
       "title": "Google data",
@@ -693,7 +695,9 @@
       "occurrence_restored": "restored one occurrence of",
       "series_restored": "resumed repeating",
       "occurrence_updated_in_google": "edited",
-      "other": "edited"
+      "other": "edited",
+      "attachment_added": "attached a file to",
+      "attachment_deleted": "removed a file from"
     },
     "fields": {
       "title": "title",
@@ -748,5 +752,13 @@
     "offline": "Offline: you're seeing the latest data received. Tick tasks, add some or do the shopping: everything will be sent when you're back online.",
     "pending": "{count, plural, one {# change pending.} other {# changes pending.}}",
     "sending": "{count, plural, one {Sending a change made offline…} other {Sending # changes made offline…}}"
+  },
+  "attachments": {
+    "title": "Attachments",
+    "add": "Attach a file",
+    "delete": "Delete “{name}”",
+    "confirmDelete": "Delete “{name}”?",
+    "kb": "{n} KB",
+    "mb": "{n} MB"
   }
 }

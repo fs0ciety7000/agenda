@@ -116,6 +116,7 @@ model Household {
   checklistItems ChecklistItem[]
   shoppingItems  ShoppingItem[]
   templates      TaskTemplate[]
+  attachments    TaskAttachment[]
   calendarLink   HouseholdCalendarLink?
   activity       ActivityLog[]
 }
@@ -226,6 +227,7 @@ model Task {
   category    Category?        @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   series      TaskSeries[]
   occurrences TaskOccurrence[]
+  attachments TaskAttachment[]
 
   @@index([householdId, deletedAt])
   @@index([categoryId])
@@ -343,6 +345,26 @@ model TaskOccurrence {
   @@index([householdId, date])
   @@index([householdId, status, startsAt])
   @@index([taskId])
+}
+
+/// Fichier joint à une tâche (photo, facture PDF…), stocké en base : inclus dans les sauvegardes.
+/// Limites : 10 Mo par fichier, 200 Mo par foyer.
+model TaskAttachment {
+  id          String   @id @default(uuid()) @db.Uuid
+  householdId String   @db.Uuid
+  taskId      String   @db.Uuid
+  filename    String   @db.VarChar(255)
+  contentType String   @db.VarChar(127)
+  size        Int
+  data        Bytes
+  createdById String?  @db.Uuid
+  createdAt   DateTime @default(now())
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  task      Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@index([taskId])
+  @@index([householdId])
 }
 
 /// Sous-tâches / liste (ex. courses) d'une occurrence : cochées à deux, ordre libre.

@@ -1,5 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
-import type { InboundEmailSettingsDto, ResendWebhookEvent } from '@agenda/contracts';
+import {
+  ATTACHMENT_MAX_BYTES,
+  type InboundEmailSettingsDto,
+  type OccurrenceDto,
+  type ResendWebhookEvent,
+} from '@agenda/contracts';
 import { Prisma } from '@prisma/client';
 import { randomBytes } from 'node:crypto';
 import { AppException, notFound } from '../common/app-exception';
@@ -8,9 +13,31 @@ import { env } from '../config/env';
 import { PrismaService } from '../prisma/prisma.service';
 import { TasksService } from '../tasks/tasks.service';
 import { htmlToText } from './html-to-text';
-import { ResendReceivingClient } from './resend-receiving.client';
+import { MailService } from '../mail/mail.service';
+import { inboundTaskCreatedEmail, inboundTaskEmptyEmail } from '../mail/templates';
+import { AttachmentsService } from '../tasks/attachments.service';
+import { type ReceivedEmail, ResendReceivingClient } from './resend-receiving.client';
 
 const NOTES_MAX = 5000;
+const MAX_EMAIL_ATTACHMENTS = 10;
+
+/** « mercredi 30 septembre à 11:30 » (date locale du foyer, telle que stockée). */
+export function formatWhen(
+  locale: 'fr' | 'en',
+  date: string | null,
+  startMinute: number | null,
+): string | null {
+  if (!date) return null;
+  const day = new Intl.DateTimeFormat(locale === 'en' ? 'en-GB' : 'fr-BE', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    timeZone: 'UTC',
+  }).format(new Date(`${date}T12:00:00Z`));
+  if (startMinute == null) return day;
+  const hm = `${String(Math.floor(startMinute / 60)).padStart(2, '0')}:${String(startMinute % 60).padStart(2, '0')}`;
+  return locale === 'en' ? `${day} at ${hm}` : `${day} à ${hm}`;
+}
 
 /** Préfixes de réponse / transfert retirés du sujet (FR, EN, NL, DE…). */
 const SUBJECT_PREFIX = /^\s*((re|tr|fw|fwd|wg|aw|antw|réf|ref|rv)\s*(\[\d+\])?\s*:\s*)+/i;
@@ -55,6 +82,8 @@ export class InboundEmailService {
     private readonly prisma: PrismaService,
     private readonly tasks: TasksService,
     private readonly resend: ResendReceivingClient,
+    private readonly attachments: AttachmentsService,
+    private readonly mail: MailService,
   ) {}
 
   async settings(ctx: HouseholdContext): Promise<InboundEmailSettingsDto> {
@@ -143,13 +172,79 @@ export class InboundEmailService {
       subject: email.subject ?? event.data.subject ?? '',
       text: text.slice(0, 20_000),
     });
-    return created ? { occurrenceId: created } : { ignored: 'empty' };
+    if (!created) {
+      await this.acknowledge(member.id, null, []);
+      return { ignored: 'empty' };
+    }
+    const files = await this.saveAttachments(ctx, created.taskId, event.data.email_id, email);
+    await this.acknowledge(member.id, created, files);
+    return { occurrenceId: created.id };
+  }
+
+  /**
+   * Pièces jointes de l'e-mail → tâche (images intégrées au message ignorées). Une pièce jointe
+   * trop grosse ou illisible est sautée : la tâche est déjà créée.
+   */
+  private async saveAttachments(
+    ctx: HouseholdContext,
+    taskId: string,
+    emailId: string,
+    email: ReceivedEmail,
+  ): Promise<string[]> {
+    const saved: string[] = [];
+    const candidates = (email.attachments ?? [])
+      .filter((a) => a.content_disposition !== 'inline')
+      .slice(0, MAX_EMAIL_ATTACHMENTS);
+    for (const a of candidates) {
+      if (a.size !== undefined && a.size > ATTACHMENT_MAX_BYTES) continue;
+      try {
+        const data = await this.resend.attachment(emailId, a.id, ATTACHMENT_MAX_BYTES);
+        await this.attachments.add(ctx, taskId, [
+          { filename: a.filename, contentType: a.content_type, data },
+        ]);
+        saved.push(a.filename);
+      } catch (e) {
+        this.logger.warn({ err: e }, 'e-mail attachment skipped');
+      }
+    }
+    return saved;
+  }
+
+  /** Accusé de réception, à l'adresse du compte (jamais à l'expéditeur, falsifiable). */
+  private async acknowledge(memberId: string, created: OccurrenceDto | null, files: string[]) {
+    const m = await this.prisma.householdMember.findUniqueOrThrow({
+      where: { id: memberId },
+      select: {
+        user: { select: { email: true, locale: true } },
+        household: {
+          select: { members: { where: { leftAt: null }, select: { id: true, displayName: true } } },
+        },
+      },
+    });
+    if (!m.user) return;
+    const locale = m.user.locale === 'en' ? 'en' : 'fr';
+    const mail = created
+      ? inboundTaskCreatedEmail(locale, {
+          title: created.title,
+          when: formatWhen(locale, created.date, created.startMinute),
+          assignees:
+            created.assigneeIds
+              .map((id) => m.household.members.find((x) => x.id === id)?.displayName)
+              .filter(Boolean)
+              .join(locale === 'en' ? ' and ' : ' et ') || null,
+          files,
+          url: `${env().WEB_ORIGIN}/?open=${created.id}`,
+        })
+      : inboundTaskEmptyEmail(locale);
+    await this.mail
+      .send({ to: m.user.email, ...mail })
+      .catch((e: unknown) => this.logger.warn({ err: e }, 'acknowledgement not sent'));
   }
 
   private async createFromEmail(
     ctx: HouseholdContext,
     input: { from: string; subject: string; text: string },
-  ): Promise<string | null> {
+  ): Promise<OccurrenceDto | null> {
     const title = titleFrom(input.subject, input.text);
     if (!title) return null;
     const header = [input.from && `✉ ${input.from.trim()}`, input.subject.trim()]
@@ -173,6 +268,6 @@ export class InboundEmailService {
       });
     }
     this.logger.log({ householdId: ctx.householdId }, 'task created from e-mail');
-    return created.id;
+    return created;
   }
 }

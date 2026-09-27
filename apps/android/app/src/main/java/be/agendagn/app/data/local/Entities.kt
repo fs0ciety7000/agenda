@@ -67,6 +67,9 @@ data class OccurrenceEntity(
     /** Sous-tâches, en JSON (liste de [be.agendagn.app.data.remote.ChecklistItemDto]). */
     @ColumnInfo(defaultValue = "[]")
     val checklist: String = "[]",
+    /** Pièces jointes (métadonnées), en JSON (liste de [be.agendagn.app.data.remote.AttachmentDto]). */
+    @ColumnInfo(defaultValue = "[]")
+    val attachments: String = "[]",
 )
 
 /**

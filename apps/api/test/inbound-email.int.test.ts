@@ -11,10 +11,12 @@ import {
   ResendUnavailableError,
 } from '../src/inbound/resend-receiving.client';
 import { signSvix, verifySvix } from '../src/inbound/svix';
+import { MailService } from '../src/mail/mail.service';
 import { coupleHousehold, createTestApp } from './app';
 
 /** Faux client Resend : e-mails « reçus », par identifiant. */
 const inbox = new Map<string, ReceivedEmail>();
+const files = new Map<string, Buffer>();
 let resendDown = false;
 const fakeResend = {
   get: async (id: string) => {
@@ -23,6 +25,7 @@ const fakeResend = {
     if (!email) throw new ResendUnavailableError('404');
     return email;
   },
+  attachment: async (_emailId: string, id: string) => files.get(id)!,
 };
 
 describe('Tâches par e-mail (Resend)', () => {
@@ -128,6 +131,72 @@ describe('Tâches par e-mail (Resend)', () => {
     resendDown = false;
     const retried = await deliver(address, { subject: 'Réessayer' }, retryId).expect(200);
     expect(retried.body.occurrenceId).toBeTruthy();
+  });
+
+  it('accusé de réception, responsable dans le sujet, pièces jointes', async () => {
+    const h = await coupleHousehold(app);
+    const mail = app.get(MailService);
+    const { address } = (await http().post(`${h.base}/inbound-email`).set(h.grace.auth)).body;
+    files.set('att-pdf', Buffer.from('%PDF-1.4 facture'));
+    files.set('att-logo', Buffer.from('png'));
+    const before = mail.outbox.length;
+    const res = await deliver(address, {
+      subject: 'Faire la lessive mercredi 11h30 @nicolas',
+      text: 'Couleurs',
+      attachments: [
+        {
+          id: 'att-pdf',
+          filename: 'facture.pdf',
+          content_type: 'application/pdf',
+          content_disposition: 'attachment',
+          size: 16,
+        },
+        // Image intégrée au message (signature) : ignorée.
+        {
+          id: 'att-logo',
+          filename: 'logo.png',
+          content_type: 'image/png',
+          content_disposition: 'inline',
+          size: 3,
+        },
+      ],
+    }).expect(200);
+    const o = (await http().get(`${h.base}/occurrences/${res.body.occurrenceId}`).set(h.grace.auth))
+      .body;
+    expect(o).toMatchObject({
+      title: 'Faire la lessive',
+      startMinute: 11 * 60 + 30,
+      assigneeIds: [h.nicolas.memberId],
+    });
+    expect(o.attachments).toEqual([
+      expect.objectContaining({
+        filename: 'facture.pdf',
+        contentType: 'application/pdf',
+        size: 16,
+      }),
+    ]);
+    const file = await http()
+      .get(`${h.base}/attachments/${o.attachments[0].id}`)
+      .set(h.nicolas.auth)
+      .expect(200);
+    expect(file.headers['content-type']).toBe('application/pdf');
+    expect(file.body.toString()).toContain('facture');
+
+    // Accusé de réception envoyé à l'adresse du compte de Grace (pas à l'expéditeur).
+    const ack = mail.outbox.slice(before).find((m) => m.subject.includes('Faire la lessive'))!;
+    expect(ack.to).toBe(h.grace.email);
+    expect(ack.subject).toBe('✓ Tâche créée : Faire la lessive');
+    expect(ack.text).toMatch(/Quand : \w+ \d+ \w+ à 11:30/);
+    expect(ack.text).toContain('Qui : Nicolas');
+    expect(ack.text).toContain('Pièces jointes : facture.pdf');
+    expect(ack.text).toContain(`/?open=${o.id}`);
+
+    // E-mail vide : pas de tâche, mais un message pour le dire.
+    const count = mail.outbox.length;
+    expect((await deliver(address, { subject: '', text: '' }).expect(200)).body).toEqual({
+      ignored: 'empty',
+    });
+    expect(mail.outbox.slice(count).map((m) => m.subject)).toEqual(['Aucune tâche créée']);
   });
 
   it('extraction du jeton, du titre et du texte ; signature Svix', () => {
