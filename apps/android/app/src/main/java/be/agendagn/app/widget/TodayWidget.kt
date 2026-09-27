@@ -194,7 +194,7 @@ fun TodayWidgetContent(snapshot: TodaySnapshot) {
 }
 
 @Composable
-private fun Message(text: String) {
+internal fun Message(text: String) {
     Text(
         text,
         style = TextStyle(color = GlanceTheme.colors.onSurfaceVariant, fontSize = 14.sp),
@@ -203,7 +203,7 @@ private fun Message(text: String) {
 }
 
 @Composable
-private fun TaskLine(o: Occurrence, late: Boolean, members: Map<String, Member>) {
+internal fun TaskLine(o: Occurrence, late: Boolean, members: Map<String, Member>) {
     val context = LocalContext.current
     val colors = GlanceTheme.colors
     val who = when {

@@ -1,5 +1,9 @@
 package be.agendagn.app.ui.navigation
 
+import java.util.Locale
+import android.speech.RecognizerIntent
+import android.content.Intent
+import android.content.ActivityNotFoundException
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -97,6 +101,8 @@ fun AppNavHost(
     container: AppContainer,
     openOccurrenceId: String? = null,
     quickAddRequest: Int = 0,
+    quickAddText: String? = null,
+    voiceRequest: Int = 0,
     tabRequest: Pair<String, Int>? = null,
     googleCallback: Uri? = null,
     onGoogleCallbackHandled: () -> Unit = {},
@@ -122,7 +128,7 @@ fun AppNavHost(
                     onGoogle = { scope.launch { openWeb(context, vm.googleUrl(container.webBaseUrl), "") } },
                 )
             }
-            true -> MainScaffold(container, openOccurrenceId, quickAddRequest, tabRequest)
+            true -> MainScaffold(container, openOccurrenceId, quickAddRequest, tabRequest, quickAddText, voiceRequest)
         }
     }
 }
@@ -145,6 +151,8 @@ private fun MainScaffold(
     openOccurrenceId: String?,
     quickAddRequest: Int,
     tabRequest: Pair<String, Int>? = null,
+    quickAddText: String? = null,
+    voiceRequest: Int = 0,
 ) {
     val context = LocalContext.current
     val vm: AgendaViewModel = viewModel(
@@ -183,7 +191,34 @@ private fun MainScaffold(
         if (!notificationsAllowed && Build.VERSION.SDK_INT >= 33) permission.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
     LaunchedEffect(openOccurrenceId) { openOccurrenceId?.let { nav.navigate("task/$it") } }
-    LaunchedEffect(quickAddRequest) { if (quickAddRequest > 0) showQuickAdd = true }
+    LaunchedEffect(quickAddRequest) {
+        if (quickAddRequest > 0) {
+            quickAddText?.let(vm::onQuickAddText)
+            showQuickAdd = true
+        }
+    }
+    val snackbar = remember { SnackbarHostState() }
+    // Dictée : la reconnaissance vocale d'Android remplit l'ajout rapide (analysé comme au clavier).
+    val voiceUnavailable = stringResource(R.string.voice_unavailable)
+    val voicePrompt = stringResource(R.string.voice_prompt)
+    val voice = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.firstOrNull()?.let {
+            vm.onQuickAddText(it)
+            showQuickAdd = true
+        }
+    }
+    val startVoice: () -> Unit = {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+            .putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            .putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault().toLanguageTag())
+            .putExtra(RecognizerIntent.EXTRA_PROMPT, voicePrompt)
+        try {
+            voice.launch(intent)
+        } catch (_: ActivityNotFoundException) {
+            scope.launch { snackbar.showSnackbar(voiceUnavailable) }
+        }
+    }
+    LaunchedEffect(voiceRequest) { if (voiceRequest > 0) startVoice() }
     LaunchedEffect(tabRequest) {
         val tab = Tab.entries.firstOrNull { it.route == tabRequest?.first } ?: return@LaunchedEffect
         nav.navigate(tab.route) {
@@ -245,7 +280,6 @@ private fun MainScaffold(
     }
 
     // Messages du glisser-déposer (avec « Annuler »).
-    val snackbar = remember { SnackbarHostState() }
     val locale = currentLocale()
     val undoLabel = stringResource(R.string.undo)
     val movedFormat = stringResource(R.string.task_moved)
@@ -428,6 +462,10 @@ private fun MainScaffold(
             },
             onDismiss = { showQuickAdd = false },
             templates = templates,
+            onVoice = {
+                showQuickAdd = false
+                startVoice()
+            },
             onApplyTemplate = { template, date ->
                 showQuickAdd = false
                 scope.launch {

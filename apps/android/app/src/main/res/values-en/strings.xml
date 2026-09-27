@@ -269,4 +269,18 @@
     <string name="history_skipped">Skipped</string>
     <string name="history_not_done">Not done</string>
     <string name="history_former_member">Former member</string>
+    <string name="shortcut_new_task">New task</string>
+    <string name="shortcut_new_task_long">Add a task</string>
+    <string name="shortcut_voice">Dictate</string>
+    <string name="shortcut_voice_long">Dictate a task</string>
+    <string name="shortcut_shopping">Shopping</string>
+    <string name="shortcut_shopping_long">Shopping list</string>
+    <string name="shortcut_today">Today</string>
+    <string name="shortcut_today_long">Today\'s tasks</string>
+    <string name="voice_dictate">Dictate the task</string>
+    <string name="voice_prompt">Say the task, e.g. “Take the bins out tomorrow 7pm”</string>
+    <string name="voice_unavailable">Dictation isn\'t available on this phone.</string>
+    <string name="widget_week_name">Week</string>
+    <string name="widget_week_description">Tasks for the next 7 days, checked off from the home screen.</string>
+    <string name="widget_week_empty">Nothing planned this week.</string>
 </resources>

@@ -1,5 +1,8 @@
 package be.agendagn.app.ui.quickadd
 
+import androidx.compose.ui.res.painterResource
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Icon
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.FilterChip
@@ -64,6 +67,8 @@ fun QuickAddSheet(
     /** Modèles du foyer (null = pas encore chargés ou hors ligne). */
     templates: List<TaskTemplate>? = null,
     onApplyTemplate: (TaskTemplate, LocalDate?) -> Unit = { _, _ -> },
+    /** Dicter la tâche (reconnaissance vocale d'Android). */
+    onVoice: (() -> Unit)? = null,
 ) {
     val focus = remember { FocusRequester() }
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
@@ -82,6 +87,13 @@ fun QuickAddSheet(
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { onSubmit() }),
+                trailingIcon = onVoice?.let {
+                    {
+                        IconButton(onClick = it) {
+                            Icon(painterResource(R.drawable.ic_mic), contentDescription = stringResource(R.string.voice_dictate))
+                        }
+                    }
+                },
                 modifier = Modifier.fillMaxWidth().focusRequester(focus),
             )
             state.preview?.let { PreviewLine(it, members, today) }

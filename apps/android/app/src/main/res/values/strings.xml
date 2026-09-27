@@ -282,4 +282,18 @@
     <string name="history_skipped">Sautée</string>
     <string name="history_not_done">Pas faite</string>
     <string name="history_former_member">Ancien membre</string>
+    <string name="shortcut_new_task">Nouvelle tâche</string>
+    <string name="shortcut_new_task_long">Ajouter une tâche</string>
+    <string name="shortcut_voice">Dicter</string>
+    <string name="shortcut_voice_long">Dicter une tâche</string>
+    <string name="shortcut_shopping">Courses</string>
+    <string name="shortcut_shopping_long">Liste de courses</string>
+    <string name="shortcut_today">Aujourd\'hui</string>
+    <string name="shortcut_today_long">Tâches d\'aujourd\'hui</string>
+    <string name="voice_dictate">Dicter la tâche</string>
+    <string name="voice_prompt">Dites la tâche, par ex. « Sortir les poubelles demain 19 h »</string>
+    <string name="voice_unavailable">La dictée n\'est pas disponible sur ce téléphone.</string>
+    <string name="widget_week_name">Semaine</string>
+    <string name="widget_week_description">Les tâches des 7 prochains jours, à cocher depuis l\'écran d\'accueil.</string>
+    <string name="widget_week_empty">Rien de prévu cette semaine.</string>
 </resources>

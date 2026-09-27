@@ -35,6 +35,15 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="be.agendagn.app" android:host="auth" />
             </intent-filter>
+            <!-- « Partager » un texte depuis une autre app → ajout rapide. -->
+            <intent-filter>
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+            <meta-data
+                android:name="android.app.shortcuts"
+                android:resource="@xml/shortcuts" />
         </activity>
 
         <provider
@@ -76,6 +85,19 @@
                 android:resource="@xml/today_widget_info" />
         </receiver>
 
+        <!-- Widget « Semaine » (Glance). -->
+        <receiver
+            android:name=".widget.WeekWidgetReceiver"
+            android:exported="true"
+            android:label="@string/widget_week_name">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/week_widget_info" />
+        </receiver>
+
         <!-- Widget « Courses » (Glance). -->
         <receiver
             android:name=".widget.ShoppingWidgetReceiver"
@@ -108,6 +130,10 @@
     <queries>
         <intent>
             <action android:name="android.support.customtabs.action.CustomTabsService" />
+        </intent>
+        <!-- Dictée d'une tâche (reconnaissance vocale du téléphone). -->
+        <intent>
+            <action android:name="android.speech.action.RECOGNIZE_SPEECH" />
         </intent>
     </queries>
 </manifest>

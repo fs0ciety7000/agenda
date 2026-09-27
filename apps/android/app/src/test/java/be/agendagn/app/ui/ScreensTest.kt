@@ -273,14 +273,18 @@ class ScreensTest {
     @Test
     fun ajout_rapide_depuis_un_modele() {
         val applied = mutableListOf<Pair<String, java.time.LocalDate?>>()
+        var dictated = 0
         val template = be.agendagn.app.domain.model.TaskTemplate("t1", "Ménage du samedi", "🧹", listOf("Aspirateur", "Salle de bain"))
         screen {
             be.agendagn.app.ui.quickadd.QuickAddSheet(
                 state = be.agendagn.app.ui.main.QuickAddState(), online = true, members = state.members, today = TODAY,
                 onText = {}, onSubmit = {}, onFullForm = {}, onDismiss = {},
                 templates = listOf(template), onApplyTemplate = { t, d -> applied += t.id to d },
+                onVoice = { dictated++ },
             )
         }
+        compose.onNodeWithContentDescription("Dicter la tâche").performClick()
+        assertEquals(1, dictated)
         compose.onNodeWithText("🧹 Ménage du samedi").performClick()
         compose.onNodeWithText("Aspirateur · Salle de bain").assertIsDisplayed()
         compose.onNodeWithText("Demain").performClick()

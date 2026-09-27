@@ -36,8 +36,8 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
   déplacements et renommages faits dans Google sont repris dans l'app.
 - **Notifications** : centre de notifications, préférences, rappels locaux sur Android, notifications
   instantanées (Firebase) quand l'autre vous confie une tâche.
-- **Android** : hors ligne (cocher et créer sans réseau), mises à jour
-  automatiques (APK du site) ou via Google Play, widgets « Aujourd'hui » et « Courses ».
+- **Android** : hors ligne (cocher et créer sans réseau), raccourcis, dictée, mises à jour
+  automatiques (APK du site) ou via Google Play, widgets « Aujourd'hui », « Semaine » et « Courses ».
 - **Compte & RGPD** :
   - connexion par e-mail ou avec Google ;
   - mot de passe oublié ;
