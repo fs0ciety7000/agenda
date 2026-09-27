@@ -13,6 +13,7 @@ import {
   describeSlots,
   expandSeries,
   iterateSeries,
+  nextAfter,
   type RotationConfig,
   type Rule,
   todayIn,
@@ -246,6 +247,110 @@ export class SeriesService {
       data: { generatedUntil: toDbDate(addDays(from, -1)) },
     });
     await this.materialize(tx, seriesId, until);
+  }
+
+  /**
+   * Règle « après la dernière fois » : l'occurrence en cours vient d'être faite (ou annulée) le jour
+   * `doneDate` → la série repart de doneDate + intervalle, au tour de rotation suivant. Sans effet
+   * pour les autres règles, ou si une occurrence plus récente attend déjà.
+   */
+  async advanceAfter(tx: Tx, seriesId: string, originalDate: string, doneDate: string) {
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${seriesId}))`;
+    const series = await tx.taskSeries.findUnique({ where: { id: seriesId } });
+    const rule = series?.rule as Rule | undefined;
+    if (!series || rule?.freq !== 'AFTER') return;
+    const pending = await tx.taskOccurrence.count({
+      where: { seriesId, status: 'TODO', originalDate: { gt: toDbDate(originalDate) } },
+    });
+    if (pending) return;
+    let next = nextAfter(rule, doneDate);
+    const until = fromDbDate(series.untilDate);
+    // Date déjà prise par une ancienne occurrence (faite en avance) : le lendemain.
+    const taken = new Set(
+      (
+        await tx.taskOccurrence.findMany({
+          where: { seriesId, originalDate: { gte: toDbDate(next) } },
+          select: { originalDate: true },
+        })
+      ).map((o) => fromDbDate(o.originalDate)),
+    );
+    while (taken.has(next)) next = addDays(next, 1);
+    if (until && next > until) return; // série terminée
+    await tx.taskSeries.update({
+      where: { id: seriesId },
+      data: {
+        startDate: toDbDate(next),
+        rotationOffset: { increment: 1 },
+        generatedUntil: null,
+        version: { increment: 1 },
+      },
+    });
+    await this.materialize(tx, seriesId, addDays(next, HORIZON_DAYS));
+  }
+
+  /**
+   * « Annuler » après avoir coché une tâche « après la dernière fois » : l'occurrence suivante, pas
+   * encore touchée, disparaît et la série revient sur celle-ci.
+   */
+  async rewindAfter(tx: Tx, seriesId: string, occurrence: { originalDate: Date | null }) {
+    if (!occurrence.originalDate) return;
+    const originalDate = occurrence.originalDate;
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${seriesId}))`;
+    const series = await tx.taskSeries.findUnique({ where: { id: seriesId } });
+    if (!series || (series.rule as Rule).freq !== 'AFTER') return;
+    if (series.startDate.getTime() <= originalDate.getTime()) return;
+    const next = await tx.taskOccurrence.findFirst({
+      where: { seriesId, originalDate: series.startDate },
+    });
+    if (next && (next.status !== 'TODO' || next.isException)) return; // déjà prise en main
+    if (next) await tx.taskOccurrence.delete({ where: { id: next.id } });
+    await tx.taskSeries.update({
+      where: { id: seriesId },
+      data: {
+        startDate: originalDate,
+        rotationOffset: { decrement: 1 },
+        generatedUntil: originalDate,
+        version: { increment: 1 },
+      },
+    });
+  }
+
+  /**
+   * Règle « après la dernière fois » posée ou modifiée : la série repart de `anchor`. L'occurrence
+   * en attente est déplacée (même identifiant : événement Google, sous-tâches conservés) ; les
+   * autres occurrences à venir d'une ancienne règle disparaissent.
+   */
+  async reanchorAfter(tx: Tx, seriesId: string, anchor: string) {
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${seriesId}))`;
+    const pending = await tx.taskOccurrence.findMany({
+      where: { seriesId, status: 'TODO', isException: false },
+      orderBy: { originalDate: 'asc' },
+      select: { id: true },
+    });
+    const [keep, ...drop] = pending;
+    if (drop.length)
+      await tx.taskOccurrence.deleteMany({ where: { id: { in: drop.map((p) => p.id) } } });
+    const taken = new Set(
+      (
+        await tx.taskOccurrence.findMany({
+          where: { seriesId, id: { not: keep?.id } },
+          select: { originalDate: true },
+        })
+      ).map((o) => fromDbDate(o.originalDate)),
+    );
+    let date = anchor;
+    while (taken.has(date)) date = addDays(date, 1);
+    if (keep) {
+      await tx.taskOccurrence.update({
+        where: { id: keep.id },
+        data: { originalDate: toDbDate(date) },
+      });
+    }
+    await tx.taskSeries.update({
+      where: { id: seriesId },
+      data: { startDate: toDbDate(date), generatedUntil: null },
+    });
+    return date;
   }
 
   /**

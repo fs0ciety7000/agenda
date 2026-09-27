@@ -95,3 +95,35 @@ test('mot de passe oublié : message neutre (pas d’énumération des comptes)'
   await page.getByRole('button', { name: 'Envoyer le lien' }).click();
   await expect(page.getByText('Si un compte existe pour cette adresse')).toBeVisible();
 });
+
+test('répétition « après la dernière fois » : la suivante part du jour où c’est fait', async ({
+  page,
+}) => {
+  await signUpWithHousehold(page, 'Grace');
+  await page.getByRole('button', { name: "Plus d'options" }).click();
+  const dialog = page.getByRole('dialog', { name: 'Nouvelle tâche' });
+  await dialog.getByLabel('Titre').fill('Détartrer la bouilloire');
+  await dialog.getByLabel('Date', { exact: true }).fill(todayBrussels());
+  await dialog.getByLabel('Répéter').selectOption('after');
+  await dialog.getByLabel('Tous les').fill('3');
+  await dialog.getByLabel('Unité').selectOption('WEEK');
+  await expect(dialog.getByText('à partir du jour où la tâche est faite')).toBeVisible();
+  await expect(dialog.getByText('Prochaines fois')).toBeHidden();
+  await dialog.getByRole('button', { name: 'Ajouter' }).click();
+  await expect(dialog).toBeHidden();
+
+  const today = page.getByRole('list', { name: "Aujourd'hui" });
+  await today.getByRole('checkbox', { name: /Détartrer la bouilloire/ }).click();
+
+  // Onglet Récurrentes : règle lisible et prochaine date dans 3 semaines.
+  await page.getByRole('link', { name: 'Tâches' }).first().click();
+  await page.getByRole('link', { name: 'Récurrentes' }).click();
+  await expect(page.getByText('3 semaines après la dernière fois')).toBeVisible();
+
+  // La suivante indique la dernière fois.
+  await page.getByRole('link', { name: 'À venir' }).click();
+  await page.getByRole('button', { name: /Détartrer la bouilloire/ }).click();
+  const edit = page.getByRole('dialog', { name: 'Modifier la tâche' });
+  await expect(edit.getByLabel('Répéter')).toHaveValue('after');
+  await expect(edit.getByText(/Fait .* par Grace/)).toBeVisible();
+});

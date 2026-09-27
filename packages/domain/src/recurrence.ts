@@ -19,7 +19,8 @@ export type Rule =
   | { freq: 'DAILY'; interval: number; weekdaysOnly?: boolean }
   | { freq: 'WEEKLY'; interval: number; byWeekday: Weekday[] }
   | { freq: 'MONTHLY'; interval: number; byMonthDay: number }
-  | { freq: 'YEARLY'; interval: number };
+  | { freq: 'YEARLY'; interval: number }
+  | { freq: 'AFTER'; interval: number; unit: 'DAY' | 'WEEK' | 'MONTH' };
 
 export interface SeriesBounds {
   startDate: IsoDate;
@@ -77,6 +78,10 @@ function* candidateDates(rule: Rule, startDate: IsoDate): Generator<IsoDate> {
         } else yield '';
       }
     }
+    case 'AFTER':
+      // Une seule occurrence connue d'avance : la suivante dépend du jour où celle-ci est faite.
+      yield startDate;
+      return;
     case 'YEARLY': {
       for (let y = 0; ; y += Math.max(1, rule.interval)) {
         const year = start.year + y;
@@ -137,4 +142,19 @@ export function expandSeries(
 export function firstOccurrence(rule: Rule, bounds: SeriesBounds): IsoDate | null {
   for (const occ of iterateSeries(rule, bounds)) return occ.date;
   return null;
+}
+
+/**
+ * Règle « après la dernière fois » : date de la prochaine occurrence quand la précédente est faite
+ * (ou passée) le jour `doneDate`. Un mois plus tard que le 31 janvier = le 28/29 février.
+ */
+export function nextAfter(rule: Extract<Rule, { freq: 'AFTER' }>, doneDate: IsoDate): IsoDate {
+  const n = Math.max(1, rule.interval);
+  if (rule.unit === 'DAY') return addDays(doneDate, n);
+  if (rule.unit === 'WEEK') return addDays(doneDate, 7 * n);
+  const d = parseIsoDate(doneDate);
+  const monthIndex = d.month - 1 + n;
+  const year = d.year + Math.floor(monthIndex / 12);
+  const month = (monthIndex % 12) + 1;
+  return formatIsoDate(year, month, Math.min(d.day, daysInMonth(year, month)));
 }

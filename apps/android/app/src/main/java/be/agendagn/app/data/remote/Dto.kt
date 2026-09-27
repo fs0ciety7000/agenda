@@ -100,7 +100,11 @@ data class OccurrenceDto(
     val version: Int,
     val checklist: List<ChecklistItemDto> = emptyList(),
     val attachments: List<AttachmentDto> = emptyList(),
+    val lastDone: LastDoneDto? = null,
 )
+
+@Serializable
+data class LastDoneDto(val at: String, val memberId: String? = null)
 
 /** Journal d'activité (cf. packages/contracts/src/activity.ts). */
 @Serializable

@@ -16,7 +16,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         PendingOperationEntity::class,
         ShoppingItemEntity::class,
     ],
-    version = 5,
+    version = 6,
     exportSchema = true,
 )
 abstract class AgendaDatabase : RoomDatabase() {
@@ -67,6 +67,14 @@ abstract class AgendaDatabase : RoomDatabase() {
             }
         }
 
-        val MIGRATIONS = arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
+        /** v6 : dernière fois qu'une tâche récurrente a été faite. */
+        val MIGRATION_5_6 = object : Migration(5, 6) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE occurrences ADD COLUMN lastDoneAt TEXT DEFAULT NULL")
+                db.execSQL("ALTER TABLE occurrences ADD COLUMN lastDoneById TEXT DEFAULT NULL")
+            }
+        }
+
+        val MIGRATIONS = arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
     }
 }

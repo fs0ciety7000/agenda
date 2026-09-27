@@ -63,9 +63,13 @@ data class Occurrence(
     val dueDate: LocalDate? = null,
     /** Fichiers joints (factures, photos…). */
     val attachments: List<Attachment> = emptyList(),
+    /** Tâche récurrente : dernière fois faite (« fait il y a 5 semaines par Grace »). */
+    val lastDone: LastDone? = null,
 ) {
     val isDone: Boolean get() = status == OccurrenceStatus.DONE
 }
+
+data class LastDone(val at: Instant, val memberId: String?)
 
 data class ChecklistItem(val id: String, val text: String, val done: Boolean)
 

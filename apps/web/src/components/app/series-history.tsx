@@ -1,6 +1,7 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
+import type { OccurrenceDto } from '@agenda/contracts';
+import { useFormatter, useNow, useTranslations } from 'next-intl';
 import { useDayLabel } from '@/lib/format';
 import { useSeriesHistory } from '@/lib/templates';
 import { useSession } from './household-context';
@@ -44,4 +45,18 @@ export function SeriesHistory({ seriesId }: { seriesId: string }) {
       </ul>
     </details>
   );
+}
+
+/** « Fait il y a 5 semaines par Grace » : la dernière fois qu'une tâche récurrente a été faite. */
+export function useLastDoneText() {
+  const t = useTranslations('history');
+  const format = useFormatter();
+  const now = useNow({ updateInterval: 60_000 });
+  const { household } = useSession();
+  return (lastDone: NonNullable<OccurrenceDto['lastDone']>, short = false) => {
+    const when = format.relativeTime(new Date(lastDone.at), now);
+    const name =
+      household.members.find((m) => m.id === lastDone.memberId)?.displayName ?? t('formerMember');
+    return short ? t('lastDoneShort', { when }) : t('lastDone', { when, name });
+  };
 }

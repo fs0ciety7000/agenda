@@ -328,4 +328,7 @@
     <string name="trash_restore_failed">Couldn’t restore</string>
     <string name="settings_history">Activity and trash</string>
     <string name="settings_history_hint">Who did what, and tasks deleted in the last 30 days.</string>
+    <string name="repeat_after">After the last time</string>
+    <string name="repeat_after_hint">The next time is counted from the day the task is done (descaling, changing a filter…).</string>
+    <string name="last_done">Done %1$s by %2$s</string>
 </resources>

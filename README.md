@@ -31,6 +31,8 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
 - **Temps réel** : ce que l'autre change apparaît aussitôt sur le site et dans l'app (Server-Sent Events).
 - **Modèles de tâches** (« Ménage du samedi » crée toutes ses tâches d'un coup) et **historique
   « fait par »** des tâches récurrentes.
+- **Répétition « après la dernière fois »** (détartrer, changer un filtre) : la suivante est prévue
+  X jours / semaines / mois après le jour où c'est fait, avec « fait il y a 5 semaines par Grace ».
 - **Ajouter par e-mail** : un e-mail transféré à son adresse personnelle devient une tâche
   (avec ses pièces jointes), confirmée par un accusé de réception.
 - **Annuler** après avoir coché ou supprimé, **corbeille** de 30 jours et **journal d'activité**

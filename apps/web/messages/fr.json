@@ -329,6 +329,7 @@
       "monthly": "Chaque mois",
       "quarterly": "Tous les 3 mois",
       "yearly": "Chaque année",
+      "after": "Après la dernière fois…",
       "custom": "Personnalisé…"
     },
     "units": {
@@ -349,7 +350,8 @@
       "weekly": "{n, plural, one {Chaque semaine} other {Toutes les # semaines}} le {days}",
       "monthly": "{n, plural, one {Chaque mois} other {Tous les # mois}} le {day}",
       "monthlyLast": "{n, plural, one {Chaque mois} other {Tous les # mois}}, le dernier jour",
-      "yearly": "{n, plural, one {Chaque année} other {Tous les # ans}}"
+      "yearly": "{n, plural, one {Chaque année} other {Tous les # ans}}",
+      "after": "{n} {unit, select, day {{n, plural, one {jour} other {jours}}} week {{n, plural, one {semaine} other {semaines}}} other {mois}} après la dernière fois"
     },
     "rotationSummary": {
       "unassigned": "à définir",
@@ -358,7 +360,8 @@
       "alternate": "chacun son tour : {names}",
       "sequence": "rotation : {steps}",
       "weekday": "selon le jour"
-    }
+    },
+    "afterHint": "La prochaine fois est prévue à partir du jour où la tâche est faite (idéal pour détartrer, changer un filtre)."
   },
   "scope": {
     "saveQuestion": "Cette tâche se répète. Que voulez-vous modifier ?",
@@ -653,7 +656,9 @@
     "doneBy": "Fait par {name}",
     "skipped": "Sautée",
     "notDone": "Pas faite",
-    "formerMember": "Ancien membre"
+    "formerMember": "Ancien membre",
+    "lastDone": "Fait {when} par {name}",
+    "lastDoneShort": "fait {when}"
   },
   "about": {
     "metaTitle": "Agenda G & N · Les tâches du foyer, à deux",

@@ -19,6 +19,7 @@ export type RepeatPreset =
   | 'monthly'
   | 'quarterly'
   | 'yearly'
+  | 'after'
   | 'custom';
 export type RepeatUnit = 'day' | 'week' | 'month' | 'year';
 export type RotationKind = 'fixed' | 'alternate' | 'sequence' | 'weekday';
@@ -43,6 +44,9 @@ export interface RecurrenceState {
   /** Rotation par jour : weekday (0 = lundi) → membre | together | alternate. */
   byDay: Record<number, StepValue>;
   perWeek: boolean;
+  /** « Après la dernière fois » : délai compté à partir du jour où c'est fait. */
+  afterInterval: number;
+  afterUnit: 'DAY' | 'WEEK' | 'MONTH';
 }
 
 export function defaultRecurrence(date: string, members: HouseholdMemberDto[]): RecurrenceState {
@@ -62,6 +66,8 @@ export function defaultRecurrence(date: string, members: HouseholdMemberDto[]): 
     sequence: ids.length ? [...ids] : ['none'],
     byDay: {},
     perWeek: false,
+    afterInterval: 1,
+    afterUnit: 'MONTH',
   };
 }
 
@@ -86,6 +92,12 @@ function ruleOf(s: RecurrenceState, date: string): RecurrenceRule | null {
       return { freq: 'MONTHLY', interval: 3, byMonthDay };
     case 'yearly':
       return { freq: 'YEARLY', interval: 1 };
+    case 'after':
+      return {
+        freq: 'AFTER',
+        interval: Math.max(1, Math.min(s.afterInterval, 365)),
+        unit: s.afterUnit,
+      };
     case 'custom': {
       const interval = Math.max(1, Math.min(s.interval, 365));
       if (s.unit === 'day') return { freq: 'DAILY', interval, weekdaysOnly: false };
@@ -157,12 +169,13 @@ export function toRecurrenceInput(
 ): RecurrenceInput | null {
   const rule = ruleOf(s, date);
   if (!rule) return null;
+  const after = rule.freq === 'AFTER';
   return {
     rule,
     until: s.end === 'until' && s.until ? s.until : null,
-    count: s.end === 'count' ? Math.max(1, Math.min(s.count, 1000)) : null,
+    count: s.end === 'count' && !after ? Math.max(1, Math.min(s.count, 1000)) : null,
     rotation: personal ? { mode: 'UNASSIGNED' } : rotationOf(s, assignee, members, date),
-    advance: s.perWeek ? 'PER_WEEK' : 'PER_OCCURRENCE',
+    advance: s.perWeek && !after ? 'PER_WEEK' : 'PER_OCCURRENCE',
   };
 }
 
@@ -178,7 +191,13 @@ export function fromSeries(
   let interval = r.interval;
   let weekdays = base.weekdays;
   let monthDay: 'date' | 'last' = 'date';
-  if (r.freq === 'DAILY') {
+  let afterInterval = base.afterInterval;
+  let afterUnit = base.afterUnit;
+  if (r.freq === 'AFTER') {
+    preset = 'after';
+    afterInterval = r.interval;
+    afterUnit = r.unit;
+  } else if (r.freq === 'DAILY') {
     unit = 'day';
     preset = r.weekdaysOnly ? 'weekdays' : r.interval === 1 ? 'daily' : 'custom';
   } else if (r.freq === 'WEEKLY') {
@@ -213,6 +232,8 @@ export function fromSeries(
     weekdays,
     weekdaysAuto: false,
     monthDay,
+    afterInterval,
+    afterUnit,
     end: series.untilDate ? 'until' : series.count ? 'count' : 'never',
     until: series.untilDate ?? '',
     count: series.count ?? 10,

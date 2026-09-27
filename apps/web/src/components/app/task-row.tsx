@@ -19,6 +19,7 @@ import { useToggleDone } from '@/lib/tasks';
 import { useToast } from '@/components/ui/toast';
 import { AssigneeAvatars, useAssigneeLabel } from './assignees';
 import { useSession } from './household-context';
+import { useLastDoneText } from './series-history';
 
 export function TaskRow({
   occurrence: o,
@@ -38,6 +39,10 @@ export function TaskRow({
   const toggle = useToggleDone(household.id);
   const toast = useToast();
   const done = o.status === 'DONE';
+  const lastDoneText = useLastDoneText();
+  // Utile surtout pour les tâches espacées (« après la dernière fois ») : pas pour le quotidien.
+  const showLastDone =
+    !done && o.lastDone && Date.now() - new Date(o.lastDone.at).getTime() >= 7 * 86_400_000;
 
   const onToggle = () => {
     toggle.mutate(
@@ -119,6 +124,7 @@ export function TaskRow({
               <span className="sr-only">{t('recurring')}</span>
             </span>
           )}
+          {showLastDone && <span>· {lastDoneText(o.lastDone!, true)}</span>}
           {o.checklist.length > 0 && (
             <span className="inline-flex items-center gap-1 tabular-nums">
               · <ListChecks aria-hidden className="size-3.5" />

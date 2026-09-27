@@ -329,6 +329,7 @@
       "monthly": "Every month",
       "quarterly": "Every 3 months",
       "yearly": "Every year",
+      "after": "After the last time…",
       "custom": "Custom…"
     },
     "units": {
@@ -349,7 +350,8 @@
       "weekly": "{n, plural, one {Every week} other {Every # weeks}} on {days}",
       "monthly": "{n, plural, one {Every month} other {Every # months}} on day {day}",
       "monthlyLast": "{n, plural, one {Every month} other {Every # months}}, on the last day",
-      "yearly": "{n, plural, one {Every year} other {Every # years}}"
+      "yearly": "{n, plural, one {Every year} other {Every # years}}",
+      "after": "{n} {unit, select, day {{n, plural, one {day} other {days}}} week {{n, plural, one {week} other {weeks}}} other {{n, plural, one {month} other {months}}}} after the last time"
     },
     "rotationSummary": {
       "unassigned": "unassigned",
@@ -358,7 +360,8 @@
       "alternate": "each in turn: {names}",
       "sequence": "rotation: {steps}",
       "weekday": "depends on the day"
-    }
+    },
+    "afterHint": "The next time is counted from the day the task is done (great for descaling, changing a filter)."
   },
   "scope": {
     "saveQuestion": "This task repeats. What do you want to change?",
@@ -653,7 +656,9 @@
     "doneBy": "Done by {name}",
     "skipped": "Skipped",
     "notDone": "Not done",
-    "formerMember": "Former member"
+    "formerMember": "Former member",
+    "lastDone": "Done {when} by {name}",
+    "lastDoneShort": "done {when}"
   },
   "about": {
     "metaTitle": "Agenda G & N · Household tasks, shared by two",

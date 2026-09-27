@@ -70,6 +70,9 @@ data class OccurrenceEntity(
     /** Pièces jointes (métadonnées), en JSON (liste de [be.agendagn.app.data.remote.AttachmentDto]). */
     @ColumnInfo(defaultValue = "[]")
     val attachments: String = "[]",
+    /** Tâche récurrente : dernière fois faite (ISO) et par qui. */
+    val lastDoneAt: String? = null,
+    val lastDoneById: String? = null,
 )
 
 /**

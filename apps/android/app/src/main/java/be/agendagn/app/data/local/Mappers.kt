@@ -12,6 +12,7 @@ import be.agendagn.app.data.remote.OccurrenceDto
 import be.agendagn.app.domain.model.Attachment
 import be.agendagn.app.domain.model.CalendarSync
 import be.agendagn.app.domain.model.Category
+import be.agendagn.app.domain.model.LastDone
 import be.agendagn.app.domain.model.Member
 import be.agendagn.app.domain.model.MemberColor
 import be.agendagn.app.domain.model.Occurrence
@@ -50,6 +51,8 @@ fun OccurrenceDto.toEntity(householdId: String) = OccurrenceEntity(
     version = version,
     checklist = json.encodeToString(checklist),
     attachments = json.encodeToString(attachments),
+    lastDoneAt = lastDone?.at,
+    lastDoneById = lastDone?.memberId,
 )
 
 fun OccurrenceEntity.toDomain(pending: Boolean) = Occurrence(
@@ -79,6 +82,7 @@ fun OccurrenceEntity.toDomain(pending: Boolean) = Occurrence(
         .map { ChecklistItem(it.id, it.text, it.done) },
     attachments = runCatching { json.decodeFromString<List<AttachmentDto>>(attachments) }.getOrDefault(emptyList())
         .map { Attachment(it.id, it.filename, it.contentType, it.size) },
+    lastDone = lastDoneAt?.let { at -> runCatching { Instant.parse(at) }.getOrNull() }?.let { LastDone(it, lastDoneById) },
 )
 
 fun MemberDto.toEntity(householdId: String, position: Int) =

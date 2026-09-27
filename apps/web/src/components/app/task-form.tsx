@@ -52,7 +52,7 @@ import { Attachments } from './attachments';
 import { ChecklistEditor, type ChecklistRow } from './checklist';
 import { useSession } from './household-context';
 import { RecurrenceFields } from './recurrence-fields';
-import { SeriesHistory } from './series-history';
+import { SeriesHistory, useLastDoneText } from './series-history';
 
 export interface TaskDraft {
   title?: string;
@@ -107,6 +107,7 @@ export function TaskFormDialog({
   draft?: TaskDraft;
 }) {
   const t = useTranslations('tasks');
+  const lastDoneText = useLastDoneText();
   const tc = useTranslations('common');
   const te = useTranslations('errors');
   const { me, household } = useSession();
@@ -556,6 +557,9 @@ export function TaskFormDialog({
               </label>
             )}
 
+            {occurrence?.lastDone && occurrence.status === 'TODO' && (
+              <p className="text-sm text-text-muted">{lastDoneText(occurrence.lastDone)}</p>
+            )}
             {occurrence?.seriesId && <SeriesHistory seriesId={occurrence.seriesId} />}
 
             {error && (

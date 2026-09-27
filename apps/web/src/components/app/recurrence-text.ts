@@ -39,6 +39,8 @@ export function useRuleText() {
           : t('monthly', { n: rule.interval, day: rule.byMonthDay });
       case 'YEARLY':
         return t('yearly', { n: rule.interval });
+      case 'AFTER':
+        return t('after', { n: rule.interval, unit: rule.unit.toLowerCase() });
     }
   };
 }

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { expandSeries, firstOccurrence, iterateSeries, type Rule } from './recurrence';
+import { expandSeries, firstOccurrence, iterateSeries, nextAfter, type Rule } from './recurrence';
 
 const dates = (
   rule: Rule,
@@ -168,5 +168,34 @@ describe('récurrence — bornes et indices', () => {
     );
     expect(occs).toHaveLength(365);
     expect(performance.now() - t).toBeLessThan(500);
+  });
+});
+
+describe('récurrence — après la dernière fois', () => {
+  const rule = (interval: number, unit: 'DAY' | 'WEEK' | 'MONTH'): Rule => ({
+    freq: 'AFTER',
+    interval,
+    unit,
+  });
+
+  it('une seule occurrence connue : la date de départ', () => {
+    expect(
+      expandSeries(
+        rule(3, 'DAY'),
+        { startDate: '2026-09-27' },
+        {
+          from: '2026-01-01',
+          to: '2027-12-31',
+        },
+      ).map((o) => o.date),
+    ).toEqual(['2026-09-27']);
+  });
+
+  it('la suivante se compte à partir du jour où elle est faite', () => {
+    expect(nextAfter(rule(10, 'DAY'), '2026-09-27')).toBe('2026-10-07');
+    expect(nextAfter(rule(5, 'WEEK'), '2026-09-27')).toBe('2026-11-01');
+    expect(nextAfter(rule(3, 'MONTH'), '2026-11-30')).toBe('2027-02-28');
+    expect(nextAfter(rule(1, 'MONTH'), '2028-01-31')).toBe('2028-02-29');
+    expect(nextAfter(rule(12, 'MONTH'), '2026-09-27')).toBe('2027-09-27');
   });
 });

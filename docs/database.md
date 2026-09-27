@@ -105,7 +105,16 @@ Post‑MVP : `TaskTemplate` (modèles de tâches pré-remplis), `PushDevice` (to
 { "freq": "MONTHLY", "interval": 1, "byMonthDay": -1 }            // dernier jour du mois
 { "freq": "MONTHLY", "interval": 3, "byMonthDay": 15 }            // tous les 3 mois le 15
 { "freq": "YEARLY", "interval": 1 }                               // annuel (date de départ)
+{ "freq": "AFTER", "interval": 3, "unit": "MONTH" }               // 3 mois après la dernière fois
 ```
+
+**« Après la dernière fois »** (`AFTER`, jours / semaines / mois) : une seule occurrence à la fois,
+à `startDate`. Quand elle est faite (ou supprimée « cette fois »), la série avance :
+`startDate` = jour où c'est fait + intervalle, `rotationOffset` + 1 (tour suivant), puis
+matérialisation normale. Décocher (« Annuler ») retire l'occurrence suivante encore intacte et
+revient en arrière. Changer l'intervalle replace l'occurrence en attente (même identifiant) à
+dernière fois + nouvel intervalle. Pas de `count`, rotation toujours `PER_OCCURRENCE`.
+Les occurrences renvoient `lastDone` (dernière fois faite, et par qui) pour toute tâche récurrente.
 
 Pourquoi JSON typé et pas la chaîne RRULE brute ? Validation stricte, sous‑ensemble maîtrisé
 (pas de `BYSETPOS` exotique non testé), et conversion triviale vers RRULE si besoin.
