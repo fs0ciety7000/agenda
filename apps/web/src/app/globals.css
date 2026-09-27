@@ -77,3 +77,26 @@
     }
   }
 }
+
+/* Coche qui se remplit, confettis discrets (neutralisés par « réduire les animations »). */
+@keyframes check-pop {
+  0% {
+    transform: scale(0.6);
+  }
+  60% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes confetti-fall {
+  from {
+    transform: translate3d(0, -8vh, 0) rotate(0deg);
+    opacity: 1;
+  }
+  to {
+    transform: translate3d(var(--dx), 104vh, 0) rotate(var(--rot));
+    opacity: 0.85;
+  }
+}

@@ -324,7 +324,7 @@ export function ApplyTemplateButton() {
   if (list.length === 0) return null;
   return (
     <>
-      <Button variant="ghost" onClick={() => setOpen(true)} className="self-start">
+      <Button variant="ghost" size="sm" onClick={() => setOpen(true)} className="shrink-0">
         <LayoutTemplate aria-hidden className="size-4" />
         {t('use')}
       </Button>

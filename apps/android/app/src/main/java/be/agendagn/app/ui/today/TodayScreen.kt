@@ -39,6 +39,14 @@ import be.agendagn.app.ui.components.currentLocale
 import be.agendagn.app.ui.components.formatDuration
 import be.agendagn.app.ui.components.formatLongDate
 import be.agendagn.app.ui.main.AgendaUiState
+import be.agendagn.app.ui.components.memberColor
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
 
 /** Tableau de bord : en retard, aujourd'hui, 7 prochains jours, répartition de la semaine. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -136,14 +144,16 @@ fun TodayScreen(
 
 @Composable
 private fun BalanceCard(balance: Agenda.Balance) {
+    val max = maxOf(1, balance.members.maxOfOrNull { it.second.count } ?: 0, balance.together.count, balance.unassigned.count)
+    val neutral = MaterialTheme.colorScheme.outline
     SectionHeader(stringResource(R.string.balance_title))
     OutlinedCard(Modifier.fillMaxWidth()) {
-        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             balance.members.forEach { (member, share) ->
-                BalanceRow(member.displayName, share) { MemberAvatar(member, 28) }
+                BalanceRow(member.displayName, share, max, memberColor(member.color)) { MemberAvatar(member, 28) }
             }
-            BalanceRow(stringResource(R.string.balance_together), balance.together, null)
-            BalanceRow(stringResource(R.string.balance_unassigned), balance.unassigned, null)
+            BalanceRow(stringResource(R.string.balance_together), balance.together, max, neutral, null)
+            BalanceRow(stringResource(R.string.balance_unassigned), balance.unassigned, max, neutral, null)
             Text(
                 stringResource(R.string.balance_hint),
                 style = MaterialTheme.typography.bodySmall,
@@ -154,15 +164,43 @@ private fun BalanceCard(balance: Agenda.Balance) {
 }
 
 @Composable
-private fun BalanceRow(label: String, share: Agenda.Share, avatar: (@Composable () -> Unit)?) {
+private fun BalanceRow(
+    label: String,
+    share: Agenda.Share,
+    max: Int,
+    barColor: Color,
+    avatar: (@Composable () -> Unit)?,
+) {
     Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
         if (avatar != null) avatar() else Spacer(Modifier.width(28.dp))
         Spacer(Modifier.width(12.dp))
-        Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-        Text(
-            pluralStringResource(R.plurals.balance_row, share.count, share.count, formatDuration(share.minutes)),
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(label, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                Text(
+                    pluralStringResource(R.plurals.balance_row, share.count, share.count, formatDuration(share.minutes)),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            // Barre décorative : l'identité est portée par le nom et l'initiale, pas par la couleur.
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(6.dp)
+                    .clip(RoundedCornerShape(3.dp))
+                    .background(MaterialTheme.colorScheme.surfaceVariant),
+            ) {
+                if (share.count > 0) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth(share.count.toFloat() / max)
+                            .fillMaxHeight()
+                            .clip(RoundedCornerShape(3.dp))
+                            .background(barColor),
+                    )
+                }
+            }
+        }
     }
 }

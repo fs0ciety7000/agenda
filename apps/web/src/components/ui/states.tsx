@@ -18,7 +18,12 @@ export function EmptyState({
 }) {
   return (
     <div className={cn('flex flex-col items-center gap-3 px-6 py-12 text-center', className)}>
-      <Icon aria-hidden className="size-8 stroke-[1.25] text-text-muted" />
+      <span
+        aria-hidden
+        className="flex size-16 items-center justify-center rounded-full bg-accent/10 text-accent"
+      >
+        <Icon className="size-7 stroke-[1.5]" />
+      </span>
       <p className="text-[1.0625rem] font-medium text-text">{title}</p>
       {body && <p className="max-w-sm text-[0.9375rem] text-text-muted">{body}</p>}
       {action}

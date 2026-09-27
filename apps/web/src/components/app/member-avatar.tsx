@@ -10,6 +10,9 @@ const COLOR_CLASS: Record<HouseholdMemberDto['color'], string> = {
   slate: 'bg-member-slate',
 };
 
+/** Fond de la couleur d'un membre (barres, pastilles). */
+export const memberBgClass = (color: HouseholdMemberDto['color']) => COLOR_CLASS[color];
+
 /** Couleur + initiale : l'information n'est jamais portée par la couleur seule. */
 export function MemberAvatar({
   member,

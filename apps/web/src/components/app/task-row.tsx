@@ -80,7 +80,7 @@ export function TaskRow({
           className={cn(
             'flex size-[1.375rem] items-center justify-center rounded-full border-[1.5px] transition-colors duration-(--gn-motion-base)',
             done
-              ? 'border-success bg-success text-white'
+              ? 'animate-[check-pop_280ms_ease-out] border-success bg-success text-white'
               : 'border-text-muted/60 group-hover:border-text-muted',
           )}
         >
@@ -93,7 +93,12 @@ export function TaskRow({
         className="flex min-w-0 flex-1 flex-col gap-1 text-left"
       >
         <span className="flex items-baseline justify-between gap-3">
-          <span className={cn('truncate text-[0.9375rem]', done && 'text-text-muted line-through')}>
+          <span
+            className={cn(
+              'truncate text-[0.9375rem] transition-colors duration-(--gn-motion-base)',
+              done && 'text-text-muted line-through',
+            )}
+          >
             {o.title}
           </span>
           {meta.length > 0 && (
