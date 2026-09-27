@@ -80,7 +80,7 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
 | ------------------------------------------------------- | --------------------------------------------------------- |
 | [Exigences produit](docs/product-requirements.md)       | Vision, user stories, décisions                           |
 | [Architecture](docs/architecture.md)                    | Choix techniques (ADR), sécurité, RGPD, infra             |
-| [Surveillance](docs/monitoring.md)                        | Sondes, `/status`, alertes, Uptime Kuma, Prometheus        |
+| [Surveillance](docs/monitoring.md)                      | Sondes, `/status`, alertes, Uptime Kuma, Prometheus       |
 | [Base de données](docs/database.md)                     | Modèle, récurrence, fuseaux, index                        |
 | [Google Calendar](docs/google-calendar.md)              | OAuth, stratégie de synchronisation, erreurs              |
 | [Vérification OAuth](docs/google-oauth-verification.md) | Faire valider l'app Google (autres foyers)                |
