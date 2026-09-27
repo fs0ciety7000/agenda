@@ -95,6 +95,8 @@ android {
     // Schémas Room exportés, lus par le test de migration (MigrationTestHelper). Robolectric ne voit
     // que les assets de la variante testée : ajoutés à la variante debug seulement (pas à la release).
     sourceSets.getByName("debug").assets.srcDir("$projectDir/schemas")
+    // Tests sur émulateur (MigrationTestHelper lit les schémas dans l'APK de test).
+    sourceSets.getByName("androidTest").assets.srcDir("$projectDir/schemas")
 
     testOptions {
         unitTests.isReturnDefaultValues = true
@@ -166,4 +168,10 @@ dependencies {
     testImplementation(libs.roborazzi.compose)
     androidTestImplementation(platform(libs.compose.bom))
     androidTestImplementation(libs.compose.ui.test.junit4)
+    androidTestImplementation(libs.androidx.test.core)
+    androidTestImplementation(libs.androidx.test.junit)
+    androidTestImplementation(libs.androidx.test.runner)
+    androidTestImplementation(libs.androidx.test.rules)
+    androidTestImplementation(libs.androidx.room.testing)
+    androidTestImplementation(libs.kotlinx.coroutines.test)
 }
