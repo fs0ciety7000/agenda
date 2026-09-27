@@ -10,3 +10,4 @@ export * from './shopping';
 export * from './templates';
 export * from './activity';
 export * from './inbound';
+export * from './absences';

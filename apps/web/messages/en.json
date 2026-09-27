@@ -705,7 +705,9 @@
       "occurrence_updated_in_google": "edited",
       "other": "edited",
       "attachment_added": "attached a file to",
-      "attachment_deleted": "removed a file from"
+      "attachment_deleted": "removed a file from",
+      "absence_created": "recorded an absence for",
+      "absence_deleted": "cancelled the absence of"
     },
     "fields": {
       "title": "title",
@@ -770,5 +772,21 @@
     "confirmDelete": "Delete “{name}”?",
     "kb": "{n} KB",
     "mb": "{n} MB"
+  },
+  "absences": {
+    "title": "Absences",
+    "intro": "On holiday, travelling or ill? During the absence, their shared tasks go to the other person (turns included). Personal tasks stay as they are. Everything resumes afterwards.",
+    "list": "Planned absences",
+    "item": "{name}: {from} to {to}",
+    "remove": "Cancel {name}'s absence",
+    "removed": "Absence cancelled: turns resume.",
+    "added": "Absence saved: {name}'s tasks go to the other person.",
+    "error": "Couldn't save the absence.",
+    "who": "Who?",
+    "from": "From",
+    "to": "To",
+    "add": "Add",
+    "banner": "{name} is away until {until}: their shared tasks go to the other person.",
+    "formerMember": "Former member"
   }
 }

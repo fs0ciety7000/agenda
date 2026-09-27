@@ -344,4 +344,16 @@
     <string name="repeat_after">Après la dernière fois</string>
     <string name="repeat_after_hint">La prochaine fois est comptée à partir du jour où la tâche est faite (détartrer, changer un filtre…).</string>
     <string name="last_done">Fait %1$s par %2$s</string>
+    <string name="absences_title">Absences</string>
+    <string name="absences_hint">En vacances ou en déplacement ? Ses tâches partagées passent à l’autre pendant l’absence.</string>
+    <string name="absences_intro">Pendant l’absence, les tâches partagées de la personne passent à l’autre (tours de rôle compris). Les tâches personnelles ne bougent pas. À la fin, tout reprend son cours.</string>
+    <string name="absence_item">%1$s : du %2$s au %3$s</string>
+    <string name="absence_remove">Annuler l’absence de %1$s</string>
+    <string name="absence_who">Qui s’absente ?</string>
+    <string name="absence_add">Choisir les dates</string>
+    <string name="absence_added">Absence enregistrée</string>
+    <string name="absence_removed">Absence annulée : les tours de rôle reprennent</string>
+    <string name="absence_failed">Impossible pour le moment (connexion ?)</string>
+    <string name="activity_absence_created">a déclaré l’absence de</string>
+    <string name="activity_absence_deleted">a annulé l’absence de</string>
 </resources>

@@ -479,7 +479,7 @@ describe('Tâches récurrentes & rotation (intégration)', () => {
         .set(h.grace.auth)
         .expect(204);
       const [next] = await pending(first.seriesId);
-      expect(next!.originalDate.toISOString().slice(0, 10)).toBe(addDays(today, 21));
+      expect(next!.originalDate!.toISOString().slice(0, 10)).toBe(addDays(today, 21));
 
       // Faite, puis intervalle passé à 10 jours : la suivante = dernière fois + 10 jours.
       await http().post(`${h.base}/occurrences/${next!.id}/complete`).set(h.grace.auth).expect(200);

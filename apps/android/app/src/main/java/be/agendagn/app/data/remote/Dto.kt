@@ -238,3 +238,10 @@ data class DoneCountDto(val memberId: String, val count: Int)
 
 @Serializable
 data class SeriesHistoryDto(val items: List<SeriesHistoryItemDto>, val doneBy: List<DoneCountDto>)
+
+/** Mode absence (cf. packages/contracts/src/absences.ts). */
+@Serializable
+data class AbsenceDto(val id: String, val memberId: String, val startDate: String, val endDate: String)
+
+@Serializable
+data class CreateAbsenceBody(val memberId: String, val startDate: String, val endDate: String)

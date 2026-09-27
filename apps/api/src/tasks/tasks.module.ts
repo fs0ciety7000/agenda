@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { HouseholdsModule } from '../households/households.module';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { AbsencesController } from './absences.controller';
+import { AbsencesService } from './absences.service';
 import { ActivityController } from './activity.controller';
 import { AttachmentsController } from './attachments.controller';
 import { AttachmentsService } from './attachments.service';
@@ -13,8 +15,21 @@ import { TemplatesService } from './templates.service';
 
 @Module({
   imports: [HouseholdsModule, NotificationsModule],
-  controllers: [TasksController, TemplatesController, ActivityController, AttachmentsController],
-  providers: [TasksService, SeriesService, TemplatesService, ActivityService, AttachmentsService],
+  controllers: [
+    TasksController,
+    TemplatesController,
+    ActivityController,
+    AttachmentsController,
+    AbsencesController,
+  ],
+  providers: [
+    TasksService,
+    SeriesService,
+    TemplatesService,
+    ActivityService,
+    AttachmentsService,
+    AbsencesService,
+  ],
   exports: [SeriesService, TasksService, AttachmentsService],
 })
 export class TasksModule {}

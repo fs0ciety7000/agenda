@@ -8,7 +8,9 @@ import {
   type HouseholdDto,
   MemberColor,
 } from '@agenda/contracts';
+import { todayIn } from '@agenda/domain';
 import { AppException, notFound } from '../common/app-exception';
+import { fromDbDate } from '../common/dates';
 import { randomToken, sha256Hex } from '../common/crypto';
 import { HouseholdContext } from '../common/request-context';
 import { PrismaService } from '../prisma/prisma.service';
@@ -16,11 +18,19 @@ import { PrismaService } from '../prisma/prisma.service';
 const INVITATION_TTL_MS = 7 * 86_400_000;
 const DEFAULT_COLOR: MemberColor = 'sage';
 
-const householdInclude = {
-  members: { where: { leftAt: null }, orderBy: { joinedAt: 'asc' } },
-} as const satisfies Prisma.HouseholdInclude;
+/** Absences qui ne sont pas encore terminées (marge d'un jour pour les fuseaux). */
+const householdInclude = () =>
+  ({
+    members: { where: { leftAt: null }, orderBy: { joinedAt: 'asc' } },
+    absences: {
+      where: { endDate: { gte: new Date(Date.now() - 86_400_000) } },
+      select: { memberId: true, startDate: true, endDate: true },
+    },
+  }) as const satisfies Prisma.HouseholdInclude;
 
-type HouseholdWithMembers = Prisma.HouseholdGetPayload<{ include: typeof householdInclude }>;
+type HouseholdWithMembers = Prisma.HouseholdGetPayload<{
+  include: ReturnType<typeof householdInclude>;
+}>;
 
 @Injectable()
 export class HouseholdsService {
@@ -51,7 +61,7 @@ export class HouseholdsService {
           })),
         },
       },
-      include: householdInclude,
+      include: householdInclude(),
     });
     return toDto(household);
   }
@@ -59,7 +69,7 @@ export class HouseholdsService {
   async listForUser(userId: string): Promise<HouseholdDto[]> {
     const households = await this.prisma.household.findMany({
       where: { deletedAt: null, members: { some: { userId, leftAt: null } } },
-      include: householdInclude,
+      include: householdInclude(),
       orderBy: { createdAt: 'asc' },
     });
     return households.map(toDto);
@@ -68,7 +78,7 @@ export class HouseholdsService {
   async get(ctx: HouseholdContext): Promise<HouseholdDto> {
     const household = await this.prisma.household.findFirst({
       where: { id: ctx.householdId, deletedAt: null },
-      include: householdInclude,
+      include: householdInclude(),
     });
     if (!household) throw notFound('HOUSEHOLD_NOT_FOUND');
     return toDto(household);
@@ -100,7 +110,7 @@ export class HouseholdsService {
     return this.prisma.$transaction(async (tx) => {
       const invitation = await tx.householdInvitation.findUnique({
         where: { tokenHash: sha256Hex(input.token) },
-        include: { household: { include: householdInclude } },
+        include: { household: { include: householdInclude() } },
       });
       if (
         !invitation ||
@@ -147,7 +157,7 @@ export class HouseholdsService {
 
       const household = await tx.household.findUniqueOrThrow({
         where: { id: invitation.householdId },
-        include: householdInclude,
+        include: householdInclude(),
       });
       return toDto(household);
     });
@@ -155,6 +165,18 @@ export class HouseholdsService {
 }
 
 function toDto(h: HouseholdWithMembers): HouseholdDto {
+  const today = todayIn(h.timezone);
+  const absentUntil = (memberId: string) =>
+    h.absences
+      .filter(
+        (a) =>
+          a.memberId === memberId &&
+          fromDbDate(a.startDate)! <= today &&
+          fromDbDate(a.endDate)! >= today,
+      )
+      .map((a) => fromDbDate(a.endDate)!)
+      .sort()
+      .at(-1) ?? null;
   return {
     id: h.id,
     name: h.name,
@@ -165,6 +187,7 @@ function toDto(h: HouseholdWithMembers): HouseholdDto {
       displayName: m.displayName,
       role: m.role,
       color: MemberColor.catch('slate').parse(m.color),
+      absentUntil: absentUntil(m.id),
     })),
   };
 }

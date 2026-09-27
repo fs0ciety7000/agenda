@@ -122,3 +122,19 @@ export function continuationOffset(occ: GeneratedOccurrence, config: RotationCon
   const counter = config.advance === 'PER_WEEK' ? occ.weekIndex : occ.index;
   return counter + config.offset;
 }
+
+/**
+ * Mode absence : responsables effectifs d'une tâche partagée un jour donné. Les absents sont retirés ;
+ * si plus personne ne reste, la tâche passe au premier membre présent (ordre du foyer).
+ */
+export function coverAbsence(
+  assigneeIds: string[],
+  absentIds: ReadonlySet<string>,
+  memberIds: string[],
+): string[] {
+  if (!assigneeIds.length || !assigneeIds.some((id) => absentIds.has(id))) return assigneeIds;
+  const present = assigneeIds.filter((id) => !absentIds.has(id));
+  if (present.length) return present;
+  const stand = memberIds.find((id) => !absentIds.has(id));
+  return stand ? [stand] : assigneeIds;
+}

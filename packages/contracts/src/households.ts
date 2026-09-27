@@ -44,6 +44,8 @@ export const HouseholdMemberDto = z.object({
   displayName: z.string(),
   role: HouseholdRole,
   color: MemberColor,
+  /** Mode absence en cours : dernier jour d'absence (inclus), sinon null. */
+  absentUntil: z.string().nullish(),
 });
 export type HouseholdMemberDto = z.infer<typeof HouseholdMemberDto>;
 

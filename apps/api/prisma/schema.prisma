@@ -119,11 +119,28 @@ model Household {
   attachments    TaskAttachment[]
   calendarLink   HouseholdCalendarLink?
   activity       ActivityLog[]
+  absences       MemberAbsence[]
 }
 
 enum HouseholdRole {
   OWNER
   MEMBER
+}
+
+/// Mode absence : du startDate au endDate inclus (dates locales du foyer), les tâches partagées
+/// du membre passent aux autres (rotation comprise). Ses tâches personnelles ne bougent pas.
+model MemberAbsence {
+  id          String   @id @default(uuid()) @db.Uuid
+  householdId String   @db.Uuid
+  memberId    String   @db.Uuid
+  startDate   DateTime @db.Date
+  endDate     DateTime @db.Date
+  createdAt   DateTime @default(now())
+
+  household Household       @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  member    HouseholdMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@index([householdId, endDate])
 }
 
 model HouseholdMember {
@@ -152,6 +169,7 @@ model HouseholdMember {
   preferences          NotificationPreference[]
   sentInvitations      HouseholdInvitation[]
   activity             ActivityLog[]
+  absences             MemberAbsence[]
 
   @@unique([householdId, userId])
   @@index([userId])

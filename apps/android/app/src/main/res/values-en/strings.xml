@@ -331,4 +331,16 @@
     <string name="repeat_after">After the last time</string>
     <string name="repeat_after_hint">The next time is counted from the day the task is done (descaling, changing a filter…).</string>
     <string name="last_done">Done %1$s by %2$s</string>
+    <string name="absences_title">Absences</string>
+    <string name="absences_hint">On holiday or travelling? Their shared tasks go to the other person during the absence.</string>
+    <string name="absences_intro">During the absence, the person’s shared tasks go to the other (turns included). Personal tasks stay as they are. Everything resumes afterwards.</string>
+    <string name="absence_item">%1$s: %2$s to %3$s</string>
+    <string name="absence_remove">Cancel %1$s’s absence</string>
+    <string name="absence_who">Who is away?</string>
+    <string name="absence_add">Choose dates</string>
+    <string name="absence_added">Absence saved</string>
+    <string name="absence_removed">Absence cancelled: turns resume</string>
+    <string name="absence_failed">Not possible right now (connection?)</string>
+    <string name="activity_absence_created">recorded an absence for</string>
+    <string name="activity_absence_deleted">cancelled the absence of</string>
 </resources>

@@ -57,6 +57,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import be.agendagn.app.ui.absences.AbsencesScreen
+import be.agendagn.app.ui.absences.AbsencesViewModel
 import be.agendagn.app.ui.history.HistoryScreen
 import be.agendagn.app.ui.history.HistoryViewModel
 import androidx.lifecycle.viewmodel.initializer
@@ -497,6 +499,18 @@ private fun MainScaffold(
                     onMorningRecap = { scope.launch { container.settings.setMorningRecap(it) } },
                     onRetryPush = { scope.launch { container.push.register() } },
                     onOpenHistory = { nav.navigate("history") },
+                    onOpenAbsences = { nav.navigate("absences") },
+                )
+            }
+            composable("absences") {
+                val absencesVm: AbsencesViewModel = viewModel(factory = viewModelFactory { initializer { AbsencesViewModel(container.absences) } })
+                val members = state.household?.members.orEmpty()
+                AbsencesScreen(
+                    absencesVm,
+                    members,
+                    members.firstOrNull { it.userId != null && it.userId == user?.id }?.id,
+                    onBack = { nav.popBackStack() },
+                    onMessage = onMessage,
                 )
             }
             composable("history") {

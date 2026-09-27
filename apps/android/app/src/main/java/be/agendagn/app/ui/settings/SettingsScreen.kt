@@ -64,6 +64,7 @@ fun SettingsScreen(
     onMorningRecap: (Boolean) -> Unit = {},
     onRetryPush: () -> Unit = {},
     onOpenHistory: () -> Unit = {},
+    onOpenAbsences: () -> Unit = {},
 ) {
     var confirmSignOut by remember { mutableStateOf(false) }
     Column(
@@ -121,6 +122,17 @@ fun SettingsScreen(
                 OutlinedButton(onClick = { onOpenWeb("settings") }, modifier = Modifier.heightIn(min = 48.dp)) {
                     Text(stringResource(R.string.calendar_manage_web))
                 }
+            }
+        }
+
+        if ((state.household?.members?.size ?: 0) > 1) {
+            SectionHeader(stringResource(R.string.absences_title))
+            OutlinedCard(onClick = onOpenAbsences, modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    stringResource(R.string.absences_hint),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(16.dp),
+                )
             }
         }
 
