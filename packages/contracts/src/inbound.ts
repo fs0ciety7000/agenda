@@ -9,13 +9,18 @@ export const InboundEmailSettingsDto = z.object({
 });
 export type InboundEmailSettingsDto = z.infer<typeof InboundEmailSettingsDto>;
 
-/** Envoyé par le Worker Cloudflare qui reçoit les e-mails (infra/email-worker). */
-export const InboundEmailInput = z.object({
-  /** Destinataire(s) tels que reçus : l'adresse personnelle y figure. */
-  to: z.string().max(2000),
-  from: z.string().max(500).default(''),
-  subject: z.string().max(1000).default(''),
-  /** Corps en texte brut (déjà extrait du MIME). */
-  text: z.string().max(200_000).default(''),
+/** Webhook Resend (réception d'e-mails) : seuls les champs utilisés sont validés. */
+export const ResendWebhookEvent = z.object({
+  type: z.string(),
+  data: z
+    .object({
+      email_id: z.string().max(100).optional(),
+      from: z.string().max(500).optional(),
+      to: z.array(z.string().max(500)).max(50).optional(),
+      received_for: z.array(z.string().max(500)).max(50).optional(),
+      subject: z.string().max(1000).optional(),
+    })
+    .loose()
+    .optional(),
 });
-export type InboundEmailInput = z.infer<typeof InboundEmailInput>;
+export type ResendWebhookEvent = z.infer<typeof ResendWebhookEvent>;

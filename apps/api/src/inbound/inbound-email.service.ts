@@ -1,11 +1,14 @@
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
-import type { InboundEmailInput, InboundEmailSettingsDto } from '@agenda/contracts';
+import { Injectable, Logger } from '@nestjs/common';
+import type { InboundEmailSettingsDto, ResendWebhookEvent } from '@agenda/contracts';
+import { Prisma } from '@prisma/client';
 import { randomBytes } from 'node:crypto';
 import { AppException, notFound } from '../common/app-exception';
 import type { HouseholdContext } from '../common/request-context';
 import { env } from '../config/env';
 import { PrismaService } from '../prisma/prisma.service';
 import { TasksService } from '../tasks/tasks.service';
+import { htmlToText } from './html-to-text';
+import { ResendReceivingClient } from './resend-receiving.client';
 
 const NOTES_MAX = 5000;
 
@@ -13,7 +16,7 @@ const NOTES_MAX = 5000;
 const SUBJECT_PREFIX = /^\s*((re|tr|fw|fwd|wg|aw|antw|réf|ref|rv)\s*(\[\d+\])?\s*:\s*)+/i;
 
 export const inboundAvailable = () =>
-  Boolean(env().INBOUND_EMAIL_ADDRESS && env().INBOUND_EMAIL_SECRET);
+  Boolean(env().INBOUND_EMAIL_ADDRESS && env().RESEND_WEBHOOK_SECRET && env().RESEND_API_KEY);
 
 const addressFor = (token: string) => env().INBOUND_EMAIL_ADDRESS!.replace('{token}', token);
 
@@ -39,7 +42,8 @@ export function titleFrom(subject: string, text: string): string {
 }
 
 /**
- * Tâches par e-mail : chaque membre a une adresse personnelle (`agenda+<jeton>@domaine`) ;
+ * Tâches par e-mail (réception par Resend) : chaque membre a une adresse personnelle
+ * (`<jeton>@tasks.domaine`) ;
  * un e-mail transféré à cette adresse devient une tâche du foyer, créée en son nom. Le sujet
  * passe par l'ajout rapide (« Payer la facture vendredi » → vendredi) ; le message va en notes.
  */
@@ -50,6 +54,7 @@ export class InboundEmailService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly tasks: TasksService,
+    private readonly resend: ResendReceivingClient,
   ) {}
 
   async settings(ctx: HouseholdContext): Promise<InboundEmailSettingsDto> {
@@ -79,25 +84,74 @@ export class InboundEmailService {
     });
   }
 
-  async receive(input: InboundEmailInput): Promise<{ occurrenceId: string }> {
-    const token = extractToken(input.to);
+  /**
+   * Webhook Resend `email.received`. Renvoie `ignored` pour ce qui ne crée rien (autre
+   * événement, adresse inconnue ou désactivée, doublon) : Resend ne doit pas réessayer.
+   * Une erreur (API Resend indisponible) fait réessayer Resend plus tard.
+   */
+  async handleResendEvent(
+    event: ResendWebhookEvent,
+  ): Promise<{ occurrenceId: string } | { ignored: string }> {
+    if (event.type !== 'email.received' || !event.data?.email_id) return { ignored: 'event' };
+    const recipients = [...(event.data.to ?? []), ...(event.data.received_for ?? [])].join(', ');
+    const token = extractToken(recipients);
     const member = token
       ? await this.prisma.householdMember.findFirst({
           where: { inboundToken: token, leftAt: null, userId: { not: null } },
-          select: { id: true, householdId: true, role: true },
+          select: { id: true, householdId: true, role: true, userId: true },
         })
       : null;
-    if (!member) throw notFound();
+    if (!member) return { ignored: 'address' };
+
+    // Resend peut livrer deux fois le même webhook : une seule tâche par e-mail.
+    try {
+      await this.prisma.idempotencyKey.create({
+        data: {
+          key: `resend:${event.data.email_id}`.slice(0, 64),
+          userId: member.userId!,
+          method: 'POST',
+          path: '/v1/inbound/resend',
+          statusCode: 201,
+          responseBody: {},
+        },
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002')
+        return { ignored: 'duplicate' };
+      throw e;
+    }
+
+    let email;
+    try {
+      email = await this.resend.get(event.data.email_id);
+    } catch (e) {
+      // Réservation annulée : le prochain essai de Resend la refera.
+      await this.prisma.idempotencyKey.deleteMany({
+        where: { key: `resend:${event.data.email_id}`.slice(0, 64) },
+      });
+      throw e;
+    }
     const ctx: HouseholdContext = {
       householdId: member.householdId,
       memberId: member.id,
       role: member.role,
     };
+    const text = email.text?.trim() || (email.html ? htmlToText(email.html) : '');
+    const from = email.headers?.from ?? email.from ?? event.data.from ?? '';
+    const created = await this.createFromEmail(ctx, {
+      from,
+      subject: email.subject ?? event.data.subject ?? '',
+      text: text.slice(0, 20_000),
+    });
+    return created ? { occurrenceId: created } : { ignored: 'empty' };
+  }
 
+  private async createFromEmail(
+    ctx: HouseholdContext,
+    input: { from: string; subject: string; text: string },
+  ): Promise<string | null> {
     const title = titleFrom(input.subject, input.text);
-    if (!title) {
-      throw new AppException('TASK_TITLE_REQUIRED', HttpStatus.BAD_REQUEST, 'Empty e-mail');
-    }
+    if (!title) return null;
     const header = [input.from && `✉ ${input.from.trim()}`, input.subject.trim()]
       .filter(Boolean)
       .join(' — ');
@@ -119,6 +173,6 @@ export class InboundEmailService {
       });
     }
     this.logger.log({ householdId: ctx.householdId }, 'task created from e-mail');
-    return { occurrenceId: created.id };
+    return created.id;
   }
 }

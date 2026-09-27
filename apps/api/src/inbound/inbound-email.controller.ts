@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -7,18 +6,22 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  type RawBodyRequest,
+  Req,
   UseGuards,
 } from '@nestjs/common';
+import type { Request } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import { InboundEmailInput, type InboundEmailSettingsDto } from '@agenda/contracts';
+import { type InboundEmailSettingsDto, ResendWebhookEvent } from '@agenda/contracts';
 import { AppException, notFound } from '../common/app-exception';
-import { safeEqual } from '../common/crypto';
+import { SkipCsrf } from '../auth/csrf.guard';
 import { CurrentHousehold, HouseholdContext, Public } from '../common/request-context';
-import { ZodPipe } from '../common/zod.pipe';
 import { env } from '../config/env';
 import { HouseholdMemberGuard } from '../households/household-member.guard';
 import { InboundEmailService, inboundAvailable } from './inbound-email.service';
+import { ResendUnavailableError } from './resend-receiving.client';
+import { verifySvix } from './svix';
 
 /** Réglage de l'adresse personnelle « créer une tâche par e-mail ». */
 @ApiTags('inbound-email')
@@ -45,24 +48,37 @@ export class InboundEmailSettingsController {
   }
 }
 
-/** Réception (Worker Cloudflare Email Routing → API), authentifiée par secret partagé. */
+/** Réception : webhook Resend `email.received`, authentifié par signature Svix. */
 @ApiTags('inbound-email')
 @Public()
-@Controller({ path: 'inbound/email', version: '1' })
-export class InboundEmailController {
+@SkipCsrf()
+@Controller({ path: 'inbound/resend', version: '1' })
+export class ResendWebhookController {
   constructor(private readonly inbound: InboundEmailService) {}
 
   @Post()
-  @Throttle({ default: { limit: 30, ttl: 60_000 } })
-  receive(
-    @Headers('authorization') authorization: string | undefined,
-    @Body(new ZodPipe(InboundEmailInput)) body: InboundEmailInput,
-  ): Promise<{ occurrenceId: string }> {
+  @HttpCode(200)
+  @Throttle({ default: { limit: 60, ttl: 60_000 } })
+  async receive(
+    @Req() req: RawBodyRequest<Request>,
+    @Headers('svix-id') id: string | undefined,
+    @Headers('svix-timestamp') timestamp: string | undefined,
+    @Headers('svix-signature') signature: string | undefined,
+  ): Promise<{ occurrenceId: string } | { ignored: string }> {
     if (!inboundAvailable()) throw notFound();
-    const expected = `Bearer ${env().INBOUND_EMAIL_SECRET}`;
-    if (!authorization || !safeEqual(authorization, expected)) {
-      throw new AppException('UNAUTHENTICATED', HttpStatus.UNAUTHORIZED, 'Invalid inbound secret');
+    const raw = req.rawBody?.toString('utf8') ?? '';
+    if (!verifySvix(env().RESEND_WEBHOOK_SECRET!, { id, timestamp, signature }, raw)) {
+      throw new AppException('UNAUTHENTICATED', HttpStatus.UNAUTHORIZED, 'Invalid signature');
     }
-    return this.inbound.receive(body);
+    const parsed = ResendWebhookEvent.safeParse(req.body);
+    if (!parsed.success) return { ignored: 'payload' };
+    try {
+      return await this.inbound.handleResendEvent(parsed.data);
+    } catch (e) {
+      if (e instanceof ResendUnavailableError) {
+        throw new AppException('INTERNAL', HttpStatus.BAD_GATEWAY, 'Resend API unavailable');
+      }
+      throw e;
+    }
   }
 }

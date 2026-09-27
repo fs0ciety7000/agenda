@@ -17,9 +17,10 @@ export function loadTestEnv(): string {
   process.env.GOOGLE_CLIENT_ID ||= 'test-client.apps.googleusercontent.com';
   process.env.GOOGLE_CLIENT_SECRET ||= 'test-secret';
   process.env.TOKEN_ENCRYPTION_KEY ||= Buffer.alloc(32, 7).toString('base64');
-  // Tâches par e-mail activées (adresse modèle + secret du Worker).
-  process.env.INBOUND_EMAIL_ADDRESS ||= 'agenda+{token}@example.test';
-  process.env.INBOUND_EMAIL_SECRET ||= 'inbound-secret-inbound-secret-inbound';
+  // Tâches par e-mail activées (adresse modèle, webhook et clé Resend ; client HTTP remplacé).
+  process.env.INBOUND_EMAIL_ADDRESS ||= '{token}@tasks.example.test';
+  process.env.RESEND_WEBHOOK_SECRET ||= `whsec_${Buffer.from('resend-webhook-secret').toString('base64')}`;
+  process.env.RESEND_API_KEY ||= 're_test';
   process.env.JWT_SECRET ??= 'test-secret-test-secret-test-secret-123456';
   return url;
 }

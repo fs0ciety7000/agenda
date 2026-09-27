@@ -72,8 +72,10 @@ jobs:
       NODE_ENV: production
       AUTH_RATE_LIMIT: '100'
       API_URL: http://localhost:4000
-      INBOUND_EMAIL_ADDRESS: 'agenda+{token}@example.test'
-      INBOUND_EMAIL_SECRET: ci-inbound-secret-ci-inbound-secret-1234
+      INBOUND_EMAIL_ADDRESS: '{token}@tasks.example.test'
+      # Valeurs factices (la réception réelle est testée avec un faux client Resend).
+      RESEND_WEBHOOK_SECRET: dGVzdA==
+      RESEND_API_KEY: test
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6
