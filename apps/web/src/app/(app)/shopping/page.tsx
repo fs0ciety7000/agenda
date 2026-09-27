@@ -1,6 +1,7 @@
 'use client';
 
-import type { ShoppingItemDto } from '@agenda/contracts';
+import type { Aisle, ShoppingItemDto } from '@agenda/contracts';
+import { AISLES } from '@agenda/domain';
 import { Check, Plus, ShoppingCart, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useId, useState, type FormEvent } from 'react';
@@ -11,7 +12,12 @@ import { EmptyState, ErrorState, Skeleton } from '@/components/ui/states';
 import { errorKey } from '@/lib/api';
 import { cn } from '@/lib/cn';
 import { useRealtimeStatus } from '@/lib/realtime';
-import { splitItems, useShopping, useShoppingActions } from '@/lib/shopping';
+import {
+  splitItems,
+  useShopping,
+  useShoppingActions,
+  useShoppingSuggestions,
+} from '@/lib/shopping';
 
 /**
  * Liste de courses permanente du foyer : ajoutée par l'un, cochée par l'autre au magasin,
@@ -24,6 +30,7 @@ export default function ShoppingPage() {
   const memberId = household.members.find((m) => m.userId === me.id)?.id ?? '';
   const names = new Map(household.members.map((m) => [m.id, m.displayName]));
   const list = useShopping(household.id);
+  const suggestions = useShoppingSuggestions(household.id);
   const actions = useShoppingActions(household.id, memberId);
   const live = useRealtimeStatus();
   const [text, setText] = useState('');
@@ -80,6 +87,27 @@ export default function ShoppingPage() {
         </Button>
       </form>
 
+      {(suggestions.data?.length ?? 0) > 0 && (
+        <div className="flex flex-col gap-1.5">
+          <p className="text-[0.8125rem] text-text-muted">{t('suggestions')}</p>
+          <ul aria-label={t('suggestions')} className="flex flex-wrap gap-1.5">
+            {suggestions.data!.map((s) => (
+              <li key={s.text}>
+                <button
+                  type="button"
+                  onClick={() => actions.add.mutate([s.text])}
+                  aria-label={t('addSuggestion', { text: s.text })}
+                  className="inline-flex min-h-9 items-center gap-1 rounded-full border border-border px-3 text-sm hover:bg-surface-muted"
+                >
+                  <Plus aria-hidden className="size-3.5" />
+                  {s.text}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {failed && (
         <p role="alert" className="text-sm text-danger">
           {te(errorKey(failed.error) as 'generic')}
@@ -106,13 +134,26 @@ export default function ShoppingPage() {
             {toBuy.length === 0 ? (
               <p className="text-[0.9375rem] text-text-muted">{t('allDone')}</p>
             ) : (
-              <ItemList
-                items={toBuy}
-                label={t('toBuy', { count: toBuy.length })}
-                onToggle={(i) => actions.toggle.mutate({ id: i.id, done: true })}
-                onRemove={(i) => actions.remove.mutate(i.id)}
-                removeLabel={(i) => t('remove', { text: i.text })}
-              />
+              // Rangé par rayon, dans l'ordre d'un parcours de magasin.
+              AISLES.map((aisle) => {
+                const inAisle = toBuy.filter((i) => (i.aisle ?? 'OTHER') === aisle);
+                if (!inAisle.length) return null;
+                return (
+                  <div key={aisle} className="flex flex-col gap-1">
+                    <h3 className="text-[0.8125rem] font-medium text-text-muted">
+                      {t(`aisles.${aisle}`)}
+                    </h3>
+                    <ItemList
+                      items={inAisle}
+                      label={t(`aisles.${aisle}`)}
+                      onToggle={(i) => actions.toggle.mutate({ id: i.id, done: true })}
+                      onRemove={(i) => actions.remove.mutate(i.id)}
+                      removeLabel={(i) => t('remove', { text: i.text })}
+                      onAisle={(i, a) => actions.setAisle.mutate({ id: i.id, aisle: a })}
+                    />
+                  </div>
+                );
+              })
             )}
           </section>
           {inCart.length > 0 && (
@@ -154,6 +195,7 @@ function ItemList({
   onRemove,
   removeLabel,
   meta,
+  onAisle,
 }: {
   items: ShoppingItemDto[];
   label: string;
@@ -161,7 +203,10 @@ function ItemList({
   onRemove: (i: ShoppingItemDto) => void;
   removeLabel: (i: ShoppingItemDto) => string;
   meta?: (i: ShoppingItemDto) => string | null;
+  /** Changer de rayon (retenu pour la prochaine fois). */
+  onAisle?: (i: ShoppingItemDto, aisle: Aisle) => void;
 }) {
+  const t = useTranslations('shopping');
   return (
     <ul
       aria-label={label}
@@ -194,11 +239,30 @@ function ItemList({
               )}
             >
               {item.text}
+              {item.quantity && (
+                <span className="ml-2 rounded-sm bg-surface-muted px-1.5 py-0.5 text-[0.8125rem] tabular-nums text-text-muted">
+                  {item.quantity}
+                </span>
+              )}
             </span>
             {meta?.(item) && (
               <span className="block text-[0.8125rem] text-text-muted">{meta(item)}</span>
             )}
           </span>
+          {onAisle && (
+            <select
+              aria-label={t('aisleOf', { text: item.text })}
+              value={item.aisle ?? 'OTHER'}
+              onChange={(e) => onAisle(item, e.target.value as Aisle)}
+              className="h-9 w-11 shrink-0 cursor-pointer appearance-none rounded-md bg-transparent text-center text-base hover:bg-surface-muted"
+            >
+              {AISLES.map((a) => (
+                <option key={a} value={a}>
+                  {t(`aisles.${a}`)}
+                </option>
+              ))}
+            </select>
+          )}
           <button
             type="button"
             aria-label={removeLabel(item)}

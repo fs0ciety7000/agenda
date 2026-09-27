@@ -25,7 +25,9 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
   - tour de rôle : fixe, à deux, chacun son tour, rotation personnalisée, selon le jour, par semaine ;
   - aperçu des prochaines dates ;
   - modification « cette fois / les suivantes / toute la série ».
-- **Liste de courses partagée** permanente, cochée à deux au magasin, hors ligne sur Android.
+- **Liste de courses partagée** permanente, cochée à deux au magasin, hors ligne sur Android :
+  rangée par rayon (appris quand on le corrige), quantités (« 2 kg de pommes », « lait x6 ») et
+  articles souvent achetés proposés en un geste.
 - **Hors ligne sur le site** comme sur Android : consultation, coches, ajout rapide et courses
   sans réseau, envoyés au retour de la connexion.
 - **Temps réel** : ce que l'autre change apparaît aussitôt sur le site et dans l'app (Server-Sent Events).

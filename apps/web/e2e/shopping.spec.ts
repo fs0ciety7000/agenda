@@ -60,3 +60,33 @@ test('courses : ajout de l’autre visible sans recharger, coche partagée, vide
   await expect(page.getByRole('checkbox', { name: 'Pain' })).toHaveCount(0);
   await expect(page.getByRole('heading', { name: 'À acheter (2)' })).toBeVisible();
 });
+
+test('courses malignes : quantités, rayons, rayon retenu, souvent achetés', async ({ page }) => {
+  await signUpWithHousehold(page, 'Grace');
+  await page.getByRole('link', { name: 'Courses' }).first().click();
+  await page
+    .getByRole('textbox', { name: 'Ajouter à la liste' })
+    .fill('2 kg de pommes, lait x6, Speculoos');
+  await page.keyboard.press('Enter');
+
+  const produce = page.getByRole('list', { name: '🥕 Fruits et légumes' });
+  await expect(produce.getByRole('checkbox', { name: 'pommes' })).toBeVisible();
+  await expect(produce.getByText('2 kg')).toBeVisible();
+  await expect(
+    page.getByRole('list', { name: '🧀 Crèmerie et œufs' }).getByText('x6'),
+  ).toBeVisible();
+
+  // Rayon inconnu → « Autres » ; corrigé une fois, il est retenu.
+  await page.getByLabel('Rayon de Speculoos').selectOption('PANTRY');
+  await expect(
+    page.getByRole('list', { name: '🥫 Épicerie' }).getByRole('checkbox', { name: 'Speculoos' }),
+  ).toBeVisible();
+
+  // Acheté puis panier vidé → proposé dans « Souvent achetés », ajouté en un geste.
+  await page.getByRole('checkbox', { name: 'lait' }).click();
+  await page.getByRole('button', { name: 'Vider le panier' }).click();
+  await page.getByRole('button', { name: 'Ajouter lait' }).click();
+  await expect(
+    page.getByRole('list', { name: '🧀 Crèmerie et œufs' }).getByRole('checkbox', { name: 'lait' }),
+  ).toBeVisible();
+});

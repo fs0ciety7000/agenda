@@ -103,6 +103,7 @@ data class PendingOperationEntity(
         const val SHOP_SET = "SHOP_SET"
         const val SHOP_DELETE = "SHOP_DELETE"
         const val SHOP_CLEAR = "SHOP_CLEAR"
+        const val SHOP_AISLE = "SHOP_AISLE"
     }
 }
 
@@ -116,4 +117,8 @@ data class ShoppingItemEntity(
     val doneById: String?,
     val createdAt: String,
     val doneAt: String?,
+    /** « 2 kg », « x6 » (null = pas de quantité). */
+    val quantity: String? = null,
+    /** Rayon (PRODUCE, DAIRY…) ; null = pas encore rangé (ajout hors ligne). */
+    val aisle: String? = null,
 )

@@ -1,20 +1,29 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import type { ShoppingItem } from '@prisma/client';
 import {
+  type Aisle,
   MAX_SHOPPING_ITEMS,
   type ShoppingItemDto,
   type ShoppingItemInput,
+  type ShoppingSuggestionDto,
   type UpdateShoppingItemInput,
 } from '@agenda/contracts';
+import { AISLES, guessAisle, parseShoppingText, productKey } from '@agenda/domain';
 import { randomUUID } from 'node:crypto';
 import { AppException, notFound } from '../common/app-exception';
 import { DomainEvents } from '../common/domain-events';
 import { HouseholdContext } from '../common/request-context';
 import { PrismaService } from '../prisma/prisma.service';
 
+const asAisle = (v: string | null | undefined): Aisle | null =>
+  v && (AISLES as readonly string[]).includes(v) ? (v as Aisle) : null;
+
 const toDto = (i: ShoppingItem): ShoppingItemDto => ({
   id: i.id,
   text: i.text,
+  quantity: i.quantity,
+  // Articles d'avant les rayons : deviné à la lecture.
+  aisle: asAisle(i.aisle) ?? guessAisle(i.text),
   done: i.done,
   createdById: i.createdById,
   doneById: i.doneById,
@@ -22,7 +31,14 @@ const toDto = (i: ShoppingItem): ShoppingItemDto => ({
   doneAt: i.doneAt?.toISOString() ?? null,
 });
 
-/** Liste de courses permanente du foyer, partagée et mise à jour en temps réel. */
+/** Nombre de suggestions « souvent achetés ». */
+const SUGGESTIONS = 12;
+
+/**
+ * Liste de courses permanente du foyer, partagée et mise à jour en temps réel. Chaque article a
+ * une quantité (« 2 kg ») et un rayon ; le foyer garde la mémoire de ses produits (rayon corrigé,
+ * nombre d'achats) pour trier la liste et proposer ce qui est souvent acheté.
+ */
 @Injectable()
 export class ShoppingService {
   constructor(
@@ -56,14 +72,27 @@ export class ShoppingService {
         'Too many items',
       );
     }
+    const parsed =
+      input.quantity === undefined
+        ? parseShoppingText(input.text)
+        : { name: input.text, quantity: input.quantity || null };
+    const key = productKey(parsed.name);
+    const known = await this.prisma.shoppingProduct.findUnique({
+      where: { householdId_key: { householdId: ctx.householdId, key } },
+      select: { aisle: true },
+    });
+    const aisle = input.aisle ?? asAisle(known?.aisle) ?? guessAisle(parsed.name);
     const item = await this.prisma.shoppingItem.create({
       data: {
         id: input.id ?? randomUUID(),
         householdId: ctx.householdId,
-        text: input.text,
+        text: parsed.name,
+        quantity: parsed.quantity,
+        aisle,
         createdById: ctx.memberId,
       },
     });
+    await this.remember(ctx.householdId, parsed.name, aisle, { added: true });
     this.events.publish(ctx.householdId, 'shopping');
     return toDto(item);
   }
@@ -75,10 +104,20 @@ export class ShoppingService {
   ): Promise<ShoppingItemDto> {
     const current = await this.find(ctx, id);
     const doneChanged = input.done !== undefined && input.done !== current.done;
+    // Texte modifié sans quantité explicite : « 3 citrons » est redécoupé.
+    const parsed =
+      input.text !== undefined && input.quantity === undefined
+        ? parseShoppingText(input.text)
+        : null;
     const item = await this.prisma.shoppingItem.update({
       where: { id },
       data: {
-        ...(input.text !== undefined ? { text: input.text } : {}),
+        ...(parsed
+          ? { text: parsed.name, ...(parsed.quantity ? { quantity: parsed.quantity } : {}) }
+          : {}),
+        ...(input.text !== undefined && !parsed ? { text: input.text } : {}),
+        ...(input.quantity !== undefined ? { quantity: input.quantity || null } : {}),
+        ...(input.aisle !== undefined ? { aisle: input.aisle } : {}),
         ...(doneChanged
           ? input.done
             ? { done: true, doneById: ctx.memberId, doneAt: new Date() }
@@ -86,8 +125,67 @@ export class ShoppingService {
           : {}),
       },
     });
+    const aisle = asAisle(item.aisle) ?? guessAisle(item.text);
+    // Rayon corrigé : retenu pour la prochaine fois. Coché : un achat de plus.
+    if (input.aisle !== undefined || (doneChanged && input.done)) {
+      await this.remember(ctx.householdId, item.text, aisle, {
+        aisleChosen: input.aisle !== undefined,
+        bought: doneChanged && input.done === true,
+      });
+    }
     this.events.publish(ctx.householdId, 'shopping');
     return toDto(item);
+  }
+
+  /** Souvent achetés et absents de la liste (à acheter), les plus fréquents d'abord. */
+  async suggestions(ctx: HouseholdContext): Promise<ShoppingSuggestionDto[]> {
+    const [products, pending] = await Promise.all([
+      this.prisma.shoppingProduct.findMany({
+        where: { householdId: ctx.householdId, timesBought: { gt: 0 } },
+        orderBy: [{ timesBought: 'desc' }, { lastBoughtAt: 'desc' }],
+        take: SUGGESTIONS * 3,
+      }),
+      this.prisma.shoppingItem.findMany({
+        where: { householdId: ctx.householdId, done: false },
+        select: { text: true },
+      }),
+    ]);
+    const onList = new Set(pending.map((i) => productKey(i.text)));
+    return products
+      .filter((p) => !onList.has(p.key))
+      .slice(0, SUGGESTIONS)
+      .map((p) => ({
+        text: p.label,
+        aisle: asAisle(p.aisle) ?? 'OTHER',
+        timesBought: p.timesBought,
+      }));
+  }
+
+  private async remember(
+    householdId: string,
+    name: string,
+    aisle: Aisle,
+    what: { added?: boolean; aisleChosen?: boolean; bought?: boolean },
+  ) {
+    const key = productKey(name);
+    if (!key) return;
+    const now = new Date();
+    await this.prisma.shoppingProduct.upsert({
+      where: { householdId_key: { householdId, key } },
+      create: {
+        householdId,
+        key,
+        label: name.slice(0, 200),
+        aisle,
+        timesBought: what.bought ? 1 : 0,
+        lastBoughtAt: what.bought ? now : null,
+      },
+      update: {
+        ...(what.added ? { label: name.slice(0, 200), lastAddedAt: now } : {}),
+        ...(what.aisleChosen ? { aisle } : {}),
+        ...(what.bought ? { timesBought: { increment: 1 }, lastBoughtAt: now } : {}),
+      },
+    });
   }
 
   /** Idempotent : un article déjà retiré (par l'autre) ne provoque pas d'erreur. */

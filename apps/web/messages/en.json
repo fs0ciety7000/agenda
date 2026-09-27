@@ -623,7 +623,7 @@
     "live": "Live",
     "notLive": "Offline",
     "add": "Add to the list",
-    "placeholder": "Milk, bread, eggs…",
+    "placeholder": "2 kg apples, milk x6, bread…",
     "emptyTitle": "The list is empty",
     "emptyBody": "Add what's missing: the other person sees it right away, even at the shop.",
     "toBuy": "To buy ({count})",
@@ -631,7 +631,22 @@
     "allDone": "Everything is in the basket 🎉",
     "clear": "Empty the basket",
     "remove": "Remove “{text}”",
-    "takenBy": "Picked up by {name}"
+    "takenBy": "Picked up by {name}",
+    "aisles": {
+      "PRODUCE": "🥕 Fruit & veg",
+      "BAKERY": "🥖 Bakery",
+      "DAIRY": "🧀 Dairy & eggs",
+      "MEAT_FISH": "🥩 Meat & fish",
+      "FROZEN": "🧊 Frozen",
+      "PANTRY": "🥫 Pantry",
+      "DRINKS": "🧃 Drinks",
+      "HOUSEHOLD": "🧽 Household",
+      "HYGIENE": "🧴 Toiletries",
+      "OTHER": "🛒 Other"
+    },
+    "suggestions": "Often bought",
+    "addSuggestion": "Add {text}",
+    "aisleOf": "Aisle for {text}"
   },
   "templates": {
     "hint": "Several tasks created at once, e.g. “Saturday cleaning”: vacuum, bathroom, sheets…",

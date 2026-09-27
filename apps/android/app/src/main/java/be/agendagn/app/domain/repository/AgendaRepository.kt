@@ -93,5 +93,9 @@ interface AgendaRepository {
     suspend fun setShoppingDone(item: ShoppingItem, done: Boolean)
     suspend fun removeShopping(item: ShoppingItem)
     suspend fun clearShoppingDone()
+    /** Rayon choisi pour un article (retenu par le serveur pour ce produit). */
+    suspend fun setShoppingAisle(item: ShoppingItem, aisle: String)
+    /** Souvent achetés, absents de la liste (en ligne ; vide sinon). */
+    suspend fun shoppingSuggestions(): List<String>
     suspend fun refreshShopping(): RefreshOutcome
 }

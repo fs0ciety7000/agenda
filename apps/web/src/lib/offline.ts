@@ -1,7 +1,7 @@
 'use client';
 
 import { unsubscribeWebPush } from './web-push';
-import type { OccurrenceDto, ShoppingItemDto } from '@agenda/contracts';
+import type { Aisle, OccurrenceDto, ShoppingItemDto } from '@agenda/contracts';
 import { type QueryClient, onlineManager, useMutationState } from '@tanstack/react-query';
 import { useSyncExternalStore } from 'react';
 import { ApiError, api } from './api';
@@ -25,7 +25,13 @@ export type ToggleVars = { hid: string; id: string; done: boolean };
 /** `key` : Idempotency-Key, pour qu'un renvoi ne crée jamais la tâche deux fois. */
 export type QuickAddVars = { hid: string; text: string; key: string };
 export type ShopAddVars = { hid: string; items: { id: string; text: string }[] };
-export type ShopUpdateVars = { hid: string; id: string; done?: boolean; text?: string };
+export type ShopUpdateVars = {
+  hid: string;
+  id: string;
+  done?: boolean;
+  text?: string;
+  aisle?: Aisle;
+};
 export type ShopRemoveVars = { hid: string; id: string };
 export type ShopClearVars = { hid: string };
 

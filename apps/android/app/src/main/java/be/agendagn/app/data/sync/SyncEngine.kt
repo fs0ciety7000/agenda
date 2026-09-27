@@ -9,6 +9,7 @@ import be.agendagn.app.data.local.PendingOperationEntity.Companion.CREATE
 import be.agendagn.app.data.local.PendingOperationEntity.Companion.QUICK_ADD
 import be.agendagn.app.data.local.PendingOperationEntity.Companion.REOPEN
 import be.agendagn.app.data.local.PendingOperationEntity.Companion.SHOP_ADD
+import be.agendagn.app.data.local.PendingOperationEntity.Companion.SHOP_AISLE
 import be.agendagn.app.data.local.PendingOperationEntity.Companion.SHOP_CLEAR
 import be.agendagn.app.data.local.PendingOperationEntity.Companion.SHOP_DELETE
 import be.agendagn.app.data.local.PendingOperationEntity.Companion.SHOP_SET
@@ -50,7 +51,7 @@ class SyncEngine(
     data class PushResult(val outcome: PushOutcome, val rejected: Int)
 
     private companion object {
-        val SHOPPING_OPS = setOf(SHOP_ADD, SHOP_SET, SHOP_DELETE, SHOP_CLEAR)
+        val SHOPPING_OPS = setOf(SHOP_ADD, SHOP_SET, SHOP_DELETE, SHOP_CLEAR, SHOP_AISLE)
 
         /** Au-delà (erreur serveur persistante), l'action est abandonnée plutôt que bloquer la file. */
         const val MAX_ATTEMPTS = 10
@@ -148,8 +149,9 @@ class SyncEngine(
 
     private suspend fun sendShopping(op: PendingOperationEntity): Response<*> = when (op.type) {
         SHOP_ADD -> api.addShopping(op.householdId, ShoppingItemRequest(op.occurrenceId, op.payload!!))
-        SHOP_SET -> api.updateShopping(op.householdId, op.occurrenceId, ShoppingUpdateRequest(op.payload == "true"))
+        SHOP_SET -> api.updateShopping(op.householdId, op.occurrenceId, ShoppingUpdateRequest(done = op.payload == "true"))
         SHOP_DELETE -> api.deleteShopping(op.householdId, op.occurrenceId)
+        SHOP_AISLE -> api.updateShopping(op.householdId, op.occurrenceId, ShoppingUpdateRequest(aisle = op.payload))
         SHOP_CLEAR -> api.clearShopping(op.householdId)
         else -> error("Unknown operation ${op.type}")
     }
@@ -194,6 +196,7 @@ class SyncEngine(
                     if (op.payload == "true") Instant.ofEpochMilli(op.createdAt).toString() else null,
                 )
                 SHOP_DELETE -> shopping.delete(op.occurrenceId)
+                SHOP_AISLE -> op.payload?.let { shopping.setAisle(op.occurrenceId, it) }
                 SHOP_CLEAR -> shopping.deleteDone(hid)
             }
         }

@@ -1,6 +1,7 @@
 'use client';
 
-import type { ShoppingItemDto } from '@agenda/contracts';
+import type { Aisle, ShoppingItemDto, ShoppingSuggestionDto } from '@agenda/contracts';
+import { guessAisle, parseShoppingText } from '@agenda/domain';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from './api';
 import {
@@ -19,6 +20,13 @@ const sorted = (items: ShoppingItemDto[]) => [
   ...items.filter((i) => !i.done).sort((a, b) => a.createdAt.localeCompare(b.createdAt)),
   ...items.filter((i) => i.done).sort((a, b) => (b.doneAt ?? '').localeCompare(a.doneAt ?? '')),
 ];
+
+/** Produits souvent achetés, absents de la liste (proposés en un geste). */
+export const useShoppingSuggestions = (hid: string) =>
+  useQuery({
+    queryKey: [...shoppingKey(hid), 'suggestions'],
+    queryFn: () => api<ShoppingSuggestionDto[]>(`/v1/households/${hid}/shopping/suggestions`),
+  });
 
 export const useShopping = (hid: string) =>
   useQuery({
@@ -45,6 +53,7 @@ export function useShoppingActions(hid: string, memberId: string) {
   };
   const common = {
     onError: (_e: unknown, _v: unknown, ctx?: Ctx) => qc.setQueryData(key, ctx?.previous),
+    // Préfixe : la liste et les suggestions.
     onSettled: () => qc.invalidateQueries({ queryKey: key }),
   };
   const add = useMutation<ShoppingItemDto[], Error, ShopAddVars, Ctx>({
@@ -53,22 +62,28 @@ export function useShoppingActions(hid: string, memberId: string) {
       const now = new Date().toISOString();
       return optimistic((list) => [
         ...list,
-        ...items.map(({ id, text }) => ({
-          id,
-          text,
-          done: false,
-          createdById: memberId,
-          doneById: null,
-          createdAt: now,
-          doneAt: null,
-        })),
+        // Affiché tout de suite comme le serveur le rangera (quantité, rayon deviné).
+        ...items.map(({ id, text }) => {
+          const { name, quantity } = parseShoppingText(text);
+          return {
+            id,
+            text: name,
+            quantity,
+            aisle: guessAisle(name),
+            done: false,
+            createdById: memberId,
+            doneById: null,
+            createdAt: now,
+            doneAt: null,
+          };
+        }),
       ]);
     },
     ...common,
   });
   const update = useMutation<ShoppingItemDto, Error, ShopUpdateVars, Ctx>({
     mutationKey: offlineKeys.shopUpdate,
-    onMutate: ({ id, done, text }) =>
+    onMutate: ({ id, done, text, aisle }) =>
       optimistic((list) =>
         list.map((i) =>
           i.id !== id
@@ -76,6 +91,7 @@ export function useShoppingActions(hid: string, memberId: string) {
             : {
                 ...i,
                 ...(text !== undefined ? { text } : {}),
+                ...(aisle !== undefined ? { aisle } : {}),
                 ...(done !== undefined
                   ? {
                       done,
@@ -111,6 +127,10 @@ export function useShoppingActions(hid: string, memberId: string) {
     rename: {
       ...update,
       mutate: ({ id, text }: { id: string; text: string }) => update.mutate({ hid, id, text }),
+    },
+    setAisle: {
+      ...update,
+      mutate: ({ id, aisle }: { id: string; aisle: Aisle }) => update.mutate({ hid, id, aisle }),
     },
     remove: { ...remove, mutate: (id: string) => remove.mutate({ hid, id }) },
     clearDone: { ...clearDone, mutate: () => clearDone.mutate({ hid }) },

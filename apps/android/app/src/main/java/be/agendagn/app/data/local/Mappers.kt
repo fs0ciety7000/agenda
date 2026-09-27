@@ -95,6 +95,6 @@ fun CategoryDto.toEntity(householdId: String) = CategoryEntity(id, householdId, 
 fun CategoryEntity.toDomain() = Category(id, name, emoji)
 
 fun ShoppingItemDto.toEntity(householdId: String) =
-    ShoppingItemEntity(id, householdId, text, done, doneById, createdAt, doneAt)
+    ShoppingItemEntity(id, householdId, text, done, doneById, createdAt, doneAt, quantity, aisle)
 
-fun ShoppingItemEntity.toDomain() = ShoppingItem(id, text, done, doneById)
+fun ShoppingItemEntity.toDomain() = ShoppingItem(id, text, done, doneById, quantity, aisle)

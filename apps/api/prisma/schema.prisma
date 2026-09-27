@@ -122,6 +122,7 @@ model Household {
   activity       ActivityLog[]
   absences       MemberAbsence[]
   comments       TaskComment[]
+  products       ShoppingProduct[]
 }
 
 enum HouseholdRole {
@@ -450,6 +451,10 @@ model ShoppingItem {
   id          String    @id @db.Uuid
   householdId String    @db.Uuid
   text        String    @db.VarChar(200)
+  /// « 2 kg », « x6 »… (null = pas de quantité).
+  quantity    String?   @db.VarChar(40)
+  /// Rayon (Aisle de @agenda/domain) ; null = deviné à la lecture (articles d'avant).
+  aisle       String?   @db.VarChar(16)
   done        Boolean   @default(false)
   /// Membres (jamais supprimés physiquement : anonymisés), sans clé étrangère.
   createdById String?   @db.Uuid
@@ -461,6 +466,24 @@ model ShoppingItem {
   household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
 
   @@index([householdId, done])
+}
+
+/// Mémoire des courses du foyer : rayon choisi et fréquence d'achat de chaque produit
+/// (suggestions « souvent achetés », rayon retenu quand on le corrige).
+model ShoppingProduct {
+  id           String    @id @default(uuid()) @db.Uuid
+  householdId  String    @db.Uuid
+  /// productKey() : minuscules, sans accents, singulier.
+  key          String    @db.VarChar(200)
+  label        String    @db.VarChar(200)
+  aisle        String    @db.VarChar(16)
+  timesBought  Int       @default(0)
+  lastBoughtAt DateTime?
+  lastAddedAt  DateTime  @default(now())
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@unique([householdId, key])
 }
 
 model OccurrenceAssignee {
