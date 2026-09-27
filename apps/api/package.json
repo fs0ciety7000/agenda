@@ -18,7 +18,8 @@
     "test:unit": "vitest run --project unit",
     "db:migrate": "prisma migrate dev",
     "db:deploy": "prisma migrate deploy",
-    "db:generate": "prisma generate"
+    "db:generate": "prisma generate",
+    "openapi": "node dist/openapi/generate.js"
   },
   "dependencies": {
     "@agenda/contracts": "workspace:*",

@@ -23,11 +23,13 @@ import { CategoriesService } from './categories.service';
 export class CategoriesController {
   constructor(private readonly categories: CategoriesService) {}
 
+  /** Catégories du foyer. */
   @Get()
   list(@CurrentHousehold() ctx: HouseholdContext): Promise<CategoryDto[]> {
     return this.categories.list(ctx);
   }
 
+  /** Créer une catégorie. */
   @Post()
   create(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -36,6 +38,7 @@ export class CategoriesController {
     return this.categories.create(ctx, body);
   }
 
+  /** Modifier une catégorie. */
   @Patch(':categoryId')
   update(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -45,6 +48,7 @@ export class CategoriesController {
     return this.categories.update(ctx, assertUuid(id), body);
   }
 
+  /** Supprimer une catégorie. */
   @Delete(':categoryId')
   @HttpCode(204)
   remove(

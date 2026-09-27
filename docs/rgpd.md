@@ -1,0 +1,97 @@
+---
+title: Confidentialité & RGPD
+description: Données traitées, finalités, bases légales, durées de conservation, prestataires, sécurité et droits — registre des traitements d'Agenda G & N.
+---
+
+# Confidentialité & RGPD
+
+Agenda G & N est une application **privée et non commerciale** : ni publicité, ni revente, ni
+pistage, ni mesure d'audience. Cette page est la version détaillée (registre des traitements) de
+la [politique de confidentialité](https://agenda.fs0ciety.org/privacy) affichée dans l'app ; en
+cas de doute, c'est la politique en ligne qui fait foi pour les utilisateurs.
+
+## Responsable du traitement
+
+L'administrateur qui héberge l'instance (un membre du foyer, sur son propre serveur, derrière
+Cloudflare). Contact : l'adresse affichée sur la page `/privacy` (variable
+`PRIVACY_CONTACT_EMAIL`), à défaut l'administrateur du foyer.
+
+## Registre des traitements
+
+| Traitement | Données | Finalité | Base légale | Conservation |
+|---|---|---|---|---|
+| **Compte** | prénom, e-mail, mot de passe **haché (Argon2id)**, langue, identité Google liée (identifiant, e-mail vérifié) | se connecter, retrouver son foyer | exécution du service | tant que le compte existe |
+| **Sessions** | appareil (navigateur / app), dates de connexion, jeton de rafraîchissement **haché** | rester connecté, déconnexion à distance | exécution du service | 60 jours d'inactivité |
+| **Foyer et tâches** | foyer, membres, catégories, tâches, notes, dates, responsables, répétitions, sous-tâches, commentaires, liste de courses | le service lui-même | exécution du service | tant que le foyer existe ; tâche supprimée : **30 jours** en corbeille |
+| **Pièces jointes** | fichiers joints (PDF, photos), taille, type | joindre une facture, une photo | exécution du service | supprimées avec la tâche ; 10 Mo / fichier, 200 Mo / foyer |
+| **Journal d'activité** | qui a fait quoi, quand, champs modifiés (pas les valeurs) | transparence entre membres, annuler | intérêt légitime (vie commune) | **1 an** |
+| **Absences** | membre absent, dates | réattribuer les tâches partagées | exécution du service | supprimées avec le foyer |
+| **Notifications** | notifications de l'app, préférences ; jeton Firebase (Android) ; abonnement Web Push (navigateur) | prévenir d'une tâche confiée, d'un commentaire | exécution du service ; activation volontaire | jeton / abonnement supprimés à la déconnexion ou s'ils expirent |
+| **Tâches par e-mail** (si activé) | expéditeur, sujet, texte et pièces jointes des e-mails transférés à l'adresse personnelle | créer une tâche depuis un e-mail | action de l'utilisateur | comme la tâche créée |
+| **Google Agenda** (si connecté) | liste des agendas, événements créés par l'app ; jetons OAuth **chiffrés AES-256-GCM** | publier les tâches dans l'agenda commun | **consentement** (révocable) | jusqu'à la déconnexion de Google Agenda |
+| **Mot de passe oublié** | jeton de réinitialisation **haché** | réinitialiser le mot de passe | exécution du service | 30 minutes |
+| **Sécurité et exploitation** | journaux techniques (route, statut, durée, adresse IP pour la limitation des tentatives), erreurs techniques, métriques agrégées par minute (sans utilisateur) | disponibilité, sécurité, correction des erreurs | intérêt légitime | métriques 8 jours ; sondes 7 jours ; journaux selon l'hébergeur |
+| **Sauvegardes** | copie chiffrée en transit de la base | restaurer en cas de panne | intérêt légitime | 14 jours sur le serveur, 30 jours hors serveur |
+
+L'app Android garde une **copie locale** des données du foyer pour fonctionner hors ligne ; le
+site en garde une dans le navigateur (stockage local et cache du service worker). Les deux sont
+effacées à la déconnexion.
+
+## Ce qui n'est jamais collecté
+
+Position, contacts, agenda du téléphone, historique de navigation, identifiant publicitaire,
+données de santé ou financières. Aucun cookie de mesure d'audience ou de publicité : uniquement
+les cookies **strictement nécessaires** (session `httpOnly`, suivi d'une connexion Google en
+cours pendant quelques minutes).
+
+## Prestataires (sous-traitants)
+
+| Prestataire | Rôle | Données reçues | Quand |
+|---|---|---|---|
+| **Hébergeur du serveur** (VPS de l'administrateur, Coolify) | héberge l'app et la base | toutes (chiffrées en transit) | toujours |
+| **Cloudflare** | DNS, HTTPS, protection | trafic (chiffré de bout en bout jusqu'à Cloudflare) | toujours |
+| **Fournisseur d'e-mails** (SMTP : Resend, Brevo…) | mot de passe oublié, accusés, alertes admin | adresse e-mail, contenu du message | à l'envoi |
+| **Resend** (réception) | tâches par e-mail | e-mails transférés à l'adresse personnelle | si activé |
+| **Google** | connexion Google, Google Agenda | identifiant et e-mail ; événements des tâches publiées | si utilisé |
+| **Firebase Cloud Messaging** | notifications instantanées Android | jeton de l'appareil et un signal « du nouveau » — **jamais** le contenu d'une tâche | si configuré |
+| **Services push des navigateurs** (Google, Mozilla, Apple) | notifications du site | abonnement du navigateur ; le message est **chiffré de bout en bout** (RFC 8291), illisible par le service | si activé par l'utilisateur |
+| **Stockage hors serveur** (Cloudflare R2…) | copie des sauvegardes | sauvegarde de la base | si configuré |
+| **Sentry / GlitchTip** | suivi des erreurs | type d'erreur, page, version — sans contenu de tâche ni identité | si configuré |
+
+Aucun transfert à des fins publicitaires. Les données reçues des API Google respectent la
+*Google API Services User Data Policy*, exigences *Limited Use* comprises.
+
+## Sécurité
+
+- HTTPS partout ; cookies `httpOnly`, `Secure`, `SameSite=Lax` ; protection CSRF sur toute
+  modification.
+- Mots de passe hachés (Argon2id), jetons de session et de réinitialisation hachés, jetons Google
+  chiffrés (AES-256-GCM, clé hors base).
+- Cloisonnement strict entre foyers (vérifié à chaque requête) ; tâches personnelles visibles par
+  leur seul auteur.
+- Limitation des tentatives de connexion ; en-têtes de sécurité (Helmet).
+- Sauvegardes quotidiennes **restaurées et vérifiées** automatiquement, copie hors serveur.
+- Surveillance continue et alertes en cas d'incident ([Surveillance](monitoring.md)).
+
+## Vos droits
+
+| Droit | Comment |
+|---|---|
+| **Accès / portabilité** | Réglages → Données & confidentialité → **Exporter mes données** (JSON) |
+| **Rectification** | directement dans l'app (prénom, tâches…), ou en contactant l'administrateur |
+| **Effacement** | Réglages → Données & confidentialité → **Supprimer mon compte** (immédiat) ; sauvegardes : effacées sous 30 jours |
+| **Retrait du consentement** (Google Agenda) | Réglages → Calendrier partagé → *Retirer l'accès* |
+| **Opposition, limitation** | contacter l'administrateur |
+| **Réclamation** | autorité de protection des données de votre pays (Belgique : [Autorité de protection des données](https://www.autoriteprotectiondonnees.be)) |
+
+## Google Play : section « Sécurité des données »
+
+Les réponses au formulaire de Google Play (données collectées, finalités, caractère facultatif)
+sont tenues à jour dans [Google Play → Sécurité des données](play-store.md#4-sécurité-des-données-réponses).
+Toute nouvelle donnée collectée par l'app Android doit y être ajoutée **avant** publication.
+
+## Tenir cette page à jour
+
+Toute fonction qui collecte une nouvelle donnée ou ajoute un prestataire met à jour, dans la même
+PR : ce registre, la politique en ligne (`apps/web/messages/*.json` → `privacyPolicy`) et, pour
+Android, la section Sécurité des données.

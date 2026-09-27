@@ -17,6 +17,7 @@ export class PushController {
     return this.push.status(user.userId);
   }
 
+  /** Enregistrer le jeton FCM de l'appareil Android. */
   @Put()
   @HttpCode(204)
   register(

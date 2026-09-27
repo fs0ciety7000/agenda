@@ -18,6 +18,7 @@ import { NotificationsService } from './notifications.service';
 export class NotificationsController {
   constructor(private readonly notifications: NotificationsService) {}
 
+  /** Centre de notifications. */
   @Get('notifications')
   list(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -36,11 +37,13 @@ export class NotificationsController {
     return this.notifications.markRead(ctx, body.ids);
   }
 
+  /** Préférences de notification. */
   @Get('notification-preferences')
   preferences(@CurrentHousehold() ctx: HouseholdContext): Promise<NotificationPreferenceDto[]> {
     return this.notifications.preferences(ctx);
   }
 
+  /** Modifier les préférences de notification. */
   @Put('notification-preferences')
   updatePreferences(
     @CurrentHousehold() ctx: HouseholdContext,

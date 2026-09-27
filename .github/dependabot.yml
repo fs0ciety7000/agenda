@@ -15,6 +15,15 @@ updates:
         update-types: [minor, patch]
     labels: [dependencies]
 
+  - package-ecosystem: npm # site de documentation (npm, hors workspace pnpm)
+    directory: /apps/docs
+    schedule: { interval: weekly, day: monday, time: '06:00', timezone: Europe/Brussels }
+    open-pull-requests-limit: 3
+    groups:
+      correctifs:
+        update-types: [minor, patch]
+    labels: [dependencies]
+
   - package-ecosystem: gradle # app Android
     directory: /apps/android
     schedule: { interval: weekly, day: monday, time: '06:00', timezone: Europe/Brussels }
@@ -29,7 +38,7 @@ updates:
     labels: [dependencies, android]
 
   - package-ecosystem: docker
-    directories: [/apps/api, /apps/web, /infra/backup]
+    directories: [/apps/api, /apps/web, /apps/docs, /infra/backup]
     schedule: { interval: weekly, day: monday, time: '06:00', timezone: Europe/Brussels }
     groups:
       images:

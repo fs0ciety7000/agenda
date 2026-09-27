@@ -60,7 +60,7 @@ versions et toujours croissants.
      droits » : Réglages → Données & confidentialité → Supprimer mon compte). Suppression
      immédiate ; sauvegardes effacées sous 14 jours (serveur) et 30 jours (hors serveur).
 4. **Fiche Play Store** (*Présence sur le Store → Fiche principale*) : copier les textes et
-   images de [`apps/android/fastlane/metadata/android`](../apps/android/fastlane/metadata/android)
+   images de `apps/android/fastlane/metadata/android`
    (`fr-FR` et `en-US` en traduction) :
 
    | Champ | Fichier | Limite |
@@ -95,9 +95,12 @@ exclus de la notion de partage.
 | Activité dans l'app → **Autres contenus générés par l'utilisateur** (tâches, notes, listes) | Oui | Fonctionnement de l'app | Non |
 | Infos et performances de l'app → **Journaux de plantage**, **Diagnostics** | Oui | Analyse (correction des erreurs) | Non |
 | Identifiants de l'appareil → **Autres identifiants** (jeton de notification Firebase) | Oui | Fonctionnement de l'app (notifications) | Oui |
+| Photos et vidéos → **Photos** (photo jointe à une tâche, prise ou choisie par l'utilisateur) | Oui | Fonctionnement de l'app | Oui |
+| Fichiers et documents → **Fichiers et documents** (pièces jointes) | Oui | Fonctionnement de l'app | Oui |
 
-Non collectés : position, contacts, photos, fichiers, agenda de l'appareil (l'app ne lit pas le
-calendrier du téléphone), données financières, santé, historique de navigation, publicité.
+Non collectés : position, contacts, agenda de l'appareil (l'app ne lit pas le calendrier du
+téléphone), données financières, santé, historique de navigation, publicité. Les photos et
+fichiers ne sont jamais lus en arrière-plan : seulement ceux que l'utilisateur joint lui-même.
 
 ## 5. Automatiser les envois suivants (facultatif)
 

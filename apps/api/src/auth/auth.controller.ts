@@ -43,6 +43,7 @@ export class AuthController {
     private readonly passwordReset: PasswordResetService,
   ) {}
 
+  /** Créer un compte. */
   @Public()
   @Throttle(AUTH_THROTTLE)
   @Post('auth/register')
@@ -55,6 +56,7 @@ export class AuthController {
     return this.respond(await this.auth.register(body, req.headers['user-agent']), client, res);
   }
 
+  /** Se connecter (e-mail et mot de passe). */
   @Public()
   @Throttle(AUTH_THROTTLE)
   @Post('auth/login')
@@ -68,6 +70,7 @@ export class AuthController {
     return this.respond(await this.auth.login(body, req.headers['user-agent']), client, res);
   }
 
+  /** Renouveler les jetons (cookie de rafraîchissement ou `refreshToken` dans le corps). */
   @Public()
   @Throttle({ default: { limit: () => env().AUTH_RATE_LIMIT * 3, ttl: 60_000 } })
   @Post('auth/refresh')
@@ -89,6 +92,7 @@ export class AuthController {
     }
   }
 
+  /** Se déconnecter de cet appareil. */
   @Public()
   @Post('auth/logout')
   @HttpCode(204)
@@ -102,6 +106,7 @@ export class AuthController {
     clearAuthCookies(res);
   }
 
+  /** Se déconnecter de tous les appareils. */
   @Post('auth/logout-all')
   @HttpCode(204)
   async logoutAll(
@@ -123,6 +128,7 @@ export class AuthController {
     this.passwordReset.requestInBackground(body.email);
   }
 
+  /** Choisir un nouveau mot de passe avec le jeton reçu par e-mail. */
   @Public()
   @Throttle(AUTH_THROTTLE)
   @Post('auth/password/reset')
@@ -135,6 +141,7 @@ export class AuthController {
     clearAuthCookies(res);
   }
 
+  /** Changer son mot de passe. */
   @Throttle(AUTH_THROTTLE)
   @Post('auth/password/change')
   @HttpCode(204)
@@ -145,12 +152,14 @@ export class AuthController {
     return this.auth.changePassword(user, body);
   }
 
+  /** Délier le compte Google. */
   @Delete('auth/google')
   @HttpCode(204)
   unlinkGoogle(@CurrentUser() user: AuthUser): Promise<void> {
     return this.auth.unlinkGoogle(user.userId);
   }
 
+  /** Profil de l'utilisateur connecté. */
   @Get('me')
   me(@CurrentUser() user: AuthUser): Promise<MeResponse> {
     return this.auth.me(user.userId);

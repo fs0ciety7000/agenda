@@ -93,6 +93,7 @@ export class CalendarController {
     );
   }
 
+  /** Retour de Google après l'autorisation d'accès à l'agenda (redirection). */
   @Public()
   @Get('calendar/google/callback')
   async callback(
@@ -142,6 +143,7 @@ export class CalendarController {
     res.redirect(withParam(flow.next, 'calendar=connected'));
   }
 
+  /** État de la synchronisation Google Agenda. */
   @Get('households/:householdId/calendar')
   @UseGuards(HouseholdMemberGuard)
   status(
@@ -151,12 +153,14 @@ export class CalendarController {
     return this.calendar.status(ctx, user.userId);
   }
 
+  /** Agendas Google disponibles. */
   @Get('households/:householdId/calendar/available')
   @UseGuards(HouseholdMemberGuard)
   available(@CurrentUser() user: AuthUser): Promise<AvailableCalendarDto[]> {
     return this.calendar.available(user.userId);
   }
 
+  /** Choisir l'agenda Google synchronisé. */
   @Put('households/:householdId/calendar/link')
   @UseGuards(HouseholdMemberGuard)
   link(
@@ -167,6 +171,7 @@ export class CalendarController {
     return this.calendar.link(ctx, user.userId, body.calendarId);
   }
 
+  /** Arrêter la synchronisation du foyer. */
   @Delete('households/:householdId/calendar/link')
   @UseGuards(HouseholdMemberGuard)
   @HttpCode(204)
@@ -185,6 +190,7 @@ export class CalendarController {
     await this.queue.scheduleFull(ctx.householdId);
   }
 
+  /** Révoquer l'accès à Google Agenda. */
   @Delete('me/google-calendar')
   @HttpCode(204)
   disconnect(@CurrentUser() user: AuthUser): Promise<void> {

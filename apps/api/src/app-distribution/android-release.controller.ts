@@ -19,6 +19,7 @@ import { AndroidReleaseService } from './android-release.service';
 export class AndroidReleaseController {
   constructor(private readonly releases: AndroidReleaseService) {}
 
+  /** Dernière version de l'app Android. */
   @Get('version.json')
   async version(@Res({ passthrough: true }) res: Response) {
     const release = await this.releases.latest();
@@ -31,6 +32,7 @@ export class AndroidReleaseController {
     };
   }
 
+  /** Télécharger l'APK Android. */
   @Get('agenda-gn.apk')
   async apk(@Res() res: Response): Promise<void> {
     const upstream = await this.releases.download();

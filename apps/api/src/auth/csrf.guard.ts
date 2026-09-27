@@ -6,7 +6,7 @@ import { AppException } from '../common/app-exception';
 export const CSRF_HEADER = 'x-requested-with';
 export const CSRF_HEADER_VALUE = 'agenda-gn';
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
-const SKIP_CSRF = 'skipCsrf';
+export const SKIP_CSRF = 'skipCsrf';
 
 /**
  * Webhooks de services tiers (sans cookie, authentifiés par signature) : le header CSRF n'a pas

@@ -19,6 +19,7 @@ export class AbsencesController {
     return this.absences.list(ctx);
   }
 
+  /** Déclarer une absence (les tâches partagées passent à l'autre membre). */
   @Post()
   create(
     @CurrentHousehold() ctx: HouseholdContext,
@@ -27,6 +28,7 @@ export class AbsencesController {
     return this.absences.create(ctx, input);
   }
 
+  /** Supprimer une absence. */
   @Delete(':id')
   @HttpCode(204)
   remove(@CurrentHousehold() ctx: HouseholdContext, @Param('id') id: string): Promise<void> {

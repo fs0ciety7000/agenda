@@ -16,6 +16,7 @@ import { MonitoringService } from './monitoring.service';
 export class StatusController {
   constructor(private readonly monitoring: MonitoringService) {}
 
+  /** État public du service (page /status). */
   @Get()
   @Header('cache-control', 'public, max-age=30')
   status(): Promise<StatusPageDto> {
@@ -31,6 +32,7 @@ export class StatusController {
 export class MetricsController {
   constructor(private readonly monitoring: MonitoringService) {}
 
+  /** Métriques Prometheus (jeton `METRICS_TOKEN`). */
   @Get()
   @Header('content-type', 'text/plain; version=0.0.4; charset=utf-8')
   metrics(@Req() req: Request): Promise<string> {

@@ -66,6 +66,7 @@ export class GoogleSignInController {
     private readonly mail: MailService,
   ) {}
 
+  /** Méthodes de connexion disponibles (Google configuré ou non). */
   @Get('providers')
   providers(): AuthProvidersDto {
     return {
@@ -148,6 +149,7 @@ export class GoogleSignInController {
     );
   }
 
+  /** Retour de Google après « Se connecter avec Google » (redirection). */
   @Get('google/callback')
   async callback(
     @Query('code') code: string | undefined,

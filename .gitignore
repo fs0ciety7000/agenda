@@ -25,3 +25,8 @@ apps/web/playwright-report/
 
 # Redis local
 dump.rdb
+
+# Site de documentation (Docusaurus)
+apps/docs/build/
+apps/docs/.docusaurus/
+apps/docs/static/swagger/

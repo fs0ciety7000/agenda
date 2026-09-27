@@ -110,6 +110,9 @@ https://agenda.fs0ciety.org:3000
 
 Le suffixe `:3000` indique à Traefik le **port du conteneur**. L'URL publique reste
 `https://agenda.fs0ciety.org`. Ne mettre **aucun** domaine sur `api` ni `postgres`.
+
+Service **docs** (site de documentation, facultatif) → *Domains* :
+`https://agenda-docs.fs0ciety.org:80` — voir §13.
 Aucun label Traefik dans le compose : Coolify génère tout le routage.
 
 ### 4.3 Variables d'environnement
@@ -137,6 +140,7 @@ manquent. Modèle complet : `.env.prod.example`.
 | `INBOUND_EMAIL_ADDRESS`, `RESEND_WEBHOOK_SECRET`, `RESEND_API_KEY` | facultatif : tâches par e-mail (réception par Resend) | cf. [`email-to-task.md`](email-to-task.md) |
 | `ADMIN_EMAILS` | facultatif : accès à la page d'administration | adresses e-mail séparées par des virgules ; reçoivent aussi les alertes de surveillance |
 | `METRICS_TOKEN` | facultatif : `GET /metrics` (Prometheus) | secret d'au moins 16 caractères, cf. `monitoring.md` |
+| `DOCS_URL` | facultatif : adresse du site de documentation (build) | `https://agenda-docs.fs0ciety.org` par défaut, cf. §13 |
 | `BACKUP_HEARTBEAT_URL` | facultatif : battement de cœur des sauvegardes | URL « Push » d'Uptime Kuma / Healthchecks.io |
 | `WEB_PUSH_PUBLIC_KEY`, `WEB_PUSH_PRIVATE_KEY` | facultatif : notifications du site (navigateur) | paire de clés VAPID, voir ci-dessous |
 | `WEB_PUSH_SUBJECT` | facultatif | contact pour les services de push (`mailto:…` ou `https://…`) ; défaut : `WEB_ORIGIN` |
@@ -329,7 +333,7 @@ Vue complète (sondes internes, page `/status`, alertes, Uptime Kuma, Prometheus
 [`monitoring.md`](monitoring.md).
 
 - **Disponibilité** : le workflow GitHub `Disponibilité` (`.github/workflows/uptime.yml`) appelle
-  `https://agenda.fs0ciety.org/healthz` (web → API → base) toutes les 10 minutes, **depuis
+  `https://agenda.fs0ciety.org/healthz` (web → API → base) toutes les 2 heures, **depuis
   l'extérieur du serveur**. Après 3 échecs d'affilée, il ouvre un ticket « Site indisponible »
   (étiquette `panne`) : GitHub vous prévient par email / sur l'appli mobile (*Watch* le dépôt ou
   être propriétaire suffit). Le ticket se ferme tout seul au retour du site.
@@ -402,3 +406,25 @@ Vue complète (sondes internes, page `/status`, alertes, Uptime Kuma, Prometheus
 | Synchro arrêtée au bout d'une semaine | App OAuth restée en *Testing* | La publier « In production », puis *Reconnecter* dans Réglages |
 | Tâches « en attente » de synchro qui n'avancent pas | `redis` non *healthy*, ou quota Google | Logs `api` (`Calendar sync mode: queue`, `Sweep …`) ; le balayage reprend toutes les 10 min |
 | Build `web` échoue sur `next/font` | Pas d'accès à `fonts.googleapis.com` pendant le build | Autoriser la sortie réseau du serveur pendant le build |
+
+## 13. Site de documentation
+
+Le service `docs` du compose sert ce site (Docusaurus construit, servi par nginx) : guide
+d'utilisation, technique, confidentialité, nouveautés et référence de l'API. Il est **statique**
+et indépendant : il n'a accès ni à l'API ni à la base.
+
+1. **Cloudflare → DNS** : enregistrement `A` `agenda-docs` vers l'IP du serveur (nuage gris au
+   premier déploiement, puis orange, comme en §3.1). Un nom à **un seul niveau** sous
+   `fs0ciety.org` reste couvert par le certificat Cloudflare gratuit (`docs.agenda.fs0ciety.org`
+   ne le serait pas).
+2. **Coolify** → service **docs** → *Domains* : `https://agenda-docs.fs0ciety.org:80`.
+3. Autre adresse : variable `DOCS_URL` (utilisée au build pour les liens et le plan du site),
+   puis redéployer.
+
+Le site est public : il ne contient ni secret ni donnée, seulement la documentation du dépôt.
+Pour le réserver au foyer, placer le domaine derrière **Cloudflare Access** (Zero Trust →
+Access → Applications, gratuit jusqu'à 50 utilisateurs, connexion par code e-mail).
+
+En local : `cd apps/docs && npm ci && npm start`. Le contenu est le dossier `docs/` du dépôt ;
+la référence de l'API (`apps/docs/static/openapi.json`) est régénérée par
+`pnpm --filter @agenda/api openapi` après une modification de l'API (vérifié en CI).

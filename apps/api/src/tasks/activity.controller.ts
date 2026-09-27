@@ -22,11 +22,13 @@ export class ActivityController {
     return this.activity.list(ctx, query);
   }
 
+  /** Corbeille (éléments supprimés depuis moins de 30 jours). */
   @Get('trash')
   trash(@CurrentHousehold() ctx: HouseholdContext): Promise<TrashItemDto[]> {
     return this.activity.trash(ctx);
   }
 
+  /** Restaurer un élément de la corbeille. */
   @Post('trash/:id/restore')
   @HttpCode(200)
   restore(
