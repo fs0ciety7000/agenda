@@ -27,6 +27,7 @@ import { Skeleton } from '@/components/ui/states';
 import { useToast } from '@/components/ui/toast';
 import { ApiError, errorKey } from '@/lib/api';
 import { useCalendarStatus } from '@/lib/calendar';
+import { useRestore } from '@/lib/activity';
 import { cn } from '@/lib/cn';
 import { formatDuration, formatTime, useDayLabel, useToday } from '@/lib/format';
 import {
@@ -115,6 +116,7 @@ export function TaskFormDialog({
   const create = useCreateTask(household.id);
   const update = useUpdateOccurrence(household.id);
   const remove = useDeleteOccurrence(household.id);
+  const restore = useRestore(household.id);
   const toast = useToast();
   const editing = Boolean(occurrence);
   const recurring = Boolean(occurrence?.seriesId);
@@ -295,7 +297,21 @@ export function TaskFormDialog({
     try {
       await remove.mutateAsync({ id: occurrence.id, scope });
       onOpenChange(false);
-      toast({ message: t('deletedToast') });
+      const id = occurrence.id;
+      toast({
+        message: t('deletedToast'),
+        action: {
+          label: t('undo'),
+          onClick: () =>
+            restore.mutate(
+              { occurrenceId: id },
+              {
+                onSuccess: () => toast({ message: t('restoredToast') }),
+                onError: () => toast({ message: t('restoreError'), tone: 'error' }),
+              },
+            ),
+        },
+      });
     } catch (err) {
       handleError(err);
     }

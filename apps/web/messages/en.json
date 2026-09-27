@@ -141,7 +141,10 @@
     "categories": "Categories",
     "privacy": "Data & privacy",
     "notifications": "Notifications",
-    "templates": "Task templates"
+    "templates": "Task templates",
+    "activity": "Activity and trash",
+    "activityHint": "Who did what, and tasks deleted in the last 30 days.",
+    "activityOpen": "Open the activity log"
   },
   "common": {
     "loading": "Loading…",
@@ -231,7 +234,9 @@
       "weekend": "This weekend",
       "done": "“{title}” moved to {date}",
       "error": "Couldn't postpone the task."
-    }
+    },
+    "restoredToast": "Task restored.",
+    "restoreError": "Couldn't undo the deletion."
   },
   "balance": {
     "bothOfUs": "Together",
@@ -486,7 +491,7 @@
   },
   "privacyPolicy": {
     "title": "Privacy policy",
-    "updated": "Last updated: 26 September 2026",
+    "updated": "Last updated: 27 September 2026",
     "intro": "Agenda G & N is a private, non-commercial app used by the members of a household to organise their tasks. This page explains what data it processes, why, and how to delete it.",
     "who": {
       "title": "Who manages your data",
@@ -510,7 +515,7 @@
     },
     "retention": {
       "title": "Retention",
-      "body": "Your data is kept as long as your account exists. Sessions expire after 60 days of inactivity. Password reset links expire after 30 minutes.\nAccount deletion: immediate in the app. Backups are kept 14 days on the server and 30 days off-site: your data disappears from them at the latest after that."
+      "body": "Your data is kept as long as your account exists. A deleted task stays in the household's trash for 30 days, then is permanently erased. The activity log (who did what, and when) is kept for one year. Sessions expire after 60 days of inactivity. Password reset links expire after 30 minutes.\nAccount deletion: immediate in the app. Backups are kept 14 days on the server and 30 days off-site: your data disappears from them at the latest after that."
     },
     "security": {
       "title": "Security",
@@ -657,5 +662,71 @@
     "privacyLink": "Privacy policy",
     "login": "Sign in",
     "footer": "A personal app, free and ad-free."
+  },
+  "activity": {
+    "title": "Activity and trash",
+    "tabLog": "Activity",
+    "tabTrash": "Trash",
+    "intro": "Who did what, and when. Your personal tasks only appear for you. The log is kept for one year.",
+    "export": "Export (CSV)",
+    "exportError": "Export failed. Please try again.",
+    "loadMore": "Show more",
+    "empty": "No activity yet.",
+    "system": "Google Calendar",
+    "formerMember": "A former member",
+    "untitled": "(untitled)",
+    "forDate": "for {date}",
+    "changed": "changed: {fields}",
+    "actions": {
+      "task_created": "created",
+      "occurrence_updated": "edited",
+      "series_created": "made recurring",
+      "series_split": "changed the repeat of",
+      "series_updated": "changed the repeat of",
+      "occurrence_completed": "completed",
+      "occurrence_reopened": "reopened",
+      "task_deleted": "deleted",
+      "occurrence_cancelled": "deleted one occurrence of",
+      "series_ended": "stopped repeating",
+      "task_restored": "restored",
+      "occurrence_restored": "restored one occurrence of",
+      "series_restored": "resumed repeating",
+      "occurrence_updated_in_google": "edited",
+      "other": "edited"
+    },
+    "fields": {
+      "title": "title",
+      "date": "date",
+      "startMinute": "time",
+      "durationMinutes": "duration",
+      "assigneeIds": "assignees",
+      "notes": "notes",
+      "categoryId": "category",
+      "priority": "priority",
+      "visibility": "visibility",
+      "syncToCalendar": "shared calendar",
+      "recurrence": "repeat",
+      "dueDate": "due date"
+    },
+    "csv": {
+      "date": "Date",
+      "time": "Time",
+      "who": "Who",
+      "action": "Action",
+      "task": "Task",
+      "taskDate": "Task date",
+      "fields": "Changed fields"
+    },
+    "trashIntro": "Deleted tasks stay here for 30 days, then are permanently erased.",
+    "trashEmpty": "The trash is empty.",
+    "kind_task": "Whole task",
+    "kind_occurrence": "One occurrence",
+    "kind_following": "Repeat from this date on",
+    "deletedBy": "Deleted by {who}, {when}",
+    "purgeOn": "permanently erased on {date}",
+    "restore": "Restore",
+    "restoreLabel": "Restore “{title}”",
+    "restored": "“{title}” restored.",
+    "restoreError": "Couldn't restore: it may already have been restored."
   }
 }

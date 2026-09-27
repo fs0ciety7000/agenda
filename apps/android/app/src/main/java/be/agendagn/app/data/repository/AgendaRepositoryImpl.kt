@@ -358,6 +358,23 @@ class AgendaRepositoryImpl(
         }
     }
 
+    override suspend fun restore(occurrenceId: String): OpResult = withContext(io) {
+        val h = db.households().current() ?: return@withContext OpResult.NotFound
+        try {
+            val res = api.restoreOccurrence(h.id, occurrenceId)
+            when {
+                res.isSuccessful -> {
+                    engine.refresh()
+                    OpResult.Ok
+                }
+                res.code() == 404 -> OpResult.NotFound
+                else -> OpResult.Failed(errorCode(res.errorBody()?.string()))
+            }
+        } catch (_: IOException) {
+            OpResult.Offline
+        }
+    }
+
     override suspend fun templates(): List<TaskTemplate>? = withContext(io) {
         val h = db.households().current() ?: return@withContext null
         try {

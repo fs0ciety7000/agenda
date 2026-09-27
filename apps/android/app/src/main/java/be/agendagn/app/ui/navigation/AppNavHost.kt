@@ -289,6 +289,26 @@ private fun MainScaffold(
         OpResult.NotFound to stringResource(R.string.error_not_found),
     )
     val genericError = stringResource(R.string.error_generic)
+    val completedFormat = stringResource(R.string.task_completed_snack)
+    val deletedMessage = stringResource(R.string.task_deleted)
+    val restoredMessage = stringResource(R.string.task_restored)
+    val restoreFailed = stringResource(R.string.task_restore_failed)
+    // Suppression depuis la fiche : « Annuler » restaure la tâche (corbeille, 30 jours).
+    val onDeleted: (String) -> Unit = { id ->
+        scope.launch {
+            val result = snackbar.showSnackbar(deletedMessage, actionLabel = undoLabel, duration = SnackbarDuration.Short)
+            if (result == SnackbarResult.ActionPerformed) {
+                val restored = container.repository.restore(id)
+                snackbar.showSnackbar(
+                    when (restored) {
+                        OpResult.Ok -> restoredMessage
+                        OpResult.Offline -> moveErrors.getValue(OpResult.Offline)
+                        else -> restoreFailed
+                    },
+                )
+            }
+        }
+    }
     LaunchedEffect(vm) {
         vm.events.collect { event ->
             when (event) {
@@ -304,6 +324,17 @@ private fun MainScaffold(
                     }
                 }
                 is AgendaEvent.MoveFailed -> scope.launch { snackbar.showSnackbar(moveErrors[event.result] ?: genericError) }
+                is AgendaEvent.Completed -> scope.launch {
+                    val result = snackbar.showSnackbar(
+                        completedFormat.format(event.title),
+                        actionLabel = undoLabel,
+                        duration = SnackbarDuration.Short,
+                    )
+                    if (result == SnackbarResult.ActionPerformed) {
+                        vm.state.value.occurrences.firstOrNull { it.id == event.occurrenceId && it.isDone }
+                            ?.let { vm.toggle(it, undo = true) }
+                    }
+                }
             }
         }
     }
@@ -439,11 +470,11 @@ private fun MainScaffold(
             }
             composable("task/{id}", arguments = listOf(navArgument("id") { type = NavType.StringType })) { entry ->
                 val id = entry.arguments?.getString("id")
-                TaskForm(container, id, null, state, calendar) { nav.popBackStack() }
+                TaskForm(container, id, null, state, calendar, onDeleted) { nav.popBackStack() }
             }
             composable("new?date={date}", arguments = listOf(navArgument("date") { type = NavType.StringType; nullable = true })) { entry ->
                 val date = entry.arguments?.getString("date")?.let(LocalDate::parse)
-                TaskForm(container, null, date, state, calendar) { nav.popBackStack() }
+                TaskForm(container, null, date, state, calendar, onDeleted) { nav.popBackStack() }
             }
         }
     }
@@ -490,6 +521,7 @@ private fun TaskForm(
     date: LocalDate?,
     state: be.agendagn.app.ui.main.AgendaUiState,
     calendar: CalendarStatus?,
+    onDeleted: (occurrenceId: String) -> Unit,
     onBack: () -> Unit,
 ) {
     val vm: TaskFormViewModel = viewModel(
@@ -497,6 +529,7 @@ private fun TaskForm(
         factory = viewModelFactory { initializer { TaskFormViewModel(container.repository, occurrenceId, date) } },
     )
     val form by vm.state.collectAsStateWithLifecycle()
+    LaunchedEffect(form.deleted) { if (form.deleted) form.original?.let { onDeleted(it.id) } }
     TaskFormScreen(
         state = form,
         members = state.household?.members.orEmpty(),

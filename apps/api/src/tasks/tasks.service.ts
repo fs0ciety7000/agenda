@@ -334,7 +334,11 @@ export class TasksService {
           syncToCalendar: !personal && input.syncToCalendar,
         },
       });
-      await this.log(tx, ctx, 'task.created', 'Task', task.id);
+      await this.log(tx, ctx, 'task.created', 'Task', task.id, undefined, {
+        title: input.title,
+        personal,
+        date: input.date ?? null,
+      });
 
       if (!recurrence) {
         const occ = await tx.taskOccurrence.create({
@@ -642,6 +646,11 @@ export class TasksService {
         'TaskOccurrence',
         current.id,
         changedFields(input, exception ? 'this' : undefined),
+        {
+          title: input.title ?? current.titleOverride ?? task.title,
+          personal: visibility === 'PERSONAL',
+          date: schedule.date,
+        },
       );
     });
     return this.get(ctx, current.id);
@@ -681,7 +690,11 @@ export class TasksService {
         recurrence,
       });
       await this.series.materialize(tx, seriesId, this.horizonFor(tz, schedule.date!));
-      await this.log(tx, ctx, 'series.created', 'TaskSeries', seriesId);
+      await this.log(tx, ctx, 'series.created', 'TaskSeries', seriesId, undefined, {
+        ...subjectOf(current),
+        title: input.title ?? current.task.title,
+        personal: visibility === 'PERSONAL',
+      });
       return this.firstOccurrenceId(tx, seriesId);
     });
     return this.get(ctx, firstId);
@@ -778,10 +791,22 @@ export class TasksService {
         rotationOffset: offset,
       });
       await this.series.materialize(tx, seriesId, this.horizonFor(tz, startDate));
-      await this.log(tx, ctx, 'series.split', 'TaskSeries', old.id, {
-        newSeriesId: seriesId,
-        ...changedFields(input, 'following'),
-      });
+      await this.log(
+        tx,
+        ctx,
+        'series.split',
+        'TaskSeries',
+        old.id,
+        {
+          newSeriesId: seriesId,
+          ...changedFields(input, 'following'),
+        },
+        {
+          ...subjectOf(current),
+          title: input.title ?? current.task.title,
+          personal: visibility === 'PERSONAL',
+        },
+      );
       return this.firstOccurrenceId(tx, seriesId);
     });
     return this.get(ctx, firstId);
@@ -855,7 +880,11 @@ export class TasksService {
         where: { taskId: current.taskId, date: { gte: toDbDate(addDays(today, -1)) } },
         data: { syncVersion: { increment: 1 } },
       });
-      await this.log(tx, ctx, 'series.updated', 'TaskSeries', old.id, changedFields(input, 'all'));
+      await this.log(tx, ctx, 'series.updated', 'TaskSeries', old.id, changedFields(input, 'all'), {
+        ...subjectOf(current),
+        title: input.title ?? current.task.title,
+        personal: visibility === 'PERSONAL',
+      });
     });
 
     // Renvoie l'occurrence équivalente (même date prévue) ou la prochaine.
@@ -897,7 +926,15 @@ export class TasksService {
             syncVersion: { increment: 1 },
           },
         });
-        await this.log(tx, ctx, 'occurrence.completed', 'TaskOccurrence', id);
+        await this.log(
+          tx,
+          ctx,
+          'occurrence.completed',
+          'TaskOccurrence',
+          id,
+          undefined,
+          subjectOf(current),
+        );
       });
     }
     this.events.householdChanged(ctx.householdId);
@@ -918,7 +955,15 @@ export class TasksService {
             syncVersion: { increment: 1 },
           },
         });
-        await this.log(tx, ctx, 'occurrence.reopened', 'TaskOccurrence', id);
+        await this.log(
+          tx,
+          ctx,
+          'occurrence.reopened',
+          'TaskOccurrence',
+          id,
+          undefined,
+          subjectOf(current),
+        );
       });
     }
     this.events.householdChanged(ctx.householdId);
@@ -934,7 +979,15 @@ export class TasksService {
     await this.prisma.$transaction(async (tx) => {
       if (!current.seriesId || scope === 'all') {
         await tx.task.update({ where: { id: current.taskId }, data: { deletedAt: new Date() } });
-        await this.log(tx, ctx, 'task.deleted', 'Task', current.taskId);
+        await this.log(
+          tx,
+          ctx,
+          'task.deleted',
+          'Task',
+          current.taskId,
+          { occurrenceId: id },
+          subjectOf(current),
+        );
         return;
       }
       if (scope === 'this') {
@@ -947,14 +1000,30 @@ export class TasksService {
             syncVersion: { increment: 1 },
           },
         });
-        await this.log(tx, ctx, 'occurrence.cancelled', 'TaskOccurrence', id);
+        await this.log(
+          tx,
+          ctx,
+          'occurrence.cancelled',
+          'TaskOccurrence',
+          id,
+          undefined,
+          subjectOf(current),
+        );
         return;
       }
       const series = await tx.taskSeries.findUniqueOrThrow({ where: { id: current.seriesId } });
       const splitDate = fromDbDate(current.originalDate)!;
       if (splitDate <= fromDbDate(series.startDate)!) {
         await tx.task.update({ where: { id: current.taskId }, data: { deletedAt: new Date() } });
-        await this.log(tx, ctx, 'task.deleted', 'Task', current.taskId);
+        await this.log(
+          tx,
+          ctx,
+          'task.deleted',
+          'Task',
+          current.taskId,
+          { occurrenceId: id },
+          subjectOf(current),
+        );
         return;
       }
       await tx.taskSeries.update({
@@ -968,7 +1037,15 @@ export class TasksService {
           status: { not: 'DONE' },
         },
       });
-      await this.log(tx, ctx, 'series.ended', 'TaskSeries', series.id);
+      await this.log(
+        tx,
+        ctx,
+        'series.ended',
+        'TaskSeries',
+        series.id,
+        { splitDate, previousUntil: fromDbDate(series.untilDate), occurrenceId: id },
+        subjectOf(current),
+      );
     });
     this.events.householdChanged(ctx.householdId);
   }
@@ -1214,7 +1291,9 @@ export class TasksService {
     entityType: string,
     entityId: string,
     data?: object,
+    subject?: LogSubject,
   ) {
+    const date = subject?.date ?? null;
     return tx.activityLog.create({
       data: {
         householdId: ctx.householdId,
@@ -1222,7 +1301,9 @@ export class TasksService {
         action,
         entityType,
         entityId,
-        data,
+        data: date || data ? { ...data, ...(date ? { date } : {}) } : undefined,
+        title: subject?.title.slice(0, 200) ?? null,
+        personal: subject?.personal ?? false,
       },
     });
   }
@@ -1300,6 +1381,19 @@ function taskFields(input: UpdateOccurrenceInput, visibility: 'PERSONAL' | 'SHAR
 const dedupe = (ids: string[]) => [...new Set(ids)];
 
 /** Journal d'activité : noms des champs modifiés seulement (pas de contenu). */
+/** Ce que le journal retient de la tâche concernée (titre et date au moment de l'action). */
+interface LogSubject {
+  title: string;
+  personal: boolean;
+  date?: string | null;
+}
+
+const subjectOf = (o: OccurrenceRow): LogSubject => ({
+  title: o.titleOverride ?? o.task.title,
+  personal: o.task.visibility === 'PERSONAL',
+  date: fromDbDate(o.date),
+});
+
 const changedFields = (input: UpdateOccurrenceInput, scope?: EditScope) => ({
   fields: Object.keys(input).filter((k) => k !== 'version'),
   ...(scope ? { scope } : {}),

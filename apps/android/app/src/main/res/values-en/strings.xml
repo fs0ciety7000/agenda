@@ -283,4 +283,8 @@
     <string name="widget_week_name">Week</string>
     <string name="widget_week_description">Tasks for the next 7 days, checked off from the home screen.</string>
     <string name="widget_week_empty">Nothing planned this week.</string>
+    <string name="task_completed_snack">“%1$s” done</string>
+    <string name="task_deleted">Task deleted</string>
+    <string name="task_restored">Task restored</string>
+    <string name="task_restore_failed">Couldn\'t undo the deletion.</string>
 </resources>

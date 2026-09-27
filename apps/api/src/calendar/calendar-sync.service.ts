@@ -591,6 +591,11 @@ export class GoogleCalendarSyncService {
               action: 'occurrence.updated_in_google',
               entityType: 'TaskOccurrence',
               entityId: occ.id,
+              title: (titleChanged ? title! : currentTitle).slice(0, 200),
+              data: {
+                fields: [...(scheduleChanged ? ['date'] : []), ...(titleChanged ? ['title'] : [])],
+                ...(scheduleChanged && schedule!.date ? { date: schedule!.date } : {}),
+              },
             },
           });
           stats.updated++;

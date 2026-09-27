@@ -1,6 +1,7 @@
 'use client';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { Suspense, useEffect, useState } from 'react';
@@ -73,6 +74,16 @@ export default function SettingsPage() {
         <SectionTitle id="s-templates">{t('templates')}</SectionTitle>
         <Card>
           <TemplatesSettings />
+        </Card>
+      </section>
+
+      <section className="flex flex-col gap-3" aria-labelledby="s-activity">
+        <SectionTitle id="s-activity">{t('activity')}</SectionTitle>
+        <Card className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-[0.9375rem] text-text-muted">{t('activityHint')}</p>
+          <Button asChild variant="secondary">
+            <Link href="/history">{t('activityOpen')}</Link>
+          </Button>
         </Card>
       </section>
 

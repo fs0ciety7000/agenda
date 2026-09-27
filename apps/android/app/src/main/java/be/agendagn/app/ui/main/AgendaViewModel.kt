@@ -51,6 +51,7 @@ data class AgendaUiState(
 sealed interface AgendaEvent {
     data class Moved(val occurrenceId: String, val title: String, val from: LocalDate, val to: LocalDate) : AgendaEvent
     data class MoveFailed(val result: OpResult) : AgendaEvent
+    data class Completed(val occurrenceId: String, val title: String) : AgendaEvent
 }
 
 data class QuickAddState(val text: String = "", val preview: QuickAddPreview? = null)
@@ -103,8 +104,12 @@ class AgendaViewModel(
         }
     }
 
-    fun toggle(o: Occurrence) {
-        viewModelScope.launch { repository.toggle(o) }
+    /** Cocher / décocher ; `undo` = retour arrière depuis le message, sans nouveau message. */
+    fun toggle(o: Occurrence, undo: Boolean = false) {
+        viewModelScope.launch {
+            repository.toggle(o)
+            if (!undo && !o.isDone) _events.emit(AgendaEvent.Completed(o.id, o.title))
+        }
     }
 
     private val _events = MutableSharedFlow<AgendaEvent>(extraBufferCapacity = 4)

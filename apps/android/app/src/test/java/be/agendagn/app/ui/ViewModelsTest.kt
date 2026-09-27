@@ -7,6 +7,7 @@ import be.agendagn.app.domain.RepeatPreset
 import be.agendagn.app.domain.repository.OpResult
 import be.agendagn.app.testing.FakeAgendaRepository
 import be.agendagn.app.testing.Fixtures
+import be.agendagn.app.ui.main.AgendaEvent
 import be.agendagn.app.ui.main.AgendaViewModel
 import be.agendagn.app.ui.taskform.FormError
 import be.agendagn.app.ui.taskform.ScopeAction
@@ -14,6 +15,7 @@ import be.agendagn.app.ui.taskform.TaskFormViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -211,5 +213,26 @@ class ViewModelsTest {
         vm.onScope(EditScope.ALL)
         advanceUntilIdle()
         assertEquals(listOf(EditScope.ALL), repo.deletes)
+        // Fermeture en signalant la suppression (message « Annuler » sur l'écran précédent).
+        assertTrue(vm.state.value.done)
+        assertTrue(vm.state.value.deleted)
+    }
+
+    @Test
+    fun `cocher - message avec Annuler, qui decoche sans nouveau message`() = runTest(dispatcher) {
+        val repo = FakeAgendaRepository()
+        val vm = AgendaViewModel(repo, clock = clock)
+        val events = mutableListOf<AgendaEvent>()
+        backgroundScope.launch { vm.events.collect { events += it } }
+        advanceUntilIdle()
+        val o = vm.state.value.occurrences.first { it.title == "Sortir les poubelles" }
+        vm.toggle(o)
+        advanceUntilIdle()
+        assertEquals(listOf<AgendaEvent>(AgendaEvent.Completed(o.id, o.title)), events)
+        val done = vm.state.value.occurrences.first { it.id == o.id }
+        vm.toggle(done, undo = true)
+        advanceUntilIdle()
+        assertEquals(OccurrenceStatus.TODO, vm.state.value.occurrences.first { it.id == o.id }.status)
+        assertEquals(1, events.size)
     }
 }

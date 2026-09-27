@@ -147,6 +147,10 @@ interface AgendaApi {
     @POST("v1/households/{h}/occurrences/{id}/reopen")
     suspend fun reopen(@Path("h") householdId: String, @Path("id") id: String): Response<OccurrenceDto>
 
+    /** Annule la dernière suppression de cette occurrence (corbeille, 30 jours). */
+    @POST("v1/households/{h}/occurrences/{id}/restore")
+    suspend fun restoreOccurrence(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
+
     @DELETE("v1/households/{h}/occurrences/{id}")
     suspend fun deleteOccurrence(
         @Path("h") householdId: String,

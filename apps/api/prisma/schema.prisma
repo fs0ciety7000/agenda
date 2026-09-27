@@ -552,6 +552,10 @@ model ActivityLog {
   entityId    String   @db.Uuid
   /// Diff minimal (champs modifiés), sans données sensibles.
   data        Json?
+  /// Titre au moment de l'action : le journal reste lisible après suppression ou renommage.
+  title       String?  @db.VarChar(200)
+  /// Tâche personnelle : entrée visible uniquement par son auteur.
+  personal    Boolean  @default(false)
   createdAt   DateTime @default(now())
 
   household Household        @relation(fields: [householdId], references: [id], onDelete: Cascade)
