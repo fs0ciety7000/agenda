@@ -29,6 +29,6 @@ import { GoogleTokensService } from './google-tokens.service';
     CalendarQueueService,
     CalendarConnectionService,
   ],
-  exports: [CalendarConnectionService, GoogleCalendarSyncService],
+  exports: [CalendarConnectionService, GoogleCalendarSyncService, CalendarQueueService],
 })
 export class CalendarModule {}

@@ -43,6 +43,13 @@ export class MailService {
     return this.transporter !== null || env().NODE_ENV !== 'production';
   }
 
+  /** Surveillance : le serveur SMTP accepte la connexion. null = pas de SMTP configuré. */
+  async verify(): Promise<boolean | null> {
+    if (!this.transporter) return null;
+    await this.transporter.verify();
+    return true;
+  }
+
   async send(mail: OutgoingMail): Promise<void> {
     const config = env();
     if (config.NODE_ENV === 'test') {

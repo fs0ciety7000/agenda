@@ -16,6 +16,7 @@ import {
 import { useFormatter, useNow, useTranslations } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
+import { AdminMonitoring } from '@/components/app/admin-monitoring';
 import { useSession } from '@/components/app/household-context';
 import { Button } from '@/components/ui/button';
 import { Card, SectionTitle } from '@/components/ui/card';
@@ -39,6 +40,7 @@ export default function AdminPage() {
         <p className="mt-1 text-[0.9375rem] text-text-muted">{t('intro')}</p>
       </div>
       <Overview />
+      <AdminMonitoring />
       <Backups />
       <Tools />
       <Users />

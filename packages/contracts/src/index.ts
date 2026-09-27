@@ -13,3 +13,4 @@ export * from './inbound';
 export * from './absences';
 export * from './comments';
 export * from './admin';
+export * from './monitoring';

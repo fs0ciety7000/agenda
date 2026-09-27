@@ -706,6 +706,56 @@ model BackupRun {
   @@index([createdAt])
 }
 
+// ───────────────────────────── Surveillance ─────────────────────────────
+
+/// Résultat d'une sonde interne (toutes les minutes), gardé 7 jours.
+model StatusCheck {
+  id        String   @id @default(uuid()) @db.Uuid
+  /// database | redis | calendar | email | backups
+  component String   @db.VarChar(24)
+  ok        Boolean
+  latencyMs Int?
+  detail    String?  @db.VarChar(200)
+  checkedAt DateTime @default(now())
+
+  @@index([component, checkedAt])
+  @@index([checkedAt])
+}
+
+/// Disponibilité par composant et par jour (UTC), gardée 400 jours : page /status.
+model StatusDaily {
+  component  String   @db.VarChar(24)
+  day        DateTime @db.Date
+  checks     Int      @default(0)
+  failures   Int      @default(0)
+  latencySum Int      @default(0)
+
+  @@id([component, day])
+}
+
+/// Incident : un composant en échec (ouvert après 2 sondes ratées, fermé au retour).
+model Incident {
+  id         String    @id @default(uuid()) @db.Uuid
+  component  String    @db.VarChar(24)
+  detail     String?   @db.VarChar(200)
+  startedAt  DateTime  @default(now())
+  resolvedAt DateTime?
+
+  @@index([startedAt])
+}
+
+/// Requêtes HTTP agrégées par minute (volume, erreurs, temps de réponse), gardées 8 jours.
+model RequestMetric {
+  minute     DateTime @id
+  requests   Int      @default(0)
+  errors4xx  Int      @default(0)
+  errors5xx  Int      @default(0)
+  latencySum Int      @default(0)
+  latencyMax Int      @default(0)
+  /// Réponses de plus d'une seconde.
+  slow       Int      @default(0)
+}
+
 model PushToken {
   id         String   @id @default(uuid()) @db.Uuid
   userId     String   @db.Uuid
