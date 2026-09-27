@@ -81,6 +81,21 @@ def main():
     # Écran de connexion Android (72 dp × 3).
     rounded.resize((216, 216), Image.LANCZOS).save(res / "drawable-nodpi/logo.png", optimize=True)
 
+    # Site de documentation : logo de la barre de navigation et favicon.
+    docs_img = ROOT / "apps/docs/static/img"
+    docs_img.mkdir(parents=True, exist_ok=True)
+    rounded.resize((192, 192), Image.LANCZOS).save(docs_img / "logo.png", optimize=True)
+    rounded.resize((256, 256), Image.LANCZOS).save(docs_img / "favicon.png", optimize=True)
+
+    # Logo avec le nom (facultatif) : page « À propos » et accueil de la documentation.
+    wordmark = ROOT / "docs/brand/logo-wordmark.png"
+    if wordmark.exists():
+        w = Image.open(wordmark).convert("RGB")
+        w.thumbnail((640, 640), Image.LANCZOS)
+        (public / "brand").mkdir(exist_ok=True)
+        w.save(public / "brand/tandem-wordmark.png", optimize=True)
+        w.save(docs_img / "tandem-wordmark.png", optimize=True)
+
     # Play Store (512, carré plein : Google applique ses propres coins).
     full.resize((512, 512), Image.LANCZOS).save(ROOT / "docs/brand/play-store-icon-512.png", optimize=True)
     print(f"ok — fond {hex_bg}")

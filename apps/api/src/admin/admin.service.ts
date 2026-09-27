@@ -267,7 +267,7 @@ export class AdminService {
       this.push.wakeUser(adminId).catch(() => 0),
       this.webPush
         .sendToUser(adminId, {
-          title: 'Agenda G & N',
+          title: 'Tandem',
           body: fr ? 'Notification de test : tout fonctionne.' : 'Test notification: all good.',
           url: '/admin',
           tag: 'admin-test',

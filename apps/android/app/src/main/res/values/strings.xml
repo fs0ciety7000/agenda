@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Agenda G &amp; N</string>
+    <string name="app_name" translatable="false">Tandem</string>
 
     <!-- Connexion -->
     <string name="login_title">Bon retour</string>
@@ -218,7 +218,7 @@
     <string name="move_next_day">Déplacer au jour suivant</string>
     <string name="task_moved">« %1$s » déplacée au %2$s</string>
     <string name="undo">Annuler</string>
-    <string name="widget_name">Aujourd\'hui · Agenda G &amp; N</string>
+    <string name="widget_name">Aujourd\'hui · Tandem</string>
     <string name="widget_description">Les tâches du jour et celles en retard, à cocher depuis l\'écran d\'accueil.</string>
     <string name="widget_empty">Rien pour aujourd\'hui 🎉</string>
     <string name="widget_signed_out">Ouvrez l\'app pour vous connecter.</string>

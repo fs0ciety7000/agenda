@@ -42,7 +42,7 @@ versions et toujours croissants.
 
 1. **Compte développeur** : [play.google.com/console](https://play.google.com/console),
    25 $ une fois, vérification d'identité (quelques jours).
-2. **Créer l'application** : nom *Agenda G & N*, langue par défaut *Français – fr-FR*,
+2. **Créer l'application** : nom *Tandem*, langue par défaut *Français – fr-FR*,
    *Application*, *Gratuite*. Nom du paquet : `be.agendagn.app` (fixé au premier envoi).
 3. **Configurer l'application** (tableau de bord → *Configurer votre application*) :
    - **Règles de confidentialité** : `https://agenda.fs0ciety.org/privacy`
@@ -117,7 +117,7 @@ Avec le secret `PLAY_SERVICE_ACCOUNT_JSON`, chaque mise à jour de `main` envoie
    *Clés* → *Ajouter une clé → JSON* (fichier téléchargé : **secret**, ne jamais le committer).
 2. Activer l'API **Google Play Android Developer API** dans ce projet.
 3. Play Console → *Utilisateurs et autorisations* → *Inviter* l'adresse du compte de service →
-   application *Agenda G & N* → droits **Publier dans les canaux de test** (et *Afficher les
+   application *Tandem* → droits **Publier dans les canaux de test** (et *Afficher les
    informations sur l'application*).
 4. GitHub → *Settings → Secrets and variables → Actions* → `PLAY_SERVICE_ACCOUNT_JSON` = contenu
    du fichier JSON.

@@ -65,7 +65,7 @@ describe('Notifications du site (Web Push)', () => {
     const [sub, payload] = send.mock.calls[0]!;
     expect(sub.endpoint).toBe(endpoint);
     expect(JSON.parse(payload as string)).toEqual({
-      title: 'Agenda G & N',
+      title: 'Tandem',
       body: 'Nicolas vous a confié « Vidange »',
       url: `/?open=${occ.id}`,
       tag: `occurrence-${occ.id}`,

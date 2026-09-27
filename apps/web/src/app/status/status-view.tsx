@@ -56,7 +56,7 @@ export function StatusView() {
     <main id="main" className="mx-auto flex max-w-3xl flex-col gap-8 px-4 py-12 sm:py-16">
       <header className="flex flex-col gap-2">
         <Link href="/about" className="text-sm text-text-muted hover:text-text">
-          Agenda G & N
+          Tandem
         </Link>
         <h1 className="text-3xl font-semibold tracking-tight">{t('title')}</h1>
         <p className="text-[0.9375rem] text-text-muted">{t('intro')}</p>

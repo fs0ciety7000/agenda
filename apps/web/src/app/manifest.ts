@@ -3,8 +3,9 @@ import type { MetadataRoute } from 'next';
 /** « Ajouter à l'écran d'accueil » (Chrome Android, iOS) : icônes générées par scripts/generate-icons.py. */
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Agenda G & N',
-    short_name: 'Agenda G&N',
+    name: 'Tandem',
+    short_name: 'Tandem',
+    description: 'L’équilibre parfait pour votre foyer.',
     start_url: '/',
     display: 'standalone',
     background_color: '#FAF6F2',

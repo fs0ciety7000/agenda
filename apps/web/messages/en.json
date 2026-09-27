@@ -1,9 +1,10 @@
 {
   "app": {
-    "name": "Agenda G & N",
+    "name": "Tandem",
     "skipToContent": "Skip to content",
     "privacy": "Privacy policy",
-    "about": "About"
+    "about": "About",
+    "tagline": "The perfect balance for your household."
   },
   "nav": {
     "today": "Today",
@@ -510,7 +511,7 @@
   "privacyPolicy": {
     "title": "Privacy policy",
     "updated": "Last updated: 27 September 2026",
-    "intro": "Agenda G & N is a private, non-commercial app used by the members of a household to organise their tasks. This page explains what data it processes, why, and how to delete it.",
+    "intro": "Tandem is a private, non-commercial app used by the members of a household to organise their tasks. This page explains what data it processes, why, and how to delete it.",
     "who": {
       "title": "Who manages your data",
       "body": "The app is hosted and run by a member of the household, on their own server (behind Cloudflare). There are no ads, no data sales and no tracking: your data is only used to run the app for your household."
@@ -698,9 +699,9 @@
     "lastDoneShort": "done {when}"
   },
   "about": {
-    "metaTitle": "Agenda G & N · Household tasks, shared by two",
-    "tagline": "Household tasks, shared by two.",
-    "intro": "Agenda G & N is a private app that helps a household share its chores: who takes out the bins, who does the shopping, who calls the garage. It is available as a website and an Android app.",
+    "metaTitle": "Tandem · The perfect balance for your household",
+    "tagline": "The perfect balance for your household.",
+    "intro": "Tandem is a private app that helps a household share its chores: who takes out the bins, who does the shopping, who calls the garage. It is available as a website and an Android app.",
     "featuresTitle": "What the app does",
     "features": "A \"Today\" list: overdue, today, this week.\nNatural-language quick add (\"Take out the bins tomorrow 7pm\"), by voice too.\nRecurring tasks with turn-taking between household members.\nShared shopping list, updated in real time.\nReminders, and notifications when someone assigns you a task.\nWorks offline, on the website and in the Android app.",
     "googleTitle": "Why the app asks for access to Google",
@@ -984,9 +985,9 @@
     }
   },
   "status": {
-    "metaTitle": "Service status · Agenda G & N",
+    "metaTitle": "Service status · Tandem",
     "title": "Service status",
-    "intro": "Availability of Agenda G & N, checked every minute. Updates automatically.",
+    "intro": "Availability of Tandem, checked every minute. Updates automatically.",
     "loading": "Loading…",
     "unreachable": "The service is not responding right now.",
     "overall": {

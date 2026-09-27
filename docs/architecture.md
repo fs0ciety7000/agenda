@@ -1,4 +1,4 @@
-# Architecture — Agenda G & N
+# Architecture — Tandem
 
 > Statut : Phase 0 · Les décisions marquées **[ADR]** sont figées sauf nouvelle information.
 

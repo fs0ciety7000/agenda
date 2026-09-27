@@ -6903,8 +6903,8 @@
     }
   },
   "info": {
-    "title": "Agenda G & N — API",
-    "description": "API REST de l'application **Agenda G & N** (web et Android). Toutes les routes sont versionnées\nsous `/v1`. Guide complet (authentification, erreurs, idempotence, temps réel) : page\n*API → Guide* de la documentation.\n\n- **Authentification** : `Authorization: Bearer <accessToken>` (Android, en-tête\n  `X-Client: mobile` à la connexion pour recevoir les jetons dans le corps), ou cookies\n  `httpOnly` posés par `/v1/auth/login` (web).\n- **CSRF** : toute requête qui modifie (POST, PATCH, PUT, DELETE) doit porter\n  `x-requested-with: agenda-gn`.\n- **Erreurs** : toujours `{ \"error\": { \"code\", \"message\", \"details\"? } }` ; le `code` est\n  stable (voir le schéma `ApiError`), le `message` n'est destiné qu'aux développeurs.\n- **Idempotence** : les créations de tâches acceptent `Idempotency-Key` (UUID) pour être\n  rejouées sans doublon depuis une file hors ligne.",
+    "title": "Tandem — API",
+    "description": "API REST de l'application **Tandem** (web et Android). Toutes les routes sont versionnées\nsous `/v1`. Guide complet (authentification, erreurs, idempotence, temps réel) : page\n*API → Guide* de la documentation.\n\n- **Authentification** : `Authorization: Bearer <accessToken>` (Android, en-tête\n  `X-Client: mobile` à la connexion pour recevoir les jetons dans le corps), ou cookies\n  `httpOnly` posés par `/v1/auth/login` (web).\n- **CSRF** : toute requête qui modifie (POST, PATCH, PUT, DELETE) doit porter\n  `x-requested-with: agenda-gn`.\n- **Erreurs** : toujours `{ \"error\": { \"code\", \"message\", \"details\"? } }` ; le `code` est\n  stable (voir le schéma `ApiError`), le `message` n'est destiné qu'aux développeurs.\n- **Idempotence** : les créations de tâches acceptent `Idempotency-Key` (UUID) pour être\n  rejouées sans doublon depuis une file hors ligne.",
     "version": "1",
     "contact": {}
   },

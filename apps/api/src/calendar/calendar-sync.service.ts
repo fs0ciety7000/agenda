@@ -662,13 +662,13 @@ export class GoogleCalendarSyncService {
             together: 'together',
             assignee: 'Assignee',
             unassigned: 'Unassigned',
-            open: 'Open in Agenda G & N',
+            open: 'Open in Tandem',
           }
         : {
             together: 'à deux',
             assignee: 'Responsable',
             unassigned: 'À définir',
-            open: 'Ouvrir dans Agenda G & N',
+            open: 'Ouvrir dans Tandem',
           };
     const title = occ.titleOverride ?? occ.task.title;
     const people = occ.assignees.map((a) => a.member.displayName);

@@ -60,7 +60,7 @@ const TAGS: [string, string][] = [
 ];
 
 const DESCRIPTION = `
-API REST de l'application **Agenda G & N** (web et Android). Toutes les routes sont versionnées
+API REST de l'application **Tandem** (web et Android). Toutes les routes sont versionnées
 sous \`/v1\`. Guide complet (authentification, erreurs, idempotence, temps réel) : page
 *API → Guide* de la documentation.
 
@@ -88,7 +88,7 @@ export function buildOpenApi(
   decorateRoutes(app, source, used);
 
   const config = new DocumentBuilder()
-    .setTitle('Agenda G & N — API')
+    .setTitle('Tandem — API')
     .setDescription(DESCRIPTION)
     .setVersion('1')
     .addServer('/', 'Même origine que le site (le web relaie /v1/* vers l’API)')

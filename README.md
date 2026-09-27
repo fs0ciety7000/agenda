@@ -1,4 +1,6 @@
-# Agenda G & N
+# Tandem
+
+> **L’équilibre parfait pour votre foyer.**
 
 Gestionnaire des tâches du foyer pour Grace & Nicolas : **site web responsive** et **application
 Android native**, avec publication des tâches dans un calendrier Google partagé.

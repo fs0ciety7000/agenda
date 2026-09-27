@@ -1,11 +1,11 @@
 ---
 title: Confidentialité & RGPD
-description: Données traitées, finalités, bases légales, durées de conservation, prestataires, sécurité et droits — registre des traitements d'Agenda G & N.
+description: Données traitées, finalités, bases légales, durées de conservation, prestataires, sécurité et droits — registre des traitements de Tandem.
 ---
 
 # Confidentialité & RGPD
 
-Agenda G & N est une application **privée et non commerciale** : ni publicité, ni revente, ni
+Tandem est une application **privée et non commerciale** : ni publicité, ni revente, ni
 pistage, ni mesure d'audience. Cette page est la version détaillée (registre des traitements) de
 la [politique de confidentialité](https://agenda.fs0ciety.org/privacy) affichée dans l'app ; en
 cas de doute, c'est la politique en ligne qui fait foi pour les utilisateurs.

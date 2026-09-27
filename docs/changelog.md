@@ -1,6 +1,6 @@
 ---
 title: Nouveautés
-description: Historique des changements d'Agenda G & N — nouvelles fonctions, améliorations et corrections, du plus récent au plus ancien.
+description: Historique des changements de Tandem — nouvelles fonctions, améliorations et corrections, du plus récent au plus ancien.
 toc_max_heading_level: 2
 ---
 
@@ -14,6 +14,13 @@ d'elle-même (ou via Google Play).
 ⚙️ technique
 
 ## 27 septembre 2026
+
+### Agenda G & N devient Tandem
+
+- ✨ Nouveau nom, **Tandem**, nouveau slogan — *L’équilibre parfait pour votre foyer* — et nouveau
+  logo, sur le site, l’app Android, les e-mails, les notifications et la documentation.
+- ⚙️ Rien ne change pour vos données, vos comptes ni l’adresse du site ; l’app Android se met
+  à jour normalement (même identifiant d’application).
 
 ### Signaler un problème (#61)
 

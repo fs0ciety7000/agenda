@@ -1,6 +1,6 @@
 ---
 title: Questions fréquentes
-description: Réponses aux questions courantes sur Agenda G & N.
+description: Réponses aux questions courantes sur Tandem.
 ---
 
 # Questions fréquentes
@@ -29,7 +29,7 @@ Glissez-la dans le calendrier, ou modifiez-la et choisissez **Uniquement cette o
   dans les réglages du navigateur pour ce site. Sur iPhone, ajoutez d'abord le site à l'écran
   d'accueil.
 - Android : autorisez les notifications de l'app dans les réglages du téléphone et désactivez
-  l'optimisation de batterie pour Agenda G & N si les rappels arrivent en retard.
+  l'optimisation de batterie pour Tandem si les rappels arrivent en retard.
 - Vérifiez les **préférences** de chaque type (Dans l'app / Notification).
 
 ### Mon agenda commun n'apparaît pas dans la liste Google.

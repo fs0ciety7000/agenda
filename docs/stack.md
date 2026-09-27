@@ -1,6 +1,6 @@
 ---
 title: Stack technique
-description: Vue d'ensemble des technologies, du dépôt et de l'infrastructure d'Agenda G & N.
+description: Vue d'ensemble des technologies, du dépôt et de l'infrastructure de Tandem.
 ---
 
 # Stack technique

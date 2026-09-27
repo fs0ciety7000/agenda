@@ -11,7 +11,9 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 
 export const metadata: Metadata = {
-  title: 'Agenda G & N',
+  title: 'Tandem',
+  description: 'L’équilibre parfait pour votre foyer.',
+  applicationName: 'Tandem',
   robots: { index: false, follow: false },
 };
 export const viewport: Viewport = {

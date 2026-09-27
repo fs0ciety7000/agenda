@@ -66,7 +66,7 @@ const EnvSchema = z.object({
   SMTP_PORT: z.coerce.number().int().default(587),
   SMTP_USER: z.string().optional(),
   SMTP_PASSWORD: z.string().optional(),
-  EMAIL_FROM: z.string().default('Agenda G & N <no-reply@example.invalid>'),
+  EMAIL_FROM: z.string().default('Tandem <no-reply@example.invalid>'),
   // ── Google Calendar (Phase 4) ──
   /** Redis pour la file de synchronisation (BullMQ). Sans Redis : synchronisation directe en mémoire. */
   REDIS_URL: z.string().optional(),

@@ -1,9 +1,10 @@
 {
   "app": {
-    "name": "Agenda G & N",
+    "name": "Tandem",
     "skipToContent": "Aller au contenu",
     "privacy": "Politique de confidentialité",
-    "about": "À propos"
+    "about": "À propos",
+    "tagline": "L’équilibre parfait pour votre foyer."
   },
   "nav": {
     "today": "Aujourd'hui",
@@ -510,7 +511,7 @@
   "privacyPolicy": {
     "title": "Politique de confidentialité",
     "updated": "Dernière mise à jour : 27 septembre 2026",
-    "intro": "Agenda G & N est une application privée et non commerciale d'organisation des tâches du foyer, utilisée par ses membres. Cette page explique quelles données elle traite, pourquoi, et comment les supprimer.",
+    "intro": "Tandem est une application privée et non commerciale d'organisation des tâches du foyer, utilisée par ses membres. Cette page explique quelles données elle traite, pourquoi, et comment les supprimer.",
     "who": {
       "title": "Qui gère vos données",
       "body": "L'application est hébergée et administrée par un membre du foyer, sur son propre serveur (derrière Cloudflare). Il n'y a ni publicité, ni revente, ni pistage : vos données servent uniquement à faire fonctionner l'application pour votre foyer."
@@ -698,9 +699,9 @@
     "lastDoneShort": "fait {when}"
   },
   "about": {
-    "metaTitle": "Agenda G & N · Les tâches du foyer, à deux",
-    "tagline": "Les tâches du foyer, partagées à deux.",
-    "intro": "Agenda G & N est une application privée qui aide un foyer à se répartir les tâches ménagères : qui sort les poubelles, qui fait les courses, qui appelle le garage. Elle existe en site web et en application Android.",
+    "metaTitle": "Tandem · L’équilibre parfait pour votre foyer",
+    "tagline": "L’équilibre parfait pour votre foyer.",
+    "intro": "Tandem est une application privée qui aide un foyer à se répartir les tâches ménagères : qui sort les poubelles, qui fait les courses, qui appelle le garage. Elle existe en site web et en application Android.",
     "featuresTitle": "Ce que fait l'application",
     "features": "Liste « Aujourd'hui » : en retard, du jour, de la semaine.\nAjout rapide en langage naturel (« Sortir les poubelles demain 19h »), aussi à la voix.\nTâches récurrentes avec tour de rôle entre les membres du foyer.\nListe de courses partagée, mise à jour en temps réel.\nRappels et notifications quand l'autre vous confie une tâche.\nFonctionne hors ligne, sur le site comme dans l'app Android.",
     "googleTitle": "Pourquoi l'application demande l'accès à Google",
@@ -984,9 +985,9 @@
     }
   },
   "status": {
-    "metaTitle": "État du service · Agenda G & N",
+    "metaTitle": "État du service · Tandem",
     "title": "État du service",
-    "intro": "Disponibilité d'Agenda G & N, vérifiée chaque minute. Mis à jour automatiquement.",
+    "intro": "Disponibilité de Tandem, vérifiée chaque minute. Mis à jour automatiquement.",
     "loading": "Chargement…",
     "unreachable": "Le service ne répond pas en ce moment.",
     "overall": {

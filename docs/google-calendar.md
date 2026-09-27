@@ -213,7 +213,7 @@ fériés » (reader). Le bouton « Connecter Google Calendar » revient directem
 ### Recette manuelle (à faire une fois en production)
 
 1. Réglages → **Connecter Google Calendar** avec le compte Google du foyer (écran « application non
-   vérifiée » : *Paramètres avancés → Accéder à Agenda G & N*).
+   vérifiée » : *Paramètres avancés → Accéder à Tandem*).
 2. Choisir **« Commun G & N »** (présélectionné) → **Utiliser ce calendrier**.
 3. Créer une tâche datée avec « Ajouter au calendrier partagé » ; vérifier l'événement dans Google
    Calendar (titre « Tâche · Prénom »), puis la cocher (« ✓ »), la déplacer, la supprimer.

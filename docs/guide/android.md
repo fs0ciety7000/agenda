@@ -18,11 +18,11 @@ description: Installer l'app, mises à jour, widgets, raccourcis, dictée, rappe
 - **Hors ligne complet** : consulter, cocher, créer, reporter, faire les courses sans réseau.
 - **Rappels** avant les tâches, **récapitulatif du matin**, notifications instantanées.
 - **Widgets** : *Aujourd'hui* (tâches du jour à cocher), *Semaine* (7 prochains jours),
-  *Courses*. Appui long sur l'écran d'accueil → Widgets → Agenda G & N.
+  *Courses*. Appui long sur l'écran d'accueil → Widgets → Tandem.
 - **Raccourcis** (appui long sur l'icône) : Nouvelle tâche, Dicter, Courses, Aujourd'hui.
 - **Dictée** : le micro de l'ajout rapide remplit la phrase (« Sortir les poubelles demain 19 h
   Grace »), à valider.
-- **Partager** un texte depuis une autre app vers Agenda G & N l'ouvre dans l'ajout rapide.
+- **Partager** un texte depuis une autre app vers Tandem l'ouvre dans l'ajout rapide.
 - **Photo** directement jointe à une tâche.
 - Mode sombre, TalkBack.
 

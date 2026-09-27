@@ -1,6 +1,6 @@
 ---
 title: Guide de l'API
-description: Authentification, CSRF, erreurs, idempotence, concurrence, temps réel — tout pour écrire un client de l'API Agenda G & N.
+description: Authentification, CSRF, erreurs, idempotence, concurrence, temps réel — tout pour écrire un client de l'API Tandem.
 ---
 
 # Guide de l'API

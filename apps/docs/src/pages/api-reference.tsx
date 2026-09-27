@@ -46,7 +46,7 @@ export default function ApiReference() {
   return (
     <Layout
       title="Référence de l’API"
-      description="Toutes les routes de l’API Agenda G & N, avec leurs paramètres et schémas."
+      description="Toutes les routes de l’API Tandem, avec leurs paramètres et schémas."
     >
       <Head>
         <link rel="stylesheet" href={css} />

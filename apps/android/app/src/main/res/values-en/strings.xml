@@ -205,7 +205,7 @@
     <string name="move_next_day">Move to the next day</string>
     <string name="task_moved">“%1$s” moved to %2$s</string>
     <string name="undo">Undo</string>
-    <string name="widget_name">Today · Agenda G &amp; N</string>
+    <string name="widget_name">Today · Tandem</string>
     <string name="widget_description">Today\'s and overdue tasks, ticked right from the home screen.</string>
     <string name="widget_empty">Nothing for today 🎉</string>
     <string name="widget_signed_out">Open the app to sign in.</string>
