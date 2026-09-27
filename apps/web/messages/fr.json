@@ -749,7 +749,9 @@
     "confirmRegenerate": "Créer une nouvelle adresse ? L'ancienne cessera de fonctionner.",
     "disable": "Désactiver",
     "confirmDisable": "Désactiver l'ajout par e-mail ? L'adresse cessera de fonctionner.",
-    "error": "Action impossible. Réessayez."
+    "error": "Action impossible. Réessayez.",
+    "acknowledge": "M'envoyer un accusé de réception",
+    "acknowledgeHint": "Un e-mail « ✓ Tâche créée » à chaque tâche ajoutée par e-mail."
   },
   "offline": {
     "offline": "Hors ligne : vous voyez les dernières données reçues. Cochez des tâches, ajoutez-en ou faites les courses : tout sera envoyé au retour du réseau.",

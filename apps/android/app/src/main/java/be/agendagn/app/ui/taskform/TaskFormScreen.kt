@@ -84,6 +84,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import be.agendagn.app.domain.model.Attachment
 import androidx.compose.ui.res.painterResource
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -107,6 +110,11 @@ fun TaskFormScreen(
     onRetrySeries: () -> Unit = {},
     onPostpone: (LocalDate) -> Unit = {},
     onOpenAttachment: (Attachment) -> Unit = {},
+    onAddPhoto: () -> Unit = {},
+    onAddFile: () -> Unit = {},
+    onDeleteAttachment: (Attachment) -> Unit = {},
+    /** Envoi d'une pièce jointe en cours. */
+    uploading: Boolean = false,
 ) {
     LaunchedEffect(state.done) { if (state.done) onBack() }
     Scaffold(
@@ -273,7 +281,17 @@ fun TaskFormScreen(
                 if (d.date == null) Hint(stringResource(R.string.field_sync_needs_date))
             }
 
-            state.original?.attachments?.takeIf { it.isNotEmpty() }?.let { AttachmentsSection(it, onOpenAttachment) }
+            state.original?.takeIf { state.isEdit && !it.isLocal }?.let { o ->
+                AttachmentsSection(
+                    files = o.attachments,
+                    canEdit = !state.readOnly,
+                    uploading = uploading,
+                    onOpen = onOpenAttachment,
+                    onAddPhoto = onAddPhoto,
+                    onAddFile = onAddFile,
+                    onDelete = onDeleteAttachment,
+                )
+            }
 
             state.history?.takeIf { it.items.isNotEmpty() }?.let { HistorySection(it, members) }
 
@@ -589,8 +607,17 @@ private fun PostponeRow(current: LocalDate, onPostpone: (LocalDate) -> Unit) {
 
 /** « Fait par » : les dernières fois, et combien de fois chacun l'a faite. */
 @Composable
-private fun AttachmentsSection(files: List<Attachment>, onOpen: (Attachment) -> Unit) {
+private fun AttachmentsSection(
+    files: List<Attachment>,
+    canEdit: Boolean,
+    uploading: Boolean,
+    onOpen: (Attachment) -> Unit,
+    onAddPhoto: () -> Unit,
+    onAddFile: () -> Unit,
+    onDelete: (Attachment) -> Unit,
+) {
     val locale = currentLocale()
+    var confirm by remember { mutableStateOf<Attachment?>(null) }
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Label(stringResource(R.string.attachments_title))
         files.forEach { a ->
@@ -599,8 +626,7 @@ private fun AttachmentsSection(files: List<Attachment>, onOpen: (Attachment) -> 
                 Modifier
                     .fillMaxWidth()
                     .heightIn(min = 48.dp)
-                    .clickable(onClickLabel = open) { onOpen(a) }
-                    .semantics(mergeDescendants = true) {},
+                    .clickable(onClickLabel = open) { onOpen(a) },
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
             ) {
@@ -621,8 +647,46 @@ private fun AttachmentsSection(files: List<Attachment>, onOpen: (Attachment) -> 
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                if (canEdit) {
+                    IconButton(onClick = { confirm = a }) {
+                        Icon(
+                            Icons.Filled.Delete,
+                            contentDescription = stringResource(R.string.attachment_delete, a.filename),
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
             }
         }
+        if (canEdit) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                OutlinedButton(onClick = onAddPhoto, enabled = !uploading) {
+                    Icon(painterResource(R.drawable.ic_photo_camera), contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.attachment_photo))
+                }
+                OutlinedButton(onClick = onAddFile, enabled = !uploading) {
+                    Icon(painterResource(R.drawable.ic_attachment), contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.attachment_file))
+                }
+                if (uploading) CircularProgressIndicator(Modifier.size(20.dp), strokeWidth = 2.dp)
+            }
+        }
+    }
+    confirm?.let { a ->
+        AlertDialog(
+            onDismissRequest = { confirm = null },
+            title = { Text(stringResource(R.string.attachment_delete_title)) },
+            text = { Text(a.filename) },
+            confirmButton = {
+                TextButton(onClick = {
+                    confirm = null
+                    onDelete(a)
+                }) { Text(stringResource(R.string.delete)) }
+            },
+            dismissButton = { TextButton(onClick = { confirm = null }) { Text(stringResource(R.string.cancel)) } },
+        )
     }
 }
 

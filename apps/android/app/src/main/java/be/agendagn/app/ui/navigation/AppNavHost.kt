@@ -1,5 +1,9 @@
 package be.agendagn.app.ui.navigation
 
+import kotlinx.coroutines.withContext
+import kotlinx.coroutines.Dispatchers
+import be.agendagn.app.data.files.AttachmentFiles
+import android.provider.OpenableColumns
 import be.agendagn.app.domain.model.Attachment
 import androidx.core.content.FileProvider
 import java.util.Locale
@@ -53,6 +57,8 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import be.agendagn.app.ui.history.HistoryScreen
+import be.agendagn.app.ui.history.HistoryViewModel
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -313,6 +319,7 @@ private fun MainScaffold(
     }
     val attachmentError = stringResource(R.string.attachment_error)
     val attachmentNoApp = stringResource(R.string.attachment_no_app)
+    val onMessage: (String) -> Unit = { message -> scope.launch { snackbar.showSnackbar(message) } }
     // Pièce jointe : téléchargée puis ouverte par l'app adaptée (lecteur PDF, galerie…).
     val onOpenAttachment: (Attachment) -> Unit = { a ->
         scope.launch {
@@ -489,15 +496,20 @@ private fun MainScaffold(
                     morningRecap = morningRecap,
                     onMorningRecap = { scope.launch { container.settings.setMorningRecap(it) } },
                     onRetryPush = { scope.launch { container.push.register() } },
+                    onOpenHistory = { nav.navigate("history") },
                 )
+            }
+            composable("history") {
+                val historyVm: HistoryViewModel = viewModel(factory = viewModelFactory { initializer { HistoryViewModel(container.activity) } })
+                HistoryScreen(historyVm, state.household?.members.orEmpty(), onBack = { nav.popBackStack() }, onMessage = onMessage)
             }
             composable("task/{id}", arguments = listOf(navArgument("id") { type = NavType.StringType })) { entry ->
                 val id = entry.arguments?.getString("id")
-                TaskForm(container, id, null, state, calendar, onDeleted, onOpenAttachment) { nav.popBackStack() }
+                TaskForm(container, id, null, state, calendar, onDeleted, onOpenAttachment, onMessage) { nav.popBackStack() }
             }
             composable("new?date={date}", arguments = listOf(navArgument("date") { type = NavType.StringType; nullable = true })) { entry ->
                 val date = entry.arguments?.getString("date")?.let(LocalDate::parse)
-                TaskForm(container, null, date, state, calendar, onDeleted, onOpenAttachment) { nav.popBackStack() }
+                TaskForm(container, null, date, state, calendar, onDeleted, onOpenAttachment, onMessage) { nav.popBackStack() }
             }
         }
     }
@@ -546,8 +558,51 @@ private fun TaskForm(
     calendar: CalendarStatus?,
     onDeleted: (occurrenceId: String) -> Unit,
     onOpenAttachment: (Attachment) -> Unit,
+    onMessage: (String) -> Unit,
     onBack: () -> Unit,
 ) {
+    val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    var uploading by remember { mutableStateOf(false) }
+    val messages = mapOf(
+        AttachmentFiles.UploadResult.OK to stringResource(R.string.attachment_added),
+        AttachmentFiles.UploadResult.TOO_LARGE to stringResource(R.string.attachment_too_large),
+        AttachmentFiles.UploadResult.OFFLINE to stringResource(R.string.attachment_offline),
+        AttachmentFiles.UploadResult.FAILED to stringResource(R.string.attachment_failed),
+    )
+    val deleteFailed = stringResource(R.string.attachment_failed)
+    // Envoi d'un fichier choisi ou d'une photo prise (lu depuis son Uri, puis envoyé à l'API).
+    val upload: (Uri, String?, String?) -> Unit = { uri, name, type ->
+        val id = occurrenceId
+        if (id != null) {
+            scope.launch {
+                uploading = true
+                val result = withContext(Dispatchers.IO) {
+                    runCatching { context.contentResolver.openInputStream(uri)?.use { it.readBytes() } }.getOrNull()
+                }?.let { bytes ->
+                    container.attachments.upload(
+                        id,
+                        name ?: displayName(context, uri) ?: "photo.jpg",
+                        type ?: context.contentResolver.getType(uri) ?: "application/octet-stream",
+                        bytes,
+                    )
+                } ?: AttachmentFiles.UploadResult.FAILED
+                uploading = false
+                onMessage(messages.getValue(result))
+            }
+        }
+    }
+    var photoUri by remember { mutableStateOf<Uri?>(null) }
+    val takePhoto = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { ok ->
+        val uri = photoUri
+        if (ok && uri != null) {
+            val stamp = java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd-HHmm"))
+            upload(uri, "photo-$stamp.jpg", "image/jpeg")
+        }
+    }
+    val pickFile = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+        if (uri != null) upload(uri, null, null)
+    }
     val vm: TaskFormViewModel = viewModel(
         key = "form-$occurrenceId-$date",
         factory = viewModelFactory { initializer { TaskFormViewModel(container.repository, occurrenceId, date) } },
@@ -576,6 +631,25 @@ private fun TaskForm(
         onRetrySeries = vm::retrySeries,
         onPostpone = vm::postpone,
         onOpenAttachment = onOpenAttachment,
+        onAddPhoto = {
+            val dir = java.io.File(context.cacheDir, "camera").apply { mkdirs() }
+            val file = java.io.File(dir, "photo-${System.currentTimeMillis()}.jpg")
+            val uri = FileProvider.getUriForFile(context, "${context.packageName}.attachments", file)
+            photoUri = uri
+            try {
+                takePhoto.launch(uri)
+            } catch (_: ActivityNotFoundException) {
+                onMessage(deleteFailed)
+            }
+        },
+        onAddFile = { pickFile.launch("*/*") },
+        onDeleteAttachment = { a ->
+            val id = occurrenceId
+            if (id != null) {
+                scope.launch { if (!container.attachments.delete(id, a)) onMessage(deleteFailed) }
+            }
+        },
+        uploading = uploading,
         suggestion = state.household?.let { h ->
             Agenda.suggestAssignee(Agenda.weekBalance(state.occurrences, form.draft.date ?: state.today, h.members))
         },
@@ -598,3 +672,9 @@ private fun NoHousehold(onOpenWeb: () -> Unit) {
 private fun notificationsGranted(context: Context): Boolean =
     Build.VERSION.SDK_INT < 33 ||
         ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+
+/** Nom affiché d'un fichier choisi (sélecteur de fichiers Android). */
+private fun displayName(context: Context, uri: Uri): String? =
+    context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { c ->
+        if (c.moveToFirst()) c.getString(0) else null
+    }

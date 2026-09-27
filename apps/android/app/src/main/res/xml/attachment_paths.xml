@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
+    <!-- Pièces jointes téléchargées, et photos prises depuis la fiche avant envoi. -->
     <cache-path name="attachments" path="attachments/" />
+    <cache-path name="camera" path="camera/" />
 </paths>

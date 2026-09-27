@@ -12,6 +12,9 @@ import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 import retrofit2.http.Streaming
+import retrofit2.http.Multipart
+import retrofit2.http.Part
+import okhttp3.MultipartBody
 import okhttp3.ResponseBody
 
 /** Même API REST que le web : aucune logique métier propre à Android. */
@@ -148,6 +151,33 @@ interface AgendaApi {
 
     @POST("v1/households/{h}/occurrences/{id}/reopen")
     suspend fun reopen(@Path("h") householdId: String, @Path("id") id: String): Response<OccurrenceDto>
+
+    @GET("v1/households/{h}/occurrences/{id}")
+    suspend fun occurrence(@Path("h") householdId: String, @Path("id") id: String): Response<OccurrenceDto>
+
+    @Multipart
+    @POST("v1/households/{h}/occurrences/{id}/attachments")
+    suspend fun uploadAttachment(
+        @Path("h") householdId: String,
+        @Path("id") occurrenceId: String,
+        @Part file: MultipartBody.Part,
+    ): Response<OccurrenceDto>
+
+    @DELETE("v1/households/{h}/attachments/{id}")
+    suspend fun deleteAttachment(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
+
+    @GET("v1/households/{h}/activity")
+    suspend fun activity(
+        @Path("h") householdId: String,
+        @Query("before") before: String? = null,
+        @Query("limit") limit: Int = 50,
+    ): Response<ActivityPageDto>
+
+    @GET("v1/households/{h}/trash")
+    suspend fun trash(@Path("h") householdId: String): Response<List<TrashItemDto>>
+
+    @POST("v1/households/{h}/trash/{id}/restore")
+    suspend fun restoreTrash(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
 
     /** Contenu d'une pièce jointe (téléchargé à la demande, puis ouvert par une autre app). */
     @Streaming

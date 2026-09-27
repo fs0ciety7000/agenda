@@ -1,10 +1,12 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
   Headers,
   HttpCode,
   HttpStatus,
+  Patch,
   Post,
   type RawBodyRequest,
   Req,
@@ -13,7 +15,12 @@ import {
 import type { Request } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import { type InboundEmailSettingsDto, ResendWebhookEvent } from '@agenda/contracts';
+import {
+  type InboundEmailSettingsDto,
+  InboundEmailSettingsInput,
+  ResendWebhookEvent,
+} from '@agenda/contracts';
+import { ZodPipe } from '../common/zod.pipe';
 import { AppException, notFound } from '../common/app-exception';
 import { SkipCsrf } from '../auth/csrf.guard';
 import { CurrentHousehold, HouseholdContext, Public } from '../common/request-context';
@@ -39,6 +46,14 @@ export class InboundEmailSettingsController {
   @HttpCode(200)
   regenerate(@CurrentHousehold() ctx: HouseholdContext): Promise<InboundEmailSettingsDto> {
     return this.inbound.regenerate(ctx);
+  }
+
+  @Patch()
+  update(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Body(new ZodPipe(InboundEmailSettingsInput)) body: InboundEmailSettingsInput,
+  ): Promise<InboundEmailSettingsDto> {
+    return this.inbound.update(ctx, body);
   }
 
   @Delete()

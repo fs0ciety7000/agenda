@@ -139,6 +139,8 @@ model HouseholdMember {
   leftAt       DateTime?
   /// Adresse « créer une tâche par e-mail » (partie après le +). Secrète ; null = désactivée.
   inboundToken String?       @unique @db.VarChar(40)
+  /// Accusé de réception des tâches créées par e-mail.
+  inboundAck   Boolean       @default(true)
 
   household            Household                @relation(fields: [householdId], references: [id], onDelete: Cascade)
   user                 User?                    @relation(fields: [userId], references: [id], onDelete: SetNull)

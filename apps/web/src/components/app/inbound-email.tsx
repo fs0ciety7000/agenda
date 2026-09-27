@@ -31,9 +31,16 @@ export function InboundEmailSettings({ householdId }: { householdId: string }) {
     },
     onError,
   });
+  const setAck = useMutation({
+    mutationFn: (acknowledge: boolean) =>
+      api<InboundEmailSettingsDto>(base, { method: 'PATCH', json: { acknowledge } }),
+    onSuccess: (data) => qc.setQueryData(key, data),
+    onError,
+  });
   const disable = useMutation({
     mutationFn: () => api<void>(base, { method: 'DELETE' }),
-    onSuccess: () => qc.setQueryData(key, { available: true, address: null }),
+    onSuccess: () =>
+      qc.setQueryData<InboundEmailSettingsDto>(key, (d) => d && { ...d, address: null }),
     onError,
   });
 
@@ -71,6 +78,21 @@ export function InboundEmailSettings({ householdId }: { householdId: string }) {
               </Button>
             </div>
             <p className="text-[0.8125rem] text-text-muted">{t('private')}</p>
+            <label className="flex min-h-11 cursor-pointer items-center gap-3 text-[0.9375rem]">
+              <input
+                type="checkbox"
+                checked={settings.data.acknowledge}
+                disabled={setAck.isPending}
+                onChange={(e) => setAck.mutate(e.target.checked)}
+                className="size-5 accent-(--color-accent)"
+              />
+              <span>
+                {t('acknowledge')}
+                <span className="block text-[0.8125rem] text-text-muted">
+                  {t('acknowledgeHint')}
+                </span>
+              </span>
+            </label>
             <div className="flex flex-wrap gap-2">
               <Button
                 variant="ghost"
