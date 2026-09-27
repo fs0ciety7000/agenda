@@ -9,6 +9,7 @@ import { useSession } from '@/components/app/household-context';
 import { CalendarSettings } from '@/components/app/calendar-settings';
 import { CategoriesSettings } from '@/components/app/categories-settings';
 import { TemplatesSettings } from '@/components/app/templates';
+import { InboundEmailSettings } from '@/components/app/inbound-email';
 import { InviteLink } from '@/components/app/invite-link';
 import { AndroidAppCard } from '@/components/app/android-app-card';
 import { NotificationSettings } from '@/components/app/notification-settings';
@@ -76,6 +77,8 @@ export default function SettingsPage() {
           <TemplatesSettings />
         </Card>
       </section>
+
+      <InboundEmailSettings householdId={household.id} />
 
       <section className="flex flex-col gap-3" aria-labelledby="s-activity">
         <SectionTitle id="s-activity">{t('activity')}</SectionTitle>

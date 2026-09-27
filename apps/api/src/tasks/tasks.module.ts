@@ -13,6 +13,6 @@ import { TemplatesService } from './templates.service';
   imports: [HouseholdsModule, NotificationsModule],
   controllers: [TasksController, TemplatesController, ActivityController],
   providers: [TasksService, SeriesService, TemplatesService, ActivityService],
-  exports: [SeriesService],
+  exports: [SeriesService, TasksService],
 })
 export class TasksModule {}
