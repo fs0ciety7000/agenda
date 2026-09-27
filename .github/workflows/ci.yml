@@ -97,6 +97,9 @@ jobs:
       JWT_SECRET: ci-secret-ci-secret-ci-secret-ci-secret-1234
       NODE_ENV: production
       AUTH_RATE_LIMIT: '100'
+      # Tous les navigateurs de test partagent l'IP locale : la limite de production (600/min)
+      # est atteinte quand la suite tourne vite (429 « Trop de tentatives » dans les pages).
+      GLOBAL_RATE_LIMIT: '100000'
       API_URL: http://localhost:4000
       INBOUND_EMAIL_ADDRESS: '{token}@tasks.example.test'
       # Valeurs factices (la réception réelle est testée avec un faux client Resend).
