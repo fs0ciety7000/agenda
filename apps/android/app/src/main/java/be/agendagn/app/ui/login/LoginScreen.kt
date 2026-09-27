@@ -135,4 +135,5 @@ private fun AuthError.messageRes(): Int = when (this) {
     AuthError.GOOGLE_FAILED -> R.string.error_google_failed
     AuthError.GOOGLE_EMAIL_EXISTS -> R.string.error_google_email_exists
     AuthError.REGISTRATION_CLOSED -> R.string.error_registration_closed
+    AuthError.ACCOUNT_DISABLED -> R.string.error_account_disabled
 }

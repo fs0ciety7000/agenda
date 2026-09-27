@@ -119,6 +119,17 @@ export class PushService {
     }
   }
 
+  /** Administration : réveille les téléphones d'un compte. Renvoie le nombre de téléphones visés. */
+  async wakeUser(userId: string): Promise<number> {
+    if (!this.account) return 0;
+    const tokens = await this.prisma.pushToken.findMany({
+      where: { userId },
+      select: { token: true },
+    });
+    await Promise.all(tokens.map((t) => this.send(t.token, { kind: 'test' })));
+    return tokens.length;
+  }
+
   private async send(token: string, data: Record<string, string>): Promise<void> {
     const account = this.account!;
     const res = await fetch(

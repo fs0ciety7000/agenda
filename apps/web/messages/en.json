@@ -80,7 +80,8 @@
     "CURRENT_PASSWORD_INVALID": "Current password is incorrect.",
     "PASSWORD_REQUIRED": "Set a password first.",
     "ATTACHMENT_TOO_LARGE": "File too large (10 MB max).",
-    "ATTACHMENTS_QUOTA": "Household storage is full (200 MB): delete old attachments."
+    "ATTACHMENTS_QUOTA": "Household storage is full (200 MB): delete old attachments.",
+    "ACCOUNT_DISABLED": "This account is disabled. Contact the administrator."
   },
   "today": {
     "greeting": "Hello {name} 👋",
@@ -147,7 +148,10 @@
     "templates": "Task templates",
     "activity": "Activity and trash",
     "activityHint": "Who did what, and tasks deleted in the last 30 days.",
-    "activityOpen": "Open the activity log"
+    "activityOpen": "Open the activity log",
+    "admin": "Administration",
+    "adminOpen": "Open administration",
+    "adminHint": "Accounts, households, backups, delivery tests."
   },
   "common": {
     "loading": "Loading…",
@@ -824,5 +828,102 @@
     "confirmDelete": "Delete this comment?",
     "error": "Couldn't send the comment.",
     "formerMember": "Former member"
+  },
+  "admin": {
+    "title": "Administration",
+    "intro": "Admins only (ADMIN_EMAILS). Numbers and accounts: never the content of tasks.",
+    "overview": "Overview",
+    "counts": {
+      "users": "Accounts",
+      "households": "Households",
+      "tasks": "Tasks",
+      "openOccurrences": "To do",
+      "doneLast7Days": "Done (7 days)",
+      "shoppingItems": "Shopping items",
+      "comments": "Comments",
+      "attachments": "Attachments",
+      "database": "Database"
+    },
+    "integrations": "Configured features",
+    "enabled": "enabled",
+    "disabled": "disabled",
+    "integration": {
+      "email": "Sending email (SMTP)",
+      "googleSignIn": "Sign in with Google",
+      "androidPush": "Android notifications (Firebase)",
+      "webPush": "Site notifications (Web Push)",
+      "inboundEmail": "Tasks by email (Resend)",
+      "errorTracking": "Error tracking (Sentry)"
+    },
+    "registrationOpen": "Sign-ups open",
+    "registrationClosed": "Sign-ups closed (accounts created here)",
+    "calendarStatus": "Google Calendar: {synced} synced, {pending} pending, {errors} failing",
+    "uptime": "API up for {hours} h",
+    "backups": "Backups",
+    "backupsHint": "Every night at 2:15 (UTC), and on demand. Each backup is restored into a temporary database to check it, then copied off-server if configured.",
+    "backupNow": "Back up now",
+    "backupRunning": "Backup running…",
+    "backupRequested": "Backup requested: it starts within a minute.",
+    "noBackup": "No backup recorded yet (the backup service records them here).",
+    "col": {
+      "when": "When",
+      "status": "Status",
+      "details": "Details"
+    },
+    "status": {
+      "PENDING": "Pending",
+      "RUNNING": "Running",
+      "OK": "Succeeded",
+      "FAILED": "Failed"
+    },
+    "trigger": {
+      "manual": "manual",
+      "nightly": "nightly",
+      "startup": "at startup"
+    },
+    "offsite": "copied off-server",
+    "localOnly": "on the server only",
+    "tools": "Tools",
+    "testEmail": "Send me a test email",
+    "testEmailOk": "Email sent to {to}.",
+    "testEmailFailed": "Sending failed: {detail}",
+    "testPush": "Send me a test notification",
+    "testPushResult": "Test notification: {phones} phone(s) woken, {browsers} browser(s).",
+    "users": "Accounts",
+    "newEmail": "Email",
+    "newName": "First name",
+    "newLocale": "Language",
+    "createUser": "Create account",
+    "createHint": "The person gets an email to choose their password (link valid 7 days), even with sign-ups closed.",
+    "userCreated": "Account created: email sent to {email}.",
+    "badge": {
+      "admin": "admin",
+      "disabled": "disabled",
+      "invited": "invited, no password"
+    },
+    "noHousehold": "no household",
+    "createdAt": "created {date}",
+    "lastSeen": "seen {when}",
+    "neverSeen": "never signed in",
+    "devices": "{count, plural, =0 {no device signed in} one {# device signed in} other {# devices signed in}}",
+    "sendReset": "Reset link",
+    "sendWelcome": "Resend invitation",
+    "logoutAll": "Sign out everywhere",
+    "disable": "Disable",
+    "enable": "Enable",
+    "delete": "Delete",
+    "confirmDelete": "Permanently delete {email}? Their personal tasks are erased; so is a household where they are the only member.",
+    "confirmDisable": "Disable {email}? They are signed out everywhere and can no longer sign in.",
+    "done": {
+      "disable": "{email} disabled.",
+      "enable": "{email} enabled.",
+      "logout-all": "{email} signed out of all devices.",
+      "password-link": "Link sent to {email}.",
+      "delete": "{email} deleted."
+    },
+    "households": "Households",
+    "hhTasks": "{count, plural, one {# task} other {# tasks}}, {open} to do",
+    "lastActivity": "last activity {when}",
+    "search": "Search (name, email, household)"
   }
 }

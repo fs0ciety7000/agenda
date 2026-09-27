@@ -56,6 +56,22 @@ export class WebPushService {
     await this.prisma.webPushSubscription.deleteMany({ where: { userId, endpoint } });
   }
 
+  /** Administration : notification de test sur les navigateurs d'un compte (nombre d'envois réussis). */
+  async sendToUser(userId: string, message: WebPushMessage): Promise<number> {
+    if (!this.enabled) return 0;
+    const subs = await this.prisma.webPushSubscription.findMany({ where: { userId } });
+    const results = await Promise.allSettled(
+      subs.map((s) =>
+        webpush.sendNotification(
+          { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },
+          JSON.stringify(message),
+          { TTL: 3600 },
+        ),
+      ),
+    );
+    return results.filter((r) => r.status === 'fulfilled').length;
+  }
+
   /** Envoie à tous les navigateurs de ces membres, dans la langue de chacun. N'échoue jamais. */
   async sendToMembers(
     householdId: string,

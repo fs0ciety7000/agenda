@@ -80,7 +80,8 @@
     "CURRENT_PASSWORD_INVALID": "Mot de passe actuel incorrect.",
     "PASSWORD_REQUIRED": "Définissez d'abord un mot de passe.",
     "ATTACHMENT_TOO_LARGE": "Fichier trop volumineux (10 Mo maximum).",
-    "ATTACHMENTS_QUOTA": "Espace de stockage du foyer plein (200 Mo) : supprimez d'anciennes pièces jointes."
+    "ATTACHMENTS_QUOTA": "Espace de stockage du foyer plein (200 Mo) : supprimez d'anciennes pièces jointes.",
+    "ACCOUNT_DISABLED": "Ce compte est désactivé. Contactez l'administrateur."
   },
   "today": {
     "greeting": "Bonjour {name} 👋",
@@ -147,7 +148,10 @@
     "templates": "Modèles de tâches",
     "activity": "Journal et corbeille",
     "activityHint": "Qui a fait quoi, et les tâches supprimées depuis moins de 30 jours.",
-    "activityOpen": "Ouvrir le journal"
+    "activityOpen": "Ouvrir le journal",
+    "admin": "Administration",
+    "adminOpen": "Ouvrir l'administration",
+    "adminHint": "Comptes, foyers, sauvegardes, tests d'envoi."
   },
   "common": {
     "loading": "Chargement…",
@@ -824,5 +828,102 @@
     "confirmDelete": "Supprimer ce commentaire ?",
     "error": "Impossible d'envoyer le commentaire.",
     "formerMember": "Ancien membre"
+  },
+  "admin": {
+    "title": "Administration",
+    "intro": "Réservé aux administrateurs (ADMIN_EMAILS). Des chiffres et des comptes : jamais le contenu des tâches.",
+    "overview": "Vue d'ensemble",
+    "counts": {
+      "users": "Comptes",
+      "households": "Foyers",
+      "tasks": "Tâches",
+      "openOccurrences": "À faire",
+      "doneLast7Days": "Faites (7 jours)",
+      "shoppingItems": "Articles de courses",
+      "comments": "Commentaires",
+      "attachments": "Pièces jointes",
+      "database": "Base de données"
+    },
+    "integrations": "Fonctions configurées",
+    "enabled": "activé",
+    "disabled": "désactivé",
+    "integration": {
+      "email": "Envoi d'e-mails (SMTP)",
+      "googleSignIn": "Connexion avec Google",
+      "androidPush": "Notifications Android (Firebase)",
+      "webPush": "Notifications du site (Web Push)",
+      "inboundEmail": "Tâches par e-mail (Resend)",
+      "errorTracking": "Suivi des erreurs (Sentry)"
+    },
+    "registrationOpen": "Inscriptions ouvertes",
+    "registrationClosed": "Inscriptions fermées (comptes créés ici)",
+    "calendarStatus": "Google Calendar : {synced} synchronisés, {pending} en attente, {errors} en erreur",
+    "uptime": "API démarrée depuis {hours} h",
+    "backups": "Sauvegardes",
+    "backupsHint": "Chaque nuit à 2 h 15 (UTC), et à la demande. Chaque sauvegarde est restaurée dans une base temporaire pour vérification, puis copiée hors serveur si configuré.",
+    "backupNow": "Sauvegarder maintenant",
+    "backupRunning": "Sauvegarde en cours…",
+    "backupRequested": "Sauvegarde demandée : elle démarre dans la minute.",
+    "noBackup": "Aucune sauvegarde enregistrée pour l'instant (le service backup les inscrit ici).",
+    "col": {
+      "when": "Quand",
+      "status": "État",
+      "details": "Détails"
+    },
+    "status": {
+      "PENDING": "En attente",
+      "RUNNING": "En cours",
+      "OK": "Réussie",
+      "FAILED": "Échec"
+    },
+    "trigger": {
+      "manual": "manuelle",
+      "nightly": "nuit",
+      "startup": "au démarrage"
+    },
+    "offsite": "copiée hors serveur",
+    "localOnly": "sur le serveur seulement",
+    "tools": "Outils",
+    "testEmail": "M'envoyer un e-mail de test",
+    "testEmailOk": "E-mail envoyé à {to}.",
+    "testEmailFailed": "Échec de l'envoi : {detail}",
+    "testPush": "M'envoyer une notification de test",
+    "testPushResult": "Notification de test : {phones} téléphone(s) réveillé(s), {browsers} navigateur(s).",
+    "users": "Comptes",
+    "newEmail": "E-mail",
+    "newName": "Prénom",
+    "newLocale": "Langue",
+    "createUser": "Créer le compte",
+    "createHint": "La personne reçoit un e-mail pour choisir son mot de passe (lien valable 7 jours), même si les inscriptions sont fermées.",
+    "userCreated": "Compte créé : e-mail envoyé à {email}.",
+    "badge": {
+      "admin": "admin",
+      "disabled": "désactivé",
+      "invited": "invité, sans mot de passe"
+    },
+    "noHousehold": "aucun foyer",
+    "createdAt": "créé le {date}",
+    "lastSeen": "vu {when}",
+    "neverSeen": "jamais connecté",
+    "devices": "{count, plural, =0 {aucun appareil connecté} one {# appareil connecté} other {# appareils connectés}}",
+    "sendReset": "Lien de réinitialisation",
+    "sendWelcome": "Renvoyer l'invitation",
+    "logoutAll": "Déconnecter partout",
+    "disable": "Désactiver",
+    "enable": "Réactiver",
+    "delete": "Supprimer",
+    "confirmDelete": "Supprimer définitivement le compte {email} ? Ses tâches personnelles sont effacées ; un foyer dont il est seul membre aussi.",
+    "confirmDisable": "Désactiver {email} ? La personne est déconnectée partout et ne peut plus se connecter.",
+    "done": {
+      "disable": "{email} désactivé.",
+      "enable": "{email} réactivé.",
+      "logout-all": "{email} déconnecté de tous ses appareils.",
+      "password-link": "Lien envoyé à {email}.",
+      "delete": "{email} supprimé."
+    },
+    "households": "Foyers",
+    "hhTasks": "{count, plural, one {# tâche} other {# tâches}}, {open} à faire",
+    "lastActivity": "dernière activité {when}",
+    "search": "Rechercher (nom, e-mail, foyer)"
   }
 }

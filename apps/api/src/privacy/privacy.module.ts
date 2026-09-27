@@ -8,5 +8,6 @@ import { PrivacyService } from './privacy.service';
   imports: [AuthModule, CalendarModule],
   controllers: [PrivacyController],
   providers: [PrivacyService],
+  exports: [PrivacyService],
 })
 export class PrivacyModule {}

@@ -364,4 +364,5 @@
     <string name="aisle_household">🧽 Household</string>
     <string name="aisle_hygiene">🧴 Toiletries</string>
     <string name="aisle_other">🛒 Other</string>
+    <string name="error_account_disabled">This account is disabled. Contact the administrator.</string>
 </resources>

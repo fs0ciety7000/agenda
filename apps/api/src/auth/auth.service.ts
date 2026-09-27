@@ -201,6 +201,10 @@ export class AuthService {
   }
 
   private async issue(user: User, familyId: string, userAgent?: string): Promise<IssuedTokens> {
+    // Point de passage de toute connexion (mot de passe, Google, rafraîchissement).
+    if (user.disabledAt) {
+      throw new AppException('ACCOUNT_DISABLED', HttpStatus.FORBIDDEN, 'Account disabled');
+    }
     const refreshToken = randomToken();
     const session = await this.prisma.session.create({
       data: {
@@ -229,5 +233,9 @@ function toMe(user: User, googleLinked = false): MeResponse {
     locale: user.locale === 'en' ? 'en' : 'fr',
     hasPassword: user.passwordHash !== null,
     googleLinked,
+    isAdmin: isAdminEmail(user.email),
   };
 }
+
+/** Administrateur de l'instance (variable ADMIN_EMAILS). */
+export const isAdminEmail = (email: string) => env().ADMIN_EMAILS.includes(email.toLowerCase());

@@ -377,4 +377,5 @@
     <string name="aisle_household">🧽 Maison, entretien</string>
     <string name="aisle_hygiene">🧴 Hygiène</string>
     <string name="aisle_other">🛒 Autres</string>
+    <string name="error_account_disabled">Ce compte est désactivé. Contactez l’administrateur.</string>
 </resources>
