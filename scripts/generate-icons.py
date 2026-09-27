@@ -9,7 +9,7 @@ Le logo source est un carré arrondi sur fond blanc ; on en tire :
 """
 from pathlib import Path
 
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "docs/brand/logo-source.png"
@@ -82,6 +82,9 @@ def main():
     # Écran de connexion Android (72 dp × 3).
     rounded.resize((216, 216), Image.LANCZOS).save(res / "drawable-nodpi/logo.png", optimize=True)
 
+    # Logos sans fond blanc (coins transparents), pour tout autre usage (réseaux, présentations…).
+    rounded.save(ROOT / "docs/brand/tandem-icon-transparent.png", optimize=True)
+
     # Site de documentation : logo de la barre de navigation et favicon.
     docs_img = ROOT / "apps/docs/static/img"
     docs_img.mkdir(parents=True, exist_ok=True)
@@ -94,13 +97,26 @@ def main():
         wcrop, wmask, _ = load(wordmark)
         w = wcrop.convert("RGBA")
         w.putalpha(wmask)
+        w.save(ROOT / "docs/brand/tandem-wordmark-transparent.png", optimize=True)
         w.thumbnail((640, 640), Image.LANCZOS)
         (public / "brand").mkdir(exist_ok=True)
         w.save(public / "brand/tandem-wordmark.png", optimize=True)
         w.save(docs_img / "tandem-wordmark.png", optimize=True)
 
     # Play Store (512, carré plein : Google applique ses propres coins).
-    full.resize((512, 512), Image.LANCZOS).save(ROOT / "docs/brand/play-store-icon-512.png", optimize=True)
+    # Fond plein (aucun blanc, aucun cadre) : Google applique lui-même ses coins arrondis.
+    # L'illustration, réduite pour laisser respirer les roues, est découpée juste à l'intérieur
+    # du carré arrondi d'origine (son liseré disparaît) et fondue dans la couleur du fond.
+    play = Image.new("RGB", (512, 512), bg)
+    art = int(512 * 0.88)
+    inset = art * 5 // 100
+    edge = Image.new("L", (art, art), 0)
+    ImageDraw.Draw(edge).rounded_rectangle(
+        (inset, inset, art - 1 - inset, art - 1 - inset), radius=art // 8, fill=255
+    )
+    edge = edge.filter(ImageFilter.GaussianBlur(2))
+    play.paste(full.resize((art, art), Image.LANCZOS), ((512 - art) // 2, (512 - art) // 2), edge)
+    play.save(ROOT / "docs/brand/play-store-icon-512.png", optimize=True)
     print(f"ok — fond {hex_bg}")
 
 
