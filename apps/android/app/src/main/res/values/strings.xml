@@ -356,4 +356,12 @@
     <string name="absence_failed">Impossible pour le moment (connexion ?)</string>
     <string name="activity_absence_created">a déclaré l’absence de</string>
     <string name="activity_absence_deleted">a annulé l’absence de</string>
+    <string name="comments_title">Commentaires</string>
+    <string name="comments_offline">Commentaires visibles une fois connecté.</string>
+    <string name="comment_placeholder">Ajouter un commentaire</string>
+    <string name="comment_send">Envoyer le commentaire</string>
+    <string name="comment_delete">Supprimer mon commentaire</string>
+    <string name="comment_delete_confirm">Supprimer</string>
+    <string name="comment_failed">Commentaire non envoyé (connexion ?)</string>
+    <string name="activity_commented">%1$s a commenté « %2$s »</string>
 </resources>

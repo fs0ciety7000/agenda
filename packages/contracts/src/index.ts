@@ -11,3 +11,4 @@ export * from './templates';
 export * from './activity';
 export * from './inbound';
 export * from './absences';
+export * from './comments';

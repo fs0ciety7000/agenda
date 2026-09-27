@@ -102,6 +102,7 @@ describe('Notifications et statistiques (intégration)', () => {
       expect(prefs.body).toEqual([
         { type: 'TASK_ASSIGNED', inApp: true, push: true },
         { type: 'CALENDAR_SYNC_FAILED', inApp: true, push: true },
+        { type: 'TASK_COMMENT', inApp: true, push: true },
       ]);
       await http()
         .put(`${h.base}/notification-preferences`)

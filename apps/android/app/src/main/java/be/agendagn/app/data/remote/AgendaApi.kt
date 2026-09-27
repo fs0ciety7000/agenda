@@ -179,6 +179,19 @@ interface AgendaApi {
     @POST("v1/households/{h}/trash/{id}/restore")
     suspend fun restoreTrash(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
 
+    @GET("v1/households/{h}/occurrences/{id}/comments")
+    suspend fun comments(@Path("h") householdId: String, @Path("id") occurrenceId: String): Response<List<CommentDto>>
+
+    @POST("v1/households/{h}/occurrences/{id}/comments")
+    suspend fun addComment(
+        @Path("h") householdId: String,
+        @Path("id") occurrenceId: String,
+        @Body body: CreateCommentBody,
+    ): Response<CommentDto>
+
+    @DELETE("v1/households/{h}/comments/{id}")
+    suspend fun deleteComment(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
+
     @GET("v1/households/{h}/absences")
     suspend fun absences(@Path("h") householdId: String): Response<List<AbsenceDto>>
 

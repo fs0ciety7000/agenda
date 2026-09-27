@@ -49,6 +49,7 @@ import {
   useUpdateOccurrence,
 } from '@/lib/tasks';
 import { Attachments } from './attachments';
+import { Comments } from './comments';
 import { ChecklistEditor, type ChecklistRow } from './checklist';
 import { useSession } from './household-context';
 import { RecurrenceFields } from './recurrence-fields';
@@ -561,6 +562,7 @@ export function TaskFormDialog({
               <p className="text-sm text-text-muted">{lastDoneText(occurrence.lastDone)}</p>
             )}
             {occurrence?.seriesId && <SeriesHistory seriesId={occurrence.seriesId} />}
+            {occurrence && <Comments occurrence={occurrence} />}
 
             {error && (
               <p role="alert" className="rounded-md bg-danger/10 px-3 py-2 text-sm text-danger">

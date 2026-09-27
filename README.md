@@ -31,6 +31,8 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
 - **Temps réel** : ce que l'autre change apparaît aussitôt sur le site et dans l'app (Server-Sent Events).
 - **Modèles de tâches** (« Ménage du samedi » crée toutes ses tâches d'un coup) et **historique
   « fait par »** des tâches récurrentes.
+- **Commentaires sur une tâche** (« le produit est sous l'évier »), en temps réel, avec notification
+  à l'autre (sans le texte), sur le site et dans l'app.
 - **Mode absence** : « Grace est absente du 3 au 10 » → ses tâches partagées passent à Nicolas
   (tours de rôle compris), puis tout reprend son cours.
 - **Répétition « après la dernière fois »** (détartrer, changer un filtre) : la suivante est prévue

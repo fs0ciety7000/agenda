@@ -10,6 +10,7 @@ import {
   Lock,
   RefreshCw,
   ListChecks,
+  MessageCircle,
   Repeat,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -125,6 +126,13 @@ export function TaskRow({
             </span>
           )}
           {showLastDone && <span>· {lastDoneText(o.lastDone!, true)}</span>}
+          {(o.commentCount ?? 0) > 0 && (
+            <span className="inline-flex items-center gap-1 tabular-nums">
+              · <MessageCircle aria-hidden className="size-3.5" />
+              <span aria-hidden>{o.commentCount}</span>
+              <span className="sr-only">{t('commentCount', { count: o.commentCount! })}</span>
+            </span>
+          )}
           {o.checklist.length > 0 && (
             <span className="inline-flex items-center gap-1 tabular-nums">
               · <ListChecks aria-hidden className="size-3.5" />

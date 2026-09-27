@@ -39,6 +39,8 @@ const keysFor = (hid: string, topic: RealtimeTopic): (readonly unknown[])[] => {
       return [['households', hid, 'shopping']];
     case 'notifications':
       return [['households', hid, 'notifications']];
+    case 'comments':
+      return [['households', hid, 'comments']];
     case 'tasks':
       return [
         ['households', hid, 'occurrences'],
