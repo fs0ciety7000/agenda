@@ -34,6 +34,8 @@ export const MeResponse = z.object({
   /** Faux pour un compte créé via Google uniquement. */
   hasPassword: z.boolean(),
   googleLinked: z.boolean(),
+  /** Accès à l'administration (ADMIN_EMAILS). */
+  isAdmin: z.boolean().optional(),
 });
 export type MeResponse = z.infer<typeof MeResponse>;
 

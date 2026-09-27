@@ -41,6 +41,46 @@ export function passwordResetEmail(locale: Locale, name: string, url: string) {
   };
 }
 
+/** Compte créé par un administrateur : choisir son mot de passe (lien valable 7 jours). */
+export function welcomeEmail(locale: Locale, name: string, url: string) {
+  const t =
+    locale === 'en'
+      ? {
+          subject: 'Your Agenda G & N account',
+          title: `Hello ${name},`,
+          body: [
+            'An account has been created for you on Agenda G & N, the shared household task list.',
+            'Choose your password to sign in. This link is valid for 7 days and can be used once.',
+          ],
+          cta: 'Choose my password',
+        }
+      : {
+          subject: 'Votre compte Agenda G & N',
+          title: `Bonjour ${name},`,
+          body: [
+            'Un compte a été créé pour vous sur Agenda G & N, les tâches du foyer partagées.',
+            'Choisissez votre mot de passe pour vous connecter. Ce lien est valable 7 jours et utilisable une seule fois.',
+          ],
+          cta: 'Choisir mon mot de passe',
+        };
+  return {
+    subject: t.subject,
+    text: `${t.title}\n\n${t.body.join('\n\n')}\n\n${t.cta} : ${url}\n`,
+    html: layout(t.title, t.body, { label: t.cta, url }),
+  };
+}
+
+/** Vérification de la configuration SMTP depuis l'administration. */
+export function testEmail(locale: Locale) {
+  const title = locale === 'en' ? 'Test email' : 'E-mail de test';
+  const body = [
+    locale === 'en'
+      ? 'Agenda G & N can send emails: password reset, invitations and acknowledgements will arrive.'
+      : 'Agenda G & N sait envoyer des e-mails : réinitialisations, invitations et accusés de réception arriveront.',
+  ];
+  return { subject: title, text: `${title}\n\n${body[0]}\n`, html: layout(title, body) };
+}
+
 /** Accusé de réception d'une tâche créée par e-mail. */
 export function inboundTaskCreatedEmail(
   locale: Locale,

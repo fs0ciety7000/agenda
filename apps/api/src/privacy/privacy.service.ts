@@ -171,6 +171,18 @@ export class PrivacyService {
         'Password or confirmation required',
       );
     }
+    await this.purge(userId);
+  }
+
+  /**
+   * Suppression définitive d'un compte (demandée par la personne, ou par un administrateur) :
+   * foyers dont il était seul membre effacés, sinon membre anonymisé ; tâches personnelles effacées.
+   */
+  async purge(userId: string): Promise<void> {
+    const user = await this.prisma.user.findUniqueOrThrow({
+      where: { id: userId },
+      include: { memberships: { where: { leftAt: null } } },
+    });
     const formerName = FORMER_MEMBER[user.locale === 'en' ? 'en' : 'fr'];
 
     // Autorisations Google Calendar révoquées auprès de Google (les événements du calendrier

@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 /** Erreurs d'authentification traduites en messages par l'UI (jamais de texte technique). */
 enum class AuthError {
     INVALID_CREDENTIALS, RATE_LIMITED, NETWORK, UNKNOWN,
-    GOOGLE_FAILED, GOOGLE_EMAIL_EXISTS, REGISTRATION_CLOSED,
+    GOOGLE_FAILED, GOOGLE_EMAIL_EXISTS, REGISTRATION_CLOSED, ACCOUNT_DISABLED,
 }
 
 sealed interface AuthResult {

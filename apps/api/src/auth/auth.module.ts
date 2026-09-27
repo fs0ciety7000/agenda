@@ -21,6 +21,6 @@ import { TokenService } from './token.service';
     { provide: APP_GUARD, useClass: CsrfGuard },
     { provide: APP_GUARD, useClass: AuthGuard },
   ],
-  exports: [AuthService, PasswordService],
+  exports: [AuthService, PasswordService, PasswordResetService],
 })
 export class AuthModule {}

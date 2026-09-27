@@ -24,6 +24,8 @@ model User {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   deletedAt    DateTime?
+  /// Compte désactivé par un administrateur : plus aucune connexion possible.
+  disabledAt   DateTime?
 
   sessions          Session[]
   identities        AuthIdentity[]
@@ -681,6 +683,27 @@ model WebPushSubscription {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+/// Sauvegardes : historique écrit par le conteneur `backup` (infra/backup/backup.sh), et demandes
+/// manuelles faites depuis l'administration (status PENDING, prises en charge dans la minute).
+model BackupRun {
+  id          String    @id @default(uuid()) @db.Uuid
+  /// manual | nightly | startup
+  trigger     String    @db.VarChar(16)
+  /// PENDING | RUNNING | OK | FAILED
+  status      String    @db.VarChar(16)
+  requestedBy String?   @db.Uuid
+  createdAt   DateTime  @default(now())
+  startedAt   DateTime?
+  finishedAt  DateTime?
+  file        String?   @db.VarChar(255)
+  sizeBytes   BigInt?
+  /// « 2 comptes, 1 foyers, 12 occurrences » ou message d'erreur.
+  summary     String?   @db.VarChar(500)
+  offsite     Boolean   @default(false)
+
+  @@index([createdAt])
 }
 
 model PushToken {

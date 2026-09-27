@@ -70,6 +70,7 @@ class AuthRepositoryImpl(
     private fun googleError(code: String?) = when (code) {
         "GOOGLE_EMAIL_EXISTS" -> AuthError.GOOGLE_EMAIL_EXISTS
         "REGISTRATION_CLOSED" -> AuthError.REGISTRATION_CLOSED
+        "ACCOUNT_DISABLED" -> AuthError.ACCOUNT_DISABLED
         else -> AuthError.GOOGLE_FAILED
     }
 
@@ -90,6 +91,7 @@ class AuthRepositoryImpl(
         val code = raw?.let { runCatching { json.decodeFromString<ApiErrorDto>(it).error.code }.getOrNull() }
         return when {
             code == "INVALID_CREDENTIALS" -> AuthError.INVALID_CREDENTIALS
+            code == "ACCOUNT_DISABLED" -> AuthError.ACCOUNT_DISABLED
             status == 429 -> AuthError.RATE_LIMITED
             else -> AuthError.UNKNOWN
         }

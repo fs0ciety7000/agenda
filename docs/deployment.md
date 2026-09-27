@@ -135,6 +135,7 @@ manquent. Modèle complet : `.env.prod.example`.
 | `SENTRY_DSN` | facultatif : suivi des erreurs (§10) | DSN Sentry / GlitchTip |
 | `FCM_SERVICE_ACCOUNT` | facultatif : notifications instantanées Android | JSON du compte de service Firebase (docs/android.md §4.1) |
 | `INBOUND_EMAIL_ADDRESS`, `RESEND_WEBHOOK_SECRET`, `RESEND_API_KEY` | facultatif : tâches par e-mail (réception par Resend) | cf. [`email-to-task.md`](email-to-task.md) |
+| `ADMIN_EMAILS` | facultatif : accès à la page d'administration | adresses e-mail séparées par des virgules |
 | `WEB_PUSH_PUBLIC_KEY`, `WEB_PUSH_PRIVATE_KEY` | facultatif : notifications du site (navigateur) | paire de clés VAPID, voir ci-dessous |
 | `WEB_PUSH_SUBJECT` | facultatif | contact pour les services de push (`mailto:…` ou `https://…`) ; défaut : `WEB_ORIGIN` |
 
@@ -225,7 +226,10 @@ Vérifier dans les logs : `copie hors serveur : offsite:agenda-backups/agenda-�
 
 ### 6.2 Sauvegarde immédiate
 
-Coolify → service `backup` → *Terminal* : `backup.sh once`.
+Site → Réglages → **Administration** → « Sauvegarder maintenant » (compte listé dans
+`ADMIN_EMAILS`) : le service `backup` la prend en charge dans la minute ; l'historique (nuit,
+démarrage, manuelles, avec taille, contrôle de restauration et copie hors serveur) s'affiche au
+même endroit. Sans accès au site : Coolify → service `backup` → *Terminal* : `backup.sh once`.
 
 ### 6.3 Restauration
 

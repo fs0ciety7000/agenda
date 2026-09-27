@@ -30,7 +30,7 @@ export default function SettingsPage() {
   const t = useTranslations('settings');
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { household } = useSession();
+  const { household, me } = useSession();
   const [theme, setTheme] = useState<ThemePreference>('system');
   useEffect(() => setTheme(readTheme()), []);
 
@@ -84,6 +84,18 @@ export default function SettingsPage() {
       </section>
 
       <InboundEmailSettings householdId={household.id} />
+
+      {me.isAdmin && (
+        <section className="flex flex-col gap-3" aria-labelledby="s-admin">
+          <SectionTitle id="s-admin">{t('admin')}</SectionTitle>
+          <Card className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-[0.9375rem] text-text-muted">{t('adminHint')}</p>
+            <Button asChild variant="secondary">
+              <Link href="/admin">{t('adminOpen')}</Link>
+            </Button>
+          </Card>
+        </section>
+      )}
 
       <section className="flex flex-col gap-3" aria-labelledby="s-activity">
         <SectionTitle id="s-activity">{t('activity')}</SectionTitle>

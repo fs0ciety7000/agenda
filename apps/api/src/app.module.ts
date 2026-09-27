@@ -1,3 +1,4 @@
+import { AdminModule } from './admin/admin.module';
 import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -50,6 +51,7 @@ import { TasksModule } from './tasks/tasks.module';
     NotificationsModule,
     ShoppingModule,
     RealtimeModule,
+    AdminModule,
   ],
   controllers: [HealthController, ClientErrorsController],
   providers: [

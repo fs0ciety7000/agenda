@@ -3,12 +3,13 @@ import { AppException } from '../common/app-exception';
 import { randomToken, sha256Hex } from '../common/crypto';
 import { env } from '../config/env';
 import { MailService } from '../mail/mail.service';
-import { passwordResetEmail } from '../mail/templates';
+import { passwordResetEmail, welcomeEmail } from '../mail/templates';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthService } from './auth.service';
 import { PasswordService } from './password.service';
 
 const TOKEN_TTL_MS = 30 * 60_000;
+const WELCOME_TTL_MS = 7 * 86_400_000;
 
 @Injectable()
 export class PasswordResetService {
@@ -32,10 +33,11 @@ export class PasswordResetService {
     );
   }
 
-  /** Un nouveau lien invalide les précédents. */
-  async request(email: string): Promise<void> {
+  /** Un nouveau lien invalide les précédents. `welcome` : compte créé par un administrateur. */
+  async request(email: string, opts: { welcome?: boolean } = {}): Promise<void> {
     const user = await this.prisma.user.findUnique({ where: { email } });
     if (!user || user.deletedAt) return;
+    const ttl = opts.welcome ? WELCOME_TTL_MS : TOKEN_TTL_MS;
     const token = randomToken();
     await this.prisma.$transaction([
       this.prisma.passwordResetToken.updateMany({
@@ -46,14 +48,18 @@ export class PasswordResetService {
         data: {
           userId: user.id,
           tokenHash: sha256Hex(token),
-          expiresAt: new Date(Date.now() + TOKEN_TTL_MS),
+          expiresAt: new Date(Date.now() + ttl),
         },
       }),
     ]);
     const url = `${env().WEB_ORIGIN}/reset-password?token=${encodeURIComponent(token)}`;
     await this.mail.send({
       to: user.email,
-      ...passwordResetEmail(user.locale === 'en' ? 'en' : 'fr', user.displayName, url),
+      ...(opts.welcome ? welcomeEmail : passwordResetEmail)(
+        user.locale === 'en' ? 'en' : 'fr',
+        user.displayName,
+        url,
+      ),
     });
   }
 
