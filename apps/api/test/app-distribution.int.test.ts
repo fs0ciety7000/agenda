@@ -41,8 +41,14 @@ function fakeGithub(opts: { private?: boolean; missing?: boolean } = {}) {
 describe('Distribution Android (relais de la release GitHub)', () => {
   let app: INestApplication;
   const http = () => request(app.getHttpServer());
-  const reset = () =>
-    ((app.get(AndroidReleaseService) as unknown as { cache?: unknown }).cache = undefined);
+  const reset = () => {
+    const service = app.get(AndroidReleaseService) as unknown as { cache?: unknown };
+    service.cache = undefined;
+  };
+  const forget = () => {
+    reset();
+    (app.get(AndroidReleaseService) as unknown as { lastGood?: unknown }).lastGood = undefined;
+  };
 
   beforeAll(async () => {
     app = await createTestApp();
@@ -51,7 +57,7 @@ describe('Distribution Android (relais de la release GitHub)', () => {
     vi.unstubAllGlobals();
     delete process.env.GITHUB_RELEASES_TOKEN;
     resetEnvCache();
-    reset();
+    forget();
   });
   afterAll(() => app.close());
 
@@ -62,7 +68,7 @@ describe('Distribution Android (relais de la release GitHub)', () => {
       versionCode: 42,
       versionName: '0.3.42',
       sha256: 'ab'.repeat(32),
-      apkUrl: 'http://localhost:3000/v1/app/android/agenda-gn.apk',
+      apkUrl: 'http://localhost:3000/v1/app/android/agenda-gn.apk?v=42',
     });
     const apk = await http()
       .get('/v1/app/android/agenda-gn.apk')
@@ -74,6 +80,8 @@ describe('Distribution Android (relais de la release GitHub)', () => {
       })
       .expect(200);
     expect(apk.headers['content-type']).toBe('application/vnd.android.package-archive');
+    expect(apk.headers['cache-control']).toBe('no-store, no-transform');
+    expect(v.headers['cache-control']).toBe('no-store');
     expect(Buffer.compare(apk.body as Buffer, gh.apk)).toBe(0);
     expect(gh.calls.every((c) => c.auth === undefined)).toBe(true);
   });
@@ -87,5 +95,51 @@ describe('Distribution Android (relais de la release GitHub)', () => {
     const gh = fakeGithub({ private: true });
     await http().get('/v1/app/android/version.json').expect(200);
     expect(gh.calls[0]!.auth).toBe('Bearer gh-token');
+  });
+
+  it('republication : APK propre à la version, dernière version servie tant que la release manque', async () => {
+    const apk46 = Buffer.alloc(1_000, 46);
+    let state: 'v46' | 'republishing' = 'v46';
+    vi.stubGlobal('fetch', async (input: string | URL | Request) => {
+      const url = String(input);
+      if (url.endsWith('/releases/tags/android-latest')) {
+        if (state === 'republishing') return new Response('{}', { status: 404 });
+        return Response.json({
+          assets: [
+            { name: 'version.json', url: 'https://api.github.com/assets/10' },
+            { name: 'agenda-gn.apk', url: 'https://api.github.com/assets/11' },
+            { name: 'agenda-gn-46.apk', url: 'https://api.github.com/assets/12' },
+          ],
+        });
+      }
+      if (url.endsWith('/assets/10'))
+        return Response.json({
+          versionCode: 46,
+          versionName: '0.3.46',
+          sha256: 'cd'.repeat(32),
+          apkAsset: 'agenda-gn-46.apk',
+        });
+      if (url.endsWith('/assets/12')) return new Response(apk46);
+      return new Response('', { status: 404 });
+    });
+    const v = await http().get('/v1/app/android/version.json').expect(200);
+    expect(v.body.versionCode).toBe(46);
+    const apk = await http()
+      .get('/v1/app/android/agenda-gn.apk?v=46')
+      .buffer(true)
+      .parse((res, cb) => {
+        const chunks: Buffer[] = [];
+        res.on('data', (c: Buffer) => chunks.push(c));
+        res.on('end', () => cb(null, Buffer.concat(chunks)));
+      })
+      .expect(200);
+    // L'APK nommé dans version.json, pas « agenda-gn.apk ».
+    expect(Buffer.compare(apk.body as Buffer, apk46)).toBe(0);
+
+    // Release supprimée le temps de la republier : la dernière version reste annoncée.
+    state = 'republishing';
+    reset();
+    const during = await http().get('/v1/app/android/version.json').expect(200);
+    expect(during.body.versionCode).toBe(46);
   });
 });

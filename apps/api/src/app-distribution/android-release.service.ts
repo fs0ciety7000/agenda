@@ -4,6 +4,8 @@ import { env } from '../config/env';
 
 const TAG = 'android-latest';
 const CACHE_MS = 5 * 60_000;
+/** Absence de release (republication en cours, jeton manquant) : revérifiée vite. */
+const MISS_CACHE_MS = 30_000;
 
 export interface AndroidRelease {
   versionCode: number;
@@ -26,6 +28,8 @@ interface GithubAsset {
 export class AndroidReleaseService {
   private readonly logger = new Logger(AndroidReleaseService.name);
   private cache?: { at: number; release: AndroidRelease | null };
+  /** Dernière release valide : servie pendant une republication (fichiers absents un instant). */
+  private lastGood?: AndroidRelease;
 
   private headers(accept: string): Record<string, string> {
     const token = env().GITHUB_RELEASES_TOKEN;
@@ -42,8 +46,9 @@ export class AndroidReleaseService {
     return new AppException('NOT_FOUND', HttpStatus.NOT_FOUND, 'No Android release');
   }
 
-  async latest(): Promise<AndroidRelease> {
-    if (this.cache && Date.now() - this.cache.at < CACHE_MS) {
+  async latest(fresh = false): Promise<AndroidRelease> {
+    const ttl = this.cache?.release ? CACHE_MS : MISS_CACHE_MS;
+    if (!fresh && this.cache && Date.now() - this.cache.at < ttl) {
       if (!this.cache.release) throw this.unavailable('cached miss');
       return this.cache.release;
     }
@@ -51,9 +56,13 @@ export class AndroidReleaseService {
       this.logger.warn(`GitHub release lookup failed: ${e.message}`);
       return null;
     });
-    this.cache = { at: Date.now(), release };
-    if (!release) throw this.unavailable('no release');
-    return release;
+    if (release) this.lastGood = release;
+    // Republication en cours (release supprimée ou fichiers pas encore envoyés) : on continue de
+    // servir la dernière version connue plutôt que « aucune mise à jour ».
+    const served = release ?? this.lastGood ?? null;
+    this.cache = { at: Date.now(), release: release ?? null };
+    if (!served) throw this.unavailable('no release');
+    return served;
   }
 
   private async fetchLatest(): Promise<AndroidRelease | null> {
@@ -65,14 +74,21 @@ export class AndroidReleaseService {
     if (!res.ok) throw new Error(`GitHub ${res.status}`);
     const { assets } = (await res.json()) as { assets: GithubAsset[] };
     const manifest = assets.find((a) => a.name === 'version.json');
-    const apk = assets.find((a) => a.name === 'agenda-gn.apk');
-    if (!manifest || !apk) return null;
+    if (!manifest) return null;
     const meta = await fetch(manifest.url, {
       headers: this.headers('application/octet-stream'),
       signal: AbortSignal.timeout(15_000),
     });
     if (!meta.ok) throw new Error(`GitHub asset ${meta.status}`);
-    const json = (await meta.json()) as Omit<AndroidRelease, 'apkAssetUrl'>;
+    const json = (await meta.json()) as Omit<AndroidRelease, 'apkAssetUrl'> & {
+      apkAsset?: string;
+    };
+    // APK propre à la version (« agenda-gn-46.apk ») : jamais remplacé pendant qu'on le télécharge,
+    // donc toujours cohérent avec le sha256 annoncé. Anciennes releases : « agenda-gn.apk ».
+    const apk =
+      assets.find((a) => a.name === json.apkAsset) ??
+      assets.find((a) => a.name === 'agenda-gn.apk');
+    if (!apk) return null;
     return {
       versionCode: json.versionCode,
       versionName: json.versionName,
@@ -83,11 +99,14 @@ export class AndroidReleaseService {
 
   /** Flux de l'APK (redirection GitHub suivie). */
   async download(): Promise<Response> {
-    const release = await this.latest();
-    const res = await fetch(release.apkAssetUrl, {
-      headers: this.headers('application/octet-stream'),
-      signal: AbortSignal.timeout(120_000),
-    });
+    const get = (release: AndroidRelease) =>
+      fetch(release.apkAssetUrl, {
+        headers: this.headers('application/octet-stream'),
+        signal: AbortSignal.timeout(120_000),
+      });
+    let res = await get(await this.latest());
+    // Fichier disparu (release republiée depuis la mise en cache) : on relit la release une fois.
+    if (res.status === 404) res = await get(await this.latest(true));
     if (!res.ok || !res.body) throw this.unavailable(`asset download ${res.status}`);
     return res;
   }

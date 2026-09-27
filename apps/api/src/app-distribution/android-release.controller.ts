@@ -23,12 +23,13 @@ export class AndroidReleaseController {
   @Get('version.json')
   async version(@Res({ passthrough: true }) res: Response) {
     const release = await this.releases.latest();
-    res.setHeader('cache-control', 'no-cache');
+    res.setHeader('cache-control', 'no-store');
     return {
       versionCode: release.versionCode,
       versionName: release.versionName,
       sha256: release.sha256,
-      apkUrl: `${env().WEB_ORIGIN}/v1/app/android/agenda-gn.apk`,
+      // Version dans l'adresse : un cache intermédiaire ne peut pas resservir un ancien APK.
+      apkUrl: `${env().WEB_ORIGIN}/v1/app/android/agenda-gn.apk?v=${release.versionCode}`,
     };
   }
 
@@ -39,6 +40,9 @@ export class AndroidReleaseController {
     res.status(200);
     res.setHeader('content-type', 'application/vnd.android.package-archive');
     res.setHeader('content-disposition', 'attachment; filename="agenda-gn.apk"');
+    // Jamais en cache (Cloudflare met les .apk en cache 4 h par défaut : l'app recevait l'ancien
+    // APK, dont l'empreinte ne correspondait plus à version.json) ni recompressé.
+    res.setHeader('cache-control', 'no-store, no-transform');
     const length = upstream.headers.get('content-length');
     if (length) res.setHeader('content-length', length);
     Readable.fromWeb(upstream.body as unknown as ReadableStream).pipe(res);

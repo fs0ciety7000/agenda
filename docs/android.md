@@ -105,9 +105,11 @@ UI (Compose) ──▶ ViewModel ──▶ AgendaRepository
 Télécharger** (ou directement `https://agenda.fs0ciety.org/v1/app/android/agenda-gn.apk`), puis
 *Installer* (autoriser Chrome à « installer des applications inconnues » la première fois).
 
-**D'où vient l'APK** : à chaque mise à jour de `main`, le workflow `android-release.yml` publie
-l'APK et un `version.json` dans la release GitHub `android-latest`. L'API les **relaie**
-(`/v1/app/android/version.json`, `/v1/app/android/agenda-gn.apk`, cache 5 min) : l'app et le site
+**D'où vient l'APK** : à chaque mise à jour de l'app sur `main`, le workflow `android-release.yml`
+publie dans la release GitHub `android-latest` (mise à jour sur place, jamais supprimée) un APK
+propre à la version (`agenda-gn-46.apk`, les deux derniers sont gardés), une copie
+`agenda-gn.apk` et, en dernier, `version.json`, qui désigne l'APK de la version. L'API les **relaie**
+(`/v1/app/android/version.json`, `/v1/app/android/agenda-gn.apk?v=46`, cache 5 min côté API ; l'APK part en `Cache-Control: no-store` pour que Cloudflare ne serve jamais une ancienne version) : l'app et le site
 ne parlent qu'à `agenda.fs0ciety.org`, que le dépôt soit public ou privé.
 
 **Dépôt privé** : créer un jeton GitHub *fine-grained* (GitHub → *Settings* → *Developer settings*

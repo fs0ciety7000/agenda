@@ -96,18 +96,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          cp app/build/outputs/apk/release/app-release.apk agenda-gn.apk
-          cp app/build/outputs/bundle/play/app-play.aab agenda-gn-play.aab
-          sha=$(sha256sum agenda-gn.apk | cut -d' ' -f1)
-          printf '{"versionCode":%s,"versionName":"%s","apkUrl":"%s/agenda-gn.apk","sha256":"%s"}\n' \
-            "$VERSION_CODE" "$VERSION_NAME" "$RELEASE_BASE" "$sha" > version.json
-          cat version.json
-          gh release delete android-latest --yes --cleanup-tag || true
-          gh release create android-latest agenda-gn.apk version.json agenda-gn-play.aab \
-            --prerelease \
-            --target "$GITHUB_SHA" \
-            --title "Android — dernière version ($VERSION_NAME)" \
-            --notes "Application Android de Tandem, connectée à $API_BASE_URL.
+          cat > notes.md <<NOTES
+          Application Android de Tandem, connectée à $API_BASE_URL.
 
           **Première installation** : sur le téléphone, ouvrir cette page, toucher **agenda-gn.apk**, puis *Installer* (autoriser Chrome à « installer des applications inconnues » la première fois).
 
@@ -115,7 +105,33 @@ jobs:
 
           **Google Play** : \`agenda-gn-play.aab\` est la version à envoyer dans la Play Console (docs/play-store.md).
 
-          Version $VERSION_NAME · commit ${GITHUB_SHA::7}"
+          Version $VERSION_NAME · commit ${GITHUB_SHA::7}
+          NOTES
+          # APK propre à la version (jamais remplacé pendant un téléchargement) + nom fixe pour
+          # l'installation manuelle ; version.json en dernier : il ne désigne jamais un fichier absent.
+          apk="agenda-gn-$VERSION_CODE.apk"
+          cp app/build/outputs/apk/release/app-release.apk "$apk"
+          cp "$apk" agenda-gn.apk
+          cp app/build/outputs/bundle/play/app-play.aab agenda-gn-play.aab
+          sha=$(sha256sum "$apk" | cut -d' ' -f1)
+          printf '{"versionCode":%s,"versionName":"%s","apkUrl":"%s/%s","apkAsset":"%s","sha256":"%s"}\n' \
+            "$VERSION_CODE" "$VERSION_NAME" "$RELEASE_BASE" "$apk" "$apk" "$sha" > version.json
+          cat version.json
+          title="Android — dernière version ($VERSION_NAME)"
+          if gh release view android-latest >/dev/null 2>&1; then
+            # Mise à jour sur place : la release ne disparaît jamais (plus de « téléchargement échoué »).
+            gh release upload android-latest "$apk" --clobber
+            gh release upload android-latest agenda-gn.apk agenda-gn-play.aab --clobber
+            gh release upload android-latest version.json --clobber
+            gh release edit android-latest --title "$title" --notes-file notes.md
+            # On garde l'APK précédent (téléchargements en cours), on retire les plus anciens.
+            gh release view android-latest --json assets -q '.assets[].name' \
+              | grep -E '^agenda-gn-[0-9]+\.apk$' | sort -t- -k3 -n | head -n -2 \
+              | xargs -r -n1 gh release delete-asset android-latest -y
+          else
+            gh release create android-latest "$apk" agenda-gn.apk version.json agenda-gn-play.aab \
+              --prerelease --target "$GITHUB_SHA" --title "$title" --notes-file notes.md
+          fi
       - name: Notes de version pour Google Play
         if: env.PLAY_SERVICE_ACCOUNT_JSON != ''
         run: |
