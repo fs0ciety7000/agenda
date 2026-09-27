@@ -9,3 +9,4 @@ export * from './notifications';
 export * from './shopping';
 export * from './templates';
 export * from './activity';
+export * from './inbound';

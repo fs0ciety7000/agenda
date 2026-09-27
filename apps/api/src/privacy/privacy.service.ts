@@ -185,7 +185,13 @@ export class PrivacyService {
         await tx.householdInvitation.deleteMany({ where: { invitedById: m.id } });
         await tx.householdMember.update({
           where: { id: m.id },
-          data: { userId: null, displayName: formerName, role: 'MEMBER', leftAt: new Date() },
+          data: {
+            userId: null,
+            displayName: formerName,
+            role: 'MEMBER',
+            leftAt: new Date(),
+            inboundToken: null,
+          },
         });
       }
       // Réponses mémorisées pour le rejeu hors ligne (contiennent des titres de tâches).

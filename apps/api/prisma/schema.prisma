@@ -126,16 +126,18 @@ enum HouseholdRole {
 }
 
 model HouseholdMember {
-  id          String        @id @default(uuid()) @db.Uuid
-  householdId String        @db.Uuid
+  id           String        @id @default(uuid()) @db.Uuid
+  householdId  String        @db.Uuid
   /// null = compte supprimé (RGPD) : le membre reste, anonymisé, pour l'historique partagé.
-  userId      String?       @db.Uuid
-  role        HouseholdRole @default(MEMBER)
-  displayName String        @db.VarChar(40)
+  userId       String?       @db.Uuid
+  role         HouseholdRole @default(MEMBER)
+  displayName  String        @db.VarChar(40)
   /// Nom d'un token de couleur (sage, ocean…), jamais un hex libre.
-  color       String        @db.VarChar(16)
-  joinedAt    DateTime      @default(now())
-  leftAt      DateTime?
+  color        String        @db.VarChar(16)
+  joinedAt     DateTime      @default(now())
+  leftAt       DateTime?
+  /// Adresse « créer une tâche par e-mail » (partie après le +). Secrète ; null = désactivée.
+  inboundToken String?       @unique @db.VarChar(40)
 
   household            Household                @relation(fields: [householdId], references: [id], onDelete: Cascade)
   user                 User?                    @relation(fields: [userId], references: [id], onDelete: SetNull)

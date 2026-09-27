@@ -9,6 +9,7 @@ import { useSession } from '@/components/app/household-context';
 import { CalendarSettings } from '@/components/app/calendar-settings';
 import { CategoriesSettings } from '@/components/app/categories-settings';
 import { TemplatesSettings } from '@/components/app/templates';
+import { InboundEmailSettings } from '@/components/app/inbound-email';
 import { InviteLink } from '@/components/app/invite-link';
 import { AndroidAppCard } from '@/components/app/android-app-card';
 import { NotificationSettings } from '@/components/app/notification-settings';
@@ -19,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { Card, SectionTitle } from '@/components/ui/card';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/cn';
+import { clearOfflineData } from '@/lib/offline';
 import { applyTheme, readTheme, type ThemePreference } from '@/lib/theme';
 
 const THEMES: ThemePreference[] = ['system', 'light', 'dark'];
@@ -34,8 +36,9 @@ export default function SettingsPage() {
   const signOut = useMutation({
     mutationFn: (all: boolean) =>
       api<void>(all ? '/v1/auth/logout-all' : '/v1/auth/logout', { method: 'POST', json: {} }),
-    onSettled: () => {
+    onSettled: async () => {
       queryClient.clear();
+      await clearOfflineData();
       router.replace('/login');
     },
   });
@@ -76,6 +79,8 @@ export default function SettingsPage() {
           <TemplatesSettings />
         </Card>
       </section>
+
+      <InboundEmailSettings householdId={household.id} />
 
       <section className="flex flex-col gap-3" aria-labelledby="s-activity">
         <SectionTitle id="s-activity">{t('activity')}</SectionTitle>

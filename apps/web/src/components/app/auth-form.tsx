@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
 import { api, errorKey } from '@/lib/api';
 import { useProviders } from '@/lib/queries';
+import { clearOfflineData } from '@/lib/offline';
 
 const RegisterForm = RegisterInput.pick({ email: true, password: true, displayName: true });
 type FormValues = { email: string; password: string; displayName?: string };
@@ -79,6 +80,7 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
     try {
       await api<AuthResponse>(`/v1/auth/${mode}`, { method: 'POST', json: values });
       queryClient.clear();
+      await clearOfflineData();
       router.replace(safeNext(params.get('next')));
       router.refresh();
     } catch (e) {

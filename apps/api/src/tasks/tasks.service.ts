@@ -480,7 +480,11 @@ export class TasksService {
   }
 
   /** Quick add : l'analyse est faite côté serveur (même comportement web et Android). */
-  async quickAdd(ctx: HouseholdContext, text: string): Promise<OccurrenceDto> {
+  async quickAdd(
+    ctx: HouseholdContext,
+    text: string,
+    extra: { notes?: string } = {},
+  ): Promise<OccurrenceDto> {
     const parsed = await this.previewQuickAdd(ctx, text);
     if (!parsed.title) {
       throw new AppException(
@@ -491,6 +495,7 @@ export class TasksService {
     }
     return this.create(ctx, {
       title: parsed.title.slice(0, 200),
+      notes: extra.notes,
       priority: parsed.priority ?? 'NORMAL',
       visibility: 'SHARED',
       assigneeIds: parsed.assigneeIds ?? [],

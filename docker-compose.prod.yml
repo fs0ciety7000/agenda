@@ -61,6 +61,9 @@ services:
       # App Android : release GitHub relayée par l'API (jeton lecture seule si dépôt privé).
       ANDROID_RELEASE_REPO: ${ANDROID_RELEASE_REPO:-fs0ciety7000/agenda}
       GITHUB_RELEASES_TOKEN: ${GITHUB_RELEASES_TOKEN:-}
+      # Tâches par e-mail (Worker Cloudflare Email Routing) — docs/email-to-task.md.
+      INBOUND_EMAIL_ADDRESS: ${INBOUND_EMAIL_ADDRESS:-}
+      INBOUND_EMAIL_SECRET: ${INBOUND_EMAIL_SECRET:-}
     depends_on:
       postgres:
         condition: service_healthy

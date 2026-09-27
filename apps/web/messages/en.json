@@ -168,7 +168,8 @@
     "priority": {
       "HIGH": "High priority",
       "URGENT": "Urgent"
-    }
+    },
+    "queued": "“{text}” will be added when you're back online."
   },
   "tasks": {
     "unassigned": "Unassigned",
@@ -499,7 +500,7 @@
     },
     "data": {
       "title": "Data processed",
-      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, activity history (who did what, when).\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out."
+      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, activity history (who did what, when).\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They pass through Cloudflare Email Routing without being stored there; attachments are ignored."
     },
     "google": {
       "title": "Google data",
@@ -527,7 +528,7 @@
     },
     "cookies": {
       "title": "Cookies",
-      "body": "Only strictly necessary cookies: sign-in session (httpOnly, secure) and, for a few minutes, tracking of a Google sign-in in progress. Your light/dark theme choice is stored in your browser. No analytics or advertising cookies."
+      "body": "Only strictly necessary cookies: sign-in session (httpOnly, secure) and, for a few minutes, tracking of a Google sign-in in progress. Your light/dark theme choice is stored in your browser. No analytics or advertising cookies.\nOffline: the site keeps in your browser (local storage and service worker cache) a copy of the household data already displayed, so it stays usable without a network. It is erased when you sign out."
     },
     "contact": {
       "title": "Contact",
@@ -728,5 +729,24 @@
     "restoreLabel": "Restore “{title}”",
     "restored": "“{title}” restored.",
     "restoreError": "Couldn't restore: it may already have been restored."
+  },
+  "inboundEmail": {
+    "title": "Add by e-mail",
+    "intro": "Forward an e-mail to your personal address: it becomes a household task, created in your name. The subject becomes the title (“Pay the bill friday” → Friday) and the message goes into the notes.",
+    "address": "Your address for creating tasks",
+    "copy": "Copy",
+    "copied": "Copied",
+    "create": "Create my address",
+    "private": "Keep it to yourself: anyone who knows it can add tasks. If in doubt, create a new one.",
+    "regenerate": "New address",
+    "confirmRegenerate": "Create a new address? The old one will stop working.",
+    "disable": "Turn off",
+    "confirmDisable": "Turn off adding by e-mail? The address will stop working.",
+    "error": "Couldn't do that. Please try again."
+  },
+  "offline": {
+    "offline": "Offline: you're seeing the latest data received. Tick tasks, add some or do the shopping: everything will be sent when you're back online.",
+    "pending": "{count, plural, one {# change pending.} other {# changes pending.}}",
+    "sending": "{count, plural, one {Sending a change made offline…} other {Sending # changes made offline…}}"
   }
 }

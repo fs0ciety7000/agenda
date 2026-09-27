@@ -72,6 +72,8 @@ jobs:
       NODE_ENV: production
       AUTH_RATE_LIMIT: '100'
       API_URL: http://localhost:4000
+      INBOUND_EMAIL_ADDRESS: 'agenda+{token}@example.test'
+      INBOUND_EMAIL_SECRET: ci-inbound-secret-ci-inbound-secret-1234
     steps:
       - uses: actions/checkout@v7
       - uses: pnpm/action-setup@v6

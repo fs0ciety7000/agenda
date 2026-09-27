@@ -2,6 +2,7 @@
 
 import type { QuickAddPreview } from '@agenda/contracts';
 import { Plus, SlidersHorizontal } from 'lucide-react';
+import { onlineManager } from '@tanstack/react-query';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useToast } from '@/components/ui/toast';
@@ -65,15 +66,25 @@ export function QuickAdd({ onMoreOptions }: { onMoreOptions: (draft: TaskDraft) 
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
-    if (!text.trim() || quickAdd.isPending) return;
-    quickAdd.mutate(text, {
-      onSuccess: (o) => {
-        setText('');
-        setPreview(null);
-        toast({ message: t('added', { title: o.title }) });
+    if (!text.trim() || (quickAdd.isPending && !quickAdd.isPaused)) return;
+    const offline = !onlineManager.isOnline();
+    quickAdd.mutate(
+      { hid: household.id, text, key: crypto.randomUUID() },
+      {
+        onSuccess: (o) => {
+          setText('');
+          setPreview(null);
+          if (!offline) toast({ message: t('added', { title: o.title }) });
+        },
+        onError: (err) => toast({ message: te(errorKey(err) as 'generic'), tone: 'error' }),
       },
-      onError: (err) => toast({ message: te(errorKey(err) as 'generic'), tone: 'error' }),
-    });
+    );
+    // Hors ligne : mise en file, envoyée au retour du réseau (sans doublon).
+    if (offline) {
+      setText('');
+      setPreview(null);
+      toast({ message: t('queued', { text: text.trim() }) });
+    }
   };
 
   const chips: string[] = [];

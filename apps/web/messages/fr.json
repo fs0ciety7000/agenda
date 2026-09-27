@@ -168,7 +168,8 @@
     "priority": {
       "HIGH": "Priorité haute",
       "URGENT": "Urgente"
-    }
+    },
+    "queued": "« {text} » sera ajoutée au retour du réseau."
   },
   "tasks": {
     "unassigned": "À définir",
@@ -499,7 +500,7 @@
     },
     "data": {
       "title": "Données traitées",
-      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations, liste de courses.\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, historique des actions (qui a fait quoi, quand).\nSessions : appareil (navigateur ou application) et dates de connexion, pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion."
+      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations, liste de courses.\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, historique des actions (qui a fait quoi, quand).\nSessions : appareil (navigateur ou application) et dates de connexion, pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion.\nAjout par e-mail (si vous l'activez) : l'expéditeur, le sujet et le texte des e-mails que vous transférez à votre adresse personnelle sont enregistrés dans les notes de la tâche créée. Ils transitent par Cloudflare Email Routing, sans y être conservés ; les pièces jointes sont ignorées."
     },
     "google": {
       "title": "Données Google",
@@ -527,7 +528,7 @@
     },
     "cookies": {
       "title": "Cookies",
-      "body": "Uniquement des cookies strictement nécessaires : session de connexion (httpOnly, sécurisés) et, pendant quelques minutes, le suivi d'une connexion Google en cours. Le choix du thème clair ou sombre est gardé dans votre navigateur. Aucun cookie de mesure d'audience ni de publicité."
+      "body": "Uniquement des cookies strictement nécessaires : session de connexion (httpOnly, sécurisés) et, pendant quelques minutes, le suivi d'une connexion Google en cours. Le choix du thème clair ou sombre est gardé dans votre navigateur. Aucun cookie de mesure d'audience ni de publicité.\nHors ligne : le site garde dans votre navigateur (stockage local et cache du service worker) une copie des données du foyer déjà affichées, pour rester consultable sans réseau. Elle est effacée à la déconnexion."
     },
     "contact": {
       "title": "Contact",
@@ -728,5 +729,24 @@
     "restoreLabel": "Restaurer « {title} »",
     "restored": "« {title} » restaurée.",
     "restoreError": "Impossible de restaurer : l'élément a peut-être déjà été restauré."
+  },
+  "inboundEmail": {
+    "title": "Ajouter par e-mail",
+    "intro": "Transférez un e-mail à votre adresse personnelle : il devient une tâche du foyer, créée à votre nom. Le sujet sert de titre (« Payer la facture vendredi » → vendredi) et le message va dans les notes.",
+    "address": "Votre adresse pour créer des tâches",
+    "copy": "Copier",
+    "copied": "Copiée",
+    "create": "Créer mon adresse",
+    "private": "Gardez-la pour vous : quiconque la connaît peut ajouter des tâches. En cas de doute, créez-en une nouvelle.",
+    "regenerate": "Nouvelle adresse",
+    "confirmRegenerate": "Créer une nouvelle adresse ? L'ancienne cessera de fonctionner.",
+    "disable": "Désactiver",
+    "confirmDisable": "Désactiver l'ajout par e-mail ? L'adresse cessera de fonctionner.",
+    "error": "Action impossible. Réessayez."
+  },
+  "offline": {
+    "offline": "Hors ligne : vous voyez les dernières données reçues. Cochez des tâches, ajoutez-en ou faites les courses : tout sera envoyé au retour du réseau.",
+    "pending": "{count, plural, one {# modification en attente.} other {# modifications en attente.}}",
+    "sending": "{count, plural, one {Envoi d'une modification faite hors ligne…} other {Envoi de # modifications faites hors ligne…}}"
   }
 }

@@ -1,0 +1,10 @@
+# Worker d'e-mails entrants (Cloudflare Email Routing). Déploiement : docs/email-to-task.md.
+name = "agenda-email"
+main = "src/index.ts"
+compatibility_date = "2026-09-01"
+
+[vars]
+# Adresse publique de l'app (l'API est servie sous /v1 par le site).
+API_URL = "https://agenda.fs0ciety.org"
+
+# Secret : `npx wrangler secret put INBOUND_EMAIL_SECRET` (même valeur que dans Coolify).

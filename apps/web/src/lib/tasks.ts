@@ -17,6 +17,7 @@ import type {
 } from '@agenda/contracts';
 import { keepPreviousData, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from './api';
+import { offlineKeys, type QuickAddVars, type ToggleVars } from './offline';
 import { pollInterval } from './realtime';
 
 type ListQuery = Partial<OccurrenceQuery>;
@@ -84,11 +85,11 @@ export function useCreateTask(hid: string) {
   });
 }
 
+/** Ajout rapide, possible hors ligne (envoyé au retour du réseau, sans doublon). */
 export function useQuickAdd(hid: string) {
   const invalidate = useInvalidateTasks(hid);
-  return useMutation({
-    mutationFn: (text: string) =>
-      api<OccurrenceDto>(`/v1/households/${hid}/tasks/quick`, { method: 'POST', json: { text } }),
+  return useMutation<OccurrenceDto, Error, QuickAddVars>({
+    mutationKey: offlineKeys.quickAdd,
     onSuccess: invalidate,
   });
 }
@@ -228,15 +229,17 @@ export const previewRecurrence = (
   });
 
 /** Cocher / décocher : mise à jour optimiste immédiate de toutes les listes affichées. */
+/** Cocher / décocher : affiché tout de suite, possible hors ligne (envoyé au retour du réseau). */
 export function useToggleDone(hid: string) {
   const qc = useQueryClient();
   const invalidate = useInvalidateTasks(hid);
-  return useMutation({
-    mutationFn: ({ id, done }: { id: string; done: boolean }) =>
-      api<OccurrenceDto>(
-        `/v1/households/${hid}/occurrences/${id}/${done ? 'complete' : 'reopen'}`,
-        { method: 'POST' },
-      ),
+  return useMutation<
+    OccurrenceDto,
+    Error,
+    ToggleVars,
+    { snapshot: [readonly unknown[], OccurrenceDto[] | undefined][] }
+  >({
+    mutationKey: offlineKeys.toggle,
     onMutate: async ({ id, done }) => {
       const key = ['households', hid, 'occurrences'];
       await qc.cancelQueries({ queryKey: key });

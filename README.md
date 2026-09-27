@@ -26,9 +26,12 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
   - aperçu des prochaines dates ;
   - modification « cette fois / les suivantes / toute la série ».
 - **Liste de courses partagée** permanente, cochée à deux au magasin, hors ligne sur Android.
+- **Hors ligne sur le site** comme sur Android : consultation, coches, ajout rapide et courses
+  sans réseau, envoyés au retour de la connexion.
 - **Temps réel** : ce que l'autre change apparaît aussitôt sur le site et dans l'app (Server-Sent Events).
 - **Modèles de tâches** (« Ménage du samedi » crée toutes ses tâches d'un coup) et **historique
   « fait par »** des tâches récurrentes.
+- **Ajouter par e-mail** : un e-mail transféré à son adresse personnelle devient une tâche.
 - **Annuler** après avoir coché ou supprimé, **corbeille** de 30 jours et **journal d'activité**
   (qui a fait quoi, et quand) exportable en CSV.
 - **Sous-tâches et listes** attachées à une tâche, catégories, priorités, tâches personnelles.
@@ -64,6 +67,7 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
 | [Design system](docs/design-system.md)                  | Tokens, composants, accessibilité                         |
 | [Application Android](docs/android.md)                  | Hors ligne, installation, mises à jour, Firebase, recette |
 | [Google Play](docs/play-store.md)                       | Publication, fiche, sécurité des données                  |
+| [Tâches par e-mail](docs/email-to-task.md)              | Adresse personnelle, Worker Cloudflare                    |
 | [Déploiement](docs/deployment.md)                       | Coolify (Docker Compose) + Cloudflare, sauvegardes        |
 | [Roadmap](docs/roadmap.md)                              | Phases livrées, risques                                   |
 
@@ -78,6 +82,8 @@ packages/domain         Récurrence, rotation, ajout rapide, répartition (parta
 packages/contracts      Schémas Zod partagés API ↔ web
 packages/design-tokens  Tokens → CSS (web) + Tokens.kt (Android)
 packages/config         tsconfig / ESLint partagés
+infra/email-worker      Worker Cloudflare : e-mail → tâche
+infra/backup            Sauvegardes PostgreSQL
 ```
 
 ## Démarrage local

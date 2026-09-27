@@ -152,6 +152,18 @@ perte même si l'enqueue échoue.
 - Résolution : pour `status` (cocher), **la complétion gagne** (idempotent, intention claire) ; pour les autres champs, fusion champ par champ si les champs modifiés diffèrent, sinon l'UI propose « garder la mienne / garder celle du serveur ».
 - Statut visible : ✓ Synchronisé / ⟳ Synchronisation… / ⚠ En attente.
 
+### Site hors ligne
+
+- **Service worker** (`apps/web/public/sw.js`) : pages en « réseau d'abord, sinon cache » ;
+  fichiers `/_next/static` en « cache d'abord ». Les données (`/v1/*`) ne passent jamais par lui.
+- **Cache persistant TanStack Query** (`localStorage`, 7 jours, invalidé à chaque build) : les
+  écrans s'affichent sans réseau avec les dernières données reçues, puis se rafraîchissent.
+- **File d'envoi** : cocher, ajout rapide (`Idempotency-Key`) et courses (identifiants choisis
+  par le navigateur) sont des mutations « en pause » hors ligne, conservées au rechargement et
+  rejouées au retour du réseau (`apps/web/src/lib/offline.ts`). Les autres actions échouent tout
+  de suite avec un message clair (comme sur Android).
+- Effacé à la déconnexion (cache TanStack et pages en cache).
+
 ## 9. Stratégie de test
 
 | Niveau | Outil | Cible |

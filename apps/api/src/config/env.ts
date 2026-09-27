@@ -95,6 +95,22 @@ const EnvSchema = z.object({
   ANDROID_RELEASE_REPO: z.string().trim().default('fs0ciety7000/agenda'),
   /** Jeton GitHub en lecture seule (Contents: read) : requis si le dépôt est privé. */
   GITHUB_RELEASES_TOKEN: z.string().trim().optional(),
+  /**
+   * Tâches par e-mail. Adresse modèle avec `{token}` (ex. `agenda+{token}@fs0ciety.org`) et secret
+   * partagé avec le Worker Cloudflare qui reçoit les e-mails. Les deux sont requis pour activer.
+   */
+  INBOUND_EMAIL_ADDRESS: z.preprocess(
+    (v) => (v === '' ? undefined : v),
+    z
+      .string()
+      .trim()
+      .regex(/^[^@\s]*\{token\}[^@\s]*@[^@\s]+$/, 'must contain {token} before @')
+      .optional(),
+  ),
+  INBOUND_EMAIL_SECRET: z.preprocess(
+    (v) => (v === '' ? undefined : v),
+    z.string().min(32).optional(),
+  ),
   /** Inscriptions ouvertes. À passer à false une fois les membres du foyer inscrits. */
   REGISTRATION_ENABLED: z
     .enum(['true', 'false'])
