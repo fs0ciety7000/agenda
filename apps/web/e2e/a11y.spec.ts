@@ -74,6 +74,7 @@ for (const scheme of ['light', 'dark'] as const) {
         `/calendar?view=day&date=${today}`,
         `/calendar?view=month&date=${today}`,
         '/stats',
+        '/history',
         '/settings',
       ]) {
         await page.goto(path);

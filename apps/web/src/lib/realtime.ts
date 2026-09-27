@@ -46,6 +46,8 @@ const keysFor = (hid: string, topic: RealtimeTopic): (readonly unknown[])[] => {
         ['households', hid, 'series'],
         ['households', hid, 'calendar'],
         ['households', hid, 'stats'],
+        ['households', hid, 'activity'],
+        ['households', hid, 'trash'],
       ];
   }
 };

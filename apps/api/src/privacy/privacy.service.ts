@@ -173,6 +173,8 @@ export class PrivacyService {
         }
         // Tâches personnelles : effacées. Tâches partagées : restent au foyer.
         await tx.task.deleteMany({ where: { createdById: m.id, visibility: 'PERSONAL' } });
+        // Journal de ces tâches personnelles : effacé aussi (titres).
+        await tx.activityLog.deleteMany({ where: { actorId: m.id, personal: true } });
         // Plus de responsabilités futures : ces tâches deviennent « à définir » ou passent à l'autre membre.
         await tx.occurrenceAssignee.deleteMany({
           where: { memberId: m.id, occurrence: { status: 'TODO' } },

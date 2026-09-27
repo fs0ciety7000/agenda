@@ -68,6 +68,8 @@ class FakeAgendaRepository(
         return previewItems
     }
     override suspend fun delete(occurrence: Occurrence, scope: EditScope): OpResult { deletes += scope; return OpResult.Ok }
+    val restores = mutableListOf<String>()
+    override suspend fun restore(occurrenceId: String): OpResult { restores += occurrenceId; return OpResult.Ok }
     val moves = mutableListOf<Pair<String, java.time.LocalDate>>()
     var moveResult: OpResult = OpResult.Ok
     override suspend fun move(occurrenceId: String, date: java.time.LocalDate): OpResult {

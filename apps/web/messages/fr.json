@@ -141,7 +141,10 @@
     "categories": "Catégories",
     "privacy": "Données & confidentialité",
     "notifications": "Notifications",
-    "templates": "Modèles de tâches"
+    "templates": "Modèles de tâches",
+    "activity": "Journal et corbeille",
+    "activityHint": "Qui a fait quoi, et les tâches supprimées depuis moins de 30 jours.",
+    "activityOpen": "Ouvrir le journal"
   },
   "common": {
     "loading": "Chargement…",
@@ -231,7 +234,9 @@
       "weekend": "Ce week-end",
       "done": "« {title} » reportée à {date}",
       "error": "Impossible de reporter la tâche."
-    }
+    },
+    "restoredToast": "Tâche restaurée.",
+    "restoreError": "Impossible d'annuler la suppression."
   },
   "balance": {
     "bothOfUs": "À deux",
@@ -486,7 +491,7 @@
   },
   "privacyPolicy": {
     "title": "Politique de confidentialité",
-    "updated": "Dernière mise à jour : 26 septembre 2026",
+    "updated": "Dernière mise à jour : 27 septembre 2026",
     "intro": "Agenda G & N est une application privée et non commerciale d'organisation des tâches du foyer, utilisée par ses membres. Cette page explique quelles données elle traite, pourquoi, et comment les supprimer.",
     "who": {
       "title": "Qui gère vos données",
@@ -510,7 +515,7 @@
     },
     "retention": {
       "title": "Durées de conservation",
-      "body": "Vos données sont conservées tant que votre compte existe. Les sessions expirent après 60 jours d'inactivité. Les liens de réinitialisation de mot de passe expirent après 30 minutes.\nSuppression du compte : immédiate dans l'application. Les sauvegardes sont conservées 14 jours sur le serveur et 30 jours hors serveur : vos données y disparaissent au plus tard après ce délai."
+      "body": "Vos données sont conservées tant que votre compte existe. Une tâche supprimée reste 30 jours dans la corbeille du foyer, puis est effacée définitivement. Le journal d'activité (qui a fait quoi, et quand) est conservé un an. Les sessions expirent après 60 jours d'inactivité. Les liens de réinitialisation de mot de passe expirent après 30 minutes.\nSuppression du compte : immédiate dans l'application. Les sauvegardes sont conservées 14 jours sur le serveur et 30 jours hors serveur : vos données y disparaissent au plus tard après ce délai."
     },
     "security": {
       "title": "Sécurité",
@@ -657,5 +662,71 @@
     "privacyLink": "Politique de confidentialité",
     "login": "Se connecter",
     "footer": "Application personnelle, gratuite et sans publicité."
+  },
+  "activity": {
+    "title": "Journal et corbeille",
+    "tabLog": "Journal",
+    "tabTrash": "Corbeille",
+    "intro": "Qui a fait quoi, et quand. Vos tâches personnelles n'y apparaissent que pour vous. Le journal est conservé un an.",
+    "export": "Exporter (CSV)",
+    "exportError": "Export impossible. Réessayez.",
+    "loadMore": "Voir plus",
+    "empty": "Aucune activité pour l'instant.",
+    "system": "Google Calendar",
+    "formerMember": "Un ancien membre",
+    "untitled": "(sans titre)",
+    "forDate": "pour le {date}",
+    "changed": "modifié : {fields}",
+    "actions": {
+      "task_created": "a créé",
+      "occurrence_updated": "a modifié",
+      "series_created": "a rendu récurrente",
+      "series_split": "a modifié la répétition de",
+      "series_updated": "a modifié la répétition de",
+      "occurrence_completed": "a terminé",
+      "occurrence_reopened": "a rouvert",
+      "task_deleted": "a supprimé",
+      "occurrence_cancelled": "a supprimé une fois",
+      "series_ended": "a arrêté la répétition de",
+      "task_restored": "a restauré",
+      "occurrence_restored": "a restauré une fois",
+      "series_restored": "a relancé la répétition de",
+      "occurrence_updated_in_google": "a modifié",
+      "other": "a modifié"
+    },
+    "fields": {
+      "title": "titre",
+      "date": "date",
+      "startMinute": "heure",
+      "durationMinutes": "durée",
+      "assigneeIds": "responsables",
+      "notes": "notes",
+      "categoryId": "catégorie",
+      "priority": "priorité",
+      "visibility": "visibilité",
+      "syncToCalendar": "calendrier partagé",
+      "recurrence": "répétition",
+      "dueDate": "échéance"
+    },
+    "csv": {
+      "date": "Date",
+      "time": "Heure",
+      "who": "Qui",
+      "action": "Action",
+      "task": "Tâche",
+      "taskDate": "Date de la tâche",
+      "fields": "Champs modifiés"
+    },
+    "trashIntro": "Les tâches supprimées restent ici 30 jours, puis sont effacées définitivement.",
+    "trashEmpty": "La corbeille est vide.",
+    "kind_task": "Tâche entière",
+    "kind_occurrence": "Une seule fois",
+    "kind_following": "La répétition à partir de cette date",
+    "deletedBy": "Supprimée par {who}, {when}",
+    "purgeOn": "effacée définitivement le {date}",
+    "restore": "Restaurer",
+    "restoreLabel": "Restaurer « {title} »",
+    "restored": "« {title} » restaurée.",
+    "restoreError": "Impossible de restaurer : l'élément a peut-être déjà été restauré."
   }
 }

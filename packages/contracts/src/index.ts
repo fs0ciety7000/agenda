@@ -8,3 +8,4 @@ export * from './calendar';
 export * from './notifications';
 export * from './shopping';
 export * from './templates';
+export * from './activity';

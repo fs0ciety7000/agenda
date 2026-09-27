@@ -390,24 +390,28 @@ describe('Tâches (intégration)', () => {
     expect(res.body.unassigned).toEqual({ count: 1, minutes: 0 });
   });
 
-  it('journal d’activité : noms de champs seulement, jamais le contenu', async () => {
+  it('journal d’activité : titre et noms de champs, jamais le contenu des notes', async () => {
     const h = await coupleHousehold(app);
     const t = await http()
       .post(`${h.base}/tasks`)
       .set(h.grace.auth)
-      .send({ title: 'Titre privé' })
+      .send({ title: 'Titre', notes: 'Code de la porte 1234' })
       .expect(201);
     await http()
       .patch(`${h.base}/occurrences/${t.body.id}`)
       .set(h.grace.auth)
-      .send({ version: 1, title: 'Nouveau titre' })
+      .send({ version: 1, title: 'Nouveau titre', notes: 'Code 5678' })
       .expect(200);
     const logs = await prisma.activityLog.findMany({
       where: { householdId: h.householdId },
       orderBy: { createdAt: 'asc' },
     });
-    expect(logs.map((l) => l.action)).toEqual(['task.created', 'occurrence.updated']);
-    expect(JSON.stringify(logs)).not.toContain('Nouveau titre');
+    expect(logs.map((l) => [l.action, l.title])).toEqual([
+      ['task.created', 'Titre'],
+      ['occurrence.updated', 'Nouveau titre'],
+    ]);
+    expect(logs[1]!.data).toMatchObject({ fields: ['title', 'notes'] });
+    expect(JSON.stringify(logs)).not.toMatch(/1234|5678/);
   });
 });
 

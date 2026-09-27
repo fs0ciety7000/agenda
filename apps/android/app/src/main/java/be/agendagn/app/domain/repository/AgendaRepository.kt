@@ -66,6 +66,9 @@ interface AgendaRepository {
     /** Prochaines dates et responsables d'une répétition (en ligne uniquement). */
     suspend fun previewRecurrence(startDate: LocalDate, recurrence: JsonObject): List<PreviewItem>?
     suspend fun delete(occurrence: Occurrence, scope: EditScope): OpResult
+
+    /** « Annuler » après une suppression : la tâche revient de la corbeille. */
+    suspend fun restore(occurrenceId: String): OpResult
     /** Glisser-déposer du calendrier : change le jour d'UNE occurrence (heure conservée). */
     suspend fun move(occurrenceId: String, date: java.time.LocalDate): OpResult
     /** Sous-tâches : demandent le réseau (comme modifier) ; cocher s'affiche tout de suite. */

@@ -38,6 +38,8 @@ data class TaskFormState(
     val askScopeFor: ScopeAction? = null,
     val confirmDelete: Boolean = false,
     val done: Boolean = false,
+    /** Fermé après une suppression (proposer « Annuler »). */
+    val deleted: Boolean = false,
     /** Modification : sous-tâches à jour (cache local, suit les changements de l'autre téléphone). */
     val checklist: List<ChecklistItem> = emptyList(),
     val checklistError: FormError? = null,
@@ -255,7 +257,9 @@ class TaskFormViewModel(
     /** Reporter en un geste (cette occurrence, heure conservée). */
     fun postpone(date: LocalDate) = execute { o -> repository.move(o.id, date) }
 
-    private fun deleteWithScope(scope: EditScope) = execute { o -> repository.delete(o, scope) }
+    private fun deleteWithScope(scope: EditScope) = execute { o ->
+        repository.delete(o, scope).also { if (it == OpResult.Ok) _state.update { s -> s.copy(deleted = true) } }
+    }
 
     private fun execute(op: suspend (Occurrence) -> OpResult) {
         val o = _state.value.original ?: return

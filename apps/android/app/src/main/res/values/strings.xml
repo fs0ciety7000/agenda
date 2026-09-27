@@ -296,4 +296,8 @@
     <string name="widget_week_name">Semaine</string>
     <string name="widget_week_description">Les tâches des 7 prochains jours, à cocher depuis l\'écran d\'accueil.</string>
     <string name="widget_week_empty">Rien de prévu cette semaine.</string>
+    <string name="task_completed_snack">« %1$s » faite</string>
+    <string name="task_deleted">Tâche supprimée</string>
+    <string name="task_restored">Tâche restaurée</string>
+    <string name="task_restore_failed">Impossible d\'annuler la suppression.</string>
 </resources>

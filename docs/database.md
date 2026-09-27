@@ -90,7 +90,7 @@ pertinent pour Google) : `syncedVersion < syncVersion` ⇔ travail à faire.
 |---|---|
 | `Notification` | Notification in-app (type, payload JSON minimal, `readAt`) |
 | `NotificationPreference` | Par membre et par type : canaux (in-app, push, email), délai de rappel |
-| `ActivityLog` | Journal métier (qui a coché/modifié quoi) — rétention 12 mois |
+| `ActivityLog` | Journal métier (qui a coché/modifié/supprimé quoi), titre au moment de l'action, `personal` = visible par son seul auteur ; sert aussi de corbeille (restauration 30 j) — rétention 12 mois |
 | `IdempotencyKey` | Rejeu sûr des requêtes Android offline — TTL 24 h |
 
 Post‑MVP : `TaskTemplate` (modèles de tâches pré-remplis), `PushDevice` (tokens FCM).
