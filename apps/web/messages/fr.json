@@ -2,7 +2,8 @@
   "app": {
     "name": "Agenda G & N",
     "skipToContent": "Aller au contenu",
-    "privacy": "Politique de confidentialité"
+    "privacy": "Politique de confidentialité",
+    "about": "À propos"
   },
   "nav": {
     "today": "Aujourd'hui",
@@ -644,5 +645,17 @@
     "skipped": "Sautée",
     "notDone": "Pas faite",
     "formerMember": "Ancien membre"
+  },
+  "about": {
+    "metaTitle": "Agenda G & N · Les tâches du foyer, à deux",
+    "tagline": "Les tâches du foyer, partagées à deux.",
+    "intro": "Agenda G & N est une application privée qui aide un foyer à se répartir les tâches ménagères : qui sort les poubelles, qui fait les courses, qui appelle le garage. Elle existe en site web et en application Android.",
+    "featuresTitle": "Ce que fait l'application",
+    "features": "Liste « Aujourd'hui » : en retard, du jour, de la semaine.\nAjout rapide en langage naturel (« Sortir les poubelles demain 19h »), aussi à la voix.\nTâches récurrentes avec tour de rôle entre les membres du foyer.\nListe de courses partagée, mise à jour en temps réel.\nRappels et notifications quand l'autre vous confie une tâche.",
+    "googleTitle": "Pourquoi l'application demande l'accès à Google",
+    "google": "Connexion avec Google (facultative) : pour se connecter sans mot de passe. L'application reçoit uniquement votre nom, votre adresse e-mail et votre identifiant Google.\nGoogle Calendar (facultatif) : pour que les tâches du foyer apparaissent dans un calendrier Google partagé, sur tous vos appareils. L'application lit la liste de vos calendriers pour que vous choisissiez le calendrier partagé, puis crée, modifie et supprime uniquement les événements correspondant à vos tâches. Elle ne lit pas vos autres événements.\nLes données reçues de Google ne sont jamais vendues, partagées ni utilisées pour de la publicité.",
+    "privacyLink": "Politique de confidentialité",
+    "login": "Se connecter",
+    "footer": "Application personnelle, gratuite et sans publicité."
   }
 }

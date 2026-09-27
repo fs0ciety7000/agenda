@@ -52,17 +52,18 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
 
 ## Documentation
 
-| Document                                          | Contenu                                                   |
-| ------------------------------------------------- | --------------------------------------------------------- |
-| [Exigences produit](docs/product-requirements.md) | Vision, user stories, décisions                           |
-| [Architecture](docs/architecture.md)              | Choix techniques (ADR), sécurité, RGPD, infra             |
-| [Base de données](docs/database.md)               | Modèle, récurrence, fuseaux, index                        |
-| [Google Calendar](docs/google-calendar.md)        | OAuth, stratégie de synchronisation, erreurs              |
-| [Design system](docs/design-system.md)            | Tokens, composants, accessibilité                         |
-| [Application Android](docs/android.md)            | Hors ligne, installation, mises à jour, Firebase, recette |
-| [Google Play](docs/play-store.md)                 | Publication, fiche, sécurité des données                  |
-| [Déploiement](docs/deployment.md)                 | Coolify (Docker Compose) + Cloudflare, sauvegardes        |
-| [Roadmap](docs/roadmap.md)                        | Phases livrées, risques                                   |
+| Document                                                | Contenu                                                   |
+| ------------------------------------------------------- | --------------------------------------------------------- |
+| [Exigences produit](docs/product-requirements.md)       | Vision, user stories, décisions                           |
+| [Architecture](docs/architecture.md)                    | Choix techniques (ADR), sécurité, RGPD, infra             |
+| [Base de données](docs/database.md)                     | Modèle, récurrence, fuseaux, index                        |
+| [Google Calendar](docs/google-calendar.md)              | OAuth, stratégie de synchronisation, erreurs              |
+| [Vérification OAuth](docs/google-oauth-verification.md) | Faire valider l'app Google (autres foyers)                |
+| [Design system](docs/design-system.md)                  | Tokens, composants, accessibilité                         |
+| [Application Android](docs/android.md)                  | Hors ligne, installation, mises à jour, Firebase, recette |
+| [Google Play](docs/play-store.md)                       | Publication, fiche, sécurité des données                  |
+| [Déploiement](docs/deployment.md)                       | Coolify (Docker Compose) + Cloudflare, sauvegardes        |
+| [Roadmap](docs/roadmap.md)                              | Phases livrées, risques                                   |
 
 ## Structure
 

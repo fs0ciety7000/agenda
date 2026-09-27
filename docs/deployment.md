@@ -289,7 +289,8 @@ compte Google du foyer :
    Google invalide les autorisations au bout de 7 jours et la synchro s'arrêterait chaque semaine
    (risque R1). Sans vérification Google, l'écran de consentement affiche « Google n'a pas validé
    cette application » : cliquer *Paramètres avancés → Accéder à Agenda G & N* (normal pour une
-   app personnelle, limite de 100 utilisateurs).
+   app personnelle, limite de 100 utilisateurs). Pour ouvrir l'app à d'autres foyers : faire
+   vérifier l'app, cf. [google-oauth-verification.md](google-oauth-verification.md).
 4. **Clients → Create client → Web application** :
    - Authorized JavaScript origins : `https://agenda.fs0ciety.org`
    - Authorized redirect URIs (exactement, sans barre finale) :

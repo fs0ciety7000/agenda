@@ -18,6 +18,10 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
         />
         {children}
         <p className="mt-10 text-center text-[0.8125rem] text-text-muted">
+          <Link href="/about" className="underline-offset-4 hover:underline">
+            {t('about')}
+          </Link>
+          {' · '}
           <Link href="/privacy" className="underline-offset-4 hover:underline">
             {t('privacy')}
           </Link>

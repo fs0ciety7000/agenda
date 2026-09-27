@@ -2,7 +2,8 @@
   "app": {
     "name": "Agenda G & N",
     "skipToContent": "Skip to content",
-    "privacy": "Privacy policy"
+    "privacy": "Privacy policy",
+    "about": "About"
   },
   "nav": {
     "today": "Today",
@@ -644,5 +645,17 @@
     "skipped": "Skipped",
     "notDone": "Not done",
     "formerMember": "Former member"
+  },
+  "about": {
+    "metaTitle": "Agenda G & N · Household tasks, shared by two",
+    "tagline": "Household tasks, shared by two.",
+    "intro": "Agenda G & N is a private app that helps a household share its chores: who takes out the bins, who does the shopping, who calls the garage. It is available as a website and an Android app.",
+    "featuresTitle": "What the app does",
+    "features": "A \"Today\" list: overdue, today, this week.\nNatural-language quick add (\"Take out the bins tomorrow 7pm\"), by voice too.\nRecurring tasks with turn-taking between household members.\nShared shopping list, updated in real time.\nReminders, and notifications when someone assigns you a task.",
+    "googleTitle": "Why the app asks for access to Google",
+    "google": "Sign in with Google (optional): to sign in without a password. The app only receives your name, email address and Google identifier.\nGoogle Calendar (optional): so that household tasks appear in a shared Google calendar on all your devices. The app reads your list of calendars so you can pick the shared one, then creates, updates and deletes only the events that correspond to your tasks. It does not read your other events.\nData received from Google is never sold, shared or used for advertising.",
+    "privacyLink": "Privacy policy",
+    "login": "Sign in",
+    "footer": "A personal app, free and ad-free."
   }
 }
