@@ -96,8 +96,9 @@ const EnvSchema = z.object({
   /** Jeton GitHub en lecture seule (Contents: read) : requis si le dépôt est privé. */
   GITHUB_RELEASES_TOKEN: z.string().trim().optional(),
   /**
-   * Tâches par e-mail. Adresse modèle avec `{token}` (ex. `agenda+{token}@fs0ciety.org`) et secret
-   * partagé avec le Worker Cloudflare qui reçoit les e-mails. Les deux sont requis pour activer.
+   * Tâches par e-mail, reçues par Resend (docs/email-to-task.md). Adresse modèle avec `{token}`
+   * (ex. `{token}@tasks.fs0ciety.org`), secret de signature du webhook (`whsec_…`) et clé API
+   * Resend (lecture des e-mails reçus). Les trois sont requis pour activer la fonction.
    */
   INBOUND_EMAIL_ADDRESS: z.preprocess(
     (v) => (v === '' ? undefined : v),
@@ -107,10 +108,8 @@ const EnvSchema = z.object({
       .regex(/^[^@\s]*\{token\}[^@\s]*@[^@\s]+$/, 'must contain {token} before @')
       .optional(),
   ),
-  INBOUND_EMAIL_SECRET: z.preprocess(
-    (v) => (v === '' ? undefined : v),
-    z.string().min(32).optional(),
-  ),
+  RESEND_WEBHOOK_SECRET: z.preprocess((v) => (v === '' ? undefined : v), z.string().optional()),
+  RESEND_API_KEY: z.preprocess((v) => (v === '' ? undefined : v), z.string().optional()),
   /** Inscriptions ouvertes. À passer à false une fois les membres du foyer inscrits. */
   REGISTRATION_ENABLED: z
     .enum(['true', 'false'])

@@ -67,7 +67,7 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
 | [Design system](docs/design-system.md)                  | Tokens, composants, accessibilité                         |
 | [Application Android](docs/android.md)                  | Hors ligne, installation, mises à jour, Firebase, recette |
 | [Google Play](docs/play-store.md)                       | Publication, fiche, sécurité des données                  |
-| [Tâches par e-mail](docs/email-to-task.md)              | Adresse personnelle, Worker Cloudflare                    |
+| [Tâches par e-mail](docs/email-to-task.md)              | Adresse personnelle, réception par Resend                 |
 | [Déploiement](docs/deployment.md)                       | Coolify (Docker Compose) + Cloudflare, sauvegardes        |
 | [Roadmap](docs/roadmap.md)                              | Phases livrées, risques                                   |
 
@@ -82,7 +82,6 @@ packages/domain         Récurrence, rotation, ajout rapide, répartition (parta
 packages/contracts      Schémas Zod partagés API ↔ web
 packages/design-tokens  Tokens → CSS (web) + Tokens.kt (Android)
 packages/config         tsconfig / ESLint partagés
-infra/email-worker      Worker Cloudflare : e-mail → tâche
 infra/backup            Sauvegardes PostgreSQL
 ```
 

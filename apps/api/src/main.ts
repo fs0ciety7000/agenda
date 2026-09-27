@@ -10,7 +10,7 @@ import { env } from './config/env';
 async function main(): Promise<void> {
   const config = env();
   initErrorReporting();
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  const app = await NestFactory.create(AppModule, { bufferLogs: true, rawBody: true });
   app.useLogger(app.get(Logger));
   configureApp(app);
   if (config.NODE_ENV !== 'production') {

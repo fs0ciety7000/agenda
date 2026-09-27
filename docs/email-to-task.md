@@ -1,6 +1,6 @@
 # Tâches par e-mail
 
-Chaque membre a une **adresse personnelle** du type `agenda+3f9c…@fs0ciety.org`. Un e-mail
+Chaque membre a une **adresse personnelle** du type `3f9c…@tasks.fs0ciety.org`. Un e-mail
 transféré à cette adresse devient une tâche du foyer, créée au nom de ce membre :
 
 - le **sujet** (sans « Fwd: », « TR: »…) passe par l'ajout rapide : « Payer la facture vendredi »
@@ -16,51 +16,48 @@ peut ajouter des tâches au foyer.
 ## Fonctionnement
 
 ```
-Gmail, Outlook…  ──►  Cloudflare Email Routing  ──►  Worker « agenda-email »  ──►  POST /v1/inbound/email
-                      (MX de fs0ciety.org)            (infra/email-worker)          (secret partagé)
+Gmail, Outlook…  ──►  Resend (MX de tasks.fs0ciety.org)  ──►  webhook email.received  ──►  POST /v1/inbound/resend
+                                                                                             └► GET api.resend.com/emails/receiving/{id}
 ```
 
-- Le Worker lit le message (MIME, encodages, HTML → texte) et l'envoie à l'API avec
-  `Authorization: Bearer <INBOUND_EMAIL_SECRET>`. Pièces jointes ignorées ; message de plus de
-  5 Mo refusé.
-- Adresse inconnue ou désactivée : l'e-mail est **refusé** (l'expéditeur reçoit un avis de
-  non-remise). API indisponible : échec temporaire, le serveur d'envoi réessaie plus tard.
-- Rien n'est stocké par Cloudflare ; l'API ne garde que la tâche créée.
+- La réception se fait sur un **sous-domaine** dédié : les e-mails de `fs0ciety.org` (et les
+  enregistrements utilisés par Resend pour l'envoi) ne changent pas.
+- Le webhook est vérifié par sa **signature** (Svix, secret `whsec_…`, horodatage de moins de
+  5 minutes). Il ne contient pas le message : l'API le lit ensuite avec la clé Resend.
+- Un même e-mail livré deux fois ne crée qu'une tâche. Adresse inconnue ou désactivée : ignoré.
+  API Resend indisponible : erreur, Resend réessaie plus tard.
+- Pièces jointes ignorées. L'API ne garde que la tâche créée.
 
 ## Installation (une fois)
 
-> ⚠️ Email Routing remplace les enregistrements **MX** du domaine. Si `fs0ciety.org` reçoit
-> déjà des e-mails ailleurs (Gmail, OVH…), utilisez un **sous-domaine** dédié
-> (ex. `taches.fs0ciety.org`, proposé par Email Routing) et l'adresse
-> `agenda+{token}@taches.fs0ciety.org`.
+1. **Resend → Domains → Add domain** : `tasks.fs0ciety.org`, puis activer la **réception**
+   (*Receiving*). Resend affiche les enregistrements DNS à créer, dont un **MX** pour
+   `tasks.fs0ciety.org`.
+2. **Cloudflare → fs0ciety.org → DNS → Records** : ajouter exactement ces enregistrements
+   (proxy désactivé, « DNS only »). Rien à faire dans *Email Routing* de Cloudflare. De retour
+   dans Resend : *Verify*.
+3. **Resend → Webhooks → Add endpoint** :
+   - URL : `https://agenda.fs0ciety.org/v1/inbound/resend` ;
+   - événement : **`email.received`** uniquement ;
+   - copier le **Signing secret** (`whsec_…`).
+4. **Resend → API Keys → Create API key** : nom « Agenda — réception », permission
+   **Full access** (une clé « Sending access » ne peut pas lire les e-mails reçus).
+5. **Coolify** (service `api`), puis **Redeploy** :
+   - `INBOUND_EMAIL_ADDRESS` = `{token}@tasks.fs0ciety.org` (littéralement `{token}`) ;
+   - `RESEND_WEBHOOK_SECRET` = le secret `whsec_…` ;
+   - `RESEND_API_KEY` = la clé créée à l'étape 4.
 
-1. **Coolify** (service `api`) :
-   - `INBOUND_EMAIL_ADDRESS` = `agenda+{token}@fs0ciety.org` (littéralement `{token}`) ;
-   - `INBOUND_EMAIL_SECRET` = le résultat de `openssl rand -hex 32` ;
-   - redéployer. La section « Ajouter par e-mail » apparaît dans les Réglages.
-2. **Cloudflare → votre domaine → Email → Email Routing** : *Enable* (Cloudflare ajoute les
-   enregistrements MX et SPF). Onglet *Settings* : activer **Subaddressing** (les adresses
-   `agenda+…@` sont alors livrées à la règle de `agenda@`).
-3. **Déployer le Worker** (depuis un ordinateur avec Node) :
-
-   ```bash
-   cd infra/email-worker
-   npx wrangler@4 login
-   npx wrangler@4 secret put INBOUND_EMAIL_SECRET   # même valeur que dans Coolify
-   npx wrangler@4 deploy
-   ```
-
-   Si l'app n'est pas sur `agenda.fs0ciety.org`, modifier `API_URL` dans `wrangler.toml`.
-4. **Email Routing → Routing rules → Create address** : adresse `agenda@fs0ciety.org`, action
-   **Send to a Worker**, Worker `agenda-email`.
-5. Tester : Réglages → Ajouter par e-mail → *Créer mon adresse*, puis transférer un e-mail à
-   cette adresse. La tâche apparaît en quelques secondes (temps réel).
+   La section « Ajouter par e-mail » apparaît alors dans les Réglages.
+6. Tester : Réglages → Ajouter par e-mail → *Créer mon adresse*, puis transférer un e-mail à
+   cette adresse. La tâche apparaît en quelques secondes.
 
 ## Dépannage
 
 | Symptôme | Cause probable |
 |---|---|
-| Pas de section dans les Réglages | `INBOUND_EMAIL_ADDRESS` ou `INBOUND_EMAIL_SECRET` absent (ou secret de moins de 32 caractères) |
-| Avis de non-remise « Adresse inconnue » | Adresse remplacée ou désactivée ; ou subaddressing non activé |
-| Rien n'arrive, pas d'avis | Règle Email Routing absente ; voir *Workers → agenda-email → Logs* |
-| `API 401` dans les logs du Worker | Secret différent entre Coolify et le Worker |
+| Pas de section dans les Réglages | Une des trois variables manque dans Coolify (ou pas redéployé) |
+| Resend → Webhooks : réponses `401` | `RESEND_WEBHOOK_SECRET` différent du *Signing secret* de l'endpoint |
+| Réponses `502` | `RESEND_API_KEY` invalide ou en « Sending access » |
+| Réponses `403` ou page Cloudflare | Règle WAF / *Bot Fight Mode* qui bloque les POST de Resend : autoriser `/v1/inbound/resend` |
+| Réponse `{"ignored":"address"}` | Adresse remplacée ou désactivée dans les Réglages |
+| Rien dans Resend → *Receiving* | MX de `tasks.fs0ciety.org` absent ou non vérifié |
