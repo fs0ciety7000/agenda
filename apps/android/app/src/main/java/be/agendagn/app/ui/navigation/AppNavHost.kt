@@ -58,6 +58,7 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import be.agendagn.app.ui.absences.AbsencesScreen
+import be.agendagn.app.ui.comments.CommentsSection
 import be.agendagn.app.ui.absences.AbsencesViewModel
 import be.agendagn.app.ui.history.HistoryScreen
 import be.agendagn.app.ui.history.HistoryViewModel
@@ -257,6 +258,7 @@ private fun MainScaffold(
                         "shopping" -> launch { container.repository.refreshShopping() }
                         "tasks" -> launch { container.repository.refresh() }
                         "notifications" -> launch { container.activityNotifier.poll(hid) }
+                        "comments" -> container.comments.changed()
                     }
                 }
             } finally {
@@ -664,6 +666,12 @@ private fun TaskForm(
             }
         },
         uploading = uploading,
+        comments = {
+            val o = form.original
+            if (o != null && !o.isLocal) {
+                CommentsSection(container.comments, o.id, state.household?.members.orEmpty(), state.myMemberId, onMessage)
+            }
+        },
         suggestion = state.household?.let { h ->
             Agenda.suggestAssignee(Agenda.weekBalance(state.occurrences, form.draft.date ?: state.today, h.members))
         },

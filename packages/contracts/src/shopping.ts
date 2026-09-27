@@ -29,5 +29,5 @@ export const UpdateShoppingItemInput = z
 export type UpdateShoppingItemInput = z.infer<typeof UpdateShoppingItemInput>;
 
 /** Ce qui a changé dans le foyer (événements temps réel, `GET …/events`). */
-export const RealtimeTopic = z.enum(['tasks', 'shopping', 'notifications']);
+export const RealtimeTopic = z.enum(['tasks', 'shopping', 'notifications', 'comments']);
 export type RealtimeTopic = z.infer<typeof RealtimeTopic>;

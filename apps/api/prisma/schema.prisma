@@ -120,11 +120,29 @@ model Household {
   calendarLink   HouseholdCalendarLink?
   activity       ActivityLog[]
   absences       MemberAbsence[]
+  comments       TaskComment[]
 }
 
 enum HouseholdRole {
   OWNER
   MEMBER
+}
+
+/// Commentaire sur une tâche (commun à toutes ses occurrences). Visible par ceux qui voient la tâche.
+model TaskComment {
+  id          String   @id @default(uuid()) @db.Uuid
+  householdId String   @db.Uuid
+  taskId      String   @db.Uuid
+  /// null = ancien membre supprimé.
+  authorId    String?  @db.Uuid
+  body        String   @db.VarChar(2000)
+  createdAt   DateTime @default(now())
+
+  household Household        @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  task      Task             @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  author    HouseholdMember? @relation(fields: [authorId], references: [id], onDelete: SetNull)
+
+  @@index([taskId, createdAt])
 }
 
 /// Mode absence : du startDate au endDate inclus (dates locales du foyer), les tâches partagées
@@ -170,6 +188,7 @@ model HouseholdMember {
   sentInvitations      HouseholdInvitation[]
   activity             ActivityLog[]
   absences             MemberAbsence[]
+  comments             TaskComment[]
 
   @@unique([householdId, userId])
   @@index([userId])
@@ -248,6 +267,7 @@ model Task {
   series      TaskSeries[]
   occurrences TaskOccurrence[]
   attachments TaskAttachment[]
+  comments    TaskComment[]
 
   @@index([householdId, deletedAt])
   @@index([categoryId])
@@ -556,6 +576,7 @@ enum NotificationType {
   TASK_ASSIGNED
   ASSIGNEE_CHANGED
   CALENDAR_SYNC_FAILED
+  TASK_COMMENT
 }
 
 model Notification {

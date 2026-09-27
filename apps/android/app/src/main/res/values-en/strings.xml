@@ -343,4 +343,12 @@
     <string name="absence_failed">Not possible right now (connection?)</string>
     <string name="activity_absence_created">recorded an absence for</string>
     <string name="activity_absence_deleted">cancelled the absence of</string>
+    <string name="comments_title">Comments</string>
+    <string name="comments_offline">Comments are visible once online.</string>
+    <string name="comment_placeholder">Add a comment</string>
+    <string name="comment_send">Send comment</string>
+    <string name="comment_delete">Delete my comment</string>
+    <string name="comment_delete_confirm">Delete</string>
+    <string name="comment_failed">Comment not sent (connection?)</string>
+    <string name="activity_commented">%1$s commented on “%2$s”</string>
 </resources>

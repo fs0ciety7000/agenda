@@ -151,6 +151,8 @@ export const OccurrenceDto = z.object({
   attachments: z.array(AttachmentDto),
   /** Tâche récurrente : dernière fois qu'elle a été faite (« fait il y a 5 semaines par Grace »). */
   lastDone: z.object({ at: z.string(), memberId: z.uuid().nullable() }).nullish(),
+  /** Nombre de commentaires sur la tâche. */
+  commentCount: z.number().int().optional(),
 });
 export type OccurrenceDto = z.infer<typeof OccurrenceDto>;
 

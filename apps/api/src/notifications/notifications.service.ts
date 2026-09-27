@@ -12,7 +12,11 @@ import type { HouseholdContext } from '../common/request-context';
 import { PrismaService } from '../prisma/prisma.service';
 import { PushService } from './push.service';
 
-export const NOTIFICATION_KINDS: NotificationKind[] = ['TASK_ASSIGNED', 'CALENDAR_SYNC_FAILED'];
+export const NOTIFICATION_KINDS: NotificationKind[] = [
+  'TASK_ASSIGNED',
+  'CALENDAR_SYNC_FAILED',
+  'TASK_COMMENT',
+];
 const DEFAULT_PREF = { inApp: true, push: true };
 
 interface AssignedPayload {
@@ -40,6 +44,26 @@ export class NotificationsService {
     memberIds: string[],
     recurring: boolean,
   ): Promise<void> {
+    await this.notifyTask(ctx, 'TASK_ASSIGNED', occurrenceId, memberIds, recurring);
+  }
+
+  /** « Grace a commenté « Vidange » » (jamais le texte du commentaire dans la notification). */
+  async notifyComment(
+    ctx: HouseholdContext,
+    occurrenceId: string,
+    memberIds: string[],
+    recurring: boolean,
+  ): Promise<void> {
+    await this.notifyTask(ctx, 'TASK_COMMENT', occurrenceId, memberIds, recurring);
+  }
+
+  private async notifyTask(
+    ctx: HouseholdContext,
+    type: 'TASK_ASSIGNED' | 'TASK_COMMENT',
+    occurrenceId: string,
+    memberIds: string[],
+    recurring: boolean,
+  ): Promise<void> {
     const targets = [...new Set(memberIds)].filter((id) => id !== ctx.memberId);
     if (!targets.length) return;
     const members = await this.prisma.householdMember.findMany({
@@ -49,7 +73,7 @@ export class NotificationsService {
         leftAt: null,
         userId: { not: null },
       },
-      select: { id: true, preferences: { where: { type: 'TASK_ASSIGNED' } } },
+      select: { id: true, preferences: { where: { type } } },
     });
     const payload: AssignedPayload = { occurrenceId, byMemberId: ctx.memberId, recurring };
     const data = members
@@ -57,7 +81,7 @@ export class NotificationsService {
       .filter(({ pref }) => pref.inApp || pref.push)
       .map(({ member, pref }) => ({
         memberId: member.id,
-        type: 'TASK_ASSIGNED' as const,
+        type,
         payload: { ...payload, push: pref.push } as unknown as Prisma.InputJsonValue,
       }));
     if (!data.length) return;
@@ -94,7 +118,7 @@ export class NotificationsService {
     ]);
 
     const assigned = rows
-      .filter((r) => r.type === 'TASK_ASSIGNED')
+      .filter((r) => r.type === 'TASK_ASSIGNED' || r.type === 'TASK_COMMENT')
       .map((r) => r.payload as unknown as AssignedPayload);
     const [occurrences, members] = await Promise.all([
       this.prisma.taskOccurrence.findMany({
@@ -117,15 +141,17 @@ export class NotificationsService {
     const items: NotificationDto[] = rows.map((r) => {
       const payload = r.payload as Record<string, unknown>;
       const occ =
-        r.type === 'TASK_ASSIGNED' ? occById.get(payload.occurrenceId as string) : undefined;
+        r.type === 'TASK_ASSIGNED' || r.type === 'TASK_COMMENT'
+          ? occById.get(payload.occurrenceId as string)
+          : undefined;
       return {
         id: r.id,
         type: r.type as NotificationKind,
         createdAt: r.createdAt.toISOString(),
         readAt: r.readAt?.toISOString() ?? null,
         push:
-          r.type === 'TASK_ASSIGNED'
-            ? payload.push !== false && prefs.TASK_ASSIGNED.push
+          r.type === 'TASK_ASSIGNED' || r.type === 'TASK_COMMENT'
+            ? payload.push !== false && prefs[r.type].push
             : prefs[r.type as NotificationKind].push,
         occurrenceId: occ?.id ?? null,
         title: occ ? (occ.titleOverride ?? occ.task.title) : null,

@@ -3,6 +3,8 @@ import { HouseholdsModule } from '../households/households.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { AbsencesController } from './absences.controller';
 import { AbsencesService } from './absences.service';
+import { CommentsController } from './comments.controller';
+import { CommentsService } from './comments.service';
 import { ActivityController } from './activity.controller';
 import { AttachmentsController } from './attachments.controller';
 import { AttachmentsService } from './attachments.service';
@@ -21,6 +23,7 @@ import { TemplatesService } from './templates.service';
     ActivityController,
     AttachmentsController,
     AbsencesController,
+    CommentsController,
   ],
   providers: [
     TasksService,
@@ -29,6 +32,7 @@ import { TemplatesService } from './templates.service';
     ActivityService,
     AttachmentsService,
     AbsencesService,
+    CommentsService,
   ],
   exports: [SeriesService, TasksService, AttachmentsService],
 })

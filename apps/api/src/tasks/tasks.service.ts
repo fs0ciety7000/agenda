@@ -52,6 +52,7 @@ const occurrenceInclude = {
         orderBy: { createdAt: 'asc' },
         select: { id: true, filename: true, contentType: true, size: true },
       },
+      _count: { select: { comments: true } },
     },
   },
   assignees: { select: { memberId: true } },
@@ -1443,6 +1444,7 @@ function toDto(o: OccurrenceRow, lastDone?: Map<string, OccurrenceDto['lastDone'
     checklist: o.checklist,
     attachments: o.task.attachments,
     lastDone: (o.seriesId && lastDone?.get(o.seriesId)) || null,
+    commentCount: o.task._count.comments,
   };
 }
 

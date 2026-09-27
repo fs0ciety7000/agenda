@@ -240,7 +240,8 @@
       "error": "Impossible de reporter la tâche."
     },
     "restoredToast": "Tâche restaurée.",
-    "restoreError": "Impossible d'annuler la suppression."
+    "restoreError": "Impossible d'annuler la suppression.",
+    "commentCount": "{count, plural, one {# commentaire} other {# commentaires}}"
   },
   "balance": {
     "bothOfUs": "À deux",
@@ -552,7 +553,9 @@
     "assigned": "{by} vous a confié « {title} »",
     "assignedRecurring": "{by} vous a inclus dans « {title} » (récurrente)",
     "assignedDeleted": "{by} vous avait confié une tâche, supprimée depuis",
-    "calendarFailed": "La synchronisation avec Google Calendar est interrompue. Ouvrez les Réglages."
+    "calendarFailed": "La synchronisation avec Google Calendar est interrompue. Ouvrez les Réglages.",
+    "commented": "{by} a commenté « {title} »",
+    "commentedDeleted": "{by} a commenté une tâche, supprimée depuis"
   },
   "notificationSettings": {
     "title": "Préférences de notification",
@@ -561,7 +564,8 @@
     "hint": "« Sur le téléphone » : notifications de l'app Android (vérifiées toutes les heures et à l'ouverture). Les rappels avant une tâche se règlent dans l'app Android.",
     "types": {
       "TASK_ASSIGNED": "Quelqu'un me confie une tâche",
-      "CALENDAR_SYNC_FAILED": "Problème de synchronisation Google Calendar"
+      "CALENDAR_SYNC_FAILED": "Problème de synchronisation Google Calendar",
+      "TASK_COMMENT": "Quelqu'un commente une de mes tâches"
     },
     "status": {
       "title": "Notifications instantanées sur le téléphone : pas encore actives",
@@ -787,6 +791,15 @@
     "to": "Au",
     "add": "Ajouter",
     "banner": "{name} : absence jusqu'au {until}, ses tâches partagées sont confiées à l'autre.",
+    "formerMember": "Ancien membre"
+  },
+  "comments": {
+    "title": "Commentaires",
+    "placeholder": "Ajouter un commentaire…",
+    "send": "Envoyer le commentaire",
+    "delete": "Supprimer mon commentaire",
+    "confirmDelete": "Supprimer ce commentaire ?",
+    "error": "Impossible d'envoyer le commentaire.",
     "formerMember": "Ancien membre"
   }
 }

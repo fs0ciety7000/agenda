@@ -240,7 +240,8 @@
       "error": "Couldn't postpone the task."
     },
     "restoredToast": "Task restored.",
-    "restoreError": "Couldn't undo the deletion."
+    "restoreError": "Couldn't undo the deletion.",
+    "commentCount": "{count, plural, one {# comment} other {# comments}}"
   },
   "balance": {
     "bothOfUs": "Together",
@@ -552,7 +553,9 @@
     "assigned": "{by} gave you “{title}”",
     "assignedRecurring": "{by} included you in “{title}” (recurring)",
     "assignedDeleted": "{by} gave you a task that has since been deleted",
-    "calendarFailed": "Google Calendar sync is interrupted. Open Settings."
+    "calendarFailed": "Google Calendar sync is interrupted. Open Settings.",
+    "commented": "{by} commented on “{title}”",
+    "commentedDeleted": "{by} commented on a task that has since been deleted"
   },
   "notificationSettings": {
     "title": "Notification preferences",
@@ -561,7 +564,8 @@
     "hint": "“On the phone”: Android app notifications (checked hourly and when opening the app). Reminders before a task are set in the Android app.",
     "types": {
       "TASK_ASSIGNED": "Someone gives me a task",
-      "CALENDAR_SYNC_FAILED": "Google Calendar sync problem"
+      "CALENDAR_SYNC_FAILED": "Google Calendar sync problem",
+      "TASK_COMMENT": "Someone comments on one of my tasks"
     },
     "status": {
       "title": "Instant phone notifications: not active yet",
@@ -787,6 +791,15 @@
     "to": "To",
     "add": "Add",
     "banner": "{name} is away until {until}: their shared tasks go to the other person.",
+    "formerMember": "Former member"
+  },
+  "comments": {
+    "title": "Comments",
+    "placeholder": "Add a comment…",
+    "send": "Send comment",
+    "delete": "Delete my comment",
+    "confirmDelete": "Delete this comment?",
+    "error": "Couldn't send the comment.",
     "formerMember": "Former member"
   }
 }

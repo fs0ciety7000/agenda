@@ -48,7 +48,7 @@ export class PrivacyService {
       },
     });
     const memberIds = user.memberships.map((m) => m.id);
-    const [createdTasks, assigned, shopping, attachments] = await Promise.all([
+    const [createdTasks, assigned, shopping, attachments, comments] = await Promise.all([
       this.prisma.task.findMany({
         where: { createdById: { in: memberIds }, deletedAt: null },
         include: {
@@ -95,6 +95,11 @@ export class PrivacyService {
           createdAt: true,
           task: { select: { title: true } },
         },
+        orderBy: { createdAt: 'asc' },
+      }),
+      this.prisma.taskComment.findMany({
+        where: { authorId: { in: memberIds } },
+        select: { body: true, createdAt: true, task: { select: { title: true } } },
         orderBy: { createdAt: 'asc' },
       }),
     ]);
@@ -147,6 +152,7 @@ export class PrivacyService {
         size: a.size,
         createdAt: a.createdAt,
       })),
+      comments: comments.map((c) => ({ task: c.task.title, body: c.body, createdAt: c.createdAt })),
     };
   }
 

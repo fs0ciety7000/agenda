@@ -115,6 +115,8 @@ fun TaskFormScreen(
     onDeleteAttachment: (Attachment) -> Unit = {},
     /** Envoi d'une pièce jointe en cours. */
     uploading: Boolean = false,
+    /** Fil de commentaires (tâche existante, en ligne). */
+    comments: @Composable () -> Unit = {},
 ) {
     LaunchedEffect(state.done) { if (state.done) onBack() }
     Scaffold(
@@ -299,6 +301,7 @@ fun TaskFormScreen(
                 Hint(stringResource(R.string.last_done, relativeTime(last.at), who))
             }
             state.history?.takeIf { it.items.isNotEmpty() }?.let { HistorySection(it, members) }
+            if (state.isEdit) comments()
 
             state.error?.takeIf { it != FormError.TITLE_REQUIRED }?.let { e ->
                 Text(

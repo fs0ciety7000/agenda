@@ -49,7 +49,9 @@ class ActivityNotifier(
         } catch (_: IOException) {
             return emptyList()
         }
-        val toShow = items.filter { it.push && it.readAt == null && (it.type != "TASK_ASSIGNED" || it.title != null) }
+        val toShow = items.filter {
+            it.push && it.readAt == null && (it.type == "CALENDAR_SYNC_FAILED" || it.title != null)
+        }
         toShow.forEach(::show)
         items.maxOfOrNull { it.createdAt }?.let { prefs.edit().putString(KEY_SINCE, it).apply() }
         return toShow
@@ -68,6 +70,7 @@ class ActivityNotifier(
                 n.byName ?: "?",
                 n.title ?: "",
             )
+            "TASK_COMMENT" -> context.getString(R.string.activity_commented, n.byName ?: "?", n.title ?: "")
             else -> context.getString(R.string.activity_calendar_failed)
         }
         val open = PendingIntent.getActivity(

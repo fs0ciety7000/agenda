@@ -101,6 +101,7 @@ data class OccurrenceDto(
     val checklist: List<ChecklistItemDto> = emptyList(),
     val attachments: List<AttachmentDto> = emptyList(),
     val lastDone: LastDoneDto? = null,
+    val commentCount: Int = 0,
 )
 
 @Serializable
@@ -245,3 +246,10 @@ data class AbsenceDto(val id: String, val memberId: String, val startDate: Strin
 
 @Serializable
 data class CreateAbsenceBody(val memberId: String, val startDate: String, val endDate: String)
+
+/** Commentaire sur une tâche (cf. packages/contracts/src/comments.ts). */
+@Serializable
+data class CommentDto(val id: String, val authorId: String? = null, val body: String, val createdAt: String)
+
+@Serializable
+data class CreateCommentBody(val body: String)
