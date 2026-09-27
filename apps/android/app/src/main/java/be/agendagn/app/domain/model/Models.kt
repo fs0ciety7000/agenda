@@ -110,3 +110,13 @@ data class CalendarStatus(
     val pending: Int,
     val errors: Int,
 )
+
+/** Modèle de tâches (« Ménage du samedi ») : ses tâches sont créées d'un coup. */
+data class TaskTemplate(val id: String, val name: String, val emoji: String?, val titles: List<String>) {
+    val label: String get() = listOfNotNull(emoji, name).joinToString(" ")
+}
+
+/** Historique d'une tâche récurrente : qui l'a faite, et quand. */
+data class SeriesHistory(val items: List<Item>, val doneBy: List<Pair<String, Int>>) {
+    data class Item(val date: LocalDate?, val done: Boolean, val skipped: Boolean, val completedById: String?)
+}

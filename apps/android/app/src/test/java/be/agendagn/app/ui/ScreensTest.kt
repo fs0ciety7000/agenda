@@ -269,4 +269,22 @@ class ScreensTest {
         assertEquals(listOf("Lait"), toggled)
         shot("shopping")
     }
+
+    @Test
+    fun ajout_rapide_depuis_un_modele() {
+        val applied = mutableListOf<Pair<String, java.time.LocalDate?>>()
+        val template = be.agendagn.app.domain.model.TaskTemplate("t1", "Ménage du samedi", "🧹", listOf("Aspirateur", "Salle de bain"))
+        screen {
+            be.agendagn.app.ui.quickadd.QuickAddSheet(
+                state = be.agendagn.app.ui.main.QuickAddState(), online = true, members = state.members, today = TODAY,
+                onText = {}, onSubmit = {}, onFullForm = {}, onDismiss = {},
+                templates = listOf(template), onApplyTemplate = { t, d -> applied += t.id to d },
+            )
+        }
+        compose.onNodeWithText("🧹 Ménage du samedi").performClick()
+        compose.onNodeWithText("Aspirateur · Salle de bain").assertIsDisplayed()
+        compose.onNodeWithText("Demain").performClick()
+        compose.onNodeWithText("Créer les 2 tâches").performClick()
+        assertEquals(listOf("t1" to TODAY.plusDays(1)), applied)
+    }
 }

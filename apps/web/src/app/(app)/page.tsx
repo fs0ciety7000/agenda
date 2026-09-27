@@ -11,6 +11,7 @@ import { CalendarBanner } from '@/components/app/calendar-banner';
 import { useSession } from '@/components/app/household-context';
 import { NotificationBell } from '@/components/app/notification-bell';
 import { QuickAdd } from '@/components/app/quick-add';
+import { ApplyTemplateButton } from '@/components/app/templates';
 import { TaskList } from '@/components/app/task-row';
 import { useTaskDialog } from '@/components/app/use-task-dialog';
 import { SectionTitle } from '@/components/ui/card';
@@ -69,7 +70,10 @@ export default function TodayPage() {
 
       <CalendarBanner />
 
-      <QuickAdd onMoreOptions={dialog.openNew} />
+      <div className="flex flex-col gap-1">
+        <QuickAdd onMoreOptions={dialog.openNew} />
+        <ApplyTemplateButton />
+      </div>
 
       {(overdueQ.data?.length ?? 0) > 0 && (
         <section aria-labelledby="overdue-heading" className="flex flex-col gap-3">

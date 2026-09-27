@@ -50,6 +50,7 @@ import {
 import { ChecklistEditor, type ChecklistRow } from './checklist';
 import { useSession } from './household-context';
 import { RecurrenceFields } from './recurrence-fields';
+import { SeriesHistory } from './series-history';
 
 export interface TaskDraft {
   title?: string;
@@ -535,6 +536,8 @@ export function TaskFormDialog({
                 </span>
               </label>
             )}
+
+            {occurrence?.seriesId && <SeriesHistory seriesId={occurrence.seriesId} />}
 
             {error && (
               <p role="alert" className="rounded-md bg-danger/10 px-3 py-2 text-sm text-danger">

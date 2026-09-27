@@ -115,6 +115,7 @@ model Household {
   occurrences    TaskOccurrence[]
   checklistItems ChecklistItem[]
   shoppingItems  ShoppingItem[]
+  templates      TaskTemplate[]
   calendarLink   HouseholdCalendarLink?
   activity       ActivityLog[]
 }
@@ -360,6 +361,23 @@ model ChecklistItem {
   occurrence TaskOccurrence @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
 
   @@index([occurrenceId, position])
+}
+
+/// Modèle de tâches (« Ménage du samedi ») : plusieurs tâches créées d'un coup.
+model TaskTemplate {
+  id          String   @id @default(uuid()) @db.Uuid
+  householdId String   @db.Uuid
+  name        String   @db.VarChar(80)
+  emoji       String?  @db.VarChar(8)
+  /// TemplateItem[] (packages/contracts), validé à l'écriture.
+  items       Json
+  createdById String?  @db.Uuid
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@index([householdId])
 }
 
 /// Liste de courses permanente du foyer. `id` peut être choisi par le client (ajout idempotent).

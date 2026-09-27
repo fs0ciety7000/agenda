@@ -160,6 +160,8 @@ private fun MainScaffold(
     val scope = rememberCoroutineScope()
 
     var showQuickAdd by rememberSaveable { mutableStateOf(false) }
+    var templates by remember { mutableStateOf<List<be.agendagn.app.domain.model.TaskTemplate>?>(null) }
+    LaunchedEffect(showQuickAdd) { if (showQuickAdd) templates = container.repository.templates() ?: templates }
     var filter by remember { mutableStateOf(Agenda.Filter()) }
     var month by rememberSaveable { mutableStateOf(YearMonth.now().toString()) }
     var selectedDay by rememberSaveable { mutableStateOf<String?>(null) }
@@ -425,6 +427,20 @@ private fun MainScaffold(
                 nav.navigate("new")
             },
             onDismiss = { showQuickAdd = false },
+            templates = templates,
+            onApplyTemplate = { template, date ->
+                showQuickAdd = false
+                scope.launch {
+                    val result = container.repository.applyTemplate(template, date)
+                    snackbar.showSnackbar(
+                        if (result == OpResult.Ok) {
+                            context.resources.getQuantityString(R.plurals.templates_applied, template.titles.size, template.titles.size, template.name)
+                        } else {
+                            moveErrors[result] ?: genericError
+                        },
+                    )
+                }
+            },
         )
     }
 }

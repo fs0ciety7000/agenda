@@ -14,6 +14,7 @@ import {
   type RecurrencePreviewItem,
   type RotationInput,
   type SeriesDto,
+  type SeriesHistoryDto,
   type StatsDto,
   type StatsQuery,
   type UpdateChecklistItemInput,
@@ -206,6 +207,55 @@ export class TasksService {
       .map((r) => this.series.toDto(r, next.get(r.id) ?? null))
       .filter((s) => s.nextDate !== null)
       .sort((a, b) => a.nextDate!.localeCompare(b.nextDate!));
+  }
+
+  /** Qui a fait une tâche récurrente, et quand (les 30 dernières fois, passées ou faites). */
+  async seriesHistory(ctx: HouseholdContext, id: string): Promise<SeriesHistoryDto> {
+    const series = await this.prisma.taskSeries.findFirst({
+      where: { id, task: this.visibleTask(ctx) },
+      select: { id: true },
+    });
+    if (!series) throw notFound();
+    const today = todayIn(await this.timezone(ctx));
+    const [rows, counts] = await Promise.all([
+      this.prisma.taskOccurrence.findMany({
+        where: {
+          seriesId: id,
+          OR: [
+            { status: 'DONE' },
+            { status: { in: ['TODO', 'SKIPPED'] }, date: { lt: toDbDate(today) } },
+          ],
+        },
+        select: {
+          id: true,
+          date: true,
+          status: true,
+          completedAt: true,
+          completedById: true,
+          assignees: { select: { memberId: true } },
+        },
+        orderBy: [{ date: 'desc' }, { completedAt: 'desc' }],
+        take: 30,
+      }),
+      this.prisma.taskOccurrence.groupBy({
+        by: ['completedById'],
+        where: { seriesId: id, status: 'DONE', completedById: { not: null } },
+        _count: { _all: true },
+      }),
+    ]);
+    return {
+      items: rows.map((o) => ({
+        occurrenceId: o.id,
+        date: fromDbDate(o.date),
+        status: o.status === 'DONE' ? 'DONE' : o.status === 'SKIPPED' ? 'SKIPPED' : 'TODO',
+        completedAt: o.completedAt?.toISOString() ?? null,
+        completedById: o.completedById,
+        assigneeIds: o.assignees.map((a) => a.memberId).sort(),
+      })),
+      doneBy: counts
+        .map((c) => ({ memberId: c.completedById!, count: c._count._all }))
+        .sort((a, b) => b.count - a.count),
+    };
   }
 
   async getSeries(ctx: HouseholdContext, id: string): Promise<SeriesDto> {

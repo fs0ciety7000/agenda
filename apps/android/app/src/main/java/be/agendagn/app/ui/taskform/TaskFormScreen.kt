@@ -268,6 +268,8 @@ fun TaskFormScreen(
                 if (d.date == null) Hint(stringResource(R.string.field_sync_needs_date))
             }
 
+            state.history?.takeIf { it.items.isNotEmpty() }?.let { HistorySection(it, members) }
+
             state.error?.takeIf { it != FormError.TITLE_REQUIRED }?.let { e ->
                 Text(
                     stringResource(
@@ -573,6 +575,39 @@ private fun PostponeRow(current: LocalDate, onPostpone: (LocalDate) -> Unit) {
         ).filter { it.first != current }.forEach { (date, label) ->
             OutlinedButton(onClick = { onPostpone(date) }, modifier = Modifier.heightIn(min = 48.dp)) {
                 Text(stringResource(label))
+            }
+        }
+    }
+}
+
+/** « Fait par » : les dernières fois, et combien de fois chacun l'a faite. */
+@Composable
+private fun HistorySection(history: be.agendagn.app.domain.model.SeriesHistory, members: List<Member>) {
+    val locale = currentLocale()
+    val former = stringResource(R.string.history_former_member)
+    val name = { id: String? -> members.firstOrNull { it.id == id }?.displayName ?: former }
+    val today = LocalDate.now()
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Label(stringResource(R.string.history_title))
+        if (history.doneBy.isNotEmpty()) {
+            Hint(history.doneBy.joinToString(" · ") { (id, n) -> "${name(id)} $n" })
+        }
+        history.items.take(10).forEach { item ->
+            Row(Modifier.fillMaxWidth()) {
+                Text(
+                    item.date?.let { formatShortDate(it, locale, today) } ?: "—",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(
+                    when {
+                        item.done -> stringResource(R.string.history_done_by, name(item.completedById))
+                        item.skipped -> stringResource(R.string.history_skipped)
+                        else -> stringResource(R.string.history_not_done)
+                    },
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = if (item.done) MaterialTheme.colorScheme.onSurface else MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
         }
     }

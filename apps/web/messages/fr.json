@@ -139,7 +139,8 @@
     "logoutAll": "Se déconnecter de tous les appareils",
     "categories": "Catégories",
     "privacy": "Données & confidentialité",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "templates": "Modèles de tâches"
   },
   "common": {
     "loading": "Chargement…",
@@ -606,5 +607,42 @@
     "clear": "Vider le panier",
     "remove": "Retirer « {text} »",
     "takenBy": "Pris par {name}"
+  },
+  "templates": {
+    "hint": "Plusieurs tâches créées d'un coup, par exemple « Ménage du samedi » : aspirateur, salle de bain, draps…",
+    "new": "Nouveau modèle",
+    "newTitle": "Nouveau modèle",
+    "editTitle": "Modifier le modèle",
+    "edit": "Modifier « {name} »",
+    "delete": "Supprimer « {name} »",
+    "confirmDelete": "Supprimer le modèle « {name} » ? Les tâches déjà créées restent.",
+    "emoji": "Emoji",
+    "name": "Nom",
+    "namePlaceholder": "Ménage du samedi",
+    "items": "Tâches du modèle",
+    "itemTitle": "Tâche {n}",
+    "removeItem": "Retirer la tâche {n}",
+    "addItem": "Ajouter une tâche",
+    "save": "Enregistrer",
+    "required": "Donnez un nom et au moins une tâche.",
+    "use": "Utiliser un modèle",
+    "useTitle": "Utiliser un modèle",
+    "template": "Modèle",
+    "when": "Pour quand ?",
+    "whenToday": "Aujourd'hui",
+    "whenTomorrow": "Demain",
+    "whenWeekend": "Ce week-end",
+    "whenDate": "Autre jour…",
+    "whenNone": "Sans date",
+    "date": "Jour",
+    "create": "{count, plural, one {Créer la tâche} other {Créer les # tâches}}",
+    "applied": "{count, plural, one {# tâche ajoutée} other {# tâches ajoutées}} depuis « {name} »"
+  },
+  "history": {
+    "title": "Historique",
+    "doneBy": "Fait par {name}",
+    "skipped": "Sautée",
+    "notDone": "Pas faite",
+    "formerMember": "Ancien membre"
   }
 }

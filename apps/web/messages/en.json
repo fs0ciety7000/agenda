@@ -139,7 +139,8 @@
     "logoutAll": "Sign out of all devices",
     "categories": "Categories",
     "privacy": "Data & privacy",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "templates": "Task templates"
   },
   "common": {
     "loading": "Loading…",
@@ -606,5 +607,42 @@
     "clear": "Empty the basket",
     "remove": "Remove “{text}”",
     "takenBy": "Picked up by {name}"
+  },
+  "templates": {
+    "hint": "Several tasks created at once, e.g. “Saturday cleaning”: vacuum, bathroom, sheets…",
+    "new": "New template",
+    "newTitle": "New template",
+    "editTitle": "Edit template",
+    "edit": "Edit “{name}”",
+    "delete": "Delete “{name}”",
+    "confirmDelete": "Delete the template “{name}”? Tasks already created stay.",
+    "emoji": "Emoji",
+    "name": "Name",
+    "namePlaceholder": "Saturday cleaning",
+    "items": "Template tasks",
+    "itemTitle": "Task {n}",
+    "removeItem": "Remove task {n}",
+    "addItem": "Add a task",
+    "save": "Save",
+    "required": "Give a name and at least one task.",
+    "use": "Use a template",
+    "useTitle": "Use a template",
+    "template": "Template",
+    "when": "When?",
+    "whenToday": "Today",
+    "whenTomorrow": "Tomorrow",
+    "whenWeekend": "This weekend",
+    "whenDate": "Another day…",
+    "whenNone": "No date",
+    "date": "Day",
+    "create": "{count, plural, one {Create the task} other {Create the # tasks}}",
+    "applied": "{count, plural, one {# task added} other {# tasks added}} from “{name}”"
+  },
+  "history": {
+    "title": "History",
+    "doneBy": "Done by {name}",
+    "skipped": "Skipped",
+    "notDone": "Not done",
+    "formerMember": "Former member"
   }
 }

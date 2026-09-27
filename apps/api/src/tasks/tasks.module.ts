@@ -4,11 +4,13 @@ import { NotificationsModule } from '../notifications/notifications.module';
 import { TasksController } from './tasks.controller';
 import { SeriesService } from './series.service';
 import { TasksService } from './tasks.service';
+import { TemplatesController } from './templates.controller';
+import { TemplatesService } from './templates.service';
 
 @Module({
   imports: [HouseholdsModule, NotificationsModule],
-  controllers: [TasksController],
-  providers: [TasksService, SeriesService],
+  controllers: [TasksController, TemplatesController],
+  providers: [TasksService, SeriesService, TemplatesService],
   exports: [SeriesService],
 })
 export class TasksModule {}

@@ -27,6 +27,7 @@ import {
   type RecurrencePreviewItem,
   ScopeQuery,
   type SeriesDto,
+  type SeriesHistoryDto,
   UpdateChecklistItemInput,
   UpdateOccurrenceInput,
 } from '@agenda/contracts';
@@ -157,6 +158,14 @@ export class TasksController {
   @Get('series')
   listSeries(@CurrentHousehold() ctx: HouseholdContext): Promise<SeriesDto[]> {
     return this.tasks.listSeries(ctx);
+  }
+
+  @Get('series/:seriesId/history')
+  seriesHistory(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Param('seriesId') id: string,
+  ): Promise<SeriesHistoryDto> {
+    return this.tasks.seriesHistory(ctx, assertUuid(id));
   }
 
   @Get('series/:seriesId')

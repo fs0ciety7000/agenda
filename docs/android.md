@@ -27,6 +27,10 @@ métier propre à Android : les règles (récurrence, rotation, quick add) reste
 - **Échéance souple** : une tâche sans date peut être « à faire cette semaine », « ce mois-ci » ou
   avant une date ; section « À faire cette semaine » sur Aujourd'hui, en retard une fois dépassée.
   L'ajout rapide comprend « cette semaine », « ce mois-ci », « ce week-end ».
+- **Modèles de tâches** : dans l'ajout rapide (+), choisir un modèle et le jour (aujourd'hui,
+  demain, ce week-end, sans date) crée toutes ses tâches. Les modèles se gèrent sur le site
+  (Réglages → Modèles de tâches). Demande une connexion.
+- **Historique** (tâche récurrente) : dans la fiche, les dernières fois et qui l'a faite.
 - **Reporter en un geste** : « Demain » / « Ce week-end » dans la fiche, la notification de
   rappel et le widget (« → » : à demain).
 - **Widget « Aujourd'hui »** (appui long sur l'écran d'accueil → Widgets → Agenda G & N) : tâches

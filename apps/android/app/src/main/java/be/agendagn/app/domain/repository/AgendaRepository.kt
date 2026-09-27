@@ -8,7 +8,9 @@ import be.agendagn.app.domain.model.EditScope
 import be.agendagn.app.domain.model.Household
 import be.agendagn.app.domain.model.Occurrence
 import be.agendagn.app.domain.model.QuickAddPreview
+import be.agendagn.app.domain.model.SeriesHistory
 import be.agendagn.app.domain.model.ShoppingItem
+import be.agendagn.app.domain.model.TaskTemplate
 import be.agendagn.app.domain.model.TaskDraft
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
@@ -71,6 +73,15 @@ interface AgendaRepository {
     suspend fun setChecklistItemDone(occurrenceId: String, itemId: String, done: Boolean): OpResult
     suspend fun removeChecklistItem(occurrenceId: String, itemId: String): OpResult
     suspend fun calendarStatus(): CalendarStatus?
+
+    /** Modèles de tâches du foyer (en ligne), null si indisponibles. */
+    suspend fun templates(): List<TaskTemplate>?
+
+    /** Crée les tâches du modèle pour [date] (sans date si null) ; recharge ensuite le cache. */
+    suspend fun applyTemplate(template: TaskTemplate, date: LocalDate?): OpResult
+
+    /** Historique d'une tâche récurrente (en ligne), null si indisponible. */
+    suspend fun seriesHistory(seriesId: String): SeriesHistory?
 
     // ───────── Liste de courses (hors ligne : affichée tout de suite, envoyée dès que possible) ─────────
 

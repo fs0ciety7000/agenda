@@ -261,4 +261,12 @@
     <plurals name="recap_today"><item quantity="one">%d task today</item><item quantity="other">%d tasks today</item></plurals>
     <plurals name="recap_overdue"><item quantity="one">%d overdue</item><item quantity="other">%d overdue</item></plurals>
     <plurals name="recap_due"><item quantity="one">%d to do this week</item><item quantity="other">%d to do this week</item></plurals>
+    <string name="templates_title">Templates</string>
+    <plurals name="templates_create"><item quantity="one">Create the task</item><item quantity="other">Create the %d tasks</item></plurals>
+    <plurals name="templates_applied"><item quantity="one">%d task added from “%s”</item><item quantity="other">%d tasks added from “%s”</item></plurals>
+    <string name="history_title">History</string>
+    <string name="history_done_by">Done by %1$s</string>
+    <string name="history_skipped">Skipped</string>
+    <string name="history_not_done">Not done</string>
+    <string name="history_former_member">Former member</string>
 </resources>

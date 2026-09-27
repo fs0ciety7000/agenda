@@ -27,6 +27,8 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
   - modification « cette fois / les suivantes / toute la série ».
 - **Liste de courses partagée** permanente, cochée à deux au magasin, hors ligne sur Android.
 - **Temps réel** : ce que l'autre change apparaît aussitôt sur le site et dans l'app (Server-Sent Events).
+- **Modèles de tâches** (« Ménage du samedi » crée toutes ses tâches d'un coup) et **historique
+  « fait par »** des tâches récurrentes.
 - **Sous-tâches et listes** attachées à une tâche, catégories, priorités, tâches personnelles.
 - **Calendrier** : vues mois, semaine et jour ; glisser-déposer (souris, doigt, clavier, TalkBack).
 - **Suggestion d'attribution** : la personne la moins chargée de la semaine.
