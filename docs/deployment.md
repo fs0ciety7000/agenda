@@ -135,6 +135,15 @@ manquent. Modèle complet : `.env.prod.example`.
 | `SENTRY_DSN` | facultatif : suivi des erreurs (§10) | DSN Sentry / GlitchTip |
 | `FCM_SERVICE_ACCOUNT` | facultatif : notifications instantanées Android | JSON du compte de service Firebase (docs/android.md §4.1) |
 | `INBOUND_EMAIL_ADDRESS`, `RESEND_WEBHOOK_SECRET`, `RESEND_API_KEY` | facultatif : tâches par e-mail (réception par Resend) | cf. [`email-to-task.md`](email-to-task.md) |
+| `WEB_PUSH_PUBLIC_KEY`, `WEB_PUSH_PRIVATE_KEY` | facultatif : notifications du site (navigateur) | paire de clés VAPID, voir ci-dessous |
+| `WEB_PUSH_SUBJECT` | facultatif | contact pour les services de push (`mailto:…` ou `https://…`) ; défaut : `WEB_ORIGIN` |
+
+**Clés VAPID (notifications du site).** À générer une seule fois : Coolify → service `api` →
+*Terminal* → `node -e "console.log(require('web-push').generateVAPIDKeys())"`, puis copier
+`publicKey` dans `WEB_PUSH_PUBLIC_KEY` et `privateKey` dans `WEB_PUSH_PRIVATE_KEY` (secrète, sans
+*Available at Buildtime*) et redéployer. Chaque personne active ensuite les notifications dans
+Réglages → Notifications → « Activer sur ce navigateur ». Changer les clés oblige chacun à les
+réactiver.
 
 `REDIS_URL` est fixée par le compose (`redis://redis:6379`) : rien à définir.
 

@@ -32,6 +32,7 @@ model User {
   resetTokens       PasswordResetToken[]
   mobileAuthCodes   MobileAuthCode[]
   pushTokens        PushToken[]
+  webPushSubscriptions WebPushSubscription[]
 }
 
 enum AuthProvider {
@@ -644,6 +645,21 @@ model IdempotencyKey {
 
 /// Jeton Firebase Cloud Messaging d'un téléphone (notifications instantanées, docs/android.md).
 /// Le message envoyé ne contient aucune donnée : il réveille l'app, qui relit ses notifications.
+/// Abonnement « Web Push » d'un navigateur (notifications du site, chiffrées de bout en bout).
+model WebPushSubscription {
+  id         String   @id @default(uuid()) @db.Uuid
+  userId     String   @db.Uuid
+  endpoint   String   @unique @db.VarChar(2048)
+  p256dh     String   @db.VarChar(200)
+  auth       String   @db.VarChar(100)
+  createdAt  DateTime @default(now())
+  lastSeenAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
 model PushToken {
   id         String   @id @default(uuid()) @db.Uuid
   userId     String   @db.Uuid

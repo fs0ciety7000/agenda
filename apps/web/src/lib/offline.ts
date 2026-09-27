@@ -1,5 +1,6 @@
 'use client';
 
+import { unsubscribeWebPush } from './web-push';
 import type { OccurrenceDto, ShoppingItemDto } from '@agenda/contracts';
 import { type QueryClient, onlineManager, useMutationState } from '@tanstack/react-query';
 import { useSyncExternalStore } from 'react';
@@ -100,6 +101,7 @@ export const usePendingChanges = () =>
 
 /** Déconnexion : plus rien du compte ne reste dans le navigateur. */
 export async function clearOfflineData() {
+  await unsubscribeWebPush();
   try {
     localStorage.removeItem(PERSIST_KEY);
   } catch {

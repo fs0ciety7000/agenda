@@ -560,8 +560,8 @@
   "notificationSettings": {
     "title": "Notification preferences",
     "inApp": "In the app",
-    "push": "On the phone",
-    "hint": "“On the phone”: Android app notifications (checked hourly and when opening the app). Reminders before a task are set in the Android app.",
+    "push": "Notification",
+    "hint": "“Notification”: on the phone (Android app) and on browsers where you enabled it below. Reminders before a task are set in the Android app.",
     "types": {
       "TASK_ASSIGNED": "Someone gives me a task",
       "CALENDAR_SYNC_FAILED": "Google Calendar sync problem",
@@ -575,6 +575,14 @@
       "serverInvalid": "✗ Server: unreadable Firebase key (FCM_SERVICE_ACCOUNT). Paste the service account JSON file again.",
       "devices": "✓ {count, plural, one {# phone registered} other {# phones registered}} for your account (latest: {date}).",
       "noDevice": "✗ No phone registered for your account: update the Android app, then open it once."
+    },
+    "browser": {
+      "off": "Notifications on this browser: off.",
+      "on": "✓ Notifications on this browser: on (even with the site closed).",
+      "denied": "Notifications are blocked for this site in the browser: allow them in the browser settings (icon left of the address).",
+      "unsupported": "This browser can't receive the site's notifications. On iPhone: add the site to the home screen first.",
+      "enable": "Enable on this browser",
+      "disable": "Turn off"
     }
   },
   "stats": {

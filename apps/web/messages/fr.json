@@ -560,8 +560,8 @@
   "notificationSettings": {
     "title": "Préférences de notification",
     "inApp": "Dans l'app",
-    "push": "Sur le téléphone",
-    "hint": "« Sur le téléphone » : notifications de l'app Android (vérifiées toutes les heures et à l'ouverture). Les rappels avant une tâche se règlent dans l'app Android.",
+    "push": "Notification",
+    "hint": "« Notification » : sur le téléphone (app Android) et sur les navigateurs où vous l'avez activée ci-dessous. Les rappels avant une tâche se règlent dans l'app Android.",
     "types": {
       "TASK_ASSIGNED": "Quelqu'un me confie une tâche",
       "CALENDAR_SYNC_FAILED": "Problème de synchronisation Google Calendar",
@@ -575,6 +575,14 @@
       "serverInvalid": "✗ Serveur : clé Firebase illisible (FCM_SERVICE_ACCOUNT). Recoller le fichier JSON du compte de service.",
       "devices": "✓ {count, plural, one {# téléphone enregistré} other {# téléphones enregistrés}} pour votre compte (dernier : {date}).",
       "noDevice": "✗ Aucun téléphone enregistré pour votre compte : mettre l'app Android à jour, puis l'ouvrir une fois."
+    },
+    "browser": {
+      "off": "Notifications sur ce navigateur : désactivées.",
+      "on": "✓ Notifications sur ce navigateur : actives (même site fermé).",
+      "denied": "Notifications bloquées pour ce site dans le navigateur : les autoriser dans les réglages du navigateur (icône à gauche de l'adresse).",
+      "unsupported": "Ce navigateur ne peut pas recevoir les notifications du site. Sur iPhone : ajouter le site à l'écran d'accueil d'abord.",
+      "enable": "Activer sur ce navigateur",
+      "disable": "Désactiver"
     }
   },
   "stats": {

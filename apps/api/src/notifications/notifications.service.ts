@@ -11,6 +11,7 @@ import { Prisma } from '@prisma/client';
 import type { HouseholdContext } from '../common/request-context';
 import { PrismaService } from '../prisma/prisma.service';
 import { PushService } from './push.service';
+import { type WebPushMessage, WebPushService } from './web-push.service';
 
 export const NOTIFICATION_KINDS: NotificationKind[] = [
   'TASK_ASSIGNED',
@@ -34,6 +35,7 @@ export class NotificationsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly push: PushService,
+    private readonly webPush: WebPushService,
     private readonly events: DomainEvents,
   ) {}
 
@@ -88,10 +90,25 @@ export class NotificationsService {
     await this.prisma.notification.createMany({ data });
     this.events.publish(ctx.householdId, 'notifications');
     // Téléphones réveillés tout de suite (sans contenu) pour ceux qui veulent la notification.
-    void this.push.wakeMembers(
-      ctx.householdId,
-      members.filter((m) => (m.preferences[0] ?? DEFAULT_PREF).push).map((m) => m.id),
-    );
+    const pushIds = members.filter((m) => (m.preferences[0] ?? DEFAULT_PREF).push).map((m) => m.id);
+    void this.push.wakeMembers(ctx.householdId, pushIds);
+    // Navigateurs abonnés : message chiffré, dans la langue de chacun.
+    if (this.webPush.enabled && pushIds.length) {
+      const [occ, by] = await Promise.all([
+        this.prisma.taskOccurrence.findUnique({
+          where: { id: occurrenceId },
+          select: { titleOverride: true, task: { select: { title: true } } },
+        }),
+        this.prisma.householdMember.findUnique({
+          where: { id: ctx.memberId },
+          select: { displayName: true },
+        }),
+      ]);
+      const title = occ?.titleOverride ?? occ?.task.title ?? '';
+      void this.webPush.sendToMembers(ctx.householdId, pushIds, (locale) =>
+        webPushText(locale, type, by?.displayName ?? '?', title, recurring, occurrenceId),
+      );
+    }
   }
 
   async list(ctx: HouseholdContext, query: NotificationQuery): Promise<NotificationListDto> {
@@ -208,4 +225,34 @@ export class NotificationsService {
     }
     return map;
   }
+}
+
+/** Texte des notifications du site (mêmes formulations que la cloche). */
+export function webPushText(
+  locale: 'fr' | 'en',
+  type: 'TASK_ASSIGNED' | 'TASK_COMMENT',
+  by: string,
+  title: string,
+  recurring: boolean,
+  occurrenceId: string,
+): WebPushMessage {
+  const fr = locale === 'fr';
+  const body =
+    type === 'TASK_COMMENT'
+      ? fr
+        ? `${by} a commenté « ${title} »`
+        : `${by} commented on “${title}”`
+      : recurring
+        ? fr
+          ? `${by} vous a inclus dans « ${title} » (récurrente)`
+          : `${by} included you in “${title}” (recurring)`
+        : fr
+          ? `${by} vous a confié « ${title} »`
+          : `${by} assigned you “${title}”`;
+  return {
+    title: 'Agenda G & N',
+    body,
+    url: `/?open=${occurrenceId}`,
+    tag: `occurrence-${occurrenceId}`,
+  };
 }
