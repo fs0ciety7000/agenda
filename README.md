@@ -26,6 +26,8 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
   - aperçu des prochaines dates ;
   - modification « cette fois / les suivantes / toute la série ».
 - **Liste de courses partagée** permanente, cochée à deux au magasin, hors ligne sur Android.
+- **Hors ligne sur le site** comme sur Android : consultation, coches, ajout rapide et courses
+  sans réseau, envoyés au retour de la connexion.
 - **Temps réel** : ce que l'autre change apparaît aussitôt sur le site et dans l'app (Server-Sent Events).
 - **Modèles de tâches** (« Ménage du samedi » crée toutes ses tâches d'un coup) et **historique
   « fait par »** des tâches récurrentes.

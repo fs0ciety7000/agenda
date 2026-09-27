@@ -121,7 +121,7 @@ export default function ShoppingPage() {
                 <SectionTitle id="in-cart">{t('inCart', { count: inCart.length })}</SectionTitle>
                 <button
                   type="button"
-                  onClick={() => actions.clearDone.mutate(undefined)}
+                  onClick={() => actions.clearDone.mutate()}
                   className="min-h-11 rounded-md px-2 text-sm text-accent hover:bg-surface-muted"
                 >
                   {t('clear')}

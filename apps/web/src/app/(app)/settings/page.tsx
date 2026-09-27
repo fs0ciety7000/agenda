@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { Card, SectionTitle } from '@/components/ui/card';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/cn';
+import { clearOfflineData } from '@/lib/offline';
 import { applyTheme, readTheme, type ThemePreference } from '@/lib/theme';
 
 const THEMES: ThemePreference[] = ['system', 'light', 'dark'];
@@ -35,8 +36,9 @@ export default function SettingsPage() {
   const signOut = useMutation({
     mutationFn: (all: boolean) =>
       api<void>(all ? '/v1/auth/logout-all' : '/v1/auth/logout', { method: 'POST', json: {} }),
-    onSettled: () => {
+    onSettled: async () => {
       queryClient.clear();
+      await clearOfflineData();
       router.replace('/login');
     },
   });

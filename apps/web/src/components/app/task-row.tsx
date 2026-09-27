@@ -41,13 +41,16 @@ export function TaskRow({
 
   const onToggle = () => {
     toggle.mutate(
-      { id: o.id, done: !done },
+      { hid: household.id, id: o.id, done: !done },
       {
         onSuccess: () => {
           if (!done) {
             toast({
               message: t('completedToast', { title: o.title }),
-              action: { label: t('undo'), onClick: () => toggle.mutate({ id: o.id, done: false }) },
+              action: {
+                label: t('undo'),
+                onClick: () => toggle.mutate({ hid: household.id, id: o.id, done: false }),
+              },
             });
           }
         },

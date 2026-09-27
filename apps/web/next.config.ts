@@ -14,6 +14,8 @@ const securityHeaders = [
 
 const config: NextConfig = {
   reactStrictMode: true,
+  // Identifiant du build : invalide le cache hors ligne du navigateur à chaque version.
+  env: { NEXT_PUBLIC_BUILD_ID: process.env.NEXT_PUBLIC_BUILD_ID ?? String(Date.now()) },
   poweredByHeader: false,
   // Image Docker minimale (server.js autonome) ; racine = monorepo pour tracer les paquets workspace.
   output: 'standalone',

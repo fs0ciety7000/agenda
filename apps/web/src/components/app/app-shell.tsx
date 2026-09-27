@@ -12,10 +12,11 @@ import {
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useEffect, type ReactNode } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { ErrorState, Skeleton } from '@/components/ui/states';
 import { ApiError, errorKey } from '@/lib/api';
 import { cn } from '@/lib/cn';
+import { OfflineBanner } from './offline-banner';
 import { useHouseholds, useMe } from '@/lib/queries';
 import { useRealtime } from '@/lib/realtime';
 import { SessionContext } from './household-context';
@@ -37,6 +38,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const router = useRouter();
   const me = useMe();
   const households = useHouseholds();
+  const [mountedAt] = useState(() => Date.now());
+  const freshHouseholds = households.isFetchedAfterMount && households.dataUpdatedAt >= mountedAt;
 
   const unauthenticated = me.error instanceof ApiError && me.error.status === 401;
   const household = households.data?.[0];
@@ -44,10 +47,10 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (unauthenticated) router.replace(`/login?next=${encodeURIComponent(pathname)}`);
-    // Seulement sur une donnée fraîche : un cache périmé « aucun foyer » ne doit pas renvoyer à l'onboarding.
-    else if (households.isFetchedAfterMount && households.data?.length === 0)
-      router.replace('/onboarding');
-  }, [unauthenticated, households.isFetchedAfterMount, households.data, pathname, router]);
+    // Seulement sur une réponse reçue pendant cette visite : un cache périmé (ou restauré du
+    // stockage local) « aucun foyer » ne doit pas renvoyer à l'onboarding.
+    else if (freshHouseholds && households.data?.length === 0) router.replace('/onboarding');
+  }, [unauthenticated, freshHouseholds, households.data, pathname, router]);
 
   if (me.error && !unauthenticated) {
     return (
@@ -93,6 +96,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           pathname.startsWith('/calendar') ? 'max-w-6xl' : 'max-w-3xl',
         )}
       >
+        <OfflineBanner />
         {me.data && household ? (
           <SessionContext.Provider value={{ me: me.data, household }}>
             {children}

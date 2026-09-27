@@ -12,6 +12,7 @@ import { useToast } from '@/components/ui/toast';
 import { api, errorKey } from '@/lib/api';
 import { queryKeys, useProviders } from '@/lib/queries';
 import { useSession } from './household-context';
+import { clearOfflineData } from '@/lib/offline';
 
 /** Liaison Google, export des données (portabilité) et suppression du compte (effacement). */
 export function PrivacySettings() {
@@ -68,6 +69,7 @@ export function PrivacySettings() {
           : { confirm: confirm.trim().toUpperCase() === confirmWord ? 'SUPPRIMER' : undefined },
       });
       queryClient.clear();
+      await clearOfflineData();
       router.replace('/login');
     } catch (err) {
       setError(te(errorKey(err) as 'generic'));

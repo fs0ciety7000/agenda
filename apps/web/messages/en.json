@@ -168,7 +168,8 @@
     "priority": {
       "HIGH": "High priority",
       "URGENT": "Urgent"
-    }
+    },
+    "queued": "“{text}” will be added when you're back online."
   },
   "tasks": {
     "unassigned": "Unassigned",
@@ -527,7 +528,7 @@
     },
     "cookies": {
       "title": "Cookies",
-      "body": "Only strictly necessary cookies: sign-in session (httpOnly, secure) and, for a few minutes, tracking of a Google sign-in in progress. Your light/dark theme choice is stored in your browser. No analytics or advertising cookies."
+      "body": "Only strictly necessary cookies: sign-in session (httpOnly, secure) and, for a few minutes, tracking of a Google sign-in in progress. Your light/dark theme choice is stored in your browser. No analytics or advertising cookies.\nOffline: the site keeps in your browser (local storage and service worker cache) a copy of the household data already displayed, so it stays usable without a network. It is erased when you sign out."
     },
     "contact": {
       "title": "Contact",
@@ -742,5 +743,10 @@
     "disable": "Turn off",
     "confirmDisable": "Turn off adding by e-mail? The address will stop working.",
     "error": "Couldn't do that. Please try again."
+  },
+  "offline": {
+    "offline": "Offline: you're seeing the latest data received. Tick tasks, add some or do the shopping: everything will be sent when you're back online.",
+    "pending": "{count, plural, one {# change pending.} other {# changes pending.}}",
+    "sending": "{count, plural, one {Sending a change made offline…} other {Sending # changes made offline…}}"
   }
 }
