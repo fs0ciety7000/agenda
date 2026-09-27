@@ -71,17 +71,18 @@ export type RotationInput = z.infer<typeof RotationInput>;
 
 export const RotationAdvanceInput = z.enum(['PER_OCCURRENCE', 'PER_WEEK']);
 
-export const RecurrenceInput = z.object({
-  rule: RecurrenceRule,
-  /** Dernière date incluse. */
-  until: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/)
-    .nullish(),
-  count: z.number().int().min(1).max(1000).nullish(),
-  rotation: RotationInput.default({ mode: 'UNASSIGNED' }),
-  advance: RotationAdvanceInput.default('PER_OCCURRENCE'),
-})
+export const RecurrenceInput = z
+  .object({
+    rule: RecurrenceRule,
+    /** Dernière date incluse. */
+    until: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/)
+      .nullish(),
+    count: z.number().int().min(1).max(1000).nullish(),
+    rotation: RotationInput.default({ mode: 'UNASSIGNED' }),
+    advance: RotationAdvanceInput.default('PER_OCCURRENCE'),
+  })
   // « Après la dernière fois » : pas de nombre d'occurrences (la date de fin reste possible).
   .refine((r) => r.rule.freq !== 'AFTER' || r.count == null, {
     message: 'count is not supported with AFTER',
