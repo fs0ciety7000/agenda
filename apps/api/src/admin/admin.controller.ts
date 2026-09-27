@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, HttpCode, Param, Post, UseGuards } from 
 import { ApiTags } from '@nestjs/swagger';
 import {
   AdminCreateUserInput,
+  type AdminMonitoringDto,
   type AdminHouseholdDto,
   type AdminOverviewDto,
   type AdminTestResultDto,
@@ -12,13 +13,23 @@ import { AuthUser, CurrentUser } from '../common/request-context';
 import { assertUuid } from '../common/uuid';
 import { ZodPipe } from '../common/zod.pipe';
 import { AdminGuard } from './admin.guard';
+import { MonitoringService } from '../monitoring/monitoring.service';
 import { AdminService } from './admin.service';
 
 @ApiTags('admin')
 @UseGuards(AdminGuard)
 @Controller({ path: 'admin', version: '1' })
 export class AdminController {
-  constructor(private readonly admin: AdminService) {}
+  constructor(
+    private readonly admin: AdminService,
+    private readonly monitoring: MonitoringService,
+  ) {}
+
+  /** Onglet « Surveillance » : requêtes, erreurs, temps de réponse, sondes, incidents. */
+  @Get('monitoring')
+  monitoringData(): Promise<AdminMonitoringDto> {
+    return this.monitoring.adminMonitoring();
+  }
 
   @Get('overview')
   overview(): Promise<AdminOverviewDto> {

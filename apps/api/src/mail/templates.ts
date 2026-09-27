@@ -70,6 +70,57 @@ export function welcomeEmail(locale: Locale, name: string, url: string) {
   };
 }
 
+const COMPONENT_NAMES: Record<string, { fr: string; en: string }> = {
+  api: { fr: 'API', en: 'API' },
+  database: { fr: 'Base de données', en: 'Database' },
+  redis: { fr: 'Redis', en: 'Redis' },
+  calendar: { fr: 'Synchronisation Google Calendar', en: 'Google Calendar sync' },
+  email: { fr: "Envoi d'e-mails", en: 'Email delivery' },
+  backups: { fr: 'Sauvegardes', en: 'Backups' },
+};
+
+/** Alerte de surveillance aux administrateurs (incident ouvert / résolu). */
+export function incidentEmail(
+  locale: Locale,
+  kind: 'opened' | 'resolved',
+  component: string,
+  detail: string | null,
+  since: Date,
+  url: string,
+) {
+  const name = COMPONENT_NAMES[component]?.[locale] ?? component;
+  const minutes = Math.max(1, Math.round((Date.now() - since.getTime()) / 60_000));
+  const en = locale === 'en';
+  const subject =
+    kind === 'opened'
+      ? en
+        ? `🔴 Incident: ${name}`
+        : `🔴 Incident : ${name}`
+      : en
+        ? `✅ Resolved: ${name}`
+        : `✅ Résolu : ${name}`;
+  const body =
+    kind === 'opened'
+      ? [
+          en ? `${name} is failing.` : `${name} ne répond plus correctement.`,
+          ...(detail ? [(en ? 'Detail: ' : 'Détail : ') + detail] : []),
+          en
+            ? 'You will get another email when it is back.'
+            : 'Un autre e-mail vous préviendra du retour à la normale.',
+        ]
+      : [
+          en
+            ? `${name} is working again (after about ${minutes} min).`
+            : `${name} fonctionne de nouveau (après environ ${minutes} min).`,
+        ];
+  const cta = en ? 'Open monitoring' : 'Ouvrir la surveillance';
+  return {
+    subject,
+    text: `${body.join('\n\n')}\n\n${cta} : ${url}\n`,
+    html: layout(subject, body, { label: cta, url }),
+  };
+}
+
 /** Vérification de la configuration SMTP depuis l'administration. */
 export function testEmail(locale: Locale) {
   const title = locale === 'en' ? 'Test email' : 'E-mail de test';

@@ -37,6 +37,10 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
   à l'autre (sans le texte), sur le site et dans l'app.
 - **Notifications du site** (Web Push) : « Nicolas vous a confié… » même site fermé, sur ordinateur
   comme sur mobile, en plus de l'app Android.
+- **Surveillance** : sondes internes chaque minute (base, Redis, synchro Google, e-mail,
+  sauvegardes), incidents et alertes automatiques aux admins, **page publique `/status`**
+  (disponibilité sur 90 jours), tableau de bord trafic / erreurs / temps de réponse,
+  `/metrics` Prometheus, et guide Uptime Kuma pour la surveillance externe.
 - **Administration** (site, comptes listés dans `ADMIN_EMAILS`) : chiffres clés, fonctions
   configurées, comptes (créer avec lien d'invitation, désactiver, déconnecter partout, supprimer),
   foyers, **sauvegarde à la demande** et historique, e-mail et notification de test.
@@ -76,6 +80,7 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
 | ------------------------------------------------------- | --------------------------------------------------------- |
 | [Exigences produit](docs/product-requirements.md)       | Vision, user stories, décisions                           |
 | [Architecture](docs/architecture.md)                    | Choix techniques (ADR), sécurité, RGPD, infra             |
+| [Surveillance](docs/monitoring.md)                      | Sondes, `/status`, alertes, Uptime Kuma, Prometheus       |
 | [Base de données](docs/database.md)                     | Modèle, récurrence, fuseaux, index                        |
 | [Google Calendar](docs/google-calendar.md)              | OAuth, stratégie de synchronisation, erreurs              |
 | [Vérification OAuth](docs/google-oauth-verification.md) | Faire valider l'app Google (autres foyers)                |

@@ -123,6 +123,13 @@ const EnvSchema = z.object({
   RESEND_WEBHOOK_SECRET: z.preprocess((v) => (v === '' ? undefined : v), z.string().optional()),
   RESEND_API_KEY: z.preprocess((v) => (v === '' ? undefined : v), z.string().optional()),
   /** Inscriptions ouvertes. À passer à false une fois les membres du foyer inscrits. */
+  /** Surveillance : jeton exigé par GET /metrics (Prometheus). Sans jeton : /metrics désactivé. */
+  METRICS_TOKEN: z.preprocess((v) => (v === '' ? undefined : v), z.string().min(16).optional()),
+  /** Sondes internes toutes les minutes (désactivées en test : les tests les lancent eux-mêmes). */
+  MONITORING_ENABLED: z
+    .enum(['true', 'false'])
+    .optional()
+    .transform((v) => (v === undefined ? undefined : v === 'true')),
   /** Administrateurs (page /admin) : adresses e-mail séparées par des virgules. */
   ADMIN_EMAILS: z
     .string()

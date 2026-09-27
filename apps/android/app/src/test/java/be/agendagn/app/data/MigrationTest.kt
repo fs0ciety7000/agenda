@@ -94,7 +94,33 @@ class MigrationTest {
         }
     }
 
+    @Test
+    fun `v5 vers v7 - derniere fois et quantite, rayon ajoutes, donnees conservees`() {
+        helper.createDatabase(DB7, 5).use { db ->
+            db.execSQL(
+                "INSERT INTO shopping_items (id, householdId, text, done, createdAt) VALUES ('s1', 'h1', 'Lait', 0, '2026-09-29')",
+            )
+            db.execSQL(
+                """INSERT INTO occurrences (id, householdId, taskId, title, priority, visibility, status, date,
+                assigneeIds, createdById, isRecurring, syncToCalendar, version, isLocal, checklist, attachments)
+                VALUES ('o1', 'h1', 't1', 'Filtre', 'NORMAL', 'SHARED', 'TODO', NULL, '', 'm1', 1, 0, 1, 0, '[]', '[]')""",
+            )
+        }
+        helper.runMigrationsAndValidate(DB7, 7, true, *AgendaDatabase.MIGRATIONS).use { db ->
+            db.query("SELECT text, quantity, aisle FROM shopping_items WHERE id = 's1'").use { c ->
+                c.moveToFirst()
+                assertEquals("Lait", c.getString(0))
+                assertEquals(true, c.isNull(1) && c.isNull(2))
+            }
+            db.query("SELECT lastDoneAt FROM occurrences WHERE id = 'o1'").use { c ->
+                c.moveToFirst()
+                assertEquals(true, c.isNull(0))
+            }
+        }
+    }
+
     private companion object {
+        const val DB7 = "migration-test-7.db"
         const val DB5 = "migration-test-5.db"
         const val DB4 = "migration-test-4.db"
         const val DB3 = "migration-test-3.db"

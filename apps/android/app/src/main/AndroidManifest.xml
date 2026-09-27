@@ -57,11 +57,16 @@
         </provider>
 
         <!-- Pièces jointes téléchargées, ouvertes par une autre app (lecture seule). -->
+        <!-- Dossiers partagés lus ici par FileProvider.getUriForFile (appareil photo, ouverture). -->
         <provider
             android:name=".data.files.AttachmentFileProvider"
             android:authorities="${applicationId}.attachments"
             android:exported="false"
-            android:grantUriPermissions="true" />
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/attachment_paths" />
+        </provider>
 
         <!-- Notifications instantanées : réveil sans contenu envoyé par le serveur (Firebase). -->
         <service

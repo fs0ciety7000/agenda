@@ -122,6 +122,16 @@ export function ruleWeekdays(s: RecurrenceState, date: string): number[] {
 const stepMembers = (v: StepValue, members: HouseholdMemberDto[]) =>
   v === 'together' ? members.map((m) => m.id) : v === 'none' ? [] : [v];
 
+/**
+ * Ordre « chacun son tour » : l'ordre choisi, complété par les membres actuels du foyer (un membre
+ * arrivé après l'ouverture du formulaire, ou un foyer encore lu depuis le cache hors ligne).
+ */
+export function orderOf(s: RecurrenceState, members: HouseholdMemberDto[]): string[] {
+  const ids = members.map((m) => m.id);
+  const chosen = s.order.filter((id) => ids.includes(id));
+  return [...chosen, ...ids.filter((id) => !chosen.includes(id))];
+}
+
 /** Rotation à partir du choix « Responsable » (mode fixe) ou des réglages de rotation. */
 export function rotationOf(
   s: RecurrenceState,
@@ -138,10 +148,10 @@ export function rotationOf(
           ? { mode: 'FIXED', memberIds: ids }
           : { mode: 'TOGETHER', memberIds: ids };
     }
-    case 'alternate':
-      return s.order.length >= 2
-        ? { mode: 'ALTERNATE', memberIds: s.order }
-        : { mode: 'UNASSIGNED' };
+    case 'alternate': {
+      const order = orderOf(s, members);
+      return order.length >= 2 ? { mode: 'ALTERNATE', memberIds: order } : { mode: 'UNASSIGNED' };
+    }
     case 'sequence': {
       const steps = s.sequence.map((v) => stepMembers(v, members)).filter((ids) => ids.length);
       return steps.length ? { mode: 'SEQUENCE', sequence: steps } : { mode: 'UNASSIGNED' };

@@ -135,7 +135,9 @@ manquent. Modèle complet : `.env.prod.example`.
 | `SENTRY_DSN` | facultatif : suivi des erreurs (§10) | DSN Sentry / GlitchTip |
 | `FCM_SERVICE_ACCOUNT` | facultatif : notifications instantanées Android | JSON du compte de service Firebase (docs/android.md §4.1) |
 | `INBOUND_EMAIL_ADDRESS`, `RESEND_WEBHOOK_SECRET`, `RESEND_API_KEY` | facultatif : tâches par e-mail (réception par Resend) | cf. [`email-to-task.md`](email-to-task.md) |
-| `ADMIN_EMAILS` | facultatif : accès à la page d'administration | adresses e-mail séparées par des virgules |
+| `ADMIN_EMAILS` | facultatif : accès à la page d'administration | adresses e-mail séparées par des virgules ; reçoivent aussi les alertes de surveillance |
+| `METRICS_TOKEN` | facultatif : `GET /metrics` (Prometheus) | secret d'au moins 16 caractères, cf. `monitoring.md` |
+| `BACKUP_HEARTBEAT_URL` | facultatif : battement de cœur des sauvegardes | URL « Push » d'Uptime Kuma / Healthchecks.io |
 | `WEB_PUSH_PUBLIC_KEY`, `WEB_PUSH_PRIVATE_KEY` | facultatif : notifications du site (navigateur) | paire de clés VAPID, voir ci-dessous |
 | `WEB_PUSH_SUBJECT` | facultatif | contact pour les services de push (`mailto:…` ou `https://…`) ; défaut : `WEB_ORIGIN` |
 
@@ -322,6 +324,9 @@ même adresse (prise de contrôle possible). Pour lier Google à un compte cré�
 **Réglages → Données & confidentialité → Lier Google**.
 
 ## 10. Surveillance et maintenance
+
+Vue complète (sondes internes, page `/status`, alertes, Uptime Kuma, Prometheus) :
+[`monitoring.md`](monitoring.md).
 
 - **Disponibilité** : le workflow GitHub `Disponibilité` (`.github/workflows/uptime.yml`) appelle
   `https://agenda.fs0ciety.org/healthz` (web → API → base) toutes les 10 minutes, **depuis

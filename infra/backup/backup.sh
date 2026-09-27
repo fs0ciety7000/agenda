@@ -36,7 +36,17 @@ run_end() { # $1 = OK | FAILED ; $2 = résumé ; $3 = fichier ; $4 = taille (oct
   RUN_ID=""
 }
 
-fail() { log "ÉCHEC : $1"; run_end FAILED "$1"; return 1; }
+# Battement de cœur vers une surveillance externe (moniteur « Push » d'Uptime Kuma, Better
+# Stack, Healthchecks.io…) : BACKUP_HEARTBEAT_URL appelée après chaque sauvegarde.
+heartbeat() { # $1 = up | down ; $2 = message
+  [ -n "${BACKUP_HEARTBEAT_URL:-}" ] || return 0
+  sep='?'; case "$BACKUP_HEARTBEAT_URL" in *\?*) sep='&' ;; esac
+  msg=$(printf '%s' "$2" | sed 's/[^A-Za-z0-9._-]/+/g' | cut -c1-120)
+  wget -q -T 10 -O /dev/null "${BACKUP_HEARTBEAT_URL}${sep}status=$1&msg=$msg" 2>/dev/null ||
+    log "avertissement : battement de cœur non envoyé"
+}
+
+fail() { log "ÉCHEC : $1"; run_end FAILED "$1"; heartbeat down "$1"; return 1; }
 
 verify() {
   file="$1"
@@ -89,6 +99,7 @@ once() {
   # Témoin lu par le healthcheck (sauvegarde réussie de moins de 26 h).
   date -u +%FT%TZ > "$BACKUP_DIR/last-success"
   run_end OK "$counts" "$file" "$bytes" "$offsite"
+  heartbeat up "OK $size"
 }
 
 seconds_until() {

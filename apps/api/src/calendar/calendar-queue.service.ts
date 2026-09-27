@@ -46,6 +46,16 @@ export class CalendarQueueService implements OnModuleInit, OnModuleDestroy {
     events.onHouseholdChanged((householdId) => void this.scheduleSweep(householdId));
   }
 
+  /**
+   * Surveillance : file de synchronisation joignable (Redis) et pas d'embouteillage.
+   * null = pas de file (développement, tests).
+   */
+  async health(): Promise<{ waiting: number; failed: number; delayed: number } | null> {
+    if (!this.queue) return null;
+    const c = await this.queue.getJobCounts('waiting', 'failed', 'delayed');
+    return { waiting: c.waiting ?? 0, failed: c.failed ?? 0, delayed: c.delayed ?? 0 };
+  }
+
   async onModuleInit(): Promise<void> {
     const mode = syncMode();
     if (mode === 'queue') {

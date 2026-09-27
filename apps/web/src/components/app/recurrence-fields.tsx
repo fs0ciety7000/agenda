@@ -11,6 +11,7 @@ import {
   type RecurrenceState,
   type RepeatPreset,
   type RotationKind,
+  orderOf,
   ruleWeekdays,
   type StepValue,
   toRecurrenceInput,
@@ -286,7 +287,7 @@ export function RecurrenceFields({
           {state.rotation === 'alternate' && (
             <Select
               label={t('startsWith')}
-              value={state.order[0] ?? ''}
+              value={orderOf(state, members)[0] ?? ''}
               onChange={(e) => {
                 const first = e.target.value;
                 set('order', [first, ...members.map((m) => m.id).filter((id) => id !== first)]);

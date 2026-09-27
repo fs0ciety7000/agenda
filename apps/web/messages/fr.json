@@ -703,7 +703,8 @@
     "login": "Se connecter",
     "footer": "Application personnelle, gratuite et sans publicité.",
     "cta": "Se connecter",
-    "ctaSecondary": "Créer un compte"
+    "ctaSecondary": "Créer un compte",
+    "statusLink": "État du service"
   },
   "activity": {
     "title": "Journal et corbeille",
@@ -924,6 +925,71 @@
     "households": "Foyers",
     "hhTasks": "{count, plural, one {# tâche} other {# tâches}}, {open} à faire",
     "lastActivity": "dernière activité {when}",
-    "search": "Rechercher (nom, e-mail, foyer)"
+    "search": "Rechercher (nom, e-mail, foyer)",
+    "monitoring": {
+      "title": "Surveillance",
+      "publicPage": "Page publique /status",
+      "requests24h": "Requêtes (24 h)",
+      "errors24h": "Erreurs serveur (24 h)",
+      "avgMs": "Temps de réponse moyen",
+      "slow": "Réponses > 1 s",
+      "chartRequests": "Requêtes par quart d'heure",
+      "chartLatency": "Temps de réponse moyen",
+      "legendErrors": "erreurs 5xx",
+      "checks": "Sondes (chaque minute)",
+      "noChecks": "Pas encore de sonde : la première passe a lieu une minute après le démarrage.",
+      "incidents": "Incidents récents",
+      "resolvedAfter": "résolu après {minutes} min",
+      "ongoing": "en cours",
+      "routes": "Routes (depuis le démarrage de l'API)",
+      "col": {
+        "route": "Route",
+        "count": "Appels",
+        "avg": "Moyenne",
+        "max": "Max",
+        "errors": "5xx"
+      },
+      "uptime": "API démarrée depuis {hours} h",
+      "loopLag": "boucle : {ms} ms"
+    }
+  },
+  "status": {
+    "metaTitle": "État du service · Agenda G & N",
+    "title": "État du service",
+    "intro": "Disponibilité d'Agenda G & N, vérifiée chaque minute. Mis à jour automatiquement.",
+    "loading": "Chargement…",
+    "unreachable": "Le service ne répond pas en ce moment.",
+    "overall": {
+      "operational": "Tous les services fonctionnent",
+      "degraded": "Fonctionnement partiellement perturbé",
+      "down": "Panne en cours",
+      "unknown": "État inconnu (mesures en attente)"
+    },
+    "state": {
+      "operational": "Opérationnel",
+      "degraded": "Perturbé",
+      "down": "En panne",
+      "unknown": "Pas de mesure récente"
+    },
+    "components": "Composants",
+    "component": {
+      "api": "API",
+      "database": "Base de données",
+      "redis": "Redis (file de tâches)",
+      "calendar": "Synchronisation Google Calendar",
+      "email": "Envoi d'e-mails",
+      "backups": "Sauvegardes"
+    },
+    "barsLabel": "{name} : {uptime} de disponibilité sur 90 jours",
+    "noData": "pas de mesure",
+    "uptime": "{value} sur 90 jours",
+    "daysAgo": "il y a 90 jours",
+    "today": "aujourd'hui",
+    "incidents": "Incidents (90 jours)",
+    "noIncident": "Aucun incident sur les 90 derniers jours.",
+    "resolved": "résolu",
+    "ongoing": "en cours",
+    "duration": "{minutes, plural, one {# minute} other {# minutes}}",
+    "updated": "Mis à jour {when}"
   }
 }

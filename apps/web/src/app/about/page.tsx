@@ -98,9 +98,14 @@ export default async function AboutPage() {
 
       <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-6 text-[0.8125rem] text-text-muted">
         <span>{t('footer')}</span>
-        <Link href="/privacy" className="text-accent underline underline-offset-4">
-          {t('privacyLink')}
-        </Link>
+        <span className="flex gap-4">
+          <Link href="/status" className="text-accent underline underline-offset-4">
+            {t('statusLink')}
+          </Link>
+          <Link href="/privacy" className="text-accent underline underline-offset-4">
+            {t('privacyLink')}
+          </Link>
+        </span>
       </footer>
     </main>
   );

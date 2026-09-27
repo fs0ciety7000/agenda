@@ -60,6 +60,8 @@ services:
       FCM_SERVICE_ACCOUNT: ${FCM_SERVICE_ACCOUNT:-}
       # Page d'administration : adresses e-mail séparées par des virgules.
       ADMIN_EMAILS: ${ADMIN_EMAILS:-}
+      # Surveillance : jeton de GET /metrics (Prometheus), cf. docs/monitoring.md.
+      METRICS_TOKEN: ${METRICS_TOKEN:-}
       # Notifications du site (Web Push) : clés VAPID, cf. docs/deployment.md §4.3.
       WEB_PUSH_PUBLIC_KEY: ${WEB_PUSH_PUBLIC_KEY:-}
       WEB_PUSH_PRIVATE_KEY: ${WEB_PUSH_PRIVATE_KEY:-}
@@ -111,6 +113,8 @@ services:
       BACKUP_RETENTION_DAYS: ${BACKUP_RETENTION_DAYS:-14}
       # Copie hors serveur (rclone) : ex. Cloudflare R2 → BACKUP_OFFSITE_REMOTE=offsite:agenda-backups
       BACKUP_OFFSITE_REMOTE: ${BACKUP_OFFSITE_REMOTE:-}
+      # Moniteur « Push » d'Uptime Kuma (ou Healthchecks.io) prévenu après chaque sauvegarde.
+      BACKUP_HEARTBEAT_URL: ${BACKUP_HEARTBEAT_URL:-}
       RCLONE_CONFIG_OFFSITE_TYPE: s3
       RCLONE_CONFIG_OFFSITE_PROVIDER: ${BACKUP_S3_PROVIDER:-Cloudflare}
       RCLONE_CONFIG_OFFSITE_ENDPOINT: ${BACKUP_S3_ENDPOINT:-}

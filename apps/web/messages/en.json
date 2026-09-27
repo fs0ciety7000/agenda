@@ -703,7 +703,8 @@
     "login": "Sign in",
     "footer": "A personal app, free and ad-free.",
     "cta": "Sign in",
-    "ctaSecondary": "Create an account"
+    "ctaSecondary": "Create an account",
+    "statusLink": "Service status"
   },
   "activity": {
     "title": "Activity and trash",
@@ -924,6 +925,71 @@
     "households": "Households",
     "hhTasks": "{count, plural, one {# task} other {# tasks}}, {open} to do",
     "lastActivity": "last activity {when}",
-    "search": "Search (name, email, household)"
+    "search": "Search (name, email, household)",
+    "monitoring": {
+      "title": "Monitoring",
+      "publicPage": "Public /status page",
+      "requests24h": "Requests (24 h)",
+      "errors24h": "Server errors (24 h)",
+      "avgMs": "Average response time",
+      "slow": "Responses > 1 s",
+      "chartRequests": "Requests per 15 minutes",
+      "chartLatency": "Average response time",
+      "legendErrors": "5xx errors",
+      "checks": "Checks (every minute)",
+      "noChecks": "No check yet: the first pass runs one minute after startup.",
+      "incidents": "Recent incidents",
+      "resolvedAfter": "resolved after {minutes} min",
+      "ongoing": "ongoing",
+      "routes": "Routes (since API startup)",
+      "col": {
+        "route": "Route",
+        "count": "Calls",
+        "avg": "Average",
+        "max": "Max",
+        "errors": "5xx"
+      },
+      "uptime": "API up for {hours} h",
+      "loopLag": "event loop: {ms} ms"
+    }
+  },
+  "status": {
+    "metaTitle": "Service status · Agenda G & N",
+    "title": "Service status",
+    "intro": "Availability of Agenda G & N, checked every minute. Updates automatically.",
+    "loading": "Loading…",
+    "unreachable": "The service is not responding right now.",
+    "overall": {
+      "operational": "All systems operational",
+      "degraded": "Partially degraded service",
+      "down": "Ongoing outage",
+      "unknown": "Unknown status (waiting for checks)"
+    },
+    "state": {
+      "operational": "Operational",
+      "degraded": "Degraded",
+      "down": "Down",
+      "unknown": "No recent check"
+    },
+    "components": "Components",
+    "component": {
+      "api": "API",
+      "database": "Database",
+      "redis": "Redis (job queue)",
+      "calendar": "Google Calendar sync",
+      "email": "Email delivery",
+      "backups": "Backups"
+    },
+    "barsLabel": "{name}: {uptime} availability over 90 days",
+    "noData": "no data",
+    "uptime": "{value} over 90 days",
+    "daysAgo": "90 days ago",
+    "today": "today",
+    "incidents": "Incidents (90 days)",
+    "noIncident": "No incident in the last 90 days.",
+    "resolved": "resolved",
+    "ongoing": "ongoing",
+    "duration": "{minutes, plural, one {# minute} other {# minutes}}",
+    "updated": "Updated {when}"
   }
 }

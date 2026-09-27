@@ -1,0 +1,20 @@
+# Uptime Kuma : surveillance EXTERNE d'Agenda G & N (docs/monitoring.md).
+# À installer sur une AUTRE machine que le serveur de l'app (sinon il tombe avec lui) :
+# un petit VPS, un Raspberry Pi à la maison, un NAS… ou une autre instance Coolify.
+#   docker compose up -d   →   http://<machine>:3001 (créer le compte admin au premier accès)
+services:
+  uptime-kuma:
+    image: louislam/uptime-kuma:2
+    restart: unless-stopped
+    ports:
+      - '3001:3001'
+    volumes:
+      - uptime-kuma:/app/data
+    healthcheck:
+      test: ['CMD-SHELL', 'curl -fsS http://localhost:3001/ >/dev/null || exit 1']
+      interval: 60s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  uptime-kuma:

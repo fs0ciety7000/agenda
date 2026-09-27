@@ -9,6 +9,7 @@ const PUBLIC_PATHS = [
   '/reset-password',
   '/privacy',
   '/about',
+  '/status',
 ];
 
 /**
