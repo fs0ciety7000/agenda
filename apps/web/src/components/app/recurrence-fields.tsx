@@ -30,6 +30,7 @@ const PRESETS: RepeatPreset[] = [
   'monthly',
   'quarterly',
   'yearly',
+  'after',
   'custom',
 ];
 
@@ -62,6 +63,7 @@ export function RecurrenceFields({
   const set = <K extends keyof RecurrenceState>(key: K, value: RecurrenceState[K]) =>
     onChange({ ...state, [key]: value });
   const repeating = state.preset !== 'none';
+  const after = state.preset === 'after';
   const showWeekdays =
     ['weekly', 'biweekly'].includes(state.preset) ||
     (state.preset === 'custom' && state.unit === 'week');
@@ -95,7 +97,15 @@ export function RecurrenceFields({
       <Select
         label={t('repeat')}
         value={state.preset}
-        onChange={(e) => set('preset', e.target.value as RepeatPreset)}
+        onChange={(e) => {
+          const preset = e.target.value as RepeatPreset;
+          // « Après la dernière fois » : pas de nombre de fois.
+          onChange({
+            ...state,
+            preset,
+            end: preset === 'after' && state.end === 'count' ? 'never' : state.end,
+          });
+        }}
       >
         {PRESETS.filter((p) => allowNone || p !== 'none').map((p) => (
           <option key={p} value={p}>
@@ -131,6 +141,42 @@ export function RecurrenceFields({
               </option>
             ))}
           </Select>
+        </div>
+      )}
+
+      {after && (
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <label htmlFor="rec-after" className="text-sm">
+              {t('every')}
+            </label>
+            <input
+              id="rec-after"
+              type="number"
+              min={1}
+              max={365}
+              value={state.afterInterval}
+              onChange={(e) =>
+                set('afterInterval', Math.max(1, Math.min(365, Number(e.target.value) || 1)))
+              }
+              className={cn(inputClass, 'w-20')}
+            />
+            <Select
+              label={t('unit')}
+              hideLabel
+              value={state.afterUnit}
+              onChange={(e) => set('afterUnit', e.target.value as RecurrenceState['afterUnit'])}
+            >
+              {(['DAY', 'WEEK', 'MONTH'] as const).map((u) => (
+                <option key={u} value={u}>
+                  {t(`units.${u === 'DAY' ? 'day' : u === 'WEEK' ? 'week' : 'month'}`, {
+                    n: state.afterInterval,
+                  })}
+                </option>
+              ))}
+            </Select>
+          </div>
+          <p className="text-sm text-text-muted">{t('afterHint')}</p>
         </div>
       )}
 
@@ -188,7 +234,7 @@ export function RecurrenceFields({
           >
             <option value="never">{t('endNever')}</option>
             <option value="until">{t('endUntil')}</option>
-            <option value="count">{t('endCount')}</option>
+            {!after && <option value="count">{t('endCount')}</option>}
           </Select>
           {state.end === 'until' && (
             <div className="flex flex-col gap-1.5">
@@ -205,7 +251,7 @@ export function RecurrenceFields({
               />
             </div>
           )}
-          {state.end === 'count' && (
+          {state.end === 'count' && !after && (
             <div className="flex flex-col gap-1.5">
               <label htmlFor="rec-count" className="text-sm font-medium">
                 {t('times')}
@@ -329,23 +375,24 @@ export function RecurrenceFields({
             </ul>
           )}
 
-          {(state.rotation === 'alternate' ||
-            state.rotation === 'sequence' ||
-            state.rotation === 'weekday') && (
-            <label className="flex min-h-10 items-center gap-2 text-sm">
-              <input
-                type="checkbox"
-                checked={state.perWeek}
-                onChange={(e) => set('perWeek', e.target.checked)}
-                className="size-4 accent-(--color-accent)"
-              />
-              {t('perWeek')}
-            </label>
-          )}
+          {!after &&
+            (state.rotation === 'alternate' ||
+              state.rotation === 'sequence' ||
+              state.rotation === 'weekday') && (
+              <label className="flex min-h-10 items-center gap-2 text-sm">
+                <input
+                  type="checkbox"
+                  checked={state.perWeek}
+                  onChange={(e) => set('perWeek', e.target.checked)}
+                  className="size-4 accent-(--color-accent)"
+                />
+                {t('perWeek')}
+              </label>
+            )}
         </div>
       )}
 
-      {repeating && date && (
+      {repeating && !after && date && (
         <RecurrencePreview state={state} date={date} assignee={assignee} personal={personal} />
       )}
     </fieldset>

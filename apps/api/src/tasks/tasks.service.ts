@@ -26,6 +26,7 @@ import {
   continuationOffset,
   describeSlots,
   expandSeries,
+  nextAfter,
   parseQuickAdd,
   type Rule,
   startOfWeek,
@@ -175,11 +176,32 @@ export class TasksService {
             ],
       take: query.limit,
     });
-    return rows.map(toDto);
+    const last = await this.lastDone(rows);
+    return rows.map((o) => toDto(o, last));
+  }
+
+  /** Dernière fois que chaque tâche récurrente a été faite (une requête pour toute la liste). */
+  private async lastDone(rows: OccurrenceRow[]): Promise<Map<string, OccurrenceDto['lastDone']>> {
+    const ids = [...new Set(rows.flatMap((o) => (o.seriesId ? [o.seriesId] : [])))];
+    if (!ids.length) return new Map();
+    const found = await this.prisma.$queryRaw<
+      { seriesId: string; completedAt: Date; completedById: string | null }[]
+    >`
+      SELECT DISTINCT ON ("seriesId") "seriesId", "completedAt", "completedById"
+      FROM "TaskOccurrence"
+      WHERE "seriesId" = ANY(${ids}::uuid[]) AND status = 'DONE' AND "completedAt" IS NOT NULL
+      ORDER BY "seriesId", "completedAt" DESC`;
+    return new Map(
+      found.map((r) => [
+        r.seriesId,
+        { at: r.completedAt.toISOString(), memberId: r.completedById },
+      ]),
+    );
   }
 
   async get(ctx: HouseholdContext, id: string): Promise<OccurrenceDto> {
-    return toDto(await this.findVisible(ctx, id));
+    const row = await this.findVisible(ctx, id);
+    return toDto(row, await this.lastDone([row]));
   }
 
   /** Occurrences qui ont au moins deux responsables (« à deux »). */
@@ -887,8 +909,17 @@ export class TasksService {
           recurrence?.advance ?? (old.rotationAdvance as 'PER_OCCURRENCE'),
         );
       }
+      const rule = (recurrence?.rule ?? old.rule) as Rule;
+      let from = today;
+      if (rule.freq === 'AFTER') {
+        const anchor = await this.afterAnchor(tx, tz, old, current, input, recurrence);
+        if (anchor !== fromDbDate(old.startDate)) {
+          const date = await this.series.reanchorAfter(tx, old.id, anchor);
+          if (date < from) from = date;
+        } else if (fromDbDate(old.startDate)! < from) from = fromDbDate(old.startDate)!;
+      }
       // Régénération à partir d'aujourd'hui, identifiants conservés ; faites / modifiées intactes.
-      await this.series.regenerate(tx, old.id, today, this.horizonFor(tz, today));
+      await this.series.regenerate(tx, old.id, from, this.horizonFor(tz, today));
       // Titre ou responsables changés : toutes les occurrences à venir sont à republier dans Google.
       await tx.taskOccurrence.updateMany({
         where: { taskId: current.taskId, date: { gte: toDbDate(addDays(today, -1)) } },
@@ -940,6 +971,16 @@ export class TasksService {
             syncVersion: { increment: 1 },
           },
         });
+        if (current.seriesId) {
+          // « Après la dernière fois » : la suivante part d'aujourd'hui.
+          const tz = await this.timezone(ctx);
+          await this.series.advanceAfter(
+            tx,
+            current.seriesId,
+            fromDbDate(current.originalDate)!,
+            todayIn(tz),
+          );
+        }
         await this.log(
           tx,
           ctx,
@@ -969,6 +1010,7 @@ export class TasksService {
             syncVersion: { increment: 1 },
           },
         });
+        if (current.seriesId) await this.series.rewindAfter(tx, current.seriesId, current);
         await this.log(
           tx,
           ctx,
@@ -1014,6 +1056,13 @@ export class TasksService {
             syncVersion: { increment: 1 },
           },
         });
+        // « Après la dernière fois » : une occurrence annulée relance la suivante.
+        await this.series.advanceAfter(
+          tx,
+          current.seriesId,
+          fromDbDate(current.originalDate)!,
+          todayIn(await this.timezone(ctx)),
+        );
         await this.log(
           tx,
           ctx,
@@ -1215,6 +1264,44 @@ export class TasksService {
     return startDate > horizon ? addDays(startDate, 30) : horizon;
   }
 
+  /**
+   * Date de l'occurrence en attente d'une série « après la dernière fois » après modification :
+   * la date choisie dans le formulaire, sinon (règle changée) dernière fois + nouvel intervalle,
+   * sinon inchangée.
+   */
+  private async afterAnchor(
+    tx: Tx,
+    tz: string,
+    series: { id: string; startDate: Date; rule: Prisma.JsonValue },
+    current: OccurrenceRow,
+    input: UpdateOccurrenceInput,
+    recurrence: RecurrenceInput | null,
+  ): Promise<string> {
+    const today = todayIn(tz);
+    const start = fromDbDate(series.startDate)!;
+    if (input.date && input.date !== fromDbDate(current.date)) return input.date;
+    const oldRule = series.rule as Rule;
+    const rule = (recurrence?.rule ?? oldRule) as Rule;
+    if (rule.freq !== 'AFTER') return start;
+    if (JSON.stringify(rule) === JSON.stringify(oldRule)) return start;
+    const last = await tx.taskOccurrence.findFirst({
+      where: { seriesId: series.id, status: 'DONE', completedAt: { not: null } },
+      orderBy: { completedAt: 'desc' },
+      select: { completedAt: true },
+    });
+    if (last) {
+      const next = nextAfter(rule, todayIn(tz, last.completedAt!));
+      return next > today ? next : today;
+    }
+    // Pas encore faite : l'occurrence en attente garde sa date (sinon aujourd'hui).
+    const pending = await tx.taskOccurrence.findFirst({
+      where: { seriesId: series.id, status: 'TODO', isException: false },
+      orderBy: { originalDate: 'asc' },
+      select: { originalDate: true },
+    });
+    return pending ? fromDbDate(pending.originalDate)! : start > today ? start : today;
+  }
+
   private async firstOccurrenceId(tx: Tx, seriesId: string): Promise<string> {
     const first = await tx.taskOccurrence.findFirst({
       where: { seriesId },
@@ -1232,7 +1319,10 @@ export class TasksService {
     personal: boolean,
     creatorId = ctx.memberId,
   ): RecurrenceInput {
-    return personal ? { ...r, rotation: { mode: 'FIXED', memberIds: [creatorId] } } : r;
+    // « Après la dernière fois » : la rotation avance à chaque fois, jamais « par semaine ».
+    const base: RecurrenceInput =
+      r.rule.freq === 'AFTER' ? { ...r, advance: 'PER_OCCURRENCE', count: null } : r;
+    return personal ? { ...base, rotation: { mode: 'FIXED', memberIds: [creatorId] } } : base;
   }
 
   private mergeSchedule(
@@ -1323,7 +1413,7 @@ export class TasksService {
   }
 }
 
-function toDto(o: OccurrenceRow): OccurrenceDto {
+function toDto(o: OccurrenceRow, lastDone?: Map<string, OccurrenceDto['lastDone']>): OccurrenceDto {
   return {
     id: o.id,
     taskId: o.taskId,
@@ -1352,6 +1442,7 @@ function toDto(o: OccurrenceRow): OccurrenceDto {
     version: o.version,
     checklist: o.checklist,
     attachments: o.task.attachments,
+    lastDone: (o.seriesId && lastDone?.get(o.seriesId)) || null,
   };
 }
 

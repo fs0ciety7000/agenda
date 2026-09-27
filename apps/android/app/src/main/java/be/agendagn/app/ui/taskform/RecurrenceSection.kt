@@ -79,10 +79,37 @@ fun RecurrenceSection(
                 RepeatPreset.WEEKDAYS to R.string.repeat_weekdays, RepeatPreset.WEEKLY to R.string.repeat_weekly,
                 RepeatPreset.BIWEEKLY to R.string.repeat_biweekly, RepeatPreset.MONTHLY to R.string.repeat_monthly,
                 RepeatPreset.QUARTERLY to R.string.repeat_quarterly, RepeatPreset.YEARLY to R.string.repeat_yearly,
-                RepeatPreset.CUSTOM to R.string.repeat_custom,
+                RepeatPreset.AFTER to R.string.repeat_after, RepeatPreset.CUSTOM to R.string.repeat_custom,
             ).filter { allowNone || it.first != RepeatPreset.NONE }.map { (v, res) -> v to stringResource(res) },
             spec.preset,
-        ) { onChange(spec.copy(preset = it)) }
+        ) { preset ->
+            // « Après la dernière fois » : jours, semaines ou mois ; pas de nombre de fois.
+            onChange(
+                if (preset == RepeatPreset.AFTER) {
+                    spec.copy(
+                        preset = preset,
+                        unit = if (spec.unit == RepeatUnit.YEAR) RepeatUnit.MONTH else spec.unit,
+                        end = if (spec.end == RepeatEnd.COUNT) RepeatEnd.NEVER else spec.end,
+                    )
+                } else spec.copy(preset = preset),
+            )
+        }
+
+        if (spec.after) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Text(stringResource(R.string.repeat_every), style = MaterialTheme.typography.bodyLarge)
+                Stepper(spec.interval, 1, 365, stringResource(R.string.repeat_interval)) { onChange(spec.copy(interval = it)) }
+            }
+            WrapChips(
+                listOf(
+                    RepeatUnit.DAY to pluralStringResource(R.plurals.repeat_unit_day, spec.interval),
+                    RepeatUnit.WEEK to pluralStringResource(R.plurals.repeat_unit_week, spec.interval),
+                    RepeatUnit.MONTH to stringResource(R.string.repeat_unit_month),
+                ),
+                spec.unit,
+            ) { onChange(spec.copy(unit = it)) }
+            Hint(stringResource(R.string.repeat_after_hint))
+        }
 
         if (spec.preset == RepeatPreset.CUSTOM) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -133,10 +160,10 @@ fun RecurrenceSection(
 
         Label(stringResource(R.string.repeat_ends))
         WrapChips(
-            listOf(
+            listOfNotNull(
                 RepeatEnd.NEVER to stringResource(R.string.repeat_end_never),
                 RepeatEnd.UNTIL to stringResource(R.string.repeat_end_until),
-                RepeatEnd.COUNT to stringResource(R.string.repeat_end_count),
+                if (spec.after) null else RepeatEnd.COUNT to stringResource(R.string.repeat_end_count),
             ),
             spec.end,
         ) { end ->
@@ -155,7 +182,7 @@ fun RecurrenceSection(
             RotationFields(spec, start, members, onChange)
         }
 
-        if (date != null && preview != null) PreviewList(preview, members, personal)
+        if (date != null && preview != null && !spec.after) PreviewList(preview, members, personal)
     }
 }
 
@@ -218,7 +245,7 @@ private fun RotationFields(spec: RecurrenceSpec, start: LocalDate, members: List
             }
         }
     }
-    if (spec.rotation != RotationKind.FIXED) {
+    if (spec.rotation != RotationKind.FIXED && !spec.after) {
         CheckRow(stringResource(R.string.rotation_per_week), spec.perWeek) { onChange(spec.copy(perWeek = it)) }
     }
 }

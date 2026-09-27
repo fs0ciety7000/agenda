@@ -15,7 +15,8 @@ import kotlinx.serialization.json.put
 import java.time.DayOfWeek
 import java.time.LocalDate
 
-enum class RepeatPreset { NONE, DAILY, WEEKDAYS, WEEKLY, BIWEEKLY, MONTHLY, QUARTERLY, YEARLY, CUSTOM }
+/** AFTER : « X jours / semaines / mois après la dernière fois » (compté à partir du jour où c'est fait). */
+enum class RepeatPreset { NONE, DAILY, WEEKDAYS, WEEKLY, BIWEEKLY, MONTHLY, QUARTERLY, YEARLY, AFTER, CUSTOM }
 
 enum class RepeatUnit { DAY, WEEK, MONTH, YEAR }
 
@@ -49,6 +50,8 @@ data class RecurrenceSpec(
     val perWeek: Boolean = false,
 ) {
     val repeating: Boolean get() = preset != RepeatPreset.NONE
+
+    val after: Boolean get() = preset == RepeatPreset.AFTER
 
     val showsWeekdays: Boolean
         get() = preset == RepeatPreset.WEEKLY || preset == RepeatPreset.BIWEEKLY ||
@@ -101,6 +104,11 @@ object Recurrences {
             RepeatPreset.MONTHLY -> monthly(1)
             RepeatPreset.QUARTERLY -> monthly(3)
             RepeatPreset.YEARLY -> yearly(1)
+            RepeatPreset.AFTER -> buildJsonObject {
+                put("freq", "AFTER")
+                put("interval", s.interval.coerceIn(1, 365))
+                put("unit", if (s.unit == RepeatUnit.YEAR) "MONTH" else s.unit.name)
+            }
             RepeatPreset.CUSTOM -> {
                 val n = s.interval.coerceIn(1, 365)
                 when (s.unit) {
@@ -183,9 +191,9 @@ object Recurrences {
         return buildJsonObject {
             put("rule", rule)
             if (s.end == RepeatEnd.UNTIL && s.until != null) put("until", s.until.toString())
-            if (s.end == RepeatEnd.COUNT) put("count", s.count.coerceIn(1, 1000))
+            if (s.end == RepeatEnd.COUNT && !s.after) put("count", s.count.coerceIn(1, 1000))
             put("rotation", if (personal) unassigned else rotation(s, assignees, members, date))
-            put("advance", if (s.perWeek) "PER_WEEK" else "PER_OCCURRENCE")
+            put("advance", if (s.perWeek && !s.after) "PER_WEEK" else "PER_OCCURRENCE")
         }
     }
 
@@ -196,6 +204,10 @@ object Recurrences {
         val interval = r["interval"]?.jsonPrimitive?.int ?: 1
         var spec = RecurrenceSpec(interval = interval)
         spec = when (freq) {
+            "AFTER" -> spec.copy(
+                preset = RepeatPreset.AFTER,
+                unit = when (r["unit"]?.jsonPrimitive?.content) { "DAY" -> RepeatUnit.DAY; "WEEK" -> RepeatUnit.WEEK; else -> RepeatUnit.MONTH },
+            )
             "DAILY" -> spec.copy(
                 unit = RepeatUnit.DAY,
                 preset = when {

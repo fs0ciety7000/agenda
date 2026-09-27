@@ -419,4 +419,100 @@ describe('Tâches récurrentes & rotation (intégration)', () => {
       after.every((o) => o.startMinute === 480 && o.assigneeIds[0] === h.nicolas.memberId),
     ).toBe(true);
   });
+
+  describe('« après la dernière fois »', () => {
+    const create = (h: Awaited<ReturnType<typeof setup>>, date = addDays(today, -2)) =>
+      http()
+        .post(`${h.base}/tasks`)
+        .set(h.grace.auth)
+        .send({
+          title: 'Détartrer la bouilloire',
+          date,
+          recurrence: {
+            rule: { freq: 'AFTER', interval: 3, unit: 'WEEK' },
+            rotation: { mode: 'ALTERNATE', memberIds: [h.grace.memberId, h.nicolas.memberId] },
+          },
+        })
+        .expect(201);
+    const pending = async (seriesId: string) =>
+      prisma.taskOccurrence.findMany({
+        where: { seriesId, status: 'TODO' },
+        include: { assignees: true },
+      });
+
+    it('une seule occurrence à la fois ; la suivante part du jour où elle est faite', async () => {
+      const h = await setup();
+      const first = (await create(h)).body as Occ & { lastDone: unknown };
+      expect(first).toMatchObject({ date: addDays(today, -2), lastDone: null });
+      expect(await pending(first.seriesId)).toHaveLength(1);
+
+      // Faite aujourd'hui (en retard de 2 jours) → dans 3 semaines à partir d'aujourd'hui, par Nicolas.
+      await http().post(`${h.base}/occurrences/${first.id}/complete`).set(h.grace.auth).expect(200);
+      const next = await pending(first.seriesId);
+      expect(next).toHaveLength(1);
+      const nextDto = (
+        await http().get(`${h.base}/occurrences/${next[0]!.id}`).set(h.grace.auth).expect(200)
+      ).body as Occ & { lastDone: { memberId: string } };
+      expect(nextDto).toMatchObject({
+        date: addDays(today, 21),
+        assigneeIds: [h.nicolas.memberId],
+        lastDone: { memberId: h.grace.memberId },
+      });
+
+      // Annuler (décocher) : la suivante disparaît, la tâche redevient à faire.
+      await http().post(`${h.base}/occurrences/${first.id}/reopen`).set(h.grace.auth).expect(200);
+      const back = await pending(first.seriesId);
+      expect(back.map((o) => o.id)).toEqual([first.id]);
+
+      // Recochée : la suivante revient, même tour de rotation.
+      await http().post(`${h.base}/occurrences/${first.id}/complete`).set(h.grace.auth).expect(200);
+      const again = await pending(first.seriesId);
+      expect(again).toHaveLength(1);
+      expect(again[0]!.assignees.map((a) => a.memberId)).toEqual([h.nicolas.memberId]);
+    });
+
+    it('supprimer « cette fois » relance la suivante ; changer l’intervalle la déplace', async () => {
+      const h = await setup();
+      const first = (await create(h, today)).body as Occ;
+      await http()
+        .delete(`${h.base}/occurrences/${first.id}?scope=this`)
+        .set(h.grace.auth)
+        .expect(204);
+      const [next] = await pending(first.seriesId);
+      expect(next!.originalDate.toISOString().slice(0, 10)).toBe(addDays(today, 21));
+
+      // Faite, puis intervalle passé à 10 jours : la suivante = dernière fois + 10 jours.
+      await http().post(`${h.base}/occurrences/${next!.id}/complete`).set(h.grace.auth).expect(200);
+      const [third] = await pending(first.seriesId);
+      const dto = (
+        await http().get(`${h.base}/occurrences/${third!.id}`).set(h.grace.auth).expect(200)
+      ).body as Occ;
+      const moved = await http()
+        .patch(`${h.base}/occurrences/${third!.id}?scope=all`)
+        .set(h.grace.auth)
+        .send({
+          version: dto.version,
+          recurrence: {
+            rule: { freq: 'AFTER', interval: 10, unit: 'DAY' },
+            rotation: { mode: 'ALTERNATE', memberIds: [h.grace.memberId, h.nicolas.memberId] },
+          },
+        })
+        .expect(200);
+      expect(moved.body).toMatchObject({ id: third!.id, date: addDays(today, 10) });
+      expect(await pending(first.seriesId)).toHaveLength(1);
+    });
+
+    it('refuse un nombre d’occurrences', async () => {
+      const h = await setup();
+      await http()
+        .post(`${h.base}/tasks`)
+        .set(h.grace.auth)
+        .send({
+          title: 'Filtre',
+          date: today,
+          recurrence: { rule: { freq: 'AFTER', interval: 2, unit: 'MONTH' }, count: 3 },
+        })
+        .expect(400);
+    });
+  });
 });

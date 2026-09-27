@@ -35,6 +35,15 @@ export const RecurrenceRule = z.discriminatedUnion('freq', [
     freq: z.literal('YEARLY'),
     interval: z.number().int().min(1).max(10).default(1),
   }),
+  /**
+   * « X jours / semaines / mois après la dernière fois » (détartrer, changer un filtre) : une seule
+   * occurrence à la fois ; la suivante est créée quand celle-ci est faite, à partir de ce jour-là.
+   */
+  z.object({
+    freq: z.literal('AFTER'),
+    interval: z.number().int().min(1).max(365),
+    unit: z.enum(['DAY', 'WEEK', 'MONTH']),
+  }),
 ]);
 export type RecurrenceRule = z.infer<typeof RecurrenceRule>;
 
@@ -62,17 +71,23 @@ export type RotationInput = z.infer<typeof RotationInput>;
 
 export const RotationAdvanceInput = z.enum(['PER_OCCURRENCE', 'PER_WEEK']);
 
-export const RecurrenceInput = z.object({
-  rule: RecurrenceRule,
-  /** Dernière date incluse. */
-  until: z
-    .string()
-    .regex(/^\d{4}-\d{2}-\d{2}$/)
-    .nullish(),
-  count: z.number().int().min(1).max(1000).nullish(),
-  rotation: RotationInput.default({ mode: 'UNASSIGNED' }),
-  advance: RotationAdvanceInput.default('PER_OCCURRENCE'),
-});
+export const RecurrenceInput = z
+  .object({
+    rule: RecurrenceRule,
+    /** Dernière date incluse. */
+    until: z
+      .string()
+      .regex(/^\d{4}-\d{2}-\d{2}$/)
+      .nullish(),
+    count: z.number().int().min(1).max(1000).nullish(),
+    rotation: RotationInput.default({ mode: 'UNASSIGNED' }),
+    advance: RotationAdvanceInput.default('PER_OCCURRENCE'),
+  })
+  // « Après la dernière fois » : pas de nombre d'occurrences (la date de fin reste possible).
+  .refine((r) => r.rule.freq !== 'AFTER' || r.count == null, {
+    message: 'count is not supported with AFTER',
+    path: ['count'],
+  });
 export type RecurrenceInput = z.infer<typeof RecurrenceInput>;
 
 /** Portée d'une modification / suppression d'une tâche récurrente. */

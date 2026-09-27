@@ -293,6 +293,11 @@ fun TaskFormScreen(
                 )
             }
 
+            state.original?.takeIf { !it.isDone }?.lastDone?.let { last ->
+                val who = members.firstOrNull { it.id == last.memberId }?.displayName
+                    ?: stringResource(R.string.history_former_member)
+                Hint(stringResource(R.string.last_done, relativeTime(last.at), who))
+            }
             state.history?.takeIf { it.items.isNotEmpty() }?.let { HistorySection(it, members) }
 
             state.error?.takeIf { it != FormError.TITLE_REQUIRED }?.let { e ->
@@ -730,4 +735,16 @@ private fun HistorySection(history: be.agendagn.app.domain.model.SeriesHistory, 
             }
         }
     }
+}
+
+/** « il y a 5 semaines », « hier »… (semaines au-delà de 7 jours). */
+internal fun relativeTime(at: java.time.Instant, now: Long = System.currentTimeMillis()): String {
+    val ms = at.toEpochMilli()
+    val resolution = if (now - ms >= 7 * android.text.format.DateUtils.DAY_IN_MILLIS) {
+        android.text.format.DateUtils.WEEK_IN_MILLIS
+    } else {
+        android.text.format.DateUtils.DAY_IN_MILLIS
+    }
+    return android.text.format.DateUtils.getRelativeTimeSpanString(ms, now, resolution).toString()
+        .replaceFirstChar { it.lowercase() }
 }
