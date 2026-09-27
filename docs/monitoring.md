@@ -68,9 +68,14 @@ mêmes moniteurs.
 |---|---|---|
 | Site | HTTP(s) | `https://agenda.fs0ciety.org/healthz`, intervalle 60 s, 3 essais avant alerte |
 | État détaillé | HTTP(s) – Json Query | `https://agenda.fs0ciety.org/v1/status`, expression `status`, valeur attendue `operational` |
-| Certificat | (inclus) | cocher *Certificate Expiry Notification* sur « Site » (alerte 14 jours avant) |
 | Sauvegardes | Push | intervalle **90 000 s** (25 h) ; copier l'URL « Push » dans la variable Coolify `BACKUP_HEARTBEAT_URL` (service `backup`) puis redéployer |
 | Page de connexion | HTTP(s) – Keyword | `https://agenda.fs0ciety.org/login`, mot-clé `Agenda G` |
+
+**Certificat HTTPS** : ce n'est pas un type de moniteur mais une option du moniteur « Site ».
+Dans son formulaire, section *Advanced*, cocher *Certificate Expiry Notification* : Uptime Kuma
+prévient avant l'expiration (jours réglables dans *Settings → Notifications → TLS Certificate
+Expiry*, 7/14/21 j par défaut). Derrière Cloudflare, c'est le certificat Cloudflare qui est
+vérifié.
 
 « État détaillé » passe au rouge dès qu'un composant interne est perturbé (SMTP, sauvegardes…),
 « Site » seulement si plus rien ne répond : deux niveaux de gravité.
