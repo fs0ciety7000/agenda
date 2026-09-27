@@ -14,3 +14,4 @@ export * from './absences';
 export * from './comments';
 export * from './admin';
 export * from './monitoring';
+export * from './reports';

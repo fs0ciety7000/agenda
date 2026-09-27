@@ -65,6 +65,7 @@ fun SettingsScreen(
     onRetryPush: () -> Unit = {},
     onOpenHistory: () -> Unit = {},
     onOpenAbsences: () -> Unit = {},
+    onOpenReport: () -> Unit = {},
 ) {
     var confirmSignOut by remember { mutableStateOf(false) }
     Column(
@@ -134,6 +135,15 @@ fun SettingsScreen(
                     modifier = Modifier.padding(16.dp),
                 )
             }
+        }
+
+        SectionHeader(stringResource(R.string.report_section))
+        OutlinedCard(onClick = onOpenReport, modifier = Modifier.fillMaxWidth()) {
+            Text(
+                stringResource(R.string.report_section_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp),
+            )
         }
 
         SectionHeader(stringResource(R.string.settings_history))

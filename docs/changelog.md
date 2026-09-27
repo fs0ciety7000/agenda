@@ -15,6 +15,19 @@ d'elle-même (ou via Google Play).
 
 ## 27 septembre 2026
 
+### Signaler un problème (#59)
+
+- ✨ **Signaler un problème** depuis le site et l'app Android : bug, idée ou question, capture
+  d'écran facultative, suivi de l'état et **réponse de l'administrateur** dans l'app.
+- ✨ Administration → **Signalements** : à traiter, répondre, changer l'état ; alerte e-mail et
+  notification à chaque nouveau signalement.
+- 🔒 Informations techniques et contact par e-mail **décochés par défaut**, contenu affiché avant
+  l'envoi ; conservation limitée (180 jours après résolution), retrait à tout moment, export RGPD.
+- 🔒 Politique de confidentialité et « Sécurité des données » Google Play mises à jour
+  (signalements, commentaires, notifications du navigateur, pièces jointes des e-mails).
+- 🛠 Réglages → **Aide** : signaler, documentation, état du service ; bouton *Signaler ce
+  problème* sur les pages d'erreur.
+
 ### Documentation, API et CI (#58)
 
 - ✨ **Site de documentation** : guide d'utilisation complet, confidentialité & RGPD (registre

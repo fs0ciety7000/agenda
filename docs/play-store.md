@@ -91,12 +91,17 @@ exclus de la notion de partage.
 | Type de données | Collectée | Finalité | Facultative |
 |---|---|---|---|
 | Informations personnelles → **Nom** (prénom) | Oui | Fonctionnement de l'app, gestion du compte | Non |
-| Informations personnelles → **Adresse e-mail** | Oui | Fonctionnement de l'app, gestion du compte | Non |
+| Informations personnelles → **Adresse e-mail** | Oui | Fonctionnement de l'app, gestion du compte ; **communications du développeur** (réponse à un signalement, seulement si l'utilisateur l'accepte) | Non |
 | Activité dans l'app → **Autres contenus générés par l'utilisateur** (tâches, notes, listes) | Oui | Fonctionnement de l'app | Non |
 | Infos et performances de l'app → **Journaux de plantage**, **Diagnostics** | Oui | Analyse (correction des erreurs) | Non |
+| Infos et performances de l'app → **Autres informations sur les performances** (informations techniques d'un signalement : version, Android, modèle, langue, écran) | Oui | Fonctionnement de l'app (assistance) | Oui (case décochée par défaut, contenu affiché avant l'envoi) |
+| Messages → **Autres messages dans l'app** (texte d'un signalement envoyé à l'administrateur) | Oui | Fonctionnement de l'app (assistance) | Oui |
 | Identifiants de l'appareil → **Autres identifiants** (jeton de notification Firebase) | Oui | Fonctionnement de l'app (notifications) | Oui |
-| Photos et vidéos → **Photos** (photo jointe à une tâche, prise ou choisie par l'utilisateur) | Oui | Fonctionnement de l'app | Oui |
+| Photos et vidéos → **Photos** (photo jointe à une tâche ou capture jointe à un signalement, prise ou choisie par l'utilisateur) | Oui | Fonctionnement de l'app | Oui |
 | Fichiers et documents → **Fichiers et documents** (pièces jointes) | Oui | Fonctionnement de l'app | Oui |
+
+La capture d'un signalement passe par le **sélecteur de photos du système** : l'app ne demande
+aucune permission de stockage ou de galerie.
 
 Non collectés : position, contacts, agenda de l'appareil (l'app ne lit pas le calendrier du
 téléphone), données financières, santé, historique de navigation, publicité. Les photos et

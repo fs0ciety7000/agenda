@@ -151,7 +151,12 @@
     "activityOpen": "Open the activity log",
     "admin": "Administration",
     "adminOpen": "Open administration",
-    "adminHint": "Accounts, households, backups, delivery tests."
+    "adminHint": "Accounts, households, backups, delivery tests.",
+    "help": "Help",
+    "helpHint": "A bug, an idea, a question? Report it; the documentation answers common questions.",
+    "report": "Report a problem",
+    "docs": "Documentation",
+    "status": "Service status"
   },
   "common": {
     "loading": "Loading…",
@@ -499,7 +504,8 @@
   "errorPage": {
     "title": "Oops, this page couldn't be displayed",
     "body": "The error was reported automatically. You can try again; your data is not lost.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "report": "Report this problem"
   },
   "privacyPolicy": {
     "title": "Privacy policy",
@@ -511,7 +517,7 @@
     },
     "data": {
       "title": "Data processed",
-      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, activity history (who did what, when).\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; attachments are ignored.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it."
+      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, sub-tasks, comments, declared absences, activity history (who did what, when).\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; their attachments are added to the task.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it.\nReports (if you send any): the type, title and text of your message, a screenshot if you attach one, whether you agree to be contacted and, only if you tick the box, technical information shown before sending (browser or phone model, system, app version, language, time zone, screen size, open page). Never the content of your tasks. Only the app's administrators read them.\nBrowser notifications (if you turn them on): the subscription address provided by your browser, deleted when you turn them off or sign out."
     },
     "google": {
       "title": "Google data",
@@ -523,11 +529,11 @@
     },
     "processors": {
       "title": "Service providers",
-      "body": "Cloudflare (site delivery and protection), Google (if you use Google sign-in or Google Calendar), the email provider configured for “forgot password” (e.g. Brevo), off-site backup storage if configured (e.g. Cloudflare R2), Google Firebase Cloud Messaging for instant notifications in the Android app if enabled (it only receives the phone's notification identifier and a “something new” signal, never task content or names), and, if enabled, an error-tracking service (Sentry) that only receives technical information (error type, page), without task content or identity."
+      "body": "Cloudflare (site delivery and protection), Google (if you use Google sign-in or Google Calendar), the email provider configured for “forgot password” (e.g. Brevo), off-site backup storage if configured (e.g. Cloudflare R2), Google Firebase Cloud Messaging for instant notifications in the Android app if enabled (it only receives the phone's notification identifier and a “something new” signal, never task content or names), browsers' push services (Google, Mozilla, Apple) if you turn on site notifications (messages pass through them encrypted, unreadable to them), and, if enabled, an error-tracking service (Sentry) that only receives technical information (error type, page), without task content or identity."
     },
     "retention": {
       "title": "Retention",
-      "body": "Your data is kept as long as your account exists. A deleted task stays in the household's trash for 30 days, then is permanently erased. The activity log (who did what, and when) is kept for one year. Sessions expire after 60 days of inactivity. Password reset links expire after 30 minutes.\nAccount deletion: immediate in the app. Backups are kept 14 days on the server and 30 days off-site: your data disappears from them at the latest after that."
+      "body": "Your data is kept as long as your account exists. A deleted task stays in the household's trash for 30 days, then is permanently erased. The activity log (who did what, and when) is kept for one year. Sessions expire after 60 days of inactivity. Password reset links expire after 30 minutes. A report is kept while open, then 180 days after it is resolved (you can withdraw it at any time).\nAccount deletion: immediate in the app. Backups are kept 14 days on the server and 30 days off-site: your data disappears from them at the latest after that."
     },
     "security": {
       "title": "Security",
@@ -535,7 +541,7 @@
     },
     "rights": {
       "title": "Your rights",
-      "body": "From Settings → Data & privacy you can at any time: export all your data (JSON file), unlink Google, disconnect Google Calendar, delete your account. You also have the rights of access, rectification, objection and complaint to your country's data protection authority."
+      "body": "From Settings → Data & privacy you can at any time: export all your data (JSON file), unlink Google, disconnect Google Calendar, delete your account. From Settings → Help → Report a problem, you can withdraw your reports. You also have the rights of access, rectification, objection and complaint to your country's data protection authority."
     },
     "cookies": {
       "title": "Cookies",
@@ -843,7 +849,8 @@
       "shoppingItems": "Shopping items",
       "comments": "Comments",
       "attachments": "Attachments",
-      "database": "Database"
+      "database": "Database",
+      "openReports": "Reports to handle"
     },
     "integrations": "Configured features",
     "enabled": "enabled",
@@ -951,6 +958,29 @@
       },
       "uptime": "API up for {hours} h",
       "loopLag": "event loop: {ms} ms"
+    },
+    "reports": {
+      "title": "Reports",
+      "filter": "Show",
+      "filters": {
+        "ACTIVE": "To handle",
+        "RESOLVED": "Resolved",
+        "ALL": "All"
+      },
+      "empty": "No reports here.",
+      "contactYes": "agrees to be contacted",
+      "contactNo": "does not want to be contacted",
+      "screenshot": "View the screenshot",
+      "noDiagnostics": "No technical information (not attached by the user).",
+      "status": "Status",
+      "reply": "Reply to the user",
+      "replyHintEmail": "Shown in the app and sent by email (the user agreed).",
+      "replyHintApp": "Shown in the app only (no email: the user did not agree).",
+      "sendReply": "Send reply",
+      "replied": "Reply sent.",
+      "delete": "Delete",
+      "deleteConfirm": "Permanently delete this report?",
+      "error": "Action failed. Try again."
     }
   },
   "status": {
@@ -991,5 +1021,71 @@
     "ongoing": "ongoing",
     "duration": "{minutes, plural, one {# minute} other {# minutes}}",
     "updated": "Updated {when}"
+  },
+  "report": {
+    "title": "Report a problem",
+    "intro": "A bug, an idea, a question? Write to us: the administrator receives your message and can reply here.",
+    "faq": "Frequently asked questions",
+    "status": "Service status",
+    "newTitle": "New report",
+    "kind": "Type",
+    "kinds": {
+      "BUG": "Bug",
+      "IDEA": "Idea",
+      "QUESTION": "Question",
+      "OTHER": "Other"
+    },
+    "fieldTitle": "In a few words",
+    "placeholders": {
+      "BUG": "The shopping list no longer loads",
+      "IDEA": "Being able to pause a task",
+      "QUESTION": "How do I share a task with the other person?",
+      "OTHER": "Your message"
+    },
+    "fieldDescription": "Details",
+    "descriptionHintBug": "What you were doing, what happened, what you expected. Avoid sensitive information.",
+    "descriptionHint": "The more precise, the better. Avoid sensitive information.",
+    "screenshot": "Screenshot (optional)",
+    "screenshotAdd": "Add an image",
+    "screenshotRemove": "Remove the screenshot",
+    "screenshotHint": "PNG, JPEG or WebP, 5 MB max. Check that it shows nothing private.",
+    "screenshotType": "Unsupported format: PNG, JPEG or WebP.",
+    "screenshotSize": "Image too large (5 MB max).",
+    "diagnostics": "Attach technical information",
+    "diagnosticsHint": "Helps understand a bug: browser, language, screen size, page… Never the content of your tasks.",
+    "diagnosticsShow": "See exactly what will be sent",
+    "diag": {
+      "platform": "Platform",
+      "appVersion": "Version",
+      "os": "System",
+      "device": "Device",
+      "browser": "Browser",
+      "locale": "Language",
+      "timezone": "Time zone",
+      "screen": "Screen",
+      "page": "Page",
+      "online": "Online",
+      "pendingChanges": "Pending changes"
+    },
+    "contact": "I agree to be contacted by email about this report",
+    "contactHint": "At your account address. Otherwise, the reply is only shown here.",
+    "privacy": "Only the app's administrators read reports. Kept while open, then 180 days after resolution; deleted with your account.",
+    "privacyLink": "Privacy policy",
+    "send": "Send",
+    "sent": "Report sent, thank you!",
+    "thanks": "Thank you! Your report has been sent. You will find it below, with the reply when it comes.",
+    "mine": "My reports",
+    "reply": "Reply",
+    "withdraw": "Withdraw “{title}”",
+    "withdrawConfirm": "Withdraw this report? It will be permanently deleted.",
+    "retention": "A resolved report is automatically deleted after 180 days. You can withdraw it at any time.",
+    "statuses": {
+      "OPEN": "Sent",
+      "IN_PROGRESS": "In progress",
+      "RESOLVED": "Resolved",
+      "CLOSED": "Closed"
+    },
+    "yes": "Yes",
+    "no": "No"
   }
 }

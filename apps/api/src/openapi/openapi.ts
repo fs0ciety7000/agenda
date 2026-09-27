@@ -51,6 +51,7 @@ const TAGS: [string, string][] = [
   ['calendar', 'Synchronisation Google Agenda'],
   ['inbound-email', 'Tâches par e-mail'],
   ['realtime', 'Temps réel (Server-Sent Events)'],
+  ['reports', 'Signalements : bug, idée, question'],
   ['privacy', 'RGPD : export et suppression des données'],
   ['app', 'Distribution de l’app Android'],
   ['admin', 'Administration (comptes listés dans ADMIN_EMAILS)'],

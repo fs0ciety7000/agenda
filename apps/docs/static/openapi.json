@@ -5642,6 +5642,236 @@
         ]
       }
     },
+    "/v1/admin/reports": {
+      "get": {
+        "description": "Administration : signalements (par défaut, ceux à traiter).",
+        "operationId": "AdminController_reportList_v1",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "ACTIVE",
+              "type": "string",
+              "enum": [
+                "ACTIVE",
+                "ALL",
+                "OPEN",
+                "IN_PROGRESS",
+                "RESOLVED",
+                "CLOSED"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AdminReportDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Administration ",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/v1/admin/reports/{id}": {
+      "patch": {
+        "description": "Administration : changer l'état d'un signalement ou y répondre.",
+        "operationId": "AdminController_updateReport_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "agenda-gn"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AdminUpdateReportInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminReportDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Administration ",
+        "tags": [
+          "admin"
+        ]
+      },
+      "delete": {
+        "description": "Administration : supprimer un signalement.",
+        "operationId": "AdminController_removeReport_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "agenda-gn"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Administration ",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
+    "/v1/admin/reports/{id}/screenshot": {
+      "get": {
+        "description": "Administration : capture d'écran d'un signalement.",
+        "operationId": "AdminController_reportScreenshot_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Administration ",
+        "tags": [
+          "admin"
+        ]
+      }
+    },
     "/v1/admin/monitoring": {
       "get": {
         "description": "Onglet « Surveillance » : requêtes, erreurs, temps de réponse, sondes, incidents.",
@@ -6411,6 +6641,265 @@
         ],
         "security": []
       }
+    },
+    "/v1/reports": {
+      "post": {
+        "operationId": "ReportsController_create_v1",
+        "parameters": [
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "agenda-gn"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateReportInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Envoyer un signalement (bug, idée, question)",
+        "tags": [
+          "reports"
+        ]
+      },
+      "get": {
+        "operationId": "ReportsController_mine_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReportDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Mes signalements, avec leur état et la réponse éventuelle",
+        "tags": [
+          "reports"
+        ]
+      }
+    },
+    "/v1/reports/{id}/screenshot": {
+      "post": {
+        "operationId": "ReportsController_screenshot_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "agenda-gn"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReportDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Joindre une capture d'écran (multipart, champ `file`, image de 5 Mo au plus)",
+        "tags": [
+          "reports"
+        ]
+      },
+      "get": {
+        "operationId": "ReportsController_download_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Voir la capture d'écran jointe à un de mes signalements",
+        "tags": [
+          "reports"
+        ]
+      }
+    },
+    "/v1/reports/{id}": {
+      "delete": {
+        "operationId": "ReportsController_remove_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "agenda-gn"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Retirer un de mes signalements (effacé tout de suite)",
+        "tags": [
+          "reports"
+        ]
+      }
     }
   },
   "info": {
@@ -6475,6 +6964,10 @@
     {
       "name": "realtime",
       "description": "Temps réel (Server-Sent Events)"
+    },
+    {
+      "name": "reports",
+      "description": "Signalements : bug, idée, question"
     },
     {
       "name": "privacy",
@@ -7087,6 +7580,11 @@
                 "type": "integer",
                 "minimum": -9007199254740991,
                 "maximum": 9007199254740991
+              },
+              "openReports": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
               }
             },
             "required": [
@@ -7098,7 +7596,8 @@
               "doneLast7Days",
               "shoppingItems",
               "comments",
-              "attachments"
+              "attachments",
+              "openReports"
             ],
             "additionalProperties": false
           },
@@ -7232,6 +7731,158 @@
         ],
         "additionalProperties": false
       },
+      "AdminReportDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "BUG",
+              "IDEA",
+              "QUESTION",
+              "OTHER"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "IN_PROGRESS",
+              "RESOLVED",
+              "CLOSED"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "allowContact": {
+            "type": "boolean"
+          },
+          "diagnostics": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "platform": {
+                "type": "string",
+                "enum": [
+                  "web",
+                  "android"
+                ]
+              },
+              "appVersion": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 40
+              },
+              "os": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 80
+              },
+              "device": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 80
+              },
+              "browser": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 300
+              },
+              "locale": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 20
+              },
+              "timezone": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 60
+              },
+              "screen": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 20
+              },
+              "page": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 200
+              },
+              "online": {
+                "nullable": true,
+                "type": "boolean"
+              },
+              "pendingChanges": {
+                "nullable": true,
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100000
+              }
+            },
+            "required": [
+              "platform"
+            ],
+            "additionalProperties": false
+          },
+          "hasScreenshot": {
+            "type": "boolean"
+          },
+          "reply": {
+            "nullable": true,
+            "type": "string"
+          },
+          "repliedAt": {
+            "nullable": true,
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "author": {
+            "type": "object",
+            "properties": {
+              "displayName": {
+                "type": "string"
+              },
+              "email": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "displayName",
+              "email"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "status",
+          "title",
+          "description",
+          "allowContact",
+          "diagnostics",
+          "hasScreenshot",
+          "reply",
+          "repliedAt",
+          "createdAt",
+          "updatedAt",
+          "author"
+        ],
+        "additionalProperties": false
+      },
       "AdminTestResultDto": {
         "type": "object",
         "properties": {
@@ -7248,6 +7899,25 @@
           "detail"
         ],
         "additionalProperties": false
+      },
+      "AdminUpdateReportInput": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "IN_PROGRESS",
+              "RESOLVED",
+              "CLOSED"
+            ]
+          },
+          "reply": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 5000
+          }
+        }
       },
       "AdminUserDto": {
         "type": "object",
@@ -7917,6 +8587,106 @@
             "type": "string"
           }
         }
+      },
+      "CreateReportInput": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "BUG",
+              "IDEA",
+              "QUESTION",
+              "OTHER"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 120
+          },
+          "description": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 5000
+          },
+          "allowContact": {
+            "default": false,
+            "type": "boolean"
+          },
+          "diagnostics": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "platform": {
+                "type": "string",
+                "enum": [
+                  "web",
+                  "android"
+                ]
+              },
+              "appVersion": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 40
+              },
+              "os": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 80
+              },
+              "device": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 80
+              },
+              "browser": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 300
+              },
+              "locale": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 20
+              },
+              "timezone": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 60
+              },
+              "screen": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 20
+              },
+              "page": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 200
+              },
+              "online": {
+                "nullable": true,
+                "type": "boolean"
+              },
+              "pendingChanges": {
+                "nullable": true,
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100000
+              }
+            },
+            "required": [
+              "platform"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "kind",
+          "title",
+          "description"
+        ]
       },
       "CreateTaskInput": {
         "type": "object",
@@ -9544,6 +10314,141 @@
           "password",
           "displayName"
         ]
+      },
+      "ReportDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "BUG",
+              "IDEA",
+              "QUESTION",
+              "OTHER"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "OPEN",
+              "IN_PROGRESS",
+              "RESOLVED",
+              "CLOSED"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "allowContact": {
+            "type": "boolean"
+          },
+          "diagnostics": {
+            "nullable": true,
+            "type": "object",
+            "properties": {
+              "platform": {
+                "type": "string",
+                "enum": [
+                  "web",
+                  "android"
+                ]
+              },
+              "appVersion": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 40
+              },
+              "os": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 80
+              },
+              "device": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 80
+              },
+              "browser": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 300
+              },
+              "locale": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 20
+              },
+              "timezone": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 60
+              },
+              "screen": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 20
+              },
+              "page": {
+                "nullable": true,
+                "type": "string",
+                "maxLength": 200
+              },
+              "online": {
+                "nullable": true,
+                "type": "boolean"
+              },
+              "pendingChanges": {
+                "nullable": true,
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 100000
+              }
+            },
+            "required": [
+              "platform"
+            ],
+            "additionalProperties": false
+          },
+          "hasScreenshot": {
+            "type": "boolean"
+          },
+          "reply": {
+            "nullable": true,
+            "type": "string"
+          },
+          "repliedAt": {
+            "nullable": true,
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "status",
+          "title",
+          "description",
+          "allowContact",
+          "diagnostics",
+          "hasScreenshot",
+          "reply",
+          "repliedAt",
+          "createdAt",
+          "updatedAt"
+        ],
+        "additionalProperties": false
       },
       "ResetPasswordInput": {
         "type": "object",

@@ -28,6 +28,8 @@ export const AdminOverviewDto = z.object({
     shoppingItems: z.number().int(),
     comments: z.number().int(),
     attachments: z.number().int(),
+    /** Signalements à traiter (ouverts ou en cours). */
+    openReports: z.number().int(),
   }),
   storage: z.object({ databaseBytes: z.number(), attachmentsBytes: z.number() }),
   /** Événements Google Calendar par état (SYNCED, PENDING, ERROR, BLOCKED…). */

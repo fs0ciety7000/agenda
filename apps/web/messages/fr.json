@@ -151,7 +151,12 @@
     "activityOpen": "Ouvrir le journal",
     "admin": "Administration",
     "adminOpen": "Ouvrir l'administration",
-    "adminHint": "Comptes, foyers, sauvegardes, tests d'envoi."
+    "adminHint": "Comptes, foyers, sauvegardes, tests d'envoi.",
+    "help": "Aide",
+    "helpHint": "Un bug, une idée, une question ? Signalez-le ; la documentation répond aux questions courantes.",
+    "report": "Signaler un problème",
+    "docs": "Documentation",
+    "status": "État du service"
   },
   "common": {
     "loading": "Chargement…",
@@ -499,7 +504,8 @@
   "errorPage": {
     "title": "Oups, cette page n'a pas pu s'afficher",
     "body": "L'erreur nous a été signalée automatiquement. Vous pouvez réessayer ; vos données ne sont pas perdues.",
-    "retry": "Réessayer"
+    "retry": "Réessayer",
+    "report": "Signaler ce problème"
   },
   "privacyPolicy": {
     "title": "Politique de confidentialité",
@@ -511,7 +517,7 @@
     },
     "data": {
       "title": "Données traitées",
-      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations, liste de courses.\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, historique des actions (qui a fait quoi, quand).\nSessions : appareil (navigateur ou application) et dates de connexion, pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion.\nAjout par e-mail (si vous l'activez) : l'expéditeur, le sujet et le texte des e-mails que vous transférez à votre adresse personnelle sont enregistrés dans les notes de la tâche créée. Ils sont reçus par Resend, notre prestataire d'e-mails ; les pièces jointes sont ignorées.\nPièces jointes : les fichiers que vous joignez à une tâche (ou joints à un e-mail transféré) sont stockés sur notre serveur avec la tâche, visibles par les membres du foyer (par vous seul pour une tâche personnelle), et supprimés avec elle."
+      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations, liste de courses.\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, sous-tâches, commentaires, absences déclarées, historique des actions (qui a fait quoi, quand).\nSessions : appareil (navigateur ou application) et dates de connexion, pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion.\nAjout par e-mail (si vous l'activez) : l'expéditeur, le sujet et le texte des e-mails que vous transférez à votre adresse personnelle sont enregistrés dans les notes de la tâche créée. Ils sont reçus par Resend, notre prestataire d'e-mails ; leurs pièces jointes sont jointes à la tâche.\nPièces jointes : les fichiers que vous joignez à une tâche (ou joints à un e-mail transféré) sont stockés sur notre serveur avec la tâche, visibles par les membres du foyer (par vous seul pour une tâche personnelle), et supprimés avec elle.\nSignalements (si vous en envoyez) : le type, le titre et le texte de votre message, une capture d'écran si vous en joignez une, votre choix d'être recontacté·e ou non et, seulement si vous cochez la case, des informations techniques affichées avant l'envoi (navigateur ou modèle de téléphone, système, version de l'app, langue, fuseau horaire, taille d'écran, page ouverte). Jamais le contenu de vos tâches. Seuls les administrateurs de l'app les lisent.\nNotifications du navigateur (si vous les activez) : l'adresse d'abonnement fournie par votre navigateur, supprimée quand vous les désactivez ou vous déconnectez."
     },
     "google": {
       "title": "Données Google",
@@ -523,11 +529,11 @@
     },
     "processors": {
       "title": "Prestataires",
-      "body": "Cloudflare (acheminement et protection du site), Google (si vous utilisez la connexion Google ou Google Calendar), le fournisseur d'e-mails configuré pour « mot de passe oublié » (par exemple Brevo), le stockage de sauvegarde hors serveur s'il est configuré (par exemple Cloudflare R2), Google Firebase Cloud Messaging pour les notifications instantanées de l'application Android s'il est activé (il ne reçoit que l'identifiant de notification du téléphone et un signal « du nouveau », jamais le contenu d'une tâche ni un nom), et, s'il est activé, un service de suivi des erreurs (Sentry) qui ne reçoit que des informations techniques (type d'erreur, page), sans contenu de tâche ni identité."
+      "body": "Cloudflare (acheminement et protection du site), Google (si vous utilisez la connexion Google ou Google Calendar), le fournisseur d'e-mails configuré pour « mot de passe oublié » (par exemple Brevo), le stockage de sauvegarde hors serveur s'il est configuré (par exemple Cloudflare R2), Google Firebase Cloud Messaging pour les notifications instantanées de l'application Android s'il est activé (il ne reçoit que l'identifiant de notification du téléphone et un signal « du nouveau », jamais le contenu d'une tâche ni un nom), les services de notification des navigateurs (Google, Mozilla, Apple) si vous activez les notifications du site (le message y transite chiffré, illisible pour eux), et, s'il est activé, un service de suivi des erreurs (Sentry) qui ne reçoit que des informations techniques (type d'erreur, page), sans contenu de tâche ni identité."
     },
     "retention": {
       "title": "Durées de conservation",
-      "body": "Vos données sont conservées tant que votre compte existe. Une tâche supprimée reste 30 jours dans la corbeille du foyer, puis est effacée définitivement. Le journal d'activité (qui a fait quoi, et quand) est conservé un an. Les sessions expirent après 60 jours d'inactivité. Les liens de réinitialisation de mot de passe expirent après 30 minutes.\nSuppression du compte : immédiate dans l'application. Les sauvegardes sont conservées 14 jours sur le serveur et 30 jours hors serveur : vos données y disparaissent au plus tard après ce délai."
+      "body": "Vos données sont conservées tant que votre compte existe. Une tâche supprimée reste 30 jours dans la corbeille du foyer, puis est effacée définitivement. Le journal d'activité (qui a fait quoi, et quand) est conservé un an. Les sessions expirent après 60 jours d'inactivité. Les liens de réinitialisation de mot de passe expirent après 30 minutes. Un signalement est conservé tant qu'il est ouvert, puis 180 jours après sa résolution (vous pouvez le retirer à tout moment).\nSuppression du compte : immédiate dans l'application. Les sauvegardes sont conservées 14 jours sur le serveur et 30 jours hors serveur : vos données y disparaissent au plus tard après ce délai."
     },
     "security": {
       "title": "Sécurité",
@@ -535,7 +541,7 @@
     },
     "rights": {
       "title": "Vos droits",
-      "body": "Depuis Réglages → Données & confidentialité, vous pouvez à tout moment : exporter toutes vos données (fichier JSON), délier Google, déconnecter Google Calendar, supprimer votre compte. Vous disposez aussi des droits d'accès, de rectification, d'opposition et de réclamation auprès de l'autorité de protection des données de votre pays (en Belgique : l'Autorité de protection des données)."
+      "body": "Depuis Réglages → Données & confidentialité, vous pouvez à tout moment : exporter toutes vos données (fichier JSON), délier Google, déconnecter Google Calendar, supprimer votre compte. Depuis Réglages → Aide → Signaler un problème, vous pouvez retirer vos signalements. Vous disposez aussi des droits d'accès, de rectification, d'opposition et de réclamation auprès de l'autorité de protection des données de votre pays (en Belgique : l'Autorité de protection des données)."
     },
     "cookies": {
       "title": "Cookies",
@@ -843,7 +849,8 @@
       "shoppingItems": "Articles de courses",
       "comments": "Commentaires",
       "attachments": "Pièces jointes",
-      "database": "Base de données"
+      "database": "Base de données",
+      "openReports": "Signalements à traiter"
     },
     "integrations": "Fonctions configurées",
     "enabled": "activé",
@@ -951,6 +958,29 @@
       },
       "uptime": "API démarrée depuis {hours} h",
       "loopLag": "boucle : {ms} ms"
+    },
+    "reports": {
+      "title": "Signalements",
+      "filter": "Afficher",
+      "filters": {
+        "ACTIVE": "À traiter",
+        "RESOLVED": "Résolus",
+        "ALL": "Tous"
+      },
+      "empty": "Aucun signalement ici.",
+      "contactYes": "accepte d'être recontacté·e",
+      "contactNo": "ne souhaite pas être recontacté·e",
+      "screenshot": "Voir la capture d'écran",
+      "noDiagnostics": "Sans informations techniques (non jointes par l'utilisateur).",
+      "status": "État",
+      "reply": "Réponse à l'utilisateur",
+      "replyHintEmail": "Visible dans l'app et envoyée par e-mail (l'utilisateur l'a accepté).",
+      "replyHintApp": "Visible seulement dans l'app (pas d'e-mail : l'utilisateur ne l'a pas accepté).",
+      "sendReply": "Envoyer la réponse",
+      "replied": "Réponse envoyée.",
+      "delete": "Supprimer",
+      "deleteConfirm": "Supprimer définitivement ce signalement ?",
+      "error": "Action impossible. Réessayez."
     }
   },
   "status": {
@@ -991,5 +1021,71 @@
     "ongoing": "en cours",
     "duration": "{minutes, plural, one {# minute} other {# minutes}}",
     "updated": "Mis à jour {when}"
+  },
+  "report": {
+    "title": "Signaler un problème",
+    "intro": "Un bug, une idée, une question ? Écrivez-nous : l'administrateur reçoit votre message et peut vous répondre ici.",
+    "faq": "Questions fréquentes",
+    "status": "État du service",
+    "newTitle": "Nouveau signalement",
+    "kind": "Type",
+    "kinds": {
+      "BUG": "Bug",
+      "IDEA": "Idée",
+      "QUESTION": "Question",
+      "OTHER": "Autre"
+    },
+    "fieldTitle": "En quelques mots",
+    "placeholders": {
+      "BUG": "La liste de courses ne se charge plus",
+      "IDEA": "Pouvoir mettre une tâche en pause",
+      "QUESTION": "Comment partager une tâche avec l'autre ?",
+      "OTHER": "Votre message"
+    },
+    "fieldDescription": "Détails",
+    "descriptionHintBug": "Ce que vous faisiez, ce qui s'est passé, ce que vous attendiez. Évitez d'y mettre des informations sensibles.",
+    "descriptionHint": "Plus c'est précis, mieux c'est. Évitez d'y mettre des informations sensibles.",
+    "screenshot": "Capture d'écran (facultatif)",
+    "screenshotAdd": "Ajouter une image",
+    "screenshotRemove": "Retirer la capture",
+    "screenshotHint": "PNG, JPEG ou WebP, 5 Mo au plus. Vérifiez qu'elle ne montre rien de privé.",
+    "screenshotType": "Format non accepté : PNG, JPEG ou WebP.",
+    "screenshotSize": "Image trop lourde (5 Mo au plus).",
+    "diagnostics": "Joindre les informations techniques",
+    "diagnosticsHint": "Aident à comprendre un bug : navigateur, langue, taille d'écran, page… Jamais le contenu de vos tâches.",
+    "diagnosticsShow": "Voir exactement ce qui sera envoyé",
+    "diag": {
+      "platform": "Plateforme",
+      "appVersion": "Version",
+      "os": "Système",
+      "device": "Appareil",
+      "browser": "Navigateur",
+      "locale": "Langue",
+      "timezone": "Fuseau horaire",
+      "screen": "Écran",
+      "page": "Page",
+      "online": "En ligne",
+      "pendingChanges": "Modifications en attente"
+    },
+    "contact": "J'accepte d'être recontacté·e par e-mail à propos de ce signalement",
+    "contactHint": "À l'adresse de votre compte. Sinon, la réponse s'affiche seulement ici.",
+    "privacy": "Seuls les administrateurs de l'app lisent les signalements. Conservé tant qu'il est ouvert, puis 180 jours après sa résolution ; effacé avec votre compte.",
+    "privacyLink": "Politique de confidentialité",
+    "send": "Envoyer",
+    "sent": "Signalement envoyé, merci !",
+    "thanks": "Merci ! Votre signalement a bien été envoyé. Vous le retrouvez ci-dessous, avec la réponse quand elle arrivera.",
+    "mine": "Mes signalements",
+    "reply": "Réponse",
+    "withdraw": "Retirer « {title} »",
+    "withdrawConfirm": "Retirer ce signalement ? Il sera effacé définitivement.",
+    "retention": "Un signalement résolu est effacé automatiquement après 180 jours. Vous pouvez le retirer à tout moment.",
+    "statuses": {
+      "OPEN": "Envoyé",
+      "IN_PROGRESS": "En cours",
+      "RESOLVED": "Résolu",
+      "CLOSED": "Fermé"
+    },
+    "yes": "Oui",
+    "no": "Non"
   }
 }

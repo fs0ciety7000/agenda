@@ -167,3 +167,62 @@ export function inboundTaskEmptyEmail(locale: Locale) {
     html: layout(title, body),
   };
 }
+
+const REPORT_KINDS: Record<string, Record<Locale, string>> = {
+  BUG: { fr: 'Bug', en: 'Bug' },
+  IDEA: { fr: 'Idée', en: 'Idea' },
+  QUESTION: { fr: 'Question', en: 'Question' },
+  OTHER: { fr: 'Autre', en: 'Other' },
+};
+
+/** Nouveau signalement, aux administrateurs. */
+export function reportNewEmail(
+  locale: Locale,
+  p: { kind: string; title: string; description: string; author: string; url: string },
+) {
+  const en = locale === 'en';
+  const kind = REPORT_KINDS[p.kind]?.[locale] ?? p.kind;
+  const subject = `${p.kind === 'BUG' ? '🐞' : '💬'} ${kind} : ${p.title}`;
+  const body = [
+    en ? `New report from ${p.author}.` : `Nouveau signalement de ${p.author}.`,
+    p.description.length > 1500 ? `${p.description.slice(0, 1500)}…` : p.description,
+  ];
+  const cta = en ? 'Open reports' : 'Ouvrir les signalements';
+  return {
+    subject,
+    text: `${body.join('\n\n')}\n\n${cta} : ${p.url}\n`,
+    html: layout(subject, body, { label: cta, url: p.url }),
+  };
+}
+
+/** Réponse de l'administrateur à un signalement (si l'auteur a accepté d'être recontacté). */
+export function reportReplyEmail(
+  locale: Locale,
+  p: { title: string; reply: string; status: string; url: string },
+) {
+  const en = locale === 'en';
+  const subject = en
+    ? `Reply to your report: ${p.title}`
+    : `Réponse à votre signalement : ${p.title}`;
+  const status: Record<string, Record<Locale, string>> = {
+    OPEN: { fr: 'ouvert', en: 'open' },
+    IN_PROGRESS: { fr: 'en cours', en: 'in progress' },
+    RESOLVED: { fr: 'résolu', en: 'resolved' },
+    CLOSED: { fr: 'fermé', en: 'closed' },
+  };
+  const body = [
+    p.reply,
+    en
+      ? `Status: ${status[p.status]?.en ?? p.status}.`
+      : `État : ${status[p.status]?.fr ?? p.status}.`,
+    en
+      ? 'You receive this email because you agreed to be contacted about this report.'
+      : 'Vous recevez cet e-mail car vous avez accepté d’être recontacté·e à propos de ce signalement.',
+  ];
+  const cta = en ? 'See my reports' : 'Voir mes signalements';
+  return {
+    subject,
+    text: `${body.join('\n\n')}\n\n${cta} : ${p.url}\n`,
+    html: layout(subject, body, { label: cta, url: p.url }),
+  };
+}
