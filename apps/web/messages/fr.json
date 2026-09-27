@@ -705,7 +705,9 @@
       "occurrence_updated_in_google": "a modifié",
       "other": "a modifié",
       "attachment_added": "a joint un fichier à",
-      "attachment_deleted": "a supprimé un fichier de"
+      "attachment_deleted": "a supprimé un fichier de",
+      "absence_created": "a déclaré l'absence de",
+      "absence_deleted": "a annulé l'absence de"
     },
     "fields": {
       "title": "titre",
@@ -770,5 +772,21 @@
     "confirmDelete": "Supprimer « {name} » ?",
     "kb": "{n} Ko",
     "mb": "{n} Mo"
+  },
+  "absences": {
+    "title": "Absences",
+    "intro": "En vacances, en déplacement ou malade ? Pendant l'absence, ses tâches partagées passent à l'autre (tours de rôle compris). Les tâches personnelles ne bougent pas. À la fin, tout reprend son cours.",
+    "list": "Absences prévues",
+    "item": "{name} : du {from} au {to}",
+    "remove": "Annuler l'absence de {name}",
+    "removed": "Absence annulée : les tours de rôle reprennent.",
+    "added": "Absence enregistrée : les tâches de {name} sont confiées à l'autre.",
+    "error": "Impossible d'enregistrer l'absence.",
+    "who": "Qui ?",
+    "from": "Du",
+    "to": "Au",
+    "add": "Ajouter",
+    "banner": "{name} : absence jusqu'au {until}, ses tâches partagées sont confiées à l'autre.",
+    "formerMember": "Ancien membre"
   }
 }

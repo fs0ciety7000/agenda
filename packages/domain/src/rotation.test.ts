@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { expandSeries, type Rule } from './recurrence';
 import {
   assigneesFor,
+  coverAbsence,
   buildSlots,
   continuationOffset,
   describeSlots,
@@ -194,5 +195,17 @@ describe('slots ↔ saisie', () => {
     },
   ])('aller-retour %o', (input) => {
     expect(describeSlots(buildSlots(input), input.mode)).toEqual(input);
+  });
+});
+
+describe('mode absence', () => {
+  const all = ['g', 'n'];
+  it('la tâche de l’absent passe à l’autre ; « à deux » garde le présent', () => {
+    expect(coverAbsence(['g'], new Set(['g']), all)).toEqual(['n']);
+    expect(coverAbsence(['g', 'n'], new Set(['g']), all)).toEqual(['n']);
+    expect(coverAbsence(['n'], new Set(['g']), all)).toEqual(['n']);
+    expect(coverAbsence([], new Set(['g']), all)).toEqual([]);
+    // Tout le monde absent : inchangé.
+    expect(coverAbsence(['g'], new Set(['g', 'n']), all)).toEqual(['g']);
   });
 });

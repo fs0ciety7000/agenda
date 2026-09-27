@@ -179,6 +179,15 @@ interface AgendaApi {
     @POST("v1/households/{h}/trash/{id}/restore")
     suspend fun restoreTrash(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
 
+    @GET("v1/households/{h}/absences")
+    suspend fun absences(@Path("h") householdId: String): Response<List<AbsenceDto>>
+
+    @POST("v1/households/{h}/absences")
+    suspend fun createAbsence(@Path("h") householdId: String, @Body body: CreateAbsenceBody): Response<AbsenceDto>
+
+    @DELETE("v1/households/{h}/absences/{id}")
+    suspend fun deleteAbsence(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
+
     /** Contenu d'une pièce jointe (téléchargé à la demande, puis ouvert par une autre app). */
     @Streaming
     @GET("v1/households/{h}/attachments/{id}")

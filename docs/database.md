@@ -129,6 +129,15 @@ Unicité `(seriesId, originalDate)` → la génération est **idempotente** (`IN
 (différente si l'occurrence a été déplacée). Une occurrence avec `isException = true` n'est jamais
 réécrite par la régénération.
 
+**Mode absence** (`MemberAbsence` : membre, `startDate`, `endDate` inclus) : à la génération et
+au recalcul, les responsables d'une tâche **partagée** passent par `coverAbsence` (domaine) —
+l'absent est retiré, et si plus personne ne reste, la tâche va au premier membre présent.
+Déclarer une absence recalcule les répétitions de la période (`refreshAssignees` : responsables
+seulement, identifiants et dates inchangés) et confie aux présents les tâches ponctuelles de
+l'absent ; l'annuler rétablit la rotation des répétitions (les ponctuelles restent confiées).
+Les tâches personnelles ne changent jamais. `HouseholdMemberDto.absentUntil` signale l'absence
+en cours.
+
 ## 5. Dates, heures, fuseaux
 
 - `date` (`DATE`) + `startMinute` (`INT`) + `durationMinutes` (`INT`) = vérité métier.

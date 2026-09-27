@@ -671,7 +671,9 @@ function AssigneeSuggestion({
   );
   const suggestion = balance.data ? suggestAssignee(balance.data.members) : null;
   const member = household.members.find((m) => m.id === suggestion?.memberId);
-  if (!suggestion || !member) return null;
+  // Pas de suggestion vers quelqu'un d'absent ce jour-là.
+  if (!suggestion || !member || (member.absentUntil && (date || today) <= member.absentUntil))
+    return null;
   return (
     <p className="flex flex-wrap items-center gap-x-2 text-sm text-text-muted">
       <span>

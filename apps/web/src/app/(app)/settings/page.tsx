@@ -10,6 +10,7 @@ import { CalendarSettings } from '@/components/app/calendar-settings';
 import { CategoriesSettings } from '@/components/app/categories-settings';
 import { TemplatesSettings } from '@/components/app/templates';
 import { InboundEmailSettings } from '@/components/app/inbound-email';
+import { AbsencesSettings } from '@/components/app/absences';
 import { InviteLink } from '@/components/app/invite-link';
 import { AndroidAppCard } from '@/components/app/android-app-card';
 import { NotificationSettings } from '@/components/app/notification-settings';
@@ -65,6 +66,8 @@ export default function SettingsPage() {
           {household.members.length < 2 && <InviteLink householdId={household.id} />}
         </Card>
       </section>
+
+      <AbsencesSettings />
 
       <section className="flex flex-col gap-3" aria-labelledby="s-categories">
         <SectionTitle id="s-categories">{t('categories')}</SectionTitle>

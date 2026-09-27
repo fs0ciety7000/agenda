@@ -42,6 +42,7 @@ class AppContainer(context: Context) {
     private val repositoryImpl = AgendaRepositoryImpl(api, database, SyncEngine(api, database, settings), syncScheduler)
     val repository: AgendaRepository = repositoryImpl
     val activity = be.agendagn.app.data.ActivityRemote(api, database) { repositoryImpl.refresh() }
+    val absences = be.agendagn.app.data.AbsencesRemote(api, database) { repositoryImpl.refresh() }
     val reminders = ReminderScheduler(app, repository, settings)
     val recap = RecapScheduler(app, settings)
     val authRepository: AuthRepository = AuthRepositoryImpl(

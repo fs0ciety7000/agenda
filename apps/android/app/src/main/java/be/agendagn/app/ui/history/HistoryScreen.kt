@@ -125,6 +125,8 @@ internal fun actionLabel(action: String): Int = when (action) {
     "series.split", "series.updated" -> R.string.activity_series_updated
     "attachment.added" -> R.string.activity_attachment_added
     "attachment.deleted" -> R.string.activity_attachment_deleted
+    "absence.created" -> R.string.activity_absence_created
+    "absence.deleted" -> R.string.activity_absence_deleted
     else -> R.string.activity_updated
 }
 

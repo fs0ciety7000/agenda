@@ -7,6 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { Balance } from '@/components/app/balance';
+import { AbsenceBanner } from '@/components/app/absences';
 import { CalendarBanner } from '@/components/app/calendar-banner';
 import { useSession } from '@/components/app/household-context';
 import { NotificationBell } from '@/components/app/notification-bell';
@@ -87,6 +88,7 @@ export default function TodayPage() {
 
       {party > 0 && <Confetti key={party} />}
       <CalendarBanner />
+      <AbsenceBanner />
 
       <QuickAdd onMoreOptions={dialog.openNew} extra={<ApplyTemplateButton />} />
 

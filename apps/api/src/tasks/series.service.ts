@@ -10,6 +10,7 @@ import {
   addDays,
   assigneesFor,
   buildSlots,
+  coverAbsence,
   describeSlots,
   expandSeries,
   iterateSeries,
@@ -143,12 +144,13 @@ export class SeriesService {
         ).map((o) => fromDbDate(o.originalDate)),
       );
       const config = rotationConfig(series);
+      const cover = await this.absenceCover(tx, series.task, from);
       const tz = series.task.household.timezone;
       const rows = generated
         .filter((g) => !existing.has(g.date))
         .map((g) => ({
           id: randomUUID(),
-          assignees: assigneesFor(g, config),
+          assignees: cover(g.date, assigneesFor(g, config)),
           data: {
             householdId: series.task.householdId,
             taskId: series.taskId,
@@ -195,6 +197,7 @@ export class SeriesService {
     });
     const bounds = boundsOf(series);
     const config = rotationConfig(series);
+    const cover = await this.absenceCover(tx, series.task, from);
     const tz = series.task.household.timezone;
     const expected = new Map(
       expandSeries(series.rule as Rule, bounds, { from, to: until }).map(
@@ -213,7 +216,7 @@ export class SeriesService {
         await tx.taskOccurrence.delete({ where: { id: occ.id } }); // n'existe plus dans la nouvelle règle
         continue;
       }
-      const assignees = assigneesFor(g, config);
+      const assignees = cover(g.date, assigneesFor(g, config));
       await tx.taskOccurrence.update({
         where: { id: occ.id },
         data: {
@@ -351,6 +354,86 @@ export class SeriesService {
       data: { startDate: toDbDate(date), generatedUntil: null },
     });
     return date;
+  }
+
+  /**
+   * Mode absence : fonction (date, responsables prévus) → responsables effectifs. Les tâches
+   * personnelles ne sont jamais confiées à quelqu'un d'autre.
+   */
+  async absenceCover(
+    tx: Tx,
+    task: { householdId: string; visibility: string },
+    from: string,
+  ): Promise<(date: string, ids: string[]) => string[]> {
+    const identity = (_: string, ids: string[]) => ids;
+    if (task.visibility === 'PERSONAL') return identity;
+    const absences = await tx.memberAbsence.findMany({
+      where: { householdId: task.householdId, endDate: { gte: toDbDate(from) } },
+      select: { memberId: true, startDate: true, endDate: true },
+    });
+    if (!absences.length) return identity;
+    const members = (
+      await tx.householdMember.findMany({
+        where: { householdId: task.householdId, leftAt: null },
+        orderBy: { joinedAt: 'asc' },
+        select: { id: true },
+      })
+    ).map((m) => m.id);
+    const spans = absences.map((a) => ({
+      memberId: a.memberId,
+      start: fromDbDate(a.startDate)!,
+      end: fromDbDate(a.endDate)!,
+    }));
+    return (date, ids) =>
+      coverAbsence(
+        ids,
+        new Set(spans.filter((a) => a.start <= date && date <= a.end).map((a) => a.memberId)),
+        members,
+      );
+  }
+
+  /**
+   * Responsables recalculés (rotation + absences) des occurrences à venir non modifiées d'une série,
+   * entre `from` et `to` ; dates et identifiants inchangés.
+   */
+  async refreshAssignees(tx: Tx, seriesId: string, from: string, to: string): Promise<number> {
+    const series = await tx.taskSeries.findUnique({
+      where: { id: seriesId },
+      include: seriesInclude,
+    });
+    if (!series || series.task.deletedAt) return 0;
+    const config = rotationConfig(series);
+    const cover = await this.absenceCover(tx, series.task, from);
+    const byDate = new Map(
+      expandSeries(series.rule as Rule, boundsOf(series), { from, to }).map((g) => [g.date, g]),
+    );
+    const occs = await tx.taskOccurrence.findMany({
+      where: {
+        seriesId,
+        status: 'TODO',
+        isException: false,
+        originalDate: { gte: toDbDate(from), lte: toDbDate(to) },
+      },
+      include: { assignees: true },
+    });
+    let changed = 0;
+    for (const occ of occs) {
+      const g = byDate.get(fromDbDate(occ.originalDate)!);
+      if (!g) continue;
+      const next = cover(g.date, assigneesFor(g, config));
+      const current = occ.assignees.map((a) => a.memberId);
+      if ([...current].sort().join() === [...next].sort().join()) continue;
+      await tx.occurrenceAssignee.deleteMany({ where: { occurrenceId: occ.id } });
+      await tx.occurrenceAssignee.createMany({
+        data: next.map((memberId) => ({ occurrenceId: occ.id, memberId })),
+      });
+      await tx.taskOccurrence.update({
+        where: { id: occ.id },
+        data: { version: { increment: 1 }, syncVersion: { increment: 1 } },
+      });
+      changed += 1;
+    }
+    return changed;
   }
 
   /**
