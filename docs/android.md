@@ -20,7 +20,27 @@ métier propre à Android : les règles (récurrence, rotation, quick add) reste
   choix que sur le site, aperçu des prochaines dates), catégorie, priorité, notes, personnelle,
   calendrier partagé. Modifier / supprimer une tâche récurrente demande la portée (celle-ci, les suivantes, toute la série).
 - **Rappels** : notification avant chaque tâche planifiée qui me concerne (moi, à deux, à définir),
-  délai réglable, bouton **Fait** dans la notification (fonctionne hors ligne).
+  délai réglable, boutons **Fait**, **Demain** et **Ce week-end** dans la notification (hors ligne
+  compris : le report part dès que le réseau revient).
+- **Récapitulatif du matin** (8 h, désactivable dans Réglages → Notifications) : tâches du jour
+  qui me concernent, nombre en retard et à faire cette semaine. Calculé sur le téléphone.
+- **Échéance souple** : une tâche sans date peut être « à faire cette semaine », « ce mois-ci » ou
+  avant une date ; section « À faire cette semaine » sur Aujourd'hui, en retard une fois dépassée.
+  L'ajout rapide comprend « cette semaine », « ce mois-ci », « ce week-end ».
+- **Raccourcis** (appui long sur l'icône) : Nouvelle tâche, Dicter, Courses, Aujourd'hui.
+- **Dictée** : raccourci « Dicter » ou micro dans l'ajout rapide ; la reconnaissance vocale du
+  téléphone remplit l'ajout rapide (« Sortir les poubelles demain 19 h Grace »), à valider.
+  **Partager** un texte depuis une autre app vers Agenda G & N l'ouvre aussi dans l'ajout rapide.
+  Google Assistant : « Ok Google, ouvre Agenda G & N » ; la capacité App Actions
+  `CREATE_THING` (« crée … dans Agenda G & N ») est déclarée et ne fonctionne qu'avec l'app
+  publiée sur le Play Store.
+- **Widget « Semaine »** : les 7 prochains jours, groupés par jour, à cocher (hors ligne compris).
+- **Modèles de tâches** : dans l'ajout rapide (+), choisir un modèle et le jour (aujourd'hui,
+  demain, ce week-end, sans date) crée toutes ses tâches. Les modèles se gèrent sur le site
+  (Réglages → Modèles de tâches). Demande une connexion.
+- **Historique** (tâche récurrente) : dans la fiche, les dernières fois et qui l'a faite.
+- **Reporter en un geste** : « Demain » / « Ce week-end » dans la fiche, la notification de
+  rappel et le widget (« → » : à demain).
 - **Widget « Aujourd'hui »** (appui long sur l'écran d'accueil → Widgets → Agenda G & N) : tâches
   en retard et du jour, à cocher directement (hors ligne compris, même file d'envoi que l'app),
   toucher une tâche l'ouvre, « + » ouvre l'ajout rapide. Mis à jour à chaque changement et au

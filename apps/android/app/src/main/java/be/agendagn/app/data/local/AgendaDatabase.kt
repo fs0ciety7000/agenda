@@ -16,7 +16,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         PendingOperationEntity::class,
         ShoppingItemEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = true,
 )
 abstract class AgendaDatabase : RoomDatabase() {
@@ -53,6 +53,13 @@ abstract class AgendaDatabase : RoomDatabase() {
             }
         }
 
-        val MIGRATIONS = arrayOf(MIGRATION_1_2, MIGRATION_2_3)
+        /** v4 : échéance souple des tâches sans date. */
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE occurrences ADD COLUMN dueDate TEXT DEFAULT NULL")
+            }
+        }
+
+        val MIGRATIONS = arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
     }
 }

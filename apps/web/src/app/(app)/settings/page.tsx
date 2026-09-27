@@ -7,6 +7,7 @@ import { Suspense, useEffect, useState } from 'react';
 import { useSession } from '@/components/app/household-context';
 import { CalendarSettings } from '@/components/app/calendar-settings';
 import { CategoriesSettings } from '@/components/app/categories-settings';
+import { TemplatesSettings } from '@/components/app/templates';
 import { InviteLink } from '@/components/app/invite-link';
 import { AndroidAppCard } from '@/components/app/android-app-card';
 import { NotificationSettings } from '@/components/app/notification-settings';
@@ -65,6 +66,13 @@ export default function SettingsPage() {
         <SectionTitle id="s-categories">{t('categories')}</SectionTitle>
         <Card>
           <CategoriesSettings />
+        </Card>
+      </section>
+
+      <section className="flex flex-col gap-3" aria-labelledby="s-templates">
+        <SectionTitle id="s-templates">{t('templates')}</SectionTitle>
+        <Card>
+          <TemplatesSettings />
         </Card>
       </section>
 

@@ -1,5 +1,18 @@
 package be.agendagn.app.ui.quickadd
 
+import androidx.compose.ui.res.painterResource
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Icon
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.res.pluralStringResource
+import be.agendagn.app.domain.Agenda
+import be.agendagn.app.domain.model.TaskTemplate
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -51,6 +64,11 @@ fun QuickAddSheet(
     onSubmit: () -> Unit,
     onFullForm: () -> Unit,
     onDismiss: () -> Unit,
+    /** Modèles du foyer (null = pas encore chargés ou hors ligne). */
+    templates: List<TaskTemplate>? = null,
+    onApplyTemplate: (TaskTemplate, LocalDate?) -> Unit = { _, _ -> },
+    /** Dicter la tâche (reconnaissance vocale d'Android). */
+    onVoice: (() -> Unit)? = null,
 ) {
     val focus = remember { FocusRequester() }
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
@@ -69,9 +87,17 @@ fun QuickAddSheet(
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences, imeAction = ImeAction.Done),
                 keyboardActions = KeyboardActions(onDone = { onSubmit() }),
+                trailingIcon = onVoice?.let {
+                    {
+                        IconButton(onClick = it) {
+                            Icon(painterResource(R.drawable.ic_mic), contentDescription = stringResource(R.string.voice_dictate))
+                        }
+                    }
+                },
                 modifier = Modifier.fillMaxWidth().focusRequester(focus),
             )
             state.preview?.let { PreviewLine(it, members, today) }
+            if (!templates.isNullOrEmpty()) TemplatePicker(templates, today, onApplyTemplate)
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 TextButton(onClick = onFullForm, modifier = Modifier.heightIn(min = 48.dp)) {
                     Text(stringResource(R.string.full_form))
@@ -102,4 +128,35 @@ private fun PreviewLine(p: QuickAddPreview, members: Map<String, Member>, today:
         color = MaterialTheme.colorScheme.primary,
         modifier = Modifier.semantics { liveRegionPolite() },
     )
+}
+
+/** « Ménage du samedi » → choisir le jour → toutes ses tâches créées d'un coup. */
+@Composable
+private fun TemplatePicker(templates: List<TaskTemplate>, today: LocalDate, onApply: (TaskTemplate, LocalDate?) -> Unit) {
+    var chosen by remember { mutableStateOf<TaskTemplate?>(null) }
+    val weekend = if (today.dayOfWeek.value >= 6) today else Agenda.postponeWeekend(today)
+    val days = listOf(
+        today to R.string.today,
+        today.plusDays(1) to R.string.postpone_tomorrow,
+        weekend to R.string.postpone_weekend,
+        null to R.string.no_date,
+    ).distinctBy { it.first }
+    var day by remember { mutableStateOf<LocalDate?>(today) }
+    Text(stringResource(R.string.templates_title), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+    Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        templates.forEach { t ->
+            FilterChip(selected = chosen?.id == t.id, onClick = { chosen = if (chosen?.id == t.id) null else t }, label = { Text(t.label) })
+        }
+    }
+    chosen?.let { t ->
+        Text(t.titles.joinToString(" · "), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+        Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            days.forEach { (d, label) ->
+                FilterChip(selected = day == d, onClick = { day = d }, label = { Text(stringResource(label)) })
+            }
+        }
+        OutlinedButton(onClick = { onApply(t, day) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+            Text(pluralStringResource(R.plurals.templates_create, t.titles.size, t.titles.size))
+        }
+    }
 }

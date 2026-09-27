@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Raccourcis (appui long sur l'icône de l'app) et capacité Google Assistant
+  (« Ok Google, crée … dans Agenda G & N », App Actions : actif une fois l'app publiée sur le Play Store).
+-->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <capability android:name="actions.intent.CREATE_THING">
+        <intent
+            android:action="be.agendagn.app.QUICK_ADD"
+            android:targetClass="be.agendagn.app.MainActivity"
+            android:targetPackage="be.agendagn.app">
+            <parameter
+                android:name="thing.name"
+                android:key="android.intent.extra.TEXT" />
+        </intent>
+    </capability>
+
+    <shortcut
+        android:icon="@drawable/ic_shortcut_add"
+        android:shortcutId="new_task"
+        android:shortcutLongLabel="@string/shortcut_new_task_long"
+        android:shortcutShortLabel="@string/shortcut_new_task">
+        <intent
+            android:action="be.agendagn.app.QUICK_ADD"
+            android:targetClass="be.agendagn.app.MainActivity"
+            android:targetPackage="be.agendagn.app" />
+    </shortcut>
+    <shortcut
+        android:icon="@drawable/ic_shortcut_mic"
+        android:shortcutId="voice"
+        android:shortcutLongLabel="@string/shortcut_voice_long"
+        android:shortcutShortLabel="@string/shortcut_voice">
+        <intent
+            android:action="be.agendagn.app.VOICE"
+            android:targetClass="be.agendagn.app.MainActivity"
+            android:targetPackage="be.agendagn.app" />
+    </shortcut>
+    <shortcut
+        android:icon="@drawable/ic_shortcut_cart"
+        android:shortcutId="shopping"
+        android:shortcutLongLabel="@string/shortcut_shopping_long"
+        android:shortcutShortLabel="@string/shortcut_shopping">
+        <intent
+            android:action="be.agendagn.app.OPEN_TAB"
+            android:targetClass="be.agendagn.app.MainActivity"
+            android:targetPackage="be.agendagn.app">
+            <extra
+                android:name="tab"
+                android:value="shopping" />
+        </intent>
+    </shortcut>
+    <shortcut
+        android:icon="@drawable/ic_shortcut_today"
+        android:shortcutId="today"
+        android:shortcutLongLabel="@string/shortcut_today_long"
+        android:shortcutShortLabel="@string/shortcut_today">
+        <intent
+            android:action="be.agendagn.app.OPEN_TAB"
+            android:targetClass="be.agendagn.app.MainActivity"
+            android:targetPackage="be.agendagn.app">
+            <extra
+                android:name="tab"
+                android:value="today" />
+        </intent>
+    </shortcut>
+</shortcuts>

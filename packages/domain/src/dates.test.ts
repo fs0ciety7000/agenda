@@ -80,3 +80,15 @@ describe('fuseaux horaires (Europe/Brussels)', () => {
     );
   });
 });
+
+describe('échéances et report', () => {
+  it('fin de semaine (dimanche), fin de mois, report « ce week-end »', async () => {
+    const { endOfWeek, endOfMonth, postponeWeekend } = await import('./dates');
+    expect(endOfWeek('2026-09-29')).toBe('2026-10-04'); // mardi → dimanche
+    expect(endOfWeek('2026-10-04')).toBe('2026-10-04');
+    expect(endOfMonth('2026-02-10')).toBe('2026-02-28');
+    expect(postponeWeekend('2026-09-29')).toBe('2026-10-03'); // mardi → samedi
+    expect(postponeWeekend('2026-10-03')).toBe('2026-10-04'); // samedi → dimanche
+    expect(postponeWeekend('2026-10-04')).toBe('2026-10-10'); // dimanche → samedi suivant
+  });
+});

@@ -205,3 +205,39 @@ describe('quick add — cas remontés à l’usage', () => {
     expect(p('Appeler @paul demain')).toMatchObject({ title: 'Appeler @paul', date: '2026-09-27' });
   });
 });
+
+describe('quick add — échéances souples', () => {
+  it('« cette semaine » / « ce mois-ci » : échéance, sans date', () => {
+    const week = p('Rappeler le garage cette semaine Grace');
+    expect(week).toMatchObject({
+      title: 'Rappeler le garage',
+      dueDate: '2026-09-27',
+      assigneeIds: ['g'],
+    });
+    expect(week.date).toBeUndefined();
+    expect(p('Changer les draps ce mois-ci')).toMatchObject({
+      title: 'Changer les draps',
+      dueDate: '2026-09-30',
+    });
+    expect(p('Call the bank this week')).toMatchObject({
+      title: 'Call the bank',
+      dueDate: '2026-09-27',
+    });
+  });
+
+  it('une date explicite l’emporte : pas d’échéance en plus', () => {
+    const r = p('Payer la facture demain cette semaine');
+    expect(r.date).toBe('2026-09-27');
+    expect(r.dueDate).toBeUndefined();
+  });
+
+  it('« ce week-end » : le jour même si on y est, sinon le samedi qui vient', () => {
+    expect(p('Tondre la pelouse ce week-end')).toMatchObject({
+      title: 'Tondre la pelouse',
+      date: '2026-09-26',
+    });
+    expect(parseQuickAdd('Tondre ce weekend', { ...ctx, today: '2026-09-29' }).date).toBe(
+      '2026-10-03',
+    );
+  });
+});

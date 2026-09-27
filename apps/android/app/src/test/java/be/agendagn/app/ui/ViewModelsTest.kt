@@ -166,6 +166,19 @@ class ViewModelsTest {
     }
 
     @Test
+    fun `formulaire - serie - historique fait par charge`() = runTest(dispatcher) {
+        val repo = FakeAgendaRepository()
+        repo.history = be.agendagn.app.domain.model.SeriesHistory(
+            listOf(be.agendagn.app.domain.model.SeriesHistory.Item(Fixtures.TODAY.minusDays(7), true, false, Fixtures.GRACE)),
+            listOf(Fixtures.GRACE to 1),
+        )
+        val recurring = Fixtures.week().first { it.isRecurring }
+        val vm = TaskFormViewModel(repo, recurring.id, null)
+        advanceUntilIdle()
+        assertEquals(Fixtures.GRACE, vm.state.value.history!!.items.single().completedById)
+    }
+
+    @Test
     fun `formulaire - hors ligne ou conflit - message clair, formulaire conserve`() = runTest(dispatcher) {
         val repo = FakeAgendaRepository()
         val one = Fixtures.week().first { !it.isRecurring && it.date != null }

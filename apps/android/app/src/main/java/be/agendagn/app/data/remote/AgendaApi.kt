@@ -73,6 +73,19 @@ interface AgendaApi {
     @POST("v1/households/{h}/recurrence/preview")
     suspend fun previewRecurrence(@Path("h") householdId: String, @Body body: JsonObject): Response<List<RecurrencePreviewItemDto>>
 
+    @GET("v1/households/{h}/templates")
+    suspend fun templates(@Path("h") householdId: String): Response<List<TaskTemplateDto>>
+
+    @POST("v1/households/{h}/templates/{id}/apply")
+    suspend fun applyTemplate(
+        @Path("h") householdId: String,
+        @Path("id") id: String,
+        @Body body: ApplyTemplateRequest,
+    ): Response<List<OccurrenceDto>>
+
+    @GET("v1/households/{h}/series/{id}/history")
+    suspend fun seriesHistory(@Path("h") householdId: String, @Path("id") id: String): Response<SeriesHistoryDto>
+
     @GET("v1/households/{h}/shopping")
     suspend fun shopping(@Path("h") householdId: String): Response<List<ShoppingItemDto>>
 

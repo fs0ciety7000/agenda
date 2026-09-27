@@ -1,6 +1,8 @@
 import {
   addDays,
   daysInMonth,
+  endOfMonth,
+  endOfWeek,
   formatIsoDate,
   type IsoDate,
   parseIsoDate,
@@ -30,11 +32,14 @@ export interface QuickAddContext {
   categories: { id: string; name: string }[];
 }
 
-export type QuickAddTokenKind = 'date' | 'time' | 'duration' | 'assignee' | 'category' | 'priority';
+export type QuickAddTokenKind =
+  'date' | 'due' | 'time' | 'duration' | 'assignee' | 'category' | 'priority';
 
 export interface QuickAddResult {
   title: string;
   date?: IsoDate;
+  /** Échéance souple sans date (« cette semaine », « ce mois-ci ») ; jamais avec `date`. */
+  dueDate?: IsoDate;
   startMinute?: number;
   durationMinutes?: number;
   /** Membres responsables ; plusieurs = « à deux ». */
@@ -177,10 +182,24 @@ export function parseQuickAdd(input: string, ctx: QuickAddContext): QuickAddResu
     }
   };
   const setDate = (r: QuickAddResult, date: IsoDate | undefined) => {
-    if (!date || r.date) return false;
+    if (!date || r.date || r.dueDate) return false;
     r.date = date;
     return true;
   };
+
+  // ── Échéances souples (avant « semaine » de « dans 2 semaines ») ──
+  const setDue = (r: QuickAddResult, due: IsoDate) => {
+    if (r.date || r.dueDate) return false;
+    r.dueDate = due;
+    return true;
+  };
+  add(re('cette semaine|this week'), 'due', (_, r) => setDue(r, endOfWeek(ctx.today)));
+  add(re('ce mois(?:-ci| ci)?|this month'), 'due', (_, r) => setDue(r, endOfMonth(ctx.today)));
+  add(re('ce week[- ]?end|this weekend'), 'date', (_, r) => {
+    // Le week-end en cours (aujourd'hui si on y est déjà), sinon le samedi qui vient.
+    const wd = weekdayOf(ctx.today);
+    return setDate(r, wd >= 5 ? ctx.today : addDays(ctx.today, 5 - wd));
+  });
 
   // ── Dates ──
   add(re("aujourd'hui|aujourdhui|auj|today"), 'date', (_, r) => setDate(r, ctx.today));

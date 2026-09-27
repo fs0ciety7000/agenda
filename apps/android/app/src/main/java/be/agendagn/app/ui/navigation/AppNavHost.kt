@@ -1,5 +1,9 @@
 package be.agendagn.app.ui.navigation
 
+import java.util.Locale
+import android.speech.RecognizerIntent
+import android.content.Intent
+import android.content.ActivityNotFoundException
 import android.Manifest
 import android.content.Context
 import android.content.pm.PackageManager
@@ -97,6 +101,8 @@ fun AppNavHost(
     container: AppContainer,
     openOccurrenceId: String? = null,
     quickAddRequest: Int = 0,
+    quickAddText: String? = null,
+    voiceRequest: Int = 0,
     tabRequest: Pair<String, Int>? = null,
     googleCallback: Uri? = null,
     onGoogleCallbackHandled: () -> Unit = {},
@@ -122,7 +128,7 @@ fun AppNavHost(
                     onGoogle = { scope.launch { openWeb(context, vm.googleUrl(container.webBaseUrl), "") } },
                 )
             }
-            true -> MainScaffold(container, openOccurrenceId, quickAddRequest, tabRequest)
+            true -> MainScaffold(container, openOccurrenceId, quickAddRequest, tabRequest, quickAddText, voiceRequest)
         }
     }
 }
@@ -145,6 +151,8 @@ private fun MainScaffold(
     openOccurrenceId: String?,
     quickAddRequest: Int,
     tabRequest: Pair<String, Int>? = null,
+    quickAddText: String? = null,
+    voiceRequest: Int = 0,
 ) {
     val context = LocalContext.current
     val vm: AgendaViewModel = viewModel(
@@ -153,12 +161,15 @@ private fun MainScaffold(
     val state by vm.state.collectAsStateWithLifecycle()
     val quickAdd by vm.quickAdd.collectAsStateWithLifecycle()
     val reminders by container.settings.reminders.collectAsStateWithLifecycle(initialValue = ReminderSettings())
+    val morningRecap by container.settings.morningRecap.collectAsStateWithLifecycle(initialValue = true)
     val nav = rememberNavController()
     val backStack by nav.currentBackStackEntryAsState()
     val route = backStack?.destination?.route
     val scope = rememberCoroutineScope()
 
     var showQuickAdd by rememberSaveable { mutableStateOf(false) }
+    var templates by remember { mutableStateOf<List<be.agendagn.app.domain.model.TaskTemplate>?>(null) }
+    LaunchedEffect(showQuickAdd) { if (showQuickAdd) templates = container.repository.templates() ?: templates }
     var filter by remember { mutableStateOf(Agenda.Filter()) }
     var month by rememberSaveable { mutableStateOf(YearMonth.now().toString()) }
     var selectedDay by rememberSaveable { mutableStateOf<String?>(null) }
@@ -180,7 +191,34 @@ private fun MainScaffold(
         if (!notificationsAllowed && Build.VERSION.SDK_INT >= 33) permission.launch(Manifest.permission.POST_NOTIFICATIONS)
     }
     LaunchedEffect(openOccurrenceId) { openOccurrenceId?.let { nav.navigate("task/$it") } }
-    LaunchedEffect(quickAddRequest) { if (quickAddRequest > 0) showQuickAdd = true }
+    LaunchedEffect(quickAddRequest) {
+        if (quickAddRequest > 0) {
+            quickAddText?.let(vm::onQuickAddText)
+            showQuickAdd = true
+        }
+    }
+    val snackbar = remember { SnackbarHostState() }
+    // Dictée : la reconnaissance vocale d'Android remplit l'ajout rapide (analysé comme au clavier).
+    val voiceUnavailable = stringResource(R.string.voice_unavailable)
+    val voicePrompt = stringResource(R.string.voice_prompt)
+    val voice = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        result.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.firstOrNull()?.let {
+            vm.onQuickAddText(it)
+            showQuickAdd = true
+        }
+    }
+    val startVoice: () -> Unit = {
+        val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+            .putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            .putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault().toLanguageTag())
+            .putExtra(RecognizerIntent.EXTRA_PROMPT, voicePrompt)
+        try {
+            voice.launch(intent)
+        } catch (_: ActivityNotFoundException) {
+            scope.launch { snackbar.showSnackbar(voiceUnavailable) }
+        }
+    }
+    LaunchedEffect(voiceRequest) { if (voiceRequest > 0) startVoice() }
     LaunchedEffect(tabRequest) {
         val tab = Tab.entries.firstOrNull { it.route == tabRequest?.first } ?: return@LaunchedEffect
         nav.navigate(tab.route) {
@@ -242,7 +280,6 @@ private fun MainScaffold(
     }
 
     // Messages du glisser-déposer (avec « Annuler »).
-    val snackbar = remember { SnackbarHostState() }
     val locale = currentLocale()
     val undoLabel = stringResource(R.string.undo)
     val movedFormat = stringResource(R.string.task_moved)
@@ -395,6 +432,8 @@ private fun MainScaffold(
                     contentPadding = padding,
                     update = updateBanner,
                     push = pushState,
+                    morningRecap = morningRecap,
+                    onMorningRecap = { scope.launch { container.settings.setMorningRecap(it) } },
                     onRetryPush = { scope.launch { container.push.register() } },
                 )
             }
@@ -422,6 +461,24 @@ private fun MainScaffold(
                 nav.navigate("new")
             },
             onDismiss = { showQuickAdd = false },
+            templates = templates,
+            onVoice = {
+                showQuickAdd = false
+                startVoice()
+            },
+            onApplyTemplate = { template, date ->
+                showQuickAdd = false
+                scope.launch {
+                    val result = container.repository.applyTemplate(template, date)
+                    snackbar.showSnackbar(
+                        if (result == OpResult.Ok) {
+                            context.resources.getQuantityString(R.plurals.templates_applied, template.titles.size, template.titles.size, template.name)
+                        } else {
+                            moveErrors[result] ?: genericError
+                        },
+                    )
+                }
+            },
         )
     }
 }
@@ -460,6 +517,7 @@ private fun TaskForm(
         onToggleItem = vm::toggleItem,
         onRemoveItem = vm::removeItem,
         onRetrySeries = vm::retrySeries,
+        onPostpone = vm::postpone,
         suggestion = state.household?.let { h ->
             Agenda.suggestAssignee(Agenda.weekBalance(state.occurrences, form.draft.date ?: state.today, h.members))
         },

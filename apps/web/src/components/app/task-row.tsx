@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/cn';
-import { formatDuration, formatTime, useDayLabel } from '@/lib/format';
+import { formatDuration, formatTime, useDayLabel, useDueLabel } from '@/lib/format';
 import { useToggleDone } from '@/lib/tasks';
 import { useToast } from '@/components/ui/toast';
 import { AssigneeAvatars, useAssigneeLabel } from './assignees';
@@ -34,6 +34,7 @@ export function TaskRow({
   const { household } = useSession();
   const assigneeLabel = useAssigneeLabel(household);
   const dayLabel = useDayLabel();
+  const dueLabel = useDueLabel();
   const toggle = useToggleDone(household.id);
   const toast = useToast();
   const done = o.status === 'DONE';
@@ -57,6 +58,7 @@ export function TaskRow({
 
   const meta = [
     showDate && o.date ? dayLabel(o.date) : null,
+    !o.date && o.dueDate ? dueLabel(o.dueDate) : null,
     o.startMinute != null ? formatTime(o.startMinute) : null,
     o.durationMinutes ? formatDuration(o.durationMinutes) : null,
   ].filter(Boolean);

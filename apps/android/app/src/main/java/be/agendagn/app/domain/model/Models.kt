@@ -59,6 +59,8 @@ data class Occurrence(
     val isLocal: Boolean = false,
     /** Sous-tâches / liste (ex. courses). */
     val checklist: List<ChecklistItem> = emptyList(),
+    /** Tâche sans date : à faire au plus tard ce jour-là (« cette semaine » = dimanche). */
+    val dueDate: LocalDate? = null,
 ) {
     val isDone: Boolean get() = status == OccurrenceStatus.DONE
 }
@@ -73,6 +75,8 @@ data class TaskDraft(
     val title: String = "",
     val notes: String = "",
     val date: LocalDate? = null,
+    /** Échéance souple, seulement sans date. */
+    val dueDate: LocalDate? = null,
     val startMinute: Int? = null,
     val durationMinutes: Int? = null,
     val assigneeIds: List<String> = emptyList(),
@@ -106,3 +110,13 @@ data class CalendarStatus(
     val pending: Int,
     val errors: Int,
 )
+
+/** Modèle de tâches (« Ménage du samedi ») : ses tâches sont créées d'un coup. */
+data class TaskTemplate(val id: String, val name: String, val emoji: String?, val titles: List<String>) {
+    val label: String get() = listOfNotNull(emoji, name).joinToString(" ")
+}
+
+/** Historique d'une tâche récurrente : qui l'a faite, et quand. */
+data class SeriesHistory(val items: List<Item>, val doneBy: List<Pair<String, Int>>) {
+    data class Item(val date: LocalDate?, val done: Boolean, val skipped: Boolean, val completedById: String?)
+}

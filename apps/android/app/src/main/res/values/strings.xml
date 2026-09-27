@@ -256,4 +256,44 @@
     <string name="widget_shopping_name">Courses</string>
     <string name="widget_shopping_description">La liste de courses du foyer, à cocher au magasin.</string>
     <string name="widget_shopping_empty">Rien à acheter.</string>
+    <string name="due_label">Échéance</string>
+    <string name="due_this_week">Cette semaine</string>
+    <string name="due_this_month">Ce mois-ci</string>
+    <string name="due_by">Avant %1$s</string>
+    <string name="due_pick">Avant une date…</string>
+    <string name="due_overdue">Échéance dépassée (%1$s)</string>
+    <string name="due_section">À faire cette semaine</string>
+    <string name="postpone_label">Reporter :</string>
+    <string name="postpone_tomorrow">Demain</string>
+    <string name="postpone_weekend">Ce week-end</string>
+    <string name="widget_postpone">Reporter « %1$s » à demain</string>
+    <string name="recap_channel">Récapitulatif du matin</string>
+    <string name="recap_channel_desc">À 8 h, les tâches du jour qui vous concernent.</string>
+    <string name="recap_title">Aujourd\'hui</string>
+    <string name="recap_setting">Récapitulatif du matin (8 h)</string>
+    <plurals name="recap_today"><item quantity="one">%d tâche aujourd\'hui</item><item quantity="many">%d tâches aujourd\'hui</item><item quantity="other">%d tâches aujourd\'hui</item></plurals>
+    <plurals name="recap_overdue"><item quantity="one">%d en retard</item><item quantity="many">%d en retard</item><item quantity="other">%d en retard</item></plurals>
+    <plurals name="recap_due"><item quantity="one">%d à faire cette semaine</item><item quantity="many">%d à faire cette semaine</item><item quantity="other">%d à faire cette semaine</item></plurals>
+    <string name="templates_title">Modèles</string>
+    <plurals name="templates_create"><item quantity="one">Créer la tâche</item><item quantity="many">Créer les %d tâches</item><item quantity="other">Créer les %d tâches</item></plurals>
+    <plurals name="templates_applied"><item quantity="one">%d tâche ajoutée depuis « %s »</item><item quantity="many">%d tâches ajoutées depuis « %s »</item><item quantity="other">%d tâches ajoutées depuis « %s »</item></plurals>
+    <string name="history_title">Historique</string>
+    <string name="history_done_by">Fait par %1$s</string>
+    <string name="history_skipped">Sautée</string>
+    <string name="history_not_done">Pas faite</string>
+    <string name="history_former_member">Ancien membre</string>
+    <string name="shortcut_new_task">Nouvelle tâche</string>
+    <string name="shortcut_new_task_long">Ajouter une tâche</string>
+    <string name="shortcut_voice">Dicter</string>
+    <string name="shortcut_voice_long">Dicter une tâche</string>
+    <string name="shortcut_shopping">Courses</string>
+    <string name="shortcut_shopping_long">Liste de courses</string>
+    <string name="shortcut_today">Aujourd\'hui</string>
+    <string name="shortcut_today_long">Tâches d\'aujourd\'hui</string>
+    <string name="voice_dictate">Dicter la tâche</string>
+    <string name="voice_prompt">Dites la tâche, par ex. « Sortir les poubelles demain 19 h »</string>
+    <string name="voice_unavailable">La dictée n\'est pas disponible sur ce téléphone.</string>
+    <string name="widget_week_name">Semaine</string>
+    <string name="widget_week_description">Les tâches des 7 prochains jours, à cocher depuis l\'écran d\'accueil.</string>
+    <string name="widget_week_empty">Rien de prévu cette semaine.</string>
 </resources>

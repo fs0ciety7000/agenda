@@ -4,6 +4,7 @@ import android.app.Application
 import be.agendagn.app.di.AppContainer
 import be.agendagn.app.widget.ShoppingWidget
 import be.agendagn.app.widget.TodayWidget
+import be.agendagn.app.widget.WeekWidget
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -18,10 +19,14 @@ class AgendaApplication : Application() {
         container = AppContainer(this)
         container.crashReporter.install()
         container.reminders.start()
+        container.recap.start()
         container.syncScheduler.schedulePeriodic()
         // Widget « Aujourd'hui » : redessiné à chaque changement du cache local.
         CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
             TodayWidget.keepUpdated(this@AgendaApplication, container.repository)
+        }
+        CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
+            WeekWidget.keepUpdated(this@AgendaApplication, container.repository)
         }
         CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {
             ShoppingWidget.keepUpdated(this@AgendaApplication, container.repository)

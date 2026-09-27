@@ -12,7 +12,7 @@ import java.util.Locale
 
 @Composable
 @ReadOnlyComposable
-fun currentLocale(): Locale = LocalConfiguration.current.locales[0] ?: Locale.getDefault()
+fun currentLocale(): Locale = LocalConfiguration.current.locales[0]
 
 fun formatMinute(minute: Int): String = "%02d:%02d".format(minute / 60, minute % 60)
 

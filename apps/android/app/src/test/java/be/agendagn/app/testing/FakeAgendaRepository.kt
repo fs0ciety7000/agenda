@@ -9,7 +9,9 @@ import be.agendagn.app.domain.model.Household
 import be.agendagn.app.domain.model.Occurrence
 import be.agendagn.app.domain.model.OccurrenceStatus
 import be.agendagn.app.domain.model.QuickAddPreview
+import be.agendagn.app.domain.model.SeriesHistory
 import be.agendagn.app.domain.model.ShoppingItem
+import be.agendagn.app.domain.model.TaskTemplate
 import be.agendagn.app.domain.model.TaskDraft
 import be.agendagn.app.domain.repository.AgendaRepository
 import be.agendagn.app.domain.repository.OpResult
@@ -100,4 +102,14 @@ class FakeAgendaRepository(
         shoppingItems.value = shoppingItems.value.filter { !it.done }
     }
     override suspend fun refreshShopping() = RefreshOutcome.OK
+
+    var templateList: List<TaskTemplate>? = null
+    val applied = mutableListOf<Pair<String, java.time.LocalDate?>>()
+    override suspend fun templates() = templateList
+    override suspend fun applyTemplate(template: TaskTemplate, date: java.time.LocalDate?): OpResult {
+        applied += template.id to date
+        return OpResult.Ok
+    }
+    var history: SeriesHistory? = null
+    override suspend fun seriesHistory(seriesId: String) = history
 }

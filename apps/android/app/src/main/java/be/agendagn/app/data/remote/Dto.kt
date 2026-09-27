@@ -86,6 +86,7 @@ data class OccurrenceDto(
     val visibility: String,
     val status: String,
     val date: String? = null,
+    val dueDate: String? = null,
     val startMinute: Int? = null,
     val durationMinutes: Int? = null,
     val assigneeIds: List<String>,
@@ -180,3 +181,26 @@ data class ShoppingItemRequest(val id: String, val text: String)
 
 @Serializable
 data class ShoppingUpdateRequest(val done: Boolean)
+
+@Serializable
+data class TemplateItemDto(val title: String)
+
+@Serializable
+data class TaskTemplateDto(val id: String, val name: String, val emoji: String? = null, val items: List<TemplateItemDto>)
+
+@Serializable
+data class ApplyTemplateRequest(val date: String? = null)
+
+@Serializable
+data class SeriesHistoryItemDto(
+    val occurrenceId: String,
+    val date: String? = null,
+    val status: String,
+    val completedById: String? = null,
+)
+
+@Serializable
+data class DoneCountDto(val memberId: String, val count: Int)
+
+@Serializable
+data class SeriesHistoryDto(val items: List<SeriesHistoryItemDto>, val doneBy: List<DoneCountDto>)

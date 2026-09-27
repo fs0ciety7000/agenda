@@ -28,7 +28,8 @@ un calendrier possédé par l'autre membre).
 > Google **expire les refresh tokens après 7 jours**. Il faut passer le projet Google Cloud en
 > *In production*. Sans vérification Google, l'écran de consentement affiche un avertissement
 > « application non vérifiée » (acceptable pour un usage personnel, < 100 utilisateurs). Pour
-> ouvrir le produit au public : vérification Google (quelques semaines) à planifier.
+> ouvrir le produit au public : vérification Google, cf.
+> [google-oauth-verification.md](google-oauth-verification.md).
 
 ## 2. Flux de connexion
 

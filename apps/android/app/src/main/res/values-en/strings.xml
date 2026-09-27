@@ -243,4 +243,44 @@
     <string name="widget_shopping_name">Shopping</string>
     <string name="widget_shopping_description">The household shopping list, to tick off at the shop.</string>
     <string name="widget_shopping_empty">Nothing to buy.</string>
+    <string name="due_label">Due</string>
+    <string name="due_this_week">This week</string>
+    <string name="due_this_month">This month</string>
+    <string name="due_by">By %1$s</string>
+    <string name="due_pick">By a date…</string>
+    <string name="due_overdue">Past due (%1$s)</string>
+    <string name="due_section">To do this week</string>
+    <string name="postpone_label">Postpone:</string>
+    <string name="postpone_tomorrow">Tomorrow</string>
+    <string name="postpone_weekend">This weekend</string>
+    <string name="widget_postpone">Postpone “%1$s” to tomorrow</string>
+    <string name="recap_channel">Morning summary</string>
+    <string name="recap_channel_desc">At 8 am, today\'s tasks that concern you.</string>
+    <string name="recap_title">Today</string>
+    <string name="recap_setting">Morning summary (8 am)</string>
+    <plurals name="recap_today"><item quantity="one">%d task today</item><item quantity="other">%d tasks today</item></plurals>
+    <plurals name="recap_overdue"><item quantity="one">%d overdue</item><item quantity="other">%d overdue</item></plurals>
+    <plurals name="recap_due"><item quantity="one">%d to do this week</item><item quantity="other">%d to do this week</item></plurals>
+    <string name="templates_title">Templates</string>
+    <plurals name="templates_create"><item quantity="one">Create the task</item><item quantity="other">Create the %d tasks</item></plurals>
+    <plurals name="templates_applied"><item quantity="one">%d task added from “%s”</item><item quantity="other">%d tasks added from “%s”</item></plurals>
+    <string name="history_title">History</string>
+    <string name="history_done_by">Done by %1$s</string>
+    <string name="history_skipped">Skipped</string>
+    <string name="history_not_done">Not done</string>
+    <string name="history_former_member">Former member</string>
+    <string name="shortcut_new_task">New task</string>
+    <string name="shortcut_new_task_long">Add a task</string>
+    <string name="shortcut_voice">Dictate</string>
+    <string name="shortcut_voice_long">Dictate a task</string>
+    <string name="shortcut_shopping">Shopping</string>
+    <string name="shortcut_shopping_long">Shopping list</string>
+    <string name="shortcut_today">Today</string>
+    <string name="shortcut_today_long">Today\'s tasks</string>
+    <string name="voice_dictate">Dictate the task</string>
+    <string name="voice_prompt">Say the task, e.g. “Take the bins out tomorrow 7pm”</string>
+    <string name="voice_unavailable">Dictation isn\'t available on this phone.</string>
+    <string name="widget_week_name">Week</string>
+    <string name="widget_week_description">Tasks for the next 7 days, checked off from the home screen.</string>
+    <string name="widget_week_empty">Nothing planned this week.</string>
 </resources>

@@ -2,7 +2,8 @@
   "app": {
     "name": "Agenda G & N",
     "skipToContent": "Skip to content",
-    "privacy": "Privacy policy"
+    "privacy": "Privacy policy",
+    "about": "About"
   },
   "nav": {
     "today": "Today",
@@ -88,7 +89,8 @@
     "emptyBody": "Enjoy, or add a task above.",
     "sectionOverdue": "To catch up ({count})",
     "weekEmpty": "Nothing planned for the next few days.",
-    "seeStats": "See summary"
+    "seeStats": "See summary",
+    "sectionDue": "To do this week"
   },
   "placeholder": {
     "title": "Coming soon",
@@ -138,7 +140,8 @@
     "logoutAll": "Sign out of all devices",
     "categories": "Categories",
     "privacy": "Data & privacy",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "templates": "Task templates"
   },
   "common": {
     "loading": "Loading…",
@@ -147,7 +150,11 @@
   "dates": {
     "today": "today",
     "tomorrow": "tomorrow",
-    "yesterday": "yesterday"
+    "yesterday": "yesterday",
+    "dueThisWeek": "This week",
+    "dueThisMonth": "This month",
+    "dueBy": "By {date}",
+    "dueOverdue": "Past due ({date})"
   },
   "quickAdd": {
     "label": "Quickly add a task",
@@ -209,7 +216,22 @@
     "recurrenceNeedsDate": "Pick a start date for a repeating task.",
     "suggestion": "Suggestion: {name}, the least busy this week ({count, plural, =0 {no tasks} one {# task} other {# tasks}}{load, select, other { · {load}} none {}}).",
     "suggestionPick": "Assign to {name}",
-    "checklistError": "The list couldn't be updated. Please try again."
+    "checklistError": "The list couldn't be updated. Please try again.",
+    "due": {
+      "label": "Due",
+      "none": "None",
+      "week": "This week",
+      "month": "This month",
+      "date": "By a date…",
+      "before": "At the latest on"
+    },
+    "postpone": {
+      "label": "Postpone:",
+      "tomorrow": "Tomorrow",
+      "weekend": "This weekend",
+      "done": "“{title}” moved to {date}",
+      "error": "Couldn't postpone the task."
+    }
   },
   "balance": {
     "bothOfUs": "Together",
@@ -586,5 +608,54 @@
     "clear": "Empty the basket",
     "remove": "Remove “{text}”",
     "takenBy": "Picked up by {name}"
+  },
+  "templates": {
+    "hint": "Several tasks created at once, e.g. “Saturday cleaning”: vacuum, bathroom, sheets…",
+    "new": "New template",
+    "newTitle": "New template",
+    "editTitle": "Edit template",
+    "edit": "Edit “{name}”",
+    "delete": "Delete “{name}”",
+    "confirmDelete": "Delete the template “{name}”? Tasks already created stay.",
+    "emoji": "Emoji",
+    "name": "Name",
+    "namePlaceholder": "Saturday cleaning",
+    "items": "Template tasks",
+    "itemTitle": "Task {n}",
+    "removeItem": "Remove task {n}",
+    "addItem": "Add a task",
+    "save": "Save",
+    "required": "Give a name and at least one task.",
+    "use": "Use a template",
+    "useTitle": "Use a template",
+    "template": "Template",
+    "when": "When?",
+    "whenToday": "Today",
+    "whenTomorrow": "Tomorrow",
+    "whenWeekend": "This weekend",
+    "whenDate": "Another day…",
+    "whenNone": "No date",
+    "date": "Day",
+    "create": "{count, plural, one {Create the task} other {Create the # tasks}}",
+    "applied": "{count, plural, one {# task added} other {# tasks added}} from “{name}”"
+  },
+  "history": {
+    "title": "History",
+    "doneBy": "Done by {name}",
+    "skipped": "Skipped",
+    "notDone": "Not done",
+    "formerMember": "Former member"
+  },
+  "about": {
+    "metaTitle": "Agenda G & N · Household tasks, shared by two",
+    "tagline": "Household tasks, shared by two.",
+    "intro": "Agenda G & N is a private app that helps a household share its chores: who takes out the bins, who does the shopping, who calls the garage. It is available as a website and an Android app.",
+    "featuresTitle": "What the app does",
+    "features": "A \"Today\" list: overdue, today, this week.\nNatural-language quick add (\"Take out the bins tomorrow 7pm\"), by voice too.\nRecurring tasks with turn-taking between household members.\nShared shopping list, updated in real time.\nReminders, and notifications when someone assigns you a task.",
+    "googleTitle": "Why the app asks for access to Google",
+    "google": "Sign in with Google (optional): to sign in without a password. The app only receives your name, email address and Google identifier.\nGoogle Calendar (optional): so that household tasks appear in a shared Google calendar on all your devices. The app reads your list of calendars so you can pick the shared one, then creates, updates and deletes only the events that correspond to your tasks. It does not read your other events.\nData received from Google is never sold, shared or used for advertising.",
+    "privacyLink": "Privacy policy",
+    "login": "Sign in",
+    "footer": "A personal app, free and ad-free."
   }
 }

@@ -21,6 +21,8 @@ const taskFields = {
   /** 0 = à définir, 1 = assignée, 2+ = à deux. Ignoré pour une tâche personnelle (= créateur). */
   assigneeIds: z.array(z.uuid()).max(20),
   date: IsoDate.nullish(),
+  /** Échéance souple sans date précise (« cette semaine », « ce mois-ci ») ; ignorée si `date`. */
+  dueDate: IsoDate.nullish(),
   startMinute: StartMinute.nullish(),
   durationMinutes: Duration.nullish(),
   /** Tâche récurrente : les responsables viennent alors de la rotation (assigneeIds ignoré). */
@@ -114,6 +116,8 @@ export const OccurrenceDto = z.object({
   visibility: TaskVisibility,
   status: OccurrenceStatus,
   date: IsoDate.nullable(),
+  /** Tâche sans date : à faire au plus tard ce jour-là (en retard ensuite). */
+  dueDate: IsoDate.nullable(),
   startMinute: z.number().int().nullable(),
   durationMinutes: z.number().int().nullable(),
   assigneeIds: z.array(z.uuid()),
@@ -136,6 +140,7 @@ export type OccurrenceDto = z.infer<typeof OccurrenceDto>;
 export const QuickAddPreview = z.object({
   title: z.string(),
   date: IsoDate.optional(),
+  dueDate: IsoDate.optional(),
   startMinute: z.number().int().optional(),
   durationMinutes: z.number().int().optional(),
   assigneeIds: z.array(z.uuid()).optional(),

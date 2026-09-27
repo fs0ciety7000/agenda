@@ -1,6 +1,6 @@
 'use client';
 
-import { addDays, diffDays, formatMinute, todayIn } from '@agenda/domain';
+import { addDays, diffDays, endOfMonth, endOfWeek, formatMinute, todayIn } from '@agenda/domain';
 import { useFormatter, useTranslations } from 'next-intl';
 import { useSession } from '@/components/app/household-context';
 
@@ -28,6 +28,19 @@ export function useDayLabel() {
       month: style === 'long' ? 'long' : 'short',
       year: value.getUTCFullYear() !== Number(today.slice(0, 4)) ? 'numeric' : undefined,
     });
+  };
+}
+
+/** Échéance souple d'une tâche sans date : « Cette semaine », « Ce mois-ci », « Avant le … ». */
+export function useDueLabel() {
+  const t = useTranslations('dates');
+  const dayLabel = useDayLabel();
+  const today = useToday();
+  return (due: string) => {
+    if (due < today) return t('dueOverdue', { date: dayLabel(due) });
+    if (due === endOfWeek(today)) return t('dueThisWeek');
+    if (due === endOfMonth(today)) return t('dueThisMonth');
+    return t('dueBy', { date: dayLabel(due) });
   };
 }
 

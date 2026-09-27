@@ -31,7 +31,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import be.agendagn.app.domain.Agenda
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 
@@ -114,6 +116,8 @@ class ReminderScheduler(
         const val CHANNEL = "reminders"
         const val ACTION_SHOW = "be.agendagn.app.REMINDER"
         const val ACTION_DONE = "be.agendagn.app.REMINDER_DONE"
+        const val ACTION_POSTPONE = "be.agendagn.app.REMINDER_POSTPONE"
+        const val EXTRA_DATE = "date"
         const val EXTRA_ID = "occurrenceId"
         const val EXTRA_TITLE = "title"
         const val EXTRA_TIME = "time"
@@ -136,6 +140,12 @@ class ReminderReceiver : BroadcastReceiver() {
         val notificationId = id.hashCode()
         when (intent.action) {
             ReminderScheduler.ACTION_SHOW -> show(context, id, notificationId, intent)
+            ReminderScheduler.ACTION_POSTPONE -> {
+                NotificationManagerCompat.from(context).cancel(notificationId)
+                intent.getStringExtra(ReminderScheduler.EXTRA_DATE)?.let {
+                    PostponeWorker.enqueue(context, id, LocalDate.parse(it))
+                }
+            }
             ReminderScheduler.ACTION_DONE -> {
                 NotificationManagerCompat.from(context).cancel(notificationId)
                 val pending = goAsync()
@@ -167,6 +177,15 @@ class ReminderReceiver : BroadcastReceiver() {
                 .putExtra(ReminderScheduler.EXTRA_ID, id),
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
         )
+        // Reporter en un geste : demain, ou ce week-end (heure conservée).
+        val today = LocalDate.now()
+        fun postpone(date: LocalDate, request: Int) = PendingIntent.getBroadcast(
+            context, notificationId * 4 + request,
+            Intent(context, ReminderReceiver::class.java).setAction(ReminderScheduler.ACTION_POSTPONE)
+                .putExtra(ReminderScheduler.EXTRA_ID, id)
+                .putExtra(ReminderScheduler.EXTRA_DATE, date.toString()),
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
         val notification = NotificationCompat.Builder(context, ReminderScheduler.CHANNEL)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(intent.getStringExtra(ReminderScheduler.EXTRA_TITLE))
@@ -174,6 +193,8 @@ class ReminderReceiver : BroadcastReceiver() {
             .setContentIntent(open)
             .setAutoCancel(true)
             .addAction(0, context.getString(R.string.reminder_done), done)
+            .addAction(0, context.getString(R.string.postpone_tomorrow), postpone(today.plusDays(1), 1))
+            .addAction(0, context.getString(R.string.postpone_weekend), postpone(Agenda.postponeWeekend(today), 2))
             .setCategory(NotificationCompat.CATEGORY_REMINDER)
             .build()
         NotificationManagerCompat.from(context).notify(notificationId, notification)

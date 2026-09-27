@@ -26,7 +26,10 @@ import be.agendagn.app.domain.model.Household
 import be.agendagn.app.domain.model.Occurrence
 import be.agendagn.app.domain.model.Priority
 import be.agendagn.app.domain.model.QuickAddPreview
+import be.agendagn.app.domain.model.SeriesHistory
 import be.agendagn.app.domain.model.ShoppingItem
+import be.agendagn.app.domain.model.TaskTemplate
+import be.agendagn.app.data.remote.ApplyTemplateRequest
 import be.agendagn.app.domain.model.TaskDraft
 import be.agendagn.app.domain.model.Visibility
 import be.agendagn.app.domain.repository.AgendaRepository
@@ -131,6 +134,7 @@ class AgendaRepositoryImpl(
                 priority = draft.priority.name,
                 visibility = if (draft.personal) Visibility.PERSONAL.name else Visibility.SHARED.name,
                 date = draft.date?.toString(),
+                dueDate = draft.dueDate?.toString().takeIf { draft.date == null },
                 startMinute = draft.startMinute.takeIf { draft.date != null },
                 durationMinutes = draft.durationMinutes.takeIf { draft.date != null && draft.startMinute != null },
                 assigneeIds = (if (draft.personal) listOfNotNull(h.myMemberId) else draft.assigneeIds).joinToString(","),
@@ -351,6 +355,54 @@ class AgendaRepositoryImpl(
             }
         } catch (_: IOException) {
             OpResult.Offline
+        }
+    }
+
+    override suspend fun templates(): List<TaskTemplate>? = withContext(io) {
+        val h = db.households().current() ?: return@withContext null
+        try {
+            api.templates(h.id).takeIf { it.isSuccessful }?.body()
+                ?.map { t -> TaskTemplate(t.id, t.name, t.emoji, t.items.map { it.title }) }
+        } catch (_: IOException) {
+            null
+        }
+    }
+
+    override suspend fun applyTemplate(template: TaskTemplate, date: LocalDate?): OpResult = withContext(io) {
+        val h = db.households().current() ?: return@withContext OpResult.NotFound
+        try {
+            val res = api.applyTemplate(h.id, template.id, ApplyTemplateRequest(date?.toString()))
+            when {
+                res.isSuccessful -> {
+                    res.body()?.forEach { db.occurrences().upsert(it.toEntity(h.id)) }
+                    OpResult.Ok
+                }
+                res.code() == 404 -> OpResult.NotFound
+                else -> OpResult.Failed(errorCode(res.errorBody()?.string()))
+            }
+        } catch (_: IOException) {
+            OpResult.Offline
+        }
+    }
+
+    override suspend fun seriesHistory(seriesId: String): SeriesHistory? = withContext(io) {
+        val h = db.households().current() ?: return@withContext null
+        try {
+            api.seriesHistory(h.id, seriesId).takeIf { it.isSuccessful }?.body()?.let { dto ->
+                SeriesHistory(
+                    items = dto.items.map {
+                        SeriesHistory.Item(
+                            date = it.date?.let(LocalDate::parse),
+                            done = it.status == "DONE",
+                            skipped = it.status == "SKIPPED",
+                            completedById = it.completedById,
+                        )
+                    },
+                    doneBy = dto.doneBy.map { it.memberId to it.count },
+                )
+            }
+        } catch (_: IOException) {
+            null
         }
     }
 

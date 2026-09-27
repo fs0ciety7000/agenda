@@ -10,6 +10,7 @@ import be.agendagn.app.domain.model.ChecklistItem
 import be.agendagn.app.domain.model.EditScope
 import be.agendagn.app.domain.model.Occurrence
 import be.agendagn.app.domain.model.Member
+import be.agendagn.app.domain.model.SeriesHistory
 import be.agendagn.app.domain.model.TaskDraft
 import be.agendagn.app.domain.repository.AgendaRepository
 import be.agendagn.app.domain.repository.OpResult
@@ -52,6 +53,8 @@ data class TaskFormState(
     val preview: List<PreviewItem>? = null,
     /** Portées proposées : une nouvelle répétition ne peut pas concerner une seule occurrence. */
     val scopeOptions: List<EditScope> = EditScope.entries,
+    /** Tâche récurrente : qui l'a faite, et quand. */
+    val history: SeriesHistory? = null,
 ) {
     /** Liste affichée : enregistrée (modification) ou en cours de saisie (création). */
     val items: List<ChecklistItem>
@@ -124,6 +127,7 @@ class TaskFormViewModel(
 
     /** Pré-remplit la répétition et la rotation depuis la série. */
     private suspend fun loadSeries(seriesId: String) {
+        viewModelScope.launch { repository.seriesHistory(seriesId)?.let { h -> _state.update { it.copy(history = h) } } }
         val series = repository.series(seriesId)
         if (series == null) return _state.update { it.copy(seriesUnavailable = true) }
         _state.update { s ->
@@ -247,6 +251,9 @@ class TaskFormViewModel(
         }
         execute { o -> repository.update(o, s.draft, scope, recurrence) }
     }
+
+    /** Reporter en un geste (cette occurrence, heure conservée). */
+    fun postpone(date: LocalDate) = execute { o -> repository.move(o.id, date) }
 
     private fun deleteWithScope(scope: EditScope) = execute { o -> repository.delete(o, scope) }
 

@@ -116,6 +116,7 @@ fun TaskRow(
     val locale = currentLocale()
     val meta = buildList {
         if (showDate && o.date != null && today != null) add(formatShortDate(o.date, locale, today))
+        if (o.date == null && o.dueDate != null) add(dueLabel(o.dueDate, today ?: LocalDate.now(), locale))
         o.startMinute?.let { add(formatMinute(it)) }
         o.category?.let { add(listOfNotNull(it.emoji, it.name).joinToString(" ")) }
         add(assigneeLabel(o, members))
@@ -209,5 +210,17 @@ fun EmptyState(title: String, body: String? = null) {
         body?.let {
             Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
+    }
+}
+
+/** Échéance souple : « Cette semaine », « Ce mois-ci », « Avant le … », « Échéance dépassée (…) ». */
+@Composable
+fun dueLabel(due: LocalDate, today: LocalDate, locale: java.util.Locale): String {
+    val date = formatShortDate(due, locale, today)
+    return when {
+        due < today -> stringResource(R.string.due_overdue, date)
+        due == be.agendagn.app.domain.Agenda.endOfWeek(today) -> stringResource(R.string.due_this_week)
+        due == be.agendagn.app.domain.Agenda.endOfMonth(today) -> stringResource(R.string.due_this_month)
+        else -> stringResource(R.string.due_by, date)
     }
 }

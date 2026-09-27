@@ -23,6 +23,9 @@ class FakeSettingsStore : SettingsStore {
     var lastRefresh = MutableStateFlow<Long?>(null)
     override val reminders: Flow<ReminderSettings> = remindersState
     override val lastRefreshAt: Flow<Long?> = lastRefresh
+    val recapState = MutableStateFlow(true)
+    override val morningRecap: Flow<Boolean> = recapState
+    override suspend fun setMorningRecap(enabled: Boolean) { recapState.value = enabled }
     override suspend fun setReminders(settings: ReminderSettings) { remindersState.value = settings }
     override suspend fun setLastRefreshAt(millis: Long) { lastRefresh.value = millis }
     override suspend fun cacheOwner() = owner

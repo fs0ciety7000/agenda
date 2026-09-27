@@ -18,6 +18,8 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
 
 - **Aujourd'hui** : en retard, du jour, de la semaine ; répartition de la semaine (sans classement).
 - **Ajout rapide en langage naturel** : « Sortir les poubelles demain 19h Grace », en français ou en anglais.
+- **Échéance souple** (« Appeler le garage cette semaine ») et **report en un geste** (demain,
+  ce week-end) depuis la fiche, la notification ou le widget ; **récapitulatif du matin** à 8 h.
 - **Répétitions et tour de rôle** :
   - répétitions : chaque jour, jours ouvrés, semaines, mois, dernier jour du mois, personnalisées ;
   - tour de rôle : fixe, à deux, chacun son tour, rotation personnalisée, selon le jour, par semaine ;
@@ -25,6 +27,8 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
   - modification « cette fois / les suivantes / toute la série ».
 - **Liste de courses partagée** permanente, cochée à deux au magasin, hors ligne sur Android.
 - **Temps réel** : ce que l'autre change apparaît aussitôt sur le site et dans l'app (Server-Sent Events).
+- **Modèles de tâches** (« Ménage du samedi » crée toutes ses tâches d'un coup) et **historique
+  « fait par »** des tâches récurrentes.
 - **Sous-tâches et listes** attachées à une tâche, catégories, priorités, tâches personnelles.
 - **Calendrier** : vues mois, semaine et jour ; glisser-déposer (souris, doigt, clavier, TalkBack).
 - **Suggestion d'attribution** : la personne la moins chargée de la semaine.
@@ -32,8 +36,8 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
   déplacements et renommages faits dans Google sont repris dans l'app.
 - **Notifications** : centre de notifications, préférences, rappels locaux sur Android, notifications
   instantanées (Firebase) quand l'autre vous confie une tâche.
-- **Android** : hors ligne (cocher et créer sans réseau), mises à jour
-  automatiques (APK du site) ou via Google Play, widgets « Aujourd'hui » et « Courses ».
+- **Android** : hors ligne (cocher et créer sans réseau), raccourcis, dictée, mises à jour
+  automatiques (APK du site) ou via Google Play, widgets « Aujourd'hui », « Semaine » et « Courses ».
 - **Compte & RGPD** :
   - connexion par e-mail ou avec Google ;
   - mot de passe oublié ;
@@ -48,17 +52,18 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
 
 ## Documentation
 
-| Document                                          | Contenu                                                   |
-| ------------------------------------------------- | --------------------------------------------------------- |
-| [Exigences produit](docs/product-requirements.md) | Vision, user stories, décisions                           |
-| [Architecture](docs/architecture.md)              | Choix techniques (ADR), sécurité, RGPD, infra             |
-| [Base de données](docs/database.md)               | Modèle, récurrence, fuseaux, index                        |
-| [Google Calendar](docs/google-calendar.md)        | OAuth, stratégie de synchronisation, erreurs              |
-| [Design system](docs/design-system.md)            | Tokens, composants, accessibilité                         |
-| [Application Android](docs/android.md)            | Hors ligne, installation, mises à jour, Firebase, recette |
-| [Google Play](docs/play-store.md)                 | Publication, fiche, sécurité des données                  |
-| [Déploiement](docs/deployment.md)                 | Coolify (Docker Compose) + Cloudflare, sauvegardes        |
-| [Roadmap](docs/roadmap.md)                        | Phases livrées, risques                                   |
+| Document                                                | Contenu                                                   |
+| ------------------------------------------------------- | --------------------------------------------------------- |
+| [Exigences produit](docs/product-requirements.md)       | Vision, user stories, décisions                           |
+| [Architecture](docs/architecture.md)                    | Choix techniques (ADR), sécurité, RGPD, infra             |
+| [Base de données](docs/database.md)                     | Modèle, récurrence, fuseaux, index                        |
+| [Google Calendar](docs/google-calendar.md)              | OAuth, stratégie de synchronisation, erreurs              |
+| [Vérification OAuth](docs/google-oauth-verification.md) | Faire valider l'app Google (autres foyers)                |
+| [Design system](docs/design-system.md)                  | Tokens, composants, accessibilité                         |
+| [Application Android](docs/android.md)                  | Hors ligne, installation, mises à jour, Firebase, recette |
+| [Google Play](docs/play-store.md)                       | Publication, fiche, sécurité des données                  |
+| [Déploiement](docs/deployment.md)                       | Coolify (Docker Compose) + Cloudflare, sauvegardes        |
+| [Roadmap](docs/roadmap.md)                              | Phases livrées, risques                                   |
 
 ## Structure
 

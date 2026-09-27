@@ -17,7 +17,10 @@ data class ReminderSettings(val enabled: Boolean = true, val leadMinutes: Int = 
 interface SettingsStore {
     val reminders: Flow<ReminderSettings>
     val lastRefreshAt: Flow<Long?>
+    /** Récapitulatif du matin (8 h), activé par défaut. */
+    val morningRecap: Flow<Boolean>
     suspend fun setReminders(settings: ReminderSettings)
+    suspend fun setMorningRecap(enabled: Boolean)
     suspend fun setLastRefreshAt(millis: Long)
     suspend fun cacheOwner(): String?
     suspend fun setCacheOwner(userId: String?)
@@ -30,11 +33,17 @@ class DataStoreSettingsStore(private val context: Context) : SettingsStore {
     private val lead = intPreferencesKey("reminder_lead_minutes")
     private val lastRefresh = longPreferencesKey("last_refresh_at")
     private val owner = stringPreferencesKey("cache_owner")
+    private val recap = booleanPreferencesKey("morning_recap")
 
     override val reminders: Flow<ReminderSettings> = context.settingsStore.data.map {
         ReminderSettings(it[remindersOn] ?: true, it[lead] ?: 15)
     }
     override val lastRefreshAt: Flow<Long?> = context.settingsStore.data.map { it[lastRefresh] }
+    override val morningRecap: Flow<Boolean> = context.settingsStore.data.map { it[recap] ?: true }
+
+    override suspend fun setMorningRecap(enabled: Boolean) {
+        context.settingsStore.edit { it[recap] = enabled }
+    }
 
     override suspend fun setReminders(settings: ReminderSettings) {
         context.settingsStore.edit {

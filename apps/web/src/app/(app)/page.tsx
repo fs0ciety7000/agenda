@@ -11,6 +11,7 @@ import { CalendarBanner } from '@/components/app/calendar-banner';
 import { useSession } from '@/components/app/household-context';
 import { NotificationBell } from '@/components/app/notification-bell';
 import { QuickAdd } from '@/components/app/quick-add';
+import { ApplyTemplateButton } from '@/components/app/templates';
 import { TaskList } from '@/components/app/task-row';
 import { useTaskDialog } from '@/components/app/use-task-dialog';
 import { SectionTitle } from '@/components/ui/card';
@@ -18,6 +19,7 @@ import { EmptyState, ErrorState, Skeleton } from '@/components/ui/states';
 import { api, errorKey } from '@/lib/api';
 import { addDays, useDayLabel, useToday } from '@/lib/format';
 import { useOccurrences } from '@/lib/tasks';
+import { endOfWeek } from '@agenda/domain';
 
 /** Dashboard : ouvrir → voir ce qu'il y a à faire aujourd'hui → cocher → passer à autre chose. */
 export default function TodayPage() {
@@ -45,6 +47,11 @@ export default function TodayPage() {
   const todayQ = useOccurrences(household.id, { view: 'today' });
   const overdueQ = useOccurrences(household.id, { view: 'overdue' });
   const weekQ = useOccurrences(household.id, { view: 'upcoming', to: addDays(today, 6) });
+  const unscheduledQ = useOccurrences(household.id, { view: 'unscheduled' });
+  // Sans date, à faire d'ici dimanche (les échéances dépassées sont « À rattraper »).
+  const dueThisWeek = (unscheduledQ.data ?? []).filter(
+    (o) => o.dueDate && o.dueDate >= today && o.dueDate <= endOfWeek(today),
+  );
 
   // À faire d'abord, terminées ensuite.
   const todayItems = [...(todayQ.data ?? [])].sort(
@@ -63,7 +70,10 @@ export default function TodayPage() {
 
       <CalendarBanner />
 
-      <QuickAdd onMoreOptions={dialog.openNew} />
+      <div className="flex flex-col gap-1">
+        <QuickAdd onMoreOptions={dialog.openNew} />
+        <ApplyTemplateButton />
+      </div>
 
       {(overdueQ.data?.length ?? 0) > 0 && (
         <section aria-labelledby="overdue-heading" className="flex flex-col gap-3">
@@ -97,6 +107,13 @@ export default function TodayPage() {
           <TaskList items={todayItems} onOpen={dialog.openEdit} label={t('sectionToday')} />
         )}
       </section>
+
+      {dueThisWeek.length > 0 && (
+        <section aria-labelledby="due-heading" className="flex flex-col gap-3">
+          <SectionTitle id="due-heading">{t('sectionDue')}</SectionTitle>
+          <TaskList items={dueThisWeek} onOpen={dialog.openEdit} label={t('sectionDue')} />
+        </section>
+      )}
 
       <section aria-labelledby="week-heading" className="flex flex-col gap-3">
         <SectionTitle id="week-heading">{t('sectionWeek')}</SectionTitle>

@@ -123,3 +123,23 @@ export function zonedToUtc(date: IsoDate, minuteOfDay: number, timeZone: string)
 export function formatMinute(minute: number): string {
   return `${String(Math.floor(minute / 60)).padStart(2, '0')}:${String(minute % 60).padStart(2, '0')}`;
 }
+
+/** Dimanche de la semaine ISO contenant `date` (« cette semaine »). */
+export function endOfWeek(date: IsoDate): IsoDate {
+  return addDays(date, 6 - weekdayOf(date));
+}
+
+/** Dernier jour du mois contenant `date` (« ce mois-ci »). */
+export function endOfMonth(date: IsoDate): IsoDate {
+  const { year, month } = parseIsoDate(date);
+  return formatIsoDate(year, month, daysInMonth(year, month));
+}
+
+/**
+ * Reporter « ce week-end » : le samedi qui vient ; le samedi, dimanche ; le dimanche, le
+ * samedi suivant (jamais aujourd'hui : reporter, c'est déplacer).
+ */
+export function postponeWeekend(today: IsoDate): IsoDate {
+  const wd = weekdayOf(today);
+  return addDays(today, wd < 5 ? 5 - wd : wd === 5 ? 1 : 6);
+}

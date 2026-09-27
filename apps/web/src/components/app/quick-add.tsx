@@ -6,7 +6,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useToast } from '@/components/ui/toast';
 import { errorKey } from '@/lib/api';
-import { formatDuration, formatTime, useDayLabel } from '@/lib/format';
+import { formatDuration, formatTime, useDayLabel, useDueLabel } from '@/lib/format';
 import { parseQuickAdd, useCategories, useQuickAdd } from '@/lib/tasks';
 import { useAssigneeLabel } from './assignees';
 import { useSession } from './household-context';
@@ -23,6 +23,7 @@ export function QuickAdd({ onMoreOptions }: { onMoreOptions: (draft: TaskDraft) 
   const categories = useCategories(household.id);
   const assigneeLabel = useAssigneeLabel(household);
   const dayLabel = useDayLabel();
+  const dueLabel = useDueLabel();
   const quickAdd = useQuickAdd(household.id);
   const toast = useToast();
   const [text, setText] = useState('');
@@ -77,6 +78,7 @@ export function QuickAdd({ onMoreOptions }: { onMoreOptions: (draft: TaskDraft) 
 
   const chips: string[] = [];
   if (preview?.date) chips.push(dayLabel(preview.date));
+  if (preview?.dueDate) chips.push(dueLabel(preview.dueDate));
   if (preview?.startMinute != null) chips.push(formatTime(preview.startMinute));
   if (preview?.durationMinutes) chips.push(formatDuration(preview.durationMinutes));
   if (preview?.assigneeIds) chips.push(assigneeLabel(preview.assigneeIds));
@@ -112,6 +114,7 @@ export function QuickAdd({ onMoreOptions }: { onMoreOptions: (draft: TaskDraft) 
             onMoreOptions({
               title: preview?.title ?? text,
               date: preview?.date,
+              dueDate: preview?.dueDate,
               startMinute: preview?.startMinute,
               durationMinutes: preview?.durationMinutes,
               assigneeIds: preview?.assigneeIds,
