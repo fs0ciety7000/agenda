@@ -16,7 +16,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
         PendingOperationEntity::class,
         ShoppingItemEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = true,
 )
 abstract class AgendaDatabase : RoomDatabase() {
@@ -75,6 +75,14 @@ abstract class AgendaDatabase : RoomDatabase() {
             }
         }
 
-        val MIGRATIONS = arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+        /** v7 : quantité et rayon des articles de courses. */
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE shopping_items ADD COLUMN quantity TEXT DEFAULT NULL")
+                db.execSQL("ALTER TABLE shopping_items ADD COLUMN aisle TEXT DEFAULT NULL")
+            }
+        }
+
+        val MIGRATIONS = arrayOf(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
     }
 }

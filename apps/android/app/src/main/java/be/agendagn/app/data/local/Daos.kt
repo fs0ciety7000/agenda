@@ -116,6 +116,9 @@ interface ShoppingDao {
     @Query("UPDATE shopping_items SET done = :done, doneById = :by, doneAt = :at WHERE id = :id")
     suspend fun setDone(id: String, done: Boolean, by: String?, at: String?)
 
+    @Query("UPDATE shopping_items SET aisle = :aisle WHERE id = :id")
+    suspend fun setAisle(id: String, aisle: String)
+
     @Query("DELETE FROM shopping_items WHERE id = :id") suspend fun delete(id: String)
 
     @Query("DELETE FROM shopping_items WHERE householdId = :householdId AND done = 1")

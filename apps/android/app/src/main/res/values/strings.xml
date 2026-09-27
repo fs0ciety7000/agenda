@@ -242,7 +242,7 @@
     <string name="nav_shopping">Courses</string>
     <string name="shopping_title">Courses</string>
     <string name="shopping_add">Ajouter à la liste</string>
-    <string name="shopping_placeholder">Lait, pain, œufs…</string>
+    <string name="shopping_placeholder">2 kg de pommes, lait x6, pain…</string>
     <string name="shopping_live">En direct</string>
     <string name="shopping_not_live">Hors ligne</string>
     <string name="shopping_empty_title">La liste est vide</string>
@@ -364,4 +364,17 @@
     <string name="comment_delete_confirm">Supprimer</string>
     <string name="comment_failed">Commentaire non envoyé (connexion ?)</string>
     <string name="activity_commented">%1$s a commenté « %2$s »</string>
+    <string name="shopping_suggestions">Souvent achetés</string>
+    <string name="shopping_add_suggestion">Ajouter %1$s</string>
+    <string name="shopping_aisle_of">Rayon de %1$s</string>
+    <string name="aisle_produce">🥕 Fruits et légumes</string>
+    <string name="aisle_bakery">🥖 Boulangerie</string>
+    <string name="aisle_dairy">🧀 Crèmerie et œufs</string>
+    <string name="aisle_meat_fish">🥩 Boucherie, poisson</string>
+    <string name="aisle_frozen">🧊 Surgelés</string>
+    <string name="aisle_pantry">🥫 Épicerie</string>
+    <string name="aisle_drinks">🧃 Boissons</string>
+    <string name="aisle_household">🧽 Maison, entretien</string>
+    <string name="aisle_hygiene">🧴 Hygiène</string>
+    <string name="aisle_other">🛒 Autres</string>
 </resources>

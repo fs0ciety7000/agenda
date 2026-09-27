@@ -456,6 +456,21 @@ class AgendaRepositoryImpl(
         enqueue(h.id, PendingOperationEntity.SHOP_CLEAR, h.id, null)
     }
 
+    override suspend fun setShoppingAisle(item: ShoppingItem, aisle: String) = withContext(io) {
+        val h = db.households().current() ?: return@withContext
+        db.shopping().setAisle(item.id, aisle)
+        enqueue(h.id, PendingOperationEntity.SHOP_AISLE, item.id, aisle)
+    }
+
+    override suspend fun shoppingSuggestions(): List<String> = withContext(io) {
+        val h = db.households().current() ?: return@withContext emptyList()
+        try {
+            api.shoppingSuggestions(h.id).body()?.map { it.text }.orEmpty()
+        } catch (_: IOException) {
+            emptyList()
+        }
+    }
+
     override suspend fun refreshShopping(): RefreshOutcome = withContext(io) { engine.refreshShopping() }
 
     override suspend fun calendarStatus(): CalendarStatus? = withContext(io) {

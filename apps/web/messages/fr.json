@@ -623,7 +623,7 @@
     "live": "En direct",
     "notLive": "Hors ligne",
     "add": "Ajouter à la liste",
-    "placeholder": "Lait, pain, œufs…",
+    "placeholder": "2 kg de pommes, lait x6, pain…",
     "emptyTitle": "La liste est vide",
     "emptyBody": "Ajoutez ce qui manque : l'autre le voit tout de suite, même au magasin.",
     "toBuy": "À acheter ({count})",
@@ -631,7 +631,22 @@
     "allDone": "Tout est dans le panier 🎉",
     "clear": "Vider le panier",
     "remove": "Retirer « {text} »",
-    "takenBy": "Pris par {name}"
+    "takenBy": "Pris par {name}",
+    "aisles": {
+      "PRODUCE": "🥕 Fruits et légumes",
+      "BAKERY": "🥖 Boulangerie",
+      "DAIRY": "🧀 Crèmerie et œufs",
+      "MEAT_FISH": "🥩 Boucherie, poisson",
+      "FROZEN": "🧊 Surgelés",
+      "PANTRY": "🥫 Épicerie",
+      "DRINKS": "🧃 Boissons",
+      "HOUSEHOLD": "🧽 Maison, entretien",
+      "HYGIENE": "🧴 Hygiène",
+      "OTHER": "🛒 Autres"
+    },
+    "suggestions": "Souvent achetés",
+    "addSuggestion": "Ajouter {text}",
+    "aisleOf": "Rayon de {text}"
   },
   "templates": {
     "hint": "Plusieurs tâches créées d'un coup, par exemple « Ménage du samedi » : aspirateur, salle de bain, draps…",

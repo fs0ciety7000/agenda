@@ -439,6 +439,11 @@ private fun MainScaffold(
                 TasksScreen(state, filter, { filter = it }, vm::refresh, vm::toggle, { open(it.id) }, contentPadding = padding)
             }
             composable(Tab.SHOPPING.route) {
+                // Suggestions recalculées quand la liste change (ajout, coche, panier vidé).
+                var shoppingSuggestions by remember { mutableStateOf(emptyList<String>()) }
+                LaunchedEffect(shopping.map { it.id to it.done }) {
+                    shoppingSuggestions = container.repository.shoppingSuggestions()
+                }
                 ShoppingScreen(
                     items = shopping,
                     members = state.members,
@@ -458,6 +463,8 @@ private fun MainScaffold(
                     onRemove = { scope.launch { container.repository.removeShopping(it) } },
                     onClearDone = { scope.launch { container.repository.clearShoppingDone() } },
                     contentPadding = padding,
+                    suggestions = shoppingSuggestions,
+                    onAisle = { item, aisle -> scope.launch { container.repository.setShoppingAisle(item, aisle) } },
                 )
             }
             composable(Tab.CALENDAR.route) {

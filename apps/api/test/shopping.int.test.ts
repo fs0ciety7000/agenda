@@ -127,4 +127,54 @@ describe('Liste de courses et temps réel (intégration)', () => {
       .expect(404);
     await http().post(`${h.base}/shopping`).set(h.nicolas.auth).send({ text: '' }).expect(400);
   });
+
+  it('quantités, rayons devinés puis appris, suggestions « souvent achetés »', async () => {
+    const h = await coupleHousehold(app);
+    const add = async (body: object) =>
+      (await http().post(`${h.base}/shopping`).set(h.grace.auth).send(body).expect(201)).body as {
+        id: string;
+        text: string;
+        quantity: string | null;
+        aisle: string;
+      };
+    expect(await add({ text: '2 kg de pommes' })).toMatchObject({
+      text: 'pommes',
+      quantity: '2 kg',
+      aisle: 'PRODUCE',
+    });
+    expect(await add({ text: 'lait x6' })).toMatchObject({
+      text: 'lait',
+      quantity: 'x6',
+      aisle: 'DAIRY',
+    });
+    // Quantité explicite (champ séparé) : le texte n'est pas redécoupé.
+    expect(await add({ text: '7 up', quantity: '2' })).toMatchObject({
+      text: '7 up',
+      quantity: '2',
+    });
+
+    // Rayon inconnu corrigé une fois : retenu pour la prochaine fois.
+    const odd = await add({ text: 'Speculoos' });
+    expect(odd.aisle).toBe('OTHER');
+    await http()
+      .patch(`${h.base}/shopping/${odd.id}`)
+      .set(h.grace.auth)
+      .send({ aisle: 'PANTRY', done: true })
+      .expect(200);
+    expect((await add({ text: 'speculoos' })).aisle).toBe('PANTRY');
+
+    // Suggestions : achetés (cochés) et absents de la liste à acheter.
+    const lait = (await http().get(`${h.base}/shopping`).set(h.grace.auth).expect(200)).body.find(
+      (i: { text: string }) => i.text === 'lait',
+    );
+    await http()
+      .patch(`${h.base}/shopping/${lait.id}`)
+      .set(h.grace.auth)
+      .send({ done: true })
+      .expect(200);
+    const sugg = (await http().get(`${h.base}/shopping/suggestions`).set(h.grace.auth).expect(200))
+      .body as { text: string; aisle: string; timesBought: number }[];
+    // « speculoos » est de nouveau sur la liste : pas proposé ; « lait » coché : proposé.
+    expect(sugg).toEqual([{ text: 'lait', aisle: 'DAIRY', timesBought: 1 }]);
+  });
 });

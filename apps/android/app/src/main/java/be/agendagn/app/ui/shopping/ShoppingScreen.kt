@@ -45,6 +45,15 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.runtime.remember
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import be.agendagn.app.domain.Aisles
 import be.agendagn.app.R
 import be.agendagn.app.domain.model.Member
 import be.agendagn.app.domain.model.ShoppingItem
@@ -76,6 +85,9 @@ fun ShoppingScreen(
     onRemove: (ShoppingItem) -> Unit,
     onClearDone: () -> Unit,
     contentPadding: PaddingValues = PaddingValues(),
+    /** Souvent achetés, absents de la liste : ajoutés en un geste. */
+    suggestions: List<String> = emptyList(),
+    onAisle: (ShoppingItem, String) -> Unit = { _, _ -> },
 ) {
     var text by rememberSaveable { mutableStateOf("") }
     val submit = {
@@ -113,6 +125,25 @@ fun ShoppingScreen(
                     Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.shopping_add))
                 }
             }
+            if (suggestions.isNotEmpty()) {
+                Text(
+                    stringResource(R.string.shopping_suggestions),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    items(suggestions, key = { it }) { s ->
+                        val label = stringResource(R.string.shopping_add_suggestion, s)
+                        AssistChip(
+                            onClick = { onAdd(listOf(s)) },
+                            label = { Text(s) },
+                            leadingIcon = { Icon(Icons.Filled.Add, contentDescription = null, modifier = Modifier.size(18.dp)) },
+                            modifier = Modifier.semantics { contentDescription = label },
+                        )
+                    }
+                }
+            }
             SyncBanner(online, sync)
         }
         PullToRefreshBox(isRefreshing = refreshing, onRefresh = onRefresh, modifier = Modifier.fillMaxSize()) {
@@ -130,7 +161,19 @@ fun ShoppingScreen(
                             )
                         }
                     }
-                    items(toBuy, key = { it.id }) { ItemRow(it, null, onToggle, onRemove) }
+                    // Rangé par rayon, dans l'ordre d'un parcours de magasin.
+                    val byAisle = toBuy.groupBy { Aisles.of(it.aisle) }
+                    Aisles.ORDER.filter { byAisle.containsKey(it) }.forEach { aisle ->
+                        item(key = "aisle-$aisle") {
+                            Text(
+                                stringResource(Aisles.label(aisle)),
+                                style = MaterialTheme.typography.labelLarge,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                modifier = Modifier.padding(top = 8.dp).semantics { heading() },
+                            )
+                        }
+                        items(byAisle.getValue(aisle), key = { it.id }) { ItemRow(it, null, onToggle, onRemove, onAisle) }
+                    }
                     if (inCart.isNotEmpty()) {
                         item {
                             Row(verticalAlignment = Alignment.Bottom) {
@@ -165,7 +208,14 @@ private fun LiveIndicator(live: Boolean) {
 }
 
 @Composable
-private fun ItemRow(item: ShoppingItem, meta: String?, onToggle: (ShoppingItem) -> Unit, onRemove: (ShoppingItem) -> Unit) {
+private fun ItemRow(
+    item: ShoppingItem,
+    meta: String?,
+    onToggle: (ShoppingItem) -> Unit,
+    onRemove: (ShoppingItem) -> Unit,
+    onAisle: ((ShoppingItem, String) -> Unit)? = null,
+) {
+    var menu by remember { mutableStateOf(false) }
     Row(
         Modifier.fillMaxWidth().heightIn(min = 52.dp)
             .toggleable(value = item.done, role = Role.Checkbox, onValueChange = { onToggle(item) }),
@@ -173,14 +223,47 @@ private fun ItemRow(item: ShoppingItem, meta: String?, onToggle: (ShoppingItem) 
     ) {
         Checkbox(checked = item.done, onCheckedChange = null, modifier = Modifier.padding(horizontal = 12.dp))
         Column(Modifier.weight(1f).padding(vertical = 6.dp)) {
-            Text(
-                item.text,
-                style = MaterialTheme.typography.bodyLarge,
-                textDecoration = if (item.done) TextDecoration.LineThrough else null,
-                color = if (item.done) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
-            )
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(
+                    item.text,
+                    style = MaterialTheme.typography.bodyLarge,
+                    textDecoration = if (item.done) TextDecoration.LineThrough else null,
+                    color = if (item.done) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+                )
+                item.quantity?.let {
+                    Text(
+                        it,
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.clip(RoundedCornerShape(4.dp))
+                            .background(MaterialTheme.colorScheme.surfaceVariant)
+                            .padding(horizontal = 6.dp, vertical = 2.dp),
+                    )
+                }
+            }
             meta?.let {
                 Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        }
+        if (onAisle != null) {
+            Box {
+                IconButton(onClick = { menu = true }) {
+                    Icon(
+                        painterResource(R.drawable.ic_aisle),
+                        contentDescription = stringResource(R.string.shopping_aisle_of, item.text),
+                    )
+                }
+                DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
+                    Aisles.ORDER.forEach { a ->
+                        DropdownMenuItem(
+                            text = { Text(stringResource(Aisles.label(a))) },
+                            onClick = {
+                                menu = false
+                                if (a != Aisles.of(item.aisle)) onAisle(item, a)
+                            },
+                        )
+                    }
+                }
             }
         }
         IconButton(onClick = { onRemove(item) }) {

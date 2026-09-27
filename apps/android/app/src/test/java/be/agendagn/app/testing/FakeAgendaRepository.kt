@@ -103,6 +103,10 @@ class FakeAgendaRepository(
     override suspend fun clearShoppingDone() {
         shoppingItems.value = shoppingItems.value.filter { !it.done }
     }
+    override suspend fun setShoppingAisle(item: ShoppingItem, aisle: String) {
+        shoppingItems.value = shoppingItems.value.map { if (it.id == item.id) it.copy(aisle = aisle) else it }
+    }
+    override suspend fun shoppingSuggestions(): List<String> = emptyList()
     override suspend fun refreshShopping() = RefreshOutcome.OK
 
     var templateList: List<TaskTemplate>? = null

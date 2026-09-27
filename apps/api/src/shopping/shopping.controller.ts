@@ -13,6 +13,7 @@ import { ApiTags } from '@nestjs/swagger';
 import {
   type ShoppingItemDto,
   ShoppingItemInput,
+  type ShoppingSuggestionDto,
   UpdateShoppingItemInput,
 } from '@agenda/contracts';
 import { CurrentHousehold, HouseholdContext } from '../common/request-context';
@@ -30,6 +31,11 @@ export class ShoppingController {
   @Get()
   list(@CurrentHousehold() ctx: HouseholdContext): Promise<ShoppingItemDto[]> {
     return this.shopping.list(ctx);
+  }
+
+  @Get('suggestions')
+  suggestions(@CurrentHousehold() ctx: HouseholdContext): Promise<ShoppingSuggestionDto[]> {
+    return this.shopping.suggestions(ctx);
   }
 
   @Post()

@@ -76,7 +76,16 @@ data class ChecklistItem(val id: String, val text: String, val done: Boolean)
 data class Attachment(val id: String, val filename: String, val contentType: String, val size: Long)
 
 /** Article de la liste de courses du foyer ([doneById] : qui l'a mis dans le panier). */
-data class ShoppingItem(val id: String, val text: String, val done: Boolean, val doneById: String? = null)
+data class ShoppingItem(
+    val id: String,
+    val text: String,
+    val done: Boolean,
+    val doneById: String? = null,
+    /** « 2 kg », « x6 ». */
+    val quantity: String? = null,
+    /** Rayon (cf. [be.agendagn.app.domain.Aisles]) ; null = pas encore rangé. */
+    val aisle: String? = null,
+)
 
 /** Saisie du formulaire de création / modification. */
 data class TaskDraft(

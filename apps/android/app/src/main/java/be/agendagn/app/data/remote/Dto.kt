@@ -209,13 +209,18 @@ data class ShoppingItemDto(
     val doneById: String? = null,
     val createdAt: String,
     val doneAt: String? = null,
+    val quantity: String? = null,
+    val aisle: String? = null,
 )
+
+@Serializable
+data class ShoppingSuggestionDto(val text: String, val aisle: String = "OTHER", val timesBought: Int = 0)
 
 @Serializable
 data class ShoppingItemRequest(val id: String, val text: String)
 
 @Serializable
-data class ShoppingUpdateRequest(val done: Boolean)
+data class ShoppingUpdateRequest(val done: Boolean? = null, val aisle: String? = null)
 
 @Serializable
 data class TemplateItemDto(val title: String)

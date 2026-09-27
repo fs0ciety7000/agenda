@@ -229,7 +229,7 @@
     <string name="nav_shopping">Shopping</string>
     <string name="shopping_title">Shopping</string>
     <string name="shopping_add">Add to the list</string>
-    <string name="shopping_placeholder">Milk, bread, eggs…</string>
+    <string name="shopping_placeholder">2 kg apples, milk x6, bread…</string>
     <string name="shopping_live">Live</string>
     <string name="shopping_not_live">Offline</string>
     <string name="shopping_empty_title">The list is empty</string>
@@ -351,4 +351,17 @@
     <string name="comment_delete_confirm">Delete</string>
     <string name="comment_failed">Comment not sent (connection?)</string>
     <string name="activity_commented">%1$s commented on “%2$s”</string>
+    <string name="shopping_suggestions">Often bought</string>
+    <string name="shopping_add_suggestion">Add %1$s</string>
+    <string name="shopping_aisle_of">Aisle for %1$s</string>
+    <string name="aisle_produce">🥕 Fruit &amp; veg</string>
+    <string name="aisle_bakery">🥖 Bakery</string>
+    <string name="aisle_dairy">🧀 Dairy &amp; eggs</string>
+    <string name="aisle_meat_fish">🥩 Meat &amp; fish</string>
+    <string name="aisle_frozen">🧊 Frozen</string>
+    <string name="aisle_pantry">🥫 Pantry</string>
+    <string name="aisle_drinks">🧃 Drinks</string>
+    <string name="aisle_household">🧽 Household</string>
+    <string name="aisle_hygiene">🧴 Toiletries</string>
+    <string name="aisle_other">🛒 Other</string>
 </resources>
