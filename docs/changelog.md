@@ -13,6 +13,16 @@ d'elle-même (ou via Google Play).
 **Légende** : ✨ nouveau · 🛠 amélioration · 🐞 correction · 🔒 sécurité et confidentialité ·
 ⚙️ technique
 
+## 28 septembre 2026
+
+### Mise à jour Android fiable (#62)
+
+- 🐞 « Le téléchargement a échoué » pendant la mise à jour de l’app : Cloudflare gardait en
+  cache l’ancien APK (4 h), dont l’empreinte ne correspondait plus à la nouvelle version ; et la
+  release était supprimée puis recréée à chaque publication. L’APK n’est plus mis en cache, son
+  adresse contient la version, la release est mise à jour sur place et l’API sert la dernière
+  version valide pendant une republication.
+
 ## 27 septembre 2026
 
 ### Agenda G & N devient Tandem
