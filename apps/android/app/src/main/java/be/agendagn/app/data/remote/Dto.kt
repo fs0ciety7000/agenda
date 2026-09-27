@@ -258,3 +258,40 @@ data class CommentDto(val id: String, val authorId: String? = null, val body: St
 
 @Serializable
 data class CreateCommentBody(val body: String)
+
+/** Signalements (cf. packages/contracts/src/reports.ts). */
+@Serializable
+data class ReportDiagnosticsDto(
+    val platform: String = "android",
+    val appVersion: String? = null,
+    val os: String? = null,
+    val device: String? = null,
+    val locale: String? = null,
+    val timezone: String? = null,
+    val screen: String? = null,
+    val page: String? = null,
+    val online: Boolean? = null,
+    val pendingChanges: Int? = null,
+)
+
+@Serializable
+data class CreateReportBody(
+    val kind: String,
+    val title: String,
+    val description: String,
+    val allowContact: Boolean,
+    val diagnostics: ReportDiagnosticsDto? = null,
+)
+
+@Serializable
+data class ReportDto(
+    val id: String,
+    val kind: String,
+    val status: String,
+    val title: String,
+    val description: String,
+    val allowContact: Boolean = false,
+    val hasScreenshot: Boolean = false,
+    val reply: String? = null,
+    val createdAt: String,
+)

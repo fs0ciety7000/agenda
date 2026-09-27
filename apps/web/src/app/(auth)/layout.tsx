@@ -10,12 +10,14 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
       <div className="w-full max-w-sm">
         <Image
           src="/icons/icon-192.png"
-          alt="Agenda G & N"
+          alt="Tandem"
           width={72}
           height={72}
           priority
-          className="mb-6"
+          className="mb-3"
         />
+        <p className="text-lg font-semibold tracking-tight">Tandem</p>
+        <p className="mb-6 text-[0.9375rem] text-text-muted">{t('tagline')}</p>
         {children}
         <p className="mt-10 text-center text-[0.8125rem] text-text-muted">
           <Link href="/about" className="underline-offset-4 hover:underline">

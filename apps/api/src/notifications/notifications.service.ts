@@ -250,7 +250,7 @@ export function webPushText(
           ? `${by} vous a confié « ${title} »`
           : `${by} assigned you “${title}”`;
   return {
-    title: 'Agenda G & N',
+    title: 'Tandem',
     body,
     url: `/?open=${occurrenceId}`,
     tag: `occurrence-${occurrenceId}`,

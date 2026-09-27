@@ -1,5 +1,5 @@
 #!/bin/sh
-# Sauvegarde PostgreSQL d'Agenda G & N (docs/deployment.md §6).
+# Sauvegarde PostgreSQL de Tandem (docs/deployment.md §6).
 #   backup.sh loop          chaque nuit à BACKUP_HOUR:15 (défaut du conteneur), et à la demande
 #                           depuis la page d'administration (vérifié toutes les 30 s)
 #   backup.sh once          une sauvegarde maintenant (+ vérification + copie hors serveur)

@@ -30,3 +30,4 @@ dump.rdb
 apps/docs/build/
 apps/docs/.docusaurus/
 apps/docs/static/swagger/
+__pycache__/

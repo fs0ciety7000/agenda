@@ -17,6 +17,7 @@ import { useFormatter, useNow, useTranslations } from 'next-intl';
 import { notFound } from 'next/navigation';
 import { useState, type FormEvent } from 'react';
 import { AdminMonitoring } from '@/components/app/admin-monitoring';
+import { AdminReports } from '@/components/app/admin-reports';
 import { useSession } from '@/components/app/household-context';
 import { Button } from '@/components/ui/button';
 import { Card, SectionTitle } from '@/components/ui/card';
@@ -40,6 +41,7 @@ export default function AdminPage() {
         <p className="mt-1 text-[0.9375rem] text-text-muted">{t('intro')}</p>
       </div>
       <Overview />
+      <AdminReports />
       <AdminMonitoring />
       <Backups />
       <Tools />
@@ -74,6 +76,7 @@ function Overview() {
     [t('counts.openOccurrences'), counts.openOccurrences],
     [t('counts.doneLast7Days'), counts.doneLast7Days],
     [t('counts.shoppingItems'), counts.shoppingItems],
+    [t('counts.openReports'), counts.openReports],
     [t('counts.comments'), counts.comments],
     [t('counts.attachments'), `${counts.attachments} · ${bytes(storage.attachmentsBytes)}`],
     [t('counts.database'), bytes(storage.databaseBytes)],

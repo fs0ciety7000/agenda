@@ -1,6 +1,6 @@
 ---
 title: Nouveautés
-description: Historique des changements d'Agenda G & N — nouvelles fonctions, améliorations et corrections, du plus récent au plus ancien.
+description: Historique des changements de Tandem — nouvelles fonctions, améliorations et corrections, du plus récent au plus ancien.
 toc_max_heading_level: 2
 ---
 
@@ -14,6 +14,26 @@ d'elle-même (ou via Google Play).
 ⚙️ technique
 
 ## 27 septembre 2026
+
+### Agenda G & N devient Tandem
+
+- ✨ Nouveau nom, **Tandem**, nouveau slogan — *L’équilibre parfait pour votre foyer* — et nouveau
+  logo, sur le site, l’app Android, les e-mails, les notifications et la documentation.
+- ⚙️ Rien ne change pour vos données, vos comptes ni l’adresse du site ; l’app Android se met
+  à jour normalement (même identifiant d’application).
+
+### Signaler un problème (#61)
+
+- ✨ **Signaler un problème** depuis le site et l'app Android : bug, idée ou question, capture
+  d'écran facultative, suivi de l'état et **réponse de l'administrateur** dans l'app.
+- ✨ Administration → **Signalements** : à traiter, répondre, changer l'état ; alerte e-mail et
+  notification à chaque nouveau signalement.
+- 🔒 Informations techniques et contact par e-mail **décochés par défaut**, contenu affiché avant
+  l'envoi ; conservation limitée (180 jours après résolution), retrait à tout moment, export RGPD.
+- 🔒 Politique de confidentialité et « Sécurité des données » Google Play mises à jour
+  (signalements, commentaires, notifications du navigateur, pièces jointes des e-mails).
+- 🛠 Réglages → **Aide** : signaler, documentation, état du service ; bouton *Signaler ce
+  problème* sur les pages d'erreur.
 
 ### Documentation, API et CI (#58)
 

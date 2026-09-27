@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('privacyPolicy');
-  return { title: `${t('title')} · Agenda G & N`, robots: { index: true, follow: false } };
+  return { title: `${t('title')} · Tandem`, robots: { index: true, follow: false } };
 }
 
 const SECTIONS = [
@@ -30,7 +30,7 @@ export default async function PrivacyPage() {
     <main id="main" className="mx-auto max-w-2xl px-4 py-12">
       <p className="mb-6 text-sm">
         <Link href="/" className="text-accent underline-offset-4 hover:underline">
-          ← Agenda G & N
+          ← Tandem
         </Link>
       </p>
       <h1 className="text-3xl font-semibold tracking-tight">{t('title')}</h1>

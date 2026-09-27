@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
   Raccourcis (appui long sur l'icône de l'app) et capacité Google Assistant
-  (« Ok Google, crée … dans Agenda G & N », App Actions : actif une fois l'app publiée sur le Play Store).
+  (« Ok Google, crée … dans Tandem », App Actions : actif une fois l'app publiée sur le Play Store).
 -->
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <capability android:name="actions.intent.CREATE_THING">

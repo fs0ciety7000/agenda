@@ -285,7 +285,7 @@ Pour un foyer (quelques emails par an), Brevo est largement suffisant.
 | `SMTP_PORT` | `587` |
 | `SMTP_USER` | l'identifiant SMTP affiché par Brevo (`…@smtp-brevo.com`) |
 | `SMTP_PASSWORD` | la clé SMTP |
-| `EMAIL_FROM` | `Agenda G & N <no-reply@fs0ciety.org>` |
+| `EMAIL_FROM` | `Tandem <no-reply@fs0ciety.org>` |
 
 6. Redéployer, puis tester « Mot de passe oublié » avec votre adresse.
 
@@ -297,9 +297,9 @@ vérification du domaine de la même façon.
 Un seul client OAuth pour les deux usages. Dans la **Google Cloud Console**, idéalement avec le
 compte Google du foyer :
 
-1. Créer un projet (ex. « Agenda G & N ») ; **APIs & Services → Library** : activer
+1. Créer un projet (ex. « Tandem ») ; **APIs & Services → Library** : activer
    **Google Calendar API**.
-2. **OAuth consent screen** (*Google Auth Platform*) : type *External*, nom « Agenda G & N »,
+2. **OAuth consent screen** (*Google Auth Platform*) : type *External*, nom « Tandem »,
    email d'assistance, domaine autorisé `fs0ciety.org`. **Data access** : ajouter les scopes
    `openid`, `email`, `profile`, `…/auth/calendar.calendarlist.readonly` et
    `…/auth/calendar.events` — rien de plus (pas `…/auth/calendar`).
@@ -308,7 +308,7 @@ compte Google du foyer :
 3. **Audience → Publish app** : passer en **« In production »**. Indispensable : en *Testing*,
    Google invalide les autorisations au bout de 7 jours et la synchro s'arrêterait chaque semaine
    (risque R1). Sans vérification Google, l'écran de consentement affiche « Google n'a pas validé
-   cette application » : cliquer *Paramètres avancés → Accéder à Agenda G & N* (normal pour une
+   cette application » : cliquer *Paramètres avancés → Accéder à Tandem* (normal pour une
    app personnelle, limite de 100 utilisateurs). Pour ouvrir l'app à d'autres foyers : faire
    vérifier l'app, cf. [google-oauth-verification.md](google-oauth-verification.md).
 4. **Clients → Create client → Web application** :

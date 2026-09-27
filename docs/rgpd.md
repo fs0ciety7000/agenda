@@ -1,11 +1,11 @@
 ---
 title: Confidentialité & RGPD
-description: Données traitées, finalités, bases légales, durées de conservation, prestataires, sécurité et droits — registre des traitements d'Agenda G & N.
+description: Données traitées, finalités, bases légales, durées de conservation, prestataires, sécurité et droits — registre des traitements de Tandem.
 ---
 
 # Confidentialité & RGPD
 
-Agenda G & N est une application **privée et non commerciale** : ni publicité, ni revente, ni
+Tandem est une application **privée et non commerciale** : ni publicité, ni revente, ni
 pistage, ni mesure d'audience. Cette page est la version détaillée (registre des traitements) de
 la [politique de confidentialité](https://agenda.fs0ciety.org/privacy) affichée dans l'app ; en
 cas de doute, c'est la politique en ligne qui fait foi pour les utilisateurs.
@@ -29,6 +29,7 @@ Cloudflare). Contact : l'adresse affichée sur la page `/privacy` (variable
 | **Notifications** | notifications de l'app, préférences ; jeton Firebase (Android) ; abonnement Web Push (navigateur) | prévenir d'une tâche confiée, d'un commentaire | exécution du service ; activation volontaire | jeton / abonnement supprimés à la déconnexion ou s'ils expirent |
 | **Tâches par e-mail** (si activé) | expéditeur, sujet, texte et pièces jointes des e-mails transférés à l'adresse personnelle | créer une tâche depuis un e-mail | action de l'utilisateur | comme la tâche créée |
 | **Google Agenda** (si connecté) | liste des agendas, événements créés par l'app ; jetons OAuth **chiffrés AES-256-GCM** | publier les tâches dans l'agenda commun | **consentement** (révocable) | jusqu'à la déconnexion de Google Agenda |
+| **Signalements** | type, titre, description, capture d'écran (facultative), choix d'être recontacté ; informations techniques **seulement si l'utilisateur coche la case** (version, navigateur ou modèle, système, langue, fuseau, écran, page) | traiter un bug, une idée, une question | action de l'utilisateur ; contact par e-mail : **consentement** | tant qu'ouvert, puis **180 jours** après résolution ; retirable à tout moment ; effacé avec le compte |
 | **Mot de passe oublié** | jeton de réinitialisation **haché** | réinitialiser le mot de passe | exécution du service | 30 minutes |
 | **Sécurité et exploitation** | journaux techniques (route, statut, durée, adresse IP pour la limitation des tentatives), erreurs techniques, métriques agrégées par minute (sans utilisateur) | disponibilité, sécurité, correction des erreurs | intérêt légitime | métriques 8 jours ; sondes 7 jours ; journaux selon l'hébergeur |
 | **Sauvegardes** | copie chiffrée en transit de la base | restaurer en cas de panne | intérêt légitime | 14 jours sur le serveur, 30 jours hors serveur |
@@ -79,6 +80,7 @@ Aucun transfert à des fins publicitaires. Les données reçues des API Google r
 |---|---|
 | **Accès / portabilité** | Réglages → Données & confidentialité → **Exporter mes données** (JSON) |
 | **Rectification** | directement dans l'app (prénom, tâches…), ou en contactant l'administrateur |
+| **Retrait d'un signalement** | Réglages → Aide → Signaler un problème → *Mes signalements* → corbeille |
 | **Effacement** | Réglages → Données & confidentialité → **Supprimer mon compte** (immédiat) ; sauvegardes : effacées sous 30 jours |
 | **Retrait du consentement** (Google Agenda) | Réglages → Calendrier partagé → *Retirer l'accès* |
 | **Opposition, limitation** | contacter l'administrateur |

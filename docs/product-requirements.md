@@ -1,4 +1,4 @@
-# Product Requirements — Agenda G & N
+# Product Requirements — Tandem
 
 > Statut : Phase 0 (Discovery) · Dernière mise à jour : 2026-09-26
 > Langue produit : français (anglais prévu). Marché : Belgique / UE.

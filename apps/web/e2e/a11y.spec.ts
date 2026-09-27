@@ -83,6 +83,7 @@ for (const scheme of ['light', 'dark'] as const) {
         '/stats',
         '/history',
         '/settings',
+        '/report',
       ]) {
         await page.goto(path);
         // Pas de « networkidle » : le flux temps réel reste ouvert. On attend la fin des chargements.

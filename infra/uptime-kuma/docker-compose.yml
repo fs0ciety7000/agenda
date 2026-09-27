@@ -1,4 +1,4 @@
-# Uptime Kuma : surveillance EXTERNE d'Agenda G & N (docs/monitoring.md).
+# Uptime Kuma : surveillance EXTERNE de Tandem (docs/monitoring.md).
 # À installer sur une AUTRE machine que le serveur de l'app (sinon il tombe avec lui) :
 # un petit VPS, un Raspberry Pi à la maison, un NAS… ou une autre instance Coolify.
 #   docker compose up -d   →   http://<machine>:3001 (créer le compte admin au premier accès)

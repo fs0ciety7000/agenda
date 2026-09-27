@@ -4,7 +4,7 @@
 
 | Situation | Vérification |
 |---|---|
-| Seuls Grace et Nicolas connectent Google Calendar | **Non.** App en *In production* non vérifiée : écran « Google n'a pas validé cette application » → *Paramètres avancés → Accéder à Agenda G & N*. Limite : 100 comptes. |
+| Seuls Grace et Nicolas connectent Google Calendar | **Non.** App en *In production* non vérifiée : écran « Google n'a pas validé cette application » → *Paramètres avancés → Accéder à Tandem*. Limite : 100 comptes. |
 | D'autres foyers doivent connecter Google Calendar | **Oui**, sinon l'avertissement fait fuir et le plafond de 100 comptes s'applique. |
 | Seulement « Se connecter avec Google » (`openid email profile`) | Scopes non sensibles : une simple **vérification de la marque** (nom, logo, domaine) suffit, en quelques jours. |
 
@@ -20,7 +20,7 @@ quelques jours à quelques semaines, selon les allers-retours par e-mail.
 | Page d'accueil publique, sur le domaine, qui décrit l'app sans connexion | `https://agenda.fs0ciety.org/about` |
 | Politique de confidentialité publique, qui détaille l'usage des données Google et mentionne la *Limited Use* | `https://agenda.fs0ciety.org/privacy` |
 | Lien de la page d'accueil vers la politique | Oui (et depuis l'écran de connexion) |
-| Nom identique partout (écran de consentement, page d'accueil, app) | « Agenda G & N » |
+| Nom identique partout (écran de consentement, page d'accueil, app) | « Tandem » |
 | Scopes minimaux | cf. [google-calendar.md](google-calendar.md) §1 |
 | Suppression du compte et révocation des jetons | Réglages → Données & confidentialité |
 
@@ -35,7 +35,7 @@ politique ; Google vérifie qu'on peut vous joindre).
    sans importance pour un TXT) → *Vérifier*. Le compte qui vérifie doit être **propriétaire ou
    éditeur** du projet Google Cloud.
 2. **Google Auth Platform → Branding** :
-   - *App name* : `Agenda G & N` ;
+   - *App name* : `Tandem` ;
    - *User support email* : une adresse surveillée ;
    - *App logo* : facultatif. `docs/brand/play-store-icon-512.png` réduit à **120 × 120**. Un
      logo ajoute une vérification : pour aller plus vite, n'en mettez pas ;
@@ -60,7 +60,7 @@ politique ; Google vérifie qu'on peut vous joindre).
 
 **`https://www.googleapis.com/auth/calendar.events`**
 
-> Agenda G & N is a shared household task manager. When a user connects Google Calendar, the app
+> Tandem is a shared household task manager. When a user connects Google Calendar, the app
 > publishes the household's tasks as events in one calendar the user explicitly selects
 > (typically a calendar shared by the two members of the household). The app creates an event
 > when a task is created, updates it when the task's title, date, time or assignee changes, and
@@ -112,7 +112,7 @@ La **barre d'adresse doit rester visible** du début à la fin.
 |---|---|
 | *Homepage not accessible / requires login* | Donner `/about`, jamais `/` (qui renvoie vers la connexion) |
 | *Privacy policy does not disclose Google data use* | Section « Données Google » de `/privacy` (déjà présente) |
-| *App name mismatch* | Même nom partout : « Agenda G & N » |
+| *App name mismatch* | Même nom partout : « Tandem » |
 | *Domain not verified* | §3.1, avec un compte propriétaire ou éditeur du projet |
 | *Video does not show the OAuth client ID / the consent screen* | Refaire l'étape 4 du §5 en zoomant sur l'URL |
 | *Requesting more scopes than needed* | Aucun scope en plus de ceux du §3.3 |

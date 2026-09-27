@@ -1,5 +1,6 @@
 import { AdminModule } from './admin/admin.module';
 import { MonitoringModule } from './monitoring/monitoring.module';
+import { ReportsModule } from './reports/reports.module';
 import { Module } from '@nestjs/common';
 import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { ThrottlerModule } from '@nestjs/throttler';
@@ -54,6 +55,7 @@ import { TasksModule } from './tasks/tasks.module';
     RealtimeModule,
     AdminModule,
     MonitoringModule,
+    ReportsModule,
   ],
   controllers: [HealthController, ClientErrorsController],
   providers: [

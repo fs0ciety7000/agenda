@@ -35,6 +35,7 @@ model User {
   mobileAuthCodes   MobileAuthCode[]
   pushTokens        PushToken[]
   webPushSubscriptions WebPushSubscription[]
+  reports           Report[]
 }
 
 enum AuthProvider {
@@ -767,4 +768,47 @@ model PushToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+// ───────────────────────────── Signalements ─────────────────────────────
+
+enum ReportKind {
+  BUG
+  IDEA
+  QUESTION
+  OTHER
+}
+
+enum ReportStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+/// Signalement (bug, idée, question) envoyé depuis le site ou l'app, traité dans l'administration.
+/// Effacé avec le compte ; résolu ou fermé, effacé après 180 jours.
+model Report {
+  id             String       @id @default(uuid()) @db.Uuid
+  userId         String       @db.Uuid
+  kind           ReportKind
+  status         ReportStatus @default(OPEN)
+  title          String       @db.VarChar(120)
+  description    String       @db.VarChar(5000)
+  allowContact   Boolean      @default(false)
+  /// Informations techniques, seulement si l'utilisateur a choisi de les joindre.
+  diagnostics    Json?
+  screenshot     Bytes?
+  screenshotType String?      @db.VarChar(40)
+  reply          String?      @db.VarChar(5000)
+  repliedAt      DateTime?
+  /// Passage à RESOLVED ou CLOSED (point de départ de la durée de conservation).
+  closedAt       DateTime?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([status, createdAt])
 }

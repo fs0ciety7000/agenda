@@ -159,6 +159,26 @@ export default function SettingsPage() {
         </Card>
       </section>
 
+      <section className="flex flex-col gap-3" aria-labelledby="s-help">
+        <SectionTitle id="s-help">{t('help')}</SectionTitle>
+        <Card className="flex flex-col gap-3">
+          <p className="text-[0.9375rem] text-text-muted">{t('helpHint')}</p>
+          <div className="flex flex-wrap gap-2">
+            <Button asChild variant="secondary" className="self-start">
+              <Link href="/report?from=/settings">{t('report')}</Link>
+            </Button>
+            <Button asChild variant="ghost" className="self-start">
+              <a href={process.env.NEXT_PUBLIC_DOCS_URL || 'https://agenda-docs.fs0ciety.org'}>
+                {t('docs')}
+              </a>
+            </Button>
+            <Button asChild variant="ghost" className="self-start">
+              <Link href="/status">{t('status')}</Link>
+            </Button>
+          </div>
+        </Card>
+      </section>
+
       <section className="flex flex-col gap-3" aria-labelledby="s-account">
         <SectionTitle id="s-account">{t('account')}</SectionTitle>
         <Card>

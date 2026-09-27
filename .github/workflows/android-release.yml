@@ -107,7 +107,7 @@ jobs:
             --prerelease \
             --target "$GITHUB_SHA" \
             --title "Android — dernière version ($VERSION_NAME)" \
-            --notes "Application Android d'Agenda G & N, connectée à $API_BASE_URL.
+            --notes "Application Android de Tandem, connectée à $API_BASE_URL.
 
           **Première installation** : sur le téléphone, ouvrir cette page, toucher **agenda-gn.apk**, puis *Installer* (autoriser Chrome à « installer des applications inconnues » la première fois).
 

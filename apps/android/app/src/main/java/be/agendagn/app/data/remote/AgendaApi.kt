@@ -229,4 +229,18 @@ interface AgendaApi {
 
     @GET("v1/households/{h}/calendar")
     suspend fun calendarStatus(@Path("h") householdId: String): Response<CalendarStatusDto>
+
+    // ── Signalements ──
+    @POST("v1/reports")
+    suspend fun createReport(@Body body: CreateReportBody): Response<ReportDto>
+
+    @Multipart
+    @POST("v1/reports/{id}/screenshot")
+    suspend fun uploadReportScreenshot(@Path("id") id: String, @Part file: MultipartBody.Part): Response<ReportDto>
+
+    @GET("v1/reports")
+    suspend fun reports(): Response<List<ReportDto>>
+
+    @DELETE("v1/reports/{id}")
+    suspend fun deleteReport(@Path("id") id: String): Response<Unit>
 }

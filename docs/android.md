@@ -30,9 +30,9 @@ métier propre à Android : les règles (récurrence, rotation, quick add) reste
 - **Raccourcis** (appui long sur l'icône) : Nouvelle tâche, Dicter, Courses, Aujourd'hui.
 - **Dictée** : raccourci « Dicter » ou micro dans l'ajout rapide ; la reconnaissance vocale du
   téléphone remplit l'ajout rapide (« Sortir les poubelles demain 19 h Grace »), à valider.
-  **Partager** un texte depuis une autre app vers Agenda G & N l'ouvre aussi dans l'ajout rapide.
-  Google Assistant : « Ok Google, ouvre Agenda G & N » ; la capacité App Actions
-  `CREATE_THING` (« crée … dans Agenda G & N ») est déclarée et ne fonctionne qu'avec l'app
+  **Partager** un texte depuis une autre app vers Tandem l'ouvre aussi dans l'ajout rapide.
+  Google Assistant : « Ok Google, ouvre Tandem » ; la capacité App Actions
+  `CREATE_THING` (« crée … dans Tandem ») est déclarée et ne fonctionne qu'avec l'app
   publiée sur le Play Store.
 - **Widget « Semaine »** : les 7 prochains jours, groupés par jour, à cocher (hors ligne compris).
 - **Modèles de tâches** : dans l'ajout rapide (+), choisir un modèle et le jour (aujourd'hui,
@@ -41,7 +41,7 @@ métier propre à Android : les règles (récurrence, rotation, quick add) reste
 - **Historique** (tâche récurrente) : dans la fiche, les dernières fois et qui l'a faite.
 - **Reporter en un geste** : « Demain » / « Ce week-end » dans la fiche, la notification de
   rappel et le widget (« → » : à demain).
-- **Widget « Aujourd'hui »** (appui long sur l'écran d'accueil → Widgets → Agenda G & N) : tâches
+- **Widget « Aujourd'hui »** (appui long sur l'écran d'accueil → Widgets → Tandem) : tâches
   en retard et du jour, à cocher directement (hors ligne compris, même file d'envoi que l'app),
   toucher une tâche l'ouvre, « + » ouvre l'ajout rapide. Mis à jour à chaque changement et au
   moins toutes les 30 minutes (passage à minuit).
@@ -128,7 +128,7 @@ même clé. Le dépôt étant public, la clé n'y est jamais : elle vit dans les
 ```bash
 # Une seule fois (JDK : keytool). Conserver le fichier et le mot de passe (gestionnaire de mots de passe).
 keytool -genkeypair -keystore agenda.jks -alias agenda -keyalg RSA -keysize 4096 -validity 10000 \
-  -storepass "MOT_DE_PASSE" -keypass "MOT_DE_PASSE" -dname "CN=Agenda G et N"
+  -storepass "MOT_DE_PASSE" -keypass "MOT_DE_PASSE" -dname "CN=Tandem"
 base64 -w0 agenda.jks   # → secret ANDROID_KEYSTORE_B64
 ```
 

@@ -7,8 +7,8 @@ const url = process.env.DOCS_URL ?? 'https://agenda-docs.fs0ciety.org';
 const appUrl = process.env.APP_URL ?? 'https://agenda.fs0ciety.org';
 
 const config: Config = {
-  title: 'Agenda G & N',
-  tagline: 'Les tâches du foyer, à deux — documentation',
+  title: 'Tandem',
+  tagline: 'L’équilibre parfait pour votre foyer — documentation',
   favicon: 'img/favicon.png',
   url,
   baseUrl: '/',
@@ -58,8 +58,8 @@ const config: Config = {
   themeConfig: {
     colorMode: { respectPrefersColorScheme: true },
     navbar: {
-      title: 'Agenda G & N',
-      logo: { alt: 'Agenda G & N', src: 'img/logo.png' },
+      title: 'Tandem',
+      logo: { alt: 'Tandem', src: 'img/logo.png' },
       items: [
         { type: 'docSidebar', sidebarId: 'guide', position: 'left', label: 'Guide' },
         { type: 'docSidebar', sidebarId: 'technique', position: 'left', label: 'Technique' },
@@ -105,7 +105,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Agenda G & N — application privée et non commerciale.`,
+      copyright: `Tandem — application privée et non commerciale.`,
     },
     prism: {
       theme: prismThemes.github,

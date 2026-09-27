@@ -51,6 +51,7 @@ export class AdminService {
       shoppingItems,
       comments,
       attachments,
+      openReports,
       db,
       calendar,
       backups,
@@ -64,6 +65,7 @@ export class AdminService {
       this.prisma.shoppingItem.count(),
       this.prisma.taskComment.count(),
       this.prisma.taskAttachment.aggregate({ _count: true, _sum: { size: true } }),
+      this.prisma.report.count({ where: { status: { in: ['OPEN', 'IN_PROGRESS'] } } }),
       this.prisma.$queryRaw<
         { size: bigint }[]
       >`SELECT pg_database_size(current_database()) AS size`,
@@ -82,6 +84,7 @@ export class AdminService {
         shoppingItems,
         comments,
         attachments: attachments._count,
+        openReports,
       },
       storage: {
         databaseBytes: Number(db[0]?.size ?? 0),
@@ -264,7 +267,7 @@ export class AdminService {
       this.push.wakeUser(adminId).catch(() => 0),
       this.webPush
         .sendToUser(adminId, {
-          title: 'Agenda G & N',
+          title: 'Tandem',
           body: fr ? 'Notification de test : tout fonctionne.' : 'Test notification: all good.',
           url: '/admin',
           tag: 'admin-test',

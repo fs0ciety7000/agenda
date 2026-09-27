@@ -12,6 +12,7 @@ la variable serveur `ADMIN_EMAILS` (voir [Déploiement](../deployment.md)).
 |---|---|
 | **Vue d'ensemble** | chiffres clés (comptes, foyers, tâches), fonctions configurées (e-mail, Google, notifications, sauvegardes hors serveur…) |
 | **Comptes** | rechercher ; **créer un compte** (un lien pour choisir le mot de passe est envoyé ou copié) ; **désactiver** / réactiver ; **déconnecter partout** ; envoyer un **lien de mot de passe** ; **supprimer** |
+| **Signalements** | bugs, idées et questions envoyés depuis le site et l'app : texte, capture, informations techniques (si jointes) ; changer l'**état** (envoyé, en cours, résolu, fermé), **répondre** (réponse visible dans l'app, et envoyée par e-mail si l'utilisateur l'a accepté), supprimer. Chaque nouveau signalement est notifié aux administrateurs par e-mail et notification du navigateur |
 | **Foyers** | foyers, membres, nombre de tâches et de tâches à faire |
 | **Sauvegardes** | historique (durée, taille, vérification de restauration, copie hors serveur) et **Lancer une sauvegarde** maintenant |
 | **Surveillance** | disponibilité, incidents, trafic, erreurs, temps de réponse, routes les plus lentes ([Surveillance](../monitoring.md)) |

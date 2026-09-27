@@ -58,6 +58,8 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import be.agendagn.app.ui.absences.AbsencesScreen
+import be.agendagn.app.ui.report.ReportScreen
+import be.agendagn.app.ui.report.ReportViewModel
 import be.agendagn.app.ui.comments.CommentsSection
 import be.agendagn.app.ui.absences.AbsencesViewModel
 import be.agendagn.app.ui.history.HistoryScreen
@@ -509,6 +511,19 @@ private fun MainScaffold(
                     onRetryPush = { scope.launch { container.push.register() } },
                     onOpenHistory = { nav.navigate("history") },
                     onOpenAbsences = { nav.navigate("absences") },
+                    onOpenReport = { nav.navigate("report") },
+                )
+            }
+            composable("report") {
+                val online = state.online
+                val reportVm: ReportViewModel = viewModel(
+                    factory = viewModelFactory { initializer { ReportViewModel(container.reports) { online } } },
+                )
+                ReportScreen(
+                    reportVm,
+                    faqUrl = stringResource(R.string.report_faq_url),
+                    onBack = { nav.popBackStack() },
+                    onMessage = onMessage,
                 )
             }
             composable("absences") {

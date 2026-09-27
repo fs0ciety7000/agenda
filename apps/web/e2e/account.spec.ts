@@ -38,7 +38,7 @@ test("page d'accueil publique : décrit l'app et l'usage des données Google", a
   await page.goto('/login');
   await page.getByRole('link', { name: 'À propos' }).click();
   await expect(page).toHaveURL(/\/about$/);
-  await expect(page.getByRole('heading', { name: 'Agenda G & N', level: 1 })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Tandem', level: 1 })).toBeVisible();
   await expect(
     page.getByRole('heading', { name: "Pourquoi l'application demande l'accès à Google" }),
   ).toBeVisible();

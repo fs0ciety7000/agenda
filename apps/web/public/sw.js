@@ -1,5 +1,5 @@
 /*
- * Service worker d'Agenda G & N : le site reste utilisable hors ligne.
+ * Service worker de Tandem : le site reste utilisable hors ligne.
  * - Pages : réseau d'abord, sinon la dernière version en cache (puis l'accueil).
  * - Fichiers de l'app (/_next/static, icônes) : cache d'abord (noms versionnés, immuables).
  * - Données (/v1/*) : jamais ici. Elles sont gardées par l'app (cache persistant de TanStack
@@ -77,7 +77,7 @@ self.addEventListener('push', (event) => {
     // Message illisible : notification générique.
   }
   event.waitUntil(
-    self.registration.showNotification(data.title || 'Agenda G & N', {
+    self.registration.showNotification(data.title || 'Tandem', {
       body: data.body || '',
       icon: '/icons/icon-192.png',
       badge: '/icons/icon-192.png',

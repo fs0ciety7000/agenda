@@ -1,7 +1,23 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import type { Response } from 'express';
 import { ApiTags } from '@nestjs/swagger';
 import {
   AdminCreateUserInput,
+  type AdminReportDto,
+  AdminReportsQuery,
+  AdminUpdateReportInput,
   type AdminMonitoringDto,
   type AdminHouseholdDto,
   type AdminOverviewDto,
@@ -15,6 +31,8 @@ import { ZodPipe } from '../common/zod.pipe';
 import { AdminGuard } from './admin.guard';
 import { MonitoringService } from '../monitoring/monitoring.service';
 import { AdminService } from './admin.service';
+import { ReportsService } from '../reports/reports.service';
+import { sendScreenshot } from '../reports/reports.controller';
 
 @ApiTags('admin')
 @UseGuards(AdminGuard)
@@ -23,7 +41,38 @@ export class AdminController {
   constructor(
     private readonly admin: AdminService,
     private readonly monitoring: MonitoringService,
+    private readonly reports: ReportsService,
   ) {}
+
+  /** Administration : signalements (par défaut, ceux à traiter). */
+  @Get('reports')
+  reportList(
+    @Query(new ZodPipe(AdminReportsQuery)) query: AdminReportsQuery,
+  ): Promise<AdminReportDto[]> {
+    return this.reports.adminList(query);
+  }
+
+  /** Administration : changer l'état d'un signalement ou y répondre. */
+  @Patch('reports/:id')
+  updateReport(
+    @Param('id') id: string,
+    @Body(new ZodPipe(AdminUpdateReportInput)) body: AdminUpdateReportInput,
+  ): Promise<AdminReportDto> {
+    return this.reports.adminUpdate(assertUuid(id), body);
+  }
+
+  /** Administration : capture d'écran d'un signalement. */
+  @Get('reports/:id/screenshot')
+  async reportScreenshot(@Param('id') id: string, @Res() res: Response): Promise<void> {
+    sendScreenshot(res, await this.reports.screenshot(assertUuid(id), { userId: '', admin: true }));
+  }
+
+  /** Administration : supprimer un signalement. */
+  @Delete('reports/:id')
+  @HttpCode(204)
+  removeReport(@Param('id') id: string): Promise<void> {
+    return this.reports.adminRemove(assertUuid(id));
+  }
 
   /** Onglet « Surveillance » : requêtes, erreurs, temps de réponse, sondes, incidents. */
   @Get('monitoring')

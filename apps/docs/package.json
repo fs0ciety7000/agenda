@@ -2,7 +2,7 @@
   "name": "@agenda/docs",
   "version": "0.0.0",
   "private": true,
-  "description": "Documentation d'Agenda G & N (Docusaurus) : guide, technique, RGPD, API, changelog.",
+  "description": "Documentation de Tandem (Docusaurus) : guide, technique, RGPD, API, changelog.",
   "scripts": {
     "start": "docusaurus start",
     "build": "docusaurus build",
