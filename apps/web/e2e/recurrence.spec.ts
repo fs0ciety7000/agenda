@@ -60,12 +60,16 @@ test('tâche récurrente avec rotation, modification d’une occurrence, suppres
     page.getByRole('button', { name: /Nettoyer la salle de bain/ }).first(),
   ).toBeVisible();
 
-  // Supprimer toute la série.
-  await page
-    .getByRole('button', { name: /Nettoyer la salle de bain/ })
-    .first()
-    .click();
+  // Supprimer toute la série. Un rafraîchissement du calendrier (temps réel) pendant le toucher
+  // peut avaler un tap sur mobile : on retape, comme le ferait quelqu'un.
   const del = page.getByRole('dialog', { name: 'Modifier la tâche' });
+  await expect(async () => {
+    await page
+      .getByRole('button', { name: /Nettoyer la salle de bain/ })
+      .first()
+      .click();
+    await expect(del).toBeVisible({ timeout: 2_000 });
+  }).toPass({ timeout: 15_000 });
   await del.getByRole('button', { name: 'Supprimer' }).click();
   await del.getByLabel('Toute la série').check();
   await del.getByRole('button', { name: 'Supprimer' }).click();

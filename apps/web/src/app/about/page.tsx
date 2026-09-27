@@ -27,12 +27,12 @@ export default async function AboutPage() {
     <main id="main" className="mx-auto flex max-w-3xl flex-col gap-12 px-4 py-12 sm:py-16">
       <header className="flex flex-col items-start gap-5">
         <Image
-          src="/icons/icon-192.png"
+          src="/brand/tandem-wordmark.png"
           alt=""
-          width={80}
-          height={80}
+          width={160}
+          height={160}
           priority
-          className="rounded-2xl shadow-[0_4px_16px_rgb(0_0_0/0.08)]"
+          className="rounded-3xl shadow-[0_4px_16px_rgb(0_0_0/0.08)]"
         />
         <div className="flex flex-col gap-2">
           <h1 className="text-4xl font-semibold tracking-tight">Tandem</h1>

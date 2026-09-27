@@ -19,8 +19,8 @@ def near_white(p, t=245):
     return all(c >= t for c in p[:3])
 
 
-def load():
-    im = Image.open(SRC).convert("RGB")
+def load(src=SRC):
+    im = Image.open(src).convert("RGB")
     w, h = im.size
     px = im.load()
     xs = [x for x in range(w) if not near_white(px[x, h // 2])]
@@ -53,7 +53,8 @@ def main():
     res = ROOT / "apps/android/app/src/main/res"
     for density, scale in {"mdpi": 1, "hdpi": 1.5, "xhdpi": 2, "xxhdpi": 3, "xxxhdpi": 4}.items():
         size = int(108 * scale)
-        art = int(72 * scale)
+        # 64 dp : l'illustration (roues comprises) reste dans le cercle des masques ronds.
+        art = int(64 * scale)
         layer = Image.new("RGBA", (size, size), (0, 0, 0, 0))
         layer.paste(full.resize((art, art), Image.LANCZOS), ((size - art) // 2, (size - art) // 2))
         out = res / f"mipmap-{density}"
@@ -90,7 +91,9 @@ def main():
     # Logo avec le nom (facultatif) : page « À propos » et accueil de la documentation.
     wordmark = ROOT / "docs/brand/logo-wordmark.png"
     if wordmark.exists():
-        w = Image.open(wordmark).convert("RGB")
+        wcrop, wmask, _ = load(wordmark)
+        w = wcrop.convert("RGBA")
+        w.putalpha(wmask)
         w.thumbnail((640, 640), Image.LANCZOS)
         (public / "brand").mkdir(exist_ok=True)
         w.save(public / "brand/tandem-wordmark.png", optimize=True)

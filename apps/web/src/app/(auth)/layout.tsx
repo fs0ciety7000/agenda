@@ -16,6 +16,7 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
           priority
           className="mb-3"
         />
+        <p className="text-lg font-semibold tracking-tight">Tandem</p>
         <p className="mb-6 text-[0.9375rem] text-text-muted">{t('tagline')}</p>
         {children}
         <p className="mt-10 text-center text-[0.8125rem] text-text-muted">
