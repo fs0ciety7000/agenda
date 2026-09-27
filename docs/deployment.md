@@ -327,6 +327,16 @@ même adresse (prise de contrôle possible). Pour lier Google à un compte cré�
   versions mineures et correctifs, et un PR par version majeure. Activer aussi *Settings → Code
   security → Dependabot security updates* : une faille connue ouvre un PR immédiatement. La CI
   valide chaque PR ; fusionner quand elle est verte (les majeures : lire le changelog).
+  Majeures ignorées volontairement (à migrer à la main, de façon coordonnée) :
+  - **OkHttp 5** : Retrofit 3 et MockWebServer reposent encore sur OkHttp 4 ;
+  - **PostgreSQL** : l'image de `backup` doit avoir la même majeure que le serveur (un dump
+    `pg_dump` 17+ contient `transaction_timeout`, que PostgreSQL 16 ne sait pas restaurer).
+    Changer de majeure = migrer la base (dump / restauration) puis les deux images ensemble ;
+  - **Node** : versions LTS paires uniquement, mises à jour à la main.
+
+  Android : depuis AGP 9, Kotlin est intégré au plugin Android (plus de plugin
+  `org.jetbrains.kotlin.android`) et les bibliothèques AndroidX récentes exigent `compileSdk` 37.
+  `targetSdk` reste une décision séparée (exigence Google Play).
 - **Logs** : Coolify → ressource → *Logs* (JSON structuré pino côté API ; aucun token ni cookie
   n'y figure).
 - **Erreurs (Sentry, facultatif)** : sans configuration, les erreurs du serveur, du site et de

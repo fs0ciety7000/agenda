@@ -107,7 +107,7 @@ private sealed interface WeekRow {
 fun WeekWidgetContent(snapshot: WeekSnapshot) {
     val context = LocalContext.current
     val colors = GlanceTheme.colors
-    val locale = context.resources.configuration.locales[0] ?: Locale.getDefault()
+    val locale: Locale = context.resources.configuration.locales[0]
     Column(GlanceModifier.fillMaxSize().background(colors.background).cornerRadius(20.dp).padding(12.dp)) {
         Text(
             context.getString(R.string.widget_week_name),

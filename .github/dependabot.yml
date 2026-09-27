@@ -2,6 +2,8 @@
 # Hebdomadaire, groupées pour limiter le bruit : un PR « correctifs » (patch + minor) par
 # écosystème ; les versions majeures arrivent chacune dans leur PR (montées dédiées, risque R7).
 # Les alertes de sécurité (Dependabot security updates) ouvrent un PR immédiatement.
+# Ignorées (montées manuelles, décidées) : les versions majeures qui demandent une migration
+# coordonnée — cf. docs/deployment.md §10.
 version: 2
 updates:
   - package-ecosystem: npm # pnpm workspace (apps/*, packages/*)
@@ -20,6 +22,10 @@ updates:
     groups:
       correctifs:
         update-types: [minor, patch]
+    ignore:
+      # Retrofit 3 repose sur OkHttp 4 ; OkHttp 5 change aussi MockWebServer (tests).
+      - dependency-name: 'com.squareup.okhttp3:*'
+        update-types: [version-update:semver-major]
     labels: [dependencies, android]
 
   - package-ecosystem: docker
@@ -28,6 +34,14 @@ updates:
     groups:
       images:
         update-types: [minor, patch]
+    ignore:
+      # La sauvegarde (pg_dump) doit rester à la version du serveur PostgreSQL du compose :
+      # un pg_dump plus récent produit des dumps que l'ancien serveur ne sait pas restaurer.
+      - dependency-name: postgres
+        update-types: [version-update:semver-major]
+      # Node : uniquement des versions LTS, montées à la main (API + web ensemble).
+      - dependency-name: node
+        update-types: [version-update:semver-major]
     labels: [dependencies, docker]
 
   - package-ecosystem: github-actions
