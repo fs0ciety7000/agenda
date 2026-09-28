@@ -136,8 +136,14 @@ Le premier envoi doit rester manuel (§3.5) : l'API refuse une app qui n'a encor
   ./gradlew testDebugUnitTest --tests '*StoreScreenshots*' -Pscreenshots
   ```
 
-- Image de présentation : dérivée de `docs/brand/play-store-icon-512.png` ; sans marque tierce
-  (pas de « Google » dans les visuels, règle de Google Play).
+- Icône 512 × 512 et image de présentation 1024 × 500 (`images/icon.png`,
+  `images/featureGraphic.png`, les deux langues) : générées depuis le logo, avec les autres icônes.
+  Les textes de la bannière sont dans `FEATURE_TEXT` du script. Sans marque tierce (pas de
+  « Google » dans les visuels, règle de Google Play).
+
+  ```bash
+  pip install pillow && python3 scripts/generate-icons.py
+  ```
 
 ## 7. Vérifications avant envoi
 

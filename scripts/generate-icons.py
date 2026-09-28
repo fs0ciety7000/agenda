@@ -9,10 +9,20 @@ Le logo source est un carré arrondi sur fond blanc ; on en tire :
 """
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFilter
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "docs/brand/logo-source.png"
+FASTLANE = ROOT / "apps/android/fastlane/metadata/android"
+FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans{}.ttf"  # apt install fonts-dejavu-core
+
+# Bannière Play Store (1024 × 500) : nom, slogan, trois atouts, par langue de la fiche.
+FEATURE_TEXT = {
+    "fr-FR": ("L’équilibre parfait\npour votre foyer.",
+              ["Tâches à deux, tours de rôle", "Rappels et widgets", "Calendrier partagé"]),
+    "en-US": ("The perfect balance\nfor your household.",
+              ["Shared chores, turns", "Reminders and widgets", "Shared calendar"]),
+}
 
 
 def near_white(p, t=245):
@@ -117,7 +127,33 @@ def main():
     edge = edge.filter(ImageFilter.GaussianBlur(2))
     play.paste(full.resize((art, art), Image.LANCZOS), ((512 - art) // 2, (512 - art) // 2), edge)
     play.save(ROOT / "docs/brand/play-store-icon-512.png", optimize=True)
+
+    # Fiche Google Play (fastlane) : icône et bannière de chaque langue.
+    for locale, (tagline, bullets) in FEATURE_TEXT.items():
+        images = FASTLANE / locale / "images"
+        play.save(images / "icon.png", optimize=True)
+        feature_graphic(rounded, tagline, bullets).save(images / "featureGraphic.png", optimize=True)
     print(f"ok — fond {hex_bg}")
+
+
+def feature_graphic(logo, tagline, bullets):
+    """Bannière 1024 × 500 aux couleurs de l'app (design-tokens : fond, accent, textes)."""
+    bg, shade, accent = (250, 246, 242), (242, 234, 228), (125, 68, 96)
+    text, muted = (36, 24, 29), (111, 95, 102)
+    im = Image.new("RGB", (1024, 500), bg)
+    d = ImageDraw.Draw(im)
+    d.ellipse((780, -170, 1220, 240), fill=shade)
+    d.ellipse((-120, 330, 220, 670), fill=shade)
+    im.paste(logo.resize((400, 400), Image.LANCZOS), (50, 50), logo.resize((400, 400), Image.LANCZOS))
+    bold = lambda size: ImageFont.truetype(FONT.format("-Bold"), size)
+    d.text((500, 68), "Tandem", font=bold(64), fill=accent)
+    d.multiline_text((500, 160), tagline, font=bold(34), fill=text, spacing=10)
+    regular = ImageFont.truetype(FONT.format(""), 22)
+    for i, line in enumerate(bullets):
+        y = 290 + i * 46
+        d.ellipse((500, y + 6, 514, y + 20), fill=accent)
+        d.text((528, y), line, font=regular, fill=muted)
+    return im
 
 
 if __name__ == "__main__":
