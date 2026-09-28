@@ -1,1 +1,5 @@
-Répétitions et tour de rôle complets, section Notifications dans les Réglages, corrections.
+Agenda G & N devient Tandem : nouveau nom, nouveau logo, nouvelle adresse (tandem-agenda.app).
+• Logo en haut de l'écran « Aujourd'hui ».
+• Correction : l'app se fermait juste après la connexion.
+• Connexion avec Google plus fiable.
+• Plantages mieux remontés, pour des corrections plus rapides.
