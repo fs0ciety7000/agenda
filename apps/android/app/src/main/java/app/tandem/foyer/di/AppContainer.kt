@@ -2,11 +2,16 @@ package app.tandem.foyer.di
 
 import android.content.Context
 import app.tandem.foyer.BuildConfig
+import app.tandem.foyer.data.AbsencesRemote
+import app.tandem.foyer.data.ActivityRemote
+import app.tandem.foyer.data.CommentsRemote
 import app.tandem.foyer.data.DataStoreSettingsStore
+import app.tandem.foyer.data.ReportsRemote
 import app.tandem.foyer.data.SettingsStore
 import app.tandem.foyer.data.auth.DataStoreTokenStore
 import app.tandem.foyer.data.auth.KeystoreCipher
 import app.tandem.foyer.data.auth.SharedPrefsPkceStore
+import app.tandem.foyer.data.files.AttachmentFiles
 import app.tandem.foyer.data.local.AgendaDatabase
 import app.tandem.foyer.data.monitoring.CrashReporter
 import app.tandem.foyer.data.observeOnline
@@ -38,13 +43,13 @@ class AppContainer(context: Context) {
     val database: AgendaDatabase = AgendaDatabase.create(app)
     val settings: SettingsStore = DataStoreSettingsStore(app)
     val syncScheduler = WorkManagerSyncScheduler(app)
-    val attachments = app.tandem.foyer.data.files.AttachmentFiles(api, database, app.cacheDir)
+    val attachments = AttachmentFiles(api, database, app.cacheDir)
     private val repositoryImpl = AgendaRepositoryImpl(api, database, SyncEngine(api, database, settings), syncScheduler)
     val repository: AgendaRepository = repositoryImpl
-    val activity = app.tandem.foyer.data.ActivityRemote(api, database) { repositoryImpl.refresh() }
-    val absences = app.tandem.foyer.data.AbsencesRemote(api, database) { repositoryImpl.refresh() }
-    val comments = app.tandem.foyer.data.CommentsRemote(api, database)
-    val reports = app.tandem.foyer.data.ReportsRemote(app, api, database)
+    val activity = ActivityRemote(api, database) { repositoryImpl.refresh() }
+    val absences = AbsencesRemote(api, database) { repositoryImpl.refresh() }
+    val comments = CommentsRemote(api, database)
+    val reports = ReportsRemote(app, api, database)
     val reminders = ReminderScheduler(app, repository, settings)
     val recap = RecapScheduler(app, settings)
     val authRepository: AuthRepository = AuthRepositoryImpl(
