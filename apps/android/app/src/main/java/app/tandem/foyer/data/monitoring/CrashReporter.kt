@@ -7,11 +7,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 /**
- * Plantages : enregistrés sur le téléphone au moment du crash (aucun réseau fiable à cet
- * instant), puis envoyés à l'API au lancement suivant (`/v1/client-errors` → logs + Sentry).
+ * Plantages : enregistrés sur le téléphone au moment du crash, envoyés aussitôt si le réseau
+ * répond en moins de [SEND_TIMEOUT_MS] (utile quand l'app replante à chaque ouverture), sinon au
+ * lancement suivant (`/v1/client-errors` → logs + Sentry).
  * Seuls le type d'erreur, la pile d'appels et la version partent : aucune donnée de tâche.
  */
 class CrashReporter(
@@ -27,6 +29,13 @@ class CrashReporter(
             runCatching {
                 file.writeText("${error.javaClass.name}: ${error.message.orEmpty()}\n${error.stackTraceToString()}".take(8_500))
             }
+            // Envoi immédiat, sur un autre fil (le réseau est interdit sur le fil principal), borné
+            // dans le temps : le processus s'arrête juste après.
+            runCatching {
+                val sender = Thread { runBlocking { sendPending() } }
+                sender.start()
+                sender.join(SEND_TIMEOUT_MS)
+            }
             previous?.uncaughtException(thread, error)
         }
         if (file.exists()) CoroutineScope(SupervisorJob() + Dispatchers.IO).launch { sendPending() }
@@ -41,5 +50,9 @@ class CrashReporter(
             ).isSuccessful
         }.getOrDefault(false)
         if (sent) file.delete()
+    }
+
+    private companion object {
+        const val SEND_TIMEOUT_MS = 3_000L
     }
 }

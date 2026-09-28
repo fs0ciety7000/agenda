@@ -48,4 +48,25 @@ class CrashReporterTest {
         assertTrue(body.contains("\"message\":\"java.lang.IllegalStateException: boom\""))
         assertTrue(body.contains("\"release\":\"0.3.12\""))
     }
+
+    @Test
+    fun `crash envoye aussitot, sans attendre le lancement suivant`() {
+        val api = ApiClient.create(server.url("/").toString(), FakeTokenStore())
+        val initial = Thread.getDefaultUncaughtExceptionHandler()
+        var forwarded = false
+        Thread.setDefaultUncaughtExceptionHandler { _, _ -> forwarded = true }
+        try {
+            CrashReporter(context, api, "0.3.49").install()
+            server.enqueue(MockResponse().setResponseCode(204))
+            Thread.getDefaultUncaughtExceptionHandler()!!
+                .uncaughtException(Thread.currentThread(), IllegalStateException("boom"))
+            val sent = server.takeRequest()
+            assertEquals("/v1/client-errors", sent.path)
+            assertTrue(sent.body.readUtf8().contains("java.lang.IllegalStateException: boom"))
+            assertFalse("envoyé : rien à renvoyer au prochain lancement", file.exists())
+            assertTrue("le gestionnaire système reçoit toujours le plantage", forwarded)
+        } finally {
+            Thread.setDefaultUncaughtExceptionHandler(initial)
+        }
+    }
 }

@@ -19,6 +19,8 @@ d'elle-même (ou via Google Play).
 
 - ⚙️ Les plantages de l’app Android (et erreurs du site) apparaissent dans les journaux de l’API
   avec le début de leur pile d’appels, même sans Sentry : `docker logs … | grep -A 20 "Client error"`.
+- 🐞 L’app envoie son plantage aussitôt (et plus seulement au lancement suivant) : un plantage à
+  chaque ouverture n’empêche plus le rapport d’arriver.
 
 ### E-mails aux couleurs de Tandem (#71)
 
