@@ -55,6 +55,9 @@ services:
       SMTP_USER: ${SMTP_USER:-}
       SMTP_PASSWORD: ${SMTP_PASSWORD:-}
       EMAIL_FROM: ${EMAIL_FROM:-Tandem <no-reply@tandem-agenda.app>}
+      # Pied des e-mails : lien d'aide et adresse de contact (celle de la page de confidentialité).
+      DOCS_URL: ${DOCS_URL:-https://docs.tandem-agenda.app}
+      PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-}
       SENTRY_DSN: ${SENTRY_DSN:-}
       # Notifications instantanées Android (compte de service Firebase, JSON ou base64) — docs/android.md.
       FCM_SERVICE_ACCOUNT: ${FCM_SERVICE_ACCOUNT:-}

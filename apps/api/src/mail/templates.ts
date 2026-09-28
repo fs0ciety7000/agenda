@@ -1,16 +1,123 @@
-/** Emails transactionnels, FR/EN, texte + HTML minimal (lisible partout, sans suivi ni image). */
+import { env } from '../config/env';
+
+/**
+ * Emails transactionnels, FR/EN, texte + HTML. Mise en page en tableaux et styles en ligne
+ * (Gmail, Outlook, Apple Mail) ; aucun pixel de suivi : seul le logo est chargé, depuis le site.
+ */
 type Locale = 'fr' | 'en';
 
 const escape = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
-function layout(title: string, paragraphs: string[], cta?: { label: string; url: string }): string {
-  return `<!doctype html><html><body style="margin:0;background:#FAF6F2;font-family:-apple-system,Segoe UI,Inter,sans-serif;color:#24181D">
-<div style="max-width:480px;margin:0 auto;padding:32px 24px">
-<p style="font-size:14px;color:#6F5F66;margin:0 0 24px">Tandem</p>
-<h1 style="font-size:20px;margin:0 0 16px">${escape(title)}</h1>
-${paragraphs.map((p) => `<p style="font-size:15px;line-height:1.5;margin:0 0 16px">${escape(p)}</p>`).join('\n')}
-${cta ? `<p style="margin:24px 0"><a href="${escape(cta.url)}" style="background:#7D4460;color:#fff;padding:12px 20px;border-radius:10px;text-decoration:none;font-weight:600;display:inline-block">${escape(cta.label)}</a></p><p style="font-size:13px;color:#6F5F66;word-break:break-all">${escape(cta.url)}</p>` : ''}
-</div></body></html>`;
+/** Couleurs de l'app (packages/design-tokens, thème clair). */
+const C = {
+  bg: '#FAF6F2',
+  card: '#FFFFFF',
+  border: '#EFE0D6',
+  text: '#24181D',
+  muted: '#6F5F66',
+  accent: '#7D4460',
+};
+const FONT = "-apple-system,BlinkMacSystemFont,'Segoe UI',Inter,Roboto,Helvetica,Arial,sans-serif";
+
+const FOOTER = {
+  fr: {
+    slogan: 'L’équilibre parfait pour votre foyer.',
+    automatic: 'E-mail automatique envoyé par Tandem : merci de ne pas y répondre.',
+    contact: 'Une question ? Écrivez-nous :',
+    links: {
+      privacy: 'Confidentialité',
+      help: 'Aide',
+      report: 'Signaler un problème',
+      settings: 'Réglages',
+    },
+  },
+  en: {
+    slogan: 'The perfect balance for your household.',
+    automatic: 'Automatic email sent by Tandem: please do not reply.',
+    contact: 'A question? Write to us:',
+    links: { privacy: 'Privacy', help: 'Help', report: 'Report a problem', settings: 'Settings' },
+  },
+} as const;
+
+function footerLinks(locale: Locale) {
+  const { WEB_ORIGIN: web, DOCS_URL: docs } = env();
+  const l = FOOTER[locale].links;
+  return [
+    { label: l.privacy, url: `${web}/privacy` },
+    { label: l.help, url: `${docs}/guide/faq` },
+    { label: l.report, url: `${web}/report` },
+    { label: l.settings, url: `${web}/settings` },
+  ];
+}
+
+/** Pied de la version texte (mêmes liens que la version HTML). */
+function textFooter(locale: Locale): string {
+  const f = FOOTER[locale];
+  const contact = env().PRIVACY_CONTACT_EMAIL;
+  return [
+    '—',
+    `Tandem · ${f.slogan}`,
+    ...footerLinks(locale).map((l) => `${l.label} : ${l.url}`),
+    ...(contact ? [`${f.contact} ${contact}`] : []),
+    f.automatic,
+  ].join('\n');
+}
+
+/** Corps texte commun : paragraphes, bouton (lien en clair), pied. */
+function textBody(locale: Locale, paragraphs: string[], cta?: { label: string; url: string }) {
+  return (
+    [...paragraphs, ...(cta ? [`${cta.label} : ${cta.url}`] : []), textFooter(locale)].join(
+      '\n\n',
+    ) + '\n'
+  );
+}
+
+function layout(
+  locale: Locale,
+  title: string,
+  paragraphs: string[],
+  cta?: { label: string; url: string },
+): string {
+  const web = env().WEB_ORIGIN;
+  const f = FOOTER[locale];
+  const contact = env().PRIVACY_CONTACT_EMAIL;
+  const link = (l: { label: string; url: string }) =>
+    `<a href="${escape(l.url)}" style="color:${C.accent};text-decoration:underline">${escape(l.label)}</a>`;
+  // Texte d'aperçu (liste de la boîte de réception), invisible dans le message.
+  const preheader = paragraphs[0] ?? title;
+  return `<!doctype html>
+<html lang="${locale}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light"><meta name="supported-color-schemes" content="light"><title>${escape(title)}</title></head>
+<body style="margin:0;padding:0;background:${C.bg};font-family:${FONT};color:${C.text};-webkit-text-size-adjust:100%">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:${C.bg}">${escape(preheader)}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${C.bg}">
+<tr><td align="center" style="padding:32px 16px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:560px">
+<tr><td style="padding:0 8px 20px">
+<a href="${escape(web)}" style="text-decoration:none;color:${C.text}">
+<img src="${escape(web)}/icons/icon-192.png" width="40" height="40" alt="" style="display:inline-block;vertical-align:middle;border:0;border-radius:10px">
+<span style="display:inline-block;vertical-align:middle;margin-left:10px;font-size:18px;font-weight:700;color:${C.text}">Tandem</span>
+</a></td></tr>
+<tr><td style="background:${C.card};border:1px solid ${C.border};border-radius:16px;padding:32px 28px">
+<h1 style="margin:0 0 16px;font-size:21px;line-height:1.3;font-weight:700;color:${C.text}">${escape(title)}</h1>
+${paragraphs.map((p) => `<p style="margin:0 0 16px;font-size:15px;line-height:1.6;color:${C.text};white-space:pre-line">${escape(p)}</p>`).join('\n')}
+${
+  cta
+    ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:24px 0 8px"><tr><td style="background:${C.accent};border-radius:10px">
+<a href="${escape(cta.url)}" style="display:inline-block;padding:13px 22px;font-size:15px;font-weight:600;color:#FFFFFF;text-decoration:none;border-radius:10px">${escape(cta.label)}</a>
+</td></tr></table>
+<p style="margin:16px 0 0;font-size:12px;line-height:1.5;color:${C.muted};word-break:break-all">${escape(cta.url)}</p>`
+    : ''
+}
+</td></tr>
+<tr><td style="padding:24px 8px 0;font-size:12px;line-height:1.7;color:${C.muted}">
+<p style="margin:0 0 8px"><strong style="color:${C.text}">Tandem</strong> · ${escape(f.slogan)}</p>
+<p style="margin:0 0 8px">${footerLinks(locale).map(link).join(' &nbsp;·&nbsp; ')}</p>
+${contact ? `<p style="margin:0 0 8px">${escape(f.contact)} ${link({ label: contact, url: `mailto:${contact}` })}</p>` : ''}
+<p style="margin:0">${escape(f.automatic)}</p>
+</td></tr>
+</table></td></tr></table>
+</body></html>`;
 }
 
 export function passwordResetEmail(locale: Locale, name: string, url: string) {
@@ -36,8 +143,8 @@ export function passwordResetEmail(locale: Locale, name: string, url: string) {
         };
   return {
     subject: t.subject,
-    text: `${t.title}\n\n${t.body.join('\n\n')}\n\n${t.cta} : ${url}\n`,
-    html: layout(t.title, t.body, { label: t.cta, url }),
+    text: textBody(locale, [t.title, ...t.body], { label: t.cta, url }),
+    html: layout(locale, t.title, t.body, { label: t.cta, url }),
   };
 }
 
@@ -65,8 +172,8 @@ export function welcomeEmail(locale: Locale, name: string, url: string) {
         };
   return {
     subject: t.subject,
-    text: `${t.title}\n\n${t.body.join('\n\n')}\n\n${t.cta} : ${url}\n`,
-    html: layout(t.title, t.body, { label: t.cta, url }),
+    text: textBody(locale, [t.title, ...t.body], { label: t.cta, url }),
+    html: layout(locale, t.title, t.body, { label: t.cta, url }),
   };
 }
 
@@ -116,8 +223,8 @@ export function incidentEmail(
   const cta = en ? 'Open monitoring' : 'Ouvrir la surveillance';
   return {
     subject,
-    text: `${body.join('\n\n')}\n\n${cta} : ${url}\n`,
-    html: layout(subject, body, { label: cta, url }),
+    text: textBody(locale, body, { label: cta, url }),
+    html: layout(locale, subject, body, { label: cta, url }),
   };
 }
 
@@ -129,7 +236,11 @@ export function testEmail(locale: Locale) {
       ? 'Tandem can send emails: password reset, invitations and acknowledgements will arrive.'
       : 'Tandem sait envoyer des e-mails : réinitialisations, invitations et accusés de réception arriveront.',
   ];
-  return { subject: title, text: `${title}\n\n${body[0]}\n`, html: layout(title, body) };
+  return {
+    subject: title,
+    text: textBody(locale, [title, ...body]),
+    html: layout(locale, title, body),
+  };
 }
 
 /** Accusé de réception d'une tâche créée par e-mail. */
@@ -147,8 +258,8 @@ export function inboundTaskCreatedEmail(
   const cta = fr ? 'Ouvrir la tâche' : 'Open the task';
   return {
     subject,
-    text: `${p.title}\n\n${lines.join('\n')}\n\n${cta} : ${p.url}\n`,
-    html: layout(p.title, lines, { label: cta, url: p.url }),
+    text: textBody(locale, [p.title, lines.join('\n')], { label: cta, url: p.url }),
+    html: layout(locale, p.title, lines, { label: cta, url: p.url }),
   };
 }
 
@@ -163,8 +274,8 @@ export function inboundTaskEmptyEmail(locale: Locale) {
   ];
   return {
     subject: title,
-    text: `${title}\n\n${body.join('\n\n')}\n`,
-    html: layout(title, body),
+    text: textBody(locale, [title, ...body]),
+    html: layout(locale, title, body),
   };
 }
 
@@ -190,8 +301,8 @@ export function reportNewEmail(
   const cta = en ? 'Open reports' : 'Ouvrir les signalements';
   return {
     subject,
-    text: `${body.join('\n\n')}\n\n${cta} : ${p.url}\n`,
-    html: layout(subject, body, { label: cta, url: p.url }),
+    text: textBody(locale, body, { label: cta, url: p.url }),
+    html: layout(locale, subject, body, { label: cta, url: p.url }),
   };
 }
 
@@ -222,7 +333,7 @@ export function reportReplyEmail(
   const cta = en ? 'See my reports' : 'Voir mes signalements';
   return {
     subject,
-    text: `${body.join('\n\n')}\n\n${cta} : ${p.url}\n`,
-    html: layout(subject, body, { label: cta, url: p.url }),
+    text: textBody(locale, body, { label: cta, url: p.url }),
+    html: layout(locale, subject, body, { label: cta, url: p.url }),
   };
 }

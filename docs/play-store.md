@@ -153,3 +153,10 @@ Le premier envoi doit rester manuel (§3.5) : l'API refuse une app qui n'a encor
 - [ ] Politique de confidentialité en ligne et à jour
 - [ ] Compte de démonstration valide (connexion possible sans Google)
 - [ ] Recette rapide sur téléphone de la version installée depuis le Play Store (docs/android.md §7)
+
+Avertissement attendu, sans conséquence : « Cet App Bundle contient du code natif, et vous n'avez
+pas importé de symboles de débogage ». Le seul code natif vient de deux bibliothèques AndroidX
+(`libandroidx.graphics.path.so`, `libdatastore_shared_counter.so`), livrées par Google déjà
+dépouillées de leurs symboles : il n'existe rien à importer (`debugSymbolLevel` n'y change rien).
+L'app n'a pas de code natif propre ; ses plantages Kotlin restent lisibles grâce au fichier de
+correspondance R8, inclus dans chaque AAB (`BUNDLE-METADATA`).

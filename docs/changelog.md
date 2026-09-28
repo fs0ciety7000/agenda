@@ -15,6 +15,12 @@ d'elle-même (ou via Google Play).
 
 ## 28 septembre 2026
 
+### E-mails aux couleurs de Tandem (#71)
+
+- ✨ Les e-mails (mot de passe oublié, accusés de réception, réponses aux signalements, alertes)
+  portent le logo, une mise en page soignée et un pied avec les liens Confidentialité, Aide,
+  Signaler un problème et Réglages, ainsi que l’adresse de contact.
+
 ### Logo dans l’app et fiche Google Play (#70)
 
 - ✨ Le logo Tandem apparaît après la connexion : barre latérale et haut des pages du site,

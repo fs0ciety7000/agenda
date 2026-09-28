@@ -297,6 +297,10 @@ Pour un foyer (quelques emails par an), l'offre gratuite de Resend suffit largem
 | `SMTP_PASSWORD` | la clé API (`re_…`) — secret, jamais dans le dépôt |
 | `EMAIL_FROM` | `Tandem <no-reply@tandem-agenda.app>` |
 
+Les e-mails reprennent le logo (chargé depuis `WEB_ORIGIN/icons/icon-192.png`) et un pied avec
+les liens Confidentialité, Aide (`DOCS_URL`), Signaler un problème et Réglages ; l'adresse
+`PRIVACY_CONTACT_EMAIL`, si elle est renseignée, y apparaît aussi.
+
 7. Redéployer, puis tester « Mot de passe oublié » avec votre adresse. **Emails** (tableau de bord
    Resend) montre chaque envoi et, en cas d'échec, la raison.
 
