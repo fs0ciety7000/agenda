@@ -15,6 +15,12 @@ d'elle-même (ou via Google Play).
 
 ## 28 septembre 2026
 
+### App Google Play : plus de plantage à l’ouverture (#73)
+
+- 🐞 La version installée depuis Google Play se fermait dès la connexion : elle vérifiait si elle
+  pouvait installer une mise à jour, une permission volontairement absente de cette version
+  (les mises à jour y passent par le Play Store).
+
 ### Plantages de l’app lisibles dans les journaux (#72, #73)
 
 - ⚙️ Les plantages de l’app Android (et erreurs du site) apparaissent dans les journaux de l’API

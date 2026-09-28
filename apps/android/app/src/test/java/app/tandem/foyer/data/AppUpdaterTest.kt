@@ -1,6 +1,9 @@
 package app.tandem.foyer.data
 
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.tandem.foyer.data.update.AppUpdater
@@ -12,6 +15,7 @@ import okhttp3.mockwebserver.MockWebServer
 import okio.Buffer
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test
@@ -71,5 +75,24 @@ class AppUpdaterTest {
         server.enqueue(MockResponse().setBody(Buffer().write(apk)))
         assertNull(u.download(m))
         assertEquals(UpdateState.Failed, u.state.value)
+    }
+
+    @Test
+    fun `version Google Play sans mise a jour integree, jamais d appel au systeme pour installer`() {
+        // Sans REQUEST_INSTALL_PACKAGES, canRequestPackageInstalls() lève une SecurityException
+        // (plantage de la version Play 49 à l'ouverture de l'écran principal).
+        var asked = false
+        val context = object : ContextWrapper(ApplicationProvider.getApplicationContext<Context>()) {
+            override fun getPackageManager(): PackageManager {
+                asked = true
+                throw SecurityException("Need to declare android.permission.REQUEST_INSTALL_PACKAGES")
+            }
+        }
+        val play = AppUpdater(context, "", 49, http)
+        assertFalse(play.enabled)
+        assertFalse(play.canInstall())
+        assertFalse(asked)
+        // Même avec les mises à jour actives, une exception du système ne fait pas planter l'app.
+        assertFalse(AppUpdater(context, "https://updates.test/version.json", 49, http).canInstall())
     }
 }
