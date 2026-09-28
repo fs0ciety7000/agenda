@@ -9,7 +9,9 @@ FROM base AS build
 ENV CI=true
 # URL de l'API vue DEPUIS le conteneur web : les rewrites /v1/* sont figés au build.
 ARG API_URL=http://api:4000
-ENV API_URL=${API_URL} NEXT_TELEMETRY_DISABLED=1
+# Site vitrine (facultatif) : accueil des visiteurs non connectés, figé au build.
+ARG SITE_URL=
+ENV API_URL=${API_URL} SITE_URL=${SITE_URL} NEXT_TELEMETRY_DISABLED=1
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
 RUN pnpm fetch
 COPY . .

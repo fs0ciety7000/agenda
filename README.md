@@ -84,6 +84,10 @@ Le **site de documentation** ([`apps/docs`](apps/docs), Docusaurus) rassemble to
 `https://docs.tandem-agenda.app` ([déploiement](docs/deployment.md#13-site-de-documentation)) ;
 en local : `cd apps/docs && npm ci && npm start`.
 
+Le **site vitrine** ([`apps/site`](apps/site)) présente l'app (FR/EN, animations Motion, mêmes
+design tokens que le site) : `https://decouvrir.tandem-agenda.app`
+([déploiement](docs/deployment.md#15-site-vitrine)) ; en local : `pnpm --filter @agenda/site dev`.
+
 | Document                                                | Contenu                                                   |
 | ------------------------------------------------------- | --------------------------------------------------------- |
 | [Guide d'utilisation](docs/guide/premiers-pas.md)       | Premiers pas, tâches, répétitions, courses, Android…      |
@@ -112,6 +116,7 @@ apps/api       NestJS 11 + Prisma 6 (PostgreSQL 16) + BullMQ (Redis)
 apps/web       Next.js 15 (App Router) + Tailwind 4 + TanStack Query + next-intl
 apps/android   Kotlin + Jetpack Compose, Room, WorkManager, Glance (Gradle autonome)
 apps/docs      Site de documentation Docusaurus (contenu : docs/) + référence Swagger
+apps/site      Site vitrine Next.js (export statique) + Motion, mêmes design tokens
   └ fastlane/metadata   Fiche Google Play (textes FR/EN, icône, captures)
 packages/domain         Récurrence, rotation, ajout rapide, répartition (partagé API ↔ web)
 packages/contracts      Schémas Zod partagés API ↔ web

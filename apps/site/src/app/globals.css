@@ -1,0 +1,61 @@
+@import 'tailwindcss';
+@import '@agenda/design-tokens/tokens.css';
+
+/* Même thème que le site web (apps/web) : couleurs, rayons et mouvement des design tokens. */
+@theme {
+  --color-*: initial;
+  --color-bg: var(--gn-color-bg);
+  --color-surface: var(--gn-color-surface);
+  --color-surface-muted: var(--gn-color-surface-muted);
+  --color-border: var(--gn-color-border);
+  --color-text: var(--gn-color-text);
+  --color-text-muted: var(--gn-color-text-muted);
+  --color-accent: var(--gn-color-accent);
+  --color-accent-fg: var(--gn-color-accent-fg);
+  --color-success: var(--gn-color-success);
+  --color-white: #fff;
+  --color-transparent: transparent;
+  --color-member-sage: var(--gn-member-sage);
+  --color-member-ocean: var(--gn-member-ocean);
+  --color-member-amber: var(--gn-member-amber);
+  --color-member-plum: var(--gn-member-plum);
+  --color-member-clay: var(--gn-member-clay);
+
+  --radius-sm: var(--gn-radius-sm);
+  --radius-md: var(--gn-radius-md);
+  --radius-lg: var(--gn-radius-lg);
+  --radius-xl: var(--gn-radius-xl);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --ease-out: var(--gn-motion-easing);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+  }
+  body {
+    background: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-feature-settings: 'cv11', 'ss01';
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 3px;
+    border-radius: 6px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}

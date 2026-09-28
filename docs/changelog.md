@@ -13,6 +13,15 @@ d'elle-même (ou via Google Play).
 **Légende** : ✨ nouveau · 🛠 amélioration · 🐞 correction · 🔒 sécurité et confidentialité ·
 ⚙️ technique
 
+## 29 septembre 2026
+
+### Site vitrine (#74)
+
+- ✨ Nouveau site de présentation de Tandem, en français et en anglais : fonctionnalités, étapes,
+  répartition, captures de l’app, confidentialité et questions fréquentes, avec animations et
+  mode sombre. Mêmes couleurs et composants que l’app.
+- ✨ Visiteur non connecté sur tandem-agenda.app : redirigé vers le site vitrine (si configuré).
+
 ## 28 septembre 2026
 
 ### App Google Play : plus de plantage à l’ouverture (#73)

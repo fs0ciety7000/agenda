@@ -11,6 +11,8 @@ services:
       args:
         # URL de l'API vue depuis le conteneur web (réseau Docker interne), figée au build.
         API_URL: http://api:4000
+        # Site vitrine : « / » sans session y redirige (vide = page de connexion), cf. §15.
+        SITE_URL: ${SITE_URL:-}
     restart: unless-stopped
     environment:
       # Adresse affichée sur /privacy (politique de confidentialité).
@@ -95,6 +97,22 @@ services:
     expose:
       - '80'
     # Domaine : https://docs.tandem-agenda.app (port 80) — dans l'UI Coolify.
+
+  # Site vitrine (présentation de l’app, pages statiques) — docs/deployment.md §15.
+  site:
+    build:
+      context: .
+      dockerfile: apps/site/Dockerfile
+      args:
+        SITE_URL: ${SITE_URL:-https://decouvrir.tandem-agenda.app}
+        APP_URL: ${WEB_ORIGIN:-https://tandem-agenda.app}
+        DOCS_URL: ${DOCS_URL:-https://docs.tandem-agenda.app}
+        PLAY_URL: ${PLAY_URL:-}
+        CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-}
+    restart: unless-stopped
+    expose:
+      - '80'
+    # Domaine : https://decouvrir.tandem-agenda.app (port 80) — dans l'UI Coolify.
 
   postgres:
     image: postgres:16-alpine
