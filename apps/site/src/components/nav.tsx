@@ -28,9 +28,11 @@ export function Nav({ t }: { t: Content }) {
       transition={{ duration: 0.6, ease: EASE }}
       className={clsx(
         'fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,border-color] duration-300',
-        scrolled || open
-          ? 'border-b border-border bg-bg/80 shadow-[0_8px_30px_-20px_rgb(36_24_29/0.35)] backdrop-blur-xl'
-          : 'border-b border-transparent',
+        open
+          ? 'border-b border-border bg-bg shadow-[0_8px_30px_-20px_rgb(36_24_29/0.35)]'
+          : scrolled
+            ? 'border-b border-border bg-bg/80 shadow-[0_8px_30px_-20px_rgb(36_24_29/0.35)] backdrop-blur-xl'
+            : 'border-b border-transparent',
       )}
     >
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-5">
@@ -66,8 +68,14 @@ export function Nav({ t }: { t: Content }) {
           >
             {t.lang.other}
           </a>
-          <ButtonLink href={`${APP_URL}/login`} className="h-10 px-5 text-sm">
-            {t.nav.open}
+          <a
+            href={`${APP_URL}/login`}
+            className="rounded-full px-3.5 py-2 text-[0.9375rem] font-medium text-text hover:bg-surface-muted"
+          >
+            {t.nav.login}
+          </a>
+          <ButtonLink href={`${APP_URL}/register`} className="h-10 px-5 text-sm">
+            {t.nav.start}
           </ButtonLink>
         </div>
         <button
@@ -107,9 +115,14 @@ export function Nav({ t }: { t: Content }) {
                 <a href={t.lang.href} className="px-3 py-3 text-sm text-text-muted">
                   {t.lang.other}
                 </a>
-                <ButtonLink href={`${APP_URL}/login`} className="h-11 px-5 text-sm">
-                  {t.nav.open}
-                </ButtonLink>
+                <span className="flex items-center gap-2">
+                  <a href={`${APP_URL}/login`} className="px-3 py-3 text-sm font-medium">
+                    {t.nav.login}
+                  </a>
+                  <ButtonLink href={`${APP_URL}/register`} className="h-11 px-5 text-sm">
+                    {t.nav.start}
+                  </ButtonLink>
+                </span>
               </li>
             </ul>
           </motion.div>

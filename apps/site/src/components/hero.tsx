@@ -105,7 +105,16 @@ export function Hero({ t }: { t: Content }) {
             </ButtonLink>
           </motion.div>
           <motion.p variants={line} className="text-sm text-text-muted">
-            {t.hero.note}
+            {t.hero.note}{' '}
+            <span className="whitespace-nowrap">
+              {t.hero.already}{' '}
+              <a
+                href={`${APP_URL}/login`}
+                className="font-semibold text-accent underline underline-offset-4 hover:opacity-80"
+              >
+                {t.hero.login}
+              </a>
+            </span>
           </motion.p>
         </motion.div>
 

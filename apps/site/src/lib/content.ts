@@ -6,7 +6,16 @@ export type FeatureIcon =
 
 export interface Content {
   meta: { title: string; description: string };
-  nav: { features: string; how: string; privacy: string; faq: string; open: string; menu: string };
+  nav: {
+    features: string;
+    how: string;
+    privacy: string;
+    faq: string;
+    open: string;
+    login: string;
+    start: string;
+    menu: string;
+  };
   lang: { label: string; other: string; href: string };
   hero: {
     badge: string;
@@ -15,6 +24,8 @@ export interface Content {
     primary: string;
     android: string;
     note: string;
+    already: string;
+    login: string;
   };
   mock: {
     greeting: string;
@@ -88,6 +99,8 @@ const fr: Content = {
     privacy: 'Confidentialité',
     faq: 'Questions',
     open: 'Ouvrir Tandem',
+    login: 'Se connecter',
+    start: 'Commencer',
     menu: 'Menu',
   },
   lang: { label: 'Langue', other: 'English', href: '/en/' },
@@ -98,6 +111,8 @@ const fr: Content = {
     primary: 'Commencer gratuitement',
     android: 'Télécharger pour Android',
     note: 'Un compte, un foyer, et l’autre vous rejoint en un lien.',
+    already: 'Déjà un compte ?',
+    login: 'Se connecter',
   },
   mock: {
     greeting: 'Bonjour Grace',
@@ -302,6 +317,8 @@ const en: Content = {
     privacy: 'Privacy',
     faq: 'FAQ',
     open: 'Open Tandem',
+    login: 'Sign in',
+    start: 'Get started',
     menu: 'Menu',
   },
   lang: { label: 'Language', other: 'Français', href: '/' },
@@ -312,6 +329,8 @@ const en: Content = {
     primary: 'Get started for free',
     android: 'Download for Android',
     note: 'One account, one household, and the other joins with a link.',
+    already: 'Already have an account?',
+    login: 'Sign in',
   },
   mock: {
     greeting: 'Hello Grace',
