@@ -15,6 +15,12 @@ d'elle-même (ou via Google Play).
 
 ## 28 septembre 2026
 
+### Logo dans l’app et fiche Google Play (#70)
+
+- ✨ Le logo Tandem apparaît après la connexion : barre latérale et haut des pages du site,
+  écran « Aujourd’hui » de l’app Android.
+- 🛠 Fiche Google Play refaite avec le nouveau logo : icône, bannière et captures d’écran.
+
 ### Connexion avec Google pendant le changement d’adresse (#69)
 
 - 🐞 « La connexion avec Google n’a pas abouti » quand elle était lancée depuis l’ancienne

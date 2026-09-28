@@ -9,6 +9,7 @@ import {
   Sun,
   type LucideIcon,
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -71,7 +72,15 @@ export function AppShell({ children }: { children: ReactNode }) {
         aria-label={t('nav.main')}
         className="sticky top-0 hidden h-dvh shrink-0 flex-col gap-1 border-r border-border px-3 py-6 md:flex md:w-20 xl:w-60"
       >
-        <p className="mb-6 hidden px-3 text-sm font-semibold xl:block">{t('app.name')}</p>
+        <Link
+          href="/"
+          className="mb-6 flex items-center justify-center gap-3 rounded-md px-1 xl:justify-start xl:px-3"
+        >
+          <Image src="/icons/icon-192.png" alt="" width={36} height={36} className="size-9" />
+          <span className="sr-only text-[0.9375rem] font-semibold xl:not-sr-only">
+            {t('app.name')}
+          </span>
+        </Link>
         {NAV.map(({ href, key, icon: Icon }) => (
           <Link
             key={href}
@@ -96,6 +105,11 @@ export function AppShell({ children }: { children: ReactNode }) {
           pathname.startsWith('/calendar') ? 'max-w-6xl' : 'max-w-3xl',
         )}
       >
+        {/* Mobile : logo en tête (la navigation latérale le porte sur grand écran). */}
+        <Link href="/" className="-mt-2 mb-6 flex w-fit items-center gap-2 md:hidden">
+          <Image src="/icons/icon-192.png" alt="" width={28} height={28} className="size-7" />
+          <span className="text-[0.9375rem] font-semibold">{t('app.name')}</span>
+        </Link>
         <OfflineBanner />
         {me.data && household ? (
           <SessionContext.Provider value={{ me: me.data, household }}>

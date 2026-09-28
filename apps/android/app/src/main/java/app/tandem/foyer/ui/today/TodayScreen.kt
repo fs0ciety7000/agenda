@@ -47,6 +47,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.background
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.res.painterResource
 
 /** Tableau de bord : en retard, aujourd'hui, 7 prochains jours, répartition de la semaine. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -71,6 +74,15 @@ fun TodayScreen(
     ) {
         LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 96.dp)) {
             item {
+                Row(
+                    Modifier.padding(bottom = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    // Décoratif : le nom de l'app est lu juste à côté.
+                    Image(painterResource(R.drawable.logo), contentDescription = null, modifier = Modifier.size(28.dp))
+                    Text(stringResource(R.string.app_name), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                }
                 Text(
                     stringResource(R.string.greeting, state.me?.displayName ?: ""),
                     style = MaterialTheme.typography.headlineMedium,
