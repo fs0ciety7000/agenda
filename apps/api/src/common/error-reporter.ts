@@ -35,9 +35,19 @@ export function reportServerError(error: unknown, route?: string): void {
     Sentry.captureException(error, { tags: { source: 'api', route: route ?? 'unknown' } });
 }
 
+/** Début de la pile d'appels, lisible dans les logs même sans Sentry (plantages Android). */
+const STACK_LINES = 20;
+
 export function reportClientError(input: ClientErrorInput): void {
+  const stack = input.stack
+    ?.split('\n')
+    .slice(0, STACK_LINES)
+    .map((l) => l.trimEnd())
+    .join('\n')
+    .slice(0, 3_000);
   logger.warn(
-    `Client error [${input.source}${input.release ? ` ${input.release}` : ''}] ${input.location ?? ''}: ${input.message}`,
+    `Client error [${input.source}${input.release ? ` ${input.release}` : ''}] ${input.location ?? ''}: ${input.message}` +
+      (stack ? `\n${stack}` : ''),
   );
   if (!enabled) return;
   Sentry.captureEvent({

@@ -94,3 +94,22 @@ fonctionne), ntfy, Discord… Cocher *Default enabled* pour les appliquer à tou
 L'app a déjà sa page `/status`. Uptime Kuma peut en publier une seconde, hébergée ailleurs (donc
 visible même serveur arrêté) : *Status Pages → New* ; pour `status.tandem-agenda.app`, un
 enregistrement DNS Cloudflare vers la machine d'Uptime Kuma.
+
+## 4. Erreurs du site et plantages de l'app
+
+Le site et l'app Android envoient leurs erreurs à `POST /v1/client-errors` (l'app : son dernier
+plantage, au lancement suivant). L'API les écrit dans ses journaux avec le début de la pile
+d'appels (20 lignes), et les transmet à Sentry si `SENTRY_DSN` est défini.
+
+Sur le serveur (SSH) :
+
+```bash
+# Conteneur de l'API (Coolify le nomme api-<identifiant>-<date>)
+docker ps --format '{{.Names}}' | grep -i api
+# Erreurs des dernières 24 h, avec leur pile
+docker logs --since 24h NOM_DU_CONTENEUR 2>&1 | grep -A 20 "Client error"
+```
+
+Les noms de classes de l'app publiée sont raccourcis par R8 : la Play Console
+(*Android vitals → Plantages et ANR*) affiche la même pile en clair, grâce au fichier de
+correspondance inclus dans l'AAB.
