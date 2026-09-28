@@ -97,8 +97,8 @@ enregistrement DNS Cloudflare vers la machine d'Uptime Kuma.
 
 ## 4. Erreurs du site et plantages de l'app
 
-Le site et l'app Android envoient leurs erreurs à `POST /v1/client-errors` (l'app : son dernier
-plantage, au lancement suivant). L'API les écrit dans ses journaux avec le début de la pile
+Le site et l'app Android envoient leurs erreurs à `POST /v1/client-errors` (l'app : au moment du
+plantage, ou au lancement suivant si le réseau ne répond pas). L'API les écrit dans ses journaux avec le début de la pile
 d'appels (20 lignes), et les transmet à Sentry si `SENTRY_DSN` est défini.
 
 Sur le serveur (SSH) :

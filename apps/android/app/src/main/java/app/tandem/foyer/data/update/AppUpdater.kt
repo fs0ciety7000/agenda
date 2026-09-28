@@ -68,7 +68,12 @@ class AppUpdater(
     }
 
     /** Android exige d'autoriser l'app à installer des applications (une seule fois). */
-    fun canInstall(): Boolean = context.packageManager.canRequestPackageInstalls()
+    /**
+     * Version Google Play : pas de mise à jour intégrée, donc jamais d'appel au système (sans la
+     * permission REQUEST_INSTALL_PACKAGES, retirée de cette version, Android lève une exception).
+     */
+    fun canInstall(): Boolean =
+        enabled && runCatching { context.packageManager.canRequestPackageInstalls() }.getOrDefault(false)
 
     fun permissionIntent(): Intent =
         Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:${context.packageName}"))
