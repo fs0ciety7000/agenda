@@ -3,8 +3,8 @@ import type * as Preset from '@docusaurus/preset-classic';
 import { themes as prismThemes } from 'prism-react-renderer';
 
 // Adresse publique du site de documentation (domaine attribué dans Coolify).
-const url = process.env.DOCS_URL ?? 'https://agenda-docs.fs0ciety.org';
-const appUrl = process.env.APP_URL ?? 'https://agenda.fs0ciety.org';
+const url = process.env.DOCS_URL ?? 'https://docs.tandem-agenda.app';
+const appUrl = process.env.APP_URL ?? 'https://tandem-agenda.app';
 
 const config: Config = {
   title: 'Tandem',

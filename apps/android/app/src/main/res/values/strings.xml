@@ -385,7 +385,7 @@
     <string name="report_title">Signaler un problème</string>
     <string name="report_intro">Un bug, une idée, une question ? L’administrateur reçoit votre message et peut vous répondre ici.</string>
     <string name="report_faq">Questions fréquentes</string>
-    <string name="report_faq_url" translatable="false">https://agenda-docs.fs0ciety.org/guide/faq</string>
+    <string name="report_faq_url" translatable="false">https://docs.tandem-agenda.app/guide/faq</string>
     <string name="report_kind_bug">Bug</string>
     <string name="report_kind_idea">Idée</string>
     <string name="report_kind_question">Question</string>

@@ -168,7 +168,7 @@ export default function SettingsPage() {
               <Link href="/report?from=/settings">{t('report')}</Link>
             </Button>
             <Button asChild variant="ghost" className="self-start">
-              <a href={process.env.NEXT_PUBLIC_DOCS_URL || 'https://agenda-docs.fs0ciety.org'}>
+              <a href={process.env.NEXT_PUBLIC_DOCS_URL || 'https://docs.tandem-agenda.app'}>
                 {t('docs')}
               </a>
             </Button>

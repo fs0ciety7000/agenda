@@ -110,6 +110,7 @@ export async function clearOfflineData() {
   await unsubscribeWebPush();
   try {
     localStorage.removeItem(PERSIST_KEY);
+    localStorage.removeItem(LEGACY_PERSIST_KEY);
   } catch {
     /* stockage indisponible */
   }
@@ -118,5 +119,7 @@ export async function clearOfflineData() {
   }
 }
 
-export const PERSIST_KEY = 'agenda-gn-cache';
+export const PERSIST_KEY = 'tandem-cache';
+/** Clé d'avant le renommage : relue une fois pour ne pas perdre les modifications en attente. */
+export const LEGACY_PERSIST_KEY = 'agenda-gn-cache';
 export const PERSIST_MAX_AGE = 7 * 24 * 3600_000;

@@ -12,7 +12,7 @@ export function reportError(error: unknown, context?: string): void {
   sent += 1;
   void fetch('/v1/client-errors', {
     method: 'POST',
-    headers: { 'content-type': 'application/json', 'x-requested-with': 'agenda-gn' },
+    headers: { 'content-type': 'application/json', 'x-requested-with': 'tandem' },
     keepalive: true,
     body: JSON.stringify({
       source: 'web',

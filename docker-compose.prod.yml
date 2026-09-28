@@ -20,7 +20,7 @@ services:
     depends_on:
       api:
         condition: service_healthy
-    # Domaine : https://agenda.fs0ciety.org (port 3000) — dans l'UI Coolify.
+    # Domaine : https://tandem-agenda.app (port 3000) — dans l'UI Coolify.
 
   api:
     build:
@@ -33,7 +33,7 @@ services:
       NODE_ENV: production
       PORT: '4000'
       # Origine PUBLIQUE du web (CORS, redirections OAuth).
-      WEB_ORIGIN: ${WEB_ORIGIN:?WEB_ORIGIN est requis (ex. https://agenda.fs0ciety.org)}
+      WEB_ORIGIN: ${WEB_ORIGIN:?WEB_ORIGIN est requis (ex. https://tandem-agenda.app)}
       DATABASE_URL: postgresql://${POSTGRES_USER:-agenda}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-agenda}?schema=public
       JWT_SECRET: ${JWT_SECRET:?JWT_SECRET est requis}
       TOKEN_ENCRYPTION_KEY: ${TOKEN_ENCRYPTION_KEY:?TOKEN_ENCRYPTION_KEY est requis}
@@ -54,7 +54,7 @@ services:
       SMTP_PORT: ${SMTP_PORT:-587}
       SMTP_USER: ${SMTP_USER:-}
       SMTP_PASSWORD: ${SMTP_PASSWORD:-}
-      EMAIL_FROM: ${EMAIL_FROM:-Tandem <no-reply@fs0ciety.org>}
+      EMAIL_FROM: ${EMAIL_FROM:-Tandem <no-reply@tandem-agenda.app>}
       SENTRY_DSN: ${SENTRY_DSN:-}
       # Notifications instantanées Android (compte de service Firebase, JSON ou base64) — docs/android.md.
       FCM_SERVICE_ACCOUNT: ${FCM_SERVICE_ACCOUNT:-}
@@ -86,12 +86,12 @@ services:
       context: .
       dockerfile: apps/docs/Dockerfile
       args:
-        DOCS_URL: ${DOCS_URL:-https://agenda-docs.fs0ciety.org}
-        APP_URL: ${WEB_ORIGIN:-https://agenda.fs0ciety.org}
+        DOCS_URL: ${DOCS_URL:-https://docs.tandem-agenda.app}
+        APP_URL: ${WEB_ORIGIN:-https://tandem-agenda.app}
     restart: unless-stopped
     expose:
       - '80'
-    # Domaine : https://agenda-docs.fs0ciety.org (port 80) — dans l'UI Coolify.
+    # Domaine : https://docs.tandem-agenda.app (port 80) — dans l'UI Coolify.
 
   postgres:
     image: postgres:16-alpine

@@ -11,7 +11,7 @@ export class ApiError extends Error {
   }
 }
 
-const CSRF_HEADERS = { 'x-requested-with': 'agenda-gn' };
+const CSRF_HEADERS = { 'x-requested-with': 'tandem' };
 
 let refreshing: Promise<boolean> | null = null;
 

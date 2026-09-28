@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { signUpWithHousehold, todayBrussels } from './helpers';
 
-const HEADERS = { 'x-requested-with': 'agenda-gn' };
+const HEADERS = { 'x-requested-with': 'tandem' };
 
 test('échéance « cette semaine » et reporter en un geste', async ({ page }) => {
   await signUpWithHousehold(page, 'Grace');

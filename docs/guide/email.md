@@ -8,7 +8,7 @@ description: Transférer un e-mail (facture, convocation) à son adresse personn
 Une facture, une convocation, un rappel du dentiste : **transférez l'e-mail** à votre adresse
 personnelle et il devient une tâche du foyer, à votre nom.
 
-1. **Réglages → Ajouter par e-mail → Créer mon adresse** (du type `3f9c…@tasks.fs0ciety.org`).
+1. **Réglages → Ajouter par e-mail → Créer mon adresse** (du type `3f9c…@tasks.tandem-agenda.app`).
 2. Ajoutez-la à vos contacts (« Agenda »), puis transférez-y les e-mails utiles.
 
 Ce qui est repris :

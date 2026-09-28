@@ -6,7 +6,7 @@ test('pièces jointes : joindre, ouvrir, supprimer', async ({ page }) => {
   const households = await (await page.request.get('/v1/households')).json();
   const hid = households[0].id as string;
   await page.request.post(`/v1/households/${hid}/tasks`, {
-    headers: { 'x-requested-with': 'agenda-gn' },
+    headers: { 'x-requested-with': 'tandem' },
     data: { title: 'Garantie frigo', date: todayBrussels() },
   });
   await page.reload();

@@ -5,7 +5,7 @@ description: Obtenir de l'aide, signaler un bug, proposer une idée ou poser une
 
 # Aide et signalement
 
-1. **Le site ne répond pas ?** Regardez d'abord [l'état du service](https://agenda.fs0ciety.org/status) :
+1. **Le site ne répond pas ?** Regardez d'abord [l'état du service](https://tandem-agenda.app/status) :
    un incident en cours y est affiché, et l'administrateur est déjà prévenu automatiquement.
 2. **Une question ?** Les [questions fréquentes](faq.md) couvrent les cas courants.
 3. **Un bug, une idée, une question ?** Envoyez un **signalement** depuis l'app.

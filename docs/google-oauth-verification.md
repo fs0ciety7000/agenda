@@ -17,8 +17,8 @@ quelques jours à quelques semaines, selon les allers-retours par e-mail.
 
 | Exigence Google | Où |
 |---|---|
-| Page d'accueil publique, sur le domaine, qui décrit l'app sans connexion | `https://agenda.fs0ciety.org/about` |
-| Politique de confidentialité publique, qui détaille l'usage des données Google et mentionne la *Limited Use* | `https://agenda.fs0ciety.org/privacy` |
+| Page d'accueil publique, sur le domaine, qui décrit l'app sans connexion | `https://tandem-agenda.app/about` |
+| Politique de confidentialité publique, qui détaille l'usage des données Google et mentionne la *Limited Use* | `https://tandem-agenda.app/privacy` |
 | Lien de la page d'accueil vers la politique | Oui (et depuis l'écran de connexion) |
 | Nom identique partout (écran de consentement, page d'accueil, app) | « Tandem » |
 | Scopes minimaux | cf. [google-calendar.md](google-calendar.md) §1 |
@@ -29,7 +29,7 @@ politique ; Google vérifie qu'on peut vous joindre).
 
 ## 3. Étapes (Google Cloud Console, compte propriétaire du projet)
 
-1. **Vérifier le domaine** `fs0ciety.org` dans
+1. **Vérifier le domaine** `tandem-agenda.app` dans
    [Google Search Console](https://search.google.com/search-console) : *Ajouter une propriété →
    Domaine* → copier l'enregistrement **TXT** → Cloudflare → *DNS* → ajouter ce TXT (nuage gris,
    sans importance pour un TXT) → *Vérifier*. Le compte qui vérifie doit être **propriétaire ou
@@ -39,10 +39,10 @@ politique ; Google vérifie qu'on peut vous joindre).
    - *User support email* : une adresse surveillée ;
    - *App logo* : facultatif. `docs/brand/play-store-icon-512.png` réduit à **120 × 120**. Un
      logo ajoute une vérification : pour aller plus vite, n'en mettez pas ;
-   - *Application home page* : `https://agenda.fs0ciety.org/about` ;
-   - *Application privacy policy link* : `https://agenda.fs0ciety.org/privacy` ;
+   - *Application home page* : `https://tandem-agenda.app/about` ;
+   - *Application privacy policy link* : `https://tandem-agenda.app/privacy` ;
    - *Application terms of service link* : laisser vide (facultatif) ;
-   - *Authorized domains* : `fs0ciety.org` ;
+   - *Authorized domains* : `tandem-agenda.app` ;
    - *Developer contact information* : votre adresse.
 3. **Data access** : exactement `openid`, `…/auth/userinfo.email`, `…/auth/userinfo.profile`,
    `…/auth/calendar.calendarlist.readonly` et `…/auth/calendar.events`. Retirer tout autre scope :
@@ -89,7 +89,7 @@ Enregistrer l'écran d'un ordinateur (OBS, ou l'enregistreur intégré de macOS 
 Mettre l'interface en **anglais** : navigateur en anglais, l'app suit la langue du navigateur.
 La **barre d'adresse doit rester visible** du début à la fin.
 
-1. Ouvrir `https://agenda.fs0ciety.org/about`, faire défiler : nom de l'app, description,
+1. Ouvrir `https://tandem-agenda.app/about`, faire défiler : nom de l'app, description,
    section Google, lien vers la politique de confidentialité.
 2. Se connecter avec un compte de démonstration (e-mail et mot de passe).
 3. *Settings → Shared calendar → Connect Google Calendar*.

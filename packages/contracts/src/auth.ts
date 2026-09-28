@@ -86,4 +86,4 @@ export const MobileExchangeInput = z.object({
 export type MobileExchangeInput = z.infer<typeof MobileExchangeInput>;
 
 /** Adresse de retour vers l'app Android (schéma propre à l'app, cf. AndroidManifest). */
-export const ANDROID_AUTH_REDIRECT = 'be.agendagn.app://auth';
+export const ANDROID_AUTH_REDIRECT = 'app.tandem.foyer://auth';

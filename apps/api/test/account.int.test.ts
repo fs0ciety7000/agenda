@@ -223,7 +223,7 @@ describe('Compte : mot de passe oublié, Google Sign-In, RGPD (intégration)', (
           `client=android&code_challenge=${challenge}`,
         );
         const location = new URL(res.headers.location!);
-        expect(`${location.protocol}//${location.host}`).toBe('be.agendagn.app://auth');
+        expect(`${location.protocol}//${location.host}`).toBe('app.tandem.foyer://auth');
         expect(res.headers['set-cookie']?.toString() ?? '').not.toContain('gn_at=');
         const code = location.searchParams.get('code')!;
 
@@ -254,7 +254,7 @@ describe('Compte : mot de passe oublié, Google Sign-In, RGPD (intégration)', (
         await exchange(code, verifier).expect(400);
 
         const noChallenge = await http().get('/v1/auth/google/start?client=android').expect(302);
-        expect(noChallenge.headers.location).toBe('be.agendagn.app://auth?error=GOOGLE_FAILED');
+        expect(noChallenge.headers.location).toBe('app.tandem.foyer://auth?error=GOOGLE_FAILED');
 
         const grace = await registerUser(app, 'Grace');
         const exists = await googleFlow(
@@ -262,7 +262,7 @@ describe('Compte : mot de passe oublié, Google Sign-In, RGPD (intégration)', (
           undefined,
           `client=android&code_challenge=${pkce().challenge}`,
         );
-        expect(exists.headers.location).toBe('be.agendagn.app://auth?error=GOOGLE_EMAIL_EXISTS');
+        expect(exists.headers.location).toBe('app.tandem.foyer://auth?error=GOOGLE_EMAIL_EXISTS');
       });
     });
 

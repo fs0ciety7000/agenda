@@ -6,7 +6,7 @@ description: Authentification, CSRF, erreurs, idempotence, concurrence, temps r�
 # Guide de l'API
 
 L'API REST sert le site et l'app Android. Toutes les routes métier sont sous **`/v1`**, sur la
-même origine que le site (`https://agenda.fs0ciety.org/v1/…` : le web relaie vers l'API).
+même origine que le site (`https://tandem-agenda.app/v1/…` : le web relaie vers l'API).
 
 - **Référence complète et interactive** : [Référence (Swagger)](/api-reference) — chaque route,
   ses paramètres, son corps et sa réponse, générés depuis le code.
@@ -51,7 +51,7 @@ jeton de rafraîchissement (rotation) : conservez le nouveau.
 Toute requête qui modifie (`POST`, `PATCH`, `PUT`, `DELETE`) doit porter :
 
 ```http
-X-Requested-With: agenda-gn
+X-Requested-With: tandem
 ```
 
 Sinon : `403 CSRF_REJECTED`. Règle identique pour le web et l'app (seuls les webhooks entrants,
@@ -65,12 +65,12 @@ l'utilisateur est **membre** du foyer (sinon `404`, pour ne rien révéler). Les
 
 ```bash
 # Lister les tâches du jour
-curl -s https://agenda.fs0ciety.org/v1/households/$HH/occurrences?view=today \
+curl -s https://tandem-agenda.app/v1/households/$HH/occurrences?view=today \
   -H "Authorization: Bearer $TOKEN"
 
 # Ajout rapide
-curl -s -X POST https://agenda.fs0ciety.org/v1/households/$HH/tasks/quick \
-  -H "Authorization: Bearer $TOKEN" -H 'X-Requested-With: agenda-gn' \
+curl -s -X POST https://tandem-agenda.app/v1/households/$HH/tasks/quick \
+  -H "Authorization: Bearer $TOKEN" -H 'X-Requested-With: tandem' \
   -H 'Content-Type: application/json' \
   -d '{"text":"Sortir les poubelles demain 19h @nicolas"}'
 ```

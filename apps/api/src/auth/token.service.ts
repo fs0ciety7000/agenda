@@ -2,8 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { jwtVerify, SignJWT } from 'jose';
 import { env } from '../config/env';
 
-const ISSUER = 'agenda-gn';
-const AUDIENCE = 'agenda-gn-api';
+const ISSUER = 'tandem';
+const AUDIENCE = 'tandem-api';
+/** Jetons émis avant le renommage : acceptés jusqu'à leur expiration. */
+const ACCEPTED_ISSUERS = [ISSUER, 'agenda-gn'];
+const ACCEPTED_AUDIENCES = [AUDIENCE, 'agenda-gn-api'];
 
 export interface AccessClaims {
   userId: string;
@@ -34,8 +37,8 @@ export class TokenService {
   async verifyAccess(token: string): Promise<AccessClaims | null> {
     try {
       const { payload } = await jwtVerify(token, this.secret, {
-        issuer: ISSUER,
-        audience: AUDIENCE,
+        issuer: ACCEPTED_ISSUERS,
+        audience: ACCEPTED_AUDIENCES,
         algorithms: ['HS256'],
       });
       if (typeof payload.sub !== 'string' || typeof payload.sid !== 'string') return null;

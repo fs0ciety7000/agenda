@@ -48,7 +48,7 @@ Oui, en grande partie : voir [Hors ligne](hors-ligne.md).
 
 ### Le site est-il en panne ?
 
-Consultez [l'état du service](https://agenda.fs0ciety.org/status) (disponibilité, incidents en
+Consultez [l'état du service](https://tandem-agenda.app/status) (disponibilité, incidents en
 cours).
 
 ### Où sont mes données et comment les supprimer ?

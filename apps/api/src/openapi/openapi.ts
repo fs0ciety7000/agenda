@@ -68,7 +68,7 @@ sous \`/v1\`. Guide complet (authentification, erreurs, idempotence, temps réel
   \`X-Client: mobile\` à la connexion pour recevoir les jetons dans le corps), ou cookies
   \`httpOnly\` posés par \`/v1/auth/login\` (web).
 - **CSRF** : toute requête qui modifie (POST, PATCH, PUT, DELETE) doit porter
-  \`${CSRF_HEADER}: agenda-gn\`.
+  \`${CSRF_HEADER}: tandem\`.
 - **Erreurs** : toujours \`{ "error": { "code", "message", "details"? } }\` ; le \`code\` est
   stable (voir le schéma \`ApiError\`), le \`message\` n'est destiné qu'aux développeurs.
 - **Idempotence** : les créations de tâches acceptent \`Idempotency-Key\` (UUID) pour être

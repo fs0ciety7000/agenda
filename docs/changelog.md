@@ -15,6 +15,16 @@ d'elle-même (ou via Google Play).
 
 ## 28 septembre 2026
 
+### Nouvelle adresse : tandem-agenda.app (#63)
+
+- ✨ Le site déménage sur **[tandem-agenda.app](https://tandem-agenda.app)** et la documentation
+  sur **docs.tandem-agenda.app**. L’ancienne adresse reste active le temps de la transition.
+- ⚙️ L’app Android prend son identifiant définitif, `app.tandem.foyer`, en vue de Google Play.
+  La prochaine mise à jour installe **Tandem** à côté de l’ancienne app : connectez-vous dans
+  Tandem, puis désinstallez « Agenda G & N ».
+- ⚙️ Dernières traces de l’ancien nom retirées (fichiers d’installation `tandem.apk`, export
+  `tandem-export/1`, en-têtes techniques) ; les anciennes valeurs restent acceptées.
+
 ### Mise à jour Android fiable (#62)
 
 - 🐞 « Le téléchargement a échoué » pendant la mise à jour de l’app : Cloudflare gardait en
@@ -29,8 +39,7 @@ d'elle-même (ou via Google Play).
 
 - ✨ Nouveau nom, **Tandem**, nouveau slogan — *L’équilibre parfait pour votre foyer* — et nouveau
   logo, sur le site, l’app Android, les e-mails, les notifications et la documentation.
-- ⚙️ Rien ne change pour vos données, vos comptes ni l’adresse du site ; l’app Android se met
-  à jour normalement (même identifiant d’application).
+- ⚙️ Rien ne change pour vos données ni vos comptes.
 
 ### Signaler un problème (#61)
 

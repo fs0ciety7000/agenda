@@ -7,7 +7,7 @@ import { loadTestEnv } from './env';
 
 loadTestEnv();
 
-export const CSRF = { 'x-requested-with': 'agenda-gn' } as const;
+export const CSRF = { 'x-requested-with': 'tandem' } as const;
 
 export async function createTestApp(
   overrides: { provide: unknown; useValue: unknown }[] = [],

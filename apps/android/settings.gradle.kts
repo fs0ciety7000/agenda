@@ -12,5 +12,5 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "agenda-gn"
+rootProject.name = "tandem"
 include(":app")

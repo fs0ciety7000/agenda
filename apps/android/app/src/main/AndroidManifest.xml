@@ -28,12 +28,12 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <!-- Retour de « Continuer avec Google » (be.agendagn.app://auth?code=…). -->
+            <!-- Retour de « Continuer avec Google » (app.tandem.foyer://auth?code=…). -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="be.agendagn.app" android:host="auth" />
+                <data android:scheme="app.tandem.foyer" android:host="auth" />
             </intent-filter>
             <!-- « Partager » un texte depuis une autre app → ajout rapide. -->
             <intent-filter>

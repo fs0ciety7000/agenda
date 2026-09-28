@@ -58,7 +58,7 @@ if (process.argv.includes('--android')) {
       .map(([k, v]) => `        val ${camel(k)} = ${hex(v)}`)
       .join('\n')}\n    }`;
   const kt = `// Généré par packages/design-tokens (pnpm --filter @agenda/design-tokens gen:android) — ne pas éditer.
-package be.agendagn.app.ui.theme
+package app.tandem.foyer.ui.theme
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -80,7 +80,10 @@ ${Object.entries(tokens.radius)
     }
 }
 `;
-  const out = join(root, '../../apps/android/app/src/main/java/be/agendagn/app/ui/theme/Tokens.kt');
+  const out = join(
+    root,
+    '../../apps/android/app/src/main/java/app/tandem/foyer/ui/theme/Tokens.kt',
+  );
   mkdirSync(dirname(out), { recursive: true });
   writeFileSync(out, kt);
   console.warn(`Tokens.kt écrit dans ${out}`);

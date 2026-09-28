@@ -6,25 +6,25 @@ plugins {
 }
 
 android {
-    namespace = "be.agendagn.app"
+    namespace = "app.tandem.foyer"
     compileSdk = 37
 
     defaultConfig {
-        applicationId = "be.agendagn.app"
+        applicationId = "app.tandem.foyer"
         minSdk = 26
         targetSdk = 36
         // Numéro croissant fourni par la CI (android-release.yml) : indispensable aux mises à jour.
-        versionCode = providers.gradleProperty("agenda.versionCode").orNull?.toInt() ?: 2
-        versionName = providers.gradleProperty("agenda.versionName").orNull ?: "0.2.0"
+        versionCode = providers.gradleProperty("tandem.versionCode").orNull?.toInt() ?: 2
+        versionName = providers.gradleProperty("tandem.versionName").orNull ?: "0.2.0"
         // Manifeste de mise à jour (version.json de la release) ; vide = pas de mise à jour auto.
-        buildConfigField("String", "UPDATE_MANIFEST_URL", "\"${providers.gradleProperty("agenda.updateUrl").getOrElse("")}\"")
+        buildConfigField("String", "UPDATE_MANIFEST_URL", "\"${providers.gradleProperty("tandem.updateUrl").getOrElse("")}\"")
         // Notifications instantanées (Firebase, docs/android.md) : identifiants publics du projet,
         // fournis par la CI (variables du dépôt). Vides = désactivées.
         for ((field, prop) in listOf(
-            "FCM_APP_ID" to "agenda.fcm.appId",
-            "FCM_API_KEY" to "agenda.fcm.apiKey",
-            "FCM_PROJECT_ID" to "agenda.fcm.projectId",
-            "FCM_SENDER_ID" to "agenda.fcm.senderId",
+            "FCM_APP_ID" to "tandem.fcm.appId",
+            "FCM_API_KEY" to "tandem.fcm.apiKey",
+            "FCM_PROJECT_ID" to "tandem.fcm.projectId",
+            "FCM_SENDER_ID" to "tandem.fcm.senderId",
         )) {
             buildConfigField("String", field, "\"${providers.gradleProperty(prop).getOrElse("")}\"")
         }
@@ -34,11 +34,11 @@ android {
     signingConfigs {
         // Clé de publication (docs/android.md) : jamais dans le dépôt, passée en propriétés Gradle.
         create("release") {
-            providers.gradleProperty("agenda.keystore").orNull?.let { path ->
+            providers.gradleProperty("tandem.keystore").orNull?.let { path ->
                 storeFile = file(path)
-                storePassword = providers.gradleProperty("agenda.keystorePassword").get()
-                keyAlias = providers.gradleProperty("agenda.keyAlias").get()
-                keyPassword = providers.gradleProperty("agenda.keyPassword").get()
+                storePassword = providers.gradleProperty("tandem.keystorePassword").get()
+                keyAlias = providers.gradleProperty("tandem.keyAlias").get()
+                keyPassword = providers.gradleProperty("tandem.keyPassword").get()
             }
         }
     }
@@ -52,7 +52,7 @@ android {
         }
         release {
             signingConfig = when {
-                providers.gradleProperty("agenda.keystore").isPresent -> signingConfigs.getByName("release")
+                providers.gradleProperty("tandem.keystore").isPresent -> signingConfigs.getByName("release")
                 else -> null
             }
             isMinifyEnabled = true
@@ -61,13 +61,13 @@ android {
             buildConfigField(
                 "String",
                 "API_BASE_URL",
-                "\"${providers.gradleProperty("agenda.apiBaseUrl").getOrElse("https://api.example.invalid/")}\"",
+                "\"${providers.gradleProperty("tandem.apiBaseUrl").getOrElse("https://api.example.invalid/")}\"",
             )
             // Même domaine que l'API (le web proxifie /v1/*) sauf indication contraire.
             buildConfigField(
                 "String",
                 "WEB_BASE_URL",
-                "\"${providers.gradleProperty("agenda.webBaseUrl").orElse(providers.gradleProperty("agenda.apiBaseUrl")).getOrElse("https://api.example.invalid/")}\"",
+                "\"${providers.gradleProperty("tandem.webBaseUrl").orElse(providers.gradleProperty("tandem.apiBaseUrl")).getOrElse("https://api.example.invalid/")}\"",
             )
         }
         // Google Play (docs/play-store.md) : même build que la release, sans la mise à jour
@@ -107,7 +107,7 @@ android {
             // Captures d'écran (docs/screenshots) : ./gradlew testDebugUnitTest -Pscreenshots
             if (project.hasProperty("screenshots")) it.systemProperty("roborazzi.test.record", "true")
             // Test contre une vraie API locale : ./gradlew testDebugUnitTest -PliveApi=http://localhost:4000/
-            project.findProperty("liveApi")?.let { url -> it.systemProperty("agenda.liveApi", url) }
+            project.findProperty("liveApi")?.let { url -> it.systemProperty("tandem.liveApi", url) }
         }
     }
 }

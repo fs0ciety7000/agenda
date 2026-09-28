@@ -32,7 +32,7 @@ export function AndroidAppCard() {
         </div>
       </div>
       <Button asChild variant="secondary" size="sm">
-        <a href="/v1/app/android/agenda-gn.apk" download>
+        <a href="/v1/app/android/tandem.apk" download>
           <Download aria-hidden className="size-4" />
           {t('download')}
         </a>

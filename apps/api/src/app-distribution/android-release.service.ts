@@ -22,7 +22,7 @@ interface GithubAsset {
 
 /**
  * Relais vers la release GitHub `android-latest` : l'app (et le site) téléchargent depuis
- * agenda.fs0ciety.org, que le dépôt soit public ou privé (jeton `GITHUB_RELEASES_TOKEN`).
+ * tandem-agenda.app, que le dépôt soit public ou privé (jeton `GITHUB_RELEASES_TOKEN`).
  */
 @Injectable()
 export class AndroidReleaseService {
@@ -36,7 +36,7 @@ export class AndroidReleaseService {
     return {
       accept,
       'x-github-api-version': '2022-11-28',
-      'user-agent': 'agenda-gn',
+      'user-agent': 'tandem',
       ...(token ? { authorization: `Bearer ${token}` } : {}),
     };
   }
@@ -83,10 +83,11 @@ export class AndroidReleaseService {
     const json = (await meta.json()) as Omit<AndroidRelease, 'apkAssetUrl'> & {
       apkAsset?: string;
     };
-    // APK propre à la version (« agenda-gn-46.apk ») : jamais remplacé pendant qu'on le télécharge,
-    // donc toujours cohérent avec le sha256 annoncé. Anciennes releases : « agenda-gn.apk ».
+    // APK propre à la version (« tandem-46.apk ») : jamais remplacé pendant qu'on le télécharge,
+    // donc toujours cohérent avec le sha256 annoncé. Anciennes releases : nom fixe.
     const apk =
       assets.find((a) => a.name === json.apkAsset) ??
+      assets.find((a) => a.name === 'tandem.apk') ??
       assets.find((a) => a.name === 'agenda-gn.apk');
     if (!apk) return null;
     return {

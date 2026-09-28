@@ -29,7 +29,7 @@ for (const scheme of ['light', 'dark'] as const) {
     };
     const grace = partner.members.find((m: { displayName: string }) => m.displayName === 'Grace')!;
     const nico = partner.members.find((m: { displayName: string }) => m.displayName === 'Nicolas')!;
-    const H = { 'x-requested-with': 'agenda-gn' };
+    const H = { 'x-requested-with': 'tandem' };
     const tasks = [
       { title: 'Sortir les poubelles', date: today, startMinute: 19 * 60, assigneeIds: [nico.id] },
       { title: 'Arroser les plantes', date: today, durationMinutes: 15, assigneeIds: [grace.id] },

@@ -7,7 +7,7 @@ description: Créer son compte, son foyer, inviter l'autre membre et ajouter ses
 
 ## 1. Créer un compte
 
-Sur [agenda.fs0ciety.org](https://agenda.fs0ciety.org), choisissez **Créer un compte** : prénom,
+Sur [tandem-agenda.app](https://tandem-agenda.app), choisissez **Créer un compte** : prénom,
 adresse e-mail et mot de passe (10 caractères minimum). Vous pouvez aussi **Continuer avec
 Google** : l'app ne reçoit alors que votre nom et votre adresse vérifiée, jamais votre mot de
 passe Google.
