@@ -48,7 +48,7 @@ Gmail, Outlook…  ──►  Resend (MX de tasks.tandem-agenda.app)  ──► 
    - URL : `https://tandem-agenda.app/v1/inbound/resend` ;
    - événement : **`email.received`** uniquement ;
    - copier le **Signing secret** (`whsec_…`).
-4. **Resend → API Keys → Create API key** : nom « Agenda — réception », permission
+4. **Resend → API Keys → Create API key** : nom « Tandem — réception », permission
    **Full access** (une clé « Sending access » ne peut pas lire les e-mails reçus).
 5. **Coolify** (service `api`), puis **Redeploy** :
    - `INBOUND_EMAIL_ADDRESS` = `{token}@tasks.tandem-agenda.app` (littéralement `{token}`) ;

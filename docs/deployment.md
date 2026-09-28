@@ -261,36 +261,51 @@ le code. Sans `SMTP_HOST`, rien n'est envoyé (le lien « Mot de passe oublié �
 
 | Fournisseur | Offre gratuite | + | − |
 |---|---|---|---|
-| **Brevo** (recommandé) | 300 emails/jour, sans carte bancaire | Société française, données dans l'UE (RGPD), SMTP simple | Interface un peu chargée |
-| Resend | 3 000/mois (100/jour) | Très simple, bonne délivrabilité | Société américaine |
+| **Resend** (utilisé) | 3 000/mois (100/jour) | Très simple, bonne délivrabilité, même compte que la **tâche par e-mail** (réception) | Société américaine |
+| Brevo | 300 emails/jour, sans carte bancaire | Société française, données dans l'UE | Interface un peu chargée |
 | Mailjet | 200/jour | Européen | Quota plus faible |
 | Gmail + mot de passe d'application | 500/jour | Rien à créer | Lie l'app à un compte personnel, délivrabilité moyenne |
 
-Pour un foyer (quelques emails par an), Brevo est largement suffisant.
+Pour un foyer (quelques emails par an), l'offre gratuite de Resend suffit largement.
 
-### 8.1 Brevo, pas à pas
+### 8.1 Resend, pas à pas
 
-1. Créer un compte gratuit sur brevo.com.
-2. **Senders, Domains & Dedicated IPs → Domains → Add a domain** : `tandem-agenda.app`.
-3. Brevo affiche des enregistrements DNS (code Brevo, DKIM, DMARC). Les ajouter dans **Cloudflare →
-   DNS** en **DNS only** (nuage gris : les TXT/CNAME de messagerie ne se proxifient pas), puis
-   « Authenticate » dans Brevo. Si un enregistrement SPF (`v=spf1 …`) existe déjà sur `tandem-agenda.app`,
-   y ajouter `include:spf.brevo.com` plutôt que d'en créer un second.
-4. **Senders** : ajouter l'expéditeur `no-reply@tandem-agenda.app`.
-5. **SMTP & API → SMTP** : générer une clé SMTP. Renseigner dans Coolify :
+1. Créer un compte sur resend.com (celui de la tâche par e-mail s'il existe déjà).
+2. **Domains → Add Domain** : `tandem-agenda.app`, région **Ireland (eu-west-1)** (données dans
+   l'UE).
+3. Resend affiche les enregistrements DNS à créer. Deux façons de faire :
+   - bouton **Auto configure** (connexion à Cloudflare) : Resend crée lui-même les enregistrements ;
+   - ou à la main dans **Cloudflare → DNS**, en **DNS only** (nuage gris : les enregistrements de
+     messagerie ne se proxifient pas), en recopiant exactement nom et valeur :
+     - `TXT` `resend._domainkey` : la clé DKIM ;
+     - `MX` `send` : le serveur de retour (`feedback-smtp.eu-west-1.amazonses.com`, priorité 10) ;
+     - `TXT` `send` : le SPF (`v=spf1 include:amazonses.com ~all`).
+
+   Ces enregistrements portent sur le sous-domaine `send` : ils ne gênent ni un autre SPF à la
+   racine, ni le sous-domaine `tasks` de la réception.
+4. Recommandé : `TXT` `_dmarc` = `v=DMARC1; p=none;` (améliore la délivrabilité ; durcir plus
+   tard en `p=quarantine`).
+5. **Verify DNS Records**, attendre l'état **Verified** (quelques minutes).
+6. **API Keys → Create API Key** : nom « Tandem SMTP », permission **Sending access**, domaine
+   `tandem-agenda.app`. Renseigner dans Coolify :
 
 | Variable | Valeur |
 |---|---|
-| `SMTP_HOST` | `smtp-relay.brevo.com` |
+| `SMTP_HOST` | `smtp.resend.com` |
 | `SMTP_PORT` | `587` |
-| `SMTP_USER` | l'identifiant SMTP affiché par Brevo (`…@smtp-brevo.com`) |
-| `SMTP_PASSWORD` | la clé SMTP |
+| `SMTP_USER` | `resend` |
+| `SMTP_PASSWORD` | la clé API (`re_…`) — secret, jamais dans le dépôt |
 | `EMAIL_FROM` | `Tandem <no-reply@tandem-agenda.app>` |
 
-6. Redéployer, puis tester « Mot de passe oublié » avec votre adresse.
+7. Redéployer, puis tester « Mot de passe oublié » avec votre adresse. **Emails** (tableau de bord
+   Resend) montre chaque envoi et, en cas d'échec, la raison.
 
-Resend : `SMTP_HOST=smtp.resend.com`, `SMTP_USER=resend`, `SMTP_PASSWORD=<clé API>`, après
-vérification du domaine de la même façon.
+Cette clé d'envoi est distincte de `RESEND_API_KEY` (tâche par e-mail, qui lit les messages
+reçus) : une clé par usage, révocable séparément.
+
+**Brevo** (alternative) : *Domains → Add a domain*, enregistrements DKIM/DMARC dans Cloudflare,
+expéditeur `no-reply@tandem-agenda.app`, puis `SMTP_HOST=smtp-relay.brevo.com`, `SMTP_PORT=587`,
+`SMTP_USER` = identifiant `…@smtp-brevo.com`, `SMTP_PASSWORD` = clé SMTP Brevo.
 
 ## 9. Google Calendar et connexion Google
 
@@ -452,7 +467,7 @@ toutes **hors dépôt** (consoles), dans cet ordre. Compter une soirée, surtout
    | A | `docs` | IP du serveur Coolify | gris, puis orange |
    | A | `status` | IP du serveur Uptime Kuma (si page de statut, [monitoring.md](monitoring.md)) | gris, puis orange |
 
-   Les enregistrements e-mail (Brevo, `tasks`) viennent aux étapes 14.4 et 14.5.
+   Les enregistrements e-mail (Resend : envoi et `tasks`) viennent aux étapes 14.4 et 14.5.
 3. Reprendre **tous les réglages de zone** du §3.2 (Full strict, Always HTTPS, Rocket Loader off,
    Email Obfuscation off, **Cache Rule « Bypass » sur `tandem-agenda.app/v1/*`**) et §3.3.
 4. `.app` est un domaine « HTTPS obligatoire » (HSTS préchargé dans les navigateurs) : aucun test
@@ -486,13 +501,21 @@ toutes **hors dépôt** (consoles), dans cet ordre. Compter une soirée, surtout
 - `AGENDA_API_BASE_URL` : `https://tandem-agenda.app/` (ou supprimer : c'est la valeur par défaut) ;
 - `UPTIME_URL` : `https://tandem-agenda.app/healthz` (ou supprimer, idem).
 
-### 14.4 E-mails sortants (Brevo, §8.1)
+### 14.4 E-mails sortants (Resend, §8.1)
 
-1. Brevo → *Domains* → *Add a domain* : `tandem-agenda.app` ; ajouter dans Cloudflare les
-   enregistrements proposés (code Brevo, DKIM, DMARC, SPF `include:spf.brevo.com`), nuage gris.
-2. *Authenticate*, puis *Senders* : ajouter `no-reply@tandem-agenda.app`.
-3. Seulement alors, changer `EMAIL_FROM` (14.2) et redéployer. Tester « Mot de passe oublié » :
-   le lien reçu doit pointer vers `https://tandem-agenda.app/reset-password…`.
+1. Resend → **Domains → Add Domain** : `tandem-agenda.app` (région Ireland), puis **Auto configure**
+   ou recopier dans Cloudflare, nuage gris : `TXT resend._domainkey` (DKIM), `MX send` et
+   `TXT send` (SPF), et si possible `TXT _dmarc` = `v=DMARC1; p=none;`.
+2. **Verify DNS Records** → état **Verified**.
+3. **API Keys** : si la clé actuelle (`SMTP_PASSWORD`) est limitée à l'ancien domaine, en créer une
+   nouvelle (*Sending access*, domaine `tandem-agenda.app`) et remplacer `SMTP_PASSWORD` ; une clé
+   « tous domaines » peut rester telle quelle. `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER` ne changent pas.
+4. Seulement alors, changer `EMAIL_FROM` en `Tandem <no-reply@tandem-agenda.app>` (14.2) et
+   redéployer : un expéditeur sur un domaine non vérifié est refusé par Resend (erreur 403,
+   visible dans *Emails* et dans les journaux de l'API).
+5. Tester « Mot de passe oublié » : le lien reçu doit pointer vers
+   `https://tandem-agenda.app/reset-password…`.
+6. Plus tard (fin de transition), supprimer l'ancien domaine dans Resend.
 
 ### 14.5 Tâche par e-mail (si utilisée, [email-to-task.md](email-to-task.md))
 
