@@ -98,6 +98,17 @@ describe('Google Calendar — connexion, synchronisation, erreurs (intégration)
       .expect(201);
 
   describe('connexion et choix du calendrier', () => {
+    it('connexion lancée depuis un autre domaine : retour aux réglages sur le bon domaine', async () => {
+      const h = await setup({ link: false });
+      const res = await http()
+        .get('/v1/calendar/google/connect?next=/settings')
+        .set(h.nicolas.auth)
+        .set('x-forwarded-host', 'ancien.example')
+        .expect(302);
+      expect(res.headers.location).toBe('http://localhost:3000/settings');
+      expect(res.headers['set-cookie']).toBeUndefined();
+    });
+
     it('OAuth : jetons chiffrés en base, jamais exposés ; statut lisible', async () => {
       const h = await setup({ link: false });
       const conn = await prisma.googleConnection.findFirstOrThrow({ where: { email: h.email } });

@@ -23,6 +23,7 @@ import type { CookieOptions, Request, Response } from 'express';
 import { jwtVerify, SignJWT } from 'jose';
 import { createHash } from 'node:crypto';
 import { randomToken } from '../common/crypto';
+import { isOtherOrigin } from '../common/public-origin';
 import {
   AuthUser,
   CurrentHousehold,
@@ -71,8 +72,12 @@ export class CalendarController {
   async connect(
     @CurrentUser() user: AuthUser,
     @Query('next') next: string | undefined,
+    @Req() req: Request,
     @Res() res: Response,
   ): Promise<void> {
+    // Autre domaine (ancien domaine) : la session n'existe pas sur WEB_ORIGIN, où Google renvoie.
+    // Retour à la page d'origine sur le bon domaine, d'où relancer la connexion.
+    if (isOtherOrigin(req)) return res.redirect(`${env().WEB_ORIGIN}${safeNext(next)}`);
     if (!this.calendar.configured)
       return res.redirect(withParam(safeNext(next), 'calendarError=CALENDAR_NOT_CONFIGURED'));
     const state = randomToken(16);

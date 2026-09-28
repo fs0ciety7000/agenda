@@ -169,6 +169,20 @@ describe('Compte : mot de passe oublié, Google Sign-In, RGPD (intégration)', (
         .expect(302);
     }
 
+    it('lancé depuis un autre domaine (migration) : repart du domaine de retour de Google', async () => {
+      const other = await http()
+        .get('/v1/auth/google/start?next=/tasks')
+        .set('x-forwarded-host', 'ancien.example')
+        .expect(302);
+      expect(other.headers.location).toBe('http://localhost:3000/v1/auth/google/start?next=/tasks');
+      expect(other.headers['set-cookie']).toBeUndefined();
+      const same = await http()
+        .get('/v1/auth/google/start?next=/tasks')
+        .set('x-forwarded-host', 'localhost:3000')
+        .expect(302);
+      expect(same.headers.location).toContain('redirect_uri=http%3A%2F%2Flocalhost%3A3000');
+    });
+
     it('fournisseurs disponibles', async () => {
       const res = await http().get('/v1/auth/providers').expect(200);
       expect(res.body).toEqual({ google: true, registration: true, passwordReset: true });
