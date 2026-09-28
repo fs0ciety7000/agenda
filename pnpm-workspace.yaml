@@ -1,6 +1,7 @@
 packages:
   - 'apps/api'
   - 'apps/web'
+  - 'apps/site'
   - 'packages/*'
 onlyBuiltDependencies:
   - '@prisma/client'

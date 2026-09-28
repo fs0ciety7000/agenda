@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .next/
+apps/site/out/
 .turbo/
 coverage/
 *.tsbuildinfo

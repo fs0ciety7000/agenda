@@ -14,3 +14,5 @@ docs
 .github
 # Site de documentation : image à part (apps/docs/Dockerfile.dockerignore).
 apps/docs
+# Site vitrine : export statique reconstruit dans l’image.
+apps/site/out

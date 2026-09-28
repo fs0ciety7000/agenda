@@ -615,3 +615,27 @@ Uptime Kuma : remplacer les URL des sondes (`/healthz`, `/v1/status`…) par
 - *Fin de transition* (quand plus personne n'utilise l'ancienne app) : retirer l'ancien domaine
   de Coolify et de Google (domaines autorisés, URI de redirection), l'ancienne app Firebase et
   l'ancien sous-domaine de réception Resend.
+
+## 15. Site vitrine
+
+Le service `site` du compose sert la page de présentation de Tandem (français sur `/`, anglais
+sur `/en/`) : pages statiques Next.js, animations Motion, mêmes design tokens que l'app. Il est
+**statique** et indépendant : ni API, ni base, ni cookie, ni traceur.
+
+1. **Cloudflare → DNS** : enregistrement `A` `decouvrir` vers l'IP du serveur (nuage gris au
+   premier déploiement, puis orange, comme en §3.1). Un seul niveau sous `tandem-agenda.app` :
+   couvert par le certificat Cloudflare gratuit.
+2. **Coolify** → service **site** → *Domains* : `https://decouvrir.tandem-agenda.app:80`.
+3. Variables (facultatives, lues **au build**, puis *Redeploy*) :
+
+   | Variable | Rôle | Défaut |
+   |---|---|---|
+   | `SITE_URL` | adresse publique du site (liens canoniques, Open Graph, plan du site) | `https://decouvrir.tandem-agenda.app` |
+   | `PLAY_URL` | lien « Télécharger pour Android » vers la fiche Google Play, une fois publique | APK de l'app (`/v1/app/android/tandem.apk`) |
+   | `PRIVACY_CONTACT_EMAIL` | lien « Contact » du pied de page | absent |
+
+   `WEB_ORIGIN` et `DOCS_URL` (déjà définies) servent aux liens vers l'app et la documentation.
+
+Autre sous-domaine (ex. `www`) : changer le domaine dans Coolify **et** `SITE_URL`, puis
+redéployer. En local : `pnpm --filter @agenda/site dev` (port 3100).
+
