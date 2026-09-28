@@ -67,6 +67,17 @@ const EnvSchema = z.object({
   SMTP_USER: z.string().optional(),
   SMTP_PASSWORD: z.string().optional(),
   EMAIL_FROM: z.string().default('Tandem <no-reply@example.invalid>'),
+  // Pied des e-mails : lien d'aide (site de documentation) et adresse de contact (facultative).
+  DOCS_URL: z
+    .string()
+    .trim()
+    .url()
+    .default('https://docs.tandem-agenda.app')
+    .transform((v) => v.replace(/\/+$/, '')),
+  PRIVACY_CONTACT_EMAIL: z.preprocess(
+    (v) => (v === '' ? undefined : v),
+    z.string().trim().email().optional(),
+  ),
   // ── Google Calendar (Phase 4) ──
   /** Redis pour la file de synchronisation (BullMQ). Sans Redis : synchronisation directe en mémoire. */
   REDIS_URL: z.string().optional(),
