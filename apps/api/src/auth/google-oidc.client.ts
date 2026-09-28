@@ -71,7 +71,10 @@ export class GoogleOidcClient {
       // expiré ou adresse de retour différente) : aucun secret dans la réponse.
       const reason = await res
         .json()
-        .then((b: { error?: unknown }) => (typeof b.error === 'string' ? `: ${b.error}` : ''))
+        .then((b) => {
+          const error = (b as { error?: unknown } | null)?.error;
+          return typeof error === 'string' ? `: ${error}` : '';
+        })
         .catch(() => '');
       throw new Error(`Google token endpoint returned ${res.status}${reason}`);
     }
