@@ -129,6 +129,10 @@ Le premier envoi doit rester manuel (§3.5) : l'API refuse une app qui n'a encor
 - Textes : modifier les fichiers `fastlane/metadata/android/<langue>/…`, puis les recopier dans la
   console. Leur format est celui de `fastlane supply`, donc utilisable tel quel si on adopte
   fastlane plus tard.
+- Notes de version (« Nouveautés », 500 caractères max par langue) :
+  `fastlane/metadata/android/<langue>/changelogs/default.txt`. À mettre à jour avant chaque
+  envoi : la CI les joint à l'envoi automatique et les recopie sur la page de la release
+  `android-latest`, au format `<fr-FR>…</fr-FR>` à coller tel quel dans la Play Console.
 - Captures (rendues depuis les vrais écrans, données fictives) :
 
   ```bash

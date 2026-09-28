@@ -1,1 +1,5 @@
-Full repeats and taking turns, Notifications section in Settings, fixes.
+Agenda G & N is now Tandem: new name, new logo, new address (tandem-agenda.app).
+• Logo at the top of the “Today” screen.
+• Fix: the app closed right after signing in.
+• More reliable Google sign-in.
+• Crashes are reported better, for faster fixes.

@@ -105,6 +105,15 @@ jobs:
 
           **Google Play** : \`tandem-play.aab\` est la version à envoyer dans la Play Console (docs/play-store.md).
 
+          **Notes de version à coller dans la Play Console** (fastlane/metadata/android/*/changelogs/default.txt) :
+
+          <fr-FR>
+          $(cat fastlane/metadata/android/fr-FR/changelogs/default.txt)
+          </fr-FR>
+          <en-US>
+          $(cat fastlane/metadata/android/en-US/changelogs/default.txt)
+          </en-US>
+
           Version $VERSION_NAME · commit ${GITHUB_SHA::7}
           NOTES
           # APK propre à la version (jamais remplacé pendant un téléchargement) + nom fixe pour
