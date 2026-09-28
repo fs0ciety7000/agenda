@@ -15,7 +15,7 @@ d'elle-même (ou via Google Play).
 
 ## 28 septembre 2026
 
-### Nouvelle adresse : tandem-agenda.app (#63)
+### Nouvelle adresse : tandem-agenda.app (#67)
 
 - ✨ Le site déménage sur **[tandem-agenda.app](https://tandem-agenda.app)** et la documentation
   sur **docs.tandem-agenda.app**. L’ancienne adresse reste active le temps de la transition.
