@@ -15,7 +15,7 @@ d'elle-même (ou via Google Play).
 
 ## 28 septembre 2026
 
-### Plantages de l’app lisibles dans les journaux (#72)
+### Plantages de l’app lisibles dans les journaux (#72, #73)
 
 - ⚙️ Les plantages de l’app Android (et erreurs du site) apparaissent dans les journaux de l’API
   avec le début de leur pile d’appels, même sans Sentry : `docker logs … | grep -A 20 "Client error"`.
