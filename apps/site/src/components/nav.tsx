@@ -66,7 +66,7 @@ export function Nav({ t }: { t: Content }) {
           >
             {t.lang.other}
           </a>
-          <ButtonLink href={APP_URL} className="h-10 px-5 text-sm">
+          <ButtonLink href={`${APP_URL}/login`} className="h-10 px-5 text-sm">
             {t.nav.open}
           </ButtonLink>
         </div>
@@ -107,7 +107,7 @@ export function Nav({ t }: { t: Content }) {
                 <a href={t.lang.href} className="px-3 py-3 text-sm text-text-muted">
                   {t.lang.other}
                 </a>
-                <ButtonLink href={APP_URL} className="h-11 px-5 text-sm">
+                <ButtonLink href={`${APP_URL}/login`} className="h-11 px-5 text-sm">
                   {t.nav.open}
                 </ButtonLink>
               </li>

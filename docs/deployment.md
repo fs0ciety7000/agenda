@@ -630,11 +630,17 @@ sur `/en/`) : pages statiques Next.js, animations Motion, mêmes design tokens q
 
    | Variable | Rôle | Défaut |
    |---|---|---|
-   | `SITE_URL` | adresse publique du site (liens canoniques, Open Graph, plan du site) | `https://decouvrir.tandem-agenda.app` |
+   | `SITE_URL` | adresse publique du site (liens canoniques, Open Graph, plan du site) ; active aussi la redirection de l'accueil de l'app (ci-dessous) | site : `https://decouvrir.tandem-agenda.app` ; app : aucune redirection |
    | `PLAY_URL` | lien « Télécharger pour Android » vers la fiche Google Play, une fois publique | APK de l'app (`/v1/app/android/tandem.apk`) |
    | `PRIVACY_CONTACT_EMAIL` | lien « Contact » du pied de page | absent |
 
    `WEB_ORIGIN` et `DOCS_URL` (déjà définies) servent aux liens vers l'app et la documentation.
+
+**Accueil de l'app** : avec `SITE_URL` renseignée, un visiteur **non connecté** qui ouvre
+`https://tandem-agenda.app/` est redirigé (302) vers le site vitrine ; les personnes connectées
+retrouvent leur écran « Aujourd'hui », et `/login`, `/register`, l'app Android et Google ne changent
+pas. Sans `SITE_URL`, cette adresse mène à la page de connexion, comme avant. Ne **pas** faire
+cette redirection dans Cloudflare : elle s'appliquerait aussi aux personnes connectées.
 
 Autre sous-domaine (ex. `www`) : changer le domaine dans Coolify **et** `SITE_URL`, puis
 redéployer. En local : `pnpm --filter @agenda/site dev` (port 3100).

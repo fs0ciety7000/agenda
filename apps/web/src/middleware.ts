@@ -12,9 +12,13 @@ const PUBLIC_PATHS = [
   '/status',
 ];
 
+/** Site vitrine (docs/deployment.md §15), figé au build ; vide = pas de redirection. */
+const SITE_URL = (process.env.SITE_URL ?? '').replace(/\/+$/, '');
+
 /**
  * Garde-fou de navigation uniquement (l'autorisation réelle est faite par l'API) :
- * sans cookie de session, on redirige vers /login en conservant la destination.
+ * sans cookie de session, on redirige vers /login en conservant la destination ; l'accueil
+ * « / » d'un visiteur non connecté mène au site vitrine s'il est configuré.
  */
 export function middleware(req: NextRequest) {
   const { pathname, search } = req.nextUrl;
@@ -23,6 +27,9 @@ export function middleware(req: NextRequest) {
 
   const hasSession = req.cookies.has('gn_at') || req.cookies.has('gn_rt');
   if (hasSession) return NextResponse.next();
+
+  // Redirection temporaire (302) : la même adresse sert l'app une fois connecté.
+  if (pathname === '/' && SITE_URL) return NextResponse.redirect(`${SITE_URL}/`, 302);
 
   const url = req.nextUrl.clone();
   url.pathname = '/login';

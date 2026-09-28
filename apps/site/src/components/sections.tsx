@@ -414,7 +414,7 @@ export function Footer({ t }: { t: Content }) {
     {
       title: t.footer.product,
       links: [
-        { label: l.app, href: APP_URL },
+        { label: l.app, href: `${APP_URL}/login` },
         { label: l.android, href: PLAY_URL ?? APK_URL },
         { label: l.status, href: `${APP_URL}/status` },
       ],

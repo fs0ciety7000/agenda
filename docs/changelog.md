@@ -20,6 +20,7 @@ d'elle-même (ou via Google Play).
 - ✨ Nouveau site de présentation de Tandem, en français et en anglais : fonctionnalités, étapes,
   répartition, captures de l’app, confidentialité et questions fréquentes, avec animations et
   mode sombre. Mêmes couleurs et composants que l’app.
+- ✨ Visiteur non connecté sur tandem-agenda.app : redirigé vers le site vitrine (si configuré).
 
 ## 28 septembre 2026
 

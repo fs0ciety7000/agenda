@@ -11,6 +11,8 @@ services:
       args:
         # URL de l'API vue depuis le conteneur web (réseau Docker interne), figée au build.
         API_URL: http://api:4000
+        # Site vitrine : « / » sans session y redirige (vide = page de connexion), cf. §15.
+        SITE_URL: ${SITE_URL:-}
     restart: unless-stopped
     environment:
       # Adresse affichée sur /privacy (politique de confidentialité).
