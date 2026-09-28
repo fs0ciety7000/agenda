@@ -24,6 +24,7 @@ import { SignJWT, jwtVerify } from 'jose';
 import { AppException } from '../common/app-exception';
 import { randomToken, safeEqual, sha256Hex } from '../common/crypto';
 import { ZodPipe } from '../common/zod.pipe';
+import { isOtherOrigin } from '../common/public-origin';
 import { Public } from '../common/request-context';
 import { env } from '../config/env';
 import { MailService } from '../mail/mail.service';
@@ -104,6 +105,9 @@ export class GoogleSignInController {
     @Req() req: Request,
     @Res() res: Response,
   ): Promise<void> {
+    // Lancé depuis un autre domaine (ancien domaine) : on repart du domaine de retour de Google,
+    // sinon le cookie du flux serait posé là où le retour ne le trouvera pas.
+    if (isOtherOrigin(req)) return res.redirect(`${env().WEB_ORIGIN}${req.originalUrl}`);
     const android = client === 'android';
     if (android && !PKCE_CHALLENGE.test(mobileChallenge ?? ''))
       return res.redirect(`${ANDROID_AUTH_REDIRECT}?error=GOOGLE_FAILED`);
@@ -166,11 +170,15 @@ export class GoogleSignInController {
       linkUserId?: string;
       mobileChallenge?: string;
     };
+    const raw = (req.cookies as Record<string, string>)[FLOW_COOKIE];
     try {
-      const raw = (req.cookies as Record<string, string>)[FLOW_COOKIE];
       flow = (await jwtVerify(raw ?? '', this.secret, { audience: 'google-sign-in' }))
         .payload as typeof flow;
-    } catch {
+    } catch (e) {
+      // Cookie absent (autre domaine ou navigateur, cookies bloqués) ou expiré (> 10 min).
+      this.logger.warn(
+        `Google sign-in failed: flow cookie ${raw ? `invalid (${e instanceof Error ? e.message : String(e)})` : 'missing'}`,
+      );
       return res.redirect('/login?error=GOOGLE_FAILED');
     }
     const fail = (error: string, to = '/login') =>

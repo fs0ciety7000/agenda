@@ -98,11 +98,24 @@ describe('Google Calendar — connexion, synchronisation, erreurs (intégration)
       .expect(201);
 
   describe('connexion et choix du calendrier', () => {
+    it('connexion lancée depuis un autre domaine : retour aux réglages sur le bon domaine', async () => {
+      const h = await setup({ link: false });
+      const res = await http()
+        .get('/v1/calendar/google/connect?next=/settings')
+        .set(h.nicolas.auth)
+        .set('x-forwarded-host', 'ancien.example')
+        .expect(302);
+      expect(res.headers.location).toBe('http://localhost:3000/settings');
+      expect(res.headers['set-cookie']).toBeUndefined();
+    });
+
     it('OAuth : jetons chiffrés en base, jamais exposés ; statut lisible', async () => {
       const h = await setup({ link: false });
       const conn = await prisma.googleConnection.findFirstOrThrow({ where: { email: h.email } });
       expect(conn.refreshTokenEnc.startsWith('v1:')).toBe(true);
-      expect(conn.refreshTokenEnc).not.toContain('rt-');
+      // Jeton en clair (`rt-sub-<foyer>-n`) absent ; « rt- » seul peut apparaître par hasard dans le
+      // chiffré (base64url).
+      expect(conn.refreshTokenEnc).not.toContain(`sub-${h.householdId}`);
       const status = await http().get(`${h.base}/calendar`).set(h.nicolas.auth).expect(200);
       expect(status.body).toMatchObject({
         configured: true,

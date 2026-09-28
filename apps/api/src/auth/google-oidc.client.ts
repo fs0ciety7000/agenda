@@ -66,7 +66,18 @@ export class GoogleOidcClient {
         code_verifier: p.codeVerifier,
       }),
     });
-    if (!res.ok) throw new Error(`Google token endpoint returned ${res.status}`);
+    if (!res.ok) {
+      // Motif renvoyé par Google (`invalid_client` = secret incorrect, `invalid_grant` = code
+      // expiré ou adresse de retour différente) : aucun secret dans la réponse.
+      const reason = await res
+        .json()
+        .then((b) => {
+          const error = (b as { error?: unknown } | null)?.error;
+          return typeof error === 'string' ? `: ${error}` : '';
+        })
+        .catch(() => '');
+      throw new Error(`Google token endpoint returned ${res.status}${reason}`);
+    }
     const { id_token: idToken } = (await res.json()) as { id_token?: string };
     if (!idToken) throw new Error('No id_token');
     const { payload } = await jwtVerify(idToken, JWKS, {

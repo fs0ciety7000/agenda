@@ -15,6 +15,11 @@ d'elle-même (ou via Google Play).
 
 ## 28 septembre 2026
 
+### Connexion avec Google pendant le changement d’adresse (#69)
+
+- 🐞 « La connexion avec Google n’a pas abouti » quand elle était lancée depuis l’ancienne
+  adresse : elle repart désormais automatiquement de tandem-agenda.app.
+
 ### Nouvelle adresse : tandem-agenda.app (#67)
 
 - ✨ Le site déménage sur **[tandem-agenda.app](https://tandem-agenda.app)** et la documentation
