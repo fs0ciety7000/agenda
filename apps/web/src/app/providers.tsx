@@ -6,7 +6,12 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import { useEffect, useState, type ReactNode } from 'react';
 import { ToastProvider } from '@/components/ui/toast';
 import { ApiError } from '@/lib/api';
-import { PERSIST_KEY, PERSIST_MAX_AGE, registerOfflineMutations } from '@/lib/offline';
+import {
+  LEGACY_PERSIST_KEY,
+  PERSIST_KEY,
+  PERSIST_MAX_AGE,
+  registerOfflineMutations,
+} from '@/lib/offline';
 
 function makeClient() {
   // TanStack Query suppose le réseau disponible au démarrage : on part de l'état réel.
@@ -39,7 +44,11 @@ const persister =
         storage: {
           getItem: (k) => {
             try {
-              return window.localStorage.getItem(k);
+              const value = window.localStorage.getItem(k);
+              if (value !== null || k !== PERSIST_KEY) return value;
+              const legacy = window.localStorage.getItem(LEGACY_PERSIST_KEY);
+              window.localStorage.removeItem(LEGACY_PERSIST_KEY);
+              return legacy;
             } catch {
               return null;
             }

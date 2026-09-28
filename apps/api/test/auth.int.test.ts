@@ -2,6 +2,7 @@ import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { PrismaClient } from '@prisma/client';
+import { decodeJwt, SignJWT } from 'jose';
 import { createTestApp, CSRF, registerUser } from './app';
 
 describe('Auth (intégration)', () => {
@@ -99,6 +100,28 @@ describe('Auth (intégration)', () => {
       .send({ email: 'a@b.be', password: 'x' })
       .expect(403);
     expect(res.body.error.code).toBe('CSRF_REJECTED');
+  });
+
+  it('renommage Tandem : ancien header CSRF et anciens jetons encore acceptés', async () => {
+    await http()
+      .post('/v1/auth/login')
+      .set('x-requested-with', 'agenda-gn')
+      .send({ email: 'a@b.be', password: 'x' })
+      .expect(401);
+    const grace = await registerUser(app, 'Grace');
+    const { sub, sid } = decodeJwt(grace.accessToken);
+    const legacy = await new SignJWT({ sid })
+      .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
+      .setSubject(sub!)
+      .setIssuer('agenda-gn')
+      .setAudience('agenda-gn-api')
+      .setIssuedAt()
+      .setExpirationTime('5m')
+      .sign(new TextEncoder().encode(process.env.JWT_SECRET));
+    await http()
+      .get('/v1/me')
+      .set({ authorization: `Bearer ${legacy}` })
+      .expect(200);
   });
 
   it('refresh : rotation, puis rejeu d’un ancien token ⇒ famille révoquée', async () => {

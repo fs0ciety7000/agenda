@@ -1,7 +1,7 @@
 # Déploiement — Coolify (Docker Compose) + Cloudflare
 
-> Cible : un serveur avec **Coolify** (proxy **Traefik**), le domaine **fs0ciety.org** chez
-> **Cloudflare**, l'application servie sur **https://agenda.fs0ciety.org**.
+> Cible : un serveur avec **Coolify** (proxy **Traefik**), le domaine **tandem-agenda.app** chez
+> **Cloudflare**, l'application servie sur **https://tandem-agenda.app**.
 > Fichiers concernés : `docker-compose.prod.yml`, `apps/api/Dockerfile`, `apps/web/Dockerfile`,
 > `.env.prod.example`.
 
@@ -14,7 +14,7 @@ Navigateur / Android
 Cloudflare (DNS proxifié, TLS, IP client → CF-Connecting-IP)
       │  HTTPS (Full strict)
       ▼
-Serveur Coolify ── Traefik :443 ── agenda.fs0ciety.org
+Serveur Coolify ── Traefik :443 ── tandem-agenda.app
                                         │
                                         ▼
                        web (Next.js :3000) ── /v1/*, /healthz ──▶ api (NestJS :4000)
@@ -40,17 +40,17 @@ Redis (ou son volume) ne perd aucune donnée ; il n'est donc **pas** à sauvegar
 | Option | + | − |
 |---|---|---|
 | **A. Web public, API interne (proxy `/v1/*`)** — retenue | Cookies first-party (`SameSite=Lax` suffit), pas de CORS, une seule entrée à protéger, un seul certificat, Android et OAuth Google utilisent le même domaine | Un saut réseau interne de plus (négligeable) |
-| B. `agenda-api.fs0ciety.org` public en plus | API joignable directement | Surface d'attaque doublée, CORS + cookies cross-subdomain à régler |
+| B. `api.tandem-agenda.app` public en plus | API joignable directement | Surface d'attaque doublée, CORS + cookies cross-subdomain à régler |
 
 Si un domaine d'API public devient nécessaire plus tard, utiliser un **sous-domaine à un seul
-niveau** (`agenda-api.fs0ciety.org`, pas `api.agenda.fs0ciety.org`) : le certificat universel
-gratuit de Cloudflare ne couvre que `*.fs0ciety.org`, pas les niveaux plus profonds.
+niveau** (`api.tandem-agenda.app`, pas `v1.api.tandem-agenda.app`) : le certificat universel
+gratuit de Cloudflare ne couvre que `*.tandem-agenda.app`, pas les niveaux plus profonds.
 
 ## 2. Prérequis
 
 - Serveur Coolify opérationnel (Traefik actif, ports 80/443 ouverts), accès au dépôt GitHub
   `fs0ciety7000/agenda` via la GitHub App Coolify (ou une deploy key).
-- Zone `fs0ciety.org` gérée par Cloudflare.
+- Zone `tandem-agenda.app` gérée par Cloudflare.
 - ≥ 2 Go de RAM libres pendant le build (le build Next.js est le plus gourmand), ~3 Go de disque pour les images.
 
 ## 3. Cloudflare
@@ -59,11 +59,11 @@ gratuit de Cloudflare ne couvre que `*.fs0ciety.org`, pas les niveaux plus profo
 
 | Type | Nom | Contenu | Proxy |
 |---|---|---|---|
-| A | `agenda` | IP publique du serveur Coolify | **DNS only (nuage gris) au premier déploiement**, puis **Proxied (nuage orange)** |
+| A | `@` (apex `tandem-agenda.app`) | IP publique du serveur Coolify | **DNS only (nuage gris) au premier déploiement**, puis **Proxied (nuage orange)** |
 
 Pourquoi gris d'abord : Traefik obtient le certificat Let's Encrypt par défi HTTP‑01. En mode
 proxifié + « Full (strict) », Cloudflare refuserait le certificat auto-signé servi par Traefik
-tant que le vrai n'est pas émis (erreur 526). Une fois `https://agenda.fs0ciety.org` servi avec
+tant que le vrai n'est pas émis (erreur 526). Une fois `https://tandem-agenda.app` servi avec
 un certificat Let's Encrypt valide, passer le nuage en orange. Les renouvellements passent
 ensuite sans problème à travers Cloudflare.
 
@@ -76,7 +76,7 @@ ensuite sans problème à travers Cloudflare.
 | Minimum TLS | 1.2 | |
 | Rocket Loader | **Off** | Réécrit les scripts : casse l'hydratation React |
 | Email Address Obfuscation | **Off** (ou règle de configuration sur ce hostname) | Modifie le HTML : erreurs d'hydratation |
-| Cache | Par défaut (le HTML et le JSON ne sont pas mis en cache) + **Cache Rule « Bypass »** pour `agenda.fs0ciety.org/v1/*` | Ne jamais servir une réponse d'API d'un autre utilisateur |
+| Cache | Par défaut (le HTML et le JSON ne sont pas mis en cache) + **Cache Rule « Bypass »** pour `tandem-agenda.app/v1/*` | Ne jamais servir une réponse d'API d'un autre utilisateur |
 
 ### 3.3 IP réelle du client
 
@@ -105,14 +105,14 @@ depuis votre IP.
 Dans la ressource → service **web** → *Domains* :
 
 ```
-https://agenda.fs0ciety.org:3000
+https://tandem-agenda.app:3000
 ```
 
 Le suffixe `:3000` indique à Traefik le **port du conteneur**. L'URL publique reste
-`https://agenda.fs0ciety.org`. Ne mettre **aucun** domaine sur `api` ni `postgres`.
+`https://tandem-agenda.app`. Ne mettre **aucun** domaine sur `api` ni `postgres`.
 
 Service **docs** (site de documentation, facultatif) → *Domains* :
-`https://agenda-docs.fs0ciety.org:80` — voir §13.
+`https://docs.tandem-agenda.app:80` — voir §13.
 Aucun label Traefik dans le compose : Coolify génère tout le routage.
 
 ### 4.3 Variables d'environnement
@@ -123,7 +123,7 @@ manquent. Modèle complet : `.env.prod.example`.
 
 | Variable | Valeur | Génération |
 |---|---|---|
-| `WEB_ORIGIN` | `https://agenda.fs0ciety.org` | — |
+| `WEB_ORIGIN` | `https://tandem-agenda.app` | — |
 | `POSTGRES_PASSWORD` | secret | `openssl rand -hex 24` |
 | `JWT_SECRET` | secret ≥ 32 caractères | `openssl rand -base64 48` |
 | `TOKEN_ENCRYPTION_KEY` | 32 octets en base64 | `openssl rand -base64 32` |
@@ -140,7 +140,7 @@ manquent. Modèle complet : `.env.prod.example`.
 | `INBOUND_EMAIL_ADDRESS`, `RESEND_WEBHOOK_SECRET`, `RESEND_API_KEY` | facultatif : tâches par e-mail (réception par Resend) | cf. [`email-to-task.md`](email-to-task.md) |
 | `ADMIN_EMAILS` | facultatif : accès à la page d'administration | adresses e-mail séparées par des virgules ; reçoivent aussi les alertes de surveillance |
 | `METRICS_TOKEN` | facultatif : `GET /metrics` (Prometheus) | secret d'au moins 16 caractères, cf. `monitoring.md` |
-| `DOCS_URL` | facultatif : adresse du site de documentation (build) | `https://agenda-docs.fs0ciety.org` par défaut, cf. §13 |
+| `DOCS_URL` | facultatif : adresse du site de documentation (build) | `https://docs.tandem-agenda.app` par défaut, cf. §13 |
 | `BACKUP_HEARTBEAT_URL` | facultatif : battement de cœur des sauvegardes | URL « Push » d'Uptime Kuma / Healthchecks.io |
 | `WEB_PUSH_PUBLIC_KEY`, `WEB_PUSH_PRIVATE_KEY` | facultatif : notifications du site (navigateur) | paire de clés VAPID, voir ci-dessous |
 | `WEB_PUSH_SUBJECT` | facultatif | contact pour les services de push (`mailto:…` ou `https://…`) ; défaut : `WEB_ORIGIN` |
@@ -173,8 +173,8 @@ build (`API_URL=http://api:4000`) est fixée dans le compose.
 Vérifications :
 
 ```bash
-curl -s https://agenda.fs0ciety.org/healthz        # {"status":"ok","checks":{"database":"ok"}}
-curl -sI https://agenda.fs0ciety.org/ | head -3     # 307 → /login
+curl -s https://tandem-agenda.app/healthz        # {"status":"ok","checks":{"database":"ok"}}
+curl -sI https://tandem-agenda.app/ | head -3     # 307 → /login
 ```
 
 ### 4.5 Déploiements suivants
@@ -188,7 +188,7 @@ curl -sI https://agenda.fs0ciety.org/ | head -3     # 307 → /login
 
 ## 5. Premier démarrage
 
-1. Ouvrir https://agenda.fs0ciety.org → **Créer un compte** (Nicolas, par exemple).
+1. Ouvrir https://tandem-agenda.app → **Créer un compte** (Nicolas, par exemple).
 2. Onboarding : créer le foyer « G & N » → **Générer un lien d'invitation** → l'envoyer à Grace.
 3. Grace ouvre le lien → crée son compte → **Rejoindre**.
 4. Dans Coolify : `REGISTRATION_ENABLED=false` → **Redeploy**. Les comptes existants continuent
@@ -261,36 +261,51 @@ le code. Sans `SMTP_HOST`, rien n'est envoyé (le lien « Mot de passe oublié �
 
 | Fournisseur | Offre gratuite | + | − |
 |---|---|---|---|
-| **Brevo** (recommandé) | 300 emails/jour, sans carte bancaire | Société française, données dans l'UE (RGPD), SMTP simple | Interface un peu chargée |
-| Resend | 3 000/mois (100/jour) | Très simple, bonne délivrabilité | Société américaine |
+| **Resend** (utilisé) | 3 000/mois (100/jour) | Très simple, bonne délivrabilité, même compte que la **tâche par e-mail** (réception) | Société américaine |
+| Brevo | 300 emails/jour, sans carte bancaire | Société française, données dans l'UE | Interface un peu chargée |
 | Mailjet | 200/jour | Européen | Quota plus faible |
 | Gmail + mot de passe d'application | 500/jour | Rien à créer | Lie l'app à un compte personnel, délivrabilité moyenne |
 
-Pour un foyer (quelques emails par an), Brevo est largement suffisant.
+Pour un foyer (quelques emails par an), l'offre gratuite de Resend suffit largement.
 
-### 8.1 Brevo, pas à pas
+### 8.1 Resend, pas à pas
 
-1. Créer un compte gratuit sur brevo.com.
-2. **Senders, Domains & Dedicated IPs → Domains → Add a domain** : `fs0ciety.org`.
-3. Brevo affiche des enregistrements DNS (code Brevo, DKIM, DMARC). Les ajouter dans **Cloudflare →
-   DNS** en **DNS only** (nuage gris : les TXT/CNAME de messagerie ne se proxifient pas), puis
-   « Authenticate » dans Brevo. Si un enregistrement SPF (`v=spf1 …`) existe déjà sur `fs0ciety.org`,
-   y ajouter `include:spf.brevo.com` plutôt que d'en créer un second.
-4. **Senders** : ajouter l'expéditeur `no-reply@fs0ciety.org`.
-5. **SMTP & API → SMTP** : générer une clé SMTP. Renseigner dans Coolify :
+1. Créer un compte sur resend.com (celui de la tâche par e-mail s'il existe déjà).
+2. **Domains → Add Domain** : `tandem-agenda.app`, région **Ireland (eu-west-1)** (données dans
+   l'UE).
+3. Resend affiche les enregistrements DNS à créer. Deux façons de faire :
+   - bouton **Auto configure** (connexion à Cloudflare) : Resend crée lui-même les enregistrements ;
+   - ou à la main dans **Cloudflare → DNS**, en **DNS only** (nuage gris : les enregistrements de
+     messagerie ne se proxifient pas), en recopiant exactement nom et valeur :
+     - `TXT` `resend._domainkey` : la clé DKIM ;
+     - `MX` `send` : le serveur de retour (`feedback-smtp.eu-west-1.amazonses.com`, priorité 10) ;
+     - `TXT` `send` : le SPF (`v=spf1 include:amazonses.com ~all`).
+
+   Ces enregistrements portent sur le sous-domaine `send` : ils ne gênent ni un autre SPF à la
+   racine, ni le sous-domaine `tasks` de la réception.
+4. Recommandé : `TXT` `_dmarc` = `v=DMARC1; p=none;` (améliore la délivrabilité ; durcir plus
+   tard en `p=quarantine`).
+5. **Verify DNS Records**, attendre l'état **Verified** (quelques minutes).
+6. **API Keys → Create API Key** : nom « Tandem SMTP », permission **Sending access**, domaine
+   `tandem-agenda.app`. Renseigner dans Coolify :
 
 | Variable | Valeur |
 |---|---|
-| `SMTP_HOST` | `smtp-relay.brevo.com` |
+| `SMTP_HOST` | `smtp.resend.com` |
 | `SMTP_PORT` | `587` |
-| `SMTP_USER` | l'identifiant SMTP affiché par Brevo (`…@smtp-brevo.com`) |
-| `SMTP_PASSWORD` | la clé SMTP |
-| `EMAIL_FROM` | `Tandem <no-reply@fs0ciety.org>` |
+| `SMTP_USER` | `resend` |
+| `SMTP_PASSWORD` | la clé API (`re_…`) — secret, jamais dans le dépôt |
+| `EMAIL_FROM` | `Tandem <no-reply@tandem-agenda.app>` |
 
-6. Redéployer, puis tester « Mot de passe oublié » avec votre adresse.
+7. Redéployer, puis tester « Mot de passe oublié » avec votre adresse. **Emails** (tableau de bord
+   Resend) montre chaque envoi et, en cas d'échec, la raison.
 
-Resend : `SMTP_HOST=smtp.resend.com`, `SMTP_USER=resend`, `SMTP_PASSWORD=<clé API>`, après
-vérification du domaine de la même façon.
+Cette clé d'envoi est distincte de `RESEND_API_KEY` (tâche par e-mail, qui lit les messages
+reçus) : une clé par usage, révocable séparément.
+
+**Brevo** (alternative) : *Domains → Add a domain*, enregistrements DKIM/DMARC dans Cloudflare,
+expéditeur `no-reply@tandem-agenda.app`, puis `SMTP_HOST=smtp-relay.brevo.com`, `SMTP_PORT=587`,
+`SMTP_USER` = identifiant `…@smtp-brevo.com`, `SMTP_PASSWORD` = clé SMTP Brevo.
 
 ## 9. Google Calendar et connexion Google
 
@@ -300,10 +315,10 @@ compte Google du foyer :
 1. Créer un projet (ex. « Tandem ») ; **APIs & Services → Library** : activer
    **Google Calendar API**.
 2. **OAuth consent screen** (*Google Auth Platform*) : type *External*, nom « Tandem »,
-   email d'assistance, domaine autorisé `fs0ciety.org`. **Data access** : ajouter les scopes
+   email d'assistance, domaine autorisé `tandem-agenda.app`. **Data access** : ajouter les scopes
    `openid`, `email`, `profile`, `…/auth/calendar.calendarlist.readonly` et
    `…/auth/calendar.events` — rien de plus (pas `…/auth/calendar`).
-   **Branding** : *Application privacy policy link* = `https://agenda.fs0ciety.org/privacy`
+   **Branding** : *Application privacy policy link* = `https://tandem-agenda.app/privacy`
    (renseigner `PRIVACY_CONTACT_EMAIL` dans Coolify pour y afficher une adresse de contact).
 3. **Audience → Publish app** : passer en **« In production »**. Indispensable : en *Testing*,
    Google invalide les autorisations au bout de 7 jours et la synchro s'arrêterait chaque semaine
@@ -312,10 +327,10 @@ compte Google du foyer :
    app personnelle, limite de 100 utilisateurs). Pour ouvrir l'app à d'autres foyers : faire
    vérifier l'app, cf. [google-oauth-verification.md](google-oauth-verification.md).
 4. **Clients → Create client → Web application** :
-   - Authorized JavaScript origins : `https://agenda.fs0ciety.org`
+   - Authorized JavaScript origins : `https://tandem-agenda.app`
    - Authorized redirect URIs (exactement, sans barre finale) :
-     - `https://agenda.fs0ciety.org/v1/calendar/google/callback` (calendrier)
-     - `https://agenda.fs0ciety.org/v1/auth/google/callback` (connexion avec Google)
+     - `https://tandem-agenda.app/v1/calendar/google/callback` (calendrier)
+     - `https://tandem-agenda.app/v1/auth/google/callback` (connexion avec Google)
 5. Renseigner `GOOGLE_CLIENT_ID` et `GOOGLE_CLIENT_SECRET` dans Coolify et redéployer.
 6. Dans l'app : **Réglages → Calendrier partagé → Connecter Google Calendar**, autoriser, choisir
    **« Commun G & N »** → *Utiliser ce calendrier*. Un seul membre du foyer a besoin de connecter
@@ -333,7 +348,7 @@ Vue complète (sondes internes, page `/status`, alertes, Uptime Kuma, Prometheus
 [`monitoring.md`](monitoring.md).
 
 - **Disponibilité** : le workflow GitHub `Disponibilité` (`.github/workflows/uptime.yml`) appelle
-  `https://agenda.fs0ciety.org/healthz` (web → API → base) toutes les 2 heures, **depuis
+  `https://tandem-agenda.app/healthz` (web → API → base) toutes les 2 heures, **depuis
   l'extérieur du serveur**. Après 3 échecs d'affilée, il ouvre un ticket « Site indisponible »
   (étiquette `panne`) : GitHub vous prévient par email / sur l'appli mobile (*Watch* le dépôt ou
   être propriétaire suffit). Le ticket se ferme tout seul au retour du site.
@@ -392,12 +407,12 @@ Vue complète (sondes internes, page `/status`, alertes, Uptime Kuma, Prometheus
 | Symptôme | Cause probable | Solution |
 |---|---|---|
 | 526 Invalid SSL certificate | Nuage orange avant l'émission du certificat Let's Encrypt | Repasser en DNS only, attendre le certificat, remettre Proxied |
-| 502 / 503 depuis Traefik | `web` pas encore *healthy*, ou domaine sans `:3000` | Logs Coolify ; vérifier `https://agenda.fs0ciety.org:3000` dans *Domains* |
+| 502 / 503 depuis Traefik | `web` pas encore *healthy*, ou domaine sans `:3000` | Logs Coolify ; vérifier `https://tandem-agenda.app:3000` dans *Domains* |
 | Connexion OK mais on revient sans cesse sur /login | Cookies `Secure` sur un accès HTTP | Toujours passer par `https://` (Always Use HTTPS) |
 | Tout le monde reçoit « Trop de tentatives » | `CLIENT_IP_HEADER` absent, ou trafic ne passant pas par Cloudflare | `CLIENT_IP_HEADER=cf-connecting-ip`, nuage orange |
 | `/v1/*` renvoie 500 « Internal Server Error » en texte brut | API injoignable depuis `web` | Vérifier que le service s'appelle bien `api` et qu'il est *healthy* |
 | L'API redémarre en boucle | Variable manquante/invalide (message `Invalid environment`) ou migration en échec | Logs du service `api` |
-| `redirect_uri_mismatch` chez Google | URI absente ou différente dans le client OAuth | Copier exactement `https://agenda.fs0ciety.org/v1/calendar/google/callback` (§9) |
+| `redirect_uri_mismatch` chez Google | URI absente ou différente dans le client OAuth | Copier exactement `https://tandem-agenda.app/v1/calendar/google/callback` (§9) |
 | « La connexion avec Google a expiré ou a été ouverte dans un autre navigateur » | Cookie du flux absent : plus de 10 min sur l'écran Google, navigateur différent (ex. lien ouvert depuis une autre app), cookies bloqués | Relancer depuis le même navigateur, sans navigation privée |
 | « Google a refusé la connexion » + log `TOKEN_ENCRYPTION_KEY must be 32 …` | Clé de chiffrement invalide (depuis ce correctif, l'API refuse de démarrer avec ce message) | `openssl rand -base64 32` → coller le résultat (44 caractères, finit par `=`) dans `TOKEN_ENCRYPTION_KEY`, redéployer, reconnecter Google |
 | « Google n'a pas donné accès à votre calendrier » | Cases décochées sur l'écran de consentement Google | Relancer et cocher les deux cases |
@@ -413,11 +428,10 @@ Le service `docs` du compose sert ce site (Docusaurus construit, servi par nginx
 d'utilisation, technique, confidentialité, nouveautés et référence de l'API. Il est **statique**
 et indépendant : il n'a accès ni à l'API ni à la base.
 
-1. **Cloudflare → DNS** : enregistrement `A` `agenda-docs` vers l'IP du serveur (nuage gris au
-   premier déploiement, puis orange, comme en §3.1). Un nom à **un seul niveau** sous
-   `fs0ciety.org` reste couvert par le certificat Cloudflare gratuit (`docs.agenda.fs0ciety.org`
-   ne le serait pas).
-2. **Coolify** → service **docs** → *Domains* : `https://agenda-docs.fs0ciety.org:80`.
+1. **Cloudflare → DNS** : enregistrement `A` `docs` vers l'IP du serveur (nuage gris au
+   premier déploiement, puis orange, comme en §3.1). `docs.tandem-agenda.app` est à **un seul niveau**
+   sous `tandem-agenda.app` : il est couvert par le certificat Cloudflare gratuit.
+2. **Coolify** → service **docs** → *Domains* : `https://docs.tandem-agenda.app:80`.
 3. Autre adresse : variable `DOCS_URL` (utilisée au build pour les liens et le plan du site),
    puis redéployer.
 
@@ -428,3 +442,172 @@ Access → Applications, gratuit jusqu'à 50 utilisateurs, connexion par code e-
 En local : `cd apps/docs && npm ci && npm start`. Le contenu est le dossier `docs/` du dépôt ;
 la référence de l'API (`apps/docs/static/openapi.json`) est régénérée par
 `pnpm --filter @agenda/api openapi` après une modification de l'API (vérifié en CI).
+
+## 14. Passer sur `tandem-agenda.app` : procédure complète
+
+Le site passe de l'ancien domaine à **tandem-agenda.app** et l'app Android prend son identifiant
+définitif **`app.tandem.foyer`** (au lieu de `be.agendagn.app` ; un identifiant ne peut plus
+changer après le premier envoi sur Google Play). Le code est prêt : les étapes ci-dessous sont
+toutes **hors dépôt** (consoles), dans cet ordre. Compter une soirée, surtout de l'attente DNS.
+
+> Règle d'or : **ne rien retirer de l'ancien domaine** avant la fin de l'étape 13. Les apps
+> Android déjà installées l'appellent en dur.
+
+### 14.1 Domaine et DNS (Cloudflare)
+
+1. Acheter `tandem-agenda.app` (Cloudflare Registrar le fait au prix coûtant : la zone est alors
+   créée d'office). Chez un autre registraire : Cloudflare → *Add a site* →
+   `tandem-agenda.app` (offre Free), puis remplacer chez le registraire les serveurs de noms par
+   les deux indiqués par Cloudflare. Attendre l'e-mail « active » (quelques minutes à 24 h).
+2. **DNS → Records** :
+
+   | Type | Nom | Contenu | Proxy |
+   |---|---|---|---|
+   | A | `@` | IP du serveur Coolify | gris, puis orange (§3.1) |
+   | A | `docs` | IP du serveur Coolify | gris, puis orange |
+   | A | `status` | IP du serveur Uptime Kuma (si page de statut, [monitoring.md](monitoring.md)) | gris, puis orange |
+
+   Les enregistrements e-mail (Resend : envoi et `tasks`) viennent aux étapes 14.4 et 14.5.
+3. Reprendre **tous les réglages de zone** du §3.2 (Full strict, Always HTTPS, Rocket Loader off,
+   Email Obfuscation off, **Cache Rule « Bypass » sur `tandem-agenda.app/v1/*`**) et §3.3.
+4. `.app` est un domaine « HTTPS obligatoire » (HSTS préchargé dans les navigateurs) : aucun test
+   possible en HTTP ; un certificat valide est indispensable dès le premier accès.
+
+### 14.2 Coolify
+
+1. Service **web** → *Domains* : `https://tandem-agenda.app:3000,https://<ancien domaine>:3000`
+   (les deux, séparés par une virgule : l'ancien reste servi pendant la transition).
+2. Service **docs** → *Domains* : `https://docs.tandem-agenda.app:80` (l'ancien peut être retiré).
+3. **Environment Variables** (§4.3) :
+
+   | Variable | Nouvelle valeur |
+   |---|---|
+   | `WEB_ORIGIN` | `https://tandem-agenda.app` (sans barre finale) |
+   | `EMAIL_FROM` | `Tandem <no-reply@tandem-agenda.app>` (après 14.4) |
+   | `PRIVACY_CONTACT_EMAIL` | une adresse `@tandem-agenda.app` si vous en créez une |
+   | `INBOUND_EMAIL_ADDRESS` | `{token}@tasks.tandem-agenda.app` (après 14.5) |
+   | `WEB_PUSH_SUBJECT` | vide (= `WEB_ORIGIN`) ou `mailto:…@tandem-agenda.app` |
+   | `DOCS_URL` | vide (défaut `https://docs.tandem-agenda.app`) |
+
+   `WEB_ORIGIN` fixe CORS, les liens des e-mails et notifications, les adresses de retour Google
+   et l'adresse de l'APK : c'est **la** valeur à changer.
+4. **Redeploy**. Vérifier `https://tandem-agenda.app/healthz` et
+   `https://docs.tandem-agenda.app`, puis passer les nuages en orange.
+
+### 14.3 GitHub (variables du dépôt)
+
+*Settings → Secrets and variables → Actions → Variables* :
+
+- `AGENDA_API_BASE_URL` : `https://tandem-agenda.app/` (ou supprimer : c'est la valeur par défaut) ;
+- `UPTIME_URL` : `https://tandem-agenda.app/healthz` (ou supprimer, idem).
+
+### 14.4 E-mails sortants (Resend, §8.1)
+
+1. Resend → **Domains → Add Domain** : `tandem-agenda.app` (région Ireland), puis **Auto configure**
+   ou recopier dans Cloudflare, nuage gris : `TXT resend._domainkey` (DKIM), `MX send` et
+   `TXT send` (SPF), et si possible `TXT _dmarc` = `v=DMARC1; p=none;`.
+2. **Verify DNS Records** → état **Verified**.
+3. **API Keys** : si la clé actuelle (`SMTP_PASSWORD`) est limitée à l'ancien domaine, en créer une
+   nouvelle (*Sending access*, domaine `tandem-agenda.app`) et remplacer `SMTP_PASSWORD` ; une clé
+   « tous domaines » peut rester telle quelle. `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER` ne changent pas.
+4. Seulement alors, changer `EMAIL_FROM` en `Tandem <no-reply@tandem-agenda.app>` (14.2) et
+   redéployer : un expéditeur sur un domaine non vérifié est refusé par Resend (erreur 403,
+   visible dans *Emails* et dans les journaux de l'API).
+5. Tester « Mot de passe oublié » : le lien reçu doit pointer vers
+   `https://tandem-agenda.app/reset-password…`.
+6. Plus tard (fin de transition), supprimer l'ancien domaine dans Resend.
+
+### 14.5 Tâche par e-mail (si utilisée, [email-to-task.md](email-to-task.md))
+
+1. Resend → *Domains* : ajouter `tasks.tandem-agenda.app` et **activer la réception** ; recopier
+   dans Cloudflare le **MX** et les TXT affichés (nuage gris).
+2. Resend → *Webhooks* : modifier l'URL en `https://tandem-agenda.app/v1/inbound/resend`
+   (événement `email.received`, le secret `whsec_…` ne change pas).
+3. Changer `INBOUND_EMAIL_ADDRESS`, redéployer. Chaque membre retrouve sa nouvelle adresse dans
+   *Réglages* ; les anciennes adresses cessent de fonctionner quand l'ancien sous-domaine est
+   retiré de Resend.
+
+### 14.6 Google (connexion avec Google et Google Calendar, §9)
+
+Dans la **Google Cloud Console**, projet de l'app :
+
+1. **Search Console** (https://search.google.com/search-console) : *Ajouter une propriété* →
+   *Domaine* `tandem-agenda.app` → enregistrement TXT à ajouter dans Cloudflare → *Valider*.
+   Même compte Google que la Cloud Console.
+2. **Google Auth Platform → Branding** :
+   - *Authorized domains* : ajouter `tandem-agenda.app` (garder l'ancien pendant la transition) ;
+   - *Application home page* : `https://tandem-agenda.app/about` ;
+   - *Privacy policy* : `https://tandem-agenda.app/privacy` ;
+   - *Terms of service* (si renseigné) : `https://tandem-agenda.app/privacy`.
+3. **Clients** → le client *Web application* :
+   - *Authorized JavaScript origins* : **ajouter** `https://tandem-agenda.app` ;
+   - *Authorized redirect URIs* : **ajouter**
+     `https://tandem-agenda.app/v1/auth/google/callback` et
+     `https://tandem-agenda.app/v1/calendar/google/callback` (exactement, sans barre finale).
+   - Garder les anciennes entrées jusqu'à la fin de la transition, puis les retirer.
+   Le client et son secret ne changent pas (`GOOGLE_CLIENT_ID`/`SECRET` inchangés).
+4. Si l'écran de consentement était **validé** par Google : un changement de domaine ou de liens
+   relance une vérification ([google-oauth-verification.md](google-oauth-verification.md)) ;
+   l'app reste utilisable pendant l'examen.
+5. Tester : *Se connecter avec Google* sur le site et dans l'app Android, puis *Réglages →
+   Calendrier partagé* (la connexion existante continue ; au besoin *Reconnecter*).
+
+L'app Android n'a **rien** à déclarer chez Google pour la connexion : elle passe par le
+navigateur puis revient via `app.tandem.foyer://auth`.
+
+### 14.7 Firebase (notifications instantanées Android, [android.md](android.md) §4.1)
+
+1. Console Firebase → le projet existant → *Paramètres du projet* → *Ajouter une application* →
+   Android, package **`app.tandem.foyer`**, surnom « Tandem ».
+2. Télécharger le nouveau `google-services.json` (ne pas le committer) et remplacer les variables
+   du dépôt **`FCM_APP_ID`** (`mobilesdk_app_id`) et **`FCM_API_KEY`** (`current_key`).
+   `FCM_PROJECT_ID` et `FCM_SENDER_ID` ne changent pas, ni `FCM_SERVICE_ACCOUNT` côté API.
+3. Garder l'ancienne application Firebase tant que l'ancienne app circule.
+
+### 14.8 Android : nouvelle version
+
+1. Lancer **Actions → « Android — APK à installer » → Run workflow** (ou attendre le prochain
+   changement Android sur `main`). La release publie `tandem.apk` et `tandem-play.aab`, construits
+   pour `https://tandem-agenda.app/`.
+2. Même clé de signature qu'avant (secrets inchangés).
+
+### 14.9 Google Play ([play-store.md](play-store.md))
+
+1. Play Console → *Créer une application* : nom « Tandem », puis au premier envoi l'identifiant
+   est lu dans l'AAB : **`app.tandem.foyer`** (définitif).
+2. *Règles relatives aux applis → Règles de confidentialité* :
+   `https://tandem-agenda.app/privacy` ; *Suppression des données* :
+   `https://tandem-agenda.app/privacy` (section suppression du compte) ; site web :
+   `https://tandem-agenda.app/about` ; e-mail de contact.
+3. Donner l'accès au compte de service (`PLAY_SERVICE_ACCOUNT_JSON`) pour l'envoi automatique en
+   test interne.
+
+### 14.10 Surveillance ([monitoring.md](monitoring.md))
+
+Uptime Kuma : remplacer les URL des sondes (`/healthz`, `/v1/status`…) par
+`https://tandem-agenda.app/…`, déplacer la page de statut sur `status.tandem-agenda.app`.
+
+### 14.11 Vérification finale
+
+- [ ] `https://tandem-agenda.app` : connexion par mot de passe et par Google, création d'une tâche.
+- [ ] E-mail « Mot de passe oublié » reçu, lien vers le nouveau domaine.
+- [ ] Notifications web : *Réglages → Notifications* → réactiver sur le nouveau domaine, tester.
+- [ ] `https://tandem-agenda.app/v1/app/android/version.json` : `apkUrl` en `tandem-agenda.app/…/tandem.apk`.
+- [ ] Nouvelle app Android installée : connexion, notification instantanée (FCM) reçue.
+- [ ] Tâche par e-mail vers `…@tasks.tandem-agenda.app` (si utilisée).
+- [ ] `https://docs.tandem-agenda.app` et la page de statut répondent.
+
+### 14.12 Pendant la transition, puis après
+
+- *Site* : les cookies, le cache hors ligne et les notifications web sont liés au domaine :
+  chacun se reconnecte **une fois** sur `tandem-agenda.app` et réactive les notifications du
+  navigateur. Une fois la vérification 14.11 passée, rediriger l'ancien domaine
+  (Cloudflare, zone de l'ancien domaine → *Rules → Redirect Rules* → 301 vers
+  `https://tandem-agenda.app` en conservant chemin et paramètres), **en excluant `/v1/*`**.
+- *App Android déjà installée* (`be.agendagn.app`) : elle interroge l'ancien domaine
+  (`/v1/…`, d'où l'exclusion ci-dessus). Sa prochaine « mise à jour » installe **Tandem à côté**
+  (autre identifiant, même signature) : se connecter dans Tandem, puis désinstaller l'ancienne
+  app. L'API accepte encore l'ancien en-tête CSRF et les jetons émis avant le renommage.
+- *Fin de transition* (quand plus personne n'utilise l'ancienne app) : retirer l'ancien domaine
+  de Coolify et de Google (domaines autorisés, URI de redirection), l'ancienne app Firebase et
+  l'ancien sous-domaine de réception Resend.

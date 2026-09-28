@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { signUpWithHousehold, todayBrussels } from './helpers';
 
-const HEADERS = { 'x-requested-with': 'agenda-gn' };
+const HEADERS = { 'x-requested-with': 'tandem' };
 
 async function createTask(page: Page, body: Record<string, unknown>) {
   const households = await (await page.request.get('/v1/households')).json();

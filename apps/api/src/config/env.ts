@@ -109,7 +109,7 @@ const EnvSchema = z.object({
   GITHUB_RELEASES_TOKEN: z.string().trim().optional(),
   /**
    * Tâches par e-mail, reçues par Resend (docs/email-to-task.md). Adresse modèle avec `{token}`
-   * (ex. `{token}@tasks.fs0ciety.org`), secret de signature du webhook (`whsec_…`) et clé API
+   * (ex. `{token}@tasks.tandem-agenda.app`), secret de signature du webhook (`whsec_…`) et clé API
    * Resend (lecture des e-mails reçus). Les trois sont requis pour activer la fonction.
    */
   INBOUND_EMAIL_ADDRESS: z.preprocess(

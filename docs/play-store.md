@@ -5,8 +5,8 @@ L'app Android existe en **deux versions construites à chaque mise à jour de `m
 
 | Fichier | Pour | Mises à jour |
 |---|---|---|
-| `agenda-gn.apk` | Installation depuis le site (Réglages → Application Android) | L'app se met à jour elle-même (docs/android.md §4) |
-| `agenda-gn-play.aab` | Google Play (build `play`) | Par le Play Store. Pas de mise à jour automatique ni de permission « installer des applications », que Google Play interdit |
+| `tandem.apk` | Installation depuis le site (Réglages → Application Android) | L'app se met à jour elle-même (docs/android.md §4) |
+| `tandem-play.aab` | Google Play (build `play`) | Par le Play Store. Pas de mise à jour automatique ni de permission « installer des applications », que Google Play interdit |
 
 La version Play est la même que la release (même code, même API, mêmes notifications Firebase).
 Seule différence : `UPDATE_MANIFEST_URL` est vide et `src/play/AndroidManifest.xml` retire
@@ -33,7 +33,7 @@ Pour passer de l'une à l'autre sans désinstaller, lors de la première publica
 clé existante : exporter et importer depuis un keystore Java »** et importer `agenda.jks`
 (celui du secret `ANDROID_KEYSTORE_B64`, cf. docs/android.md §4) avec l'outil PEPK fourni par
 la console. La **clé d'importation** peut être la même (`agenda.jks`, alias `agenda`) : c'est
-elle qui signe `agenda-gn-play.aab` dans la CI.
+elle qui signe `tandem-play.aab` dans la CI.
 
 Les numéros de version (`versionCode` = exécution du workflow + 10) sont communs aux deux
 versions et toujours croissants.
@@ -43,9 +43,9 @@ versions et toujours croissants.
 1. **Compte développeur** : [play.google.com/console](https://play.google.com/console),
    25 $ une fois, vérification d'identité (quelques jours).
 2. **Créer l'application** : nom *Tandem*, langue par défaut *Français – fr-FR*,
-   *Application*, *Gratuite*. Nom du paquet : `be.agendagn.app` (fixé au premier envoi).
+   *Application*, *Gratuite*. Nom du paquet : `app.tandem.foyer` (fixé au premier envoi).
 3. **Configurer l'application** (tableau de bord → *Configurer votre application*) :
-   - **Règles de confidentialité** : `https://agenda.fs0ciety.org/privacy`
+   - **Règles de confidentialité** : `https://tandem-agenda.app/privacy`
    - **Accès à l'application** : *Tout ou partie des fonctionnalités sont restreintes* → fournir
      un compte de démonstration (créer un compte `demo…` sur le site, un foyer et quelques tâches ;
      identifiants saisis uniquement dans la console, jamais dans le dépôt).
@@ -56,7 +56,7 @@ versions et toujours croissants.
      les enfants.
    - **Application d'actualités, gouvernementale, financière, santé** : non.
    - **Sécurité des données** : voir §4.
-   - **Suppression de compte** : URL `https://agenda.fs0ciety.org/privacy` (section « Vos
+   - **Suppression de compte** : URL `https://tandem-agenda.app/privacy` (section « Vos
      droits » : Réglages → Données & confidentialité → Supprimer mon compte). Suppression
      immédiate ; sauvegardes effacées sous 14 jours (serveur) et 30 jours (hors serveur).
 4. **Fiche Play Store** (*Présence sur le Store → Fiche principale*) : copier les textes et
@@ -74,9 +74,9 @@ versions et toujours croissants.
    | Notes de version | `changelogs/default.txt` | 500 |
 
    Catégorie : **Productivité**. Coordonnées : une adresse e-mail de contact (obligatoire,
-   visible publiquement) et le site `https://agenda.fs0ciety.org`.
+   visible publiquement) et le site `https://tandem-agenda.app`.
 5. **Premier envoi (manuel)** : *Tester → Test interne → Créer une release* → importer
-   `agenda-gn-play.aab` depuis la release GitHub `android-latest` → notes de version → *Enregistrer*
+   `tandem-play.aab` depuis la release GitHub `android-latest` → notes de version → *Enregistrer*
    → *Publier*. Onglet *Testeurs* : créer une liste avec les adresses Google de Grace et Nicolas,
    puis leur envoyer le **lien d'inscription** : ils acceptent, puis installent depuis le Play Store.
 

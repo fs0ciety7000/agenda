@@ -4,7 +4,9 @@ import type { Request } from 'express';
 import { AppException } from '../common/app-exception';
 
 export const CSRF_HEADER = 'x-requested-with';
-export const CSRF_HEADER_VALUE = 'agenda-gn';
+export const CSRF_HEADER_VALUE = 'tandem';
+/** Valeur d'avant le renommage, encore envoyée par les apps Android déjà installées. */
+const LEGACY_CSRF_HEADER_VALUE = 'agenda-gn';
 const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 export const SKIP_CSRF = 'skipCsrf';
 
@@ -28,7 +30,8 @@ export class CsrfGuard implements CanActivate {
     if (SAFE_METHODS.has(req.method)) return true;
     if (this.reflector.getAllAndOverride<boolean>(SKIP_CSRF, [ctx.getHandler(), ctx.getClass()]))
       return true;
-    if (req.headers[CSRF_HEADER] !== CSRF_HEADER_VALUE) {
+    const value = req.headers[CSRF_HEADER];
+    if (value !== CSRF_HEADER_VALUE && value !== LEGACY_CSRF_HEADER_VALUE) {
       throw new AppException(
         'CSRF_REJECTED',
         HttpStatus.FORBIDDEN,

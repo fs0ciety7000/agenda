@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
-      URL: ${{ vars.UPTIME_URL || 'https://agenda.fs0ciety.org/healthz' }}
+      URL: ${{ vars.UPTIME_URL || 'https://tandem-agenda.app/healthz' }}
     steps:
       - name: Vérifier le site (3 essais)
         id: probe

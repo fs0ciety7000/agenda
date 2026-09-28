@@ -5,7 +5,7 @@
 Gestionnaire des tâches du foyer pour Grace & Nicolas : **site web responsive** et **application
 Android native**, avec publication des tâches dans un calendrier Google partagé.
 
-En production sur [agenda.fs0ciety.org](https://agenda.fs0ciety.org). Toutes les phases de la
+En production sur [tandem-agenda.app](https://tandem-agenda.app). Toutes les phases de la
 [roadmap](docs/roadmap.md) sont livrées. Restent la recette manuelle sur téléphone (TalkBack,
 Google Calendar) et la [publication Play Store](docs/play-store.md), prête côté dépôt.
 
@@ -68,7 +68,7 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
   - connexion par e-mail ou avec Google ;
   - mot de passe oublié ;
   - export JSON et suppression du compte ;
-  - [politique de confidentialité](https://agenda.fs0ciety.org/privacy).
+  - [politique de confidentialité](https://tandem-agenda.app/privacy).
 - **Accessibilité** : audit axe WCAG 2.2 AA sans violation (clair et sombre), TalkBack, mode sombre.
 - **Exploitation** :
   - sauvegardes nocturnes restaurées et vérifiées, avec copie hors serveur ;
@@ -81,7 +81,7 @@ Google Calendar) et la [publication Play Store](docs/play-store.md), prête côt
 Le **site de documentation** ([`apps/docs`](apps/docs), Docusaurus) rassemble tout le dossier
 [`docs/`](docs) : guide d'utilisation, technique, confidentialité & RGPD, nouveautés et
 **référence de l'API** (Swagger, générée depuis le code). En production :
-`https://agenda-docs.fs0ciety.org` ([déploiement](docs/deployment.md#13-site-de-documentation)) ;
+`https://docs.tandem-agenda.app` ([déploiement](docs/deployment.md#13-site-de-documentation)) ;
 en local : `cd apps/docs && npm ci && npm start`.
 
 | Document                                                | Contenu                                                   |
@@ -151,8 +151,8 @@ cd apps/android && ./gradlew lintDebug testDebugUnitTest assembleDebug
   voir [docs/deployment.md](docs/deployment.md).
 - **Android** : à chaque mise à jour de l'app sur `main`, `android-release.yml` publie dans la release GitHub
   `android-latest` :
-  - l'APK du site (`agenda-gn.apk`, qui se met à jour lui-même) ;
-  - l'AAB Google Play (`agenda-gn-play.aab`).
+  - l'APK du site (`tandem.apk`, qui se met à jour lui-même) ;
+  - l'AAB Google Play (`tandem-play.aab`).
 
   Voir [docs/android.md](docs/android.md) et [docs/play-store.md](docs/play-store.md).
 

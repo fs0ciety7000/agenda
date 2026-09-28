@@ -94,7 +94,7 @@ UI (Compose) ──▶ ViewModel ──▶ AgendaRepository
 | Injection de dépendances | Manuelle (`AppContainer`) | Une dizaine d'objets ; Hilt n'apporterait que du code généré |
 | Google Calendar (connexion, choix du calendrier) | Sur le site (bouton « Gérer sur le site ») | Même flux OAuth sécurisé que le web, aucun secret dans l'APK |
 | Inscription, mot de passe oublié | Ouvrent le site (Custom Tab) | Mêmes écrans, e-mails et protections anti-énumération |
-| « Continuer avec Google » | Custom Tab sur le site + retour `be.agendagn.app://auth?code=…`, code à usage unique (2 min) échangé avec un verifier PKCE resté dans l'app | Aucun nouveau client OAuth ni URI dans la console Google ; une app qui intercepterait le lien ne peut rien en faire sans le verifier |
+| « Continuer avec Google » | Custom Tab sur le site + retour `app.tandem.foyer://auth?code=…`, code à usage unique (2 min) échangé avec un verifier PKCE resté dans l'app | Aucun nouveau client OAuth ni URI dans la console Google ; une app qui intercepterait le lien ne peut rien en faire sans le verifier |
 | Récurrence sur mobile | Préréglages + « chacun son tour » | Rotations avancées (séquences, jours fixes) restent sur le web |
 | Base locale | Room, migration destructive | C'est un cache ; migrations obligatoires dès que le schéma change en production (sinon l'outbox non envoyée serait perdue) |
 | Tests d'interface | Robolectric (JVM) + émulateur | Robolectric à chaque PR Android (rapide, captures) ; émulateur à la demande (SQLite, Keystore, lancement réels) |
@@ -102,15 +102,15 @@ UI (Compose) ──▶ ViewModel ──▶ AgendaRepository
 ## 4. Construire et installer
 
 **Installer sur le téléphone** : sur le site, **Réglages → Compte → Application Android →
-Télécharger** (ou directement `https://agenda.fs0ciety.org/v1/app/android/agenda-gn.apk`), puis
+Télécharger** (ou directement `https://tandem-agenda.app/v1/app/android/tandem.apk`), puis
 *Installer* (autoriser Chrome à « installer des applications inconnues » la première fois).
 
 **D'où vient l'APK** : à chaque mise à jour de l'app sur `main`, le workflow `android-release.yml`
 publie dans la release GitHub `android-latest` (mise à jour sur place, jamais supprimée) un APK
-propre à la version (`agenda-gn-46.apk`, les deux derniers sont gardés), une copie
-`agenda-gn.apk` et, en dernier, `version.json`, qui désigne l'APK de la version. L'API les **relaie**
-(`/v1/app/android/version.json`, `/v1/app/android/agenda-gn.apk?v=46`, cache 5 min côté API ; l'APK part en `Cache-Control: no-store` pour que Cloudflare ne serve jamais une ancienne version) : l'app et le site
-ne parlent qu'à `agenda.fs0ciety.org`, que le dépôt soit public ou privé.
+propre à la version (`tandem-46.apk`, les deux derniers sont gardés), une copie
+`tandem.apk` et, en dernier, `version.json`, qui désigne l'APK de la version. L'API les **relaie**
+(`/v1/app/android/version.json`, `/v1/app/android/tandem.apk?v=46`, cache 5 min côté API ; l'APK part en `Cache-Control: no-store` pour que Cloudflare ne serve jamais une ancienne version) : l'app et le site
+ne parlent qu'à `tandem-agenda.app`, que le dépôt soit public ou privé.
 
 **Dépôt privé** : créer un jeton GitHub *fine-grained* (GitHub → *Settings* → *Developer settings*
 → *Fine-grained tokens*) limité à ce dépôt, permission **Contents : Read-only**, et le renseigner
@@ -142,12 +142,12 @@ workflow échoue explicitement et ne publie rien. Perdre la clé = désinstaller
 
 ```bash
 cd apps/android
-./gradlew assembleRelease -Pagenda.apiBaseUrl=https://agenda.fs0ciety.org/ \
-  -Pagenda.keystore=/chemin/agenda.jks -Pagenda.keyAlias=agenda \
-  -Pagenda.keystorePassword=… -Pagenda.keyPassword=…
+./gradlew assembleRelease -Ptandem.apiBaseUrl=https://tandem-agenda.app/ \
+  -Ptandem.keystore=/chemin/agenda.jks -Ptandem.keyAlias=agenda \
+  -Ptandem.keystorePassword=… -Ptandem.keyPassword=…
 ```
 
-**Google Play** : la même CI produit `agenda-gn-play.aab` (build `play`, sans mise à jour
+**Google Play** : la même CI produit `tandem-play.aab` (build `play`, sans mise à jour
 automatique) ; publication pas à pas dans [play-store.md](play-store.md).
 
 Développement : `./gradlew installDebug` (émulateur ; l'API locale est vue en `10.0.2.2:4000`).
@@ -161,7 +161,7 @@ nom) : l'app relit ensuite ses notifications auprès de l'API, avec les mêmes r
 
 1. https://console.firebase.google.com → *Ajouter un projet* (ex. `agenda-gn`), Google Analytics
    **désactivé**.
-2. *Ajouter une application* → **Android**, nom du package `be.agendagn.app` → télécharger
+2. *Ajouter une application* → **Android**, nom du package `app.tandem.foyer` → télécharger
    `google-services.json` (inutile de l'ajouter au projet : on n'en reprend que 4 valeurs).
 3. GitHub → *Settings → Secrets and variables → Actions → **Variables*** (pas des secrets : ce sont
    des identifiants publics, déjà présents dans tout APK Firebase) :

@@ -120,7 +120,7 @@ export class PrivacyService {
       }),
     ]);
     return {
-      format: 'agenda-gn-export/1',
+      format: 'tandem-export/1',
       exportedAt: new Date().toISOString(),
       account: {
         email: user.email,

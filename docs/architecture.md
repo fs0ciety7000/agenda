@@ -95,7 +95,7 @@ Les tâches `PERSONAL` sont en plus filtrées par `createdById = currentUser`.
 - **Access token** JWT (HS256 → migrable EdDSA), durée 15 min, contient `sub`, `sid`.
 - **Refresh token** opaque (256 bits aléatoires), stocké **haché** (SHA‑256) dans `Session`, rotation à chaque usage, détection de réutilisation (famille révoquée si un ancien token est rejoué plus de 30 s après sa rotation ; en deçà, rejeu toléré pour les onglets concurrents).
 - **Web** : tokens en cookies `httpOnly; Secure; SameSite=Lax`, refresh cookie restreint au path `/v1/auth`. Le web appelle l'API **sur sa propre origine** (`/v1/*` réécrit par Next.js vers l'API) : cookies first-party, aucun CORS nécessaire, indépendant du domaine de l'API.
-- **CSRF** : `SameSite=Lax` + header `X-Requested-With: agenda-gn` exigé sur **toute** mutation (règle uniforme web/Android, `CsrfGuard`). Un formulaire ou une image cross-site ne peut pas ajouter ce header ; CORS ne l'autorise que depuis `WEB_ORIGIN`.
+- **CSRF** : `SameSite=Lax` + header `X-Requested-With: tandem` exigé sur **toute** mutation (règle uniforme web/Android, `CsrfGuard`). Un formulaire ou une image cross-site ne peut pas ajouter ce header ; CORS ne l'autorise que depuis `WEB_ORIGIN`.
 - **Android** : `Authorization: Bearer`, refresh token dans DataStore chiffré (Android Keystore).
 - « Déconnexion de tous les appareils » = révocation de toutes les `Session` de l'utilisateur. Le guard vérifie à chaque requête que la session de l'access token n'est pas révoquée (1 lecture par clé primaire) : la déconnexion est **immédiate**, sans attendre l'expiration des 15 min.
 - Rate limiting des routes d'auth : `AUTH_RATE_LIMIT` req/min/IP (défaut 10).
@@ -201,8 +201,8 @@ Tests critiques listés dans le cahier des charges §29 → chacun a un test nom
 | D. AWS (ECS/RDS/ElastiCache) | ~ 80 €+ | Puissant | Surdimensionné, maintenance lourde |
 
 **Choix : C** (décision du 2026-09-26, remplace le choix initial A) : le serveur Coolify existe
-déjà et héberge d'autres projets sur `fs0ciety.org`. Les images Docker restent standard, donc
-portables vers A/B/D sans réécriture. Un seul domaine public (`agenda.fs0ciety.org`, service
+déjà et héberge d'autres projets de l'équipe. Les images Docker restent standard, donc
+portables vers A/B/D sans réécriture. Un seul domaine public (`tandem-agenda.app`, service
 `web`), API et base internes. Mode opératoire complet : [`deployment.md`](deployment.md).
 
 - CI/CD : GitHub Actions (lint, typecheck, tests, build ; job Android séparé).

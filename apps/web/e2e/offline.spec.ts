@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { signUpWithHousehold, todayBrussels } from './helpers';
 
-const HEADERS = { 'x-requested-with': 'agenda-gn' };
+const HEADERS = { 'x-requested-with': 'tandem' };
 
 test('hors ligne : consulter, cocher, ajouter, recharger ; envoyé au retour du réseau', async ({
   page,

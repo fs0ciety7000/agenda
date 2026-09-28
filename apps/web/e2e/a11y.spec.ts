@@ -62,7 +62,7 @@ for (const scheme of ['light', 'dark'] as const) {
       const today = todayBrussels();
       const households = await (await page.request.get('/v1/households')).json();
       const hid = households[0].id as string;
-      const headers = { 'x-requested-with': 'agenda-gn' };
+      const headers = { 'x-requested-with': 'tandem' };
       for (const data of [
         { title: 'Sortir les poubelles', date: today, startMinute: 19 * 60 },
         { title: 'Arroser les plantes', date: today, durationMinutes: 15 },

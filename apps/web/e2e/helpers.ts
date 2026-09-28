@@ -18,7 +18,7 @@ export async function signUpWithHousehold(page: Page, name = 'Grace') {
 
 const API_HEADERS = {
   'content-type': 'application/json',
-  'x-requested-with': 'agenda-gn',
+  'x-requested-with': 'tandem',
   'x-client': 'mobile',
 };
 

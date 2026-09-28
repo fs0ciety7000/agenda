@@ -29,7 +29,7 @@ jobs:
       run:
         working-directory: apps/android
     env:
-      API_BASE_URL: ${{ vars.AGENDA_API_BASE_URL || 'https://agenda.fs0ciety.org/' }}
+      API_BASE_URL: ${{ vars.AGENDA_API_BASE_URL || 'https://tandem-agenda.app/' }}
       RELEASE_BASE: https://github.com/${{ github.repository }}/releases/download/android-latest
       PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
     steps:
@@ -84,13 +84,13 @@ jobs:
           # assembleRelease : APK installé depuis le site (mise à jour automatique).
           # bundlePlay : AAB pour Google Play (sans mise à jour automatique ni permission d'installer).
           ./gradlew assembleRelease bundlePlay --console=plain \
-            -Pagenda.apiBaseUrl="$API_BASE_URL" \
-            -Pagenda.versionCode="$code" -Pagenda.versionName="0.3.$code" \
-            -Pagenda.updateUrl="${API_BASE_URL}v1/app/android/version.json" \
-            -Pagenda.fcm.appId="$FCM_APP_ID" -Pagenda.fcm.apiKey="$FCM_API_KEY" \
-            -Pagenda.fcm.projectId="$FCM_PROJECT_ID" -Pagenda.fcm.senderId="$FCM_SENDER_ID" \
-            -Pagenda.keystore="$RUNNER_TEMP/agenda.jks" -Pagenda.keyAlias=agenda \
-            -Pagenda.keystorePassword="$KEYSTORE_PASSWORD" -Pagenda.keyPassword="$KEYSTORE_PASSWORD"
+            -Ptandem.apiBaseUrl="$API_BASE_URL" \
+            -Ptandem.versionCode="$code" -Ptandem.versionName="0.3.$code" \
+            -Ptandem.updateUrl="${API_BASE_URL}v1/app/android/version.json" \
+            -Ptandem.fcm.appId="$FCM_APP_ID" -Ptandem.fcm.apiKey="$FCM_API_KEY" \
+            -Ptandem.fcm.projectId="$FCM_PROJECT_ID" -Ptandem.fcm.senderId="$FCM_SENDER_ID" \
+            -Ptandem.keystore="$RUNNER_TEMP/agenda.jks" -Ptandem.keyAlias=agenda \
+            -Ptandem.keystorePassword="$KEYSTORE_PASSWORD" -Ptandem.keyPassword="$KEYSTORE_PASSWORD"
           rm -f "$RUNNER_TEMP/agenda.jks"
       - name: Publier (remplace la version précédente)
         env:
@@ -99,20 +99,20 @@ jobs:
           cat > notes.md <<NOTES
           Application Android de Tandem, connectée à $API_BASE_URL.
 
-          **Première installation** : sur le téléphone, ouvrir cette page, toucher **agenda-gn.apk**, puis *Installer* (autoriser Chrome à « installer des applications inconnues » la première fois).
+          **Première installation** : sur le téléphone, ouvrir cette page, toucher **tandem.apk**, puis *Installer* (autoriser Chrome à « installer des applications inconnues » la première fois).
 
           **Mises à jour** : l'app les propose d'elle-même (notification + bandeau « Nouvelle version disponible »).
 
-          **Google Play** : \`agenda-gn-play.aab\` est la version à envoyer dans la Play Console (docs/play-store.md).
+          **Google Play** : \`tandem-play.aab\` est la version à envoyer dans la Play Console (docs/play-store.md).
 
           Version $VERSION_NAME · commit ${GITHUB_SHA::7}
           NOTES
           # APK propre à la version (jamais remplacé pendant un téléchargement) + nom fixe pour
           # l'installation manuelle ; version.json en dernier : il ne désigne jamais un fichier absent.
-          apk="agenda-gn-$VERSION_CODE.apk"
+          apk="tandem-$VERSION_CODE.apk"
           cp app/build/outputs/apk/release/app-release.apk "$apk"
-          cp "$apk" agenda-gn.apk
-          cp app/build/outputs/bundle/play/app-play.aab agenda-gn-play.aab
+          cp "$apk" tandem.apk
+          cp app/build/outputs/bundle/play/app-play.aab tandem-play.aab
           sha=$(sha256sum "$apk" | cut -d' ' -f1)
           printf '{"versionCode":%s,"versionName":"%s","apkUrl":"%s/%s","apkAsset":"%s","sha256":"%s"}\n' \
             "$VERSION_CODE" "$VERSION_NAME" "$RELEASE_BASE" "$apk" "$apk" "$sha" > version.json
@@ -121,15 +121,15 @@ jobs:
           if gh release view android-latest >/dev/null 2>&1; then
             # Mise à jour sur place : la release ne disparaît jamais (plus de « téléchargement échoué »).
             gh release upload android-latest "$apk" --clobber
-            gh release upload android-latest agenda-gn.apk agenda-gn-play.aab --clobber
+            gh release upload android-latest tandem.apk tandem-play.aab --clobber
             gh release upload android-latest version.json --clobber
             gh release edit android-latest --title "$title" --notes-file notes.md
             # On garde l'APK précédent (téléchargements en cours), on retire les plus anciens.
             gh release view android-latest --json assets -q '.assets[].name' \
-              | grep -E '^agenda-gn-[0-9]+\.apk$' | sort -t- -k3 -n | head -n -2 \
+              | grep -E '^tandem-[0-9]+\.apk$' | sort -t- -k2 -n | head -n -2 \
               | xargs -r -n1 gh release delete-asset android-latest -y
           else
-            gh release create android-latest "$apk" agenda-gn.apk version.json agenda-gn-play.aab \
+            gh release create android-latest "$apk" tandem.apk version.json tandem-play.aab \
               --prerelease --target "$GITHUB_SHA" --title "$title" --notes-file notes.md
           fi
       - name: Notes de version pour Google Play
@@ -143,8 +143,8 @@ jobs:
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
-          packageName: be.agendagn.app
-          releaseFiles: apps/android/agenda-gn-play.aab
+          packageName: app.tandem.foyer
+          releaseFiles: apps/android/tandem-play.aab
           track: internal
           status: completed
           whatsNewDirectory: apps/android/whatsnew

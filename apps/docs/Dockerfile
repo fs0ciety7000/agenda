@@ -9,8 +9,8 @@ RUN npm ci --no-audit --no-fund
 COPY docs /repo/docs
 COPY apps/docs ./
 # Adresses publiques (liens, plan du site), figées au build.
-ARG DOCS_URL=https://agenda-docs.fs0ciety.org
-ARG APP_URL=https://agenda.fs0ciety.org
+ARG DOCS_URL=https://docs.tandem-agenda.app
+ARG APP_URL=https://tandem-agenda.app
 ENV DOCS_URL=$DOCS_URL APP_URL=$APP_URL
 RUN npm run build
 

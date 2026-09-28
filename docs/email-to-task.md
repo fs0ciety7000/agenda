@@ -1,6 +1,6 @@
 # Tâches par e-mail
 
-Chaque membre a une **adresse personnelle** du type `3f9c…@tasks.fs0ciety.org`. Un e-mail
+Chaque membre a une **adresse personnelle** du type `3f9c…@tasks.tandem-agenda.app`. Un e-mail
 transféré à cette adresse devient une tâche du foyer, créée au nom de ce membre :
 
 - le **sujet** (sans « Fwd: », « TR: »…) passe par l'ajout rapide : « Payer la facture vendredi »
@@ -23,11 +23,11 @@ peut ajouter des tâches au foyer.
 ## Fonctionnement
 
 ```
-Gmail, Outlook…  ──►  Resend (MX de tasks.fs0ciety.org)  ──►  webhook email.received  ──►  POST /v1/inbound/resend
+Gmail, Outlook…  ──►  Resend (MX de tasks.tandem-agenda.app)  ──►  webhook email.received  ──►  POST /v1/inbound/resend
                                                                                              └► GET api.resend.com/emails/receiving/{id}
 ```
 
-- La réception se fait sur un **sous-domaine** dédié : les e-mails de `fs0ciety.org` (et les
+- La réception se fait sur un **sous-domaine** dédié : les e-mails de `tandem-agenda.app` (et les
   enregistrements utilisés par Resend pour l'envoi) ne changent pas.
 - Le webhook est vérifié par sa **signature** (Svix, secret `whsec_…`, horodatage de moins de
   5 minutes). Il ne contient pas le message : l'API le lit ensuite avec la clé Resend.
@@ -38,20 +38,20 @@ Gmail, Outlook…  ──►  Resend (MX de tasks.fs0ciety.org)  ──►  webh
 
 ## Installation (une fois)
 
-1. **Resend → Domains → Add domain** : `tasks.fs0ciety.org`, puis activer la **réception**
+1. **Resend → Domains → Add domain** : `tasks.tandem-agenda.app`, puis activer la **réception**
    (*Receiving*). Resend affiche les enregistrements DNS à créer, dont un **MX** pour
-   `tasks.fs0ciety.org`.
-2. **Cloudflare → fs0ciety.org → DNS → Records** : ajouter exactement ces enregistrements
+   `tasks.tandem-agenda.app`.
+2. **Cloudflare → tandem-agenda.app → DNS → Records** : ajouter exactement ces enregistrements
    (proxy désactivé, « DNS only »). Rien à faire dans *Email Routing* de Cloudflare. De retour
    dans Resend : *Verify*.
 3. **Resend → Webhooks → Add endpoint** :
-   - URL : `https://agenda.fs0ciety.org/v1/inbound/resend` ;
+   - URL : `https://tandem-agenda.app/v1/inbound/resend` ;
    - événement : **`email.received`** uniquement ;
    - copier le **Signing secret** (`whsec_…`).
-4. **Resend → API Keys → Create API key** : nom « Agenda — réception », permission
+4. **Resend → API Keys → Create API key** : nom « Tandem — réception », permission
    **Full access** (une clé « Sending access » ne peut pas lire les e-mails reçus).
 5. **Coolify** (service `api`), puis **Redeploy** :
-   - `INBOUND_EMAIL_ADDRESS` = `{token}@tasks.fs0ciety.org` (littéralement `{token}`) ;
+   - `INBOUND_EMAIL_ADDRESS` = `{token}@tasks.tandem-agenda.app` (littéralement `{token}`) ;
    - `RESEND_WEBHOOK_SECRET` = le secret `whsec_…` ;
    - `RESEND_API_KEY` = la clé créée à l'étape 4.
 
@@ -68,4 +68,4 @@ Gmail, Outlook…  ──►  Resend (MX de tasks.fs0ciety.org)  ──►  webh
 | Réponses `502` | `RESEND_API_KEY` invalide ou en « Sending access » |
 | Réponses `403` ou page Cloudflare | Règle WAF / *Bot Fight Mode* qui bloque les POST de Resend : autoriser `/v1/inbound/resend` |
 | Réponse `{"ignored":"address"}` | Adresse remplacée ou désactivée dans les Réglages |
-| Rien dans Resend → *Receiving* | MX de `tasks.fs0ciety.org` absent ou non vérifié |
+| Rien dans Resend → *Receiving* | MX de `tasks.tandem-agenda.app` absent ou non vérifié |

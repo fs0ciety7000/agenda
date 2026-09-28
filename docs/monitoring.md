@@ -31,7 +31,7 @@ n'apparaît pas.
 - **Incidents** : ouverts automatiquement, fermés au retour. Chaque ouverture et chaque retour
   envoient un e-mail (« 🔴 Incident : Sauvegardes » / « ✅ Résolu ») et une notification aux
   navigateurs abonnés des administrateurs (`ADMIN_EMAILS`).
-- **Page publique** `https://agenda.fs0ciety.org/status` : état de chaque composant, barres de
+- **Page publique** `https://tandem-agenda.app/status` : état de chaque composant, barres de
   disponibilité sur 90 jours, incidents (sans détail technique). À partager, ou à mettre en
   favori sur le téléphone.
 - **Administration → Surveillance** : requêtes par quart d'heure sur 24 h, erreurs 5xx, temps de
@@ -70,10 +70,10 @@ mêmes moniteurs.
 
 | Nom | Type | Réglages |
 |---|---|---|
-| Site | HTTP(s) | `https://agenda.fs0ciety.org/healthz`, intervalle 60 s, 3 essais avant alerte |
-| État détaillé | HTTP(s) – Json Query | `https://agenda.fs0ciety.org/v1/status`, expression `status`, valeur attendue `operational` |
+| Site | HTTP(s) | `https://tandem-agenda.app/healthz`, intervalle 60 s, 3 essais avant alerte |
+| État détaillé | HTTP(s) – Json Query | `https://tandem-agenda.app/v1/status`, expression `status`, valeur attendue `operational` |
 | Sauvegardes | Push | intervalle **90 000 s** (25 h) ; copier l'URL « Push » dans la variable Coolify `BACKUP_HEARTBEAT_URL` (service `backup`) puis redéployer |
-| Page de connexion | HTTP(s) – Keyword | `https://agenda.fs0ciety.org/login`, mot-clé `Tandem` |
+| Page de connexion | HTTP(s) – Keyword | `https://tandem-agenda.app/login`, mot-clé `Tandem` |
 
 **Certificat HTTPS** : ce n'est pas un type de moniteur mais une option du moniteur « Site ».
 Dans son formulaire, section *Advanced*, cocher *Certificate Expiry Notification* : Uptime Kuma
@@ -92,5 +92,5 @@ fonctionne), ntfy, Discord… Cocher *Default enabled* pour les appliquer à tou
 ### Page de statut Uptime Kuma (facultatif)
 
 L'app a déjà sa page `/status`. Uptime Kuma peut en publier une seconde, hébergée ailleurs (donc
-visible même serveur arrêté) : *Status Pages → New* ; pour `status.fs0ciety.org`, un
+visible même serveur arrêté) : *Status Pages → New* ; pour `status.tandem-agenda.app`, un
 enregistrement DNS Cloudflare vers la machine d'Uptime Kuma.

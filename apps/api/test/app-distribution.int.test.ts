@@ -68,10 +68,10 @@ describe('Distribution Android (relais de la release GitHub)', () => {
       versionCode: 42,
       versionName: '0.3.42',
       sha256: 'ab'.repeat(32),
-      apkUrl: 'http://localhost:3000/v1/app/android/agenda-gn.apk?v=42',
+      apkUrl: 'http://localhost:3000/v1/app/android/tandem.apk?v=42',
     });
     const apk = await http()
-      .get('/v1/app/android/agenda-gn.apk')
+      .get('/v1/app/android/tandem.apk')
       .buffer(true)
       .parse((res, cb) => {
         const chunks: Buffer[] = [];
@@ -83,7 +83,10 @@ describe('Distribution Android (relais de la release GitHub)', () => {
     expect(apk.headers['cache-control']).toBe('no-store, no-transform');
     expect(v.headers['cache-control']).toBe('no-store');
     expect(Buffer.compare(apk.body as Buffer, gh.apk)).toBe(0);
+    expect(apk.headers['content-disposition']).toBe('attachment; filename="tandem.apk"');
     expect(gh.calls.every((c) => c.auth === undefined)).toBe(true);
+    // Ancien nom (liens partagés, apps installées avant le renommage) : toujours servi.
+    await http().get('/v1/app/android/agenda-gn.apk').expect(200);
   });
 
   it('dépôt privé : le jeton est utilisé ; sans jeton ou sans release → 404', async () => {
@@ -107,8 +110,8 @@ describe('Distribution Android (relais de la release GitHub)', () => {
         return Response.json({
           assets: [
             { name: 'version.json', url: 'https://api.github.com/assets/10' },
-            { name: 'agenda-gn.apk', url: 'https://api.github.com/assets/11' },
-            { name: 'agenda-gn-46.apk', url: 'https://api.github.com/assets/12' },
+            { name: 'tandem.apk', url: 'https://api.github.com/assets/11' },
+            { name: 'tandem-46.apk', url: 'https://api.github.com/assets/12' },
           ],
         });
       }
@@ -117,7 +120,7 @@ describe('Distribution Android (relais de la release GitHub)', () => {
           versionCode: 46,
           versionName: '0.3.46',
           sha256: 'cd'.repeat(32),
-          apkAsset: 'agenda-gn-46.apk',
+          apkAsset: 'tandem-46.apk',
         });
       if (url.endsWith('/assets/12')) return new Response(apk46);
       return new Response('', { status: 404 });
@@ -125,7 +128,7 @@ describe('Distribution Android (relais de la release GitHub)', () => {
     const v = await http().get('/v1/app/android/version.json').expect(200);
     expect(v.body.versionCode).toBe(46);
     const apk = await http()
-      .get('/v1/app/android/agenda-gn.apk?v=46')
+      .get('/v1/app/android/tandem.apk?v=46')
       .buffer(true)
       .parse((res, cb) => {
         const chunks: Buffer[] = [];
@@ -133,7 +136,7 @@ describe('Distribution Android (relais de la release GitHub)', () => {
         res.on('end', () => cb(null, Buffer.concat(chunks)));
       })
       .expect(200);
-    // L'APK nommé dans version.json, pas « agenda-gn.apk ».
+    // L'APK nommé dans version.json, pas « tandem.apk ».
     expect(Buffer.compare(apk.body as Buffer, apk46)).toBe(0);
 
     // Release supprimée le temps de la republier : la dernière version reste annoncée.
