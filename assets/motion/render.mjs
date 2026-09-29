@@ -17,7 +17,13 @@ const root = resolve(here, '..'); // assets/
 const out = join(root, 'out');
 const TL = JSON.parse(readFileSync(join(here, 'timeline.json'), 'utf8'));
 const SIZES = { v: [1080, 1920], s: [1080, 1080], h: [1920, 1080] };
-const TYPES = { '.html': 'text/html', '.png': 'image/png', '.woff2': 'font/woff2', '.json': 'application/json', '.mjs': 'text/javascript' };
+const TYPES = {
+  '.html': 'text/html',
+  '.png': 'image/png',
+  '.woff2': 'font/woff2',
+  '.json': 'application/json',
+  '.mjs': 'text/javascript',
+};
 
 const server = createServer((req, res) => {
   const p = join(root, decodeURIComponent(new URL(req.url, 'http://x').pathname));
