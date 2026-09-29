@@ -24,6 +24,7 @@ import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } fr
 import { useEffect, useRef, useState } from 'react';
 import { APK_URL, APP_URL, CONTACT_EMAIL, DOCS_URL, PLAY_URL } from '@/lib/config';
 import type { Content, FeatureIcon, Locale } from '@/lib/content';
+import { rememberLang } from './nav';
 import { EASE, PhoneFrame, Reveal, SectionHeading } from './ui';
 
 const ICONS: Record<FeatureIcon, LucideIcon> = {
@@ -453,6 +454,7 @@ export function Footer({ t }: { t: Content }) {
           <p className="max-w-xs text-text-muted">{t.footer.tagline}</p>
           <a
             href={t.lang.href}
+            onClick={() => rememberLang(t.lang.href)}
             className="text-sm text-text-muted underline underline-offset-4 hover:text-text"
           >
             {t.lang.other}
