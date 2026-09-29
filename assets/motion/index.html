@@ -151,7 +151,7 @@ function renderHook(t) {
     const giant = { x: W / 2 - G.cx + Math.sin(t * 95) * shake, y: H / 2 - G.cy + Math.cos(t * 83) * shake, s: G.g * (1.9 - 0.9 * e), r: (1 - e) * (i % 2 ? -9 : 9) };
     const x = lerp(giant.x, 0, mv), y = lerp(giant.y, 0, mv), s = lerp(giant.s, 1, mv), r = lerp(giant.r, 0, mv);
     const someoneGiant = t < allIn + 0.1 && mv >= 1;
-    const o = e * (someoneGiant ? 0.26 : 1);
+    const o = e * (someoneGiant ? 0.1 : 1);
     tf(w, { x, y, s, r, o, blur: (1 - e) * 26 });
   });
   // Final : la phrase respire sur le temps puis la caméra plonge.
@@ -252,9 +252,9 @@ function makeFeature({ start, end, img, crop: c, title, sub }) {
       tf(cardWrap, { x: left + (1 - e) * W * 0.75 + x, y: top + (1 - e) * 120 * U, r: (1 - e) * 7, blur: (1 - e) * 18 + Math.abs(x) / W * 30,
         s: 1 + 0.008 * pulse(t) });
       const th = text.offsetHeight;
-      tf(text, { x: FEAT.tx + x * 0.6, y: F === 'h' ? H / 2 - th / 2 : FEAT.ty, o: 1 - prog(t, end - 0.18, end) });
+      tf(text, { x: FEAT.tx + x * 0.6, y: F === 'h' ? H / 2 - th / 2 : FEAT.ty, o: t < start - 0.02 ? 0 : 1 - prog(t, end - 0.18, end) });
       lines.forEach((l, i) => { const q = outExpo(prog(t, start + 0.05 + i * 0.1, start + 0.6 + i * 0.1)); tf(l, { y: (1 - q) * FEAT.title * 1.1 * U }); });
-      const q = outExpo(prog(t, start + 0.3, start + 0.8)); tf(subIn, { y: (1 - q) * 80 * U });
+      const q = outExpo(prog(t, start + 0.3, start + 0.8)); tf(subIn, { y: (1 - q) * (subIn.offsetHeight + 20 * U) });
       return true;
     },
   };

@@ -1,6 +1,6 @@
 // Rendu image par image de index.html (Playwright + Chromium).
 //   node render.mjs sheet                → planche contact (une image par temps fort) dans ../out/
-//   node render.mjs frames v|s|h         → ../out/frames-<f>/0000.png … (30 i/s, 20 s)
+//   node render.mjs frames v|s|h [de] [à] → ../out/frames-<f>/0000.png … (30 i/s, 20 s)
 // Lancer depuis un dossier où @playwright/test est installé (ex. apps/web) :
 //   node ../../assets/motion/render.mjs sheet
 import { createServer } from 'node:http';
@@ -39,7 +39,7 @@ async function open(browser, f) {
   return page;
 }
 
-const [mode = 'sheet', fmt = 'v'] = process.argv.slice(2);
+const [mode = 'sheet', fmt = 'v', from = '0', to = ''] = process.argv.slice(2);
 const browser = await chromium.launch();
 mkdirSync(out, { recursive: true });
 
@@ -69,7 +69,7 @@ if (mode === 'sheet') {
   mkdirSync(dir, { recursive: true });
   const page = await open(browser, fmt);
   const n = TL.duration * TL.fps;
-  for (let i = 0; i < n; i++) {
+  for (let i = +from; i < (to ? +to : n); i++) {
     const file = join(dir, `${String(i).padStart(4, '0')}.png`);
     if (existsSync(file) && process.env.RESUME) continue;
     await page.evaluate((x) => window.renderAt(x), i / TL.fps);
