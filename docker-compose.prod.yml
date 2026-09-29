@@ -17,6 +17,7 @@ services:
     environment:
       # Adresse affichée sur /privacy (politique de confidentialité).
       PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-}
+      SITE_URL: ${SITE_URL:-https://decouvrir.tandem-agenda.app}
     expose:
       - '3000'
     depends_on:
