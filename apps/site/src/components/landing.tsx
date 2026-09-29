@@ -1,4 +1,5 @@
 import { content, type Locale } from '@/lib/content';
+import { Film } from './film';
 import { Hero } from './hero';
 import { Nav } from './nav';
 import { Balance, Cta, Faq, Features, Footer, How, Privacy, Screens, Strip } from './sections';
@@ -18,6 +19,7 @@ export function Landing({ locale }: { locale: Locale }) {
       <main id="main">
         <Hero t={t} />
         <Strip t={t} />
+        <Film t={t} />
         <Features t={t} />
         <How t={t} />
         <Balance t={t} />
