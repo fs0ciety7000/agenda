@@ -17,8 +17,6 @@ const config: NextConfig = {
   // Identifiant du build : invalide le cache hors ligne du navigateur à chaque version.
   env: {
     NEXT_PUBLIC_BUILD_ID: process.env.NEXT_PUBLIC_BUILD_ID ?? String(Date.now()),
-    // Site vitrine : un visiteur non connecté arrivant sur « / » y est envoyé (vide = /login).
-    SITE_URL: process.env.SITE_URL ?? '',
   },
   poweredByHeader: false,
   // Image Docker minimale (server.js autonome) ; racine = monorepo pour tracer les paquets workspace.
