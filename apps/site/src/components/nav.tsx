@@ -8,6 +8,11 @@ import { APP_URL } from '@/lib/config';
 import type { Content } from '@/lib/content';
 import { ButtonLink, EASE } from './ui';
 
+/** Mémorise le choix de langue (lu par nginx sur « / », cf. nginx.conf). */
+export function rememberLang(href: string) {
+  document.cookie = `lang=${href === '/' ? 'fr' : 'en'}; path=/; max-age=31536000; samesite=lax`;
+}
+
 export function Nav({ t }: { t: Content }) {
   const { scrollY } = useScroll();
   const [scrolled, setScrolled] = useState(false);
@@ -62,6 +67,7 @@ export function Nav({ t }: { t: Content }) {
         <div className="hidden items-center gap-2 md:flex">
           <a
             href={t.lang.href}
+            onClick={() => rememberLang(t.lang.href)}
             hrefLang={t.lang.href === '/' ? 'fr' : 'en'}
             aria-label={`${t.lang.label} : ${t.lang.other}`}
             className="rounded-full px-3 py-2 text-sm text-text-muted hover:text-text"
@@ -112,7 +118,11 @@ export function Nav({ t }: { t: Content }) {
                 </li>
               ))}
               <li className="mt-2 flex items-center justify-between gap-3">
-                <a href={t.lang.href} className="px-3 py-3 text-sm text-text-muted">
+                <a
+                  href={t.lang.href}
+                  onClick={() => rememberLang(t.lang.href)}
+                  className="px-3 py-3 text-sm text-text-muted"
+                >
                   {t.lang.other}
                 </a>
                 <span className="flex items-center gap-2">

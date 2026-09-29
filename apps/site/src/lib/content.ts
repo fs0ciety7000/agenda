@@ -37,6 +37,14 @@ export interface Content {
     addedMeta: string;
   };
   strip: string[];
+  film: {
+    eyebrow: string;
+    title: string;
+    text: string;
+    label: string;
+    unmute: string;
+    mute: string;
+  };
   features: {
     eyebrow: string;
     title: string;
@@ -136,6 +144,14 @@ const fr: Content = {
     'Google Calendar',
     'Français · English',
   ],
+  film: {
+    eyebrow: 'En 20 secondes',
+    title: 'Tandem, en mouvement.',
+    text: 'Cocher, répéter, replanifier : le foyer s’organise tout seul.',
+    label: 'Vidéo de présentation de Tandem (20 secondes)',
+    unmute: 'Activer le son',
+    mute: 'Couper le son',
+  },
   features: {
     eyebrow: 'Fonctionnalités',
     title: 'Tout ce qu’il faut pour que la maison tourne, rien de plus.',
@@ -354,6 +370,14 @@ const en: Content = {
     'Google Calendar',
     'English · Français',
   ],
+  film: {
+    eyebrow: 'In 20 seconds',
+    title: 'Tandem, in motion.',
+    text: 'Tick, repeat, reschedule: the household runs itself. (Video in French.)',
+    label: 'Tandem presentation video (20 seconds, in French)',
+    unmute: 'Turn sound on',
+    mute: 'Turn sound off',
+  },
   features: {
     eyebrow: 'Features',
     title: 'Everything to keep the house running, nothing more.',

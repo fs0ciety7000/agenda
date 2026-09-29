@@ -1,0 +1,1075 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Tandem · motion 20 s</title>
+    <!--
+  Vidéo Tandem (20 s, 120 BPM). Chaque image est une fonction pure du temps :
+  window.renderAt(t) — rendu image par image par render.mjs (Playwright).
+  Formats : ?f=v (1080×1920), ?f=s (1080×1080), ?f=h (1920×1080). ?t=… pour prévisualiser.
+  Toute l'interface montrée est recadrée dans les vraies captures (../app, ../site) ; rien n'est redessiné.
+-->
+    <style>
+      @font-face {
+        font-family: Inter;
+        font-weight: 100 900;
+        src: url(../fonts/Inter-latin-var.woff2) format('woff2');
+        unicode-range:
+          U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F,
+          U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: Inter;
+        font-weight: 100 900;
+        src: url(../fonts/Inter-latin-ext-var.woff2) format('woff2');
+        unicode-range:
+          U+0100-02AF, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F,
+          U+A720-A7FF;
+      }
+      :root {
+        --bg: #faf6f2;
+        --text: #24181d;
+        --muted: #6f5f66;
+        --accent: #7d4460;
+        --accent-dark: #e0a9c3;
+        --plum: #7a5c99;
+        --ocean: #3d7ea6;
+        --sage: #5e8c6a;
+        --dark: #141012;
+      }
+      html,
+      body {
+        margin: 0;
+        background: #000;
+      }
+      #stage {
+        position: relative;
+        overflow: hidden;
+        background: var(--bg);
+        font-family: Inter, sans-serif;
+        color: var(--text);
+        -webkit-font-smoothing: antialiased;
+        font-feature-settings: 'cv11', 'ss01';
+      }
+      .layer {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+      }
+      .abs {
+        position: absolute;
+        left: 0;
+        top: 0;
+        transform-origin: 50% 50%;
+        will-change: transform;
+      }
+      .blob {
+        position: absolute;
+        border-radius: 50%;
+      }
+      .crop {
+        background-repeat: no-repeat;
+      }
+      .grad {
+        background: linear-gradient(95deg, var(--accent) 0%, var(--plum) 55%, var(--ocean) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .grad-dark {
+        background: linear-gradient(95deg, #e0a9c3 0%, #a78bc4 55%, #6fa8cc 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+      }
+      .mask {
+        display: block;
+        overflow: hidden;
+        padding-bottom: 0.08em;
+        margin-bottom: -0.08em;
+      }
+      .mask > span {
+        display: inline-block;
+      }
+      .card {
+        border-radius: 36px;
+        box-shadow:
+          0 40px 90px -30px rgb(36 24 29 / 0.45),
+          0 0 0 1px rgb(36 24 29 / 0.06);
+        overflow: hidden;
+        background-color: var(--bg);
+      }
+      .word {
+        display: inline-block;
+        font-weight: 800;
+        letter-spacing: -0.045em;
+        margin-right: 0.22em;
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stage"></div>
+    <script>
+      const Q = new URLSearchParams(location.search);
+      const F = Q.get('f') || 'v';
+      const [W, H] = { v: [1080, 1920], s: [1080, 1080], h: [1920, 1080] }[F];
+      const U = Math.min(W, H) / 1080;
+      const stage = document.getElementById('stage');
+      stage.style.width = W + 'px';
+      stage.style.height = H + 'px';
+
+      /* ---------- outils ---------- */
+      const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+      const lerp = (a, b, x) => a + (b - a) * x;
+      const prog = (t, a, b) => clamp((t - a) / (b - a));
+      const outExpo = (x) => (x >= 1 ? 1 : 1 - Math.pow(2, -10 * x));
+      const outCubic = (x) => 1 - Math.pow(1 - x, 3);
+      const inCubic = (x) => x * x * x;
+      const inOut = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+      const outBack = (x, s = 1.9) => 1 + (s + 1) * Math.pow(x - 1, 3) + s * Math.pow(x - 1, 2);
+      /** Ressort amorti : 0 → 1 avec léger dépassement. */
+      const spring = (x, k = 7, w = 13) => (x <= 0 ? 0 : 1 - Math.exp(-k * x) * Math.cos(w * x));
+      /** Pulsation sur chaque temps (120 BPM). */
+      const pulse = (t, per = 0.5, k = 7) => Math.exp(-(((t % per) + per) % per) * k);
+      const between = (t, a, b) => t >= a && t < b;
+
+      function el(tag, parent, cls = '', css = {}, html = '') {
+        const e = document.createElement(tag);
+        if (cls) e.className = cls;
+        Object.assign(e.style, css);
+        if (html) e.innerHTML = html;
+        parent.appendChild(e);
+        return e;
+      }
+      function tf(e, { x = 0, y = 0, s = 1, sx, sy, r = 0, o, blur, rx, ry } = {}) {
+        const persp =
+          rx || ry
+            ? `perspective(${2400 * U}px) rotateX(${rx || 0}deg) rotateY(${ry || 0}deg) `
+            : '';
+        e.style.transform = `translate(${x}px, ${y}px) ${persp}rotate(${r}deg) scale(${sx ?? s}, ${sy ?? s})`;
+        if (o !== undefined) e.style.opacity = o;
+        if (blur !== undefined) e.style.filter = blur > 0.2 ? `blur(${blur}px)` : 'none';
+      }
+      const show = (e, v) => (e.style.display = v ? '' : 'none');
+      const px = (n) => n + 'px';
+
+      /* Captures réelles (Android, fastlane) : 1080 × 2160. */
+      const IMG = {
+        today: '../app/1_today.png',
+        repeat: '../app/2_repeat.png',
+        cal: '../app/3_calendar.png',
+      };
+      /** Morceau de capture [x, y, w, h] affiché à l'échelle k. */
+      function crop(parent, src, [x, y, w, h], k, css = {}) {
+        return el('div', parent, 'crop abs', {
+          width: px(w * k),
+          height: px(h * k),
+          backgroundImage: `url(${src})`,
+          backgroundSize: `${1080 * k}px ${2160 * k}px`,
+          backgroundPosition: `${-x * k}px ${-y * k}px`,
+          ...css,
+        });
+      }
+
+      /* ---------- fond clair animé (scènes 2 à 5) ---------- */
+      const light = el('div', stage, 'layer', { background: 'var(--bg)' });
+      const blobs = [
+        ['rgb(125 68 96 / .20)', 0.9],
+        ['rgb(61 126 166 / .16)', 0.8],
+        ['rgb(122 92 153 / .16)', 0.7],
+        ['rgb(94 140 106 / .12)', 0.6],
+      ].map(([c, sz]) =>
+        el('div', light, 'blob', {
+          width: px(Math.max(W, H) * sz),
+          height: px(Math.max(W, H) * sz),
+          background: `radial-gradient(circle, ${c} 0%, transparent 65%)`,
+        }),
+      );
+      function renderLight(t) {
+        blobs.forEach((b, i) => {
+          const a = t * 0.35 + i * 1.7,
+            R = Math.max(W, H) * 0.28;
+          const sz = parseFloat(b.style.width);
+          tf(b, {
+            x: W / 2 + Math.cos(a) * R - sz / 2 + (i - 1.5) * W * 0.2,
+            y: H / 2 + Math.sin(a * 1.3) * R - sz / 2 + (i % 2 ? -1 : 1) * H * 0.18,
+            s: 1 + 0.06 * pulse(t) * (i === 0),
+          });
+        });
+      }
+
+      /* ---------- curseur + ondes de clic (au-dessus de tout, ajoutés à la fin) ---------- */
+      let cursor,
+        ripples = [];
+      const CURSOR_SVG = `<svg width="${64 * U}" height="${64 * U}" viewBox="0 0 32 32"><path d="M6 3 L6 25 L11.5 19.8 L15.2 28 L19 26.3 L15.4 18.3 L23 18.3 Z" fill="#24181D" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>`;
+
+      /* =========================================================
+   1 · ACCROCHE (0 – 3 s) : 5 mots, typographie cinétique
+   ========================================================= */
+      const hook = el('div', stage, 'layer', { background: 'var(--dark)' });
+      const hookGlow = [0, 1].map((i) =>
+        el('div', hook, 'blob', {
+          width: px(W * 1.2),
+          height: px(W * 1.2),
+          background: `radial-gradient(circle, ${i ? 'rgb(111 168 204 / .22)' : 'rgb(224 169 195 / .30)'} 0%, transparent 62%)`,
+        }),
+      );
+      const HOOK = {
+        v: { size: 205, left: 84, width: 920 },
+        s: { size: 150, left: 70, width: 940 },
+        h: { size: 190, left: 150, width: 1620 },
+      }[F];
+      const hookFinal = el('div', hook, '', {
+        position: 'absolute',
+        left: px(HOOK.left),
+        width: px(HOOK.width),
+        fontSize: px(HOOK.size * (F === 'h' ? 1 : U)),
+        lineHeight: '0.98',
+        color: '#F1E9EC',
+      });
+      const WORDS = ['Encore', 'toi', 'qui', 'fais', 'tout ?'];
+      const words = WORDS.map((w, i) =>
+        el('span', hookFinal, 'word' + (i === 4 ? ' grad-dark' : ''), {}, w),
+      );
+      const flash = el('div', hook, 'layer', { background: '#fff', opacity: 0 });
+      const hookTag = el(
+        'div',
+        hook,
+        'abs',
+        {
+          fontSize: px(34 * U),
+          fontWeight: 600,
+          letterSpacing: '.3em',
+          color: 'rgb(241 233 236 / .55)',
+          whiteSpace: 'nowrap',
+        },
+        'LES TÂCHES DE LA MAISON',
+      );
+      let wordGeo = [];
+      function layoutHook() {
+        hookFinal.style.top = px((H - hookFinal.offsetHeight) / 2 + (F === 'v' ? 40 : 30) * U);
+        const fr = hookFinal.getBoundingClientRect(),
+          sr = stage.getBoundingClientRect();
+        wordGeo = words.map((w) => {
+          const r = w.getBoundingClientRect();
+          const cx = r.left - sr.left + r.width / 2,
+            cy = r.top - sr.top + r.height / 2;
+          return { cx, cy, g: Math.min(2.6, (W * 0.84) / r.width, (H * 0.3) / r.height) };
+        });
+        tagGeo = { x: HOOK.left, y: fr.top - sr.top - 80 * U };
+      }
+      let tagGeo;
+      function renderHook(t) {
+        show(hook, t < 3.6);
+        if (t >= 3.6) return;
+        hookGlow.forEach((g, i) =>
+          tf(g, {
+            x: W * (i ? 0.45 : -0.25) + Math.sin(t * 1.3 + i) * 60 * U,
+            y: H * (i ? 0.5 : -0.1) + Math.cos(t + i) * 50 * U,
+            s: 1 + 0.12 * pulse(t),
+          }),
+        );
+        const allIn = 2.5;
+        words.forEach((w, i) => {
+          const a = i * 0.5,
+            G = wordGeo[i];
+          if (t < a) return tf(w, { o: 0 });
+          const e = outExpo(prog(t, a, a + 0.22));
+          const mv = outExpo(prog(t, i < 4 ? a + 0.5 : 2.5, i < 4 ? a + 0.82 : 2.85));
+          const shake = Math.exp(-(t - a) * 9) * 16 * U;
+          const giant = {
+            x: W / 2 - G.cx + Math.sin(t * 95) * shake,
+            y: H / 2 - G.cy + Math.cos(t * 83) * shake,
+            s: G.g * (1.9 - 0.9 * e),
+            r: (1 - e) * (i % 2 ? -9 : 9),
+          };
+          const x = lerp(giant.x, 0, mv),
+            y = lerp(giant.y, 0, mv),
+            s = lerp(giant.s, 1, mv),
+            r = lerp(giant.r, 0, mv);
+          const someoneGiant = t < allIn + 0.1 && mv >= 1;
+          const o = e * (someoneGiant ? 0.1 : 1);
+          tf(w, { x, y, s, r, o, blur: (1 - e) * 26 });
+        });
+        // Final : la phrase respire sur le temps puis la caméra plonge.
+        const push = outExpo(prog(t, 2.5, 3)) * 0.06 + inCubic(prog(t, 2.8, 3.2)) * 0.5;
+        tf(hookFinal, { s: 1 + push + 0.015 * pulse(t) * (t > 2.5) });
+        const tagIn = outExpo(prog(t, 2.55, 2.85));
+        tf(hookTag, {
+          x: tagGeo.x,
+          y: tagGeo.y + (1 - tagIn) * 30 * U,
+          o: tagIn * (1 - prog(t, 2.9, 3)),
+        });
+        flash.style.opacity = t < 2.6 ? 0.16 * Math.exp(-(t % 0.5) * 14) : 0;
+        // Révélation : un cercle s'ouvre au centre (3,0 → 3,45 s).
+        const R = outExpo(prog(t, 2.95, 3.45)) * Math.hypot(W, H) * 0.62;
+        const m =
+          R > 0
+            ? `radial-gradient(circle at 50% 50%, transparent ${R}px, #000 ${R + 1.5}px)`
+            : 'none';
+        hook.style.webkitMaskImage = m;
+        hook.style.maskImage = m;
+      }
+
+      /* =========================================================
+   2 · LE PRODUIT S'ASSEMBLE (3 – 6,5 s)
+   ========================================================= */
+      const reveal = el('div', stage, 'layer');
+      const RV = {
+        v: {
+          sh: 1240,
+          pcx: 540,
+          pcy: 1200,
+          tx: 540,
+          ty: 150,
+          align: 'center',
+          logo: 140,
+          title: 150,
+          sub: 54,
+        },
+        s: {
+          sh: 900,
+          pcx: 810,
+          pcy: 540,
+          tx: 60,
+          ty: 350,
+          align: 'left',
+          logo: 74,
+          title: 84,
+          sub: 36,
+          w: 480,
+        },
+        h: {
+          sh: 920,
+          pcx: 1390,
+          pcy: 540,
+          tx: 170,
+          ty: 330,
+          align: 'left',
+          logo: 120,
+          title: 150,
+          sub: 50,
+          w: 760,
+        },
+      }[F];
+      const sw = RV.sh / 2,
+        bez = 16 * U,
+        sk = sw / 1080;
+      const phone = el('div', reveal, 'abs', {
+        width: px(sw + bez * 2),
+        height: px(RV.sh + bez * 2),
+        borderRadius: px(sw * 0.13),
+        background: '#1d1417',
+        boxShadow: `0 ${60 * U}px ${120 * U}px -${40 * U}px rgb(36 24 29 / .55)`,
+      });
+      const screen = el('div', phone, '', {
+        position: 'absolute',
+        left: px(bez),
+        top: px(bez),
+        width: px(sw),
+        height: px(RV.sh),
+        borderRadius: px(sw * 0.1),
+        overflow: 'hidden',
+        background: 'var(--bg)',
+      });
+      const BANDS = [
+        [60, 170],
+        [195, 390],
+        [440, 665],
+        [735, 785],
+        [835, 955],
+        [1003, 1118],
+        [1172, 1285],
+        [1370, 1915],
+        [1985, 2040],
+      ];
+      const strips = BANDS.map(([a, b]) => {
+        const c = crop(screen, IMG.today, [0, a, 1080, b - a], sk);
+        c.dataset.y = a * sk;
+        return c;
+      });
+      const notch = el('div', screen, '', {
+        position: 'absolute',
+        left: '50%',
+        top: px(14 * U),
+        width: px(sw * 0.26),
+        height: px(26 * U),
+        marginLeft: px(-sw * 0.13),
+        borderRadius: px(20 * U),
+        background: '#1d1417',
+      });
+      const rvText = el('div', reveal, 'abs', {
+        width: px(RV.w ? RV.w : W - 120 * U),
+        textAlign: RV.align,
+      });
+      const rvBrand = el('div', rvText, 'mask', {
+        fontSize: px(RV.title * U),
+        fontWeight: 800,
+        letterSpacing: '-.04em',
+        lineHeight: 1.05,
+      });
+      const rvBrandIn = el(
+        'span',
+        rvBrand,
+        '',
+        { display: 'inline-flex', alignItems: 'center', gap: px(24 * U) },
+        `<img src="../brand/tandem-icon-transparent.png" style="width:${RV.logo * U}px;height:${RV.logo * U}px;border-radius:${RV.logo * 0.24 * U}px">Tandem`,
+      );
+      const rvSubs = ['Les tâches du foyer,', 'enfin partagées.'].map((l, i) => {
+        const m = el('div', rvText, 'mask', {
+          fontSize: px(RV.sub * U),
+          fontWeight: 600,
+          color: i ? 'var(--accent)' : 'var(--muted)',
+          marginTop: px(i ? 0 : 18 * U),
+          lineHeight: 1.2,
+        });
+        return el('span', m, '', {}, l);
+      });
+      function renderReveal(t) {
+        show(reveal, t >= 2.9 && t < 6.8);
+        if (t < 2.9 || t >= 6.8) return;
+        const pin = spring(prog(t, 3.0, 3.9) * 0.9, 6, 11);
+        const exit = inCubic(prog(t, 6.2, 6.55));
+        const drift = Math.sin((t - 3) * 0.9);
+        tf(phone, {
+          x: RV.pcx - (sw + 2 * bez) / 2,
+          y: RV.pcy - (RV.sh + 2 * bez) / 2 + (1 - pin) * H * 0.7,
+          r: (1 - pin) * -14,
+          ry: -10 * drift * (1 - exit),
+          rx: 4,
+          s: (0.92 + 0.08 * pin + 0.05 * prog(t, 4.5, 6.2)) * (1 + exit * 0.9),
+          o: 1 - exit,
+        });
+        strips.forEach((c, i) => {
+          const a = 3.25 + i * 0.125;
+          const e = outBack(prog(t, a, a + 0.32), 1.4);
+          const side = i % 2 ? 1 : -1;
+          tf(c, {
+            x: (1 - e) * side * sw * 1.25,
+            y: +c.dataset.y + (1 - e) * 40 * U,
+            r: (1 - e) * side * 7,
+            o: clamp(prog(t, a, a + 0.12)),
+          });
+        });
+        tf(rvText, {
+          x: RV.tx - (RV.align === 'center' ? parseFloat(rvText.style.width) / 2 : 0),
+          y: RV.ty + (F === 'v' ? 0 : -60 * U) - exit * 80 * U,
+          o: 1 - exit,
+        });
+        const b = outExpo(prog(t, 3.3, 3.9));
+        tf(rvBrandIn, {
+          y: (1 - b) * 130 * U * (RV.title / 100),
+          s: 1 + 0.02 * pulse(t) * (t > 4),
+        });
+        rvSubs.forEach((s, i) => {
+          const e = outExpo(prog(t, 3.55 + i * 0.12, 4.2 + i * 0.12));
+          tf(s, { y: (1 - e) * 70 * U });
+        });
+      }
+
+      /* =========================================================
+   3 · TROIS FONCTIONNALITÉS (6,5 – 15,5 s) : un vrai geste chacune
+   ========================================================= */
+      const FEAT = {
+        v: { tx: 90, ty: 170, tw: 900, title: 150, sub: 44, box: [540, 1265, 960, 1000] },
+        s: { tx: 70, ty: 60, tw: 940, title: 96, sub: 34, box: [540, 690, 940, 610] },
+        h: { tx: 150, ty: 0, tw: 760, title: 132, sub: 44, box: [1390, 540, 880, 900] },
+      }[F];
+      function makeFeature({ start, end, img, crop: c, title, sub }) {
+        const layer = el('div', stage, 'layer');
+        const [bx, by, bw, bh] = FEAT.box;
+        const k = Math.min(bw / c[2], bh / c[3]);
+        const cw = c[2] * k,
+          ch = c[3] * k,
+          left = bx - cw / 2,
+          top = by - ch / 2;
+        const cardWrap = el('div', layer, 'abs', { width: px(cw), height: px(ch) });
+        const card = el('div', cardWrap, 'card', {
+          position: 'absolute',
+          inset: 0,
+          borderRadius: px(36 * U),
+        });
+        const shot = crop(card, img, c, k);
+        tf(shot, {});
+        const text = el('div', layer, 'abs', { width: px(FEAT.tw) });
+        const lines = title.map((l, i) => {
+          const m = el('div', text, 'mask', {
+            fontSize: px(FEAT.title * U),
+            fontWeight: 800,
+            letterSpacing: '-.045em',
+            lineHeight: 1.0,
+          });
+          return el('span', m, i ? 'grad' : '', {}, l);
+        });
+        const subM = el('div', text, 'mask', {
+          fontSize: px(FEAT.sub * U),
+          fontWeight: 500,
+          color: 'var(--muted)',
+          marginTop: px(26 * U),
+          lineHeight: 1.3,
+        });
+        const subIn = el('span', subM, '', {}, sub);
+        const num = el('div', layer, 'abs', {
+          fontSize: px(26 * U),
+          fontWeight: 700,
+          letterSpacing: '.28em',
+          color: 'var(--accent)',
+        });
+        const f = {
+          start,
+          end,
+          layer,
+          card,
+          cardWrap,
+          k,
+          left,
+          top,
+          cw,
+          ch,
+          text,
+          lines,
+          subIn,
+          num,
+          cropY: c[1],
+          /** Coordonnées capture → scène. */
+          map: (x, y) => [left + (x - c[0]) * k, top + (y - c[1]) * k],
+          /** Morceau de capture posé dans la carte, aux coordonnées capture (x, y) = coin haut-gauche. */
+          overlay: (rect, atX, atY) => {
+            const o = crop(card, img, rect, k);
+            o.dataset.x = (atX - c[0]) * k;
+            o.dataset.y = (atY - c[1]) * k;
+            tf(o, { x: +o.dataset.x, y: +o.dataset.y });
+            return o;
+          },
+          render(t) {
+            show(layer, t >= start - 0.3 && t < end + 0.1);
+            if (t < start - 0.3 || t >= end + 0.1) return false;
+            const e = outExpo(prog(t, start - 0.05, start + 0.5));
+            const x = exitX(t);
+            tf(cardWrap, {
+              x: left + (1 - e) * W * 0.75 + x,
+              y: top + (1 - e) * 120 * U,
+              r: (1 - e) * 7,
+              blur: (1 - e) * 18 + (Math.abs(x) / W) * 30,
+              s: 1 + 0.008 * pulse(t),
+            });
+            const th = text.offsetHeight;
+            tf(text, {
+              x: FEAT.tx + x * 0.6,
+              y: F === 'h' ? H / 2 - th / 2 : FEAT.ty,
+              o: t < start - 0.02 ? 0 : 1 - prog(t, end - 0.18, end),
+            });
+            lines.forEach((l, i) => {
+              const q = outExpo(prog(t, start + 0.05 + i * 0.1, start + 0.6 + i * 0.1));
+              tf(l, { y: (1 - q) * FEAT.title * 1.1 * U });
+            });
+            const q = outExpo(prog(t, start + 0.3, start + 0.8));
+            tf(subIn, { y: (1 - q) * (subIn.offsetHeight + 20 * U) });
+            return true;
+          },
+        };
+        function exitX(t) {
+          const p = inCubic(prog(t, end - 0.25, end + 0.05));
+          return -p * W * 0.9;
+        }
+        return f;
+      }
+
+      const f1 = makeFeature({
+        start: 6.5,
+        end: 9.5,
+        img: IMG.today,
+        crop: F === 'v' ? [0, 180, 1080, 1120] : [0, 730, 1080, 570],
+        title: ['Cochez.', 'C’est fait.'],
+        sub: 'Tout le foyer le voit, en direct.',
+      });
+      const f2 = makeFeature({
+        start: 9.5,
+        end: 12.5,
+        img: IMG.repeat,
+        crop: [0, 920, 1080, 980],
+        title: ['Chacun', 'son tour.'],
+        sub: 'Répétitions et tours de rôle automatiques.',
+      });
+      const f3 = makeFeature({
+        start: 12.5,
+        end: 15.5,
+        img: IMG.cal,
+        crop: [0, 180, 1080, 1380],
+        title: ['Glissez,', 'déposez.'],
+        sub: 'Replanifiez d’un geste, synchronisé avec Google Agenda.',
+      });
+
+      // 3a — cases cochées : on pose la vraie case cochée (ligne « Arroser les plantes ») sur les cases vides.
+      const CHECK = [72, 1180, 96, 96]; // case cochée, capture « Aujourd'hui »
+      const checks = [
+        [895, 8],
+        [1060, 9],
+      ].map(([cy, at]) => ({ o: f1.overlay(CHECK, 72, cy - 48), at }));
+      const burst = el('div', f1.card, 'abs', {});
+      const DOTS = ['#7D4460', '#3D7EA6', '#5E8C6A', '#7A5C99', '#B7791F', '#A65D3D'];
+      const bursts = checks.map(() =>
+        Array.from({ length: 12 }, (_, i) =>
+          el('div', f1.card, 'abs', {
+            width: px(14 * U),
+            height: px(14 * U),
+            borderRadius: '50%',
+            background: DOTS[i % 6],
+          }),
+        ),
+      );
+
+      // 3b — puces « Chaque semaine » et « mar. » : vraie puce, soulevée au clic.
+      const chipWeek = f2.overlay([516, 1176, 416, 96], 516, 1176);
+      const chipTue = f2.overlay([252, 1776, 128, 96], 252, 1776);
+      [chipWeek, chipTue].forEach((c) => (c.style.borderRadius = px(22 * U)));
+
+      // 3c — glisser « Sortir les poubelles » sur le 30.
+      const ROW = [0, 1425, 1080, 125];
+      const rowCover = el('div', f3.card, 'abs', {
+        width: px(1080 * f3.k),
+        height: px(ROW[3] * f3.k),
+        background: 'var(--bg)',
+      });
+      const ghost = crop(f3.card.parentElement, IMG.cal, ROW, f3.k, {
+        borderRadius: px(20 * U),
+        boxShadow: `0 ${30 * U}px ${60 * U}px -${20 * U}px rgb(36 24 29 / .5)`,
+      });
+      const holdRing = el('div', f3.layer, 'abs', {
+        width: px(120 * U),
+        height: px(120 * U),
+        borderRadius: '50%',
+      });
+      const dayPulse = el('div', f3.card, 'abs', {
+        width: px(150 * f3.k * 1.6),
+        height: px(150 * f3.k * 1.6),
+        borderRadius: '50%',
+        border: `${6 * U}px solid var(--accent)`,
+      });
+
+      // Curseur : images clés en coordonnées capture, converties en coordonnées scène.
+      function feat1Path() {
+        return [
+          [6.7, ...f1.map(900, 1400)],
+          [7.8, ...f1.map(128, 900)],
+          [8.1, ...f1.map(128, 900)],
+          [8.85, ...f1.map(128, 1064)],
+          [9.4, ...f1.map(700, 1150)],
+        ];
+      }
+      function feat2Path() {
+        return [
+          [9.9, ...f2.map(950, 1900)],
+          [10.45, ...f2.map(420, 1090)],
+          [10.9, ...f2.map(700, 1230)],
+          [11.15, ...f2.map(700, 1230)],
+          [11.85, ...f2.map(318, 1826)],
+          [12.4, ...f2.map(600, 1700)],
+        ];
+      }
+      function feat3Path() {
+        return [
+          [12.8, ...f3.map(1000, 1560)],
+          [13.2, ...f3.map(560, 1488)],
+          [13.6, ...f3.map(560, 1488)],
+          [14.4, ...f3.map(396, 912)],
+          [14.55, ...f3.map(396, 912)],
+          [15.3, ...f3.map(700, 700)],
+        ];
+      }
+
+      function renderFeatures(t) {
+        f1.render(t);
+        f2.render(t);
+        f3.render(t);
+        // 3a
+        checks.forEach(({ o, at }, j) => {
+          const e = outBack(prog(t, at, at + 0.25), 2.4);
+          tf(o, {
+            x: +o.dataset.x,
+            y: +o.dataset.y,
+            s: t < at ? 0 : 0.4 + 0.6 * e,
+            o: t < at ? 0 : 1,
+          });
+          const [cx, cy] = [(120 - 0) * f1.k, ((j ? 1060 : 895) - f1.cropY) * f1.k];
+          bursts[j].forEach((d, i) => {
+            const p = prog(t, at, at + 0.55),
+              a = (i / 12) * Math.PI * 2 + j;
+            const r = outCubic(p) * (120 + (i % 3) * 40) * U;
+            tf(d, {
+              x: cx + Math.cos(a) * r - 7 * U,
+              y: cy + Math.sin(a) * r - 7 * U,
+              s: 1 - p,
+              o: p > 0 && p < 1 ? 1 : 0,
+            });
+          });
+        });
+        // 3b
+        [
+          [chipWeek, 11],
+          [chipTue, 12],
+        ].forEach(([c, at]) => {
+          const p = prog(t, at, at + 0.45);
+          const s = 1 + Math.sin(p * Math.PI) * 0.14 * (p > 0 && p < 1);
+          c.style.boxShadow =
+            p > 0 && p < 1
+              ? `0 ${24 * U}px ${40 * U}px -${14 * U}px rgb(125 68 96 / ${0.6 * Math.sin(p * Math.PI)})`
+              : 'none';
+          tf(c, { x: +c.dataset.x, y: +c.dataset.y, s });
+        });
+        // 3c
+        const k = f3.k,
+          lifted = t >= 13.6 && t < 14.5;
+        tf(rowCover, { x: 0, y: (ROW[1] - 180) * k, o: t >= 13.6 ? 1 : 0 });
+        const cur = cursorAt(t);
+        if (t >= 13.6 && t < 14.8) {
+          const lift = outBack(prog(t, 13.6, 13.8));
+          const drop = inCubic(prog(t, 14.5, 14.75));
+          const grab = f3.map(560, 1488),
+            rowTL = f3.map(0, ROW[1]);
+          const off = [rowTL[0] - grab[0], rowTL[1] - grab[1]];
+          const sc =
+            lerp(1, 0.55, inOut(prog(t, 13.7, 14.4))) * (1 + 0.04 * lift) * (1 - drop * 0.9);
+          ghost.style.transformOrigin = `${-off[0]}px ${-off[1]}px`;
+          tf(ghost, {
+            x: cur[0] + off[0] - f3.left,
+            y: cur[1] + off[1] - f3.top,
+            s: sc,
+            r: lift * -2.5,
+            o: 1 - drop,
+          });
+        } else tf(ghost, { o: 0 });
+        const hp = prog(t, 13.25, 13.6);
+        holdRing.style.background = `conic-gradient(var(--accent) ${hp * 360}deg, transparent 0)`;
+        holdRing.style.webkitMaskImage =
+          holdRing.style.maskImage = `radial-gradient(circle, transparent ${50 * U}px, #000 ${52 * U}px)`;
+        const hr = f3.map(560, 1488);
+        tf(holdRing, {
+          x: hr[0] - 60 * U,
+          y: hr[1] - 60 * U,
+          o: t >= 13.25 && t < 13.75 ? 1 - prog(t, 13.6, 13.75) : 0,
+          s: 1 + 0.3 * prog(t, 13.6, 13.75),
+        });
+        const dp = prog(t, 14.5, 15.0);
+        const ds = 150 * f3.k * 1.6;
+        tf(dayPulse, {
+          x: (396 - 0) * k - ds / 2,
+          y: (912 - 180) * k - ds / 2,
+          s: 0.4 + dp * 0.9,
+          o: dp > 0 && dp < 1 ? 1 - dp : 0,
+        });
+      }
+
+      /* =========================================================
+   4 · LE CHIFFRE (15,5 – 17,5 s)
+   ========================================================= */
+      const metric = el('div', stage, 'layer', {
+        background: 'linear-gradient(150deg, #7D4460 0%, #6A4C86 60%, #3D6F95 100%)',
+        color: '#fff',
+      });
+      const MT = {
+        v: { num: 720, unit: 150, pre: 70, sub: 48 },
+        s: { num: 470, unit: 96, pre: 48, sub: 36 },
+        h: { num: 480, unit: 110, pre: 52, sub: 42 },
+      }[F];
+      const mCol = el('div', metric, 'abs', { width: px(W), textAlign: 'center' });
+      const mPre = el(
+        'div',
+        mCol,
+        '',
+        { fontSize: px(MT.pre * U), fontWeight: 600, letterSpacing: '.02em', opacity: 0.85 },
+        'Prêt en',
+      );
+      const mNumBox = el('div', mCol, '', {
+        position: 'relative',
+        height: px(MT.num * U * 1.02),
+        margin: `${24 * U}px 0`,
+        fontSize: px(MT.num * U),
+        fontWeight: 800,
+        letterSpacing: '-.06em',
+        lineHeight: px(MT.num * U * 1.08),
+      });
+      const digits = ['1', '2', '3'].map((d) =>
+        el('div', mNumBox, '', { position: 'absolute', left: 0, right: 0, top: 0 }, d),
+      );
+      const ring = el('div', mNumBox, '', {
+        position: 'absolute',
+        left: '50%',
+        top: '50%',
+        width: px(MT.num * U * 1.02),
+        height: px(MT.num * U * 1.02),
+        borderRadius: '50%',
+        marginLeft: px(-MT.num * U * 0.51),
+        marginTop: px(-MT.num * U * 0.51),
+      });
+      const mUnitM = el('div', mCol, 'mask', {
+        fontSize: px(MT.unit * U),
+        fontWeight: 800,
+        letterSpacing: '-.04em',
+        lineHeight: 1,
+      });
+      const mUnit = el('span', mUnitM, '', {}, 'minutes');
+      const mSubM = el('div', mCol, 'mask', {
+        fontSize: px(MT.sub * U),
+        fontWeight: 500,
+        marginTop: px(24 * U),
+        opacity: 0.9,
+      });
+      const mSub = el('span', mSubM, '', {}, 'pour installer votre foyer à deux.');
+      function renderMetric(t) {
+        show(metric, t >= 15.2 && t < 17.8);
+        if (t < 15.2 || t >= 17.8) return;
+        const a = lerp(W + H * 0.35, -10, outExpo(prog(t, 15.25, 15.6)));
+        metric.style.clipPath = `polygon(${a}px 0, ${W + 10}px 0, ${W + 10}px ${H}px, ${a - H * 0.35}px ${H}px)`;
+        tf(mCol, { y: H / 2 - mCol.offsetHeight / 2 });
+        digits.forEach((d, i) => {
+          const at = 15.5 + i * 0.25,
+            nx = i < 2 ? 15.5 + (i + 1) * 0.25 : 99;
+          const e = outExpo(prog(t, at, at + 0.2));
+          const vis = t >= at && t < nx;
+          tf(d, {
+            s: (1.5 - 0.5 * e) * (1 + (i === 2 ? 0.02 * pulse(t) : 0)),
+            o: vis ? e : 0,
+            blur: (1 - e) * 20,
+            r: (1 - e) * (i % 2 ? 8 : -8),
+          });
+        });
+        const rp = outExpo(prog(t, 15.5, 16.1));
+        ring.style.background = `conic-gradient(rgb(255 255 255 / .9) ${rp * 360}deg, rgb(255 255 255 / .15) 0)`;
+        ring.style.webkitMaskImage =
+          ring.style.maskImage = `radial-gradient(circle, transparent ${MT.num * U * 0.497}px, #000 ${MT.num * U * 0.5}px)`;
+        tf(ring, { r: -90 + t * 20, s: 1 + 0.03 * pulse(t) });
+        tf(mPre, {
+          o: outExpo(prog(t, 15.5, 15.8)),
+          y: (1 - outExpo(prog(t, 15.5, 15.8))) * 40 * U,
+        });
+        tf(mUnit, { y: (1 - outExpo(prog(t, 16.15, 16.6))) * MT.unit * 1.1 * U });
+        tf(mSub, { y: (1 - outExpo(prog(t, 16.35, 16.8))) * 80 * U });
+        tf(metric, { s: 1 + 0.06 * inCubic(prog(t, 17.1, 17.6)) });
+      }
+
+      /* =========================================================
+   5 · LOGO + APPEL À L'ACTION (17,5 – 20 s)
+   ========================================================= */
+      const logo = el('div', stage, 'layer');
+      const LG = {
+        v: { logo: 640, tag: 58, btn: 46, url: 36 },
+        s: { logo: 420, tag: 44, btn: 36, url: 30 },
+        h: { logo: 620, tag: 60, btn: 44, url: 36 },
+      }[F];
+      const lgWrap = el('div', logo, '', {
+        position: 'absolute',
+        inset: 0,
+        display: 'flex',
+        flexDirection: F === 'h' ? 'row' : 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: px((F === 'h' ? 80 : 30) * U),
+      });
+      const lgImg = el('img', lgWrap, '', { width: px(LG.logo * U), height: px(LG.logo * U) });
+      lgImg.src = '../brand/tandem-wordmark-transparent.png';
+      const lgCol = el('div', lgWrap, '', {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: F === 'h' ? 'flex-start' : 'center',
+        gap: px(34 * U),
+        textAlign: F === 'h' ? 'left' : 'center',
+      });
+      const lgTagM = el('div', lgCol, 'mask', {
+        fontSize: px(LG.tag * U),
+        fontWeight: 800,
+        letterSpacing: '-.035em',
+        lineHeight: 1.08,
+        maxWidth: px(F === 'h' ? 820 : 960 * U),
+      });
+      const lgTag = el(
+        'span',
+        lgTagM,
+        '',
+        {},
+        'L’équilibre parfait<br><span class="grad">pour votre foyer.</span>',
+      );
+      const lgBtn = el(
+        'div',
+        lgCol,
+        '',
+        {
+          background: 'var(--accent)',
+          color: '#fff',
+          fontSize: px(LG.btn * U),
+          fontWeight: 700,
+          padding: `${28 * U}px ${52 * U}px`,
+          borderRadius: '999px',
+          boxShadow: `0 ${24 * U}px ${50 * U}px -${18 * U}px rgb(125 68 96 / .8)`,
+          whiteSpace: 'nowrap',
+        },
+        'Commencez gratuitement&nbsp;→',
+      );
+      const lgUrl = el(
+        'div',
+        lgCol,
+        '',
+        {
+          fontSize: px(LG.url * U),
+          fontWeight: 600,
+          color: 'var(--text)',
+          letterSpacing: '-.01em',
+        },
+        'decouvrir.tandem-agenda.app',
+      );
+      const lgMeta = el(
+        'div',
+        lgCol,
+        '',
+        {
+          fontSize: px(LG.url * 0.8 * U),
+          fontWeight: 500,
+          color: 'var(--muted)',
+          marginTop: px(-20 * U),
+        },
+        'Web et Android · sans publicité',
+      );
+      function btnCenter() {
+        const r = lgBtn.getBoundingClientRect(),
+          s = stage.getBoundingClientRect();
+        return [r.left - s.left + r.width * 0.62, r.top - s.top + r.height * 0.6];
+      }
+      function renderLogo(t) {
+        show(logo, t >= 17.2);
+        if (t < 17.2) return;
+        const R = outExpo(prog(t, 17.3, 17.75)) * Math.hypot(W, H) * 0.62;
+        logo.style.clipPath = `circle(${R}px at 50% 50%)`;
+        const sp = spring(prog(t, 17.45, 18.4) * 0.95, 6, 12);
+        tf(lgImg, {
+          s: 0.3 + 0.7 * sp + 0.015 * pulse(t) * (t > 18),
+          r: (1 - sp) * -14,
+          o: clamp(prog(t, 17.45, 17.6)),
+        });
+        tf(lgTag, { y: (1 - outExpo(prog(t, 17.85, 18.35))) * LG.tag * 2.4 * U });
+        const b = outBack(prog(t, 18.1, 18.45), 2);
+        const press = t >= 19 && t < 19.25 ? 1 - 0.07 * Math.sin(prog(t, 19, 19.25) * Math.PI) : 1;
+        tf(lgBtn, { s: (t < 18.1 ? 0 : 0.5 + 0.5 * b) * press, o: t < 18.1 ? 0 : 1 });
+        lgBtn.style.background = t >= 19 ? '#693650' : 'var(--accent)';
+        const u = outExpo(prog(t, 18.35, 18.75));
+        tf(lgUrl, { o: u, y: (1 - u) * 30 * U });
+        const m = outExpo(prog(t, 18.5, 18.9));
+        tf(lgMeta, { o: m, y: (1 - m) * 30 * U });
+      }
+
+      /* ---------- curseur ---------- */
+      cursor = el(
+        'div',
+        stage,
+        'abs',
+        {
+          width: px(64 * U),
+          height: px(64 * U),
+          transformOrigin: '10% 10%',
+          filter: `drop-shadow(0 ${6 * U}px ${10 * U}px rgb(0 0 0 / .3))`,
+        },
+        CURSOR_SVG,
+      );
+      let PATHS = [];
+      const CLICKS = [8, 9, 11, 12, 13.25, 14.5, 19];
+      const RELEASES = { 13.25: 14.5 }; // appui long : maintenu jusqu'au dépôt
+      ripples = CLICKS.map(() =>
+        el('div', stage, 'abs', {
+          width: px(160 * U),
+          height: px(160 * U),
+          borderRadius: '50%',
+          border: `${5 * U}px solid rgb(125 68 96 / .9)`,
+          background: 'rgb(125 68 96 / .12)',
+        }),
+      );
+      function cursorAt(t) {
+        for (const p of PATHS) {
+          if (t < p[0][0] - 0.01 || t > p[p.length - 1][0] + 0.01) continue;
+          for (let i = 0; i < p.length - 1; i++) {
+            const [ta, xa, ya] = p[i],
+              [tb, xb, yb] = p[i + 1];
+            if (t >= ta && t <= tb) {
+              const e = inOut(prog(t, ta, tb));
+              return [lerp(xa, xb, e), lerp(ya, yb, e), p];
+            }
+          }
+          const last = p[t < p[0][0] ? 0 : p.length - 1];
+          return [last[1], last[2], p];
+        }
+        return null;
+      }
+      function renderCursor(t) {
+        const c = cursorAt(t);
+        if (!c) {
+          tf(cursor, { o: 0 });
+        } else {
+          const p = c[2],
+            fadeIn = prog(t, p[0][0], p[0][0] + 0.15),
+            fadeOut = 1 - prog(t, p[p.length - 1][0] - 0.15, p[p.length - 1][0]);
+          let s = 1;
+          for (const at of CLICKS) {
+            const rel = RELEASES[at];
+            if (rel ? t >= at && t < rel : t >= at && t < at + 0.16) s = 0.82;
+          }
+          tf(cursor, { x: c[0] - 6 * U, y: c[1] - 4 * U, s, o: Math.min(fadeIn, fadeOut) });
+        }
+        CLICKS.forEach((at, i) => {
+          const p = prog(t, at, at + 0.5),
+            pos = cursorAt(at + 0.001);
+          if (!pos || p <= 0 || p >= 1) return tf(ripples[i], { o: 0 });
+          tf(ripples[i], {
+            x: pos[0] - 80 * U,
+            y: pos[1] - 80 * U,
+            s: 0.2 + outCubic(p) * 1.1,
+            o: 1 - p,
+          });
+        });
+      }
+
+      /* ---------- rendu ---------- */
+      window.renderAt = (t) => {
+        renderLight(t);
+        renderHook(t);
+        renderReveal(t);
+        renderFeatures(t);
+        renderMetric(t);
+        renderLogo(t);
+        renderCursor(t);
+      };
+      window.ready = (async () => {
+        await document.fonts.ready;
+        await Promise.all(
+          [...document.images].map((i) =>
+            i.complete ? 0 : new Promise((r) => (i.onload = i.onerror = r)),
+          ),
+        );
+        await Promise.all(
+          Object.values(IMG)
+            .concat(['../brand/tandem-icon-transparent.png'])
+            .map(
+              (src) =>
+                new Promise((r) => {
+                  const i = new Image();
+                  i.onload = i.onerror = r;
+                  i.src = src;
+                }),
+            ),
+        );
+        layoutHook();
+        PATHS = [feat1Path(), feat2Path(), feat3Path()];
+        // Le curseur du CTA vise le vrai bouton (mesuré une fois posé).
+        show(logo, true);
+        renderLogo(19.5);
+        const bc = btnCenter();
+        PATHS.push([
+          [18.55, W * 0.92, H * 0.98],
+          [18.95, ...bc],
+          [19.3, ...bc],
+          [19.9, bc[0] + 60 * U, bc[1] + 90 * U],
+        ]);
+        window.renderAt(+(Q.get('t') || 0));
+        return true;
+      })();
+    </script>
+  </body>
+</html>

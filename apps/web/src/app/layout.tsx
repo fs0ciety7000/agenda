@@ -10,12 +10,15 @@ import './globals.css';
 
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 
-export const metadata: Metadata = {
-  title: 'Tandem',
-  description: 'L’équilibre parfait pour votre foyer.',
-  applicationName: 'Tandem',
-  robots: { index: false, follow: false },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations('app');
+  return {
+    title: 'Tandem',
+    description: t('tagline'),
+    applicationName: 'Tandem',
+    robots: { index: false, follow: false },
+  };
+}
 export const viewport: Viewport = {
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#FAF6F2' },

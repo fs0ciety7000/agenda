@@ -1,0 +1,57 @@
+{
+  "bpm": 120,
+  "duration": 20,
+  "fps": 30,
+  "scenes": [
+    {
+      "id": "hook",
+      "start": 0,
+      "end": 3,
+      "label": "1 · Accroche"
+    },
+    {
+      "id": "reveal",
+      "start": 3,
+      "end": 6.5,
+      "label": "2 · Le produit s'assemble"
+    },
+    {
+      "id": "check",
+      "start": 6.5,
+      "end": 9.5,
+      "label": "3a · Cocher"
+    },
+    {
+      "id": "repeat",
+      "start": 9.5,
+      "end": 12.5,
+      "label": "3b · Répéter"
+    },
+    {
+      "id": "drag",
+      "start": 12.5,
+      "end": 15.5,
+      "label": "3c · Glisser"
+    },
+    {
+      "id": "metric",
+      "start": 15.5,
+      "end": 17.5,
+      "label": "4 · Le chiffre"
+    },
+    {
+      "id": "logo",
+      "start": 17.5,
+      "end": 20,
+      "label": "5 · Logo + CTA"
+    }
+  ],
+  "sfx": {
+    "impact": [0, 0.5, 1, 1.5, 2, 15.5, 15.75, 16],
+    "boom": [2.5, 17.5],
+    "whoosh": [2.75, 6.25, 9.25, 12.25, 15.25, 17.25],
+    "tick": [3.375, 3.5, 3.625, 3.75, 3.875, 4, 4.125, 4.25, 4.375],
+    "click": [8, 9, 11, 12, 13.25, 14.5, 19],
+    "riser": [[14.5, 15.5]]
+  }
+}

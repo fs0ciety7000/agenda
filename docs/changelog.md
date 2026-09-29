@@ -15,6 +15,16 @@ d'elle-même (ou via Google Play).
 
 ## 29 septembre 2026
 
+### Anglais partout et vidéo de présentation
+
+- ✨ Site vitrine : une vidéo de 20 secondes présente Tandem : cocher, répéter, glisser-déposer.
+  Elle est muette par défaut, avec un bouton pour le son, et ne se lance pas seule si vous
+  préférez réduire les animations.
+- 🛠 Site vitrine : un navigateur réglé dans une autre langue que le français arrive sur la
+  version anglaise ; votre choix de langue est ensuite mémorisé.
+- 🛠 App web : la description de la page et la page d’erreur de dernier recours sont traduites
+  en anglais. L’app Android et les e-mails l’étaient déjà.
+
 ### Site vitrine (#74)
 
 - ✨ Nouveau site de présentation de Tandem, en français et en anglais : fonctionnalités, étapes,

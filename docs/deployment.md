@@ -620,7 +620,10 @@ Uptime Kuma : remplacer les URL des sondes (`/healthz`, `/v1/status`…) par
 
 Le service `site` du compose sert la page de présentation de Tandem (français sur `/`, anglais
 sur `/en/`) : pages statiques Next.js, animations Motion, mêmes design tokens que l'app. Il est
-**statique** et indépendant : ni API, ni base, ni cookie, ni traceur.
+**statique** et indépendant : ni API, ni base, ni traceur. Seul cookie : `lang`, posé quand on
+choisit la langue ; sans lui, `/` envoie vers `/en/` les navigateurs non francophones (nginx).
+La vidéo de présentation (`public/video`) est fabriquée depuis `assets/motion` (voir
+`assets/README.md`).
 
 1. **Cloudflare → DNS** : enregistrement `A` `decouvrir` vers l'IP du serveur (nuage gris au
    premier déploiement, puis orange, comme en §3.1). Un seul niveau sous `tandem-agenda.app` :
