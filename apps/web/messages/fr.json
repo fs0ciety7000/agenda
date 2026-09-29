@@ -4,7 +4,8 @@
     "skipToContent": "Aller au contenu",
     "privacy": "Politique de confidentialité",
     "about": "À propos",
-    "tagline": "L’équilibre parfait pour votre foyer."
+    "tagline": "L’équilibre parfait pour votre foyer.",
+    "language": "Langue"
   },
   "nav": {
     "today": "Aujourd'hui",
@@ -133,6 +134,7 @@
     "members": "Membres",
     "owner": "Propriétaire",
     "appearance": "Apparence",
+    "language": "Langue",
     "theme": {
       "system": "Système",
       "light": "Clair",

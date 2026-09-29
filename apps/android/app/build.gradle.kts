@@ -6,6 +6,11 @@ plugins {
 }
 
 android {
+    // Google Play : toutes les langues dans l'app installée, pour pouvoir changer de langue
+    // dans les Réglages sans téléchargement (les textes pèsent quelques Ko).
+    bundle {
+        language { enableSplit = false }
+    }
     namespace = "app.tandem.foyer"
     compileSdk = 37
 

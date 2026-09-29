@@ -39,6 +39,10 @@ export const MeResponse = z.object({
 });
 export type MeResponse = z.infer<typeof MeResponse>;
 
+/** Préférences du compte : langue de l'interface et des e-mails. */
+export const UpdateMeInput = z.object({ locale: Locale });
+export type UpdateMeInput = z.infer<typeof UpdateMeInput>;
+
 export const AuthResponse = z.object({
   user: MeResponse,
   /** Présents uniquement pour les clients `X-Client: mobile`. */

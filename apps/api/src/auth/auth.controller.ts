@@ -6,6 +6,7 @@ import {
   Headers,
   HttpCode,
   HttpStatus,
+  Patch,
   Post,
   Req,
   Res,
@@ -21,6 +22,7 @@ import {
   RefreshInput,
   RegisterInput,
   ResetPasswordInput,
+  UpdateMeInput,
 } from '@agenda/contracts';
 import type { Request, Response } from 'express';
 import { AppException } from '../common/app-exception';
@@ -163,6 +165,15 @@ export class AuthController {
   @Get('me')
   me(@CurrentUser() user: AuthUser): Promise<MeResponse> {
     return this.auth.me(user.userId);
+  }
+
+  /** Changer ses préférences (langue). */
+  @Patch('me')
+  updateMe(
+    @CurrentUser() user: AuthUser,
+    @Body(new ZodPipe(UpdateMeInput)) body: UpdateMeInput,
+  ): Promise<MeResponse> {
+    return this.auth.updateMe(user.userId, body);
   }
 
   private respond(issued: IssuedTokens, client: string | undefined, res: Response): AuthResponse {

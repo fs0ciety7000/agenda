@@ -1,38 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <plurals name="unscheduled_count">
-        <item quantity="one">%1$d tâche sans date</item>
-        <item quantity="many">%1$d tâches sans date</item>
-        <item quantity="other">%1$d tâches sans date</item>
+        <item quantity="one">%1$d task without a date</item>
+        <item quantity="other">%1$d tasks without a date</item>
     </plurals>
     <plurals name="offline_pending">
-        <item quantity="one">Hors ligne · %1$d modification en attente</item>
-        <item quantity="many">Hors ligne · %1$d modifications en attente</item>
-        <item quantity="other">Hors ligne · %1$d modifications en attente</item>
+        <item quantity="one">Offline · %1$d change waiting</item>
+        <item quantity="other">Offline · %1$d changes waiting</item>
     </plurals>
     <plurals name="syncing_pending">
-        <item quantity="one">Envoi de %1$d modification…</item>
-        <item quantity="many">Envoi de %1$d modifications…</item>
-        <item quantity="other">Envoi de %1$d modifications…</item>
+        <item quantity="one">Sending %1$d change…</item>
+        <item quantity="other">Sending %1$d changes…</item>
     </plurals>
     <plurals name="day_tasks">
-        <item quantity="one">%2$s, %1$d tâche</item>
-        <item quantity="many">%2$s, %1$d tâches</item>
-        <item quantity="other">%2$s, %1$d tâches</item>
+        <item quantity="one">%2$s, %1$d task</item>
+        <item quantity="other">%2$s, %1$d tasks</item>
     </plurals>
     <plurals name="balance_row">
-        <item quantity="one">%1$d tâche · %2$s</item>
-        <item quantity="many">%1$d tâches · %2$s</item>
-        <item quantity="other">%1$d tâches · %2$s</item>
+        <item quantity="one">%1$d task · %2$s</item>
+        <item quantity="other">%1$d tasks · %2$s</item>
     </plurals>
     <plurals name="widget_more">
-        <item quantity="one">+ %d autre dans l\'app</item>
-        <item quantity="many">+ %d autres dans l\'app</item>
-        <item quantity="other">+ %d autres dans l\'app</item>
+        <item quantity="one">+ %d more in the app</item>
+        <item quantity="other">+ %d more in the app</item>
     </plurals>
     <plurals name="assignee_suggestion">
-        <item quantity="one">Suggestion : %1$s, la moins chargée cette semaine (%2$d tâche).</item>
-        <item quantity="many">Suggestion : %1$s, la moins chargée cette semaine (%2$d tâches).</item>
-        <item quantity="other">Suggestion : %1$s, la moins chargée cette semaine (%2$d tâches).</item>
+        <item quantity="one">Suggestion: %1$s, the least busy this week (%2$d task).</item>
+        <item quantity="other">Suggestion: %1$s, the least busy this week (%2$d tasks).</item>
     </plurals>
 </resources>

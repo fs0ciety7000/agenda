@@ -356,6 +356,22 @@ describe('Compte : mot de passe oublié, Google Sign-In, RGPD (intégration)', (
       await login(user.email, 'un nouveau mot de passe').expect(200);
     });
 
+    it('langue du compte : modifiable, utilisée pour les e-mails, valeur inconnue refusée', async () => {
+      const user = await registerUser(app, 'Ada');
+      expect((await http().get('/v1/me').set(user.auth).expect(200)).body.locale).toBe('fr');
+      const res = await http().patch('/v1/me').set(user.auth).send({ locale: 'en' }).expect(200);
+      expect(res.body.locale).toBe('en');
+      await http().patch('/v1/me').set(user.auth).send({ locale: 'de' }).expect(400);
+      await http()
+        .post('/v1/auth/password/forgot')
+        .set(CSRF)
+        .send({ email: user.email })
+        .expect(202);
+      await vi.waitFor(() =>
+        expect(mail.outbox.find((m) => m.to === user.email)?.subject).toBe('Reset your password'),
+      );
+    });
+
     it('délier Google (mauvais compte) puis pouvoir en lier un autre', async () => {
       const user = await registerUser(app, 'Nicolas');
       await prisma.authIdentity.create({

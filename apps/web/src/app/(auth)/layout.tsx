@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
+import { LanguageSwitcher } from '@/components/app/language-switcher';
 
 export default async function AuthLayout({ children }: { children: ReactNode }) {
   const t = await getTranslations('app');
@@ -19,7 +20,10 @@ export default async function AuthLayout({ children }: { children: ReactNode }) 
         <p className="text-lg font-semibold tracking-tight">Tandem</p>
         <p className="mb-6 text-[0.9375rem] text-text-muted">{t('tagline')}</p>
         {children}
-        <p className="mt-10 text-center text-[0.8125rem] text-text-muted">
+        <div className="mt-10 flex justify-center">
+          <LanguageSwitcher label={t('language')} />
+        </div>
+        <p className="mt-6 text-center text-[0.8125rem] text-text-muted">
           <Link href="/about" className="underline-offset-4 hover:underline">
             {t('about')}
           </Link>

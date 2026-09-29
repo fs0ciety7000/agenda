@@ -28,4 +28,7 @@ interface AuthRepository {
     suspend fun completeGoogleSignIn(code: String?, error: String?): AuthResult
     suspend fun currentUser(): User?
     suspend fun logout()
+
+    /** Langue du compte (« fr » ou « en ») : e-mails et site. Sans effet hors ligne. */
+    suspend fun setLanguage(locale: String) {}
 }

@@ -15,6 +15,15 @@ d'elle-même (ou via Google Play).
 
 ## 29 septembre 2026
 
+### Choisir sa langue (web et Android)
+
+- ✨ Sélecteur de langue (Français, English) sur la page de connexion et dans les Réglages de
+  l’app web. Sur Android, il est dans Réglages → Langue, avec aussi l’option « Langue du téléphone ».
+  Le choix est enregistré dans votre compte et vaut aussi pour les e-mails.
+- 🐞 Un téléphone ou un navigateur réglé dans une autre langue que le français ou l’anglais
+  (espagnol, allemand…) affichait Tandem en français : il l’affiche désormais en anglais.
+- 🛠 Nouveau compte : les e-mails arrivent dans la langue utilisée pour s’inscrire.
+
 ### Anglais partout et vidéo de présentation
 
 - ✨ Site vitrine : une vidéo de 20 secondes présente Tandem : cocher, répéter, glisser-déposer.

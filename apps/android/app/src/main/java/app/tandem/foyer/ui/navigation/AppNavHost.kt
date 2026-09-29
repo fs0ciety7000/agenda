@@ -1,5 +1,11 @@
 package app.tandem.foyer.ui.navigation
 
+import android.app.Activity
+import android.content.ContextWrapper
+import android.content.res.Resources
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import app.tandem.foyer.data.AppLanguage
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
 import app.tandem.foyer.data.files.AttachmentFiles
@@ -512,6 +518,18 @@ private fun MainScaffold(
                     onOpenHistory = { nav.navigate("history") },
                     onOpenAbsences = { nav.navigate("absences") },
                     onOpenReport = { nav.navigate("report") },
+                    language = remember { AppLanguage.current(context) },
+                    onLanguage = { tag ->
+                        val activity = context.findActivity() ?: return@SettingsScreen
+                        // Langue du compte (e-mails) : hors de l'écran, recréé par le changement de langue.
+                        val account = tag.ifEmpty {
+                            if (Resources.getSystem().configuration.locales[0].language == "fr") "fr" else "en"
+                        }
+                        CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
+                            container.authRepository.setLanguage(account)
+                        }
+                        AppLanguage.set(activity, tag)
+                    },
                 )
             }
             composable("report") {
@@ -722,3 +740,9 @@ private fun displayName(context: Context, uri: Uri): String? =
     context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { c ->
         if (c.moveToFirst()) c.getString(0) else null
     }
+
+private tailrec fun Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
+}

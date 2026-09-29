@@ -1,5 +1,6 @@
 package app.tandem.foyer
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -8,6 +9,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import app.tandem.foyer.data.AppLanguage
 import app.tandem.foyer.notifications.ReminderScheduler
 import app.tandem.foyer.ui.navigation.AppNavHost
 import app.tandem.foyer.ui.theme.AgendaTheme
@@ -42,6 +44,10 @@ class MainActivity : ComponentActivity() {
         }
         intent.getStringExtra(ReminderScheduler.EXTRA_ID)?.let { openOccurrence.value = it }
         intent.data?.takeIf { it.scheme == "app.tandem.foyer" && it.host == "auth" }?.let { googleCallback.value = it }
+    }
+
+    override fun attachBaseContext(newBase: Context) {
+        super.attachBaseContext(AppLanguage.wrap(newBase))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

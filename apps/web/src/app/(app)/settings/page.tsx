@@ -12,6 +12,7 @@ import { TemplatesSettings } from '@/components/app/templates';
 import { InboundEmailSettings } from '@/components/app/inbound-email';
 import { AbsencesSettings } from '@/components/app/absences';
 import { InviteLink } from '@/components/app/invite-link';
+import { LanguageSwitcher } from '@/components/app/language-switcher';
 import { AndroidAppCard } from '@/components/app/android-app-card';
 import { NotificationSettings } from '@/components/app/notification-settings';
 import { PasswordSettings } from '@/components/app/password-settings';
@@ -141,6 +142,11 @@ export default function SettingsPage() {
             </button>
           ))}
         </div>
+      </section>
+
+      <section className="flex flex-col gap-3" aria-labelledby="s-language">
+        <SectionTitle id="s-language">{t('language')}</SectionTitle>
+        <LanguageSwitcher account label={t('language')} />
       </section>
 
       <section className="flex flex-col gap-3" aria-labelledby="s-notifications">
