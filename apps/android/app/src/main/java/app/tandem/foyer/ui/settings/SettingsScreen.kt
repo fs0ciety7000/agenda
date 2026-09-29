@@ -66,6 +66,9 @@ fun SettingsScreen(
     onOpenHistory: () -> Unit = {},
     onOpenAbsences: () -> Unit = {},
     onOpenReport: () -> Unit = {},
+    /** Langue de l'app : "" (téléphone), "fr" ou "en". */
+    language: String = "",
+    onLanguage: (String) -> Unit = {},
 ) {
     var confirmSignOut by remember { mutableStateOf(false) }
     Column(
@@ -220,6 +223,17 @@ fun SettingsScreen(
                 TextButton(onClick = { onOpenWeb("settings") }, modifier = Modifier.heightIn(min = 48.dp)) {
                     Text(stringResource(R.string.notification_preferences))
                 }
+            }
+        }
+
+        SectionHeader(stringResource(R.string.settings_language))
+        Row(
+            Modifier.horizontalScroll(rememberScrollState()).padding(vertical = 4.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            // Noms des langues dans leur propre langue : jamais traduits.
+            listOf("" to stringResource(R.string.language_system), "fr" to "Français", "en" to "English").forEach { (tag, name) ->
+                FilterChip(selected = language == tag, onClick = { onLanguage(tag) }, label = { Text(name) })
             }
         }
 

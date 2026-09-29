@@ -41,6 +41,9 @@ data class MobileExchangeRequest(val code: String, val codeVerifier: String)
 data class ProvidersDto(val google: Boolean = false, val registration: Boolean = true, val passwordReset: Boolean = false)
 
 @Serializable
+data class UpdateMeRequest(val locale: String)
+
+@Serializable
 data class MeDto(val id: String, val email: String, val displayName: String, val locale: String)
 
 @Serializable

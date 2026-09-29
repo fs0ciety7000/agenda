@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
@@ -56,6 +56,7 @@ function safeNext(next: string | null): string {
 
 export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
   const t = useTranslations();
+  const locale = useLocale();
   const router = useRouter();
   const params = useSearchParams();
   const queryClient = useQueryClient();
@@ -78,7 +79,11 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
   const onSubmit = handleSubmit(async (values) => {
     setServerError(null);
     try {
-      await api<AuthResponse>(`/v1/auth/${mode}`, { method: 'POST', json: values });
+      await api<AuthResponse>(`/v1/auth/${mode}`, {
+        method: 'POST',
+        // Nouveau compte : e-mails dans la langue affichée.
+        json: mode === 'register' ? { ...values, locale } : values,
+      });
       queryClient.clear();
       await clearOfflineData();
       router.replace(safeNext(params.get('next')));

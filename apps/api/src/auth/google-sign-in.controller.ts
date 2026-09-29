@@ -228,7 +228,7 @@ export class GoogleSignInController {
             0,
             60,
           ),
-          locale: profile.locale?.startsWith('en') ? 'en' : 'fr',
+          locale: !profile.locale || profile.locale.startsWith('fr') ? 'fr' : 'en',
           identities: { create: { provider: 'GOOGLE', providerSubject: profile.sub } },
         },
       });

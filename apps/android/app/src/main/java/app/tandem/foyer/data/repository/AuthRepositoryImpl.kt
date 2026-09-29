@@ -8,6 +8,7 @@ import app.tandem.foyer.data.remote.LoginRequest
 import app.tandem.foyer.data.remote.MeDto
 import app.tandem.foyer.data.remote.MobileExchangeRequest
 import app.tandem.foyer.data.remote.RefreshRequest
+import app.tandem.foyer.data.remote.UpdateMeRequest
 import app.tandem.foyer.data.remote.json
 import app.tandem.foyer.domain.model.User
 import app.tandem.foyer.domain.repository.AuthError
@@ -78,6 +79,10 @@ class AuthRepositoryImpl(
         api.me().body()?.toDomain()
     } catch (_: IOException) {
         null
+    }
+
+    override suspend fun setLanguage(locale: String) {
+        runCatching { api.updateMe(UpdateMeRequest(locale)) }
     }
 
     override suspend fun logout() {

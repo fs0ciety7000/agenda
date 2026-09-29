@@ -31,6 +31,9 @@ interface AgendaApi {
     @GET("v1/me")
     suspend fun me(): Response<MeDto>
 
+    @PATCH("v1/me")
+    suspend fun updateMe(@Body body: UpdateMeRequest): Response<MeDto>
+
     @POST("v1/client-errors")
     suspend fun reportClientError(@Body body: ClientErrorRequest): Response<Unit>
 

@@ -605,6 +605,67 @@
           "auth"
         ]
       },
+      "patch": {
+        "operationId": "AuthController_updateMe_v1",
+        "parameters": [
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MeResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Changer ses préférences (langue)",
+        "tags": [
+          "auth"
+        ]
+      },
       "delete": {
         "description": "Droit à l'effacement : suppression définitive et immédiate du compte.",
         "operationId": "PrivacyController_remove_v1",
@@ -11643,6 +11704,21 @@
             "type": "boolean"
           }
         }
+      },
+      "UpdateMeInput": {
+        "type": "object",
+        "properties": {
+          "locale": {
+            "type": "string",
+            "enum": [
+              "fr",
+              "en"
+            ]
+          }
+        },
+        "required": [
+          "locale"
+        ]
       },
       "UpdateOccurrenceInput": {
         "type": "object",

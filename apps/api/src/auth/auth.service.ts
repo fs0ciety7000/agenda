@@ -1,7 +1,13 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Prisma, type User } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
-import type { ChangePasswordInput, LoginInput, MeResponse, RegisterInput } from '@agenda/contracts';
+import type {
+  ChangePasswordInput,
+  LoginInput,
+  MeResponse,
+  RegisterInput,
+  UpdateMeInput,
+} from '@agenda/contracts';
 import { AppException } from '../common/app-exception';
 import type { AuthUser } from '../common/request-context';
 import { randomToken, sha256Hex } from '../common/crypto';
@@ -191,6 +197,12 @@ export class AuthService {
     });
     if (!user) throw new AppException('UNAUTHENTICATED', HttpStatus.UNAUTHORIZED, 'Unknown user');
     return toMe(user, user.identities.length > 0);
+  }
+
+  /** Changer la langue du compte (interface, e-mails). */
+  async updateMe(userId: string, input: UpdateMeInput): Promise<MeResponse> {
+    await this.prisma.user.update({ where: { id: userId }, data: { locale: input.locale } });
+    return this.me(userId);
   }
 
   private async revokeFamily(familyId: string): Promise<void> {
