@@ -124,6 +124,19 @@ Avec le secret `PLAY_SERVICE_ACCOUNT_JSON`, chaque mise à jour de `main` envoie
 
 Le premier envoi doit rester manuel (§3.5) : l'API refuse une app qui n'a encore aucune release.
 
+**Choisir la piste** : par défaut, les envois vont en **test interne**. Pour envoyer directement
+chaque nouvelle version à la piste de votre **test fermé**, créez la variable GitHub
+*Settings → Secrets and variables → Actions → Variables* → `PLAY_TRACK` = `alpha`. C'est
+l'identifiant de la piste « Test fermé – Alpha » créée par défaut ; pour une piste fermée
+personnalisée, mettez son nom exact tel qu'affiché dans la Play Console. Autres valeurs :
+`internal`, `beta` (test ouvert), `production`. Un lancement manuel du workflow (*Actions →
+Android — APK à installer → Run workflow*) permet aussi de choisir la piste pour cet envoi-là.
+
+Une version déjà envoyée en test interne se passe au test fermé sans nouvel envoi : Play Console
+→ *Tester → Test interne* → la release → **Promouvoir la release → Test fermé** → *Enregistrer*
+→ *Envoyer pour examen*. Les pistes de test fermé passent par l'examen de Google (quelques heures
+à quelques jours), contrairement au test interne.
+
 ## 6. Mettre à jour la fiche et les captures
 
 - Textes : modifier les fichiers `fastlane/metadata/android/<langue>/…`, puis les recopier dans la

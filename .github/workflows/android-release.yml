@@ -5,7 +5,9 @@ name: Android — APK à installer
 # Secrets requis (Settings → Secrets and variables → Actions) : ANDROID_KEYSTORE_B64,
 # ANDROID_KEYSTORE_PASSWORD — cf. docs/android.md §4. Sans eux, rien n'est publié.
 # Google Play (facultatif, docs/play-store.md) : l'AAB est joint à la release ; avec le secret
-# PLAY_SERVICE_ACCOUNT_JSON, il est aussi envoyé en « Test interne ».
+# PLAY_SERVICE_ACCOUNT_JSON, il est aussi envoyé sur Google Play : piste de la variable PLAY_TRACK
+# (internal = test interne par défaut, alpha = test fermé, beta = test ouvert, production),
+# ou celle choisie au lancement manuel.
 on:
   push:
     branches: [main]
@@ -13,6 +15,12 @@ on:
       - 'apps/android/**'
       - '.github/workflows/android-release.yml'
   workflow_dispatch:
+    inputs:
+      track:
+        description: 'Piste Google Play (auto = variable PLAY_TRACK, sinon test interne)'
+        type: choice
+        options: [auto, internal, alpha, beta, production]
+        default: auto
 
 concurrency:
   group: android-release
@@ -147,14 +155,14 @@ jobs:
           mkdir -p whatsnew
           cp fastlane/metadata/android/fr-FR/changelogs/default.txt whatsnew/whatsnew-fr-FR
           cp fastlane/metadata/android/en-US/changelogs/default.txt whatsnew/whatsnew-en-US
-      - name: Envoyer sur Google Play (test interne)
+      - name: Envoyer sur Google Play (${{ inputs.track != 'auto' && inputs.track || vars.PLAY_TRACK || 'internal' }})
         if: env.PLAY_SERVICE_ACCOUNT_JSON != ''
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: app.tandem.foyer
           releaseFiles: apps/android/tandem-play.aab
-          track: internal
+          track: ${{ inputs.track != 'auto' && inputs.track || vars.PLAY_TRACK || 'internal' }}
           status: completed
           whatsNewDirectory: apps/android/whatsnew
           mappingFile: apps/android/app/build/outputs/mapping/play/mapping.txt
