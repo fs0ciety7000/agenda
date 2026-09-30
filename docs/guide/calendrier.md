@@ -38,3 +38,22 @@ Ce qui se passe ensuite :
 **Arrêter** : *Déconnecter le calendrier* (les événements créés par l'app y sont supprimés) ou
 *Retirer l'accès* (révoque l'autorisation Google). Détails techniques :
 [Google Calendar](../google-calendar.md).
+
+## S'abonner depuis Apple Calendrier, Outlook ou un autre agenda
+
+Pas de compte Google ? Un **lien iCal privé** affiche vos tâches datées dans n'importe quel agenda,
+en lecture seule :
+
+1. **Réglages → Calendrier → Abonnement iCal → Créer mon lien**, puis **Copier**.
+2. Dans votre agenda :
+   - **Apple Calendrier** (Mac, iPhone) : *Ouvrir dans Apple Calendrier*, ou *Fichier → Nouvel
+     abonnement* et coller le lien ;
+   - **Outlook** : *Ajouter un calendrier → S'abonner à partir du web* ;
+   - **Proton Calendar, Thunderbird…** : « ajouter un calendrier par URL ».
+
+Le lien contient les tâches partagées du foyer et **vos** tâches personnelles (jamais celles des
+autres), des 60 derniers jours à l'année à venir. Les tâches faites sont précédées de « ✓ ».
+L'agenda se met à jour à son propre rythme, souvent toutes les heures.
+
+Le lien est **secret** : quiconque le connaît voit vos tâches. *Nouveau lien* remplace l'ancien,
+qui cesse aussitôt de fonctionner ; *Désactiver* supprime l'abonnement.

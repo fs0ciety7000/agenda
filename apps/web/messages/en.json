@@ -801,6 +801,22 @@
     "acknowledge": "Send me a confirmation",
     "acknowledgeHint": "A “✓ Task created” e-mail for each task added by e-mail."
   },
+  "icalFeed": {
+    "title": "iCal subscription (Apple Calendar, Outlook…)",
+    "intro": "A private link to add to your calendar app: your dated tasks show up there and update on their own (read-only).",
+    "address": "Your subscription link",
+    "copy": "Copy",
+    "copied": "Copied",
+    "create": "Create my link",
+    "openApple": "Open in Apple Calendar",
+    "howto": "Outlook: Add calendar → Subscribe from web. Apple Calendar: File → New Calendar Subscription. Your calendar app refreshes on its own schedule (often hourly).",
+    "private": "Keep this link to yourself: it gives access to your tasks. If in doubt, create a new one.",
+    "regenerate": "New link",
+    "confirmRegenerate": "Create a new link? The old one will stop working.",
+    "disable": "Turn off",
+    "confirmDisable": "Turn off the subscription? The link will stop working.",
+    "error": "Couldn't do that. Please try again."
+  },
   "offline": {
     "offline": "Offline: you're seeing the latest data received. Tick tasks, add some or do the shopping: everything will be sent when you're back online.",
     "pending": "{count, plural, one {# change pending.} other {# changes pending.}}",

@@ -801,6 +801,22 @@
     "acknowledge": "M'envoyer un accusé de réception",
     "acknowledgeHint": "Un e-mail « ✓ Tâche créée » à chaque tâche ajoutée par e-mail."
   },
+  "icalFeed": {
+    "title": "Abonnement iCal (Apple Calendrier, Outlook…)",
+    "intro": "Un lien privé à ajouter dans votre agenda : vos tâches datées s'y affichent et se mettent à jour toutes seules (en lecture seule).",
+    "address": "Votre lien d'abonnement",
+    "copy": "Copier",
+    "copied": "Copié",
+    "create": "Créer mon lien",
+    "openApple": "Ouvrir dans Apple Calendrier",
+    "howto": "Outlook : Ajouter un calendrier → S'abonner à partir du web. Apple Calendrier : Fichier → Nouvel abonnement. L'agenda se met à jour selon son propre rythme (souvent toutes les heures).",
+    "private": "Gardez ce lien pour vous : il donne accès à vos tâches. En cas de doute, créez-en un nouveau.",
+    "regenerate": "Nouveau lien",
+    "confirmRegenerate": "Créer un nouveau lien ? L'ancien cessera de fonctionner.",
+    "disable": "Désactiver",
+    "confirmDisable": "Désactiver l'abonnement ? Le lien cessera de fonctionner.",
+    "error": "Action impossible. Réessayez."
+  },
   "offline": {
     "offline": "Hors ligne : vous voyez les dernières données reçues. Cochez des tâches, ajoutez-en ou faites les courses : tout sera envoyé au retour du réseau.",
     "pending": "{count, plural, one {# modification en attente.} other {# modifications en attente.}}",

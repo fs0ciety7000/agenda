@@ -176,7 +176,7 @@
     <string name="calendar_not_configured">La connexion à Google Calendar n\'est pas activée sur ce serveur.</string>
     <string name="calendar_unknown">État indisponible hors ligne.</string>
     <string name="calendar_manage_web">Gérer sur le site</string>
-    <string name="calendar_web_hint">La connexion à Google et le choix du calendrier se font sur le site (plus sûr pour l\'autorisation Google).</string>
+    <string name="calendar_web_hint">La connexion à Google et le choix du calendrier se font sur le site (plus sûr pour l\'autorisation Google). Vous y trouverez aussi un lien iCal pour Apple Calendrier ou Outlook.</string>
     <string name="settings_reminders">Rappels</string>
     <string name="reminders_enabled">Me rappeler mes tâches avec une heure</string>
     <string name="reminders_lead">Combien de temps avant ?</string>

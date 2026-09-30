@@ -11,6 +11,7 @@ import { CategoriesSettings } from '@/components/app/categories-settings';
 import { TemplatesSettings } from '@/components/app/templates';
 import { InboundEmailSettings } from '@/components/app/inbound-email';
 import { AbsencesSettings } from '@/components/app/absences';
+import { IcalFeedSettings } from '@/components/app/ical-feed';
 import { InviteLink } from '@/components/app/invite-link';
 import { LanguageSwitcher } from '@/components/app/language-switcher';
 import { AndroidAppCard } from '@/components/app/android-app-card';
@@ -110,10 +111,11 @@ export default function SettingsPage() {
 
       <section className="flex flex-col gap-3" aria-labelledby="s-calendar">
         <SectionTitle id="s-calendar">{t('calendar')}</SectionTitle>
-        <Card>
+        <Card className="flex flex-col gap-4">
           <Suspense>
             <CalendarSettings />
           </Suspense>
+          <IcalFeedSettings householdId={household.id} />
         </Card>
       </section>
 

@@ -181,6 +181,8 @@ model HouseholdMember {
   inboundToken String?       @unique @db.VarChar(40)
   /// Accusé de réception des tâches créées par e-mail.
   inboundAck   Boolean       @default(true)
+  /// Abonnement iCal (lecture seule, Apple Calendrier, Outlook…). Secret ; null = désactivé.
+  icalToken    String?       @unique @db.VarChar(40)
 
   household            Household                @relation(fields: [householdId], references: [id], onDelete: Cascade)
   user                 User?                    @relation(fields: [userId], references: [id], onDelete: SetNull)

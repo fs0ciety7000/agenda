@@ -168,7 +168,7 @@
     <string name="calendar_not_configured">Google Calendar is not enabled on this server.</string>
     <string name="calendar_unknown">Status unavailable offline.</string>
     <string name="calendar_manage_web">Manage on the website</string>
-    <string name="calendar_web_hint">Connecting Google and choosing the calendar happen on the website (safer for Google authorisation).</string>
+    <string name="calendar_web_hint">Connecting Google and choosing the calendar happen on the website (safer for Google authorisation). An iCal link for Apple Calendar or Outlook is available there too.</string>
     <string name="settings_reminders">Reminders</string>
     <string name="reminders_enabled">Remind me of my timed tasks</string>
     <string name="reminders_lead">How long before?</string>

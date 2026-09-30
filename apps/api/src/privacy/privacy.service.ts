@@ -248,6 +248,7 @@ export class PrivacyService {
             role: 'MEMBER',
             leftAt: new Date(),
             inboundToken: null,
+            icalToken: null,
           },
         });
       }
