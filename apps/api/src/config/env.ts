@@ -11,6 +11,19 @@ const EnvSchema = z.object({
     .url()
     .default('http://localhost:3000')
     .transform((v) => v.replace(/\/+$/, '')),
+  // Passkeys : domaine des clés (défaut : celui de WEB_ORIGIN) et origines acceptées, séparées
+  // par des virgules (défaut : WEB_ORIGIN ; ajouter l'ancien domaine pendant une migration).
+  WEBAUTHN_RP_ID: z.string().trim().optional(),
+  WEBAUTHN_ORIGINS: z
+    .string()
+    .trim()
+    .optional()
+    .transform((v) =>
+      (v ?? '')
+        .split(',')
+        .map((o) => o.trim().replace(/\/+$/, ''))
+        .filter(Boolean),
+    ),
   DATABASE_URL: z.string().min(1),
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
   // Vérifiée au démarrage : une clé invalide ne doit pas attendre la première connexion Google.

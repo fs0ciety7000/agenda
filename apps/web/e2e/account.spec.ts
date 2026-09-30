@@ -19,7 +19,7 @@ test('changer son mot de passe depuis les Réglages, puis se reconnecter avec', 
   await expect(page).toHaveURL(/\/login/);
   await page.getByLabel('Adresse email').fill(email);
   await page.getByLabel('Mot de passe').fill('une phrase toute neuve');
-  await page.getByRole('button', { name: 'Se connecter' }).click();
+  await page.getByRole('button', { name: 'Se connecter', exact: true }).click();
   await expect(page.getByRole('heading', { name: 'Bonjour Grace 👋' })).toBeVisible();
 });
 

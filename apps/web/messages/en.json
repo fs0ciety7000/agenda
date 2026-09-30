@@ -43,7 +43,9 @@
     "resetTitle": "New password",
     "resetDone": "Password changed. For security, you've been signed out of all your devices.",
     "newPassword": "New password",
-    "resetSubmit": "Save"
+    "resetSubmit": "Save",
+    "passkey": "Sign in with a passkey",
+    "passkeyFailed": "Couldn't sign in with a passkey. Use your password, or add a passkey in Settings first."
   },
   "errors": {
     "VALIDATION_FAILED": "Some fields are invalid.",
@@ -84,7 +86,8 @@
     "PASSWORD_REQUIRED": "Set a password first.",
     "ATTACHMENT_TOO_LARGE": "File too large (10 MB max).",
     "ATTACHMENTS_QUOTA": "Household storage is full (200 MB): delete old attachments.",
-    "ACCOUNT_DISABLED": "This account is disabled. Contact the administrator."
+    "ACCOUNT_DISABLED": "This account is disabled. Contact the administrator.",
+    "PASSKEY_FAILED": "Couldn't sign in with a passkey. Use your password, or add a passkey in Settings first."
   },
   "today": {
     "greeting": "Hello {name} 👋",
@@ -875,6 +878,20 @@
     "disable": "Turn off",
     "confirmDisable": "Turn off the subscription? The link will stop working.",
     "error": "Couldn't do that. Please try again."
+  },
+  "passkeys": {
+    "title": "Passkeys",
+    "intro": "Sign in without a password, using your device's fingerprint, face or PIN. Safer than a password: nothing to remember, nothing to steal.",
+    "add": "Add a passkey",
+    "added": "Passkey added: you can now sign in with it.",
+    "alreadyHere": "This account already has a passkey on this device.",
+    "error": "Couldn't add the passkey. Please try again.",
+    "unsupported": "This browser doesn't support passkeys.",
+    "created": "Added on {date}",
+    "lastUsed": "Used on {date}",
+    "synced": "synced",
+    "remove": "Delete “{name}”",
+    "confirmRemove": "Delete this passkey? It will no longer let you sign in."
   },
   "offline": {
     "offline": "Offline: you're seeing the latest data received. Tick tasks, add some or do the shopping: everything will be sent when you're back online.",

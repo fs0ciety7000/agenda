@@ -91,3 +91,37 @@ export type MobileExchangeInput = z.infer<typeof MobileExchangeInput>;
 
 /** Adresse de retour vers l'app Android (schéma propre à l'app, cf. AndroidManifest). */
 export const ANDROID_AUTH_REDIRECT = 'app.tandem.foyer://auth';
+
+/** Passkeys (WebAuthn) : connexion sans mot de passe (empreinte, visage, code du téléphone). */
+export const PasskeyDto = z.object({
+  id: z.string(),
+  name: z.string(),
+  createdAt: z.string(),
+  lastUsedAt: z.string().nullable(),
+  /** Synchronisée entre appareils (trousseau iCloud, gestionnaire Google…). */
+  synced: z.boolean(),
+});
+export type PasskeyDto = z.infer<typeof PasskeyDto>;
+
+/** Options WebAuthn à passer au navigateur, et l'identifiant du défi à renvoyer. */
+export const PasskeyOptionsDto = z.object({
+  challengeId: z.uuid(),
+  options: z.record(z.string(), z.unknown()),
+});
+export type PasskeyOptionsDto = z.infer<typeof PasskeyOptionsDto>;
+
+export const PasskeyRegisterInput = z.object({
+  challengeId: z.uuid(),
+  response: z.record(z.string(), z.unknown()),
+  name: z.string().trim().min(1).max(60).optional(),
+});
+export type PasskeyRegisterInput = z.infer<typeof PasskeyRegisterInput>;
+
+export const PasskeyLoginInput = z.object({
+  challengeId: z.uuid(),
+  response: z.record(z.string(), z.unknown()),
+});
+export type PasskeyLoginInput = z.infer<typeof PasskeyLoginInput>;
+
+export const RenamePasskeyInput = z.object({ name: z.string().trim().min(1).max(60) });
+export type RenamePasskeyInput = z.infer<typeof RenamePasskeyInput>;

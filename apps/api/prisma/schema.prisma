@@ -36,6 +36,37 @@ model User {
   pushTokens        PushToken[]
   webPushSubscriptions WebPushSubscription[]
   reports           Report[]
+  passkeys          Passkey[]
+}
+
+/// Passkey (WebAuthn) : clé publique d'un appareil ou d'un gestionnaire de mots de passe.
+model Passkey {
+  /// Identifiant de la clé (base64url), choisi par l'authentificateur.
+  id         String    @id @db.VarChar(512)
+  userId     String    @db.Uuid
+  publicKey  Bytes
+  counter    Int       @default(0)
+  transports String[]
+  backedUp   Boolean   @default(false)
+  name       String    @db.VarChar(60)
+  createdAt  DateTime  @default(now())
+  lastUsedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+/// Défi WebAuthn à usage unique (5 minutes), pour l'enregistrement ou la connexion.
+model WebAuthnChallenge {
+  id        String   @id @default(uuid()) @db.Uuid
+  challenge String   @db.VarChar(128)
+  /// Enregistrement : l'utilisateur connecté ; connexion : null (clé découvrable).
+  userId    String?  @db.Uuid
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
 }
 
 enum AuthProvider {

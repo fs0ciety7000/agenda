@@ -43,7 +43,9 @@
     "resetTitle": "Nouveau mot de passe",
     "resetDone": "Mot de passe modifié. Par sécurité, vous avez été déconnecté·e de tous vos appareils.",
     "newPassword": "Nouveau mot de passe",
-    "resetSubmit": "Enregistrer"
+    "resetSubmit": "Enregistrer",
+    "passkey": "Se connecter avec une passkey",
+    "passkeyFailed": "Connexion par passkey impossible. Utilisez votre mot de passe, ou ajoutez d'abord une passkey dans les Réglages."
   },
   "errors": {
     "VALIDATION_FAILED": "Certains champs sont invalides.",
@@ -84,7 +86,8 @@
     "PASSWORD_REQUIRED": "Définissez d'abord un mot de passe.",
     "ATTACHMENT_TOO_LARGE": "Fichier trop volumineux (10 Mo maximum).",
     "ATTACHMENTS_QUOTA": "Espace de stockage du foyer plein (200 Mo) : supprimez d'anciennes pièces jointes.",
-    "ACCOUNT_DISABLED": "Ce compte est désactivé. Contactez l'administrateur."
+    "ACCOUNT_DISABLED": "Ce compte est désactivé. Contactez l'administrateur.",
+    "PASSKEY_FAILED": "Connexion par passkey impossible. Utilisez votre mot de passe, ou ajoutez d'abord une passkey dans les Réglages."
   },
   "today": {
     "greeting": "Bonjour {name} 👋",
@@ -875,6 +878,20 @@
     "disable": "Désactiver",
     "confirmDisable": "Désactiver l'abonnement ? Le lien cessera de fonctionner.",
     "error": "Action impossible. Réessayez."
+  },
+  "passkeys": {
+    "title": "Passkeys",
+    "intro": "Connectez-vous sans mot de passe, avec l'empreinte, le visage ou le code de votre appareil. Plus sûr qu'un mot de passe : rien à retenir, rien à voler.",
+    "add": "Ajouter une passkey",
+    "added": "Passkey ajoutée : vous pourrez vous connecter avec.",
+    "alreadyHere": "Une passkey existe déjà pour ce compte sur cet appareil.",
+    "error": "Impossible d'ajouter la passkey. Réessayez.",
+    "unsupported": "Ce navigateur ne gère pas les passkeys.",
+    "created": "Ajoutée le {date}",
+    "lastUsed": "Utilisée le {date}",
+    "synced": "synchronisée",
+    "remove": "Supprimer « {name} »",
+    "confirmRemove": "Supprimer cette passkey ? Elle ne permettra plus de se connecter."
   },
   "offline": {
     "offline": "Hors ligne : vous voyez les dernières données reçues. Cochez des tâches, ajoutez-en ou faites les courses : tout sera envoyé au retour du réseau.",

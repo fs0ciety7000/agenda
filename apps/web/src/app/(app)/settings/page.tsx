@@ -16,6 +16,7 @@ import { InviteLink } from '@/components/app/invite-link';
 import { LanguageSwitcher } from '@/components/app/language-switcher';
 import { AndroidAppCard } from '@/components/app/android-app-card';
 import { NotificationSettings } from '@/components/app/notification-settings';
+import { PasskeySettings } from '@/components/app/passkeys';
 import { PasswordSettings } from '@/components/app/password-settings';
 import { PrivacySettings } from '@/components/app/privacy-settings';
 import { MemberAvatar } from '@/components/app/member-avatar';
@@ -189,8 +190,9 @@ export default function SettingsPage() {
 
       <section className="flex flex-col gap-3" aria-labelledby="s-account">
         <SectionTitle id="s-account">{t('account')}</SectionTitle>
-        <Card>
+        <Card className="flex flex-col gap-4">
           <PasswordSettings />
+          <PasskeySettings />
         </Card>
         <AndroidAppCard />
         <div className="flex flex-col gap-2 sm:flex-row">
