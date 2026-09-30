@@ -13,7 +13,7 @@ export function Landing({ locale }: { locale: Locale }) {
         href="#main"
         className="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[60] focus:rounded-full focus:bg-surface focus:px-4 focus:py-2"
       >
-        {locale === 'fr' ? 'Aller au contenu' : 'Skip to content'}
+        {{ fr: 'Aller au contenu', en: 'Skip to content', nl: 'Naar de inhoud' }[locale]}
       </a>
       <Nav t={t} />
       <main id="main">

@@ -10,7 +10,7 @@ import { isAdminEmail } from '../auth/auth.service';
 import { CalendarQueueService } from '../calendar/calendar-queue.service';
 import { env } from '../config/env';
 import { MailService } from '../mail/mail.service';
-import { incidentEmail } from '../mail/templates';
+import { incidentEmail, mailLocale } from '../mail/templates';
 import { WebPushService } from '../notifications/web-push.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { requestMetrics } from './request-metrics';
@@ -248,7 +248,7 @@ export class MonitoringService implements OnModuleInit, OnModuleDestroy {
         })
       ).filter((u) => isAdminEmail(u.email));
       for (const a of admins) {
-        const locale = a.locale === 'en' ? 'en' : 'fr';
+        const locale = mailLocale(a.locale);
         const mail = incidentEmail(
           locale,
           kind,

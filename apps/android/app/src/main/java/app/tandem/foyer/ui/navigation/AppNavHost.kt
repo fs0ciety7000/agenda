@@ -540,7 +540,7 @@ private fun MainScaffold(
                         val activity = context.findActivity() ?: return@SettingsScreen
                         // Langue du compte (e-mails) : hors de l'écran, recréé par le changement de langue.
                         val account = tag.ifEmpty {
-                            if (Resources.getSystem().configuration.locales[0].language == "fr") "fr" else "en"
+                            AppLanguage.supportedOrEnglish(Resources.getSystem().configuration.locales[0].language)
                         }
                         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
                             container.authRepository.setLanguage(account)

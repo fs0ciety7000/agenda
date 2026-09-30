@@ -5,12 +5,29 @@ import { Menu, X } from 'lucide-react';
 import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'motion/react';
 import { useState } from 'react';
 import { APP_URL } from '@/lib/config';
-import type { Content } from '@/lib/content';
+import { type Content, LANGS } from '@/lib/content';
 import { ButtonLink, EASE } from './ui';
 
 /** Mémorise le choix de langue (lu par nginx sur « / », cf. nginx.conf). */
-export function rememberLang(href: string) {
-  document.cookie = `lang=${href === '/' ? 'fr' : 'en'}; path=/; max-age=31536000; samesite=lax`;
+export function rememberLang(locale: string) {
+  document.cookie = `lang=${locale}; path=/; max-age=31536000; samesite=lax`;
+}
+
+/** Liens vers les autres langues du site. */
+export function OtherLangs({ t, className }: { t: Content; className?: string }) {
+  return LANGS.filter((l) => l.locale !== t.lang.current).map((l) => (
+    <a
+      key={l.locale}
+      href={l.href}
+      lang={l.locale}
+      hrefLang={l.locale}
+      onClick={() => rememberLang(l.locale)}
+      aria-label={`${t.lang.label} : ${l.name}`}
+      className={className}
+    >
+      {l.name}
+    </a>
+  ));
 }
 
 export function Nav({ t }: { t: Content }) {
@@ -65,15 +82,10 @@ export function Nav({ t }: { t: Content }) {
           ))}
         </ul>
         <div className="hidden items-center gap-2 md:flex">
-          <a
-            href={t.lang.href}
-            onClick={() => rememberLang(t.lang.href)}
-            hrefLang={t.lang.href === '/' ? 'fr' : 'en'}
-            aria-label={`${t.lang.label} : ${t.lang.other}`}
-            className="rounded-full px-3 py-2 text-sm text-text-muted hover:text-text"
-          >
-            {t.lang.other}
-          </a>
+          <OtherLangs
+            t={t}
+            className="rounded-full px-2 py-2 text-sm text-text-muted hover:text-text"
+          />
           <a
             href={`${APP_URL}/login`}
             className="rounded-full px-3.5 py-2 text-[0.9375rem] font-medium text-text hover:bg-surface-muted"
@@ -118,13 +130,9 @@ export function Nav({ t }: { t: Content }) {
                 </li>
               ))}
               <li className="mt-2 flex items-center justify-between gap-3">
-                <a
-                  href={t.lang.href}
-                  onClick={() => rememberLang(t.lang.href)}
-                  className="px-3 py-3 text-sm text-text-muted"
-                >
-                  {t.lang.other}
-                </a>
+                <span className="flex items-center">
+                  <OtherLangs t={t} className="px-2 py-3 text-sm text-text-muted" />
+                </span>
                 <span className="flex items-center gap-2">
                   <a href={`${APP_URL}/login`} className="px-3 py-3 text-sm font-medium">
                     {t.nav.login}

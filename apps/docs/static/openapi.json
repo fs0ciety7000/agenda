@@ -8476,7 +8476,8 @@
             "type": "string",
             "enum": [
               "fr",
-              "en"
+              "en",
+              "nl"
             ]
           }
         },
@@ -9308,7 +9309,8 @@
                 "type": "string",
                 "enum": [
                   "fr",
-                  "en"
+                  "en",
+                  "nl"
                 ]
               },
               "hasPassword": {
@@ -10612,7 +10614,8 @@
             "type": "string",
             "enum": [
               "fr",
-              "en"
+              "en",
+              "nl"
             ]
           },
           "hasPassword": {
@@ -11826,7 +11829,8 @@
             "type": "string",
             "enum": [
               "fr",
-              "en"
+              "en",
+              "nl"
             ]
           }
         },
@@ -13159,7 +13163,8 @@
             "type": "string",
             "enum": [
               "fr",
-              "en"
+              "en",
+              "nl"
             ]
           }
         },

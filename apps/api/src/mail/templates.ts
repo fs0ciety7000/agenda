@@ -1,10 +1,14 @@
 import { env } from '../config/env';
 
 /**
- * Emails transactionnels, FR/EN, texte + HTML. Mise en page en tableaux et styles en ligne
+ * Emails transactionnels, FR/EN/NL, texte + HTML. Mise en page en tableaux et styles en ligne
  * (Gmail, Outlook, Apple Mail) ; aucun pixel de suivi : seul le logo est chargé, depuis le site.
  */
-type Locale = 'fr' | 'en';
+export type Locale = 'fr' | 'en' | 'nl';
+
+/** Langue d'e-mail d'un compte (valeur libre en base ; français par défaut). */
+export const mailLocale = (v: string | null | undefined): Locale =>
+  v === 'en' || v === 'nl' ? v : 'fr';
 
 const escape = (s: string) => s.replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
 
@@ -36,6 +40,17 @@ const FOOTER = {
     automatic: 'Automatic email sent by Tandem: please do not reply.',
     contact: 'A question? Write to us:',
     links: { privacy: 'Privacy', help: 'Help', report: 'Report a problem', settings: 'Settings' },
+  },
+  nl: {
+    slogan: 'Het perfecte evenwicht voor je huishouden.',
+    automatic: 'Automatische e-mail van Tandem: gelieve niet te antwoorden.',
+    contact: 'Een vraag? Schrijf ons:',
+    links: {
+      privacy: 'Privacy',
+      help: 'Hulp',
+      report: 'Een probleem melden',
+      settings: 'Instellingen',
+    },
   },
 } as const;
 
@@ -121,26 +136,35 @@ ${contact ? `<p style="margin:0 0 8px">${escape(f.contact)} ${link({ label: cont
 }
 
 export function passwordResetEmail(locale: Locale, name: string, url: string) {
-  const t =
-    locale === 'en'
-      ? {
-          subject: 'Reset your password',
-          title: `Hello ${name},`,
-          body: [
-            'Someone (hopefully you) asked to reset your Tandem password.',
-            'This link is valid for 30 minutes and can be used once. If you did not ask for it, ignore this email: your password stays the same.',
-          ],
-          cta: 'Choose a new password',
-        }
-      : {
-          subject: 'Réinitialisation de votre mot de passe',
-          title: `Bonjour ${name},`,
-          body: [
-            'Une demande de réinitialisation du mot de passe de votre compte Tandem a été faite.',
-            "Ce lien est valable 30 minutes et utilisable une seule fois. Si vous n'êtes pas à l'origine de la demande, ignorez cet email : votre mot de passe reste inchangé.",
-          ],
-          cta: 'Choisir un nouveau mot de passe',
-        };
+  const t = {
+    en: {
+      subject: 'Reset your password',
+      title: `Hello ${name},`,
+      body: [
+        'Someone (hopefully you) asked to reset your Tandem password.',
+        'This link is valid for 30 minutes and can be used once. If you did not ask for it, ignore this email: your password stays the same.',
+      ],
+      cta: 'Choose a new password',
+    },
+    nl: {
+      subject: 'Je wachtwoord herstellen',
+      title: `Hallo ${name},`,
+      body: [
+        'Iemand (hopelijk jij) heeft gevraagd om je Tandem-wachtwoord te herstellen.',
+        'Deze link is 30 minuten geldig en kan één keer worden gebruikt. Heb je dit niet gevraagd? Negeer deze e-mail dan: je wachtwoord blijft hetzelfde.',
+      ],
+      cta: 'Een nieuw wachtwoord kiezen',
+    },
+    fr: {
+      subject: 'Réinitialisation de votre mot de passe',
+      title: `Bonjour ${name},`,
+      body: [
+        'Une demande de réinitialisation du mot de passe de votre compte Tandem a été faite.',
+        "Ce lien est valable 30 minutes et utilisable une seule fois. Si vous n'êtes pas à l'origine de la demande, ignorez cet email : votre mot de passe reste inchangé.",
+      ],
+      cta: 'Choisir un nouveau mot de passe',
+    },
+  }[locale];
   return {
     subject: t.subject,
     text: textBody(locale, [t.title, ...t.body], { label: t.cta, url }),
@@ -150,26 +174,35 @@ export function passwordResetEmail(locale: Locale, name: string, url: string) {
 
 /** Compte créé par un administrateur : choisir son mot de passe (lien valable 7 jours). */
 export function welcomeEmail(locale: Locale, name: string, url: string) {
-  const t =
-    locale === 'en'
-      ? {
-          subject: 'Your Tandem account',
-          title: `Hello ${name},`,
-          body: [
-            'An account has been created for you on Tandem, the shared household task list.',
-            'Choose your password to sign in. This link is valid for 7 days and can be used once.',
-          ],
-          cta: 'Choose my password',
-        }
-      : {
-          subject: 'Votre compte Tandem',
-          title: `Bonjour ${name},`,
-          body: [
-            'Un compte a été créé pour vous sur Tandem, les tâches du foyer partagées.',
-            'Choisissez votre mot de passe pour vous connecter. Ce lien est valable 7 jours et utilisable une seule fois.',
-          ],
-          cta: 'Choisir mon mot de passe',
-        };
+  const t = {
+    en: {
+      subject: 'Your Tandem account',
+      title: `Hello ${name},`,
+      body: [
+        'An account has been created for you on Tandem, the shared household task list.',
+        'Choose your password to sign in. This link is valid for 7 days and can be used once.',
+      ],
+      cta: 'Choose my password',
+    },
+    nl: {
+      subject: 'Je Tandem-account',
+      title: `Hallo ${name},`,
+      body: [
+        'Er is een account voor je aangemaakt op Tandem, de gedeelde takenlijst van het huishouden.',
+        'Kies je wachtwoord om je aan te melden. Deze link is 7 dagen geldig en kan één keer worden gebruikt.',
+      ],
+      cta: 'Mijn wachtwoord kiezen',
+    },
+    fr: {
+      subject: 'Votre compte Tandem',
+      title: `Bonjour ${name},`,
+      body: [
+        'Un compte a été créé pour vous sur Tandem, les tâches du foyer partagées.',
+        'Choisissez votre mot de passe pour vous connecter. Ce lien est valable 7 jours et utilisable une seule fois.',
+      ],
+      cta: 'Choisir mon mot de passe',
+    },
+  }[locale];
   return {
     subject: t.subject,
     text: textBody(locale, [t.title, ...t.body], { label: t.cta, url }),
@@ -177,13 +210,17 @@ export function welcomeEmail(locale: Locale, name: string, url: string) {
   };
 }
 
-const COMPONENT_NAMES: Record<string, { fr: string; en: string }> = {
-  api: { fr: 'API', en: 'API' },
-  database: { fr: 'Base de données', en: 'Database' },
-  redis: { fr: 'Redis', en: 'Redis' },
-  calendar: { fr: 'Synchronisation Google Calendar', en: 'Google Calendar sync' },
-  email: { fr: "Envoi d'e-mails", en: 'Email delivery' },
-  backups: { fr: 'Sauvegardes', en: 'Backups' },
+const COMPONENT_NAMES: Record<string, Record<Locale, string>> = {
+  api: { fr: 'API', en: 'API', nl: 'API' },
+  database: { fr: 'Base de données', en: 'Database', nl: 'Database' },
+  redis: { fr: 'Redis', en: 'Redis', nl: 'Redis' },
+  calendar: {
+    fr: 'Synchronisation Google Calendar',
+    en: 'Google Calendar sync',
+    nl: 'Synchronisatie Google Agenda',
+  },
+  email: { fr: "Envoi d'e-mails", en: 'Email delivery', nl: 'E-mail verzenden' },
+  backups: { fr: 'Sauvegardes', en: 'Backups', nl: 'Back-ups' },
 };
 
 /** Alerte de surveillance aux administrateurs (incident ouvert / résolu). */
@@ -197,49 +234,65 @@ export function incidentEmail(
 ) {
   const name = COMPONENT_NAMES[component]?.[locale] ?? component;
   const minutes = Math.max(1, Math.round((Date.now() - since.getTime()) / 60_000));
-  const en = locale === 'en';
-  const subject =
-    kind === 'opened'
-      ? en
-        ? `🔴 Incident: ${name}`
-        : `🔴 Incident : ${name}`
-      : en
-        ? `✅ Resolved: ${name}`
-        : `✅ Résolu : ${name}`;
+  const t = {
+    fr: {
+      opened: `🔴 Incident : ${name}`,
+      resolved: `✅ Résolu : ${name}`,
+      failing: `${name} ne répond plus correctement.`,
+      detail: 'Détail : ',
+      later: 'Un autre e-mail vous préviendra du retour à la normale.',
+      back: `${name} fonctionne de nouveau (après environ ${minutes} min).`,
+      cta: 'Ouvrir la surveillance',
+    },
+    en: {
+      opened: `🔴 Incident: ${name}`,
+      resolved: `✅ Resolved: ${name}`,
+      failing: `${name} is failing.`,
+      detail: 'Detail: ',
+      later: 'You will get another email when it is back.',
+      back: `${name} is working again (after about ${minutes} min).`,
+      cta: 'Open monitoring',
+    },
+    nl: {
+      opened: `🔴 Incident: ${name}`,
+      resolved: `✅ Opgelost: ${name}`,
+      failing: `${name} werkt niet goed meer.`,
+      detail: 'Detail: ',
+      later: 'Je krijgt nog een e-mail zodra alles weer werkt.',
+      back: `${name} werkt weer (na ongeveer ${minutes} min).`,
+      cta: 'Monitoring openen',
+    },
+  }[locale];
+  const subject = kind === 'opened' ? t.opened : t.resolved;
   const body =
-    kind === 'opened'
-      ? [
-          en ? `${name} is failing.` : `${name} ne répond plus correctement.`,
-          ...(detail ? [(en ? 'Detail: ' : 'Détail : ') + detail] : []),
-          en
-            ? 'You will get another email when it is back.'
-            : 'Un autre e-mail vous préviendra du retour à la normale.',
-        ]
-      : [
-          en
-            ? `${name} is working again (after about ${minutes} min).`
-            : `${name} fonctionne de nouveau (après environ ${minutes} min).`,
-        ];
-  const cta = en ? 'Open monitoring' : 'Ouvrir la surveillance';
+    kind === 'opened' ? [t.failing, ...(detail ? [t.detail + detail] : []), t.later] : [t.back];
   return {
     subject,
-    text: textBody(locale, body, { label: cta, url }),
-    html: layout(locale, subject, body, { label: cta, url }),
+    text: textBody(locale, body, { label: t.cta, url }),
+    html: layout(locale, subject, body, { label: t.cta, url }),
   };
 }
 
 /** Vérification de la configuration SMTP depuis l'administration. */
 export function testEmail(locale: Locale) {
-  const title = locale === 'en' ? 'Test email' : 'E-mail de test';
-  const body = [
-    locale === 'en'
-      ? 'Tandem can send emails: password reset, invitations and acknowledgements will arrive.'
-      : 'Tandem sait envoyer des e-mails : réinitialisations, invitations et accusés de réception arriveront.',
-  ];
+  const t = {
+    fr: {
+      title: 'E-mail de test',
+      body: 'Tandem sait envoyer des e-mails : réinitialisations, invitations et accusés de réception arriveront.',
+    },
+    en: {
+      title: 'Test email',
+      body: 'Tandem can send emails: password reset, invitations and acknowledgements will arrive.',
+    },
+    nl: {
+      title: 'Test-e-mail',
+      body: 'Tandem kan e-mails verzenden: herstellinks, uitnodigingen en ontvangstbevestigingen komen aan.',
+    },
+  }[locale];
   return {
-    subject: title,
-    text: textBody(locale, [title, ...body]),
-    html: layout(locale, title, body),
+    subject: t.title,
+    text: textBody(locale, [t.title, t.body]),
+    html: layout(locale, t.title, [t.body]),
   };
 }
 
@@ -248,42 +301,73 @@ export function inboundTaskCreatedEmail(
   locale: Locale,
   p: { title: string; when: string | null; assignees: string | null; files: string[]; url: string },
 ) {
-  const fr = locale !== 'en';
-  const subject = `${fr ? '✓ Tâche créée' : '✓ Task created'} : ${p.title}`;
+  const t = {
+    fr: {
+      created: '✓ Tâche créée',
+      when: 'Quand',
+      noDate: 'Sans date',
+      who: 'Qui',
+      files: 'Pièces jointes',
+      cta: 'Ouvrir la tâche',
+    },
+    en: {
+      created: '✓ Task created',
+      when: 'When',
+      noDate: 'No date',
+      who: 'Who',
+      files: 'Attachments',
+      cta: 'Open the task',
+    },
+    nl: {
+      created: '✓ Taak aangemaakt',
+      when: 'Wanneer',
+      noDate: 'Geen datum',
+      who: 'Wie',
+      files: 'Bijlagen',
+      cta: 'Taak openen',
+    },
+  }[locale];
+  const subject = `${t.created} : ${p.title}`;
   const lines = [
-    p.when ? `${fr ? 'Quand' : 'When'} : ${p.when}` : fr ? 'Sans date' : 'No date',
-    p.assignees ? `${fr ? 'Qui' : 'Who'} : ${p.assignees}` : null,
-    p.files.length ? `${fr ? 'Pièces jointes' : 'Attachments'} : ${p.files.join(', ')}` : null,
+    p.when ? `${t.when} : ${p.when}` : t.noDate,
+    p.assignees ? `${t.who} : ${p.assignees}` : null,
+    p.files.length ? `${t.files} : ${p.files.join(', ')}` : null,
   ].filter((l): l is string => l !== null);
-  const cta = fr ? 'Ouvrir la tâche' : 'Open the task';
   return {
     subject,
-    text: textBody(locale, [p.title, lines.join('\n')], { label: cta, url: p.url }),
-    html: layout(locale, p.title, lines, { label: cta, url: p.url }),
+    text: textBody(locale, [p.title, lines.join('\n')], { label: t.cta, url: p.url }),
+    html: layout(locale, p.title, lines, { label: t.cta, url: p.url }),
   };
 }
 
 /** E-mail reçu mais sans rien pour faire un titre (sujet et message vides). */
 export function inboundTaskEmptyEmail(locale: Locale) {
-  const fr = locale !== 'en';
-  const title = fr ? 'Aucune tâche créée' : 'No task created';
-  const body = [
-    fr
-      ? "L'e-mail transféré n'avait ni sujet ni texte : impossible d'en faire une tâche. Écrivez la tâche dans le sujet (par exemple « Payer la facture vendredi »)."
-      : 'The forwarded e-mail had neither subject nor text, so no task could be created. Write the task in the subject (e.g. “Pay the bill friday”).',
-  ];
+  const t = {
+    fr: {
+      title: 'Aucune tâche créée',
+      body: "L'e-mail transféré n'avait ni sujet ni texte : impossible d'en faire une tâche. Écrivez la tâche dans le sujet (par exemple « Payer la facture vendredi »).",
+    },
+    en: {
+      title: 'No task created',
+      body: 'The forwarded e-mail had neither subject nor text, so no task could be created. Write the task in the subject (e.g. “Pay the bill friday”).',
+    },
+    nl: {
+      title: 'Geen taak aangemaakt',
+      body: 'De doorgestuurde e-mail had geen onderwerp en geen tekst, dus er kon geen taak worden aangemaakt. Schrijf de taak in het onderwerp (bv. “Factuur betalen vrijdag”).',
+    },
+  }[locale];
   return {
-    subject: title,
-    text: textBody(locale, [title, ...body]),
-    html: layout(locale, title, body),
+    subject: t.title,
+    text: textBody(locale, [t.title, t.body]),
+    html: layout(locale, t.title, [t.body]),
   };
 }
 
 const REPORT_KINDS: Record<string, Record<Locale, string>> = {
-  BUG: { fr: 'Bug', en: 'Bug' },
-  IDEA: { fr: 'Idée', en: 'Idea' },
-  QUESTION: { fr: 'Question', en: 'Question' },
-  OTHER: { fr: 'Autre', en: 'Other' },
+  BUG: { fr: 'Bug', en: 'Bug', nl: 'Bug' },
+  IDEA: { fr: 'Idée', en: 'Idea', nl: 'Idee' },
+  QUESTION: { fr: 'Question', en: 'Question', nl: 'Vraag' },
+  OTHER: { fr: 'Autre', en: 'Other', nl: 'Andere' },
 };
 
 /** Nouveau signalement, aux administrateurs. */
@@ -291,49 +375,61 @@ export function reportNewEmail(
   locale: Locale,
   p: { kind: string; title: string; description: string; author: string; url: string },
 ) {
-  const en = locale === 'en';
   const kind = REPORT_KINDS[p.kind]?.[locale] ?? p.kind;
   const subject = `${p.kind === 'BUG' ? '🐞' : '💬'} ${kind} : ${p.title}`;
+  const t = {
+    fr: { from: `Nouveau signalement de ${p.author}.`, cta: 'Ouvrir les signalements' },
+    en: { from: `New report from ${p.author}.`, cta: 'Open reports' },
+    nl: { from: `Nieuwe melding van ${p.author}.`, cta: 'Meldingen openen' },
+  }[locale];
   const body = [
-    en ? `New report from ${p.author}.` : `Nouveau signalement de ${p.author}.`,
+    t.from,
     p.description.length > 1500 ? `${p.description.slice(0, 1500)}…` : p.description,
   ];
-  const cta = en ? 'Open reports' : 'Ouvrir les signalements';
   return {
     subject,
-    text: textBody(locale, body, { label: cta, url: p.url }),
-    html: layout(locale, subject, body, { label: cta, url: p.url }),
+    text: textBody(locale, body, { label: t.cta, url: p.url }),
+    html: layout(locale, subject, body, { label: t.cta, url: p.url }),
   };
 }
+
+const REPORT_STATUS: Record<string, Record<Locale, string>> = {
+  OPEN: { fr: 'ouvert', en: 'open', nl: 'open' },
+  IN_PROGRESS: { fr: 'en cours', en: 'in progress', nl: 'in behandeling' },
+  RESOLVED: { fr: 'résolu', en: 'resolved', nl: 'opgelost' },
+  CLOSED: { fr: 'fermé', en: 'closed', nl: 'gesloten' },
+};
 
 /** Réponse de l'administrateur à un signalement (si l'auteur a accepté d'être recontacté). */
 export function reportReplyEmail(
   locale: Locale,
   p: { title: string; reply: string; status: string; url: string },
 ) {
-  const en = locale === 'en';
-  const subject = en
-    ? `Reply to your report: ${p.title}`
-    : `Réponse à votre signalement : ${p.title}`;
-  const status: Record<string, Record<Locale, string>> = {
-    OPEN: { fr: 'ouvert', en: 'open' },
-    IN_PROGRESS: { fr: 'en cours', en: 'in progress' },
-    RESOLVED: { fr: 'résolu', en: 'resolved' },
-    CLOSED: { fr: 'fermé', en: 'closed' },
-  };
-  const body = [
-    p.reply,
-    en
-      ? `Status: ${status[p.status]?.en ?? p.status}.`
-      : `État : ${status[p.status]?.fr ?? p.status}.`,
-    en
-      ? 'You receive this email because you agreed to be contacted about this report.'
-      : 'Vous recevez cet e-mail car vous avez accepté d’être recontacté·e à propos de ce signalement.',
-  ];
-  const cta = en ? 'See my reports' : 'Voir mes signalements';
+  const status = REPORT_STATUS[p.status]?.[locale] ?? p.status;
+  const t = {
+    fr: {
+      subject: `Réponse à votre signalement : ${p.title}`,
+      status: `État : ${status}.`,
+      why: 'Vous recevez cet e-mail car vous avez accepté d’être recontacté·e à propos de ce signalement.',
+      cta: 'Voir mes signalements',
+    },
+    en: {
+      subject: `Reply to your report: ${p.title}`,
+      status: `Status: ${status}.`,
+      why: 'You receive this email because you agreed to be contacted about this report.',
+      cta: 'See my reports',
+    },
+    nl: {
+      subject: `Antwoord op je melding: ${p.title}`,
+      status: `Status: ${status}.`,
+      why: 'Je krijgt deze e-mail omdat je akkoord ging om over deze melding gecontacteerd te worden.',
+      cta: 'Mijn meldingen bekijken',
+    },
+  }[locale];
+  const body = [p.reply, t.status, t.why];
   return {
-    subject,
-    text: textBody(locale, body, { label: cta, url: p.url }),
-    html: layout(locale, subject, body, { label: cta, url: p.url }),
+    subject: t.subject,
+    text: textBody(locale, body, { label: t.cta, url: p.url }),
+    html: layout(locale, t.subject, body, { label: t.cta, url: p.url }),
   };
 }

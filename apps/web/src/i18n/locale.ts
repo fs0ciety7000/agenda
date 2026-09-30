@@ -1,4 +1,4 @@
-export const LOCALES = ['fr', 'en'] as const;
+export const LOCALES = ['fr', 'en', 'nl'] as const;
 export type AppLocale = (typeof LOCALES)[number];
 export const DEFAULT_LOCALE: AppLocale = 'fr';
 /** Cookie posé par le sélecteur de langue (prioritaire sur le navigateur). */
@@ -8,7 +8,7 @@ export const isLocale = (v: string | undefined): v is AppLocale => LOCALES.inclu
 
 /**
  * Langue d'après l'en-tête Accept-Language : la première langue prise en charge, par ordre de
- * préférence (q). Un navigateur qui ne demande ni français ni anglais (allemand, espagnol…)
+ * préférence (q). Un navigateur qui ne demande ni français, ni anglais, ni néerlandais (allemand…)
  * reçoit l'anglais ; sans en-tête (robots), le français.
  */
 export function localeFromAcceptLanguage(header: string | null | undefined): AppLocale {

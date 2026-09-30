@@ -12,6 +12,7 @@ import type { HouseholdContext } from '../common/request-context';
 import { PrismaService } from '../prisma/prisma.service';
 import { PushService } from './push.service';
 import { type WebPushMessage, WebPushService } from './web-push.service';
+import { type Locale } from '../mail/templates';
 
 export const NOTIFICATION_KINDS: NotificationKind[] = [
   'TASK_ASSIGNED',
@@ -242,30 +243,41 @@ export class NotificationsService {
 
 /** Texte des notifications du site (mêmes formulations que la cloche). */
 export function webPushText(
-  locale: 'fr' | 'en',
+  locale: Locale,
   type: TaskNotification,
   by: string,
   title: string,
   recurring: boolean,
   occurrenceId: string,
 ): WebPushMessage {
-  const fr = locale === 'fr';
-  const body =
+  const kind =
     type === 'TASK_THANKS'
-      ? fr
-        ? `${by} vous dit merci pour « ${title} »`
-        : `${by} says thanks for “${title}”`
+      ? 'thanks'
       : type === 'TASK_COMMENT'
-        ? fr
-          ? `${by} a commenté « ${title} »`
-          : `${by} commented on “${title}”`
+        ? 'comment'
         : recurring
-          ? fr
-            ? `${by} vous a inclus dans « ${title} » (récurrente)`
-            : `${by} included you in “${title}” (recurring)`
-          : fr
-            ? `${by} vous a confié « ${title} »`
-            : `${by} assigned you “${title}”`;
+          ? 'recurring'
+          : 'assigned';
+  const body = {
+    fr: {
+      thanks: `${by} vous dit merci pour « ${title} »`,
+      comment: `${by} a commenté « ${title} »`,
+      recurring: `${by} vous a inclus dans « ${title} » (récurrente)`,
+      assigned: `${by} vous a confié « ${title} »`,
+    },
+    en: {
+      thanks: `${by} says thanks for “${title}”`,
+      comment: `${by} commented on “${title}”`,
+      recurring: `${by} included you in “${title}” (recurring)`,
+      assigned: `${by} assigned you “${title}”`,
+    },
+    nl: {
+      thanks: `${by} bedankt je voor “${title}”`,
+      comment: `${by} heeft gereageerd op “${title}”`,
+      recurring: `${by} heeft je toegevoegd aan “${title}” (terugkerend)`,
+      assigned: `${by} heeft je “${title}” gegeven`,
+    },
+  }[locale][kind];
   return {
     title: 'Tandem',
     body,

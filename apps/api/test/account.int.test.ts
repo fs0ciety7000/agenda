@@ -362,6 +362,11 @@ describe('Compte : mot de passe oublié, Google Sign-In, RGPD (intégration)', (
       const res = await http().patch('/v1/me').set(user.auth).send({ locale: 'en' }).expect(200);
       expect(res.body.locale).toBe('en');
       await http().patch('/v1/me').set(user.auth).send({ locale: 'de' }).expect(400);
+      expect(
+        (await http().patch('/v1/me').set(user.auth).send({ locale: 'nl' }).expect(200)).body
+          .locale,
+      ).toBe('nl');
+      await http().patch('/v1/me').set(user.auth).send({ locale: 'en' }).expect(200);
       await http()
         .post('/v1/auth/password/forgot')
         .set(CSRF)

@@ -7,7 +7,8 @@ description: Ajout rapide, formulaire, échéances, responsables, sous-tâches, 
 
 ## Ajout rapide
 
-L'ajout rapide comprend le français et l'anglais. Ce qui n'est pas reconnu reste dans le titre.
+L'ajout rapide comprend le français, l'anglais et le néerlandais (`morgen 19u`, `volgende maandag`,
+`over 2 weken`, `om 9u30`, `samen`…). Ce qui n'est pas reconnu reste dans le titre.
 
 | Élément | Exemples |
 |---|---|

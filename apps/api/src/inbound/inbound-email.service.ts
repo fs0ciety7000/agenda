@@ -15,7 +15,12 @@ import { PrismaService } from '../prisma/prisma.service';
 import { TasksService } from '../tasks/tasks.service';
 import { htmlToText } from './html-to-text';
 import { MailService } from '../mail/mail.service';
-import { inboundTaskCreatedEmail, inboundTaskEmptyEmail } from '../mail/templates';
+import {
+  inboundTaskCreatedEmail,
+  inboundTaskEmptyEmail,
+  type Locale,
+  mailLocale,
+} from '../mail/templates';
 import { AttachmentsService } from '../tasks/attachments.service';
 import { type ReceivedEmail, ResendReceivingClient } from './resend-receiving.client';
 
@@ -24,12 +29,12 @@ const MAX_EMAIL_ATTACHMENTS = 10;
 
 /** « mercredi 30 septembre à 11:30 » (date locale du foyer, telle que stockée). */
 export function formatWhen(
-  locale: 'fr' | 'en',
+  locale: Locale,
   date: string | null,
   startMinute: number | null,
 ): string | null {
   if (!date) return null;
-  const day = new Intl.DateTimeFormat(locale === 'en' ? 'en-GB' : 'fr-BE', {
+  const day = new Intl.DateTimeFormat({ en: 'en-GB', fr: 'fr-BE', nl: 'nl-BE' }[locale], {
     weekday: 'long',
     day: 'numeric',
     month: 'long',
@@ -37,7 +42,7 @@ export function formatWhen(
   }).format(new Date(`${date}T12:00:00Z`));
   if (startMinute == null) return day;
   const hm = `${String(Math.floor(startMinute / 60)).padStart(2, '0')}:${String(startMinute % 60).padStart(2, '0')}`;
-  return locale === 'en' ? `${day} at ${hm}` : `${day} à ${hm}`;
+  return `${day} ${{ en: 'at', fr: 'à', nl: 'om' }[locale]} ${hm}`;
 }
 
 /** Préfixes de réponse / transfert retirés du sujet (FR, EN, NL, DE…). */
@@ -238,7 +243,7 @@ export class InboundEmailService {
       },
     });
     if (!m.user || !m.inboundAck) return;
-    const locale = m.user.locale === 'en' ? 'en' : 'fr';
+    const locale = mailLocale(m.user.locale);
     const mail = created
       ? inboundTaskCreatedEmail(locale, {
           title: created.title,
@@ -247,7 +252,7 @@ export class InboundEmailService {
             created.assigneeIds
               .map((id) => m.household.members.find((x) => x.id === id)?.displayName)
               .filter(Boolean)
-              .join(locale === 'en' ? ' and ' : ' et ') || null,
+              .join({ en: ' and ', fr: ' et ', nl: ' en ' }[locale]) || null,
           files,
           url: `${env().WEB_ORIGIN}/?open=${created.id}`,
         })

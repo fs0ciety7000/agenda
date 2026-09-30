@@ -14,13 +14,18 @@ const TEXT = {
     body: 'The error has been reported. Reload the page to try again.',
     retry: 'Try again',
   },
+  nl: {
+    title: 'Er ging iets mis',
+    body: 'De fout is gemeld. Laad de pagina opnieuw om het nog eens te proberen.',
+    retry: 'Opnieuw proberen',
+  },
 };
 
 /** Dernier recours (la mise en page elle-même a échoué) : pas de traductions chargées, la langue suit celle du document. */
 export default function GlobalError({ error, reset }: { error: Error; reset: () => void }) {
   useEffect(() => reportError(error, 'global'), [error]);
-  const lang =
-    typeof document !== 'undefined' && document.documentElement.lang.startsWith('en') ? 'en' : 'fr';
+  const docLang = typeof document !== 'undefined' ? document.documentElement.lang.slice(0, 2) : '';
+  const lang: keyof typeof TEXT = docLang === 'en' || docLang === 'nl' ? docLang : 'fr';
   const t = TEXT[lang];
   return (
     <html lang={lang}>

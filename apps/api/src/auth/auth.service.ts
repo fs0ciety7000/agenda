@@ -15,6 +15,7 @@ import { env } from '../config/env';
 import { PrismaService } from '../prisma/prisma.service';
 import { PasswordService } from './password.service';
 import { TokenService } from './token.service';
+import { mailLocale } from '../mail/templates';
 
 export interface IssuedTokens {
   user: MeResponse;
@@ -242,7 +243,7 @@ function toMe(user: User, googleLinked = false): MeResponse {
     id: user.id,
     email: user.email,
     displayName: user.displayName,
-    locale: user.locale === 'en' ? 'en' : 'fr',
+    locale: mailLocale(user.locale),
     hasPassword: user.passwordHash !== null,
     googleLinked,
     isAdmin: isAdminEmail(user.email),

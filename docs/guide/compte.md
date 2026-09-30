@@ -36,5 +36,6 @@ Ce que l'app fait de vos données, combien de temps elle les garde et avec quels
 
 ## Apparence et langue
 
-Thème **Système**, **Clair** ou **Sombre** dans les Réglages. L'app est en français et en
-anglais (langue du navigateur ou du téléphone).
+Thème **Système**, **Clair** ou **Sombre** dans les Réglages. L'app est en français, en
+anglais et en néerlandais (langue du navigateur ou du téléphone, ou choix dans les Réglages ;
+une autre langue affiche l'anglais). Le choix vaut aussi pour les e-mails.

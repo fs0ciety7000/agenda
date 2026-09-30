@@ -1,6 +1,6 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { resetEnvCache } from '../config/env';
-import { passwordResetEmail, testEmail } from './templates';
+import { mailLocale, passwordResetEmail, testEmail } from './templates';
 
 beforeAll(() => {
   process.env.DATABASE_URL ||= 'postgresql://unit@localhost/unit_test';
@@ -34,5 +34,15 @@ describe('mise en page des e-mails', () => {
     expect(mail.html).toContain('Privacy');
     expect(mail.text).toContain('The perfect balance for your household.');
     expect(passwordResetEmail('fr', '<b>x</b>', 'http://x').html).not.toContain('<b>x</b>');
+  });
+
+  it('néerlandais (je) et langue inconnue ramenée au français', () => {
+    const mail = passwordResetEmail('nl', 'Grace', 'http://x');
+    expect(mail.subject).toBe('Je wachtwoord herstellen');
+    expect(mail.html).toContain('lang="nl"');
+    expect(mail.text).toContain('Het perfecte evenwicht voor je huishouden.');
+    expect(mailLocale('nl')).toBe('nl');
+    expect(mailLocale('de')).toBe('fr');
+    expect(mailLocale(null)).toBe('fr');
   });
 });

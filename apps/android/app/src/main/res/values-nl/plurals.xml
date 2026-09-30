@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="unscheduled_count">
+        <item quantity="one">%1$d taak zonder datum</item>
+        <item quantity="other">%1$d taken zonder datum</item>
+    </plurals>
+    <plurals name="offline_pending">
+        <item quantity="one">Offline · %1$d wijziging in wachtrij</item>
+        <item quantity="other">Offline · %1$d wijzigingen in wachtrij</item>
+    </plurals>
+    <plurals name="syncing_pending">
+        <item quantity="one">%1$d wijziging wordt verzonden…</item>
+        <item quantity="other">%1$d wijzigingen worden verzonden…</item>
+    </plurals>
+    <plurals name="day_tasks">
+        <item quantity="one">%2$s, %1$d taak</item>
+        <item quantity="other">%2$s, %1$d taken</item>
+    </plurals>
+    <plurals name="balance_row">
+        <item quantity="one">%1$d taak · %2$s</item>
+        <item quantity="other">%1$d taken · %2$s</item>
+    </plurals>
+    <plurals name="widget_more">
+        <item quantity="one">+ nog %d in de app</item>
+        <item quantity="other">+ nog %d in de app</item>
+    </plurals>
+    <plurals name="assignee_suggestion">
+        <item quantity="one">Suggestie: %1$s, het minst bezet deze week (%2$d taak).</item>
+        <item quantity="other">Suggestie: %1$s, het minst bezet deze week (%2$d taken).</item>
+    </plurals>
+</resources>

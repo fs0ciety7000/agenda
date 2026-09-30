@@ -3,7 +3,7 @@ import { AppException } from '../common/app-exception';
 import { randomToken, sha256Hex } from '../common/crypto';
 import { env } from '../config/env';
 import { MailService } from '../mail/mail.service';
-import { passwordResetEmail, welcomeEmail } from '../mail/templates';
+import { mailLocale, passwordResetEmail, welcomeEmail } from '../mail/templates';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuthService } from './auth.service';
 import { PasswordService } from './password.service';
@@ -56,7 +56,7 @@ export class PasswordResetService {
     await this.mail.send({
       to: user.email,
       ...(opts.welcome ? welcomeEmail : passwordResetEmail)(
-        user.locale === 'en' ? 'en' : 'fr',
+        mailLocale(user.locale),
         user.displayName,
         url,
       ),

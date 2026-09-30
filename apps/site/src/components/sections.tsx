@@ -24,7 +24,7 @@ import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } fr
 import { useEffect, useRef, useState } from 'react';
 import { APK_URL, APP_URL, CONTACT_EMAIL, DOCS_URL, PLAY_URL } from '@/lib/config';
 import type { Content, FeatureIcon, Locale } from '@/lib/content';
-import { rememberLang } from './nav';
+import { OtherLangs } from './nav';
 import { EASE, PhoneFrame, Reveal, SectionHeading } from './ui';
 
 const ICONS: Record<FeatureIcon, LucideIcon> = {
@@ -245,7 +245,7 @@ export function Screens({ t, locale }: { t: Content; locale: Locale }) {
               <PhoneFrame className="pt-7">
                 {/* eslint-disable-next-line @next/next/no-img-element -- export statique */}
                 <img
-                  src={`/shots/${locale}/${s.file}.webp`}
+                  src={`/shots/${locale === 'fr' ? 'fr' : 'en'}/${s.file}.webp`}
                   alt={s.caption}
                   width={720}
                   height={1440}
@@ -452,13 +452,12 @@ export function Footer({ t }: { t: Content }) {
             <span className="text-lg font-semibold">Tandem</span>
           </div>
           <p className="max-w-xs text-text-muted">{t.footer.tagline}</p>
-          <a
-            href={t.lang.href}
-            onClick={() => rememberLang(t.lang.href)}
-            className="text-sm text-text-muted underline underline-offset-4 hover:text-text"
-          >
-            {t.lang.other}
-          </a>
+          <div className="flex gap-4">
+            <OtherLangs
+              t={t}
+              className="text-sm text-text-muted underline underline-offset-4 hover:text-text"
+            />
+          </div>
         </div>
         {columns.map((c) => (
           <div key={c.title} className="flex flex-col gap-3">

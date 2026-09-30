@@ -10,14 +10,15 @@ import {
 } from './dates';
 
 /**
- * Quick add déterministe (FR + EN), sans IA.
+ * Quick add déterministe (FR + EN + NL), sans IA.
  *   « Sortir les poubelles demain 19h @nicolas #maison » → titre, date, heure, responsable, catégorie.
  *
  * Syntaxe reconnue :
  *   dates     aujourd'hui, ce soir, demain, après-demain, lundi…dimanche [prochain], dans N jours/semaines,
- *             le 12, le 12/10[/2027], 12 octobre, today, tomorrow, monday, next monday, in N days
- *   heures    19h, 19h30, 19:30, à 7h, midi, minuit, 7pm
- *   durées    30 min, pendant 1h30, pour 2h, for 45 min
+ *             le 12, le 12/10[/2027], 12 octobre, today, tomorrow, monday, next monday, in N days,
+ *             vandaag, vanavond, morgen, overmorgen, (volgende) maandag, over N dagen, 12 oktober
+ *   heures    19h, 19h30, 19:30, à 7h, midi, minuit, 7pm, 19u, om 19u30, middernacht
+ *   durées    30 min, pendant 1h30, pour 2h, for 45 min, gedurende 1u30
  *   personnes @grace, @nicolas, @nous / @tous / @ensemble (à deux) ; sans @, un prénom seul
  *             APRÈS une date / heure / durée reconnue (« …21h Grace », « …demain Grace et Nicolas »,
  *             « …20h à deux ») — avant, il reste dans le titre (« Appeler Grace demain »)
@@ -74,6 +75,15 @@ const re = (src: string) => new RegExp(`${B}(?:${src})${E}`, 'gu');
 
 const WEEKDAYS_FR = ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'];
 const WEEKDAYS_EN = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+const WEEKDAYS_NL = [
+  'maandag',
+  'dinsdag',
+  'woensdag',
+  'donderdag',
+  'vrijdag',
+  'zaterdag',
+  'zondag',
+];
 const MONTHS_FR = [
   'janvier',
   'fevrier',
@@ -103,7 +113,39 @@ const MONTHS_EN = [
   'december',
 ];
 
-const TOGETHER = new Set(['nous', 'tous', 'ensemble', 'deux', 'both', 'us', 'all', 'together']);
+const MONTHS_NL = [
+  'januari',
+  'februari',
+  'maart',
+  'april',
+  'mei',
+  'juni',
+  'juli',
+  'augustus',
+  'september',
+  'oktober',
+  'november',
+  'december',
+];
+/** Nom de jour ou de mois (toutes langues) → index (0 = lundi / janvier). */
+const indexOf = (lists: string[][]) =>
+  new Map(lists.flatMap((l) => l.map((name, i) => [name, i] as const)));
+const WEEKDAY_INDEX = indexOf([WEEKDAYS_FR, WEEKDAYS_EN, WEEKDAYS_NL]);
+const MONTH_INDEX = indexOf([MONTHS_FR, MONTHS_EN, MONTHS_NL]);
+
+const TOGETHER = new Set([
+  'nous',
+  'tous',
+  'ensemble',
+  'deux',
+  'both',
+  'us',
+  'all',
+  'together',
+  'samen',
+  'wij',
+  'allebei',
+]);
 
 function nextWeekday(today: IsoDate, weekday: number, strictlyAfter: boolean): IsoDate {
   let delta = (weekday - weekdayOf(today) + 7) % 7;
@@ -149,13 +191,18 @@ const TOGETHER_BARE = new Set([
   'ensemble',
   'together',
   'both of us',
+  'samen',
+  'allebei',
+  'wij twee',
+  'met twee',
+  "met z'n tweeen",
 ]);
 
 /** « Grace », « Grace et Nicolas », « à deux »… → membres ; null si ce n'est pas que ça. */
 function bareAssignees(gap: string, members: { id: string; key: string }[]): string[] | null {
   if (!gap || members.length === 0) return null;
   if (TOGETHER_BARE.has(gap)) return members.map((m) => m.id);
-  const parts = gap.split(/\s*(?:,|&|\bet\b|\band\b)\s*/u).filter(Boolean);
+  const parts = gap.split(/\s*(?:,|&|\bet\b|\band\b|\ben\b)\s*/u).filter(Boolean);
   const ids: string[] = [];
   for (const part of parts) {
     const found =
@@ -193,44 +240,45 @@ export function parseQuickAdd(input: string, ctx: QuickAddContext): QuickAddResu
     r.dueDate = due;
     return true;
   };
-  add(re('cette semaine|this week'), 'due', (_, r) => setDue(r, endOfWeek(ctx.today)));
-  add(re('ce mois(?:-ci| ci)?|this month'), 'due', (_, r) => setDue(r, endOfMonth(ctx.today)));
-  add(re('ce week[- ]?end|this weekend'), 'date', (_, r) => {
+  add(re('cette semaine|this week|deze week'), 'due', (_, r) => setDue(r, endOfWeek(ctx.today)));
+  add(re('ce mois(?:-ci| ci)?|this month|deze maand'), 'due', (_, r) =>
+    setDue(r, endOfMonth(ctx.today)),
+  );
+  add(re('ce week[- ]?end|this weekend|dit weekend'), 'date', (_, r) => {
     // Le week-end en cours (aujourd'hui si on y est déjà), sinon le samedi qui vient.
     const wd = weekdayOf(ctx.today);
     return setDate(r, wd >= 5 ? ctx.today : addDays(ctx.today, 5 - wd));
   });
 
   // ── Dates ──
-  add(re("aujourd'hui|aujourdhui|auj|today"), 'date', (_, r) => setDate(r, ctx.today));
-  add(re('ce soir|tonight'), 'date', (_, r) => {
+  add(re("aujourd'hui|aujourdhui|auj|today|vandaag"), 'date', (_, r) => setDate(r, ctx.today));
+  add(re('ce soir|tonight|vanavond'), 'date', (_, r) => {
     if (!setDate(r, ctx.today)) return false;
     r.startMinute ??= 19 * 60; // « ce soir » sans heure : 19:00 (l'heure explicite, traitée après, gagne)
     return true;
   });
-  add(re('apres[- ]demain|day after tomorrow'), 'date', (_, r) =>
+  add(re('apres[- ]demain|day after tomorrow|overmorgen'), 'date', (_, r) =>
     setDate(r, addDays(ctx.today, 2)),
   );
-  add(re('demain|tomorrow'), 'date', (_, r) => setDate(r, addDays(ctx.today, 1)));
+  add(re('demain|tomorrow|morgen'), 'date', (_, r) => setDate(r, addDays(ctx.today, 1)));
   add(
-    re(`(?:(next) )?(${[...WEEKDAYS_FR, ...WEEKDAYS_EN].join('|')})(?: (prochain))?`),
+    re(`(?:(next|volgende) )?(${[...WEEKDAY_INDEX.keys()].join('|')})(?: (prochain))?`),
+    'date',
+    (m, r) => setDate(r, nextWeekday(ctx.today, WEEKDAY_INDEX.get(m[2]!)!, Boolean(m[1] || m[3]))),
+  );
+  add(
+    re('(?:dans|in|over) (\\d{1,3}) (jours?|semaines?|days?|weeks?|dagen|dag|weken)'),
     'date',
     (m, r) => {
-      const idx =
-        WEEKDAYS_FR.indexOf(m[2]!) >= 0 ? WEEKDAYS_FR.indexOf(m[2]!) : WEEKDAYS_EN.indexOf(m[2]!);
-      return setDate(r, nextWeekday(ctx.today, idx, Boolean(m[1] || m[3])));
+      const n = Number(m[1]);
+      return setDate(r, addDays(ctx.today, /^(semaine|week|weken)/.test(m[2]!) ? n * 7 : n));
     },
   );
-  add(re('(?:dans|in) (\\d{1,3}) (jours?|semaines?|days?|weeks?)'), 'date', (m, r) => {
-    const n = Number(m[1]);
-    return setDate(r, addDays(ctx.today, /^(semaine|week)/.test(m[2]!) ? n * 7 : n));
-  });
   add(
-    re(`(?:le )?(\\d{1,2})(?:er)? (${[...MONTHS_FR, ...MONTHS_EN].join('|')})(?: (\\d{4}))?`),
+    re(`(?:le )?(\\d{1,2})(?:er)? (${[...MONTH_INDEX.keys()].join('|')})(?: (\\d{4}))?`),
     'date',
     (m, r) => {
-      const month =
-        (MONTHS_FR.indexOf(m[2]!) >= 0 ? MONTHS_FR.indexOf(m[2]!) : MONTHS_EN.indexOf(m[2]!)) + 1;
+      const month = MONTH_INDEX.get(m[2]!)! + 1;
       return setDate(
         r,
         nextDayMonth(ctx.today, Number(m[1]), month, m[3] ? Number(m[3]) : undefined),
@@ -249,9 +297,11 @@ export function parseQuickAdd(input: string, ctx: QuickAddContext): QuickAddResu
 
   // ── Durées (avant les heures : « pendant 1h30 » n'est pas une heure) ──
   const toMinutes = (value: number, unit: string, extra?: string) =>
-    /^(h|heure|hour)/.test(unit) ? value * 60 + (extra ? Number(extra) : 0) : value;
+    /^(h|heure|hour|u)/.test(unit) ? value * 60 + (extra ? Number(extra) : 0) : value;
   add(
-    re('(?:pendant|pour|durant|for) (\\d{1,3}) ?(min|mins|minutes?|h|heures?|hours?)(\\d{2})?'),
+    re(
+      '(?:pendant|pour|durant|for|gedurende) (\\d{1,3}) ?(min|mins|minutes?|minuten|h|heures?|hours?|uur|u)(\\d{2})?',
+    ),
     'duration',
     (m, r) => {
       if (r.durationMinutes !== undefined) return false;
@@ -261,7 +311,7 @@ export function parseQuickAdd(input: string, ctx: QuickAddContext): QuickAddResu
       return true;
     },
   );
-  add(re('(\\d{1,3}) ?(?:min|mins|minutes)'), 'duration', (m, r) => {
+  add(re('(\\d{1,3}) ?(?:min|mins|minutes|minuten)'), 'duration', (m, r) => {
     const d = Number(m[1]);
     if (r.durationMinutes !== undefined || d < 1 || d > 1440) return false;
     r.durationMinutes = d;
@@ -282,13 +332,14 @@ export function parseQuickAdd(input: string, ctx: QuickAddContext): QuickAddResu
     if (m[2] === 'am' && h === 12) h = 0;
     return setTime(r, h, 0);
   });
-  add(re('(?:a |vers |at |@ ?)?(\\d{1,2})h(\\d{2})?'), 'time', (m, r) =>
+  add(re('(?:a |vers |at |om |@ ?)?(\\d{1,2})[hu](\\d{2})?'), 'time', (m, r) =>
     setTime(r, Number(m[1]), Number(m[2] ?? 0)),
   );
-  add(re('(?:a |vers |at |@ ?)?(\\d{1,2}):(\\d{2})'), 'time', (m, r) =>
+  add(re('(?:om )?(\\d{1,2}) uur'), 'time', (m, r) => setTime(r, Number(m[1]), 0));
+  add(re('(?:a |vers |at |om |@ ?)?(\\d{1,2}):(\\d{2})'), 'time', (m, r) =>
     setTime(r, Number(m[1]), Number(m[2])),
   );
-  add(re('(?:a |at )?(midi|noon|minuit|midnight)'), 'time', (m, r) =>
+  add(re('(?:a |at |om )?(midi|noon|minuit|midnight|middernacht)'), 'time', (m, r) =>
     setTime(r, /midi|noon/.test(m[1]!) ? 12 : 0, 0),
   );
 
@@ -380,7 +431,7 @@ export function parseQuickAdd(input: string, ctx: QuickAddContext): QuickAddResu
   result.title = title
     .replace(/\s+/g, ' ')
     .replace(/\s+([,.;:])/g, '$1')
-    .replace(/(?:\s+(?:à|a|le|pour|vers|at|on|by|for|,))+\s*$/i, '')
+    .replace(/(?:\s+(?:à|a|le|pour|vers|at|on|by|for|om|op|,))+\s*$/i, '')
     .replace(/^[\s,;:-]+|[\s,;:-]+$/g, '')
     .trim();
   return result;

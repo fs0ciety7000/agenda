@@ -5,9 +5,10 @@ import { fromDbDate } from '../common/dates';
 import { PasswordService } from '../auth/password.service';
 import { CalendarConnectionService } from '../calendar/calendar-connection.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { mailLocale } from '../mail/templates';
 
 /** Nom affiché d'un ancien membre dont le compte a été supprimé. */
-const FORMER_MEMBER = { fr: 'Ancien membre', en: 'Former member' } as const;
+const FORMER_MEMBER = { fr: 'Ancien membre', en: 'Former member', nl: 'Voormalig lid' } as const;
 
 /**
  * Droits RGPD : portabilité (export JSON) et effacement (art. 17).
@@ -203,7 +204,7 @@ export class PrivacyService {
       where: { id: userId },
       include: { memberships: { where: { leftAt: null } } },
     });
-    const formerName = FORMER_MEMBER[user.locale === 'en' ? 'en' : 'fr'];
+    const formerName = FORMER_MEMBER[mailLocale(user.locale)];
 
     // Autorisations Google Calendar révoquées auprès de Google (les événements du calendrier
     // partagé restent ; l'autre membre peut reconnecter son propre compte pour reprendre la synchro).

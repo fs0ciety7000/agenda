@@ -276,7 +276,7 @@ function Users() {
   const { me } = useSession();
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
-  const [locale, setLocale] = useState<'fr' | 'en'>('fr');
+  const [locale, setLocale] = useState<'fr' | 'en' | 'nl'>('fr');
   const [query, setQuery] = useState('');
   const q = query.trim().toLowerCase();
   const shown = (users.data ?? []).filter(
@@ -342,10 +342,11 @@ function Users() {
           <Select
             label={t('newLocale')}
             value={locale}
-            onChange={(e) => setLocale(e.target.value as 'fr' | 'en')}
+            onChange={(e) => setLocale(e.target.value as 'fr' | 'en' | 'nl')}
           >
             <option value="fr">Français</option>
             <option value="en">English</option>
+            <option value="nl">Nederlands</option>
           </Select>
           <div className="sm:col-span-2 lg:col-span-3">
             <Button type="submit" disabled={createUser.isPending}>
