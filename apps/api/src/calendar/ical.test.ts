@@ -3,7 +3,7 @@ import { buildCalendar, escapeText, fold } from './ical';
 
 describe('iCalendar', () => {
   it('échappe le texte', () => {
-    expect(escapeText('a, b; c\\d\nsuite')).toBe('a\\, b\; c\\\\d\\nsuite');
+    expect(escapeText('a, b; c\\d\nsuite')).toBe('a\\, b\\; c\\\\d\\nsuite');
   });
 
   it('plie les lignes longues à 75 octets, sans couper un caractère', () => {

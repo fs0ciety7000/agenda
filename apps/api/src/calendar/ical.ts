@@ -16,7 +16,7 @@ export interface IcalEvent {
 
 /** Échappement des valeurs texte (virgules, points-virgules, retours à la ligne). */
 export const escapeText = (s: string) =>
-  s.replace(/\\/g, '\\\\').replace(/;/g, '\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
+  s.replace(/\\/g, '\\\\').replace(/;/g, '\\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n');
 
 /** Pliage des lignes à 75 octets (continuation : espace en début de ligne). */
 export function fold(line: string): string {
