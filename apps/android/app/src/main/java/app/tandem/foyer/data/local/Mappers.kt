@@ -53,6 +53,8 @@ fun OccurrenceDto.toEntity(householdId: String) = OccurrenceEntity(
     attachments = json.encodeToString(attachments),
     lastDoneAt = lastDone?.at,
     lastDoneById = lastDone?.memberId,
+    completedById = completedById,
+    thankedBy = thankedBy.joinToString(","),
 )
 
 fun OccurrenceEntity.toDomain(pending: Boolean) = Occurrence(
@@ -83,6 +85,8 @@ fun OccurrenceEntity.toDomain(pending: Boolean) = Occurrence(
     attachments = runCatching { json.decodeFromString<List<AttachmentDto>>(attachments) }.getOrDefault(emptyList())
         .map { Attachment(it.id, it.filename, it.contentType, it.size) },
     lastDone = lastDoneAt?.let { at -> runCatching { Instant.parse(at) }.getOrNull() }?.let { LastDone(it, lastDoneById) },
+    completedById = completedById,
+    thankedBy = thankedBy.split(',').filter { it.isNotBlank() },
 )
 
 fun MemberDto.toEntity(householdId: String, position: Int) =

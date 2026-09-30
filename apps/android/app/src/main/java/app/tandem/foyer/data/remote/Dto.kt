@@ -105,6 +105,9 @@ data class OccurrenceDto(
     val attachments: List<AttachmentDto> = emptyList(),
     val lastDone: LastDoneDto? = null,
     val commentCount: Int = 0,
+    val completedById: String? = null,
+    /** Membres qui ont dit « merci » pour cette tâche faite. */
+    val thankedBy: List<String> = emptyList(),
 )
 
 @Serializable

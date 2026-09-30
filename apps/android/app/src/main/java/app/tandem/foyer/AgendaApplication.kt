@@ -20,6 +20,7 @@ class AgendaApplication : Application() {
         container.crashReporter.install()
         container.reminders.start()
         container.recap.start()
+        container.review.start()
         container.syncScheduler.schedulePeriodic()
         // Widget « Aujourd'hui » : redessiné à chaque changement du cache local.
         CoroutineScope(SupervisorJob() + Dispatchers.Default).launch {

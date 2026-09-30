@@ -71,6 +71,7 @@ class ActivityNotifier(
                 n.title ?: "",
             )
             "TASK_COMMENT" -> context.getString(R.string.activity_commented, n.byName ?: "?", n.title ?: "")
+            "TASK_THANKS" -> context.getString(R.string.activity_thanked, n.byName ?: "?", n.title ?: "")
             else -> context.getString(R.string.activity_calendar_failed)
         }
         val open = PendingIntent.getActivity(

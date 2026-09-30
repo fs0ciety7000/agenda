@@ -11,6 +11,7 @@ description: Centre de notifications, notifications du navigateur et du téléph
 |---|---|
 | Une tâche vous est confiée | « Nicolas vous a confié « Sortir les poubelles » » |
 | Un commentaire sur une de vos tâches | « Grace a commenté « Vidange » » (sans le texte) |
+| Un merci pour une tâche que vous avez faite | « Nicolas vous dit merci pour « Sortir les poubelles » » |
 | Problème de synchronisation Google Agenda | « La synchronisation est interrompue » |
 
 Tout arrive dans le **centre de notifications** (la cloche). **Réglages → Notifications** choisit,

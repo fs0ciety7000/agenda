@@ -79,18 +79,22 @@ function NotificationRow({ n, onOpen }: { n: NotificationDto; onOpen: () => void
   const t = useTranslations('notifications');
   const format = useFormatter();
   const text =
-    n.type === 'TASK_COMMENT'
+    n.type === 'TASK_THANKS'
       ? n.title
-        ? t('commented', { by: n.byName ?? '?', title: n.title })
-        : t('commentedDeleted', { by: n.byName ?? '?' })
-      : n.type === 'TASK_ASSIGNED'
+        ? t('thanked', { by: n.byName ?? '?', title: n.title })
+        : t('thankedDeleted', { by: n.byName ?? '?' })
+      : n.type === 'TASK_COMMENT'
         ? n.title
-          ? t(n.recurring ? 'assignedRecurring' : 'assigned', {
-              by: n.byName ?? '?',
-              title: n.title,
-            })
-          : t('assignedDeleted', { by: n.byName ?? '?' })
-        : t('calendarFailed');
+          ? t('commented', { by: n.byName ?? '?', title: n.title })
+          : t('commentedDeleted', { by: n.byName ?? '?' })
+        : n.type === 'TASK_ASSIGNED'
+          ? n.title
+            ? t(n.recurring ? 'assignedRecurring' : 'assigned', {
+                by: n.byName ?? '?',
+                title: n.title,
+              })
+            : t('assignedDeleted', { by: n.byName ?? '?' })
+          : t('calendarFailed');
   return (
     <button
       type="button"

@@ -13,10 +13,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -30,6 +33,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -112,8 +116,15 @@ fun TaskRow(
     onOpen: () -> Unit,
     today: LocalDate? = null,
     showDate: Boolean = false,
+    myMemberId: String? = null,
+    /** « Merci » : présent quand l'écran sait l'envoyer (tâche faite par quelqu'un d'autre). */
+    onThank: ((Boolean) -> Unit)? = null,
 ) {
     val locale = currentLocale()
+    val doneBy = o.completedById?.takeIf { o.isDone }
+    val canThank = onThank != null && doneBy != null && myMemberId != null && doneBy != myMemberId
+    val iThanked = myMemberId != null && myMemberId in o.thankedBy
+    val thanksReceived = if (doneBy != null && doneBy == myMemberId) o.thankedBy.filter { it != myMemberId } else emptyList()
     val meta = buildList {
         if (showDate && o.date != null && today != null) add(formatShortDate(o.date, locale, today))
         if (o.date == null && o.dueDate != null) add(dueLabel(o.dueDate, today ?: LocalDate.now(), locale))
@@ -123,6 +134,9 @@ fun TaskRow(
         if (o.visibility == Visibility.PERSONAL) add(stringResource(R.string.personal))
         if (o.isRecurring) add("↻")
         if (o.checklist.isNotEmpty()) add(stringResource(R.string.checklist_row, o.checklist.count { it.done }, o.checklist.size))
+        if (thanksReceived.isNotEmpty()) {
+            add("♥ " + stringResource(R.string.thanks_from, thanksReceived.joinToString(" & ") { members[it]?.displayName ?: "?" }))
+        }
     }.joinToString(" · ")
     val priority = when (o.priority) {
         Priority.URGENT -> stringResource(R.string.priority_urgent)
@@ -155,6 +169,20 @@ fun TaskRow(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+        }
+        if (canThank) {
+            val name = members[doneBy]?.displayName ?: "?"
+            val label = stringResource(if (iThanked) R.string.thanks_sent else R.string.say_thanks, name)
+            IconButton(
+                onClick = { onThank?.invoke(!iThanked) },
+                modifier = Modifier.semantics { contentDescription = label; stateDescription = label },
+            ) {
+                Icon(
+                    if (iThanked) Icons.Filled.Favorite else Icons.Filled.FavoriteBorder,
+                    contentDescription = null,
+                    tint = if (iThanked) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
         }
         SyncIcon(o)
     }

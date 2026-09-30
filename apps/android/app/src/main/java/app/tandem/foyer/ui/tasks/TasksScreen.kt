@@ -109,7 +109,7 @@ fun TasksScreen(
                             )
                         }
                     }
-                    items(rows, key = { it.id }) { TaskRow(it, state.members, { onToggle(it) }, { onOpen(it) }) }
+                    items(rows, key = { it.id }) { TaskRow(it, state.members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId) }
                 }
             }
         }

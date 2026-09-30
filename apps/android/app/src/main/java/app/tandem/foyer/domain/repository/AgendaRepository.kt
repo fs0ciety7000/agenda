@@ -69,6 +69,9 @@ interface AgendaRepository {
 
     /** « Annuler » après une suppression : la tâche revient de la corbeille. */
     suspend fun restore(occurrenceId: String): OpResult
+
+    /** « Merci » pour une tâche faite par quelqu'un d'autre (en ligne seulement). */
+    suspend fun thank(occurrenceId: String, thank: Boolean): OpResult = OpResult.Offline
     /** Glisser-déposer du calendrier : change le jour d'UNE occurrence (heure conservée). */
     suspend fun move(occurrenceId: String, date: java.time.LocalDate): OpResult
     /** Sous-tâches : demandent le réseau (comme modifier) ; cocher s'affiche tout de suite. */

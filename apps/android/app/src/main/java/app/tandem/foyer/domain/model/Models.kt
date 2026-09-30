@@ -65,6 +65,10 @@ data class Occurrence(
     val attachments: List<Attachment> = emptyList(),
     /** Tâche récurrente : dernière fois faite (« fait il y a 5 semaines par Grace »). */
     val lastDone: LastDone? = null,
+    /** Qui a coché la tâche. */
+    val completedById: String? = null,
+    /** Membres qui ont dit « merci » pour cette tâche faite. */
+    val thankedBy: List<String> = emptyList(),
 ) {
     val isDone: Boolean get() = status == OccurrenceStatus.DONE
 }

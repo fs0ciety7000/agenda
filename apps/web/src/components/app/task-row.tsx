@@ -5,6 +5,7 @@ import {
   AlertTriangle,
   CalendarCheck,
   Check,
+  Heart,
   ChevronsUp,
   ChevronUp,
   Lock,
@@ -16,7 +17,7 @@ import {
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/cn';
 import { formatDuration, formatTime, useDayLabel, useDueLabel } from '@/lib/format';
-import { useToggleDone } from '@/lib/tasks';
+import { useThanks, useToggleDone } from '@/lib/tasks';
 import { useToast } from '@/components/ui/toast';
 import { AssigneeAvatars, useAssigneeLabel } from './assignees';
 import { useSession } from './household-context';
@@ -33,13 +34,22 @@ export function TaskRow({
 }) {
   const t = useTranslations('tasks');
   const tl = useTranslations('checklist');
-  const { household } = useSession();
+  const { household, me } = useSession();
+  const myId = household.members.find((m) => m.userId === me.id)?.id ?? '';
+  const thanks = useThanks(household.id, myId);
   const assigneeLabel = useAssigneeLabel(household);
   const dayLabel = useDayLabel();
   const dueLabel = useDueLabel();
   const toggle = useToggleDone(household.id);
   const toast = useToast();
   const done = o.status === 'DONE';
+  const nameOf = (id: string) => household.members.find((m) => m.id === id)?.displayName ?? '?';
+  const thankedBy = o.thankedBy ?? [];
+  // Faite par quelqu'un d'autre : je peux dire merci. Faite par moi : je vois les merci reçus.
+  const canThank = done && !!o.completedById && o.completedById !== myId;
+  const iThanked = thankedBy.includes(myId);
+  const thanksReceived =
+    done && o.completedById === myId ? thankedBy.filter((id) => id !== myId) : [];
   const lastDoneText = useLastDoneText();
   // Utile surtout pour les tâches espacées (« après la dernière fois ») : pas pour le quotidien.
   const showLastDone =
@@ -126,6 +136,12 @@ export function TaskRow({
             </span>
           )}
           {showLastDone && <span>· {lastDoneText(o.lastDone!, true)}</span>}
+          {thanksReceived.length > 0 && (
+            <span className="inline-flex items-center gap-1 text-accent">
+              · <Heart aria-hidden className="size-3.5 fill-current" />
+              {t('thanksFrom', { names: thanksReceived.map(nameOf).join(' & ') })}
+            </span>
+          )}
           {(o.commentCount ?? 0) > 0 && (
             <span className="inline-flex items-center gap-1 tabular-nums">
               · <MessageCircle aria-hidden className="size-3.5" />
@@ -173,6 +189,38 @@ export function TaskRow({
           )}
         </span>
       </button>
+      {canThank && (
+        <button
+          type="button"
+          aria-pressed={iThanked}
+          aria-label={
+            iThanked
+              ? t('thanksSent', { name: nameOf(o.completedById!) })
+              : t('sayThanks', { name: nameOf(o.completedById!) })
+          }
+          title={
+            iThanked
+              ? t('thanksSent', { name: nameOf(o.completedById!) })
+              : t('sayThanks', { name: nameOf(o.completedById!) })
+          }
+          disabled={thanks.isPending}
+          onClick={() =>
+            thanks.mutate(
+              { id: o.id, thank: !iThanked },
+              { onError: () => toast({ message: t('toggleError'), tone: 'error' }) },
+            )
+          }
+          className={cn(
+            '-my-2 -mr-2 flex size-11 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-surface-muted',
+            iThanked ? 'text-accent' : 'text-text-muted',
+          )}
+        >
+          <Heart
+            aria-hidden
+            className={cn('size-5', iThanked && 'animate-[check-pop_280ms_ease-out] fill-current')}
+          />
+        </button>
+      )}
     </li>
   );
 }

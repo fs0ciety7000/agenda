@@ -62,6 +62,8 @@ fun SettingsScreen(
     push: PushState? = null,
     morningRecap: Boolean = true,
     onMorningRecap: (Boolean) -> Unit = {},
+    weeklyReview: Boolean = true,
+    onWeeklyReview: (Boolean) -> Unit = {},
     onRetryPush: () -> Unit = {},
     onOpenHistory: () -> Unit = {},
     onOpenAbsences: () -> Unit = {},
@@ -208,6 +210,17 @@ fun SettingsScreen(
                 ) {
                     Text(stringResource(R.string.recap_setting), modifier = Modifier.weight(1f))
                     Switch(checked = morningRecap, onCheckedChange = null)
+                }
+                Row(
+                    Modifier.fillMaxWidth().heightIn(min = 48.dp).toggleable(
+                        value = weeklyReview,
+                        role = Role.Switch,
+                        onValueChange = onWeeklyReview,
+                    ),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(stringResource(R.string.review_setting), modifier = Modifier.weight(1f))
+                    Switch(checked = weeklyReview, onCheckedChange = null)
                 }
                 if (!notificationsAllowed) {
                     Text(

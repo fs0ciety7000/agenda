@@ -1,7 +1,12 @@
 import { z } from 'zod';
 
 /** Types proposés aux utilisateurs (les autres types du schéma ne sont pas encore émis). */
-export const NotificationKind = z.enum(['TASK_ASSIGNED', 'CALENDAR_SYNC_FAILED', 'TASK_COMMENT']);
+export const NotificationKind = z.enum([
+  'TASK_ASSIGNED',
+  'CALENDAR_SYNC_FAILED',
+  'TASK_COMMENT',
+  'TASK_THANKS',
+]);
 export type NotificationKind = z.infer<typeof NotificationKind>;
 
 export const NotificationDto = z.object({
@@ -11,7 +16,7 @@ export const NotificationDto = z.object({
   readAt: z.string().nullable(),
   /** À afficher aussi sur le téléphone (préférence « push » au moment de la création). */
   push: z.boolean(),
-  /** TASK_ASSIGNED, TASK_COMMENT : tâche concernée (null si supprimée entre-temps). */
+  /** TASK_ASSIGNED, TASK_COMMENT, TASK_THANKS : tâche concernée (null si supprimée entre-temps). */
   occurrenceId: z.uuid().nullable(),
   title: z.string().nullable(),
   date: z.string().nullable(),

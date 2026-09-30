@@ -253,7 +253,10 @@
     },
     "restoredToast": "Tâche restaurée.",
     "restoreError": "Impossible d'annuler la suppression.",
-    "commentCount": "{count, plural, one {# commentaire} other {# commentaires}}"
+    "commentCount": "{count, plural, one {# commentaire} other {# commentaires}}",
+    "sayThanks": "Dire merci à {name}",
+    "thanksSent": "Merci envoyé à {name}",
+    "thanksFrom": "Merci de {names}"
   },
   "balance": {
     "bothOfUs": "À deux",
@@ -568,7 +571,9 @@
     "assignedDeleted": "{by} vous avait confié une tâche, supprimée depuis",
     "calendarFailed": "La synchronisation avec Google Calendar est interrompue. Ouvrez les Réglages.",
     "commented": "{by} a commenté « {title} »",
-    "commentedDeleted": "{by} a commenté une tâche, supprimée depuis"
+    "commentedDeleted": "{by} a commenté une tâche, supprimée depuis",
+    "thanked": "{by} vous dit merci pour « {title} »",
+    "thankedDeleted": "{by} vous dit merci"
   },
   "notificationSettings": {
     "title": "Préférences de notification",
@@ -578,7 +583,8 @@
     "types": {
       "TASK_ASSIGNED": "Quelqu'un me confie une tâche",
       "CALENDAR_SYNC_FAILED": "Problème de synchronisation Google Calendar",
-      "TASK_COMMENT": "Quelqu'un commente une de mes tâches"
+      "TASK_COMMENT": "Quelqu'un commente une de mes tâches",
+      "TASK_THANKS": "Quelqu'un me dit merci pour une tâche faite"
     },
     "status": {
       "title": "Notifications instantanées sur le téléphone : pas encore actives",
@@ -597,6 +603,29 @@
       "enable": "Activer sur ce navigateur",
       "disable": "Désactiver"
     }
+  },
+  "review": {
+    "title": "Revue de la semaine",
+    "nav": "Revue",
+    "subtitle": "Du {from} au {to}",
+    "prev": "Semaine précédente",
+    "next": "Semaine suivante",
+    "done": "{count, plural, =0 {Aucune tâche faite} one {# tâche faite} other {# tâches faites}}",
+    "doneBy": "{count, plural, =0 {rien coché} one {# tâche} other {# tâches}}",
+    "thanks": "{count, plural, =0 {} one {· # merci} other {· # mercis}}",
+    "minutes": "{time} au total",
+    "missedTitle": "Ce qui a glissé",
+    "missedNone": "Rien n'a glissé cette semaine. Bravo à vous deux !",
+    "missedMore": "Et d'autres encore : voir « En retard ».",
+    "plan": "Replanifier",
+    "nextTitle": "La semaine prochaine",
+    "nextTotal": "{count, plural, =0 {Rien de prévu pour l'instant} one {# tâche prévue} other {# tâches prévues}}",
+    "nextUnassigned": "{count, plural, one {# à attribuer} other {# à attribuer}}",
+    "nextBalanced": "Répartition : ",
+    "openStats": "Voir les statistiques",
+    "banner": "C'est dimanche : votre revue de la semaine est prête.",
+    "bannerOpen": "Voir la revue",
+    "error": "Impossible de charger la revue."
   },
   "stats": {
     "title": "Bilan",

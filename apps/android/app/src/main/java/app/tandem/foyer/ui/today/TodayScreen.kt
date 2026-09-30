@@ -63,6 +63,7 @@ fun TodayScreen(
     contentPadding: PaddingValues = PaddingValues(),
     /** Bandeau optionnel en haut (ex. nouvelle version de l'app). */
     banner: @Composable () -> Unit = {},
+    onThank: (Occurrence, Boolean) -> Unit = { _, _ -> },
 ) {
     val sections = Agenda.todaySections(state.occurrences, state.today)
     val members = state.members
@@ -100,7 +101,7 @@ fun TodayScreen(
             if (sections.overdue.isNotEmpty()) {
                 item { SectionHeader(stringResource(R.string.overdue), trailing = sections.overdue.size.toString()) }
                 items(sections.overdue, key = { "o-" + it.id }) {
-                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, today = state.today, showDate = true)
+                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, showDate = true)
                 }
             }
             item {
@@ -113,12 +114,12 @@ fun TodayScreen(
             if (sections.today.isEmpty()) {
                 item { EmptyState(stringResource(R.string.today_empty_title), stringResource(R.string.today_empty_body)) }
             } else {
-                items(sections.today, key = { "t-" + it.id }) { TaskRow(it, members, { onToggle(it) }, { onOpen(it) }) }
+                items(sections.today, key = { "t-" + it.id }) { TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }) }
             }
             if (sections.dueThisWeek.isNotEmpty()) {
                 item { SectionHeader(stringResource(R.string.due_section), trailing = sections.dueThisWeek.size.toString()) }
                 items(sections.dueThisWeek, key = { "d-" + it.id }) {
-                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, today = state.today)
+                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today)
                 }
             }
             item { SectionHeader(stringResource(R.string.this_week)) }
@@ -133,7 +134,7 @@ fun TodayScreen(
                 }
             } else {
                 items(sections.upcoming, key = { "w-" + it.id }) {
-                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, today = state.today, showDate = true)
+                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, showDate = true)
                 }
             }
             if (sections.unscheduledCount > 0) {

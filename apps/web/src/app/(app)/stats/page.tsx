@@ -2,6 +2,7 @@
 
 import type { StatsDto } from '@agenda/contracts';
 import { useFormatter, useTranslations } from 'next-intl';
+import Link from 'next/link';
 import { useState } from 'react';
 import { useSession } from '@/components/app/household-context';
 import { MemberAvatar, memberBgClass } from '@/components/app/member-avatar';
@@ -13,6 +14,7 @@ import { useStats } from '@/lib/notifications';
 /** Bilan factuel des tâches partagées : aucun classement, aucune note. */
 export default function StatsPage() {
   const t = useTranslations('stats');
+  const tr = useTranslations('review');
   const { household } = useSession();
   const [days, setDays] = useState<'7' | '30'>('7');
   const stats = useStats(household.id, days === '7' ? 7 : 30);
@@ -32,6 +34,12 @@ export default function StatsPage() {
         />
       </div>
       <p className="-mt-3 text-[0.9375rem] text-text-muted">{t('intro')}</p>
+      <Link
+        href="/review"
+        className="-mt-3 self-start text-sm font-medium text-accent underline-offset-4 hover:underline"
+      >
+        {tr('title')} →
+      </Link>
       {!stats.data ? <Skeleton className="h-64 w-full" /> : <StatsContent data={stats.data} />}
     </div>
   );

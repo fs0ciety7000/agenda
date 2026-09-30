@@ -11,6 +11,7 @@ import { AttachmentsService } from './attachments.service';
 import { ActivityService } from './activity.service';
 import { TasksController } from './tasks.controller';
 import { SeriesService } from './series.service';
+import { ReviewService } from './review.service';
 import { TasksService } from './tasks.service';
 import { TemplatesController } from './templates.controller';
 import { TemplatesService } from './templates.service';
@@ -33,6 +34,7 @@ import { TemplatesService } from './templates.service';
     AttachmentsService,
     AbsencesService,
     CommentsService,
+    ReviewService,
   ],
   exports: [SeriesService, TasksService, AttachmentsService],
 })

@@ -56,6 +56,7 @@ const occurrenceInclude = {
     },
   },
   assignees: { select: { memberId: true } },
+  thanks: { select: { memberId: true } },
   eventLink: { select: { syncStatus: true, syncedVersion: true, lastErrorCode: true } },
   checklist: {
     orderBy: { position: 'asc' },
@@ -997,6 +998,43 @@ export class TasksService {
     return this.get(ctx, id);
   }
 
+  /**
+   * « Merci » pour une tâche faite par quelqu'un d'autre : une fois par personne (idempotent),
+   * avec une notification pour celle ou celui qui l'a faite.
+   */
+  async thank(ctx: HouseholdContext, id: string): Promise<OccurrenceDto> {
+    const current = await this.findVisible(ctx, id);
+    if (current.status !== 'DONE' || !current.completedById) {
+      throw validation('status', 'Only a completed task can be thanked');
+    }
+    if (current.completedById === ctx.memberId) {
+      throw validation('completedById', 'You cannot thank yourself');
+    }
+    const created = await this.prisma.occurrenceThanks.createMany({
+      data: [{ occurrenceId: id, memberId: ctx.memberId }],
+      skipDuplicates: true,
+    });
+    if (created.count) {
+      await this.notifications.notifyThanks(
+        ctx,
+        id,
+        current.completedById,
+        current.seriesId !== null,
+      );
+      this.events.householdChanged(ctx.householdId);
+    }
+    return this.get(ctx, id);
+  }
+
+  async unthank(ctx: HouseholdContext, id: string): Promise<OccurrenceDto> {
+    await this.findVisible(ctx, id);
+    const removed = await this.prisma.occurrenceThanks.deleteMany({
+      where: { occurrenceId: id, memberId: ctx.memberId },
+    });
+    if (removed.count) this.events.householdChanged(ctx.householdId);
+    return this.get(ctx, id);
+  }
+
   async reopen(ctx: HouseholdContext, id: string): Promise<OccurrenceDto> {
     const current = await this.findVisible(ctx, id);
     if (current.status === 'DONE') {
@@ -1012,6 +1050,7 @@ export class TasksService {
           },
         });
         if (current.seriesId) await this.series.rewindAfter(tx, current.seriesId, current);
+        await tx.occurrenceThanks.deleteMany({ where: { occurrenceId: id } });
         await this.log(
           tx,
           ctx,
@@ -1445,6 +1484,7 @@ function toDto(o: OccurrenceRow, lastDone?: Map<string, OccurrenceDto['lastDone'
     attachments: o.task.attachments,
     lastDone: (o.seriesId && lastDone?.get(o.seriesId)) || null,
     commentCount: o.task._count.comments,
+    thankedBy: o.thanks.map((t) => t.memberId).sort(),
   };
 }
 

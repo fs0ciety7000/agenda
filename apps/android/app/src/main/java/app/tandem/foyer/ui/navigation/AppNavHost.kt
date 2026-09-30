@@ -181,6 +181,7 @@ private fun MainScaffold(
     val quickAdd by vm.quickAdd.collectAsStateWithLifecycle()
     val reminders by container.settings.reminders.collectAsStateWithLifecycle(initialValue = ReminderSettings())
     val morningRecap by container.settings.morningRecap.collectAsStateWithLifecycle(initialValue = true)
+    val weeklyReview by container.settings.weeklyReview.collectAsStateWithLifecycle(initialValue = true)
     val nav = rememberNavController()
     val backStack by nav.currentBackStackEntryAsState()
     val route = backStack?.destination?.route
@@ -309,6 +310,7 @@ private fun MainScaffold(
         OpResult.NotFound to stringResource(R.string.error_not_found),
     )
     val genericError = stringResource(R.string.error_generic)
+    val thanksFailed = stringResource(R.string.thanks_failed)
     val completedFormat = stringResource(R.string.task_completed_snack)
     val deletedMessage = stringResource(R.string.task_deleted)
     val restoredMessage = stringResource(R.string.task_restored)
@@ -366,6 +368,7 @@ private fun MainScaffold(
                     }
                 }
                 is AgendaEvent.MoveFailed -> scope.launch { snackbar.showSnackbar(moveErrors[event.result] ?: genericError) }
+                is AgendaEvent.ThanksFailed -> scope.launch { snackbar.showSnackbar(thanksFailed) }
                 is AgendaEvent.Completed -> scope.launch {
                     val result = snackbar.showSnackbar(
                         completedFormat.format(event.title),
@@ -435,6 +438,7 @@ private fun MainScaffold(
             composable(Tab.TODAY.route) {
                 TodayScreen(
                     state, vm::refresh, vm::toggle, { open(it.id) },
+                    onThank = vm::thank,
                     banner = updateBanner,
                     onShowUnscheduled = {
                         filter = filter.copy(view = Agenda.View.UNSCHEDULED)
@@ -514,6 +518,8 @@ private fun MainScaffold(
                     push = pushState,
                     morningRecap = morningRecap,
                     onMorningRecap = { scope.launch { container.settings.setMorningRecap(it) } },
+                    weeklyReview = weeklyReview,
+                    onWeeklyReview = { scope.launch { container.settings.setWeeklyReview(it) } },
                     onRetryPush = { scope.launch { container.push.register() } },
                     onOpenHistory = { nav.navigate("history") },
                     onOpenAbsences = { nav.navigate("absences") },

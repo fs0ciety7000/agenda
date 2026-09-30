@@ -255,6 +255,33 @@ export function useToggleDone(hid: string) {
   });
 }
 
+/** « Merci » pour une tâche faite par quelqu'un d'autre (ou le retirer). */
+export function useThanks(hid: string, myId: string) {
+  const qc = useQueryClient();
+  const invalidate = useInvalidateTasks(hid);
+  return useMutation<OccurrenceDto, Error, { id: string; thank: boolean }>({
+    mutationFn: ({ id, thank }) =>
+      api<OccurrenceDto>(`/v1/households/${hid}/occurrences/${id}/thanks`, {
+        method: thank ? 'POST' : 'DELETE',
+      }),
+    onMutate: ({ id, thank }) => {
+      qc.setQueriesData<OccurrenceDto[]>({ queryKey: ['households', hid, 'occurrences'] }, (list) =>
+        list?.map((o) =>
+          o.id === id
+            ? {
+                ...o,
+                thankedBy: thank
+                  ? [...new Set([...(o.thankedBy ?? []), myId])]
+                  : (o.thankedBy ?? []).filter((m) => m !== myId),
+              }
+            : o,
+        ),
+      );
+    },
+    onSettled: invalidate,
+  });
+}
+
 export function useCategoryMutations(hid: string) {
   const qc = useQueryClient();
   const invalidate = () =>

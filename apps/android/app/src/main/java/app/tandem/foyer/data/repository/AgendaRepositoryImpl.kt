@@ -375,6 +375,23 @@ class AgendaRepositoryImpl(
         }
     }
 
+    override suspend fun thank(occurrenceId: String, thank: Boolean): OpResult = withContext(io) {
+        val h = db.households().current() ?: return@withContext OpResult.NotFound
+        try {
+            val res = if (thank) api.thank(h.id, occurrenceId) else api.unthank(h.id, occurrenceId)
+            when {
+                res.isSuccessful -> {
+                    res.body()?.let { db.occurrences().upsert(it.toEntity(h.id)) }
+                    OpResult.Ok
+                }
+                res.code() == 404 -> OpResult.NotFound
+                else -> OpResult.Failed(errorCode(res.errorBody()?.string()))
+            }
+        } catch (_: IOException) {
+            OpResult.Offline
+        }
+    }
+
     override suspend fun templates(): List<TaskTemplate>? = withContext(io) {
         val h = db.households().current() ?: return@withContext null
         try {

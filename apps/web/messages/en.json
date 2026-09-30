@@ -253,7 +253,10 @@
     },
     "restoredToast": "Task restored.",
     "restoreError": "Couldn't undo the deletion.",
-    "commentCount": "{count, plural, one {# comment} other {# comments}}"
+    "commentCount": "{count, plural, one {# comment} other {# comments}}",
+    "sayThanks": "Say thanks to {name}",
+    "thanksSent": "Thanks sent to {name}",
+    "thanksFrom": "Thanks from {names}"
   },
   "balance": {
     "bothOfUs": "Together",
@@ -568,7 +571,9 @@
     "assignedDeleted": "{by} gave you a task that has since been deleted",
     "calendarFailed": "Google Calendar sync is interrupted. Open Settings.",
     "commented": "{by} commented on “{title}”",
-    "commentedDeleted": "{by} commented on a task that has since been deleted"
+    "commentedDeleted": "{by} commented on a task that has since been deleted",
+    "thanked": "{by} says thanks for “{title}”",
+    "thankedDeleted": "{by} says thanks"
   },
   "notificationSettings": {
     "title": "Notification preferences",
@@ -578,7 +583,8 @@
     "types": {
       "TASK_ASSIGNED": "Someone gives me a task",
       "CALENDAR_SYNC_FAILED": "Google Calendar sync problem",
-      "TASK_COMMENT": "Someone comments on one of my tasks"
+      "TASK_COMMENT": "Someone comments on one of my tasks",
+      "TASK_THANKS": "Someone thanks me for a task I did"
     },
     "status": {
       "title": "Instant phone notifications: not active yet",
@@ -597,6 +603,29 @@
       "enable": "Enable on this browser",
       "disable": "Turn off"
     }
+  },
+  "review": {
+    "title": "Weekly review",
+    "nav": "Review",
+    "subtitle": "{from} to {to}",
+    "prev": "Previous week",
+    "next": "Next week",
+    "done": "{count, plural, =0 {No tasks done} one {# task done} other {# tasks done}}",
+    "doneBy": "{count, plural, =0 {nothing ticked} one {# task} other {# tasks}}",
+    "thanks": "{count, plural, =0 {} one {· # thanks} other {· # thanks}}",
+    "minutes": "{time} in total",
+    "missedTitle": "What slipped",
+    "missedNone": "Nothing slipped this week. Well done, both of you!",
+    "missedMore": "And a few more: see “Overdue”.",
+    "plan": "Reschedule",
+    "nextTitle": "Next week",
+    "nextTotal": "{count, plural, =0 {Nothing planned yet} one {# task planned} other {# tasks planned}}",
+    "nextUnassigned": "{count, plural, one {# to assign} other {# to assign}}",
+    "nextBalanced": "Split: ",
+    "openStats": "See statistics",
+    "banner": "It's Sunday: your weekly review is ready.",
+    "bannerOpen": "See the review",
+    "error": "Couldn't load the review."
   },
   "stats": {
     "title": "Summary",

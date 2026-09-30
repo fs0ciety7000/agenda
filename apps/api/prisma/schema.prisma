@@ -196,6 +196,7 @@ model HouseholdMember {
   activity             ActivityLog[]
   absences             MemberAbsence[]
   comments             TaskComment[]
+  thanks               OccurrenceThanks[]
 
   @@unique([householdId, userId])
   @@index([userId])
@@ -387,6 +388,7 @@ model TaskOccurrence {
   assignees   OccurrenceAssignee[]
   eventLink   CalendarEventLink?
   checklist   ChecklistItem[]
+  thanks      OccurrenceThanks[]
 
   @@unique([seriesId, originalDate])
   @@index([householdId, date])
@@ -489,6 +491,19 @@ model ShoppingProduct {
   household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
 
   @@unique([householdId, key])
+}
+
+/// « Merci » d'un membre pour une tâche faite par un autre (un par membre et par occurrence).
+model OccurrenceThanks {
+  occurrenceId String   @db.Uuid
+  memberId     String   @db.Uuid
+  createdAt    DateTime @default(now())
+
+  occurrence TaskOccurrence  @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
+  member     HouseholdMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@id([occurrenceId, memberId])
+  @@index([memberId])
 }
 
 model OccurrenceAssignee {
@@ -606,6 +621,7 @@ enum NotificationType {
   ASSIGNEE_CHANGED
   CALENDAR_SYNC_FAILED
   TASK_COMMENT
+  TASK_THANKS
 }
 
 model Notification {

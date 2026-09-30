@@ -436,4 +436,17 @@
     <string name="report_status_in_progress">En cours</string>
     <string name="report_status_resolved">Résolu</string>
     <string name="report_status_closed">Fermé</string>
+    <string name="say_thanks">Dire merci à %1$s</string>
+    <string name="thanks_sent">Merci envoyé à %1$s</string>
+    <string name="thanks_from">Merci de %1$s</string>
+    <string name="activity_thanked">%1$s vous dit merci pour « %2$s »</string>
+    <string name="thanks_failed">Merci non envoyé. Vérifiez la connexion.</string>
+    <string name="review_channel">Revue de la semaine</string>
+    <string name="review_channel_desc">Le dimanche soir : ce qui a été fait cette semaine et ce qui arrive.</string>
+    <string name="review_title">Votre semaine</string>
+    <string name="review_setting">Revue de la semaine (dimanche 19 h)</string>
+    <plurals name="review_done"><item quantity="one">%d tâche faite</item><item quantity="many">%d tâches faites</item><item quantity="other">%d tâches faites</item></plurals>
+    <plurals name="review_thanks"><item quantity="one">%d merci</item><item quantity="many">%d mercis</item><item quantity="other">%d mercis</item></plurals>
+    <plurals name="review_missed"><item quantity="one">%d a glissé</item><item quantity="many">%d ont glissé</item><item quantity="other">%d ont glissé</item></plurals>
+    <plurals name="review_next"><item quantity="one">Semaine prochaine : %d tâche</item><item quantity="many">Semaine prochaine : %d tâches</item><item quantity="other">Semaine prochaine : %d tâches</item></plurals>
 </resources>
