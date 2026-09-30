@@ -6,6 +6,7 @@ import app.tandem.foyer.domain.model.CalendarStatus
 import app.tandem.foyer.domain.model.Category
 import app.tandem.foyer.domain.model.EditScope
 import app.tandem.foyer.domain.model.Household
+import app.tandem.foyer.domain.model.Meal
 import app.tandem.foyer.domain.model.Occurrence
 import app.tandem.foyer.domain.model.QuickAddPreview
 import app.tandem.foyer.domain.model.SeriesHistory
@@ -69,6 +70,12 @@ interface AgendaRepository {
 
     /** « Annuler » après une suppression : la tâche revient de la corbeille. */
     suspend fun restore(occurrenceId: String): OpResult
+
+    /** Repas de la semaine (du lundi au dimanche contenant `day`) ; null hors ligne. */
+    suspend fun weekMeals(day: LocalDate): List<Meal>? = null
+
+    /** Ingrédients de ces repas → liste de courses ; (ajoutés, déjà présents), null en cas d'échec. */
+    suspend fun mealsToShopping(mealIds: List<String>): Pair<Int, Int>? = null
 
     /** « Merci » pour une tâche faite par quelqu'un d'autre (en ligne seulement). */
     suspend fun thank(occurrenceId: String, thank: Boolean): OpResult = OpResult.Offline

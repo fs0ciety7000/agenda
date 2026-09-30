@@ -11,6 +11,7 @@ import app.tandem.foyer.data.remote.ApiErrorDto
 import app.tandem.foyer.data.remote.ChecklistItemDto
 import app.tandem.foyer.data.remote.ChecklistItemRequest
 import app.tandem.foyer.data.remote.ChecklistUpdateRequest
+import app.tandem.foyer.data.remote.MealsToShoppingRequest
 import app.tandem.foyer.data.remote.QuickAddRequest
 import app.tandem.foyer.data.remote.json
 import app.tandem.foyer.data.sync.SyncEngine
@@ -23,6 +24,7 @@ import app.tandem.foyer.domain.model.CalendarStatus
 import app.tandem.foyer.domain.model.Category
 import app.tandem.foyer.domain.model.EditScope
 import app.tandem.foyer.domain.model.Household
+import app.tandem.foyer.domain.model.Meal
 import app.tandem.foyer.domain.model.Occurrence
 import app.tandem.foyer.domain.model.Priority
 import app.tandem.foyer.domain.model.QuickAddPreview
@@ -372,6 +374,29 @@ class AgendaRepositoryImpl(
             }
         } catch (_: IOException) {
             OpResult.Offline
+        }
+    }
+
+    override suspend fun weekMeals(day: LocalDate): List<Meal>? = withContext(io) {
+        val h = db.households().current() ?: return@withContext null
+        val monday = day.with(java.time.temporal.TemporalAdjusters.previousOrSame(java.time.DayOfWeek.MONDAY))
+        try {
+            api.meals(h.id, monday.toString(), monday.plusDays(6).toString()).takeIf { it.isSuccessful }?.body()
+                ?.map { Meal(it.id, LocalDate.parse(it.date), it.slot, it.title, it.ingredients, it.addedToShoppingAt != null) }
+        } catch (_: IOException) {
+            null
+        }
+    }
+
+    override suspend fun mealsToShopping(mealIds: List<String>): Pair<Int, Int>? = withContext(io) {
+        val h = db.households().current() ?: return@withContext null
+        try {
+            val res = api.mealsToShopping(h.id, MealsToShoppingRequest(mealIds))
+            if (!res.isSuccessful) return@withContext null
+            refreshShopping()
+            res.body()?.let { it.added to it.skipped }
+        } catch (_: IOException) {
+            null
         }
     }
 

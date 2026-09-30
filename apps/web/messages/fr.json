@@ -14,7 +14,8 @@
     "settings": "Réglages",
     "main": "Navigation principale",
     "stats": "Bilan",
-    "shopping": "Courses"
+    "shopping": "Courses",
+    "meals": "Menus"
   },
   "auth": {
     "loginTitle": "Bon retour",
@@ -689,6 +690,35 @@
     "suggestions": "Souvent achetés",
     "addSuggestion": "Ajouter {text}",
     "aisleOf": "Rayon de {text}"
+  },
+  "meals": {
+    "title": "Menus",
+    "nav": "Menus",
+    "week": "Du {from} au {to}",
+    "prev": "Semaine précédente",
+    "next": "Semaine suivante",
+    "slot": {
+      "LUNCH": "Midi",
+      "DINNER": "Soir"
+    },
+    "add": "Ajouter ({slot})",
+    "inShopping": "Ingrédients dans les courses",
+    "weekToShopping": "{count, plural, =0 {Tout est déjà dans les courses} one {Ajouter les ingrédients de # repas aux courses} other {Ajouter les ingrédients de # repas aux courses}}",
+    "openShopping": "Voir la liste de courses",
+    "added": "{added, plural, one {# article ajouté} other {# articles ajoutés}} aux courses{skipped, plural, =0 {} one { (# déjà sur la liste)} other { (# déjà sur la liste)}}.",
+    "nothingAdded": "Tout était déjà sur la liste de courses.",
+    "newTitle": "Nouveau repas",
+    "editTitle": "Modifier le repas",
+    "mealTitle": "Repas",
+    "mealPlaceholder": "Lasagnes, salade niçoise…",
+    "ideas": "Déjà cuisinés",
+    "ingredients": "Ingrédients",
+    "ingredientsPlaceholder": "500 g de bœuf haché\nTomates\nPâtes à lasagne",
+    "ingredientsHint": "Un par ligne. Ils partent dans la liste de courses en un geste, sans doublon.",
+    "titleRequired": "Donnez un nom au repas.",
+    "delete": "Supprimer",
+    "toShopping": "Ajouter aux courses",
+    "save": "Enregistrer"
   },
   "templates": {
     "hint": "Plusieurs tâches créées d'un coup, par exemple « Ménage du samedi » : aspirateur, salle de bain, draps…",

@@ -449,4 +449,11 @@
     <plurals name="review_thanks"><item quantity="one">%d merci</item><item quantity="many">%d mercis</item><item quantity="other">%d mercis</item></plurals>
     <plurals name="review_missed"><item quantity="one">%d a glissé</item><item quantity="many">%d ont glissé</item><item quantity="other">%d ont glissé</item></plurals>
     <plurals name="review_next"><item quantity="one">Semaine prochaine : %d tâche</item><item quantity="many">Semaine prochaine : %d tâches</item><item quantity="other">Semaine prochaine : %d tâches</item></plurals>
+    <string name="meals_title">Menus de la semaine</string>
+    <string name="meals_empty">Aucun repas prévu pour l\'instant.</string>
+    <string name="meals_lunch">Midi</string>
+    <string name="meals_dinner">Soir</string>
+    <string name="meals_edit_web">Planifier sur le site</string>
+    <plurals name="meals_to_shopping"><item quantity="one">Ingrédients de %d repas → courses</item><item quantity="many">Ingrédients de %d repas → courses</item><item quantity="other">Ingrédients de %d repas → courses</item></plurals>
+    <plurals name="meals_added"><item quantity="one">%d article ajouté aux courses.</item><item quantity="many">%d articles ajoutés aux courses.</item><item quantity="other">%d articles ajoutés aux courses.</item></plurals>
 </resources>

@@ -141,3 +141,14 @@ data class TaskTemplate(val id: String, val name: String, val emoji: String?, va
 data class SeriesHistory(val items: List<Item>, val doneBy: List<Pair<String, Int>>) {
     data class Item(val date: LocalDate?, val done: Boolean, val skipped: Boolean, val completedById: String?)
 }
+
+/** Repas prévu (menus de la semaine), modifiable sur le site. */
+data class Meal(
+    val id: String,
+    val date: java.time.LocalDate,
+    /** LUNCH ou DINNER. */
+    val slot: String,
+    val title: String,
+    val ingredients: List<String>,
+    val inShopping: Boolean,
+)

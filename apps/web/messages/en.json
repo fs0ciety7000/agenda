@@ -14,7 +14,8 @@
     "settings": "Settings",
     "main": "Main navigation",
     "stats": "Summary",
-    "shopping": "Shopping"
+    "shopping": "Shopping",
+    "meals": "Meals"
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -689,6 +690,35 @@
     "suggestions": "Often bought",
     "addSuggestion": "Add {text}",
     "aisleOf": "Aisle for {text}"
+  },
+  "meals": {
+    "title": "Meals",
+    "nav": "Meals",
+    "week": "{from} to {to}",
+    "prev": "Previous week",
+    "next": "Next week",
+    "slot": {
+      "LUNCH": "Lunch",
+      "DINNER": "Dinner"
+    },
+    "add": "Add ({slot})",
+    "inShopping": "Ingredients on the shopping list",
+    "weekToShopping": "{count, plural, =0 {Everything is already on the list} one {Add ingredients of # meal to shopping} other {Add ingredients of # meals to shopping}}",
+    "openShopping": "See the shopping list",
+    "added": "{added, plural, one {# item} other {# items}} added to shopping{skipped, plural, =0 {} other { (# already on the list)}}.",
+    "nothingAdded": "Everything was already on the shopping list.",
+    "newTitle": "New meal",
+    "editTitle": "Edit meal",
+    "mealTitle": "Meal",
+    "mealPlaceholder": "Lasagne, niçoise salad…",
+    "ideas": "Cooked before",
+    "ingredients": "Ingredients",
+    "ingredientsPlaceholder": "500 g minced beef\nTomatoes\nLasagne sheets",
+    "ingredientsHint": "One per line. They go to the shopping list in one tap, without duplicates.",
+    "titleRequired": "Give the meal a name.",
+    "delete": "Delete",
+    "toShopping": "Add to shopping",
+    "save": "Save"
   },
   "templates": {
     "hint": "Several tasks created at once, e.g. “Saturday cleaning”: vacuum, bathroom, sheets…",

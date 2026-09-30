@@ -126,6 +126,7 @@ model Household {
   absences       MemberAbsence[]
   comments       TaskComment[]
   products       ShoppingProduct[]
+  meals          Meal[]
 }
 
 enum HouseholdRole {
@@ -473,6 +474,29 @@ model ShoppingItem {
   household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
 
   @@index([householdId, done])
+}
+
+enum MealSlot {
+  LUNCH
+  DINNER
+}
+
+/// Menus de la semaine : un repas (midi ou soir) avec ses ingrédients, envoyables aux courses.
+model Meal {
+  id                String    @id @default(uuid()) @db.Uuid
+  householdId       String    @db.Uuid
+  date              DateTime  @db.Date
+  slot              MealSlot
+  title             String    @db.VarChar(120)
+  ingredients       String[]
+  createdById       String?   @db.Uuid
+  addedToShoppingAt DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@index([householdId, date])
 }
 
 /// Mémoire des courses du foyer : rayon choisi et fréquence d'achat de chaque produit

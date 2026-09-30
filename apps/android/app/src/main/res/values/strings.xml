@@ -440,4 +440,11 @@
     <plurals name="review_thanks"><item quantity="one">%d thanks</item><item quantity="other">%d thanks</item></plurals>
     <plurals name="review_missed"><item quantity="one">%d slipped</item><item quantity="other">%d slipped</item></plurals>
     <plurals name="review_next"><item quantity="one">Next week: %d task</item><item quantity="other">Next week: %d tasks</item></plurals>
+    <string name="meals_title">This week\'s meals</string>
+    <string name="meals_empty">No meals planned yet.</string>
+    <string name="meals_lunch">Lunch</string>
+    <string name="meals_dinner">Dinner</string>
+    <string name="meals_edit_web">Plan on the website</string>
+    <plurals name="meals_to_shopping"><item quantity="one">Ingredients of %d meal → shopping</item><item quantity="other">Ingredients of %d meals → shopping</item></plurals>
+    <plurals name="meals_added"><item quantity="one">%d item added to shopping.</item><item quantity="other">%d items added to shopping.</item></plurals>
 </resources>

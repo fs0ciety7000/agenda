@@ -456,6 +456,8 @@ private fun MainScaffold(
                 LaunchedEffect(shopping.map { it.id to it.done }) {
                     shoppingSuggestions = container.repository.shoppingSuggestions()
                 }
+                var meals by remember { mutableStateOf<List<app.tandem.foyer.domain.model.Meal>?>(null) }
+                LaunchedEffect(state.online, state.today) { meals = container.repository.weekMeals(state.today) }
                 ShoppingScreen(
                     items = shopping,
                     members = state.members,
@@ -477,6 +479,15 @@ private fun MainScaffold(
                     contentPadding = padding,
                     suggestions = shoppingSuggestions,
                     onAisle = { item, aisle -> scope.launch { container.repository.setShoppingAisle(item, aisle) } },
+                    meals = meals,
+                    onMealsToShopping = { list ->
+                        scope.launch {
+                            val result = container.repository.mealsToShopping(list.map { it.id })
+                            snackbar.showSnackbar(result?.let { context.resources.getQuantityString(R.plurals.meals_added, it.first, it.first) } ?: genericError)
+                            meals = container.repository.weekMeals(state.today)
+                        }
+                    },
+                    onOpenMeals = { openWeb(context, container.webBaseUrl, "meals") },
                 )
             }
             composable(Tab.CALENDAR.route) {
