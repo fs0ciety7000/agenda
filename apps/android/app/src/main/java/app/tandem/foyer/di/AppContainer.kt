@@ -27,6 +27,7 @@ import app.tandem.foyer.domain.repository.AuthRepository
 import app.tandem.foyer.notifications.ActivityNotifier
 import app.tandem.foyer.notifications.PushRegistrar
 import app.tandem.foyer.notifications.RecapScheduler
+import app.tandem.foyer.notifications.ReviewScheduler
 import app.tandem.foyer.notifications.ReminderScheduler
 import kotlinx.coroutines.flow.Flow
 
@@ -52,6 +53,7 @@ class AppContainer(context: Context) {
     val reports = ReportsRemote(app, api, database)
     val reminders = ReminderScheduler(app, repository, settings)
     val recap = RecapScheduler(app, settings)
+    val review = ReviewScheduler(app, settings)
     val authRepository: AuthRepository = AuthRepositoryImpl(
         api,
         tokenStore,

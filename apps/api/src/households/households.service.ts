@@ -14,6 +14,7 @@ import { fromDbDate } from '../common/dates';
 import { randomToken, sha256Hex } from '../common/crypto';
 import { HouseholdContext } from '../common/request-context';
 import { PrismaService } from '../prisma/prisma.service';
+import { mailLocale } from '../mail/templates';
 
 const INVITATION_TTL_MS = 7 * 86_400_000;
 const DEFAULT_COLOR: MemberColor = 'sage';
@@ -38,7 +39,7 @@ export class HouseholdsService {
 
   async create(userId: string, input: CreateHouseholdInput): Promise<HouseholdDto> {
     const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
-    const lang = user.locale === 'en' ? 'en' : 'fr';
+    const lang = mailLocale(user.locale);
 
     const household = await this.prisma.household.create({
       data: {

@@ -52,6 +52,7 @@ sealed interface AgendaEvent {
     data class Moved(val occurrenceId: String, val title: String, val from: LocalDate, val to: LocalDate) : AgendaEvent
     data class MoveFailed(val result: OpResult) : AgendaEvent
     data class Completed(val occurrenceId: String, val title: String) : AgendaEvent
+    data class ThanksFailed(val result: OpResult) : AgendaEvent
 }
 
 data class QuickAddState(val text: String = "", val preview: QuickAddPreview? = null)
@@ -109,6 +110,14 @@ class AgendaViewModel(
         viewModelScope.launch {
             repository.toggle(o)
             if (!undo && !o.isDone) _events.emit(AgendaEvent.Completed(o.id, o.title))
+        }
+    }
+
+    /** « Merci » (ou le retirer) pour une tâche faite par quelqu'un d'autre. */
+    fun thank(o: Occurrence, thank: Boolean) {
+        viewModelScope.launch {
+            val result = repository.thank(o.id, thank)
+            if (result != OpResult.Ok) _events.emit(AgendaEvent.ThanksFailed(result))
         }
     }
 

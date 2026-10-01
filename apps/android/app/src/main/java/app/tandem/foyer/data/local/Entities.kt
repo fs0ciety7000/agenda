@@ -73,6 +73,10 @@ data class OccurrenceEntity(
     /** Tâche récurrente : dernière fois faite (ISO) et par qui. */
     val lastDoneAt: String? = null,
     val lastDoneById: String? = null,
+    /** Qui a coché la tâche (v8). */
+    @ColumnInfo(defaultValue = "NULL") val completedById: String? = null,
+    /** « Merci » reçus : identifiants séparés par des virgules (v8). */
+    @ColumnInfo(defaultValue = "") val thankedBy: String = "",
 )
 
 /**

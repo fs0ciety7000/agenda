@@ -8,6 +8,8 @@ describe('localeFromAcceptLanguage', () => {
     ['de-DE,de;q=0.9,en;q=0.8', 'en'],
     ['de-DE,de;q=0.9,fr;q=0.8', 'fr'],
     ['es-ES', 'en'],
+    ['nl-BE,nl;q=0.9,fr;q=0.8', 'nl'],
+    ['fr-BE,nl-BE;q=0.9', 'fr'],
     ['nl;q=0.5,fr;q=0.9', 'fr'],
     ['*', 'fr'],
     ['', 'fr'],

@@ -7,7 +7,8 @@ description: Ajout rapide, formulaire, échéances, responsables, sous-tâches, 
 
 ## Ajout rapide
 
-L'ajout rapide comprend le français et l'anglais. Ce qui n'est pas reconnu reste dans le titre.
+L'ajout rapide comprend le français, l'anglais et le néerlandais (`morgen 19u`, `volgende maandag`,
+`over 2 weken`, `om 9u30`, `samen`…). Ce qui n'est pas reconnu reste dans le titre.
 
 | Élément | Exemples |
 |---|---|
@@ -63,6 +64,12 @@ tâche et sont supprimés avec elle.
 Sous chaque tâche : « Le produit est sous l'évier ». L'autre les voit en direct et reçoit une
 notification (sans le texte du commentaire). Chacun peut supprimer ses propres commentaires.
 
+## Dire merci
+
+Une tâche faite par l'autre affiche un **cœur** : un geste pour dire merci. La personne reçoit une
+notification (« Grace vous dit merci pour « Sortir les poubelles » ») et voit « Merci de Grace »
+sous la tâche. Un nouvel appui retire le merci ; rouvrir la tâche efface les merci.
+
 ## Modèles de tâches
 
 **Réglages → Modèles de tâches** : un modèle regroupe plusieurs tâches (« Ménage du samedi » :
@@ -74,6 +81,19 @@ demain, ce week-end, un autre jour ou sans date.
 **Réglages → Journal et corbeille → Journal** : qui a fait quoi, et quand (création, modification,
 « a terminé », suppression, restauration…). Exportable en **CSV**. Conservé **un an**. Vos tâches
 personnelles n'y apparaissent que pour vous.
+
+## Revue de la semaine
+
+Le dimanche, un bandeau sur **Aujourd'hui** ouvre la **Revue de la semaine** (aussi depuis le
+**Bilan**) :
+
+- ce qui a été fait, par personne, avec les merci reçus ;
+- ce qui a glissé (dates passées, encore à faire), à replanifier en un geste ;
+- la semaine suivante : nombre de tâches prévues et répartition entre vous.
+
+Sur **Android**, une notification « Votre semaine » arrive le dimanche à 19 h et ouvre la revue.
+Elle se désactive dans **Réglages → Notifications**. Les flèches permettent aussi de revoir les
+semaines précédentes.
 
 ## Bilan
 

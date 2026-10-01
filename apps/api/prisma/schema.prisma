@@ -36,6 +36,37 @@ model User {
   pushTokens        PushToken[]
   webPushSubscriptions WebPushSubscription[]
   reports           Report[]
+  passkeys          Passkey[]
+}
+
+/// Passkey (WebAuthn) : clé publique d'un appareil ou d'un gestionnaire de mots de passe.
+model Passkey {
+  /// Identifiant de la clé (base64url), choisi par l'authentificateur.
+  id         String    @id @db.VarChar(512)
+  userId     String    @db.Uuid
+  publicKey  Bytes
+  counter    Int       @default(0)
+  transports String[]
+  backedUp   Boolean   @default(false)
+  name       String    @db.VarChar(60)
+  createdAt  DateTime  @default(now())
+  lastUsedAt DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+/// Défi WebAuthn à usage unique (5 minutes), pour l'enregistrement ou la connexion.
+model WebAuthnChallenge {
+  id        String   @id @default(uuid()) @db.Uuid
+  challenge String   @db.VarChar(128)
+  /// Enregistrement : l'utilisateur connecté ; connexion : null (clé découvrable).
+  userId    String?  @db.Uuid
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([expiresAt])
 }
 
 enum AuthProvider {
@@ -126,6 +157,7 @@ model Household {
   absences       MemberAbsence[]
   comments       TaskComment[]
   products       ShoppingProduct[]
+  meals          Meal[]
 }
 
 enum HouseholdRole {
@@ -181,6 +213,8 @@ model HouseholdMember {
   inboundToken String?       @unique @db.VarChar(40)
   /// Accusé de réception des tâches créées par e-mail.
   inboundAck   Boolean       @default(true)
+  /// Abonnement iCal (lecture seule, Apple Calendrier, Outlook…). Secret ; null = désactivé.
+  icalToken    String?       @unique @db.VarChar(40)
 
   household            Household                @relation(fields: [householdId], references: [id], onDelete: Cascade)
   user                 User?                    @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -194,6 +228,7 @@ model HouseholdMember {
   activity             ActivityLog[]
   absences             MemberAbsence[]
   comments             TaskComment[]
+  thanks               OccurrenceThanks[]
 
   @@unique([householdId, userId])
   @@index([userId])
@@ -385,6 +420,7 @@ model TaskOccurrence {
   assignees   OccurrenceAssignee[]
   eventLink   CalendarEventLink?
   checklist   ChecklistItem[]
+  thanks      OccurrenceThanks[]
 
   @@unique([seriesId, originalDate])
   @@index([householdId, date])
@@ -471,6 +507,29 @@ model ShoppingItem {
   @@index([householdId, done])
 }
 
+enum MealSlot {
+  LUNCH
+  DINNER
+}
+
+/// Menus de la semaine : un repas (midi ou soir) avec ses ingrédients, envoyables aux courses.
+model Meal {
+  id                String    @id @default(uuid()) @db.Uuid
+  householdId       String    @db.Uuid
+  date              DateTime  @db.Date
+  slot              MealSlot
+  title             String    @db.VarChar(120)
+  ingredients       String[]
+  createdById       String?   @db.Uuid
+  addedToShoppingAt DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@index([householdId, date])
+}
+
 /// Mémoire des courses du foyer : rayon choisi et fréquence d'achat de chaque produit
 /// (suggestions « souvent achetés », rayon retenu quand on le corrige).
 model ShoppingProduct {
@@ -487,6 +546,19 @@ model ShoppingProduct {
   household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
 
   @@unique([householdId, key])
+}
+
+/// « Merci » d'un membre pour une tâche faite par un autre (un par membre et par occurrence).
+model OccurrenceThanks {
+  occurrenceId String   @db.Uuid
+  memberId     String   @db.Uuid
+  createdAt    DateTime @default(now())
+
+  occurrence TaskOccurrence  @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
+  member     HouseholdMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@id([occurrenceId, memberId])
+  @@index([memberId])
 }
 
 model OccurrenceAssignee {
@@ -604,6 +676,7 @@ enum NotificationType {
   ASSIGNEE_CHANGED
   CALENDAR_SYNC_FAILED
   TASK_COMMENT
+  TASK_THANKS
 }
 
 model Notification {

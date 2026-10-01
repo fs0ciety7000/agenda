@@ -28,6 +28,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedCard
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -55,6 +58,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.contentDescription
 import app.tandem.foyer.domain.Aisles
 import app.tandem.foyer.R
+import app.tandem.foyer.domain.model.Meal
+import app.tandem.foyer.ui.components.currentLocale
 import app.tandem.foyer.domain.model.Member
 import app.tandem.foyer.domain.model.ShoppingItem
 import app.tandem.foyer.domain.repository.SyncState
@@ -88,6 +93,10 @@ fun ShoppingScreen(
     /** Souvent achetés, absents de la liste : ajoutés en un geste. */
     suggestions: List<String> = emptyList(),
     onAisle: (ShoppingItem, String) -> Unit = { _, _ -> },
+    /** Menus de la semaine (null = inconnus, hors ligne). */
+    meals: List<Meal>? = null,
+    onMealsToShopping: (List<Meal>) -> Unit = {},
+    onOpenMeals: () -> Unit = {},
 ) {
     var text by rememberSaveable { mutableStateOf("") }
     val submit = {
@@ -148,6 +157,7 @@ fun ShoppingScreen(
         }
         PullToRefreshBox(isRefreshing = refreshing, onRefresh = onRefresh, modifier = Modifier.fillMaxSize()) {
             LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 32.dp)) {
+                if (meals != null) item(key = "meals") { MealsCard(meals, onMealsToShopping, onOpenMeals) }
                 if (items.isEmpty()) {
                     item { EmptyState(stringResource(R.string.shopping_empty_title), stringResource(R.string.shopping_empty_body)) }
                 } else {
@@ -268,6 +278,47 @@ private fun ItemRow(
         }
         IconButton(onClick = { onRemove(item) }) {
             Icon(Icons.Filled.Close, contentDescription = stringResource(R.string.shopping_remove, item.text))
+        }
+    }
+}
+
+/** Menus de la semaine : lecture, et ingrédients envoyés aux courses en un geste. */
+@Composable
+private fun MealsCard(meals: List<Meal>, onToShopping: (List<Meal>) -> Unit, onOpen: () -> Unit) {
+    val locale = currentLocale()
+    val pending = meals.filter { !it.inShopping && it.ingredients.isNotEmpty() }
+    OutlinedCard(Modifier.fillMaxWidth().padding(top = 12.dp)) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Text(
+                stringResource(R.string.meals_title),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.semantics { heading() },
+            )
+            if (meals.isEmpty()) {
+                Text(
+                    stringResource(R.string.meals_empty),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            meals.forEach { m ->
+                val day = m.date.dayOfWeek.getDisplayName(java.time.format.TextStyle.SHORT, locale)
+                val slot = stringResource(if (m.slot == "LUNCH") R.string.meals_lunch else R.string.meals_dinner)
+                Text(
+                    listOfNotNull("$day · $slot : ${m.title}", if (m.inShopping) "✓" else null).joinToString(" "),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (pending.isNotEmpty()) {
+                    OutlinedButton(onClick = { onToShopping(pending) }, modifier = Modifier.heightIn(min = 48.dp)) {
+                        Text(pluralStringResource(R.plurals.meals_to_shopping, pending.size, pending.size))
+                    }
+                }
+                TextButton(onClick = onOpen, modifier = Modifier.heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.meals_edit_web))
+                }
+            }
         }
     }
 }

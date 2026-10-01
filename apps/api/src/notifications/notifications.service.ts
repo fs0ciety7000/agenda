@@ -12,13 +12,19 @@ import type { HouseholdContext } from '../common/request-context';
 import { PrismaService } from '../prisma/prisma.service';
 import { PushService } from './push.service';
 import { type WebPushMessage, WebPushService } from './web-push.service';
+import { type Locale } from '../mail/templates';
 
 export const NOTIFICATION_KINDS: NotificationKind[] = [
   'TASK_ASSIGNED',
   'CALENDAR_SYNC_FAILED',
   'TASK_COMMENT',
+  'TASK_THANKS',
 ];
 const DEFAULT_PREF = { inApp: true, push: true };
+
+type TaskNotification = 'TASK_ASSIGNED' | 'TASK_COMMENT' | 'TASK_THANKS';
+const isTaskNotification = (type: string): type is TaskNotification =>
+  type === 'TASK_ASSIGNED' || type === 'TASK_COMMENT' || type === 'TASK_THANKS';
 
 interface AssignedPayload {
   occurrenceId: string;
@@ -59,9 +65,19 @@ export class NotificationsService {
     await this.notifyTask(ctx, 'TASK_COMMENT', occurrenceId, memberIds, recurring);
   }
 
+  /** « Grace te dit merci pour « Sortir les poubelles » ». */
+  async notifyThanks(
+    ctx: HouseholdContext,
+    occurrenceId: string,
+    memberId: string,
+    recurring: boolean,
+  ): Promise<void> {
+    await this.notifyTask(ctx, 'TASK_THANKS', occurrenceId, [memberId], recurring);
+  }
+
   private async notifyTask(
     ctx: HouseholdContext,
-    type: 'TASK_ASSIGNED' | 'TASK_COMMENT',
+    type: TaskNotification,
     occurrenceId: string,
     memberIds: string[],
     recurring: boolean,
@@ -135,7 +151,7 @@ export class NotificationsService {
     ]);
 
     const assigned = rows
-      .filter((r) => r.type === 'TASK_ASSIGNED' || r.type === 'TASK_COMMENT')
+      .filter((r) => isTaskNotification(r.type))
       .map((r) => r.payload as unknown as AssignedPayload);
     const [occurrences, members] = await Promise.all([
       this.prisma.taskOccurrence.findMany({
@@ -157,19 +173,17 @@ export class NotificationsService {
 
     const items: NotificationDto[] = rows.map((r) => {
       const payload = r.payload as Record<string, unknown>;
-      const occ =
-        r.type === 'TASK_ASSIGNED' || r.type === 'TASK_COMMENT'
-          ? occById.get(payload.occurrenceId as string)
-          : undefined;
+      const occ = isTaskNotification(r.type)
+        ? occById.get(payload.occurrenceId as string)
+        : undefined;
       return {
         id: r.id,
         type: r.type as NotificationKind,
         createdAt: r.createdAt.toISOString(),
         readAt: r.readAt?.toISOString() ?? null,
-        push:
-          r.type === 'TASK_ASSIGNED' || r.type === 'TASK_COMMENT'
-            ? payload.push !== false && prefs[r.type].push
-            : prefs[r.type as NotificationKind].push,
+        push: isTaskNotification(r.type)
+          ? payload.push !== false && prefs[r.type].push
+          : prefs[r.type as NotificationKind].push,
         occurrenceId: occ?.id ?? null,
         title: occ ? (occ.titleOverride ?? occ.task.title) : null,
         date: occ?.date ? occ.date.toISOString().slice(0, 10) : null,
@@ -229,26 +243,41 @@ export class NotificationsService {
 
 /** Texte des notifications du site (mêmes formulations que la cloche). */
 export function webPushText(
-  locale: 'fr' | 'en',
-  type: 'TASK_ASSIGNED' | 'TASK_COMMENT',
+  locale: Locale,
+  type: TaskNotification,
   by: string,
   title: string,
   recurring: boolean,
   occurrenceId: string,
 ): WebPushMessage {
-  const fr = locale === 'fr';
-  const body =
-    type === 'TASK_COMMENT'
-      ? fr
-        ? `${by} a commenté « ${title} »`
-        : `${by} commented on “${title}”`
-      : recurring
-        ? fr
-          ? `${by} vous a inclus dans « ${title} » (récurrente)`
-          : `${by} included you in “${title}” (recurring)`
-        : fr
-          ? `${by} vous a confié « ${title} »`
-          : `${by} assigned you “${title}”`;
+  const kind =
+    type === 'TASK_THANKS'
+      ? 'thanks'
+      : type === 'TASK_COMMENT'
+        ? 'comment'
+        : recurring
+          ? 'recurring'
+          : 'assigned';
+  const body = {
+    fr: {
+      thanks: `${by} vous dit merci pour « ${title} »`,
+      comment: `${by} a commenté « ${title} »`,
+      recurring: `${by} vous a inclus dans « ${title} » (récurrente)`,
+      assigned: `${by} vous a confié « ${title} »`,
+    },
+    en: {
+      thanks: `${by} says thanks for “${title}”`,
+      comment: `${by} commented on “${title}”`,
+      recurring: `${by} included you in “${title}” (recurring)`,
+      assigned: `${by} assigned you “${title}”`,
+    },
+    nl: {
+      thanks: `${by} bedankt je voor “${title}”`,
+      comment: `${by} heeft gereageerd op “${title}”`,
+      recurring: `${by} heeft je toegevoegd aan “${title}” (terugkerend)`,
+      assigned: `${by} heeft je “${title}” gegeven`,
+    },
+  }[locale][kind];
   return {
     title: 'Tandem',
     body,

@@ -3,6 +3,7 @@
 import type { Aisle, ShoppingItemDto } from '@agenda/contracts';
 import { AISLES } from '@agenda/domain';
 import { Check, Plus, ShoppingCart, X } from 'lucide-react';
+import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { useId, useState, type FormEvent } from 'react';
 import { useSession } from '@/components/app/household-context';
@@ -26,6 +27,7 @@ import {
 export default function ShoppingPage() {
   const t = useTranslations('shopping');
   const te = useTranslations('errors');
+  const tm = useTranslations('meals');
   const { me, household } = useSession();
   const memberId = household.members.find((m) => m.userId === me.id)?.id ?? '';
   const names = new Map(household.members.map((m) => [m.id, m.displayName]));
@@ -54,7 +56,12 @@ export default function ShoppingPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between gap-3">
-        <h1 className="text-[2rem] font-semibold leading-tight tracking-tight">{t('title')}</h1>
+        <div className="flex flex-col gap-1">
+          <h1 className="text-[2rem] font-semibold leading-tight tracking-tight">{t('title')}</h1>
+          <Link href="/meals" className="text-sm text-accent underline-offset-4 hover:underline">
+            {tm('title')} →
+          </Link>
+        </div>
         <span
           className={cn(
             'inline-flex items-center gap-1.5 text-[0.8125rem]',

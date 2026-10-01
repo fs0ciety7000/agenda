@@ -130,6 +130,9 @@
             android:name=".notifications.RecapReceiver"
             android:exported="false" />
         <receiver
+            android:name=".notifications.ReviewReceiver"
+            android:exported="false" />
+        <receiver
             android:name=".notifications.BootReceiver"
             android:exported="true">
             <intent-filter>

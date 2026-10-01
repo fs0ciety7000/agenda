@@ -1,5 +1,12 @@
-/** Textes du site vitrine (français, anglais). Reprend le ton de l'app et de sa fiche Play Store. */
-export type Locale = 'fr' | 'en';
+/** Textes du site vitrine (français, anglais, néerlandais). Reprend le ton de l'app et de sa fiche Play Store. */
+export type Locale = 'fr' | 'en' | 'nl';
+
+/** Langues du site : chemin et nom dans la langue elle-même (jamais traduit). */
+export const LANGS: { locale: Locale; href: string; name: string }[] = [
+  { locale: 'fr', href: '/', name: 'Français' },
+  { locale: 'en', href: '/en/', name: 'English' },
+  { locale: 'nl', href: '/nl/', name: 'Nederlands' },
+];
 
 export type FeatureIcon =
   'sun' | 'sparkles' | 'repeat' | 'cart' | 'bell' | 'offline' | 'calendar' | 'widget';
@@ -16,7 +23,7 @@ export interface Content {
     start: string;
     menu: string;
   };
-  lang: { label: string; other: string; href: string };
+  lang: { label: string; current: Locale };
   hero: {
     badge: string;
     title: [string, string];
@@ -111,7 +118,7 @@ const fr: Content = {
     start: 'Commencer',
     menu: 'Menu',
   },
-  lang: { label: 'Langue', other: 'English', href: '/en/' },
+  lang: { label: 'Langue', current: 'fr' },
   hero: {
     badge: 'Gratuit · sans publicité · web et Android',
     title: ['L’équilibre parfait', 'pour votre foyer.'],
@@ -142,7 +149,7 @@ const fr: Content = {
     'Hors ligne',
     'Temps réel',
     'Google Calendar',
-    'Français · English',
+    'Français · English · Nederlands',
   ],
   film: {
     eyebrow: 'En 20 secondes',
@@ -337,7 +344,7 @@ const en: Content = {
     start: 'Get started',
     menu: 'Menu',
   },
-  lang: { label: 'Language', other: 'Français', href: '/' },
+  lang: { label: 'Language', current: 'en' },
   hero: {
     badge: 'Free · ad-free · web and Android',
     title: ['The perfect balance', 'for your household.'],
@@ -368,7 +375,7 @@ const en: Content = {
     'Offline',
     'Real time',
     'Google Calendar',
-    'English · Français',
+    'English · Français · Nederlands',
   ],
   film: {
     eyebrow: 'In 20 seconds',
@@ -547,4 +554,230 @@ const en: Content = {
   },
 };
 
-export const content: Record<Locale, Content> = { fr, en };
+const nl: Content = {
+  meta: {
+    title: 'Tandem · Het perfecte evenwicht voor je huishouden',
+    description:
+      'Tandem verdeelt de klusjes in huis tussen jullie: om de beurt, een gedeelde boodschappenlijst, herinneringen, offline. Gratis, zonder advertenties, op het web en Android.',
+  },
+  nav: {
+    features: 'Functies',
+    how: 'Hoe het werkt',
+    privacy: 'Privacy',
+    faq: 'FAQ',
+    open: 'Tandem openen',
+    login: 'Aanmelden',
+    start: 'Aan de slag',
+    menu: 'Menu',
+  },
+  lang: { label: 'Taal', current: 'nl' },
+  hero: {
+    badge: 'Gratis · zonder advertenties · web en Android',
+    title: ['Het perfecte evenwicht', 'voor je huishouden.'],
+    text: 'Wie zet deze week de vuilnisbakken buiten? Wie doet de boodschappen? Tandem verdeelt de klusjes tussen jullie, om de beurt, zonder dat je het twee keer hoeft te vragen.',
+    primary: 'Gratis beginnen',
+    android: 'Downloaden voor Android',
+    note: 'Eén account, één huishouden, en de ander komt erbij met een link.',
+    already: 'Heb je al een account?',
+    login: 'Aanmelden',
+  },
+  mock: {
+    greeting: 'Hallo Grace',
+    date: 'Dinsdag 29 september',
+    today: 'Vandaag',
+    tasks: [
+      { title: 'Planten water geven', meta: '8.30 u · Grace', who: 'g' },
+      { title: 'Vuilnisbakken buitenzetten', meta: '20.00 u · Nicolas · om de beurt', who: 'n' },
+      { title: 'Wekelijkse boodschappen', meta: '18.00 u · samen', who: 'both' },
+      { title: 'Lakens verversen', meta: 'Deze week · Grace', who: 'g' },
+    ],
+    toast: 'Nicolas heeft “Vuilnisbakken buitenzetten” afgevinkt',
+    added: 'Garage bellen',
+    addedMeta: 'morgen 10.00 u · Nicolas',
+  },
+  strip: [
+    'Website',
+    'Android-app',
+    'Offline',
+    'Live',
+    'Google Agenda',
+    'Nederlands · Français · English',
+  ],
+  film: {
+    eyebrow: 'In 20 seconden',
+    title: 'Tandem, in beweging.',
+    text: 'Afvinken, herhalen, verplaatsen: het huishouden loopt vanzelf. (Video in het Frans.)',
+    label: 'Presentatievideo van Tandem (20 seconden, in het Frans)',
+    unmute: 'Geluid aanzetten',
+    mute: 'Geluid uitzetten',
+  },
+  features: {
+    eyebrow: 'Functies',
+    title: 'Alles om het huishouden te laten draaien, niets meer.',
+    text: 'Gemaakt voor een koppel of een klein gezin: eenvoudig in het dagelijks leven, nauwkeurig wanneer het ertoe doet.',
+    items: [
+      {
+        icon: 'sun',
+        title: 'Vandaag in één oogopslag',
+        text: 'Te laat, vandaag, deze week: afvinken met één tik, op het web en op je telefoon.',
+      },
+      {
+        icon: 'sparkles',
+        title: 'Snel toevoegen in gewone taal',
+        text: '“Vuilnis buitenzetten morgen 19u Grace”: datum, uur en persoon worden herkend. Ook met je stem.',
+      },
+      {
+        icon: 'repeat',
+        title: 'Herhalingen en beurtrol',
+        text: 'Elke week, om de week, de laatste dag van de maand… en wie het doet: samen, om de beurt, per weekdag.',
+      },
+      {
+        icon: 'cart',
+        title: 'Gedeelde boodschappenlijst',
+        text: 'De een voegt toe, de ander vinkt af in de winkel, live. Hoeveelheden, afdelingen en vaste producten.',
+      },
+      {
+        icon: 'bell',
+        title: 'Herinneringen en meldingen',
+        text: 'Een herinnering vóór elke taak, een melding als de ander je er een geeft, een ochtendoverzicht.',
+      },
+      {
+        icon: 'offline',
+        title: 'Werkt offline',
+        text: 'Taken afvinken en toevoegen zonder netwerk: alles wordt gesynchroniseerd zodra je weer online bent.',
+      },
+      {
+        icon: 'calendar',
+        title: 'Gedeelde agenda',
+        text: 'Dag-, week- en maandweergave met slepen en neerzetten. En als je wilt, de taken in een gedeelde Google Agenda of via iCal.',
+      },
+      {
+        icon: 'widget',
+        title: 'Android-widgets',
+        text: 'Vandaag, de week en de boodschappenlijst op je beginscherm, afgevinkt zonder de app te openen.',
+      },
+    ],
+  },
+  how: {
+    eyebrow: 'Hoe het werkt',
+    title: 'Klaar in drie minuten.',
+    steps: [
+      {
+        title: 'Maak je huishouden aan',
+        text: 'Een account op de website of in de app, met je e-mailadres of je Google-account.',
+      },
+      {
+        title: 'Nodig de ander uit',
+        text: 'Een uitnodigingslink volstaat: jullie delen dezelfde taken, live.',
+      },
+      {
+        title: 'Laat het draaien',
+        text: 'Herhalingen, beurtrol en herinneringen: iedereen weet wat er moet gebeuren, zonder lijstje op de koelkast.',
+      },
+    ],
+  },
+  balance: {
+    eyebrow: 'Evenwicht',
+    title: 'Zie wie wat doet, zonder te tellen.',
+    text: 'De verdeling van de week toont ieders aandeel, in taken en in tijd. Geen ranglijst, geen wedstrijd: net genoeg om erover te praten en bij te sturen.',
+    points: [
+      'Stelt de minst bezette persoon voor',
+      'Afwezigheidsmodus: de taken gaan naar de ander',
+      'Geschiedenis “gedaan door” voor elke taak',
+    ],
+    card: 'Verdeling van deze week',
+    rows: [
+      { name: 'Grace', detail: '6 taken · 1 u 40', value: 52, color: 'ocean' },
+      { name: 'Nicolas', detail: '5 taken · 1 u 30', value: 48, color: 'sage' },
+      { name: 'Samen', detail: '2 taken · 1 u', value: 22, color: 'plum' },
+    ],
+    footnote: 'Gedeelde taken, van maandag tot zondag.',
+  },
+  shots: {
+    eyebrow: 'De app',
+    title: 'Hetzelfde huishouden, in je broekzak.',
+    text: 'De Android-app kan alles wat de website kan, afgestemd op de telefoon: widgets, snelkoppelingen, dicteren en donkere modus.',
+    items: [
+      { file: '1_today', caption: 'Vandaag' },
+      { file: '2_repeat', caption: 'Herhalingen en beurtrol' },
+      { file: '3_calendar', caption: 'Agenda' },
+      { file: '4_tasks', caption: 'Alle taken' },
+      { file: '5_dark', caption: 'Donkere modus' },
+    ],
+  },
+  privacy: {
+    eyebrow: 'Privacy',
+    title: 'Jullie zaken blijven van jullie.',
+    text: 'Tandem is een onafhankelijke app zonder advertentiemodel. Je gegevens dienen maar voor één ding: je huishouden laten draaien.',
+    items: [
+      {
+        title: 'Geen advertenties, geen doorverkoop',
+        text: 'Geen advertentietrackers, geen gegevens verkocht of gedeeld voor commerciële doeleinden.',
+      },
+      {
+        title: 'Veilig',
+        text: 'Overal HTTPS, gehashte wachtwoorden (Argon2id), versleutelde Google-toegang (AES-256-GCM), strikt gescheiden huishoudens, aanmelden met een toegangssleutel.',
+      },
+      {
+        title: 'Jij houdt de controle',
+        text: 'Exporteer al je gegevens en verwijder je account op elk moment, vanuit de instellingen.',
+      },
+      {
+        title: 'Google, alleen als je wilt',
+        text: 'Aanmelden met Google en de agenda zijn optioneel; Tandem leest nooit je andere afspraken.',
+      },
+    ],
+    link: 'Lees het privacybeleid',
+  },
+  faq: {
+    eyebrow: 'FAQ',
+    title: 'Veelgestelde vragen',
+    items: [
+      {
+        q: 'Is Tandem echt gratis?',
+        a: 'Ja, zonder advertenties en zonder abonnement. Het is een persoonlijke app, gemaakt voor één huishouden en open voor iedereen die er iets aan heeft.',
+      },
+      {
+        q: 'Heb ik een Android-telefoon nodig?',
+        a: 'Nee. Alles werkt via de website, op een computer of een telefoon (ook iPhone, in de browser). De Android-app voegt widgets, dicteren en offline herinneringen toe.',
+      },
+      {
+        q: 'Hoeveel mensen per huishouden?',
+        a: 'Gemaakt voor een koppel of een klein gezin. Iedereen heeft een eigen account en ziet de gedeelde taken; persoonlijke taken blijven privé.',
+      },
+      {
+        q: 'En zonder internet?',
+        a: 'Je kunt taken offline bekijken, afvinken en toevoegen. Wijzigingen worden verzonden zodra het netwerk terug is.',
+      },
+      {
+        q: 'Hoe krijg of verwijder ik mijn gegevens?',
+        a: 'In Instellingen → Gegevens en privacy: een volledige export met één klik, en je account definitief verwijderen.',
+      },
+    ],
+  },
+  cta: {
+    title: 'En als het huishouden nu eens vanzelf liep?',
+    text: 'Maak je huishouden aan, nodig de ander uit en laat Tandem alles onthouden.',
+    primary: 'Mijn huishouden aanmaken',
+    secondary: 'Aanmelden',
+  },
+  footer: {
+    tagline: 'Het perfecte evenwicht voor je huishouden.',
+    product: 'Product',
+    help: 'Hulp',
+    legal: 'Privacy',
+    links: {
+      app: 'Tandem openen',
+      android: 'Android-app',
+      docs: 'Handleiding',
+      faq: 'FAQ',
+      status: 'Status van de dienst',
+      report: 'Een probleem melden',
+      privacy: 'Privacybeleid',
+      contact: 'Contact',
+    },
+    rights: 'Een persoonlijke app, gratis en zonder advertenties.',
+  },
+};
+
+export const content: Record<Locale, Content> = { fr, en, nl };

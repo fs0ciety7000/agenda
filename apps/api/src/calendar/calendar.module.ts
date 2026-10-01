@@ -6,6 +6,8 @@ import { CalendarConnectionService } from './calendar-connection.service';
 import { CalendarQueueService } from './calendar-queue.service';
 import { GoogleCalendarSyncService } from './calendar-sync.service';
 import { CalendarController } from './calendar.controller';
+import { IcalFeedController, IcalFeedSettingsController } from './ical-feed.controller';
+import { IcalFeedService } from './ical-feed.service';
 import { env } from '../config/env';
 import { FakeGoogleCalendar } from './fake-google-calendar';
 import { GoogleCalendarClient, HttpGoogleCalendarClient } from './google-calendar.client';
@@ -13,7 +15,7 @@ import { GoogleTokensService } from './google-tokens.service';
 
 @Module({
   imports: [HouseholdsModule, TasksModule, NotificationsModule],
-  controllers: [CalendarController],
+  controllers: [CalendarController, IcalFeedSettingsController, IcalFeedController],
   providers: [
     {
       provide: GoogleCalendarClient,
@@ -28,6 +30,7 @@ import { GoogleTokensService } from './google-tokens.service';
     GoogleCalendarSyncService,
     CalendarQueueService,
     CalendarConnectionService,
+    IcalFeedService,
   ],
   exports: [CalendarConnectionService, GoogleCalendarSyncService, CalendarQueueService],
 })

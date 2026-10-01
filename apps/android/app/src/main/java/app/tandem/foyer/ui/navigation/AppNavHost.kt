@@ -181,6 +181,7 @@ private fun MainScaffold(
     val quickAdd by vm.quickAdd.collectAsStateWithLifecycle()
     val reminders by container.settings.reminders.collectAsStateWithLifecycle(initialValue = ReminderSettings())
     val morningRecap by container.settings.morningRecap.collectAsStateWithLifecycle(initialValue = true)
+    val weeklyReview by container.settings.weeklyReview.collectAsStateWithLifecycle(initialValue = true)
     val nav = rememberNavController()
     val backStack by nav.currentBackStackEntryAsState()
     val route = backStack?.destination?.route
@@ -309,6 +310,7 @@ private fun MainScaffold(
         OpResult.NotFound to stringResource(R.string.error_not_found),
     )
     val genericError = stringResource(R.string.error_generic)
+    val thanksFailed = stringResource(R.string.thanks_failed)
     val completedFormat = stringResource(R.string.task_completed_snack)
     val deletedMessage = stringResource(R.string.task_deleted)
     val restoredMessage = stringResource(R.string.task_restored)
@@ -366,6 +368,7 @@ private fun MainScaffold(
                     }
                 }
                 is AgendaEvent.MoveFailed -> scope.launch { snackbar.showSnackbar(moveErrors[event.result] ?: genericError) }
+                is AgendaEvent.ThanksFailed -> scope.launch { snackbar.showSnackbar(thanksFailed) }
                 is AgendaEvent.Completed -> scope.launch {
                     val result = snackbar.showSnackbar(
                         completedFormat.format(event.title),
@@ -435,6 +438,7 @@ private fun MainScaffold(
             composable(Tab.TODAY.route) {
                 TodayScreen(
                     state, vm::refresh, vm::toggle, { open(it.id) },
+                    onThank = vm::thank,
                     banner = updateBanner,
                     onShowUnscheduled = {
                         filter = filter.copy(view = Agenda.View.UNSCHEDULED)
@@ -452,6 +456,8 @@ private fun MainScaffold(
                 LaunchedEffect(shopping.map { it.id to it.done }) {
                     shoppingSuggestions = container.repository.shoppingSuggestions()
                 }
+                var meals by remember { mutableStateOf<List<app.tandem.foyer.domain.model.Meal>?>(null) }
+                LaunchedEffect(state.online, state.today) { meals = container.repository.weekMeals(state.today) }
                 ShoppingScreen(
                     items = shopping,
                     members = state.members,
@@ -473,6 +479,15 @@ private fun MainScaffold(
                     contentPadding = padding,
                     suggestions = shoppingSuggestions,
                     onAisle = { item, aisle -> scope.launch { container.repository.setShoppingAisle(item, aisle) } },
+                    meals = meals,
+                    onMealsToShopping = { list ->
+                        scope.launch {
+                            val result = container.repository.mealsToShopping(list.map { it.id })
+                            snackbar.showSnackbar(result?.let { context.resources.getQuantityString(R.plurals.meals_added, it.first, it.first) } ?: genericError)
+                            meals = container.repository.weekMeals(state.today)
+                        }
+                    },
+                    onOpenMeals = { openWeb(context, container.webBaseUrl, "meals") },
                 )
             }
             composable(Tab.CALENDAR.route) {
@@ -514,6 +529,8 @@ private fun MainScaffold(
                     push = pushState,
                     morningRecap = morningRecap,
                     onMorningRecap = { scope.launch { container.settings.setMorningRecap(it) } },
+                    weeklyReview = weeklyReview,
+                    onWeeklyReview = { scope.launch { container.settings.setWeeklyReview(it) } },
                     onRetryPush = { scope.launch { container.push.register() } },
                     onOpenHistory = { nav.navigate("history") },
                     onOpenAbsences = { nav.navigate("absences") },
@@ -523,7 +540,7 @@ private fun MainScaffold(
                         val activity = context.findActivity() ?: return@SettingsScreen
                         // Langue du compte (e-mails) : hors de l'écran, recréé par le changement de langue.
                         val account = tag.ifEmpty {
-                            if (Resources.getSystem().configuration.locales[0].language == "fr") "fr" else "en"
+                            AppLanguage.supportedOrEnglish(Resources.getSystem().configuration.locales[0].language)
                         }
                         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
                             container.authRepository.setLanguage(account)

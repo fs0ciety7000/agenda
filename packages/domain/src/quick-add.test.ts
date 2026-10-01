@@ -241,3 +241,43 @@ describe('quick add — échéances souples', () => {
     );
   });
 });
+
+describe('quick add — néerlandais', () => {
+  it('« Vuilnisbakken buitenzetten morgen 19u Grace »', () => {
+    expect(p('Vuilnisbakken buitenzetten morgen 19u Grace')).toMatchObject({
+      title: 'Vuilnisbakken buitenzetten',
+      date: '2026-09-27',
+      startMinute: 19 * 60,
+      assigneeIds: ['g'],
+    });
+  });
+
+  it('jours, mois, délais', () => {
+    expect(p('Garage bellen dinsdag').date).toBe('2026-09-29');
+    expect(p('Garage bellen volgende zaterdag').date).toBe('2026-10-03');
+    expect(p('Tandarts op 12 oktober om 9u30')).toMatchObject({
+      title: 'Tandarts',
+      date: '2026-10-12',
+      startMinute: 9 * 60 + 30,
+    });
+    expect(p('Band oppompen over 2 weken').date).toBe('2026-10-10');
+    expect(p('Afwas overmorgen').date).toBe('2026-09-28');
+    expect(p('Planten water geven vandaag').date).toBe('2026-09-26');
+    expect(p('Koken vanavond')).toMatchObject({ date: '2026-09-26', startMinute: 19 * 60 });
+  });
+
+  it('heures, durées, à deux', () => {
+    expect(p('Stofzuigen om 10 uur gedurende 1u30')).toMatchObject({
+      title: 'Stofzuigen',
+      startMinute: 600,
+      durationMinutes: 90,
+    });
+    expect(p('Opruimen zondag Grace en Nicolas').assigneeIds).toEqual(['g', 'n']);
+    expect(p('Opruimen zondag samen').assigneeIds).toEqual(['g', 'n']);
+    expect(p('Factuur betalen deze week').dueDate).toBe('2026-09-27');
+  });
+
+  it('ne reconnaît pas des mots contenant un jour', () => {
+    expect(p('Morgenster kijken').date).toBeUndefined();
+  });
+});

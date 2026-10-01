@@ -11,6 +11,7 @@ import { scheduleColumns } from '../tasks/schedule';
 import { SeriesService } from '../tasks/series.service';
 import { GoogleApiError, GoogleCalendarClient, type GoogleEvent } from './google-calendar.client';
 import { GoogleTokensService } from './google-tokens.service';
+import { type Locale, mailLocale } from '../mail/templates';
 
 /** Fenêtre synchronisée : d'hier à J+60 (le passé n'est jamais réécrit). */
 export const SYNC_PAST_DAYS = 1;
@@ -145,7 +146,7 @@ export class GoogleCalendarSyncService {
         (l.syncStatus !== 'ERROR' || (l.nextAttemptAt !== null && l.nextAttemptAt <= now)),
     );
 
-    const locale = link.connection.user.locale === 'en' ? 'en' : 'fr';
+    const locale = mailLocale(link.connection.user.locale);
 
     for (const occ of toUpsert) {
       try {
@@ -190,7 +191,7 @@ export class GoogleCalendarSyncService {
   private async upsertEvent(
     link: { id: string; connectionId: string; googleCalendarId: string },
     occ: SyncOccurrence,
-    ctx: { tz: string; locale: 'fr' | 'en' },
+    ctx: { tz: string; locale: Locale },
   ): Promise<boolean> {
     const event = this.buildEvent(occ, link, ctx);
     const known =
@@ -654,22 +655,28 @@ export class GoogleCalendarSyncService {
   buildEvent(
     occ: SyncOccurrence,
     link: { householdId?: string; googleCalendarId: string },
-    ctx: { tz: string; locale: 'fr' | 'en' },
+    ctx: { tz: string; locale: Locale },
   ): GoogleEvent {
-    const t =
-      ctx.locale === 'en'
-        ? {
-            together: 'together',
-            assignee: 'Assignee',
-            unassigned: 'Unassigned',
-            open: 'Open in Tandem',
-          }
-        : {
-            together: 'à deux',
-            assignee: 'Responsable',
-            unassigned: 'À définir',
-            open: 'Ouvrir dans Tandem',
-          };
+    const t = {
+      en: {
+        together: 'together',
+        assignee: 'Assignee',
+        unassigned: 'Unassigned',
+        open: 'Open in Tandem',
+      },
+      fr: {
+        together: 'à deux',
+        assignee: 'Responsable',
+        unassigned: 'À définir',
+        open: 'Ouvrir dans Tandem',
+      },
+      nl: {
+        together: 'samen',
+        assignee: 'Verantwoordelijke',
+        unassigned: 'Nog te bepalen',
+        open: 'Openen in Tandem',
+      },
+    }[ctx.locale];
     const title = occ.titleOverride ?? occ.task.title;
     const people = occ.assignees.map((a) => a.member.displayName);
     const who =

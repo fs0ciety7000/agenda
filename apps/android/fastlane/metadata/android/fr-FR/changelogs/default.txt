@@ -1,5 +1,5 @@
-Agenda G & N devient Tandem : nouveau nom, nouveau logo, nouvelle adresse (tandem-agenda.app).
-• Logo en haut de l'écran « Aujourd'hui ».
-• Correction : l'app se fermait juste après la connexion.
-• Connexion avec Google plus fiable.
-• Plantages mieux remontés, pour des corrections plus rapides.
+Tandem parle maintenant néerlandais !
+• Dites « merci » pour une tâche faite par l'autre.
+• Revue de la semaine, le dimanche soir.
+• Menus de la semaine → liste de courses en un geste.
+• Abonnement iCal pour Apple Calendrier et Outlook (sur le site).

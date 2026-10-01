@@ -61,7 +61,8 @@ versions et toujours croissants.
      immédiate ; sauvegardes effacées sous 14 jours (serveur) et 30 jours (hors serveur).
 4. **Fiche Play Store** (*Présence sur le Store → Fiche principale*) : copier les textes et
    images de `apps/android/fastlane/metadata/android`
-   (`fr-FR` et `en-US` en traduction) :
+   (`fr-FR`, puis `en-US` et `nl-NL` en traduction ; `nl-NL` n'a pas d'images propres : reprendre
+   celles de `en-US`) :
 
    | Champ | Fichier | Limite |
    |---|---|---|
@@ -146,6 +147,10 @@ Une version déjà envoyée en test interne se passe au test fermé sans nouvel 
   `fastlane/metadata/android/<langue>/changelogs/default.txt`. À mettre à jour avant chaque
   envoi : la CI les joint à l'envoi automatique et les recopie sur la page de la release
   `android-latest`, au format `<fr-FR>…</fr-FR>` à coller tel quel dans la Play Console.
+- Néerlandais : une fois la traduction *Néerlandais – nl-NL* ajoutée à la fiche (*Fiche principale →
+  Gérer les traductions*), créer la variable de dépôt `PLAY_LISTING_NL=true` (GitHub → Settings →
+  Secrets and variables → Actions → Variables) : la CI joindra alors aussi les notes `nl-NL`.
+  Avant, Google Play refuserait l'envoi (langue absente de la fiche).
 - Captures (rendues depuis les vrais écrans, données fictives) :
 
   ```bash

@@ -31,6 +31,6 @@ test('mauvais identifiants : message compréhensible', async ({ page }) => {
   await page.goto('/login');
   await page.getByLabel('Adresse email').fill('personne@example.test');
   await page.getByLabel('Mot de passe').fill('mauvais mot de passe');
-  await page.getByRole('button', { name: 'Se connecter' }).click();
+  await page.getByRole('button', { name: 'Se connecter', exact: true }).click();
   await expect(page.getByText('Email ou mot de passe incorrect.')).toBeVisible();
 });

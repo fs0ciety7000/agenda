@@ -12,6 +12,12 @@ description: Mot de passe, Google, sessions, export et suppression de ses donné
   êtes déconnecté·e de tous vos appareils.
 - **Réglages → Compte** : changer de mot de passe, **se déconnecter de tous les appareils**
   (téléphone perdu).
+- **Passkeys** (connexion sans mot de passe) : **Réglages → Compte → Ajouter une passkey**, puis
+  **Se connecter avec une passkey** sur la page de connexion. La passkey reste sur votre appareil
+  (empreinte, visage ou code) ou dans votre trousseau (iCloud, Google) ; l'app ne garde qu'une
+  clé publique, inutilisable par quelqu'un d'autre. Une passkey par appareil, supprimable à tout
+  moment. Sur l'app Android, la connexion reste par mot de passe ou Google pour l'instant ; les
+  passkeys fonctionnent sur le site, y compris dans Chrome sur Android.
 - **Lier / délier Google** dans **Réglages → Données & confidentialité** (définissez d'abord un
   mot de passe pour pouvoir délier Google).
 
@@ -30,5 +36,6 @@ Ce que l'app fait de vos données, combien de temps elle les garde et avec quels
 
 ## Apparence et langue
 
-Thème **Système**, **Clair** ou **Sombre** dans les Réglages. L'app est en français et en
-anglais (langue du navigateur ou du téléphone).
+Thème **Système**, **Clair** ou **Sombre** dans les Réglages. L'app est en français, en
+anglais et en néerlandais (langue du navigateur ou du téléphone, ou choix dans les Réglages ;
+une autre langue affiche l'anglais). Le choix vaut aussi pour les e-mails.

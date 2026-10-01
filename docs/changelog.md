@@ -13,6 +13,42 @@ d'elle-même (ou via Google Play).
 **Légende** : ✨ nouveau · 🛠 amélioration · 🐞 correction · 🔒 sécurité et confidentialité ·
 ⚙️ technique
 
+## 30 septembre 2026
+
+### Néerlandais (#79)
+
+- ✨ Tandem est disponible en néerlandais (tutoiement, « je ») : app web, app Android, e-mails,
+  notifications, site vitrine (`/nl/`) et fiche Google Play. Un navigateur ou un téléphone en
+  néerlandais l’affiche directement ; sinon, Réglages → Langue → **Nederlands**.
+- ✨ L’ajout rapide comprend le néerlandais : « Vuilnis buitenzetten morgen 19u Grace ».
+
+### Abonnement iCal (#79)
+
+- ✨ Réglages → Calendrier : un lien privé à ajouter dans Apple Calendrier, Outlook ou toute app
+  de calendrier. Vos tâches datées y apparaissent et se mettent à jour seules (lecture seule).
+- 🔒 Le lien est secret et personnel : il se renouvelle ou se désactive en un clic, et disparaît
+  avec votre compte.
+
+### « Merci » et revue de la semaine (#79)
+
+- ✨ Un cœur sur une tâche faite par l’autre pour lui dire merci ; il reçoit une notification.
+- ✨ Revue de la semaine : ce qui a été fait (par qui, combien de temps, combien de mercis), ce qui
+  a glissé, et la semaine à venir. Bandeau le dimanche sur le site, notification à 19 h sur
+  Android (désactivable dans les Réglages).
+
+### Menus de la semaine (#79)
+
+- ✨ Nouvelle page **Repas** : midi et soir pour chaque jour, avec les ingrédients. Un geste les
+  ajoute à la liste de courses, sans doublon avec ce qui y est déjà. Sur Android, la carte
+  « Repas de la semaine » est en haut des Courses.
+
+### Passkeys (#79)
+
+- ✨ Connexion sans mot de passe, avec l’empreinte, le visage ou le code de l’appareil :
+  Réglages → Compte → **Ajouter une passkey**, puis **Se connecter avec une passkey**.
+- 🔒 Seule la clé publique est enregistrée ; l’empreinte ou le visage ne quittent jamais
+  l’appareil.
+
 ## 29 septembre 2026
 
 ### Choisir sa langue (web et Android)

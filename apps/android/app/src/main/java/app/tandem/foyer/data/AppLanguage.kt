@@ -9,13 +9,13 @@ import android.os.LocaleList
 import java.util.Locale
 
 /**
- * Langue de l'app choisie dans les Réglages : "" (celle du téléphone), "fr" ou "en".
+ * Langue de l'app choisie dans les Réglages : "" (celle du téléphone), "fr", "en" ou "nl".
  * Android 13+ : langue par application du système (aussi réglable dans les paramètres Android,
  * cf. res/xml/locales_config.xml). Avant : préférence locale appliquée à l'activité.
  */
 object AppLanguage {
     const val SYSTEM = ""
-    val SUPPORTED = listOf("fr", "en")
+    val SUPPORTED = listOf("fr", "en", "nl")
     private const val PREFS = "app_language"
     private const val KEY = "tag"
 
@@ -38,9 +38,11 @@ object AppLanguage {
         }
     }
 
-    /** Langue effective (« fr » ou « en ») : pour le compte (e-mails). */
-    fun effective(context: Context): String =
-        if (context.resources.configuration.locales[0].language == "fr") "fr" else "en"
+    /** Langue effective (« fr », « en » ou « nl ») : pour le compte (e-mails). */
+    fun effective(context: Context): String = supportedOrEnglish(context.resources.configuration.locales[0].language)
+
+    /** Langue prise en charge, sinon l'anglais (comme les ressources par défaut). */
+    fun supportedOrEnglish(language: String): String = if (language in SUPPORTED) language else "en"
 
     /** Avant Android 13 : contexte de l'activité dans la langue choisie (attachBaseContext). */
     fun wrap(base: Context): Context {

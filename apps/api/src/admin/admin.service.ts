@@ -13,7 +13,7 @@ import { PasswordResetService } from '../auth/password-reset.service';
 import { AppException, notFound } from '../common/app-exception';
 import { env } from '../config/env';
 import { MailService } from '../mail/mail.service';
-import { testEmail } from '../mail/templates';
+import { mailLocale, testEmail } from '../mail/templates';
 import { PushService } from '../notifications/push.service';
 import { WebPushService } from '../notifications/web-push.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -253,7 +253,7 @@ export class AdminService {
     const me = await this.user(adminId);
     if (!this.mail.enabled) return { ok: false, detail: 'SMTP_NOT_CONFIGURED' };
     try {
-      await this.mail.send({ to: me.email, ...testEmail(me.locale === 'en' ? 'en' : 'fr') });
+      await this.mail.send({ to: me.email, ...testEmail(mailLocale(me.locale)) });
       return { ok: true, detail: me.email };
     } catch (e) {
       return { ok: false, detail: (e as Error).message.slice(0, 200) };
@@ -262,13 +262,17 @@ export class AdminService {
 
   async testPush(adminId: string): Promise<AdminTestResultDto> {
     const me = await this.user(adminId);
-    const fr = me.locale !== 'en';
+    const body = {
+      fr: 'Notification de test : tout fonctionne.',
+      en: 'Test notification: all good.',
+      nl: 'Testmelding: alles werkt.',
+    }[mailLocale(me.locale)];
     const [phones, browsers] = await Promise.all([
       this.push.wakeUser(adminId).catch(() => 0),
       this.webPush
         .sendToUser(adminId, {
           title: 'Tandem',
-          body: fr ? 'Notification de test : tout fonctionne.' : 'Test notification: all good.',
+          body,
           url: '/admin',
           tag: 'admin-test',
         })

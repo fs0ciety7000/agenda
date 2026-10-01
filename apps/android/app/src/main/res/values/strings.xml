@@ -168,7 +168,7 @@
     <string name="calendar_not_configured">Google Calendar is not enabled on this server.</string>
     <string name="calendar_unknown">Status unavailable offline.</string>
     <string name="calendar_manage_web">Manage on the website</string>
-    <string name="calendar_web_hint">Connecting Google and choosing the calendar happen on the website (safer for Google authorisation).</string>
+    <string name="calendar_web_hint">Connecting Google and choosing the calendar happen on the website (safer for Google authorisation). An iCal link for Apple Calendar or Outlook is available there too.</string>
     <string name="settings_reminders">Reminders</string>
     <string name="reminders_enabled">Remind me of my timed tasks</string>
     <string name="reminders_lead">How long before?</string>
@@ -427,4 +427,24 @@
     <string name="report_status_in_progress">In progress</string>
     <string name="report_status_resolved">Resolved</string>
     <string name="report_status_closed">Closed</string>
+    <string name="say_thanks">Say thanks to %1$s</string>
+    <string name="thanks_sent">Thanks sent to %1$s</string>
+    <string name="thanks_from">Thanks from %1$s</string>
+    <string name="activity_thanked">%1$s says thanks for “%2$s”</string>
+    <string name="thanks_failed">Couldn\'t send your thanks. Check your connection.</string>
+    <string name="review_channel">Weekly review</string>
+    <string name="review_channel_desc">On Sunday evening, what got done this week and what\'s coming next.</string>
+    <string name="review_title">Your week</string>
+    <string name="review_setting">Weekly review (Sunday 7 pm)</string>
+    <plurals name="review_done"><item quantity="one">%d task done</item><item quantity="other">%d tasks done</item></plurals>
+    <plurals name="review_thanks"><item quantity="one">%d thanks</item><item quantity="other">%d thanks</item></plurals>
+    <plurals name="review_missed"><item quantity="one">%d slipped</item><item quantity="other">%d slipped</item></plurals>
+    <plurals name="review_next"><item quantity="one">Next week: %d task</item><item quantity="other">Next week: %d tasks</item></plurals>
+    <string name="meals_title">This week\'s meals</string>
+    <string name="meals_empty">No meals planned yet.</string>
+    <string name="meals_lunch">Lunch</string>
+    <string name="meals_dinner">Dinner</string>
+    <string name="meals_edit_web">Plan on the website</string>
+    <plurals name="meals_to_shopping"><item quantity="one">Ingredients of %d meal → shopping</item><item quantity="other">Ingredients of %d meals → shopping</item></plurals>
+    <plurals name="meals_added"><item quantity="one">%d item added to shopping.</item><item quantity="other">%d items added to shopping.</item></plurals>
 </resources>

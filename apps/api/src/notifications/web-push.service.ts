@@ -3,6 +3,7 @@ import type { WebPushSubscriptionInput } from '@agenda/contracts';
 import webpush from 'web-push';
 import { env } from '../config/env';
 import { PrismaService } from '../prisma/prisma.service';
+import { type Locale, mailLocale } from '../mail/templates';
 
 /** Contenu affiché par le navigateur (chiffré de bout en bout : le service de push ne le lit pas). */
 export interface WebPushMessage {
@@ -76,7 +77,7 @@ export class WebPushService {
   async sendToMembers(
     householdId: string,
     memberIds: string[],
-    build: (locale: 'fr' | 'en') => WebPushMessage,
+    build: (locale: Locale) => WebPushMessage,
   ): Promise<void> {
     if (!this.enabled || !memberIds.length) return;
     try {
@@ -94,7 +95,7 @@ export class WebPushService {
       });
       await Promise.all(
         subs.map(async (s) => {
-          const message = build(s.user.locale === 'en' ? 'en' : 'fr');
+          const message = build(mailLocale(s.user.locale));
           try {
             await webpush.sendNotification(
               { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },

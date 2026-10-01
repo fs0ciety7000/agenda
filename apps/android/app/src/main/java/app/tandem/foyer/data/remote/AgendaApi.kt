@@ -158,6 +158,18 @@ interface AgendaApi {
     @POST("v1/households/{h}/occurrences/{id}/reopen")
     suspend fun reopen(@Path("h") householdId: String, @Path("id") id: String): Response<OccurrenceDto>
 
+    @GET("v1/households/{h}/meals")
+    suspend fun meals(@Path("h") householdId: String, @Query("from") from: String, @Query("to") to: String): Response<List<MealDto>>
+
+    @POST("v1/households/{h}/meals/shopping")
+    suspend fun mealsToShopping(@Path("h") householdId: String, @Body body: MealsToShoppingRequest): Response<MealsToShoppingDto>
+
+    @POST("v1/households/{h}/occurrences/{id}/thanks")
+    suspend fun thank(@Path("h") householdId: String, @Path("id") id: String): Response<OccurrenceDto>
+
+    @DELETE("v1/households/{h}/occurrences/{id}/thanks")
+    suspend fun unthank(@Path("h") householdId: String, @Path("id") id: String): Response<OccurrenceDto>
+
     @GET("v1/households/{h}/occurrences/{id}")
     suspend fun occurrence(@Path("h") householdId: String, @Path("id") id: String): Response<OccurrenceDto>
 

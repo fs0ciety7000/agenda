@@ -64,3 +64,10 @@ export const UnlinkCalendarQuery = z.object({
     .transform((v) => v === 'true'),
 });
 export type UnlinkCalendarQuery = z.infer<typeof UnlinkCalendarQuery>;
+
+/** Abonnement iCal personnel (lecture seule) : Apple Calendrier, Outlook, Proton… */
+export const IcalFeedDto = z.object({
+  /** Adresse à coller dans l'agenda ; null tant qu'elle n'a pas été créée. */
+  url: z.string().nullable(),
+});
+export type IcalFeedDto = z.infer<typeof IcalFeedDto>;

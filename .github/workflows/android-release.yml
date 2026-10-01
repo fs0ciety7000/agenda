@@ -121,6 +121,9 @@ jobs:
           <en-US>
           $(cat fastlane/metadata/android/en-US/changelogs/default.txt)
           </en-US>
+          <nl-NL>
+          $(cat fastlane/metadata/android/nl-NL/changelogs/default.txt)
+          </nl-NL>
 
           Version $VERSION_NAME · commit ${GITHUB_SHA::7}
           NOTES
@@ -155,6 +158,11 @@ jobs:
           mkdir -p whatsnew
           cp fastlane/metadata/android/fr-FR/changelogs/default.txt whatsnew/whatsnew-fr-FR
           cp fastlane/metadata/android/en-US/changelogs/default.txt whatsnew/whatsnew-en-US
+          # Néerlandais : seulement une fois la traduction nl-NL ajoutée à la fiche (docs/play-store.md),
+          # sinon Google Play refuse la mise en ligne.
+          if [ "${{ vars.PLAY_LISTING_NL }}" = "true" ]; then
+            cp fastlane/metadata/android/nl-NL/changelogs/default.txt whatsnew/whatsnew-nl-NL
+          fi
       - name: Envoyer sur Google Play (${{ inputs.track != 'auto' && inputs.track || vars.PLAY_TRACK || 'internal' }})
         if: env.PLAY_SERVICE_ACCOUNT_JSON != ''
         uses: r0adkll/upload-google-play@v1

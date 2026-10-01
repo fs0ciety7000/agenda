@@ -3,6 +3,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthController } from './auth.controller';
 import { GoogleOidcClient } from './google-oidc.client';
 import { GoogleSignInController } from './google-sign-in.controller';
+import { PasskeysService } from './passkeys.service';
 import { PasswordResetService } from './password-reset.service';
 import { AuthGuard } from './auth.guard';
 import { AuthService } from './auth.service';
@@ -16,6 +17,7 @@ import { TokenService } from './token.service';
     AuthService,
     PasswordService,
     PasswordResetService,
+    PasskeysService,
     GoogleOidcClient,
     TokenService,
     { provide: APP_GUARD, useClass: CsrfGuard },

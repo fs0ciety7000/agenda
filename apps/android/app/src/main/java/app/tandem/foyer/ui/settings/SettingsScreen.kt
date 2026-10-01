@@ -62,11 +62,13 @@ fun SettingsScreen(
     push: PushState? = null,
     morningRecap: Boolean = true,
     onMorningRecap: (Boolean) -> Unit = {},
+    weeklyReview: Boolean = true,
+    onWeeklyReview: (Boolean) -> Unit = {},
     onRetryPush: () -> Unit = {},
     onOpenHistory: () -> Unit = {},
     onOpenAbsences: () -> Unit = {},
     onOpenReport: () -> Unit = {},
-    /** Langue de l'app : "" (téléphone), "fr" ou "en". */
+    /** Langue de l'app : "" (téléphone), "fr", "en" ou "nl". */
     language: String = "",
     onLanguage: (String) -> Unit = {},
 ) {
@@ -209,6 +211,17 @@ fun SettingsScreen(
                     Text(stringResource(R.string.recap_setting), modifier = Modifier.weight(1f))
                     Switch(checked = morningRecap, onCheckedChange = null)
                 }
+                Row(
+                    Modifier.fillMaxWidth().heightIn(min = 48.dp).toggleable(
+                        value = weeklyReview,
+                        role = Role.Switch,
+                        onValueChange = onWeeklyReview,
+                    ),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(stringResource(R.string.review_setting), modifier = Modifier.weight(1f))
+                    Switch(checked = weeklyReview, onCheckedChange = null)
+                }
                 if (!notificationsAllowed) {
                     Text(
                         stringResource(R.string.reminders_permission_denied),
@@ -232,7 +245,12 @@ fun SettingsScreen(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             // Noms des langues dans leur propre langue : jamais traduits.
-            listOf("" to stringResource(R.string.language_system), "fr" to "Français", "en" to "English").forEach { (tag, name) ->
+            listOf(
+                "" to stringResource(R.string.language_system),
+                "fr" to "Français",
+                "en" to "English",
+                "nl" to "Nederlands",
+            ).forEach { (tag, name) ->
                 FilterChip(selected = language == tag, onClick = { onLanguage(tag) }, label = { Text(name) })
             }
         }

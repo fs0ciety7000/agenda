@@ -8,6 +8,7 @@ import {
   ShoppingCart,
   Sun,
   type LucideIcon,
+  UtensilsCrossed,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -22,12 +23,13 @@ import { useHouseholds, useMe } from '@/lib/queries';
 import { useRealtime } from '@/lib/realtime';
 import { SessionContext } from './household-context';
 
-type NavKey = 'today' | 'tasks' | 'shopping' | 'calendar' | 'stats' | 'settings';
+type NavKey = 'today' | 'tasks' | 'shopping' | 'meals' | 'calendar' | 'stats' | 'settings';
 /** `mobile: false` : absent de la barre du bas (cinq onglets au plus), lien depuis Aujourd'hui. */
 const NAV: { href: string; key: NavKey; icon: LucideIcon; mobile?: false }[] = [
   { href: '/', key: 'today', icon: Sun },
   { href: '/tasks', key: 'tasks', icon: ListChecks },
   { href: '/shopping', key: 'shopping', icon: ShoppingCart },
+  { href: '/meals', key: 'meals', icon: UtensilsCrossed, mobile: false },
   { href: '/calendar', key: 'calendar', icon: CalendarDays },
   { href: '/stats', key: 'stats', icon: BarChart3, mobile: false },
   { href: '/settings', key: 'settings', icon: Settings },

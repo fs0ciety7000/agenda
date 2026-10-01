@@ -153,6 +153,8 @@ export const OccurrenceDto = z.object({
   lastDone: z.object({ at: z.string(), memberId: z.uuid().nullable() }).nullish(),
   /** Nombre de commentaires sur la tâche. */
   commentCount: z.number().int().optional(),
+  /** Membres qui ont dit « merci » pour cette tâche faite. */
+  thankedBy: z.array(z.uuid()).optional(),
 });
 export type OccurrenceDto = z.infer<typeof OccurrenceDto>;
 
@@ -257,3 +259,37 @@ export const StatsDto = z.object({
   byMember: z.array(StatsShare.extend({ memberId: z.uuid() })),
 });
 export type StatsDto = z.infer<typeof StatsDto>;
+
+/** Revue de la semaine (lundi → dimanche), tâches partagées et tâches personnelles à soi. */
+export const WeeklyReviewQuery = z.object({
+  /** Un jour de la semaine voulue (défaut : aujourd'hui). */
+  date: IsoDate.optional(),
+});
+export type WeeklyReviewQuery = z.infer<typeof WeeklyReviewQuery>;
+
+export const WeeklyReviewDto = z.object({
+  from: IsoDate,
+  to: IsoDate,
+  done: z.number().int(),
+  doneMinutes: z.number().int(),
+  /** Par personne qui a coché, avec les « merci » reçus pour ces tâches. */
+  byMember: z.array(
+    z.object({
+      memberId: z.uuid(),
+      done: z.number().int(),
+      minutes: z.number().int(),
+      thanks: z.number().int(),
+    }),
+  ),
+  /** Encore à faire alors que leur date de la semaine est passée. */
+  missed: z.array(z.object({ id: z.uuid(), title: z.string(), date: IsoDate })),
+  /** La semaine suivante. */
+  next: z.object({
+    from: IsoDate,
+    to: IsoDate,
+    total: z.number().int(),
+    byMember: z.array(z.object({ memberId: z.uuid(), count: z.number().int() })),
+    unassigned: z.number().int(),
+  }),
+});
+export type WeeklyReviewDto = z.infer<typeof WeeklyReviewDto>;

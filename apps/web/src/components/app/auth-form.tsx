@@ -1,12 +1,23 @@
 'use client';
 
-import { LoginInput, RegisterInput, type AuthResponse } from '@agenda/contracts';
+import {
+  LoginInput,
+  RegisterInput,
+  type AuthResponse,
+  type PasskeyOptionsDto,
+} from '@agenda/contracts';
+import {
+  browserSupportsWebAuthn,
+  startAuthentication,
+  type PublicKeyCredentialRequestOptionsJSON,
+} from '@simplewebauthn/browser';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { Fingerprint } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
 import { Button } from '@/components/ui/button';
@@ -149,6 +160,8 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
         </Link>
       )}
 
+      {isLogin && <PasskeyLoginButton next={safeNext(params.get('next'))} />}
+
       {providers.data?.google && (
         <>
           <div className="flex items-center gap-3 text-xs text-text-muted" aria-hidden>
@@ -180,5 +193,64 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
         </Link>
       </p>
     </form>
+  );
+}
+
+/** « Se connecter avec une passkey » : sans e-mail ni mot de passe (clé découvrable). */
+function PasskeyLoginButton({ next }: { next: string }) {
+  const t = useTranslations();
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const [supported, setSupported] = useState(false);
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  useEffect(() => setSupported(browserSupportsWebAuthn()), []);
+  if (!supported) return null;
+
+  const signIn = async () => {
+    setError(null);
+    setPending(true);
+    try {
+      const { challengeId, options } = await api<PasskeyOptionsDto>('/v1/auth/passkeys/options', {
+        method: 'POST',
+        json: {},
+      });
+      const response = await startAuthentication({
+        optionsJSON: options as unknown as PublicKeyCredentialRequestOptionsJSON,
+      });
+      await api<AuthResponse>('/v1/auth/passkeys/login', {
+        method: 'POST',
+        json: { challengeId, response },
+      });
+      queryClient.clear();
+      await clearOfflineData();
+      router.replace(next);
+      router.refresh();
+    } catch (e) {
+      const name = (e as Error).name;
+      if (name !== 'NotAllowedError' && name !== 'AbortError') setError(t('auth.passkeyFailed'));
+    } finally {
+      setPending(false);
+    }
+  };
+
+  return (
+    <>
+      <Button
+        type="button"
+        variant="secondary"
+        size="lg"
+        loading={pending}
+        onClick={() => void signIn()}
+      >
+        <Fingerprint aria-hidden className="size-4" />
+        {t('auth.passkey')}
+      </Button>
+      {error && (
+        <p role="alert" className="-mt-2 text-center text-sm text-danger">
+          {error}
+        </p>
+      )}
+    </>
   );
 }

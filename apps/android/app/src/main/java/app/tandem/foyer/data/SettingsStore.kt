@@ -21,6 +21,9 @@ interface SettingsStore {
     val morningRecap: Flow<Boolean>
     suspend fun setReminders(settings: ReminderSettings)
     suspend fun setMorningRecap(enabled: Boolean)
+    /** Revue de la semaine, le dimanche soir (activée par défaut). */
+    val weeklyReview: Flow<Boolean> get() = kotlinx.coroutines.flow.flowOf(true)
+    suspend fun setWeeklyReview(enabled: Boolean) {}
     suspend fun setLastRefreshAt(millis: Long)
     suspend fun cacheOwner(): String?
     suspend fun setCacheOwner(userId: String?)
@@ -34,12 +37,19 @@ class DataStoreSettingsStore(private val context: Context) : SettingsStore {
     private val lastRefresh = longPreferencesKey("last_refresh_at")
     private val owner = stringPreferencesKey("cache_owner")
     private val recap = booleanPreferencesKey("morning_recap")
+    private val review = booleanPreferencesKey("weekly_review")
 
     override val reminders: Flow<ReminderSettings> = context.settingsStore.data.map {
         ReminderSettings(it[remindersOn] ?: true, it[lead] ?: 15)
     }
     override val lastRefreshAt: Flow<Long?> = context.settingsStore.data.map { it[lastRefresh] }
     override val morningRecap: Flow<Boolean> = context.settingsStore.data.map { it[recap] ?: true }
+
+    override val weeklyReview: Flow<Boolean> = context.settingsStore.data.map { it[review] ?: true }
+
+    override suspend fun setWeeklyReview(enabled: Boolean) {
+        context.settingsStore.edit { it[review] = enabled }
+    }
 
     override suspend fun setMorningRecap(enabled: Boolean) {
         context.settingsStore.edit { it[recap] = enabled }

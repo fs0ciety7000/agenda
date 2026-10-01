@@ -105,6 +105,9 @@ data class OccurrenceDto(
     val attachments: List<AttachmentDto> = emptyList(),
     val lastDone: LastDoneDto? = null,
     val commentCount: Int = 0,
+    val completedById: String? = null,
+    /** Membres qui ont dit « merci » pour cette tâche faite. */
+    val thankedBy: List<String> = emptyList(),
 )
 
 @Serializable
@@ -298,3 +301,19 @@ data class ReportDto(
     val reply: String? = null,
     val createdAt: String,
 )
+
+@Serializable
+data class MealDto(
+    val id: String,
+    val date: String,
+    val slot: String,
+    val title: String,
+    val ingredients: List<String> = emptyList(),
+    val addedToShoppingAt: String? = null,
+)
+
+@Serializable
+data class MealsToShoppingRequest(val mealIds: List<String>)
+
+@Serializable
+data class MealsToShoppingDto(val added: Int, val skipped: Int)

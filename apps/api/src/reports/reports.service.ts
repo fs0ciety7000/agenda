@@ -16,7 +16,7 @@ import { isAdminEmail } from '../auth/auth.service';
 import { AppException, notFound } from '../common/app-exception';
 import { env } from '../config/env';
 import { MailService } from '../mail/mail.service';
-import { reportNewEmail, reportReplyEmail } from '../mail/templates';
+import { mailLocale, reportNewEmail, reportReplyEmail } from '../mail/templates';
 import { WebPushService } from '../notifications/web-push.service';
 import { PrismaService } from '../prisma/prisma.service';
 
@@ -174,7 +174,7 @@ export class ReportsService implements OnModuleInit, OnModuleDestroy {
       },
     });
     if (input.reply !== undefined && before.allowContact) {
-      const locale = before.user.locale === 'en' ? 'en' : 'fr';
+      const locale = mailLocale(before.user.locale);
       const mail = reportReplyEmail(locale, {
         title: before.title,
         reply: input.reply,
@@ -244,7 +244,7 @@ export class ReportsService implements OnModuleInit, OnModuleDestroy {
       })
     ).filter((u) => isAdminEmail(u.email));
     for (const a of admins) {
-      const mail = reportNewEmail(a.locale === 'en' ? 'en' : 'fr', {
+      const mail = reportNewEmail(mailLocale(a.locale), {
         kind: report.kind,
         title: report.title,
         description: report.description,

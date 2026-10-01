@@ -722,6 +722,388 @@
         ]
       }
     },
+    "/v1/auth/passkeys/options": {
+      "post": {
+        "operationId": "AuthController_passkeyLoginOptions_v1",
+        "parameters": [
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasskeyOptionsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Défi pour se connecter avec une passkey",
+        "tags": [
+          "auth"
+        ],
+        "security": []
+      }
+    },
+    "/v1/auth/passkeys/login": {
+      "post": {
+        "operationId": "AuthController_passkeyLogin_v1",
+        "parameters": [
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasskeyLoginInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Se connecter avec une passkey",
+        "tags": [
+          "auth"
+        ],
+        "security": []
+      }
+    },
+    "/v1/me/passkeys": {
+      "get": {
+        "operationId": "AuthController_listPasskeys_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/PasskeyDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Mes passkeys",
+        "tags": [
+          "auth"
+        ]
+      },
+      "post": {
+        "operationId": "AuthController_registerPasskey_v1",
+        "parameters": [
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasskeyRegisterInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasskeyDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Ajouter une passkey (réponse du navigateur au défi)",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/me/passkeys/options": {
+      "post": {
+        "operationId": "AuthController_passkeyRegistrationOptions_v1",
+        "parameters": [
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasskeyOptionsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Défi pour ajouter une passkey",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/me/passkeys/{id}": {
+      "patch": {
+        "operationId": "AuthController_renamePasskey_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RenamePasskeyInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PasskeyDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Renommer une passkey",
+        "tags": [
+          "auth"
+        ]
+      },
+      "delete": {
+        "operationId": "AuthController_removePasskey_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Supprimer une passkey",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
     "/v1/auth/providers": {
       "get": {
         "operationId": "GoogleSignInController_providers_v1",
@@ -2121,6 +2503,144 @@
         ]
       }
     },
+    "/v1/households/{householdId}/occurrences/{occurrenceId}/thanks": {
+      "post": {
+        "operationId": "TasksController_thank_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "occurrenceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OccurrenceDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Dire « merci » pour une tâche faite par quelqu'un d'autre",
+        "tags": [
+          "tasks"
+        ]
+      },
+      "delete": {
+        "operationId": "TasksController_unthank_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "occurrenceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OccurrenceDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Retirer son « merci »",
+        "tags": [
+          "tasks"
+        ]
+      }
+    },
     "/v1/households/{householdId}/occurrences/{occurrenceId}/reopen": {
       "post": {
         "operationId": "TasksController_reopen_v1",
@@ -2735,6 +3255,66 @@
           }
         ],
         "summary": "Statistiques du foyer sur une période",
+        "tags": [
+          "tasks"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/review": {
+      "get": {
+        "description": "Revue de la semaine : fait, glissé, et la semaine suivante.",
+        "operationId": "TasksController_review_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "date",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WeeklyReviewDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Revue de la semaine ",
         "tags": [
           "tasks"
         ]
@@ -5236,6 +5816,204 @@
         ]
       }
     },
+    "/v1/households/{householdId}/ical": {
+      "get": {
+        "operationId": "IcalFeedSettingsController_get_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IcalFeedDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Adresse de l'abonnement iCal (null si non créée)",
+        "tags": [
+          "calendar"
+        ]
+      },
+      "post": {
+        "operationId": "IcalFeedSettingsController_regenerate_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/IcalFeedDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Créer ou remplacer l'adresse de l'abonnement",
+        "tags": [
+          "calendar"
+        ]
+      },
+      "delete": {
+        "operationId": "IcalFeedSettingsController_disable_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Désactiver l'abonnement (l'adresse cesse de fonctionner)",
+        "tags": [
+          "calendar"
+        ]
+      }
+    },
+    "/v1/ical/{file}": {
+      "get": {
+        "operationId": "IcalFeedController_feed_v1",
+        "parameters": [
+          {
+            "name": "file",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Fichier .ics de l'abonnement (lecture seule)",
+        "tags": [
+          "calendar"
+        ],
+        "security": []
+      }
+    },
     "/v1/app/android/version.json": {
       "get": {
         "operationId": "AndroidReleaseController_version_v1",
@@ -5683,6 +6461,413 @@
         "summary": "Supprimer un article",
         "tags": [
           "shopping"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/meals": {
+      "get": {
+        "operationId": "MealsController_list_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MealDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Repas prévus entre deux dates (62 jours au plus)",
+        "tags": [
+          "meals"
+        ]
+      },
+      "post": {
+        "operationId": "MealsController_create_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MealInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MealDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Prévoir un repas",
+        "tags": [
+          "meals"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/meals/suggestions": {
+      "get": {
+        "operationId": "MealsController_suggestions_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MealSuggestionDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Repas déjà faits, à reprendre",
+        "tags": [
+          "meals"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/meals/shopping": {
+      "post": {
+        "operationId": "MealsController_toShopping_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MealsToShoppingInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MealsToShoppingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Envoyer les ingrédients de repas à la liste de courses",
+        "tags": [
+          "meals"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/meals/{mealId}": {
+      "patch": {
+        "operationId": "MealsController_update_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "mealId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateMealInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MealDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Modifier un repas",
+        "tags": [
+          "meals"
+        ]
+      },
+      "delete": {
+        "operationId": "MealsController_remove_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "mealId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Retirer un repas",
+        "tags": [
+          "meals"
         ]
       }
     },
@@ -7149,6 +8334,7 @@
                   "CATEGORY_NAME_TAKEN",
                   "TASK_TITLE_REQUIRED",
                   "RATE_LIMITED",
+                  "PASSKEY_FAILED",
                   "ATTACHMENT_TOO_LARGE",
                   "ATTACHMENTS_QUOTA",
                   "INTERNAL"
@@ -7290,7 +8476,8 @@
             "type": "string",
             "enum": [
               "fr",
-              "en"
+              "en",
+              "nl"
             ]
           }
         },
@@ -8122,7 +9309,8 @@
                 "type": "string",
                 "enum": [
                   "fr",
-                  "en"
+                  "en",
+                  "nl"
                 ]
               },
               "hasPassword": {
@@ -9321,6 +10509,19 @@
         ],
         "additionalProperties": false
       },
+      "IcalFeedDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "url"
+        ],
+        "additionalProperties": false
+      },
       "InboundEmailSettingsDto": {
         "type": "object",
         "properties": {
@@ -9413,7 +10614,8 @@
             "type": "string",
             "enum": [
               "fr",
-              "en"
+              "en",
+              "nl"
             ]
           },
           "hasPassword": {
@@ -9435,6 +10637,146 @@
           "googleLinked"
         ],
         "additionalProperties": false
+      },
+      "MealDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "slot": {
+            "type": "string",
+            "enum": [
+              "LUNCH",
+              "DINNER"
+            ]
+          },
+          "title": {
+            "type": "string"
+          },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "addedToShoppingAt": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "date",
+          "slot",
+          "title",
+          "ingredients",
+          "addedToShoppingAt"
+        ],
+        "additionalProperties": false
+      },
+      "MealInput": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "slot": {
+            "type": "string",
+            "enum": [
+              "LUNCH",
+              "DINNER"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "ingredients": {
+            "default": [],
+            "maxItems": 40,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        },
+        "required": [
+          "date",
+          "slot",
+          "title"
+        ]
+      },
+      "MealSuggestionDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "ingredients": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "times": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "title",
+          "ingredients",
+          "times"
+        ],
+        "additionalProperties": false
+      },
+      "MealsToShoppingDto": {
+        "type": "object",
+        "properties": {
+          "added": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "skipped": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "added",
+          "skipped"
+        ],
+        "additionalProperties": false
+      },
+      "MealsToShoppingInput": {
+        "type": "object",
+        "properties": {
+          "mealIds": {
+            "minItems": 1,
+            "maxItems": 30,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        },
+        "required": [
+          "mealIds"
+        ]
       },
       "MobileExchangeInput": {
         "type": "object",
@@ -9476,7 +10818,8 @@
                   "enum": [
                     "TASK_ASSIGNED",
                     "CALENDAR_SYNC_FAILED",
-                    "TASK_COMMENT"
+                    "TASK_COMMENT",
+                    "TASK_THANKS"
                   ]
                 },
                 "createdAt": {
@@ -9545,7 +10888,8 @@
             "enum": [
               "TASK_ASSIGNED",
               "CALENDAR_SYNC_FAILED",
-              "TASK_COMMENT"
+              "TASK_COMMENT",
+              "TASK_THANKS"
             ]
           },
           "inApp": {
@@ -9782,6 +11126,13 @@
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
+          },
+          "thankedBy": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         },
         "required": [
@@ -9811,6 +11162,92 @@
           "attachments"
         ],
         "additionalProperties": false
+      },
+      "PasskeyDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "lastUsedAt": {
+            "nullable": true,
+            "type": "string"
+          },
+          "synced": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "createdAt",
+          "lastUsedAt",
+          "synced"
+        ],
+        "additionalProperties": false
+      },
+      "PasskeyLoginInput": {
+        "type": "object",
+        "properties": {
+          "challengeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "response": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        },
+        "required": [
+          "challengeId",
+          "response"
+        ]
+      },
+      "PasskeyOptionsDto": {
+        "type": "object",
+        "properties": {
+          "challengeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "options": {
+            "type": "object",
+            "additionalProperties": {}
+          }
+        },
+        "required": [
+          "challengeId",
+          "options"
+        ],
+        "additionalProperties": false
+      },
+      "PasskeyRegisterInput": {
+        "type": "object",
+        "properties": {
+          "challengeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "response": {
+            "type": "object",
+            "additionalProperties": {}
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          }
+        },
+        "required": [
+          "challengeId",
+          "response"
+        ]
       },
       "PushStatusDto": {
         "type": "object",
@@ -10392,7 +11829,8 @@
             "type": "string",
             "enum": [
               "fr",
-              "en"
+              "en",
+              "nl"
             ]
           }
         },
@@ -10400,6 +11838,19 @@
           "email",
           "password",
           "displayName"
+        ]
+      },
+      "RenamePasskeyInput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 60
+          }
+        },
+        "required": [
+          "name"
         ]
       },
       "ReportDto": {
@@ -11712,13 +13163,45 @@
             "type": "string",
             "enum": [
               "fr",
-              "en"
+              "en",
+              "nl"
             ]
           }
         },
         "required": [
           "locale"
         ]
+      },
+      "UpdateMealInput": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "slot": {
+            "type": "string",
+            "enum": [
+              "LUNCH",
+              "DINNER"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "ingredients": {
+            "default": [],
+            "maxItems": 40,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          }
+        }
       },
       "UpdateOccurrenceInput": {
         "type": "object",
@@ -12165,7 +13648,8 @@
                   "enum": [
                     "TASK_ASSIGNED",
                     "CALENDAR_SYNC_FAILED",
-                    "TASK_COMMENT"
+                    "TASK_COMMENT",
+                    "TASK_THANKS"
                   ]
                 },
                 "inApp": {
@@ -12277,6 +13761,151 @@
         "required": [
           "endpoint"
         ]
+      },
+      "WeeklyReviewDto": {
+        "type": "object",
+        "properties": {
+          "from": {
+            "type": "string",
+            "format": "date"
+          },
+          "to": {
+            "type": "string",
+            "format": "date"
+          },
+          "done": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "doneMinutes": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "byMember": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "memberId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "done": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "minutes": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "thanks": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "memberId",
+                "done",
+                "minutes",
+                "thanks"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "missed": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "date": {
+                  "type": "string",
+                  "format": "date"
+                }
+              },
+              "required": [
+                "id",
+                "title",
+                "date"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "next": {
+            "type": "object",
+            "properties": {
+              "from": {
+                "type": "string",
+                "format": "date"
+              },
+              "to": {
+                "type": "string",
+                "format": "date"
+              },
+              "total": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              },
+              "byMember": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "memberId": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "count": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "memberId",
+                    "count"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "unassigned": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "from",
+              "to",
+              "total",
+              "byMember",
+              "unassigned"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "required": [
+          "from",
+          "to",
+          "done",
+          "doneMinutes",
+          "byMember",
+          "missed",
+          "next"
+        ],
+        "additionalProperties": false
       }
     }
   }

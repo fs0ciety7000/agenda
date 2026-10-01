@@ -24,6 +24,8 @@ import {
   RecurrencePreviewInput,
   type StatsDto,
   StatsQuery,
+  type WeeklyReviewDto,
+  WeeklyReviewQuery,
   type RecurrencePreviewItem,
   ScopeQuery,
   type SeriesDto,
@@ -36,13 +38,17 @@ import { CurrentHousehold, HouseholdContext } from '../common/request-context';
 import { assertUuid } from '../common/uuid';
 import { ZodPipe } from '../common/zod.pipe';
 import { HouseholdMemberGuard } from '../households/household-member.guard';
+import { ReviewService } from './review.service';
 import { TasksService } from './tasks.service';
 
 @ApiTags('tasks')
 @UseGuards(HouseholdMemberGuard)
 @Controller({ path: 'households/:householdId', version: '1' })
 export class TasksController {
-  constructor(private readonly tasks: TasksService) {}
+  constructor(
+    private readonly tasks: TasksService,
+    private readonly reviews: ReviewService,
+  ) {}
 
   /** Créer une tâche (ponctuelle ou répétée). */
   @Post('tasks')
@@ -111,6 +117,25 @@ export class TasksController {
     @Param('occurrenceId') id: string,
   ): Promise<OccurrenceDto> {
     return this.tasks.complete(ctx, assertUuid(id));
+  }
+
+  /** Dire « merci » pour une tâche faite par quelqu'un d'autre. */
+  @Post('occurrences/:occurrenceId/thanks')
+  @HttpCode(200)
+  thank(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Param('occurrenceId') id: string,
+  ): Promise<OccurrenceDto> {
+    return this.tasks.thank(ctx, assertUuid(id));
+  }
+
+  /** Retirer son « merci ». */
+  @Delete('occurrences/:occurrenceId/thanks')
+  unthank(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Param('occurrenceId') id: string,
+  ): Promise<OccurrenceDto> {
+    return this.tasks.unthank(ctx, assertUuid(id));
   }
 
   /** Marquer comme à faire. */
@@ -206,6 +231,15 @@ export class TasksController {
     @Query(new ZodPipe(StatsQuery)) query: StatsQuery,
   ): Promise<StatsDto> {
     return this.tasks.stats(ctx, query);
+  }
+
+  /** Revue de la semaine : fait, glissé, et la semaine suivante. */
+  @Get('review')
+  review(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Query(new ZodPipe(WeeklyReviewQuery)) query: WeeklyReviewQuery,
+  ): Promise<WeeklyReviewDto> {
+    return this.reviews.weekly(ctx, query);
   }
 
   /** Répartition de la charge entre les membres. */

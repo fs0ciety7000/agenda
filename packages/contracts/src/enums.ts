@@ -38,5 +38,5 @@ export const SyncStatus = z.enum([
 ]);
 export type SyncStatus = z.infer<typeof SyncStatus>;
 
-export const Locale = z.enum(['fr', 'en']);
+export const Locale = z.enum(['fr', 'en', 'nl']);
 export type Locale = z.infer<typeof Locale>;

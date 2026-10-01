@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { Email } from './auth';
+import { Locale } from './enums';
 
 /** Administration de l'instance (réservée aux adresses ADMIN_EMAILS). */
 
@@ -78,7 +79,7 @@ export type AdminHouseholdDto = z.infer<typeof AdminHouseholdDto>;
 export const AdminCreateUserInput = z.object({
   email: Email,
   displayName: z.string().trim().min(1).max(60),
-  locale: z.enum(['fr', 'en']).default('fr'),
+  locale: Locale.default('fr'),
 });
 export type AdminCreateUserInput = z.infer<typeof AdminCreateUserInput>;
 

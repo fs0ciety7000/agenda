@@ -9,7 +9,11 @@ import { api } from '@/lib/api';
 import { cn } from '@/lib/cn';
 
 /** Noms des langues dans leur propre langue (jamais traduits). */
-const NAMES: Record<AppLocale, string> = { fr: 'Français', en: 'English' };
+const NAMES: Record<AppLocale, string> = {
+  fr: 'Français',
+  en: 'English',
+  nl: 'Nederlands',
+};
 
 /**
  * Choix de la langue : cookie lu par le serveur (i18n/request.ts), puis, une fois connecté,

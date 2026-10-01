@@ -5,6 +5,7 @@ import {
   Get,
   Headers,
   HttpCode,
+  Param,
   HttpStatus,
   Patch,
   Post,
@@ -19,6 +20,11 @@ import {
   ForgotPasswordInput,
   LoginInput,
   type MeResponse,
+  type PasskeyDto,
+  PasskeyLoginInput,
+  type PasskeyOptionsDto,
+  PasskeyRegisterInput,
+  RenamePasskeyInput,
   RefreshInput,
   RegisterInput,
   ResetPasswordInput,
@@ -31,6 +37,7 @@ import { AuthUser, CurrentUser, Public } from '../common/request-context';
 import { ZodPipe } from '../common/zod.pipe';
 import { AuthService, IssuedTokens } from './auth.service';
 import { clearAuthCookies, REFRESH_COOKIE, setAuthCookies } from './cookies';
+import { PasskeysService } from './passkeys.service';
 import { PasswordResetService } from './password-reset.service';
 
 /** `X-Client: mobile` → tokens dans le corps ; sinon cookies httpOnly (web). */
@@ -43,6 +50,7 @@ export class AuthController {
   constructor(
     private readonly auth: AuthService,
     private readonly passwordReset: PasswordResetService,
+    private readonly passkeys: PasskeysService,
   ) {}
 
   /** Créer un compte. */
@@ -174,6 +182,69 @@ export class AuthController {
     @Body(new ZodPipe(UpdateMeInput)) body: UpdateMeInput,
   ): Promise<MeResponse> {
     return this.auth.updateMe(user.userId, body);
+  }
+
+  /** Défi pour se connecter avec une passkey. */
+  @Public()
+  @Throttle(AUTH_THROTTLE)
+  @Post('auth/passkeys/options')
+  @HttpCode(200)
+  passkeyLoginOptions(): Promise<PasskeyOptionsDto> {
+    return this.passkeys.loginOptions();
+  }
+
+  /** Se connecter avec une passkey. */
+  @Public()
+  @Throttle(AUTH_THROTTLE)
+  @Post('auth/passkeys/login')
+  @HttpCode(200)
+  async passkeyLogin(
+    @Body(new ZodPipe(PasskeyLoginInput)) body: PasskeyLoginInput,
+    @Headers('x-client') client: string | undefined,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<AuthResponse> {
+    return this.respond(await this.passkeys.login(body, req.headers['user-agent']), client, res);
+  }
+
+  /** Mes passkeys. */
+  @Get('me/passkeys')
+  listPasskeys(@CurrentUser() user: AuthUser): Promise<PasskeyDto[]> {
+    return this.passkeys.list(user.userId);
+  }
+
+  /** Défi pour ajouter une passkey. */
+  @Post('me/passkeys/options')
+  @HttpCode(200)
+  passkeyRegistrationOptions(@CurrentUser() user: AuthUser): Promise<PasskeyOptionsDto> {
+    return this.passkeys.registrationOptions(user.userId);
+  }
+
+  /** Ajouter une passkey (réponse du navigateur au défi). */
+  @Throttle(AUTH_THROTTLE)
+  @Post('me/passkeys')
+  registerPasskey(
+    @CurrentUser() user: AuthUser,
+    @Body(new ZodPipe(PasskeyRegisterInput)) body: PasskeyRegisterInput,
+  ): Promise<PasskeyDto> {
+    return this.passkeys.register(user.userId, body);
+  }
+
+  /** Renommer une passkey. */
+  @Patch('me/passkeys/:id')
+  renamePasskey(
+    @CurrentUser() user: AuthUser,
+    @Param('id') id: string,
+    @Body(new ZodPipe(RenamePasskeyInput)) body: RenamePasskeyInput,
+  ): Promise<PasskeyDto> {
+    return this.passkeys.rename(user.userId, id, body.name);
+  }
+
+  /** Supprimer une passkey. */
+  @Delete('me/passkeys/:id')
+  @HttpCode(204)
+  removePasskey(@CurrentUser() user: AuthUser, @Param('id') id: string): Promise<void> {
+    return this.passkeys.remove(user.userId, id);
   }
 
   private respond(issued: IssuedTokens, client: string | undefined, res: Response): AuthResponse {
