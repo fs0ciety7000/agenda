@@ -34,13 +34,44 @@ const toDto = (p: Passkey): PasskeyDto => ({
   synced: p.backedUp,
 });
 
-/** Domaine des clés et origines acceptées (site, et ancien domaine pendant une migration). */
+/** « tandem-agenda.app » → « https://tandem-agenda.app » (le schéma est souvent oublié). */
+const toOrigin = (o: string) => (/^https?:\/\//i.test(o) ? o : `https://${o}`);
+
+/** Le domaine des clés doit être celui de l'origine, ou l'un de ses domaines parents. */
+const coversHost = (rpId: string, host: string) => host === rpId || host.endsWith(`.${rpId}`);
+
+let warned = false;
+
+/**
+ * Domaine des clés et origines acceptées (site, et ancien domaine pendant une migration).
+ * Une configuration incohérente (faute de frappe, domaine étranger au site) ferait échouer toute
+ * création de passkey dans le navigateur : elle est ignorée au profit de WEB_ORIGIN, avec un
+ * avertissement dans les journaux.
+ */
 export function relyingParty() {
-  const origin = env().WEB_ORIGIN;
-  return {
-    id: env().WEBAUTHN_RP_ID || new URL(origin).hostname,
-    origins: env().WEBAUTHN_ORIGINS.length ? env().WEBAUTHN_ORIGINS : [origin],
-  };
+  const webOrigin = env().WEB_ORIGIN;
+  const fallback = { id: new URL(webOrigin).hostname, origins: [webOrigin] };
+  const origins = env().WEBAUTHN_ORIGINS.length
+    ? env().WEBAUTHN_ORIGINS.map(toOrigin)
+    : fallback.origins;
+  const id = (env().WEBAUTHN_RP_ID || '').toLowerCase().replace(/^https?:\/\//, '') || fallback.id;
+  let hosts: string[];
+  try {
+    hosts = origins.map((o) => new URL(o).hostname);
+  } catch {
+    hosts = [];
+  }
+  if (hosts.length === 0 || !hosts.every((h) => coversHost(id, h))) {
+    if (!warned) {
+      warned = true;
+      new Logger('Passkeys').error(
+        `WEBAUTHN_RP_ID « ${id} » ne correspond pas à WEBAUTHN_ORIGINS (${origins.join(', ')}) : ` +
+          `réglages ignorés, utilisation de ${webOrigin}. Corriger ou supprimer ces variables.`,
+      );
+    }
+    return fallback;
+  }
+  return { id, origins };
 }
 
 /**

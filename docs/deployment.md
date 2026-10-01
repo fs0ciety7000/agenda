@@ -144,8 +144,8 @@ manquent. Modèle complet : `.env.prod.example`.
 | `BACKUP_HEARTBEAT_URL` | facultatif : battement de cœur des sauvegardes | URL « Push » d'Uptime Kuma / Healthchecks.io |
 | `WEB_PUSH_PUBLIC_KEY`, `WEB_PUSH_PRIVATE_KEY` | facultatif : notifications du site (navigateur) | paire de clés VAPID, voir ci-dessous |
 | `WEB_PUSH_SUBJECT` | facultatif | contact pour les services de push (`mailto:…` ou `https://…`) ; défaut : `WEB_ORIGIN` |
-| `WEBAUTHN_RP_ID` | facultatif : domaine des passkeys | défaut : le domaine de `WEB_ORIGIN` (`tandem-agenda.app`). Ne pas changer après la création de passkeys : elles y sont liées |
-| `WEBAUTHN_ORIGINS` | facultatif : origines acceptées pour les passkeys | défaut : `WEB_ORIGIN` ; plusieurs, séparées par des virgules (migration de domaine) |
+| `WEBAUTHN_RP_ID` | facultatif : domaine des passkeys (à laisser vide en général) | défaut : le domaine de `WEB_ORIGIN` (`tandem-agenda.app`). Doit être ce domaine ou un domaine parent ; sinon il est ignoré (erreur dans les journaux). Ne pas changer après la création de passkeys : elles y sont liées |
+| `WEBAUTHN_ORIGINS` | facultatif : origines acceptées pour les passkeys (à laisser vide en général) | défaut : `WEB_ORIGIN` ; plusieurs, séparées par des virgules, avec `https://` (migration de domaine) |
 
 **Clés VAPID (notifications du site).** À générer une seule fois : Coolify → service `api` →
 *Terminal* → `node -e "console.log(require('web-push').generateVAPIDKeys())"`, puis copier

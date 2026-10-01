@@ -13,6 +13,14 @@ d'elle-même (ou via Google Play).
 **Légende** : ✨ nouveau · 🛠 amélioration · 🐞 correction · 🔒 sécurité et confidentialité ·
 ⚙️ technique
 
+## 1er octobre 2026
+
+### Passkeys plus robustes
+
+- 🐞 Une erreur dans `WEBAUTHN_RP_ID` ou `WEBAUTHN_ORIGINS` (faute de frappe, `https://` oublié)
+  empêchait de créer une passkey. L’origine sans schéma est maintenant complétée, et un domaine
+  incohérent est ignoré au profit de l’adresse du site, avec un message dans les journaux.
+
 ## 30 septembre 2026
 
 ### Néerlandais (#79)
