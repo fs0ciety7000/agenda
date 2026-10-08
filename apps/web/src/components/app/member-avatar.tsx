@@ -25,7 +25,7 @@ export function MemberAvatar({
     <span
       aria-hidden
       className={cn(
-        'inline-flex shrink-0 items-center justify-center rounded-full font-medium text-white',
+        'inline-flex shrink-0 items-center justify-center rounded-full font-medium text-on-member',
         COLOR_CLASS[member.color],
         size === 'xs'
           ? 'size-5 text-[0.625rem] ring-2 ring-surface'

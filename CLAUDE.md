@@ -12,6 +12,25 @@ Fichiers importés, à respecter au même titre que celui-ci :
 - @docs/audit-ui-ux.md : grille d'audit UI/UX (site, app web, app Android), passée à chaque
   changement visible.
 
+## Plan et suivi
+
+- Le plan vivant est la section **« Plan UI/UX et fonctionnalités »** de `docs/roadmap.md` :
+  le lire au début de chaque demande pour situer le travail.
+- Chaque PR coche ses tâches dans ce plan (avec son numéro) et y ajoute celles qu'elle découvre
+  (bug, dette, idée de l'utilisateur). Une demande hors plan y entre d'abord, dans le bon lot.
+- Les audits sont rangés dans `docs/audits/AAAA-MM-JJ.md` ; leurs bloquants se corrigent dans la
+  même PR, le reste va dans le plan.
+- Les décisions qui engagent la suite sont notées ci-dessous (une ligne, avec la PR).
+
+## Décisions prises
+
+- Mobile : cinq onglets au plus ; le dernier est **Plus** (pages du foyer, puis réglages), sur le
+  web comme sur Android (#86, #87).
+- Les couleurs de membres ne servent qu'aux pastilles ; graphiques et jauges sont neutres (#88).
+- Texte sur une couleur pleine : tokens `on-member` ou `surface`, jamais de blanc codé en dur (#88).
+- Retard : « À rattraper », couleur `warning` ; `danger` réservé aux erreurs et à l'urgent (#88).
+- Dépenses : montants en centimes entiers, parts figées à l'enregistrement (#86).
+
 ## Règles permanentes
 
 - **Répondre en français** à l'utilisateur, sans jargon inutile.

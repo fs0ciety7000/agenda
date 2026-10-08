@@ -39,7 +39,6 @@ import app.tandem.foyer.ui.components.currentLocale
 import app.tandem.foyer.ui.components.formatDuration
 import app.tandem.foyer.ui.components.formatLongDate
 import app.tandem.foyer.ui.main.AgendaUiState
-import app.tandem.foyer.ui.components.memberColor
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -99,7 +98,7 @@ fun TodayScreen(
                 banner()
             }
             if (sections.overdue.isNotEmpty()) {
-                item { SectionHeader(stringResource(R.string.overdue), trailing = sections.overdue.size.toString()) }
+                item { SectionHeader(stringResource(R.string.today_catch_up), trailing = sections.overdue.size.toString()) }
                 items(sections.overdue, key = { "o-" + it.id }) {
                     TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, showDate = true)
                 }
@@ -158,12 +157,14 @@ fun TodayScreen(
 @Composable
 private fun BalanceCard(balance: Agenda.Balance) {
     val max = maxOf(1, balance.members.maxOfOrNull { it.second.count } ?: 0, balance.together.count, balance.unassigned.count)
+    // Même couleur neutre pour chacun : la répartition informe, elle ne classe pas.
+    val person = MaterialTheme.colorScheme.onSurfaceVariant
     val neutral = MaterialTheme.colorScheme.outline
     SectionHeader(stringResource(R.string.balance_title))
     OutlinedCard(Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             balance.members.forEach { (member, share) ->
-                BalanceRow(member.displayName, share, max, memberColor(member.color)) { MemberAvatar(member, 28) }
+                BalanceRow(member.displayName, share, max, person) { MemberAvatar(member, 28) }
             }
             BalanceRow(stringResource(R.string.balance_together), balance.together, max, neutral, null)
             BalanceRow(stringResource(R.string.balance_unassigned), balance.unassigned, max, neutral, null)

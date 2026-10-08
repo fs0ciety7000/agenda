@@ -27,6 +27,7 @@
 
     <string name="greeting">Hello %1$s 👋</string>
     <string name="today">Today</string>
+    <string name="today_catch_up">To catch up</string>
     <string name="overdue">Overdue</string>
     <string name="this_week">This week</string>
     <string name="today_progress">%1$d of %2$d done</string>

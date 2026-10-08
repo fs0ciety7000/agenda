@@ -28,6 +28,7 @@
     <!-- Aujourd'hui -->
     <string name="greeting">Bonjour %1$s 👋</string>
     <string name="today">Aujourd\'hui</string>
+    <string name="today_catch_up">À rattraper</string>
     <string name="overdue">En retard</string>
     <string name="this_week">Cette semaine</string>
     <string name="today_progress">%1$d sur %2$d faites</string>

@@ -15,6 +15,18 @@ d'elle-même (ou via Google Play).
 
 ## 8 octobre 2026
 
+### Audit UI/UX et corrections (#88)
+
+- 🛠 **Lisibilité** : les initiales des pastilles de membre, les boutons « Supprimer » et les coches
+  sont lisibles en sombre ; trois couleurs de membre un peu plus foncées en clair.
+- 🛠 **Répartition** : une seule couleur neutre pour chacun (on informe, on ne classe pas), et
+  plus aucun nom coupé, même en néerlandais sur petit écran.
+- 🐞 Courses : le nom du rayon n'est plus coupé sur chaque article (seul son emoji s'affiche).
+- 🐞 Tâches : les filtres ne sont plus coupés sur les très petits écrans.
+- 🛠 Android : « À rattraper » au lieu de « En retard », et seule la priorité est en couleur.
+- 🐞 Site vitrine : tout le contenu s'affiche même sans JavaScript ; plus de défilement horizontal.
+- ⚙️ Rapport d'audit et plan de travail suivi dans la roadmap.
+
 ### Dépenses (#86)
 
 - ✨ **Dépenses** : qui a payé quoi, la date, le montant, la catégorie et un commentaire. Une

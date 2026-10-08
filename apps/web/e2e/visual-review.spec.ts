@@ -3,7 +3,9 @@ import { addPartner, signUpWithHousehold, todayBrussels } from './helpers';
 
 // Captures de tous les écrans pour une revue visuelle (à la demande, pas en CI) :
 // VISUAL=1 VISUAL_OUT=/tmp/shots pnpm --filter @agenda/web exec playwright test visual-review
+// VISUAL_LOCALE=en (ou nl) : comptes créés en français, puis écrans affichés dans cette langue.
 const OUT = process.env.VISUAL_OUT!;
+const LOCALE = process.env.VISUAL_LOCALE;
 test.skip(!process.env.VISUAL, 'revue visuelle manuelle');
 
 for (const scheme of ['light', 'dark'] as const) {
@@ -21,6 +23,11 @@ for (const scheme of ['light', 'dark'] as const) {
     await signUpWithHousehold(page, 'Grace');
     const partner = await addPartner(page, baseURL!, 'Nicolas');
     const hid = partner.householdId as string;
+    const switchLocale = () =>
+      LOCALE
+        ? page.context().addCookies([{ name: 'NEXT_LOCALE', value: LOCALE, url: baseURL! }])
+        : Promise.resolve();
+    await switchLocale();
     const today = todayBrussels();
     const d = (n: number) => {
       const x = new Date(`${today}T12:00:00Z`);
@@ -86,6 +93,10 @@ for (const scheme of ['light', 'dark'] as const) {
       ['cal-week', `/calendar?view=week&date=${today}`],
       ['cal-day', `/calendar?view=day&date=${today}`],
       ['stats', '/stats'],
+      ['expenses', '/expenses'],
+      ['meals', '/meals'],
+      ['more', '/more'],
+      ['review', '/review'],
       ['history', '/history'],
       ['settings', '/settings'],
       ['about', '/about'],
@@ -104,6 +115,7 @@ for (const scheme of ['light', 'dark'] as const) {
     // Écran vide : nouveau foyer.
     await page.context().clearCookies();
     await signUpWithHousehold(page, 'Nicolas');
+    await switchLocale();
     await shot('today-empty');
     await page.goto('/shopping');
     await shot('shopping-empty');

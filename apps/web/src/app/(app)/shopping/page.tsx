@@ -252,7 +252,7 @@ function ItemList({
             <span
               className={cn(
                 'flex size-5 items-center justify-center rounded-sm border-[1.5px]',
-                item.done ? 'border-success bg-success text-white' : 'border-text-muted/70',
+                item.done ? 'border-success bg-success text-surface' : 'border-text-muted/70',
               )}
             >
               {item.done && <Check aria-hidden className="size-3.5 stroke-[3]" />}
@@ -277,18 +277,23 @@ function ItemList({
             )}
           </span>
           {onAisle && (
-            <select
-              aria-label={t('aisleOf', { text: item.text })}
-              value={item.aisle ?? 'OTHER'}
-              onChange={(e) => onAisle(item, e.target.value as Aisle)}
-              className="h-9 w-11 shrink-0 cursor-pointer appearance-none rounded-md bg-transparent text-center text-base hover:bg-surface-muted"
-            >
-              {AISLES.map((a) => (
-                <option key={a} value={a}>
-                  {t(`aisles.${a}`)}
-                </option>
-              ))}
-            </select>
+            // Seul l'emoji du rayon est visible (le libellé complet ne tient pas dans 44 px) ;
+            // le menu natif garde les libellés entiers.
+            <span className="relative flex h-9 w-11 shrink-0 items-center justify-center rounded-md text-base hover:bg-surface-muted">
+              <span aria-hidden>{t(`aisles.${item.aisle ?? 'OTHER'}`).split(' ')[0]}</span>
+              <select
+                aria-label={t('aisleOf', { text: item.text })}
+                value={item.aisle ?? 'OTHER'}
+                onChange={(e) => onAisle(item, e.target.value as Aisle)}
+                className="absolute inset-0 cursor-pointer appearance-none rounded-md bg-transparent text-transparent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&>option]:text-text"
+              >
+                {AISLES.map((a) => (
+                  <option key={a} value={a}>
+                    {t(`aisles.${a}`)}
+                  </option>
+                ))}
+              </select>
+            </span>
           )}
           <button
             type="button"

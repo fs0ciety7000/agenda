@@ -32,8 +32,14 @@ logo), accent rose poudré en mode sombre. Toutes les paires texte/fond respecte
 | `danger` | `#B3261E` | `#F28B82` | Erreurs, suppression |
 
 **Couleurs de membres** (attribuées à l'arrivée dans le foyer, modifiables) :
-`sage #5E8C6A`, `ocean #3D7EA6`, `amber #B7791F`, `plum #7A5C99`, `clay #A65D3D`, `slate #5B6770`
-(variantes dark éclaircies de ~25 %). « À deux » = pastille bicolore ; « À définir » = contour pointillé neutre.
+`sage #557E60`, `ocean #3C7BA2`, `amber #9F691B`, `plum #7A5C99`, `clay #A65D3D`, `slate #5B6770`
+(variantes dark éclaircies de ~25 %). L'initiale d'une pastille utilise le token `on-member` :
+blanc en clair (≥ 4,5:1 sur chaque couleur), `#141012` en sombre. Les couleurs de membres ne
+servent qu'aux pastilles : graphiques et jauges restent neutres (§1.5). « À deux » = pastille
+bicolore ; « À définir » = contour pointillé neutre.
+
+**Texte sur une couleur pleine** (`success`, `danger`) : `surface`, jamais du blanc codé en dur
+(le blanc tombe sous 2,5:1 en sombre).
 
 **Priorité** : pas de rouge vif. `low` = rien, `normal` = rien, `high` = petit chevron `warning`, `urgent` = chevron `danger`.
 

@@ -11,6 +11,11 @@ export function RootLayout({ locale, children }: { locale: Locale; children: Rea
   return (
     <html lang={locale} className={inter.variable}>
       <body>
+        {/* Sans JavaScript, les éléments animés restent à leur état initial (invisibles) : on les
+            affiche tels quels. */}
+        <noscript>
+          <style>{`[style*="opacity:0"]{opacity:1!important;transform:none!important}`}</style>
+        </noscript>
         <Providers>{children}</Providers>
       </body>
     </html>

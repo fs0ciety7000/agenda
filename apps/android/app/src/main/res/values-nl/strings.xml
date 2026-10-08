@@ -24,6 +24,7 @@
 
     <string name="greeting">Hallo %1$s 👋</string>
     <string name="today">Vandaag</string>
+    <string name="today_catch_up">Nog in te halen</string>
     <string name="overdue">Te laat</string>
     <string name="this_week">Deze week</string>
     <string name="today_progress">%1$d van %2$d gedaan</string>

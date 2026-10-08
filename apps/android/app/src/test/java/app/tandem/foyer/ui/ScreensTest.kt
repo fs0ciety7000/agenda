@@ -86,7 +86,7 @@ class ScreensTest {
         val toggled = mutableListOf<String>()
         screen { TodayScreen(state, {}, { toggled += it.title }, {}, {}) }
         compose.onNodeWithText("Bonjour Grace 👋").assertIsDisplayed()
-        compose.onNodeWithText("EN RETARD").assertIsDisplayed()
+        compose.onNodeWithText("À RATTRAPER").assertIsDisplayed()
         compose.onNodeWithText("1 sur 3 faites").assertIsDisplayed()
         compose.onNodeWithContentDescription("Marquer « Sortir les poubelles » comme faite").performClick()
         assertEquals(listOf("Sortir les poubelles"), toggled)

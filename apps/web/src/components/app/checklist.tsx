@@ -75,7 +75,7 @@ export function ChecklistEditor({
                   <span
                     className={cn(
                       'flex size-5 items-center justify-center rounded-sm border-[1.5px]',
-                      item.done ? 'border-success bg-success text-white' : 'border-text-muted/70',
+                      item.done ? 'border-success bg-success text-surface' : 'border-text-muted/70',
                     )}
                   >
                     {item.done && <Check aria-hidden className="size-3.5 stroke-[3]" />}

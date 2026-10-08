@@ -161,8 +161,11 @@ Pour chaque liste et chaque formulaire, vérifier :
    ```bash
    cd apps/web
    VISUAL=1 VISUAL_OUT=/tmp/shots pnpm exec playwright test visual-review
+   VISUAL=1 VISUAL_LOCALE=nl VISUAL_OUT=/tmp/shots-nl pnpm exec playwright test visual-review
+   VISUAL=1 VISUAL_OUT=/tmp/shots-320 pnpm exec playwright test -c playwright.narrow.config.ts visual-review
    ```
-   À relancer avec `locale` en `en-GB` et `nl-BE` pour les autres langues.
+   `VISUAL_LOCALE` (`en` ou `nl`) crée les comptes en français puis affiche les écrans dans
+   cette langue ; la configuration `narrow` capture à 320 px.
 2. **Captures Android** :
    ```bash
    cd apps/android
@@ -174,7 +177,7 @@ Pour chaque liste et chaque formulaire, vérifier :
    largeurs.
 4. **Grille** : passer chaque écran dans les sections 1 à 7, puis noter chaque point (OK, À
    améliorer, Bloquant) avec sa capture.
-5. **Rapport** :
+5. **Rapport** (`docs/audits/AAAA-MM-JJ.md`, ajouté au menu de la documentation) :
    - les points classés par gravité, avec la correction proposée et l'effort estimé (S, M, L) ;
    - les bloquants sont corrigés tout de suite, dans une PR dédiée ;
    - le reste va dans `docs/roadmap.md`.

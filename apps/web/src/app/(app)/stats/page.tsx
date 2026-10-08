@@ -5,7 +5,7 @@ import { useFormatter, useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useState } from 'react';
 import { useSession } from '@/components/app/household-context';
-import { MemberAvatar, memberBgClass } from '@/components/app/member-avatar';
+import { MemberAvatar } from '@/components/app/member-avatar';
 import { Card, SectionTitle } from '@/components/ui/card';
 import { Segmented } from '@/components/ui/segmented';
 import { Skeleton } from '@/components/ui/states';
@@ -169,7 +169,6 @@ function StatsContent({ data }: { data: StatsDto }) {
                 key={m.memberId}
                 label={member?.displayName ?? '?'}
                 icon={member ? <MemberAvatar member={member} size="sm" /> : null}
-                barClass={member ? memberBgClass(member.color) : undefined}
                 value={m.done}
                 max={maxMember}
                 detail={`${t('doneCount', { count: m.done })}${m.minutes ? ` · ${hours(m.minutes)}` : ''}`}

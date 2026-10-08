@@ -1,6 +1,7 @@
 Nouveau : les Dépenses (onglet Plus → Dépenses).
-• Qui a payé quoi : commune, avancée pour l'autre ou perso.
+• Qui a payé quoi : commune, pour l'autre ou perso.
 • « Nicolas doit 42,50 € à Grace », et le remboursement en un geste.
-• Totaux du mois : dépenses communes, part de chacun, mes dépenses perso.
-• Parts à la main, charges fixes chaque mois, ticket en photo.
-• Budget commun du mois avec alerte, évolution sur 6 mois, export tableur.
+• Totaux du mois, part de chacun, mes dépenses perso.
+• Parts à la main, charges fixes, ticket en photo.
+• Budget du mois avec alerte, évolution sur 6 mois, export tableur.
+• Plus lisible : initiales, couleurs et priorités revues ; « À rattraper ».

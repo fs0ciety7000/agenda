@@ -40,7 +40,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
             key={t.id}
             className={cn(
               'pointer-events-auto flex min-h-11 w-full max-w-sm items-center justify-between gap-3 rounded-lg px-4 py-2 text-sm shadow-[0_4px_12px_rgb(0_0_0/0.12)]',
-              t.tone === 'error' ? 'bg-danger text-white' : 'bg-text text-bg',
+              t.tone === 'error' ? 'bg-danger text-surface' : 'bg-text text-bg',
             )}
           >
             <span>{t.message}</span>

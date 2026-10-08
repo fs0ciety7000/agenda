@@ -109,7 +109,7 @@ export function TaskRow({
           className={cn(
             'flex size-[1.375rem] items-center justify-center rounded-full border-[1.5px] transition-colors duration-(--gn-motion-base)',
             done
-              ? 'animate-[check-pop_280ms_ease-out] border-success bg-success text-white'
+              ? 'animate-[check-pop_280ms_ease-out] border-success bg-success text-surface'
               : 'border-text-muted/60 group-hover:border-text-muted',
           )}
         >

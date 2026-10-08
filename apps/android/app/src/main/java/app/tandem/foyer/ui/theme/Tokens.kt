@@ -17,6 +17,7 @@ object Tokens {
         val success = Color(0xFF2B7349)
         val warning = Color(0xFF8C5A00)
         val danger = Color(0xFFB3261E)
+        val onMember = Color(0xFFFFFFFF)
     }
     object Dark {
         val bg = Color(0xFF141012)
@@ -30,11 +31,12 @@ object Tokens {
         val success = Color(0xFF6FCF97)
         val warning = Color(0xFFF2C46D)
         val danger = Color(0xFFF28B82)
+        val onMember = Color(0xFF141012)
     }
     object MemberLight {
-        val sage = Color(0xFF5E8C6A)
-        val ocean = Color(0xFF3D7EA6)
-        val amber = Color(0xFFB7791F)
+        val sage = Color(0xFF557E60)
+        val ocean = Color(0xFF3C7BA2)
+        val amber = Color(0xFF9F691B)
         val plum = Color(0xFF7A5C99)
         val clay = Color(0xFFA65D3D)
         val slate = Color(0xFF5B6770)

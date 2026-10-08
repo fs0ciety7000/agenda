@@ -140,8 +140,13 @@ function TasksView() {
         </ul>
       </nav>
 
-      <div className={cn('grid grid-cols-2 gap-3 md:grid-cols-4', tab === 'recurring' && 'hidden')}>
-        <div className="relative col-span-2 md:col-span-1">
+      <div
+        className={cn(
+          'grid grid-cols-1 gap-3 min-[360px]:grid-cols-2 md:grid-cols-4',
+          tab === 'recurring' && 'hidden',
+        )}
+      >
+        <div className="relative min-[360px]:col-span-2 md:col-span-1">
           <label htmlFor="task-search" className="sr-only">
             {t('search')}
           </label>

@@ -39,6 +39,7 @@ const sidebars: SidebarsConfig = {
         { type: 'doc', id: 'database', label: 'Base de données' },
         { type: 'doc', id: 'design-system', label: 'Design system' },
         { type: 'doc', id: 'audit-ui-ux', label: 'Audit UI/UX' },
+        { type: 'doc', id: 'audits/2026-10-08', label: 'Audit du 8 octobre 2026' },
         { type: 'doc', id: 'api', label: 'API' },
       ],
     },

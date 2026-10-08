@@ -15,6 +15,7 @@
   --color-success: var(--gn-color-success);
   --color-warning: var(--gn-color-warning);
   --color-danger: var(--gn-color-danger);
+  --color-on-member: var(--gn-color-on-member);
   --color-white: #fff;
   --color-transparent: transparent;
   --color-member-sage: var(--gn-member-sage);

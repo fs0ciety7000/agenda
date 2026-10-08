@@ -36,6 +36,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.tandem.foyer.R
@@ -71,7 +74,7 @@ fun MemberAvatar(member: Member, size: Int = 24) {
     ) {
         Text(
             member.displayName.take(1).uppercase(),
-            color = if (isSystemInDarkTheme()) Tokens.Dark.bg else Color.White,
+            color = if (isSystemInDarkTheme()) Tokens.Dark.onMember else Tokens.Light.onMember,
             style = if (size >= 32) MaterialTheme.typography.titleSmall else MaterialTheme.typography.labelSmall,
             fontWeight = FontWeight.SemiBold,
         )
@@ -162,11 +165,24 @@ fun TaskRow(
                 textDecoration = if (o.isDone) TextDecoration.LineThrough else null,
                 color = if (o.isDone) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
             )
+            // Priorité : seul le chevron et son libellé sont colorés (haute = warning, urgente =
+            // danger), le reste de la ligne reste discret (design system §2).
+            val dark = isSystemInDarkTheme()
+            val priorityColor = when (o.priority) {
+                Priority.URGENT -> if (dark) Tokens.Dark.danger else Tokens.Light.danger
+                else -> if (dark) Tokens.Dark.warning else Tokens.Light.warning
+            }
             Text(
-                listOfNotNull(priority, meta).joinToString(" · "),
+                buildAnnotatedString {
+                    if (priority != null && !o.isDone) {
+                        withStyle(SpanStyle(color = priorityColor)) { append("⌃ $priority") }
+                        if (meta.isNotEmpty()) append(" · ")
+                    }
+                    append(meta)
+                },
                 style = MaterialTheme.typography.bodySmall,
-                color = if (priority != null && !o.isDone) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
         }
