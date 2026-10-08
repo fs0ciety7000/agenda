@@ -39,8 +39,8 @@
 
 | Zone touchée                  | Commandes                                                                                                              |
 | ----------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| Partout                       | `pnpm exec prettier --check .`                                                                                         |
-| `packages/*`                  | `pnpm --filter <paquet> test`, puis `pnpm build` (les applications importent le build)                                 |
+| Partout                       | `pnpm exec prettier --check .` et `pnpm exec turbo run lint typecheck` (tous les paquets, comme la CI)                 |
+| `packages/*`                  | `pnpm --filter <paquet> lint && pnpm --filter <paquet> test`, puis `pnpm build` (les applications importent le build)  |
 | API                           | `cd apps/api && pnpm lint && pnpm exec tsc --noEmit && pnpm exec vitest run` (après `npx prisma migrate deploy`)       |
 | Route API ajoutée ou modifiée | `pnpm --filter @agenda/api build && pnpm --filter @agenda/api openapi` (la CI compare `apps/docs/static/openapi.json`) |
 | Web                           | `cd apps/web && pnpm lint && pnpm exec tsc --noEmit && pnpm test`, puis les E2E (`CLAUDE.md`)                          |
