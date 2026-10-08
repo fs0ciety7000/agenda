@@ -19,7 +19,8 @@ internal val LightColors = lightColorScheme(
     onSurface = Tokens.Light.text,
     surfaceVariant = Tokens.Light.surfaceMuted,
     onSurfaceVariant = Tokens.Light.textMuted,
-    outline = Tokens.Light.border,
+    // Contours des champs, boutons et puces : 3:1 sur la surface (WCAG 1.4.11).
+    outline = Tokens.Light.borderStrong,
     outlineVariant = Tokens.Light.border,
     // Puces sélectionnées, indicateur d'onglet : teinte de l'accent (pas le violet Material par défaut).
     secondaryContainer = Tokens.Light.accent.copy(alpha = 0.14f).compositeOver(Tokens.Light.bg),
@@ -37,7 +38,7 @@ internal val DarkColors = darkColorScheme(
     onSurface = Tokens.Dark.text,
     surfaceVariant = Tokens.Dark.surfaceMuted,
     onSurfaceVariant = Tokens.Dark.textMuted,
-    outline = Tokens.Dark.border,
+    outline = Tokens.Dark.borderStrong,
     outlineVariant = Tokens.Dark.border,
     secondaryContainer = Tokens.Dark.accent.copy(alpha = 0.22f).compositeOver(Tokens.Dark.bg),
     onSecondaryContainer = Tokens.Dark.text,

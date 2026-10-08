@@ -26,6 +26,13 @@ d'elle-même (ou via Google Play).
 - 🛠 Android : « À rattraper » au lieu de « En retard », et seule la priorité est en couleur.
 - 🐞 Site vitrine : tout le contenu s'affiche même sans JavaScript ; plus de défilement horizontal.
 - ⚙️ Rapport d'audit et plan de travail suivi dans la roadmap.
+- ✨ **Sur grand écran**, Aujourd'hui passe en deux colonnes : la liste à gauche ; répartition,
+  courses à acheter et budget du mois à droite. Les Menus s'affichent en deux colonnes.
+- ✨ **Raccourcis clavier** : « / » pour chercher une tâche, « T » pour revenir à Aujourd'hui (en
+  plus de « N »).
+- ✨ Calendrier sur téléphone : changer une tâche de jour en deux touches depuis le mois.
+- 🛠 Champs de saisie mieux délimités ; titres de tâche sur deux lignes au lieu d'être coupés ;
+  barre d'onglets lisible sur les très petits écrans.
 - 🛠 **Android, même allure que le site** : cases de tâche rondes avec une coche animée, tâches
   regroupées en cartes, titre « Tâches », et les mêmes mots partout (« Tous les deux »,
   « À définir »).

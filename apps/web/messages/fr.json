@@ -102,7 +102,12 @@
     "weekEmpty": "Rien de prévu les prochains jours.",
     "seeStats": "Voir le bilan",
     "sectionDue": "À faire cette semaine",
-    "allDone": "Tout est fait pour aujourd'hui 🎉"
+    "allDone": "Tout est fait pour aujourd'hui 🎉",
+    "glanceShopping": "Courses",
+    "glanceShoppingCount": "{count, plural, =0 {Rien à acheter} one {# article à acheter} other {# articles à acheter}}",
+    "glanceExpenses": "Dépenses du mois",
+    "glanceBudget": "{spent} sur {budget}",
+    "glanceCommon": "{amount} de dépenses communes"
   },
   "placeholder": {
     "title": "Bientôt disponible",
@@ -428,7 +433,10 @@
     "dayWithCount": "{date}, {count, plural, =0 {aucune tâche} one {# tâche} other {# tâches}}",
     "dayEmpty": "Rien de prévu ce jour-là.",
     "addOnDay": "Ajouter ce jour-là",
-    "dragHintTouch": "Astuce : appui long sur une tâche pour la déplacer, puis tirez son bord inférieur pour changer sa durée."
+    "dragHintTouch": "Astuce : appui long sur une tâche pour la déplacer, puis tirez son bord inférieur pour changer sa durée.",
+    "moveTo": "Déplacer « {title} » à un autre jour",
+    "movePick": "Touchez le jour où déplacer « {title} ».",
+    "moveCancel": "Annuler"
   },
   "privacy": {
     "google": "Connexion avec Google",

@@ -9,7 +9,7 @@ import {
   wallClock,
   weekdayOf,
 } from '@agenda/domain';
-import { ChevronLeft, ChevronRight, Plus, Repeat } from 'lucide-react';
+import { CalendarArrowUp, ChevronLeft, ChevronRight, Plus, Repeat } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useFormatter, useTranslations } from 'next-intl';
 import { Suspense, useEffect, useRef, useState, type PointerEvent } from 'react';
@@ -281,6 +281,7 @@ function CalendarView() {
           onPick={setPicked}
           onOpen={dialog.openEdit}
           onCreate={(date) => dialog.openNew({ date })}
+          onMove={onMove}
           dayName={dayName}
         />
       ) : view === 'month' ? (
@@ -669,6 +670,7 @@ function MonthDots({
   onPick,
   onOpen,
   onCreate,
+  onMove,
   dayName,
 }: {
   days: string[];
@@ -679,9 +681,19 @@ function MonthDots({
   onPick: (date: string) => void;
   onOpen: (o: OccurrenceDto) => void;
   onCreate: (date: string) => void;
+  onMove: MoveHandler;
   dayName: (weekday: number, style?: 'long' | 'short' | 'narrow') => string;
 }) {
   const t = useTranslations('calendar');
+  // Déplacer au doigt sans glisser : « Déplacer », puis toucher le jour voulu.
+  const [moving, setMoving] = useState<OccurrenceDto | null>(null);
+  const pick = (d: string) => {
+    if (moving) {
+      if (d !== moving.date) onMove(moving, { ...placementOf(moving), date: d });
+      setMoving(null);
+    }
+    onPick(d);
+  };
   const format = useFormatter();
   const month = anchor.slice(0, 7);
   const longDate = (d: string) =>
@@ -715,7 +727,7 @@ function MonthDots({
               <button
                 key={d}
                 type="button"
-                onClick={() => onPick(d)}
+                onClick={() => pick(d)}
                 aria-pressed={d === selected}
                 aria-label={t('dayWithCount', { date: longDate(d), count })}
                 className="flex min-h-12 flex-col items-center justify-start gap-1 rounded-md pt-1"
@@ -750,12 +762,38 @@ function MonthDots({
           })}
         </div>
       </div>
+      {moving && (
+        <div
+          role="status"
+          className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-accent bg-surface px-4 py-3 text-[0.9375rem]"
+        >
+          <span>{t('movePick', { title: moving.title })}</span>
+          <Button variant="ghost" size="sm" onClick={() => setMoving(null)}>
+            {t('moveCancel')}
+          </Button>
+        </div>
+      )}
       <section aria-labelledby="picked-day" className="flex flex-col gap-2">
         <h2 id="picked-day" className="font-semibold first-letter:uppercase">
           {longDate(selected)}
         </h2>
         {dayItems.length ? (
-          <TaskList items={dayItems} onOpen={onOpen} label={longDate(selected)} />
+          <TaskList
+            items={dayItems}
+            onOpen={onOpen}
+            label={longDate(selected)}
+            trailing={(o) => (
+              <button
+                type="button"
+                onClick={() => setMoving(o)}
+                aria-label={t('moveTo', { title: o.title })}
+                aria-pressed={moving?.id === o.id}
+                className="-my-2 -mr-2 flex size-11 shrink-0 items-center justify-center rounded-full text-text-muted hover:bg-surface-muted hover:text-text"
+              >
+                <CalendarArrowUp aria-hidden className="size-5" />
+              </button>
+            )}
+          />
         ) : (
           <p className="text-[0.9375rem] text-text-muted">{t('dayEmpty')}</p>
         )}

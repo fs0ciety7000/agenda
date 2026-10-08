@@ -109,7 +109,7 @@ export function QuickAdd({
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-2">
-      <div className="flex items-center gap-2 rounded-lg border border-border bg-surface pl-3 pr-1 focus-within:border-accent focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-accent">
+      <div className="flex items-center gap-2 rounded-lg border border-border-strong bg-surface pl-3 pr-1 focus-within:border-accent focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-accent">
         <Plus aria-hidden className="size-5 shrink-0 text-text-muted" />
         <label htmlFor="quick-add" className="sr-only">
           {t('label')}

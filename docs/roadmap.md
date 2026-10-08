@@ -53,17 +53,19 @@ Source : [audit du 8 octobre 2026](audits/2026-10-08.md). Légende : effort S / 
       la fiche Play régénérées (fr, en) 🤖
 - [ ] Captures de la fiche Play en néerlandais (quand la fiche nl-NL existera) 🤖
 
-### Lot 3 — Confort et finitions (S à M)
+### Lot 3 — Confort et finitions ✅ (#88)
 
-- [ ] Aujourd'hui en deux colonnes sur desktop (liste · répartition, courses, budget) 🌐
-- [ ] Bordures de champ à 3:1 (token `border-strong`) 🌐🤖
-- [ ] Titres de tâche sur deux lignes avant l'ellipse 🌐🤖
-- [ ] Indice de défilement sur les onglets de filtre (dégradé de bord) 🌐
-- [ ] Barre d'onglets à 320 px : libellés courts ou icônes seules 🌐
-- [ ] Parcours E2E des raccourcis clavier N, / et T 🌐
-- [ ] Menus : grille semaine compacte sur desktop 🌐
-- [ ] Site : aperçu animé de l'app au-dessus de la ligne de flottaison sur mobile 🪧
-- [ ] Calendrier mois sur téléphone : glisser une tâche de la liste vers un jour 🌐
+- [x] Aujourd'hui en deux colonnes dès 1280 px (liste · répartition, courses, budget du mois) 🌐
+- [x] Bordures de champ à 3:1 (token `border-strong`, contour Material sur Android) 🌐🤖
+- [x] Titres de tâche sur deux lignes avant l'ellipse (Android l'avait déjà) 🌐
+- [x] Fondu au bord droit des onglets de filtre sur mobile 🌐
+- [x] Barre d'onglets sous 360 px : icônes seules, libellés lus par les lecteurs d'écran 🌐
+- [x] Raccourcis « / » (recherche) et « T » (aujourd'hui) ajoutés — seul « N » existait — et
+      parcours E2E des trois 🌐
+- [x] Menus : deux colonnes de jours dès 768 px 🌐
+- [x] Site : en-tête resserré, l'aperçu de l'app apparaît au bas du premier écran à 360 px 🪧
+- [x] Mois sur téléphone : déplacer une tâche en deux touches (icône, puis jour), plus sûr au
+      doigt qu'un glisser 🌐
 
 ### Lot 4 — Nouvelles fonctions (à prioriser ensemble)
 

@@ -67,6 +67,32 @@ export function AppShell({ children }: { children: ReactNode }) {
   const household = households.data?.[0];
   useRealtime(household?.id);
 
+  // Raccourcis clavier (hors saisie) : « / » recherche dans les tâches, « T » revient à
+  // Aujourd'hui. « N » (nouvelle tâche) est géré par l'ajout rapide.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement;
+      if (
+        e.metaKey ||
+        e.ctrlKey ||
+        e.altKey ||
+        target.closest('input, textarea, select, [contenteditable], [role="dialog"]')
+      )
+        return;
+      if (e.key === '/') {
+        e.preventDefault();
+        const field = document.getElementById('task-search');
+        if (field) field.focus();
+        else router.push('/tasks?search=1');
+      } else if (e.key.toLowerCase() === 't' && pathname !== '/') {
+        e.preventDefault();
+        router.push('/');
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [pathname, router]);
+
   useEffect(() => {
     if (unauthenticated) router.replace(`/login?next=${encodeURIComponent(pathname)}`);
     // Seulement sur une réponse reçue pendant cette visite : un cache périmé (ou restauré du
@@ -127,7 +153,11 @@ export function AppShell({ children }: { children: ReactNode }) {
         id="main"
         className={cn(
           'mx-auto w-full flex-1 px-4 pb-28 pt-8 md:px-8 md:pb-12',
-          pathname.startsWith('/calendar') ? 'max-w-6xl' : 'max-w-3xl',
+          pathname.startsWith('/calendar')
+            ? 'max-w-6xl'
+            : pathname === '/'
+              ? 'max-w-3xl xl:max-w-6xl'
+              : 'max-w-3xl',
         )}
       >
         {/* Mobile : logo en tête (la navigation latérale le porte sur grand écran). */}
@@ -165,7 +195,9 @@ export function AppShell({ children }: { children: ReactNode }) {
             )}
           >
             <Icon aria-hidden className="size-5 stroke-[1.5]" />
-            {t(`nav.${key}`)}
+            {/* Sous 360 px, les libellés ne tiennent pas (« Boodschappen ») : icônes seules,
+                libellé lu par les lecteurs d'écran. */}
+            <span className="sr-only min-[360px]:not-sr-only">{t(`nav.${key}`)}</span>
           </Link>
         ))}
       </nav>

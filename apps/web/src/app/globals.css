@@ -8,6 +8,7 @@
   --color-surface: var(--gn-color-surface);
   --color-surface-muted: var(--gn-color-surface-muted);
   --color-border: var(--gn-color-border);
+  --color-border-strong: var(--gn-color-border-strong);
   --color-text: var(--gn-color-text);
   --color-text-muted: var(--gn-color-text-muted);
   --color-accent: var(--gn-color-accent);

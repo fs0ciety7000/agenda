@@ -92,7 +92,7 @@ export default function ShoppingPage() {
           autoComplete="off"
           placeholder={t('placeholder')}
           onChange={(e) => setText(e.target.value)}
-          className="min-h-11 min-w-0 flex-1 rounded-md border border-border bg-surface px-3 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
+          className="min-h-11 min-w-0 flex-1 rounded-md border border-border-strong bg-surface px-3 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
         />
         <Button type="submit" disabled={!text.trim()} aria-label={t('add')} title={t('add')}>
           <Plus aria-hidden className="size-5" />

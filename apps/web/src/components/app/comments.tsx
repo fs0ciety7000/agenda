@@ -95,7 +95,7 @@ export function Comments({ occurrence }: { occurrence: OccurrenceDto }) {
               send();
             }
           }}
-          className="min-h-11 flex-1 resize-y rounded-md border border-border bg-surface px-3 py-2.5 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
+          className="min-h-11 flex-1 resize-y rounded-md border border-border-strong bg-surface px-3 py-2.5 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
         />
         <Button
           type="button"

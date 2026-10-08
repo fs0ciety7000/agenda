@@ -38,6 +38,10 @@ blanc en clair (≥ 4,5:1 sur chaque couleur), `#141012` en sombre. Les couleurs
 servent qu'aux pastilles : graphiques et jauges restent neutres (§1.5). « À deux » = pastille
 bicolore ; « À définir » = contour pointillé neutre.
 
+**Bordures** : `border` (`#E6DAD2` / `#372C32`) pour les cartes et séparateurs ;
+`border-strong` (`#9A7F8B` / `#7C6672`, ≥ 3:1 sur `bg`, `surface` et `surface-muted`) pour les
+champs de saisie, listes déroulantes et zones de texte (WCAG 1.4.11).
+
 **Texte sur une couleur pleine** (`success`, `danger`) : `surface`, jamais du blanc codé en dur
 (le blanc tombe sous 2,5:1 en sombre).
 

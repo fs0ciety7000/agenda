@@ -148,21 +148,36 @@ test('calendrier mois sur téléphone : points par jour et liste du jour touché
   const d = new Date(`${today}T12:00:00Z`);
   d.setUTCDate(d.getUTCDate() + (d.getUTCDate() > 1 ? -1 : 1)); // même mois
   const other = d.toISOString().slice(0, 10);
-  await createTask(page, { title: 'Payer le loyer', date: today, startMinute: 9 * 60 });
+  const rent = await createTask(page, {
+    title: 'Payer le loyer',
+    date: today,
+    startMinute: 9 * 60,
+  });
   await createTask(page, { title: 'Arroser les plantes', date: other });
   await page.goto(`/calendar?view=month&date=${today}`);
 
   // Le jour d'aujourd'hui est sélectionné : sa tâche est listée en entier sous la grille.
-  await expect(page.getByRole('button', { name: /Payer le loyer/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Payer le loyer/ })).toBeVisible();
   await expect(page.getByText('Arroser les plantes')).toHaveCount(0);
   await expect(page.getByRole('button', { name: /, 1 tâche$/ })).toHaveCount(2);
 
   // Toucher l'autre jour affiche ses tâches ; « Ajouter ce jour-là » préremplit la date.
   const day = new Date(`${other}T12:00:00Z`).getUTCDate();
   await page.getByRole('button', { name: new RegExp(` ${day} .*, 1 tâche$`) }).click();
-  await expect(page.getByRole('button', { name: /Arroser les plantes/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Arroser les plantes/ })).toBeVisible();
   await page.getByRole('button', { name: 'Ajouter ce jour-là' }).click();
   const dialog = page.getByRole('dialog', { name: 'Nouvelle tâche' });
   await expect(dialog.getByLabel('Date', { exact: true })).toHaveValue(other);
   await expect(page.getByText(/^Astuce/)).toHaveCount(0);
+  await dialog.getByRole('button', { name: 'Fermer' }).click();
+
+  // Déplacer sans glisser : « Déplacer », puis toucher le jour voulu.
+  const todayNum = new Date(`${today}T12:00:00Z`).getUTCDate();
+  await page.getByRole('button', { name: new RegExp(` ${todayNum} .*, 1 tâche$`) }).click();
+  await page.getByRole('button', { name: 'Déplacer « Payer le loyer » à un autre jour' }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'Touchez le jour' })).toBeVisible();
+  await page.getByRole('button', { name: new RegExp(` ${day} .*, 1 tâche$`) }).click();
+  await expect(page.getByText('« Payer le loyer » déplacée', { exact: false })).toBeVisible();
+  await expect.poll(async () => (await rent.get()).date).toBe(other);
+  await expect(page.getByRole('button', { name: /^Payer le loyer/ })).toBeVisible();
 });

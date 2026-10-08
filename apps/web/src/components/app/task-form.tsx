@@ -461,7 +461,7 @@ export function TaskFormDialog({
                 maxLength={5000}
                 rows={2}
                 onChange={(e) => set('notes', e.target.value)}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 py-2.5 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
+                className="min-h-11 rounded-md border border-border-strong bg-surface px-3 py-2.5 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
               />
             </div>
 

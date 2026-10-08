@@ -21,7 +21,7 @@ export const Select = React.forwardRef<
           ref={ref}
           id={selectId}
           className={cn(
-            'h-11 w-full appearance-none rounded-md border border-border bg-surface pl-3 pr-9 text-[0.9375rem] text-text',
+            'h-11 w-full appearance-none rounded-md border border-border-strong bg-surface pl-3 pr-9 text-[0.9375rem] text-text',
             'focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent',
             className,
           )}

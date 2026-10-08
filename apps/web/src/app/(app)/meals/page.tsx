@@ -103,10 +103,10 @@ export default function MealsPage() {
       ) : !meals.data ? (
         <Skeleton className="h-96 w-full" />
       ) : (
-        <ol className="flex flex-col gap-3">
+        <ol className="grid grid-cols-1 gap-3 md:grid-cols-2">
           {days.map((d) => (
             <li key={d}>
-              <Card className="flex flex-col gap-3 p-4">
+              <Card className="flex h-full flex-col gap-3 p-4">
                 <h2 className={d === today ? 'font-semibold text-accent' : 'font-semibold'}>
                   {dayLabel(d)}
                 </h2>
@@ -243,7 +243,7 @@ function MealDialog({
               onChange={(e) => setIngredients(e.target.value)}
               placeholder={t('ingredientsPlaceholder')}
               aria-describedby="meal-ingredients-hint"
-              className="rounded-md border border-border bg-surface px-3 py-2 text-[0.9375rem]"
+              className="rounded-md border border-border-strong bg-surface px-3 py-2 text-[0.9375rem]"
             />
             <p id="meal-ingredients-hint" className="text-[0.8125rem] text-text-muted">
               {t('ingredientsHint')}

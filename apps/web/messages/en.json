@@ -102,7 +102,12 @@
     "weekEmpty": "Nothing planned for the next few days.",
     "seeStats": "See summary",
     "sectionDue": "To do this week",
-    "allDone": "All done for today 🎉"
+    "allDone": "All done for today 🎉",
+    "glanceShopping": "Shopping",
+    "glanceShoppingCount": "{count, plural, =0 {Nothing to buy} one {# item to buy} other {# items to buy}}",
+    "glanceExpenses": "This month's expenses",
+    "glanceBudget": "{spent} of {budget}",
+    "glanceCommon": "{amount} in shared expenses"
   },
   "placeholder": {
     "title": "Coming soon",
@@ -428,7 +433,10 @@
     "dayWithCount": "{date}, {count, plural, =0 {no tasks} one {# task} other {# tasks}}",
     "dayEmpty": "Nothing planned that day.",
     "addOnDay": "Add on this day",
-    "dragHintTouch": "Tip: long-press a task to move it, then drag its bottom edge to change its duration."
+    "dragHintTouch": "Tip: long-press a task to move it, then drag its bottom edge to change its duration.",
+    "moveTo": "Move “{title}” to another day",
+    "movePick": "Tap the day to move “{title}” to.",
+    "moveCancel": "Cancel"
   },
   "privacy": {
     "google": "Sign in with Google",

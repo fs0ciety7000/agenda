@@ -23,6 +23,11 @@ L'ajout rapide comprend le français, l'anglais et le néerlandais (`morgen 19u`
 « Appeler Grace demain » garde « Grace » dans le titre : un prénom placé **avant** la date fait
 partie du titre.
 
+## Raccourcis clavier (ordinateur)
+
+Hors d'un champ de saisie : **N** place le curseur dans l'ajout rapide, **/** ouvre la recherche
+des tâches (depuis n'importe quelle page), **T** revient à Aujourd'hui.
+
 ## Le formulaire
 
 **Plus d'options** (ou toucher une tâche) ouvre le formulaire complet :
