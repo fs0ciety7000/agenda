@@ -94,7 +94,7 @@ class ActivityNotifierTest {
         val manager = context.getSystemService(android.app.NotificationManager::class.java)
         val texts = org.robolectric.Shadows.shadowOf(manager).allNotifications
             .map { it.extras.getCharSequence(androidx.core.app.NotificationCompat.EXTRA_TEXT).toString() }
-        assertTrue(texts.toString(), "Nicolas asks if you can take “Vaisselle”" in texts)
+        assertTrue(texts.toString(), "Nicolas asks you to take “Vaisselle”" in texts)
         assertTrue(texts.toString(), "Grace can’t take “Lessive”" in texts)
     }
 }

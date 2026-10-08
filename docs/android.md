@@ -21,7 +21,7 @@ métier propre à Android : les règles (récurrence, rotation, quick add) reste
   choix que sur le site, aperçu des prochaines dates), catégorie, priorité, notes, personnelle,
   calendrier partagé. Modifier / supprimer une tâche récurrente demande la portée (celle-ci, les suivantes, toute la série).
 - **Échange de tour** (`ui/swaps/Swaps.kt`, `SwapsRemote`) : « Proposer à … » sur la fiche d'une
-  tâche partagée à faire dont je suis responsable ; demandes reçues (Accepter / Refuser) et
+  tâche partagée à faire dont je suis responsable ; demandes reçues (Je la prends / Pas cette fois) et
   envoyées (Annuler) en haut d'Aujourd'hui. En ligne seulement, comme les commentaires ;
   notifications `TASK_SWAP_REQUEST` et `TASK_SWAP_ANSWER`.
 - **Rappels** : notification avant chaque tâche planifiée qui me concerne (moi, à deux, à définir),

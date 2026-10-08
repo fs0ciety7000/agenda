@@ -73,8 +73,8 @@ notification (sans le texte du commentaire). Chacun peut supprimer ses propres c
 
 Empêché jeudi ? Sur la fiche d'une tâche partagée dont vous êtes responsable, **Proposer à
 Nicolas** envoie la demande, avec un mot si besoin (« J'ai piscine »). L'autre la voit en haut
-d'**Aujourd'hui** et reçoit une notification : **Accepter** lui confie cette occurrence (les
-suivantes ne changent pas), **Refuser** vous prévient. Vous pouvez annuler une demande tant qu'elle
+d'**Aujourd'hui** et reçoit une notification : **Je la prends** lui confie cette occurrence (les
+suivantes ne changent pas), **Pas cette fois** vous prévient. Vous pouvez annuler une demande tant qu'elle
 attend. Si la tâche a été faite ou modifiée entre-temps, l'échange est refusé et la dernière
 version s'affiche. Un échange demande une connexion.
 

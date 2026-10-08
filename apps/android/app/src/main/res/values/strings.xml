@@ -549,18 +549,18 @@
     <plurals name="store_left"><item quantity="one">%d item left</item><item quantity="other">%d items left</item></plurals>
     <string name="swap_someone">Someone</string>
     <string name="swap_failed">Couldn’t send. Check your connection.</string>
-    <string name="swap_accepted">You’re now taking “%1$s”</string>
-    <string name="swap_incoming">%1$s asks if you can take “%2$s”</string>
+    <string name="swap_accepted">“%1$s” is yours.</string>
+    <string name="swap_incoming">%1$s asks you to take “%2$s”</string>
     <string name="swap_outgoing">Waiting for %1$s: “%2$s”</string>
-    <string name="swap_accept">Accept</string>
-    <string name="swap_decline">Decline</string>
-    <string name="swap_ask">Ask someone to take it</string>
-    <string name="swap_ask_one">Ask %1$s to take it</string>
+    <string name="swap_accept">I’ll take it</string>
+    <string name="swap_decline">Not this time</string>
+    <string name="swap_ask">Ask someone else</string>
+    <string name="swap_ask_one">Ask %1$s</string>
     <string name="swap_note">A note (optional)</string>
-    <string name="swap_send">Send</string>
-    <string name="swap_sent">Request sent to %1$s</string>
-    <string name="swap_waiting">Waiting for %1$s’s answer</string>
-    <string name="activity_swap_request">%1$s asks if you can take “%2$s”</string>
+    <string name="swap_send">Send request</string>
+    <string name="swap_sent">Request sent to %1$s.</string>
+    <string name="swap_waiting">Request sent to %1$s, waiting for an answer.</string>
+    <string name="activity_swap_request">%1$s asks you to take “%2$s”</string>
     <string name="activity_swap_accepted">%1$s is taking “%2$s”</string>
     <string name="activity_swap_declined">%1$s can’t take “%2$s”</string>
 </resources>
