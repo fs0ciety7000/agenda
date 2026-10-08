@@ -140,9 +140,11 @@ Une version déjà envoyée en test interne se passe au test fermé sans nouvel 
 
 ## 6. Mettre à jour la fiche et les captures
 
-- Textes : modifier les fichiers `fastlane/metadata/android/<langue>/…`, puis les recopier dans la
-  console. Leur format est celui de `fastlane supply`, donc utilisable tel quel si on adopte
-  fastlane plus tard.
+- Textes : modifier les fichiers `fastlane/metadata/android/<langue>/…`, puis lancer **Actions →
+  « Google Play — mettre à jour la fiche » → Run workflow** (case « Envoyer aussi icône, image de
+  présentation et captures » pour les images ; « Vérifier seulement » pour un essai à blanc).
+  Le workflow envoie fr-FR et en-US, et nl-NL quand `PLAY_LISTING_NL=true`. Sans le secret
+  `PLAY_SERVICE_ACCOUNT_JSON`, recopier les textes à la main dans la console (format `fastlane supply`).
 - Notes de version (« Nouveautés », 500 caractères max par langue) :
   `fastlane/metadata/android/<langue>/changelogs/default.txt`. À mettre à jour avant chaque
   envoi : la CI les joint à l'envoi automatique et les recopie sur la page de la release
