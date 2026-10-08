@@ -59,6 +59,7 @@ export class PrivacyService {
       expenses,
       swaps,
       notes,
+      dates,
     ] = await Promise.all([
       this.prisma.task.findMany({
         where: { createdById: { in: memberIds }, deletedAt: null },
@@ -178,6 +179,21 @@ export class PrivacyService {
         select: { title: true, body: true, pinned: true, createdAt: true, updatedAt: true },
         orderBy: { createdAt: 'asc' },
       }),
+      // Dates importantes ajoutées par la personne (anniversaires d'autres personnes compris).
+      this.prisma.importantDate.findMany({
+        where: { createdById: { in: memberIds } },
+        select: {
+          title: true,
+          kind: true,
+          month: true,
+          day: true,
+          year: true,
+          repeatsYearly: true,
+          remindDaysBefore: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: 'asc' },
+      }),
     ]);
     return {
       format: 'tandem-export/1',
@@ -250,6 +266,7 @@ export class PrivacyService {
         answeredAt: w.answeredAt,
       })),
       notesCreated: notes,
+      importantDatesCreated: dates,
       reports: reports.map(({ screenshotType, ...r }) => ({
         ...r,
         screenshot: screenshotType !== null,

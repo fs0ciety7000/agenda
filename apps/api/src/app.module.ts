@@ -21,6 +21,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { PrivacyModule } from './privacy/privacy.module';
 import { RealtimeModule } from './realtime/realtime.module';
+import { ImportantDatesModule } from './important-dates/important-dates.module';
 import { NotesModule } from './notes/notes.module';
 import { ShoppingModule } from './shopping/shopping.module';
 import { ExpensesModule } from './expenses/expenses.module';
@@ -55,6 +56,7 @@ import { TasksModule } from './tasks/tasks.module';
     NotificationsModule,
     ShoppingModule,
     NotesModule,
+    ImportantDatesModule,
     ExpensesModule,
     RealtimeModule,
     AdminModule,

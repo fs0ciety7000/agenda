@@ -22,6 +22,7 @@ export const NOTIFICATION_KINDS: NotificationKind[] = [
   'EXPENSE_BUDGET',
   'TASK_SWAP_REQUEST',
   'TASK_SWAP_ANSWER',
+  'IMPORTANT_DATE',
 ];
 const DEFAULT_PREF = { inApp: true, push: true };
 
@@ -49,6 +50,13 @@ export interface BudgetPayload {
   level: 80 | 100;
   amountCents: number;
   budgetCents: number;
+}
+
+/** Date importante qui approche : la date (identifiant), l'occurrence et les jours restants. */
+export interface ImportantDatePayload {
+  dateId: string;
+  date: string;
+  daysLeft: number;
 }
 
 /**
@@ -187,6 +195,37 @@ export class NotificationsService {
    * « 80 % du budget commun d'octobre » : une seule fois par mois, seuil et budget (un budget
    * modifié peut donc prévenir à nouveau). Pas pour la personne qui vient d'enregistrer la dépense.
    */
+  /** « Anniversaire de mamie dans 7 jours » : à tout le foyer (personne n'a fait d'action). */
+  async notifyImportantDate(
+    householdId: string,
+    title: string,
+    payload: ImportantDatePayload,
+  ): Promise<void> {
+    const members = await this.prisma.householdMember.findMany({
+      where: { householdId, leftAt: null, userId: { not: null } },
+      select: { id: true, preferences: { where: { type: 'IMPORTANT_DATE' } } },
+    });
+    const targets = members
+      .map((m) => ({ id: m.id, pref: m.preferences[0] ?? DEFAULT_PREF }))
+      .filter(({ pref }) => pref.inApp || pref.push);
+    if (!targets.length) return;
+    await this.prisma.notification.createMany({
+      data: targets.map(({ id, pref }) => ({
+        memberId: id,
+        type: 'IMPORTANT_DATE' as const,
+        payload: { ...payload, push: pref.push } as unknown as Prisma.InputJsonValue,
+      })),
+    });
+    this.events.publish(householdId, 'notifications');
+    const pushIds = targets.filter(({ pref }) => pref.push).map(({ id }) => id);
+    void this.push.wakeMembers(householdId, pushIds);
+    if (this.webPush.enabled && pushIds.length) {
+      void this.webPush.sendToMembers(householdId, pushIds, (locale) =>
+        importantDatePushText(locale, title, payload),
+      );
+    }
+  }
+
   async notifyBudget(
     householdId: string,
     actorMemberId: string | null,
@@ -276,6 +315,19 @@ export class NotificationsService {
         select: { id: true, displayName: true },
       }),
     ]);
+    const dateIds = rows
+      .filter((r) => r.type === 'IMPORTANT_DATE')
+      .map((r) => (r.payload as unknown as ImportantDatePayload).dateId);
+    const dateTitles = new Map(
+      dateIds.length
+        ? (
+            await this.prisma.importantDate.findMany({
+              where: { id: { in: dateIds }, householdId: ctx.householdId },
+              select: { id: true, title: true },
+            })
+          ).map((d) => [d.id, d.title])
+        : [],
+    );
     const occById = new Map(occurrences.map((o) => [o.id, o]));
     const nameById = new Map(members.map((m) => [m.id, m.displayName]));
 
@@ -292,8 +344,16 @@ export class NotificationsService {
         // Préférence « push » au moment de la création, et toujours voulue aujourd'hui.
         push: payload.push !== false && prefs[r.type as NotificationKind].push,
         occurrenceId: occ?.id ?? null,
-        title: occ ? (occ.titleOverride ?? occ.task.title) : null,
-        date: occ?.date ? occ.date.toISOString().slice(0, 10) : null,
+        title: occ
+          ? (occ.titleOverride ?? occ.task.title)
+          : r.type === 'IMPORTANT_DATE'
+            ? (dateTitles.get(payload.dateId as string) ?? null)
+            : null,
+        date: occ?.date
+          ? occ.date.toISOString().slice(0, 10)
+          : r.type === 'IMPORTANT_DATE'
+            ? String(payload.date)
+            : null,
         recurring: payload.recurring === true,
         byName:
           typeof payload.byMemberId === 'string'
@@ -304,6 +364,7 @@ export class NotificationsService {
         level: r.type === 'EXPENSE_BUDGET' ? Number(payload.level) : null,
         amountCents: r.type === 'EXPENSE_BUDGET' ? Number(payload.amountCents) : null,
         budgetCents: r.type === 'EXPENSE_BUDGET' ? Number(payload.budgetCents) : null,
+        daysLeft: r.type === 'IMPORTANT_DATE' ? Number(payload.daysLeft) : null,
       };
     });
     return { unread, items };
@@ -431,4 +492,32 @@ export function budgetPushText(locale: Locale, b: BudgetPayload): WebPushMessage
     nl: `Gezamenlijk budget · ${month}: ${b.level}% bereikt (${spent} van ${budget})`,
   }[locale];
   return { title: 'Tandem', body, url: '/expenses', tag: `budget-${b.month}` };
+}
+
+/** Texte du rappel : « Anniversaire de mamie : dans 7 jours (mercredi 14 octobre) ». */
+export function importantDatePushText(
+  locale: Locale,
+  title: string,
+  p: ImportantDatePayload,
+): WebPushMessage {
+  const when = new Intl.DateTimeFormat(INTL_LOCALE[locale], {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    timeZone: 'UTC',
+  }).format(new Date(`${p.date}T12:00:00Z`));
+  const n = p.daysLeft;
+  const body = {
+    fr:
+      n === 0
+        ? `${title} : c'est aujourd'hui`
+        : `${title} : ${n === 1 ? 'demain' : `dans ${n} jours`} (${when})`,
+    en:
+      n === 0 ? `${title}: today` : `${title}: ${n === 1 ? 'tomorrow' : `in ${n} days`} (${when})`,
+    nl:
+      n === 0
+        ? `${title}: vandaag`
+        : `${title}: ${n === 1 ? 'morgen' : `over ${n} dagen`} (${when})`,
+  }[locale];
+  return { title: 'Tandem', body, url: '/dates', tag: `date-${p.dateId}-${p.date}` };
 }

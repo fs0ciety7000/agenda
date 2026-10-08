@@ -9,6 +9,7 @@ export const NotificationKind = z.enum([
   'EXPENSE_BUDGET',
   'TASK_SWAP_REQUEST',
   'TASK_SWAP_ANSWER',
+  'IMPORTANT_DATE',
 ]);
 export type NotificationKind = z.infer<typeof NotificationKind>;
 
@@ -33,6 +34,8 @@ export const NotificationDto = z.object({
   level: z.number().int().nullable(),
   amountCents: z.number().int().nullable(),
   budgetCents: z.number().int().nullable(),
+  /** IMPORTANT_DATE : jours restants avant la date (0 = aujourd'hui) ; titre et date ci-dessus. */
+  daysLeft: z.number().int().nullable(),
 });
 export type NotificationDto = z.infer<typeof NotificationDto>;
 
