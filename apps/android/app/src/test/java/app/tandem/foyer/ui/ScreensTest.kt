@@ -255,6 +255,20 @@ class ScreensTest {
     }
 
     @Test
+    fun mode_magasin() {
+        val toggled = mutableListOf<String>()
+        val items = listOf(
+            app.tandem.foyer.domain.model.ShoppingItem("i1", "Tomates", done = false, aisle = "PRODUCE"),
+            app.tandem.foyer.domain.model.ShoppingItem("i2", "Lait", done = true, aisle = "DAIRY"),
+        )
+        screen { app.tandem.foyer.ui.shopping.StoreMode(items, { toggled += it.text }, {}) }
+        compose.onNodeWithText("Au magasin").assertIsDisplayed()
+        compose.onNodeWithText("Encore 1 article").assertIsDisplayed()
+        compose.onNodeWithText("Tomates").performClick()
+        assertEquals(listOf("Tomates"), toggled)
+    }
+
+    @Test
     fun reglages() {
         screen {
             SettingsScreen(

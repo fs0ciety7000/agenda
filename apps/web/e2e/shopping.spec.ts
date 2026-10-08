@@ -90,3 +90,25 @@ test('courses malignes : quantités, rayons, rayon retenu, souvent achetés', as
     page.getByRole('list', { name: '🧀 Crèmerie et œufs' }).getByRole('checkbox', { name: 'lait' }),
   ).toBeVisible();
 });
+
+test('courses : mode magasin plein écran, coche par rayon', async ({ page }) => {
+  await signUpWithHousehold(page, 'Grace');
+  await page.goto('/shopping');
+  await page.getByRole('textbox', { name: 'Ajouter à la liste' }).fill('Tomates, Lait');
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('checkbox', { name: 'Lait' })).toBeVisible();
+
+  await page.getByRole('button', { name: 'Mode magasin' }).click();
+  const store = page.getByRole('dialog', { name: 'Au magasin' });
+  await expect(store).toBeVisible();
+  await expect(store.getByText('Encore 2 articles')).toBeVisible();
+  await store.getByRole('checkbox', { name: /Tomates/ }).click();
+  await expect(store.getByRole('checkbox', { name: /Tomates/ })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
+  await expect(store.getByText('Encore 1 article')).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(store).toBeHidden();
+  await expect(page.getByText('Dans le panier (1)')).toBeVisible();
+});

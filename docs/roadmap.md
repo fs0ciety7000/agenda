@@ -81,7 +81,7 @@ Courses et repas :
 
 - [ ] **Recettes enregistrées** : ingrédients réutilisés d'un menu à l'autre (M)
 - [ ] **Prix habituels** des articles → estimation du ticket et lien avec le budget (M)
-- [ ] **Mode magasin** : écran plein, gros caractères, tri par rayon, écran toujours allumé (S) 🌐🤖
+- [x] **Mode magasin** : écran plein, gros caractères, tri par rayon, écran toujours allumé (S) 🌐🤖 (#88)
 
 Dépenses :
 

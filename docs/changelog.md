@@ -26,6 +26,8 @@ d'elle-même (ou via Google Play).
 - 🛠 Android : « À rattraper » au lieu de « En retard », et seule la priorité est en couleur.
 - 🐞 Site vitrine : tout le contenu s'affiche même sans JavaScript ; plus de défilement horizontal.
 - ⚙️ Rapport d'audit et plan de travail suivi dans la roadmap.
+- ✨ **Mode magasin** (Courses, site et Android) : la liste en plein écran, en gros caractères,
+  rangée par rayon, et l'écran qui reste allumé.
 - ✨ **Sur grand écran**, Aujourd'hui passe en deux colonnes : la liste à gauche ; répartition,
   courses à acheter et budget du mois à droite. Les Menus s'affichent en deux colonnes.
 - ✨ **Raccourcis clavier** : « / » pour chercher une tâche, « T » pour revenir à Aujourd'hui (en

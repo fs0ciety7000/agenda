@@ -539,4 +539,9 @@
     </plurals>
     <string name="expenses_trend_hint">Gezamenlijke uitgaven, maand per maand</string>
     <string name="expenses_trend_budget">Markering: budget van %1$s</string>
+    <string name="close">Sluiten</string>
+    <string name="store_open">Winkelmodus</string>
+    <string name="store_title">In de winkel</string>
+    <string name="store_all_in_cart">Alles zit in het mandje</string>
+    <plurals name="store_left"><item quantity="one">Nog %d artikel</item><item quantity="other">Nog %d artikels</item></plurals>
 </resources>

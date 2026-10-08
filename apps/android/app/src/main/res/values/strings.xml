@@ -542,4 +542,9 @@
     </plurals>
     <string name="expenses_trend_hint">Shared expenses, month by month</string>
     <string name="expenses_trend_budget">Marker: %1$s budget</string>
+    <string name="close">Close</string>
+    <string name="store_open">Store mode</string>
+    <string name="store_title">At the store</string>
+    <string name="store_all_in_cart">Everything is in the basket</string>
+    <plurals name="store_left"><item quantity="one">%d item left</item><item quantity="other">%d items left</item></plurals>
 </resources>

@@ -713,7 +713,10 @@
     "addSuggestion": "Add {text}",
     "aisleOf": "Aisle for {text}",
     "noteExpense": "Record the expense",
-    "cleared": "Basket emptied."
+    "cleared": "Basket emptied.",
+    "storeOpen": "Store mode",
+    "storeTitle": "At the store",
+    "storeLeft": "{count, plural, =0 {Everything is in the basket} one {# item left} other {# items left}}"
   },
   "meals": {
     "title": "Meals",

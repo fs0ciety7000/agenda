@@ -552,4 +552,9 @@
     </plurals>
     <string name="expenses_trend_hint">Dépenses communes, mois par mois</string>
     <string name="expenses_trend_budget">Repère : budget de %1$s</string>
+    <string name="close">Fermer</string>
+    <string name="store_open">Mode magasin</string>
+    <string name="store_title">Au magasin</string>
+    <string name="store_all_in_cart">Tout est dans le panier</string>
+    <plurals name="store_left"><item quantity="one">Encore %d article</item><item quantity="many">Encore %d articles</item><item quantity="other">Encore %d articles</item></plurals>
 </resources>

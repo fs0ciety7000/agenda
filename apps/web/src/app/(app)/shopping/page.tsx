@@ -2,12 +2,13 @@
 
 import type { Aisle, ShoppingItemDto } from '@agenda/contracts';
 import { AISLES } from '@agenda/domain';
-import { Check, Plus, ShoppingCart, X } from 'lucide-react';
+import { Check, Plus, ShoppingCart, Store, X } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useId, useState, type FormEvent } from 'react';
 import { useSession } from '@/components/app/household-context';
+import { StoreMode } from '@/components/app/store-mode';
 import { Button } from '@/components/ui/button';
 import { SectionTitle } from '@/components/ui/card';
 import { EmptyState, ErrorState, Skeleton } from '@/components/ui/states';
@@ -41,6 +42,7 @@ export default function ShoppingPage() {
   const router = useRouter();
   const live = useRealtimeStatus();
   const [text, setText] = useState('');
+  const [store, setStore] = useState(false);
   const inputId = useId();
 
   const submit = (e: FormEvent) => {
@@ -80,6 +82,20 @@ export default function ShoppingPage() {
           {t(live ? 'live' : 'notLive')}
         </span>
       </div>
+
+      {items.some((i) => !i.done) && (
+        <Button variant="secondary" className="self-start" onClick={() => setStore(true)}>
+          <Store aria-hidden className="size-4" />
+          {t('storeOpen')}
+        </Button>
+      )}
+      {store && (
+        <StoreMode
+          items={items}
+          onToggle={(i) => actions.toggle.mutate({ id: i.id, done: !i.done })}
+          onClose={() => setStore(false)}
+        />
+      )}
 
       <form onSubmit={submit} className="flex gap-2">
         <label htmlFor={inputId} className="sr-only">
