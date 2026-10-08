@@ -22,6 +22,7 @@ import { AppException } from '../common/app-exception';
 import {
   ATTACHMENT_MAX_BYTES,
   ExpenseBudgetInput,
+  ExpenseCategoryBudgetsInput,
   type ExpenseDto,
   ExpenseExportQuery,
   ExpenseInput,
@@ -104,6 +105,16 @@ export class ExpensesController {
     @Body(new ZodPipe(ExpenseBudgetInput)) body: ExpenseBudgetInput,
   ): Promise<void> {
     return this.expenses.setBudget(ctx, body.budgetCents);
+  }
+
+  /** Budgets mensuels par catégorie (remplacent les précédents). */
+  @Put('budget/categories')
+  @HttpCode(204)
+  categoryBudgets(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Body(new ZodPipe(ExpenseCategoryBudgetsInput)) body: ExpenseCategoryBudgetsInput,
+  ): Promise<void> {
+    return this.expenses.setCategoryBudgets(ctx, body.budgets);
   }
 
   /** Enregistrer une dépense (identifiant facultatif : un renvoi ne crée pas de doublon). */

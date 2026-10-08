@@ -15,6 +15,32 @@ d'elle-même (ou via Google Play).
 
 ## 8 octobre 2026
 
+### Appareils connectés (#89)
+
+- 🔒 **Appareils connectés** (Réglages → Compte, site et Android) : où votre compte est ouvert, la
+  dernière activité de chaque appareil, et **Déconnecter** pour un téléphone perdu ou un ordinateur
+  partagé, sans toucher aux autres.
+- ⚙️ App Android : bibliothèque `androidx.fragment` à jour (avertissement de Google Play).
+
+### Budget par catégorie (#89)
+
+- ✨ **Budget par catégorie** (Dépenses) : un budget mensuel par catégorie en plus du budget global,
+  une jauge chacun, et une alerte à 80 % et à 100 % (« Courses · octobre : 80 % atteint »). Réglage
+  sur le site, jauges aussi sur Android.
+
+### Dates importantes (#89)
+
+- ✨ **Dates importantes** (site et Android, dans « Plus ») : anniversaires, fêtes, entretiens
+  annuels, avec l'âge si l'année est connue. Rappel à tout le foyer le jour choisi (la veille,
+  7 jours avant…), et rubrique « Bientôt » sur Aujourd'hui.
+
+### Notes partagées (#89)
+
+- ✨ **Notes** (site et Android, dans « Plus ») : codes Wi-Fi, mesures, idées cadeaux. Épingler,
+  copier en un geste, modifier à deux ; si l'autre a modifié entre-temps, sa version s'affiche.
+- 🐞 Android : les boutons flottants (« + », « Dépense ») prennent la couleur de Tandem au lieu
+  d'un violet par défaut.
+
 ### Qui fait quoi cette semaine (#88)
 
 - ✨ **Tableau « Qui fait quoi »** sur Aujourd'hui (site et Android) : les 7 prochains jours,

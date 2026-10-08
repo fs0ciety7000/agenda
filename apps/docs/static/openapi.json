@@ -1247,6 +1247,104 @@
         "security": []
       }
     },
+    "/v1/me/sessions": {
+      "get": {
+        "description": "Appareils connectés : connexions actives, la plus récemment utilisée d'abord.",
+        "operationId": "SessionsController_list_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeviceSessionDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Appareils connectés ",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/me/sessions/{id}": {
+      "delete": {
+        "operationId": "SessionsController_revoke_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Déconnecter un appareil à distance (le sien compris)",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
     "/v1/households": {
       "post": {
         "operationId": "HouseholdsController_create_v1",
@@ -7206,6 +7304,534 @@
         ]
       }
     },
+    "/v1/households/{householdId}/notes": {
+      "get": {
+        "operationId": "NotesController_list_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NoteDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Notes partagées du foyer (épinglées d'abord)",
+        "tags": [
+          "notes"
+        ]
+      },
+      "post": {
+        "operationId": "NotesController_create_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NoteInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Ajouter une note",
+        "tags": [
+          "notes"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/notes/{noteId}": {
+      "patch": {
+        "operationId": "NotesController_update_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "noteId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateNoteInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Modifier ou épingler une note (409 si elle a changé entre-temps)",
+        "tags": [
+          "notes"
+        ]
+      },
+      "delete": {
+        "operationId": "NotesController_remove_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "noteId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Supprimer une note",
+        "tags": [
+          "notes"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/important-dates": {
+      "get": {
+        "operationId": "ImportantDatesController_list_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ImportantDateDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Dates importantes du foyer, les plus proches d'abord",
+        "tags": [
+          "important-dates"
+        ]
+      },
+      "post": {
+        "operationId": "ImportantDatesController_create_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportantDateInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportantDateDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Ajouter une date importante",
+        "tags": [
+          "important-dates"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/important-dates/{dateId}": {
+      "put": {
+        "operationId": "ImportantDatesController_update_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "dateId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportantDateInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportantDateDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Modifier une date importante",
+        "tags": [
+          "important-dates"
+        ]
+      },
+      "delete": {
+        "operationId": "ImportantDatesController_remove_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "dateId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Supprimer une date importante",
+        "tags": [
+          "important-dates"
+        ]
+      }
+    },
     "/v1/households/{householdId}/expenses": {
       "get": {
         "operationId": "ExpensesController_list_v1",
@@ -7590,6 +8216,71 @@
           }
         ],
         "summary": "Budget mensuel des dépenses communes (alerte à 80 % et à 100 %) ; null pour l'enlever",
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/expenses/budget/categories": {
+      "put": {
+        "operationId": "ExpensesController_categoryBudgets_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpenseCategoryBudgetsInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Budgets mensuels par catégorie (remplacent les précédents)",
         "tags": [
           "expenses"
         ]
@@ -11794,6 +12485,55 @@
           }
         }
       },
+      "DeviceSessionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "ANDROID_APP",
+              "BROWSER",
+              "OTHER"
+            ]
+          },
+          "browser": {
+            "nullable": true,
+            "type": "string"
+          },
+          "os": {
+            "nullable": true,
+            "type": "string"
+          },
+          "appVersion": {
+            "nullable": true,
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "lastUsedAt": {
+            "type": "string"
+          },
+          "current": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "browser",
+          "os",
+          "appVersion",
+          "createdAt",
+          "lastUsedAt",
+          "current"
+        ],
+        "additionalProperties": false
+      },
       "ExpenseBudgetInput": {
         "type": "object",
         "properties": {
@@ -11806,6 +12546,46 @@
         },
         "required": [
           "budgetCents"
+        ]
+      },
+      "ExpenseCategoryBudgetsInput": {
+        "type": "object",
+        "properties": {
+          "budgets": {
+            "maxItems": 9,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "GROCERIES",
+                    "HOUSING",
+                    "UTILITIES",
+                    "TRANSPORT",
+                    "LEISURE",
+                    "HEALTH",
+                    "KIDS",
+                    "GIFTS",
+                    "OTHER"
+                  ]
+                },
+                "budgetCents": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 10000000
+                }
+              },
+              "required": [
+                "category",
+                "budgetCents"
+              ]
+            }
+          }
+        },
+        "required": [
+          "budgets"
         ]
       },
       "ExpenseDto": {
@@ -12225,6 +13005,38 @@
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
+          },
+          "categoryBudgets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "GROCERIES",
+                    "HOUSING",
+                    "UTILITIES",
+                    "TRANSPORT",
+                    "LEISURE",
+                    "HEALTH",
+                    "KIDS",
+                    "GIFTS",
+                    "OTHER"
+                  ]
+                },
+                "budgetCents": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "category",
+                "budgetCents"
+              ],
+              "additionalProperties": false
+            }
           }
         },
         "required": [
@@ -12235,7 +13047,8 @@
           "members",
           "transfers",
           "byCategory",
-          "budgetCents"
+          "budgetCents",
+          "categoryBudgets"
         ],
         "additionalProperties": false
       },
@@ -12365,6 +13178,141 @@
           "url"
         ],
         "additionalProperties": false
+      },
+      "ImportantDateDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "BIRTHDAY",
+              "ANNIVERSARY",
+              "MAINTENANCE",
+              "OTHER"
+            ]
+          },
+          "month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12
+          },
+          "day": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31
+          },
+          "year": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "repeatsYearly": {
+            "type": "boolean"
+          },
+          "remindDaysBefore": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 60
+          },
+          "createdById": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          "nextDate": {
+            "nullable": true,
+            "type": "string",
+            "format": "date"
+          },
+          "daysLeft": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "years": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "kind",
+          "month",
+          "day",
+          "year",
+          "repeatsYearly",
+          "remindDaysBefore",
+          "createdById",
+          "nextDate",
+          "daysLeft",
+          "years"
+        ],
+        "additionalProperties": false
+      },
+      "ImportantDateInput": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "kind": {
+            "default": "OTHER",
+            "type": "string",
+            "enum": [
+              "BIRTHDAY",
+              "ANNIVERSARY",
+              "MAINTENANCE",
+              "OTHER"
+            ]
+          },
+          "month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12
+          },
+          "day": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31
+          },
+          "year": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": 1900,
+            "maximum": 2200
+          },
+          "repeatsYearly": {
+            "default": true,
+            "type": "boolean"
+          },
+          "remindDaysBefore": {
+            "default": 7,
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 60
+          }
+        },
+        "required": [
+          "title",
+          "month",
+          "day"
+        ]
       },
       "InboundEmailSettingsDto": {
         "type": "object",
@@ -12640,6 +13588,79 @@
           "codeVerifier"
         ]
       },
+      "NoteDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "pinned": {
+            "type": "boolean"
+          },
+          "createdById": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          "updatedById": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "updatedAt": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "body",
+          "pinned",
+          "createdById",
+          "updatedById",
+          "createdAt",
+          "updatedAt",
+          "version"
+        ],
+        "additionalProperties": false
+      },
+      "NoteInput": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "body": {
+            "default": "",
+            "type": "string",
+            "maxLength": 4000
+          },
+          "pinned": {
+            "default": false,
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "title"
+        ]
+      },
       "NotificationListDto": {
         "type": "object",
         "properties": {
@@ -12666,7 +13687,8 @@
                     "TASK_THANKS",
                     "EXPENSE_BUDGET",
                     "TASK_SWAP_REQUEST",
-                    "TASK_SWAP_ANSWER"
+                    "TASK_SWAP_ANSWER",
+                    "IMPORTANT_DATE"
                   ]
                 },
                 "createdAt": {
@@ -12724,6 +13746,16 @@
                   "type": "integer",
                   "minimum": -9007199254740991,
                   "maximum": 9007199254740991
+                },
+                "category": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "daysLeft": {
+                  "nullable": true,
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
                 }
               },
               "required": [
@@ -12741,7 +13773,9 @@
                 "month",
                 "level",
                 "amountCents",
-                "budgetCents"
+                "budgetCents",
+                "category",
+                "daysLeft"
               ],
               "additionalProperties": false
             }
@@ -12765,7 +13799,8 @@
               "TASK_THANKS",
               "EXPENSE_BUDGET",
               "TASK_SWAP_REQUEST",
-              "TASK_SWAP_ANSWER"
+              "TASK_SWAP_ANSWER",
+              "IMPORTANT_DATE"
             ]
           },
           "inApp": {
@@ -15532,6 +16567,31 @@
           }
         }
       },
+      "UpdateNoteInput": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "body": {
+            "type": "string",
+            "maxLength": 4000
+          },
+          "pinned": {
+            "type": "boolean"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "version"
+        ]
+      },
       "UpdateOccurrenceInput": {
         "type": "object",
         "properties": {
@@ -15981,7 +17041,8 @@
                     "TASK_THANKS",
                     "EXPENSE_BUDGET",
                     "TASK_SWAP_REQUEST",
-                    "TASK_SWAP_ANSWER"
+                    "TASK_SWAP_ANSWER",
+                    "IMPORTANT_DATE"
                   ]
                 },
                 "inApp": {

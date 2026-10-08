@@ -168,6 +168,8 @@ export const ExpenseSummaryDto = z.object({
   byCategory: z.array(z.object({ category: ExpenseCategory, amountCents: z.number().int() })),
   /** Budget mensuel des dépenses communes (null = pas de budget). */
   budgetCents: z.number().int().nullable(),
+  /** Budgets mensuels par catégorie (dépenses communes), en plus du budget global. */
+  categoryBudgets: z.array(z.object({ category: ExpenseCategory, budgetCents: z.number().int() })),
 });
 export type ExpenseSummaryDto = z.infer<typeof ExpenseSummaryDto>;
 
@@ -225,6 +227,15 @@ export const RECEIPT_TYPES = [
 /** Budget mensuel des dépenses communes : une alerte part à 80 % et à 100 %. null = aucun. */
 export const ExpenseBudgetInput = z.object({ budgetCents: Cents.nullable() });
 export type ExpenseBudgetInput = z.infer<typeof ExpenseBudgetInput>;
+
+/** Budgets par catégorie (remplacent les précédents) : alerte à 80 % et à 100 % de chacun. */
+export const ExpenseCategoryBudgetsInput = z.object({
+  budgets: z
+    .array(z.object({ category: ExpenseCategory, budgetCents: Cents }))
+    .max(ExpenseCategory.options.length)
+    .refine((b) => new Set(b.map((x) => x.category)).size === b.length, 'Duplicate category'),
+});
+export type ExpenseCategoryBudgetsInput = z.infer<typeof ExpenseCategoryBudgetsInput>;
 
 /** Évolution sur plusieurs mois, jusqu'à `month` compris. */
 export const ExpenseStatsQuery = z.object({

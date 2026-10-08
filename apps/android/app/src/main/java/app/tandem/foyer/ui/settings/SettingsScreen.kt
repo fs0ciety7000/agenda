@@ -68,10 +68,14 @@ fun SettingsScreen(
     onOpenHistory: () -> Unit = {},
     onOpenAbsences: () -> Unit = {},
     onOpenExpenses: () -> Unit = {},
+    onOpenNotes: () -> Unit = {},
+    onOpenDates: () -> Unit = {},
     onOpenReport: () -> Unit = {},
     /** Langue de l'app : "" (téléphone), "fr", "en" ou "nl". */
     language: String = "",
     onLanguage: (String) -> Unit = {},
+    /** Compte : appareils connectés (liste en ligne). */
+    devices: @Composable () -> Unit = {},
 ) {
     var confirmSignOut by remember { mutableStateOf(false) }
     Column(
@@ -90,6 +94,24 @@ fun SettingsScreen(
         OutlinedCard(onClick = onOpenExpenses, modifier = Modifier.fillMaxWidth()) {
             Text(
                 stringResource(R.string.expenses_settings_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp),
+            )
+        }
+
+        SectionHeader(stringResource(R.string.notes_title))
+        OutlinedCard(onClick = onOpenNotes, modifier = Modifier.fillMaxWidth()) {
+            Text(
+                stringResource(R.string.notes_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp),
+            )
+        }
+
+        SectionHeader(stringResource(R.string.dates_title))
+        OutlinedCard(onClick = onOpenDates, modifier = Modifier.fillMaxWidth()) {
+            Text(
+                stringResource(R.string.dates_hint),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(16.dp),
             )
@@ -289,6 +311,9 @@ fun SettingsScreen(
                     Text(stringResource(R.string.sign_out), color = MaterialTheme.colorScheme.error)
                 }
             }
+        }
+        OutlinedCard(Modifier.fillMaxWidth().padding(top = 12.dp)) {
+            Column(Modifier.padding(16.dp)) { devices() }
         }
         Text(
             stringResource(R.string.version, version),

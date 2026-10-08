@@ -27,6 +27,11 @@ data class NotificationDto(
     val level: Int? = null,
     val amountCents: Long? = null,
     val budgetCents: Long? = null,
+    /** EXPENSE_BUDGET : catégorie du budget atteint (null = budget global). */
+    val category: String? = null,
+    /** IMPORTANT_DATE : jours restants (0 = aujourd'hui), avec le titre et la date de l'occurrence. */
+    val daysLeft: Int? = null,
+    val date: String? = null,
 )
 
 @Serializable
@@ -265,6 +270,60 @@ data class AbsenceDto(val id: String, val memberId: String, val startDate: Strin
 @Serializable
 data class CreateAbsenceBody(val memberId: String, val startDate: String, val endDate: String)
 
+/** Date importante du foyer (cf. packages/contracts/src/important-dates.ts). */
+@Serializable
+data class ImportantDateDto(
+    val id: String,
+    val title: String,
+    val kind: String = "OTHER",
+    val month: Int,
+    val day: Int,
+    val year: Int? = null,
+    val repeatsYearly: Boolean = true,
+    val remindDaysBefore: Int = 7,
+    val nextDate: String? = null,
+    val daysLeft: Int? = null,
+    val years: Int? = null,
+)
+
+/** Sans `year` (omis quand null) : l'API l'enregistre comme « pas d'année ». */
+@Serializable
+data class ImportantDateBody(
+    val title: String,
+    val kind: String,
+    val month: Int,
+    val day: Int,
+    val year: Int?,
+    val repeatsYearly: Boolean,
+    val remindDaysBefore: Int,
+)
+
+/** Note partagée du foyer (cf. packages/contracts/src/notes.ts). */
+@Serializable
+data class NoteDto(
+    val id: String,
+    val title: String,
+    val body: String = "",
+    val pinned: Boolean = false,
+    val createdById: String? = null,
+    val updatedById: String? = null,
+    val createdAt: String,
+    val updatedAt: String,
+    val version: Int,
+)
+
+@Serializable
+data class NoteBody(val title: String, val body: String, val pinned: Boolean)
+
+/** Champs absents = inchangés (`explicitNulls = false`). */
+@Serializable
+data class UpdateNoteBody(
+    val title: String? = null,
+    val body: String? = null,
+    val pinned: Boolean? = null,
+    val version: Int,
+)
+
 /** Commentaire sur une tâche (cf. packages/contracts/src/comments.ts). */
 @Serializable
 data class CommentDto(val id: String, val authorId: String? = null, val body: String, val createdAt: String)
@@ -418,7 +477,12 @@ data class ExpenseSummaryDto(
     val byCategory: List<ExpenseCategoryTotalDto> = emptyList(),
     /** Budget mensuel des dépenses communes (null = aucun). */
     val budgetCents: Long? = null,
+    /** Budgets par catégorie (réglés sur le site). */
+    val categoryBudgets: List<ExpenseCategoryBudgetDto> = emptyList(),
 )
+
+@Serializable
+data class ExpenseCategoryBudgetDto(val category: String, val budgetCents: Long)
 
 /** Un mois de l'évolution : dépenses communes, les miennes, par catégorie. */
 @Serializable
@@ -455,3 +519,17 @@ data class SwapListDto(val incoming: List<SwapDto> = emptyList(), val outgoing: 
 
 @Serializable
 data class SwapRequestBody(val toMemberId: String, val note: String? = null)
+
+/** Connexion active du compte (cf. packages/contracts/src/sessions.ts). */
+@Serializable
+data class DeviceSessionDto(
+    val id: String,
+    /** ANDROID_APP, BROWSER ou OTHER. */
+    val kind: String = "OTHER",
+    val browser: String? = null,
+    val os: String? = null,
+    val appVersion: String? = null,
+    val createdAt: String,
+    val lastUsedAt: String,
+    val current: Boolean = false,
+)

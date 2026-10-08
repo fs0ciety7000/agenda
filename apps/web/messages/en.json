@@ -17,7 +17,9 @@
     "shopping": "Shopping",
     "meals": "Meals",
     "expenses": "Expenses",
-    "more": "More"
+    "more": "More",
+    "notes": "Notes",
+    "dates": "Dates"
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -547,7 +549,7 @@
     },
     "data": {
       "title": "Data processed",
-      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, sub-tasks, comments, turn-swap requests (with any note), declared absences, activity history (who did what, when).\nExpenses (if you use them): amount, date, label, category, comment, who paid and each person's share. A personal expense is visible to you only. An attached receipt (photo or PDF) is kept with the expense and deleted with it.\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; their attachments are added to the task.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it.\nReports (if you send any): the type, title and text of your message, a screenshot if you attach one, whether you agree to be contacted and, only if you tick the box, technical information shown before sending (browser or phone model, system, app version, language, time zone, screen size, open page). Never the content of your tasks. Only the app's administrators read them.\nBrowser notifications (if you turn them on): the subscription address provided by your browser, deleted when you turn them off or sign out."
+      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list, shared notes (title, content, who wrote them), important dates (title, day, month and optional year; they may concern relatives, such as a birthday).\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, sub-tasks, comments, turn-swap requests (with any note), declared absences, activity history (who did what, when).\nExpenses (if you use them): amount, date, label, category, comment, who paid and each person's share. A personal expense is visible to you only. An attached receipt (photo or PDF) is kept with the expense and deleted with it.\nSessions: device (browser and system, or Android app version), sign-in date and last activity, shown in “Signed-in devices” so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; their attachments are added to the task.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it.\nReports (if you send any): the type, title and text of your message, a screenshot if you attach one, whether you agree to be contacted and, only if you tick the box, technical information shown before sending (browser or phone model, system, app version, language, time zone, screen size, open page). Never the content of your tasks. Only the app's administrators read them.\nBrowser notifications (if you turn them on): the subscription address provided by your browser, deleted when you turn them off or sign out."
     },
     "google": {
       "title": "Google data",
@@ -602,7 +604,10 @@
     "swapRequest": "{by} asks you to take “{title}”",
     "swapAccepted": "{by} is taking “{title}” for you",
     "swapDeclined": "{by} can’t take “{title}”",
-    "swapDeleted": "Turn swap for a task deleted since"
+    "swapDeleted": "Turn swap for a task deleted since",
+    "importantDate": "{title}: {days, plural, =0 {today} =1 {tomorrow} other {in # days}}",
+    "importantDateDeleted": "Reminder for a date deleted since",
+    "budgetCategory": "{category} · {month}: {level}% reached ({amount} of {budget})"
   },
   "notificationSettings": {
     "title": "Notification preferences",
@@ -616,7 +621,8 @@
       "TASK_THANKS": "Someone thanks me for a task I did",
       "EXPENSE_BUDGET": "The month's shared budget reaches 80% or 100%",
       "TASK_SWAP_REQUEST": "Someone asks me to take their task",
-      "TASK_SWAP_ANSWER": "An answer to my swap request"
+      "TASK_SWAP_ANSWER": "An answer to my swap request",
+      "IMPORTANT_DATE": "An important date is coming up"
     },
     "status": {
       "title": "Instant phone notifications: not active yet",
@@ -1241,6 +1247,14 @@
     "settings": {
       "title": "Settings",
       "hint": "Household, account, notifications, language"
+    },
+    "notes": {
+      "title": "Notes",
+      "hint": "Wi-Fi codes, measurements, gift ideas"
+    },
+    "dates": {
+      "title": "Important dates",
+      "hint": "Birthdays, anniversaries, yearly servicing"
     }
   },
   "expenses": {
@@ -1348,7 +1362,14 @@
     "budgetRemove": "Remove the budget",
     "trendTitle": "Over {count} months",
     "trendHint": "Shared expenses, month by month",
-    "trendBudget": "Marker: {budget} budget"
+    "trendBudget": "Marker: {budget} budget",
+    "categoryBudgetsTitle": "Budgets by category",
+    "categoryBudgetsHint": "A monthly amount for a category’s shared expenses, on top of the overall budget. You’re both notified at 80% and 100%. Leave empty for no budget.",
+    "categoryBudgetsEdit": "Budgets by category",
+    "categoryBudgetsSet": "Set a budget by category",
+    "categoryBudgetMeter": "{category} budget",
+    "categoryBudgetNone": "None",
+    "categoryBudgetLine": "{spent} of {budget}"
   },
   "swaps": {
     "title": "Turn swaps",
@@ -1367,5 +1388,87 @@
     "send": "Send request",
     "sent": "Request sent to {name}.",
     "waiting": "Request sent to {name}, waiting for an answer."
+  },
+  "notes": {
+    "title": "Notes",
+    "new": "New note",
+    "edit": "Edit note",
+    "editOne": "Edit “{title}”",
+    "add": "Add",
+    "save": "Save",
+    "delete": "Delete",
+    "close": "Close",
+    "undo": "Undo",
+    "fieldTitle": "Title",
+    "fieldBody": "Content",
+    "fieldPinned": "Pin to the top",
+    "titlePlaceholder": "Wi-Fi code",
+    "bodyPlaceholder": "Network: Home\nPassword: …",
+    "emptyTitle": "No notes yet.",
+    "emptyBody": "Wi-Fi codes, measurements, gift ideas: everything you keep asking each other, in one place.",
+    "created": "Note added",
+    "saved": "Note saved",
+    "deleted": "“{title}” deleted",
+    "copied": "“{title}” copied",
+    "copyFailed": "Couldn’t copy. Select the text by hand.",
+    "pin": "Pin “{title}”",
+    "unpin": "Unpin “{title}”",
+    "pinned": "Pinned",
+    "copy": "Copy “{title}”",
+    "updated": "Edited on {date} by {name}",
+    "someone": "a former member",
+    "offline": "Offline: you can read notes, and edit them once you’re back online.",
+    "conflict": "This note was changed in the meantime. Here is the latest version: check it, then save again."
+  },
+  "importantDates": {
+    "title": "Important dates",
+    "intro": "Birthdays, anniversaries, yearly servicing: Tandem reminds you both ahead of time.",
+    "new": "New date",
+    "edit": "Edit date",
+    "add": "Add",
+    "save": "Save",
+    "delete": "Delete",
+    "close": "Close",
+    "fieldTitle": "Title",
+    "titlePlaceholder": "Granny’s birthday",
+    "fieldKind": "Type",
+    "fieldDay": "Day",
+    "fieldMonth": "Month",
+    "fieldYear": "Year",
+    "fieldYearOptional": "Year (optional)",
+    "yearHint": "To show the age or number of years.",
+    "yearRequired": "Enter the year for a date that doesn’t repeat.",
+    "fieldRepeats": "Every year",
+    "fieldReminder": "Reminder",
+    "kind": {
+      "BIRTHDAY": "Birthday",
+      "ANNIVERSARY": "Anniversary (wedding, first date…)",
+      "MAINTENANCE": "Servicing (boiler, car…)",
+      "OTHER": "Other"
+    },
+    "remind": "{days, plural, =0 {On the day} =1 {The day before} other {# days before}}",
+    "remindShort": "{days, plural, =0 {on the day} other {# days before}}",
+    "when": "{days, plural, =0 {today} =1 {tomorrow} other {in # days}}",
+    "years": "{years, plural, one {# year} other {# years}}",
+    "past": "Past",
+    "emptyTitle": "No dates yet.",
+    "emptyBody": "Add the birthdays and servicing you mustn’t forget: you’ll both be reminded ahead of time.",
+    "created": "Date added",
+    "saved": "Date saved",
+    "deleted": "“{title}” deleted",
+    "offline": "Offline: you can read dates, and edit them once you’re back online.",
+    "soon": "Coming up",
+    "seeAll": "All dates"
+  },
+  "devices": {
+    "title": "Signed-in devices",
+    "hint": "Where your account is open. A lost or shared device? Sign it out from here.",
+    "androidApp": "Android app",
+    "unknown": "Unknown browser",
+    "current": "This device",
+    "activity": "Active {last} · signed in {since}",
+    "revoke": "Sign out",
+    "revokeOne": "Sign out {device}",
+    "revoked": "{device} is signed out."
   }
 }

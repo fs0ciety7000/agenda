@@ -2,11 +2,13 @@
 
 import {
   BarChart3,
+  Cake,
   CalendarDays,
   ListChecks,
   Menu,
   Settings,
   ShoppingCart,
+  StickyNote,
   Sun,
   type LucideIcon,
   UtensilsCrossed,
@@ -33,6 +35,8 @@ type NavKey =
   | 'expenses'
   | 'calendar'
   | 'stats'
+  | 'notes'
+  | 'dates'
   | 'settings'
   | 'more';
 /**
@@ -45,6 +49,8 @@ const NAV: { href: string; key: NavKey; icon: LucideIcon; mobile?: false; deskto
   { href: '/shopping', key: 'shopping', icon: ShoppingCart },
   { href: '/meals', key: 'meals', icon: UtensilsCrossed, mobile: false },
   { href: '/expenses', key: 'expenses', icon: Wallet, mobile: false },
+  { href: '/notes', key: 'notes', icon: StickyNote, mobile: false },
+  { href: '/dates', key: 'dates', icon: Cake, mobile: false },
   { href: '/calendar', key: 'calendar', icon: CalendarDays },
   { href: '/stats', key: 'stats', icon: BarChart3, mobile: false },
   { href: '/settings', key: 'settings', icon: Settings, mobile: false },
@@ -52,7 +58,15 @@ const NAV: { href: string; key: NavKey; icon: LucideIcon; mobile?: false; deskto
 ];
 
 /** Pages accessibles depuis « Plus » sur mobile (onglet actif quand on y est). */
-export const MORE_PAGES = ['/expenses', '/meals', '/stats', '/review', '/settings', '/history'];
+export const MORE_PAGES = [
+  '/expenses',
+  '/notes',
+  '/meals',
+  '/stats',
+  '/review',
+  '/settings',
+  '/history',
+];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const t = useTranslations();

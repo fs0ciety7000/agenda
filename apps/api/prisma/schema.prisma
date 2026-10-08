@@ -163,6 +163,9 @@ model Household {
   expenses          Expense[]
   recurringExpenses RecurringExpense[]
   swapRequests      SwapRequest[]
+  notes             Note[]
+  importantDates    ImportantDate[]
+  categoryBudgets   ExpenseCategoryBudget[]
 }
 
 enum HouseholdRole {
@@ -520,6 +523,66 @@ model ShoppingItem {
   @@index([householdId, done])
 }
 
+enum ImportantDateKind {
+  BIRTHDAY
+  ANNIVERSARY
+  MAINTENANCE
+  OTHER
+}
+
+/// Date importante du foyer (anniversaire, fête, entretien annuel), rappelée N jours avant.
+model ImportantDate {
+  id               String            @id @default(uuid()) @db.Uuid
+  householdId      String            @db.Uuid
+  title            String            @db.VarChar(120)
+  kind             ImportantDateKind @default(OTHER)
+  month            Int
+  day              Int
+  /// Année d'origine (naissance, mariage) ; obligatoire pour une date unique.
+  year             Int?
+  repeatsYearly    Boolean           @default(true)
+  remindDaysBefore Int               @default(7)
+  /// Occurrence pour laquelle le rappel est déjà parti (évite les doublons).
+  remindedFor      DateTime?         @db.Date
+  createdById      String?           @db.Uuid
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@index([householdId])
+}
+
+/// Budget mensuel d'une catégorie de dépenses communes (en plus du budget global du foyer).
+model ExpenseCategoryBudget {
+  householdId String          @db.Uuid
+  category    ExpenseCategory
+  budgetCents Int
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@id([householdId, category])
+}
+
+/// Note partagée du foyer (codes, mesures, idées cadeaux). Modifiable par chaque membre.
+model Note {
+  id          String   @id @default(uuid()) @db.Uuid
+  householdId String   @db.Uuid
+  title       String   @db.VarChar(120)
+  body        String   @default("") @db.VarChar(4000)
+  pinned      Boolean  @default(false)
+  /// Membres (jamais supprimés physiquement : anonymisés), sans clé étrangère.
+  createdById String?  @db.Uuid
+  updatedById String?  @db.Uuid
+  version     Int      @default(1)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@index([householdId, pinned])
+}
+
 enum MealSlot {
   LUNCH
   DINNER
@@ -723,6 +786,8 @@ enum NotificationType {
   /// « Nicolas te demande de prendre … » (échange de tour) ; et la réponse.
   TASK_SWAP_REQUEST
   TASK_SWAP_ANSWER
+  /// Date importante qui approche (rappel N jours avant).
+  IMPORTANT_DATE
 }
 
 model Notification {

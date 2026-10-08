@@ -18,3 +18,6 @@ export * from './reports';
 export * from './meals';
 export * from './expenses';
 export * from './swaps';
+export * from './notes';
+export * from './important-dates';
+export * from './sessions';

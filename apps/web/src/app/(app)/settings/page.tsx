@@ -17,6 +17,7 @@ import { LanguageSwitcher } from '@/components/app/language-switcher';
 import { AndroidAppCard } from '@/components/app/android-app-card';
 import { NotificationSettings } from '@/components/app/notification-settings';
 import { PasskeySettings } from '@/components/app/passkeys';
+import { DeviceSessions } from '@/components/app/device-sessions';
 import { PasswordSettings } from '@/components/app/password-settings';
 import { PrivacySettings } from '@/components/app/privacy-settings';
 import { MemberAvatar } from '@/components/app/member-avatar';
@@ -193,6 +194,9 @@ export default function SettingsPage() {
         <Card className="flex flex-col gap-4">
           <PasswordSettings />
           <PasskeySettings />
+        </Card>
+        <Card className="flex flex-col gap-4">
+          <DeviceSessions />
         </Card>
         <AndroidAppCard />
         <div className="flex flex-col gap-2 sm:flex-row">

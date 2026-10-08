@@ -83,6 +83,11 @@ class ActivityNotifier(
                 n.title ?: "",
             )
             "EXPENSE_BUDGET" -> budgetText(n)
+            "IMPORTANT_DATE" -> when (val d = n.daysLeft ?: 0) {
+                0 -> context.getString(R.string.activity_date_today, n.title ?: "")
+                1 -> context.getString(R.string.activity_date_tomorrow, n.title ?: "")
+                else -> context.resources.getQuantityString(R.plurals.activity_date_in, d, n.title ?: "", d)
+            }
             else -> context.getString(R.string.activity_calendar_failed)
         }
         val open = PendingIntent.getActivity(
@@ -111,6 +116,16 @@ class ActivityNotifier(
         val month = runCatching {
             YearMonth.parse(n.month).month.getDisplayName(TextStyle.FULL_STANDALONE, locale)
         }.getOrDefault(n.month.orEmpty())
+        n.category?.let { cat ->
+            return context.getString(
+                R.string.activity_budget_category,
+                context.getString(Money.categoryRes(cat)),
+                month,
+                n.level ?: 80,
+                Money.format(n.amountCents ?: 0, locale),
+                Money.format(n.budgetCents ?: 0, locale),
+            )
+        }
         return context.getString(
             R.string.activity_budget,
             month,

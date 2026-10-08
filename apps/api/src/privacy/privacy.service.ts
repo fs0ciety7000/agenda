@@ -49,121 +49,152 @@ export class PrivacyService {
       },
     });
     const memberIds = user.memberships.map((m) => m.id);
-    const [createdTasks, assigned, shopping, attachments, comments, reports, expenses, swaps] =
-      await Promise.all([
-        this.prisma.task.findMany({
-          where: { createdById: { in: memberIds }, deletedAt: null },
-          include: {
-            category: { select: { name: true } },
-            series: {
-              select: {
-                rule: true,
-                startDate: true,
-                untilDate: true,
-                startMinute: true,
-                durationMinutes: true,
-              },
+    const [
+      createdTasks,
+      assigned,
+      shopping,
+      attachments,
+      comments,
+      reports,
+      expenses,
+      swaps,
+      notes,
+      dates,
+    ] = await Promise.all([
+      this.prisma.task.findMany({
+        where: { createdById: { in: memberIds }, deletedAt: null },
+        include: {
+          category: { select: { name: true } },
+          series: {
+            select: {
+              rule: true,
+              startDate: true,
+              untilDate: true,
+              startMinute: true,
+              durationMinutes: true,
             },
-            occurrences: {
-              select: {
-                date: true,
-                startMinute: true,
-                durationMinutes: true,
-                status: true,
-                completedAt: true,
-                checklist: { select: { text: true, done: true }, orderBy: { position: 'asc' } },
-              },
+          },
+          occurrences: {
+            select: {
+              date: true,
+              startMinute: true,
+              durationMinutes: true,
+              status: true,
+              completedAt: true,
+              checklist: { select: { text: true, done: true }, orderBy: { position: 'asc' } },
             },
           },
-          orderBy: { createdAt: 'asc' },
-        }),
-        this.prisma.taskOccurrence.findMany({
-          where: {
-            assignees: { some: { memberId: { in: memberIds } } },
-            task: { deletedAt: null },
-          },
-          select: {
-            date: true,
-            status: true,
-            completedAt: true,
-            task: { select: { title: true } },
-          },
-          orderBy: { date: 'asc' },
-        }),
-        this.prisma.shoppingItem.findMany({
-          where: { createdById: { in: memberIds } },
-          select: { text: true, done: true, createdAt: true, doneAt: true },
-          orderBy: { createdAt: 'asc' },
-        }),
-        // Fichiers joints : la liste (le contenu se télécharge depuis chaque tâche).
-        this.prisma.taskAttachment.findMany({
-          where: { createdById: { in: memberIds } },
-          select: {
-            filename: true,
-            contentType: true,
-            size: true,
-            createdAt: true,
-            task: { select: { title: true } },
-          },
-          orderBy: { createdAt: 'asc' },
-        }),
-        this.prisma.taskComment.findMany({
-          where: { authorId: { in: memberIds } },
-          select: { body: true, createdAt: true, task: { select: { title: true } } },
-          orderBy: { createdAt: 'asc' },
-        }),
-        this.prisma.report.findMany({
-          where: { userId },
-          select: {
-            kind: true,
-            status: true,
-            title: true,
-            description: true,
-            allowContact: true,
-            diagnostics: true,
-            screenshotType: true,
-            reply: true,
-            repliedAt: true,
-            createdAt: true,
-          },
-          orderBy: { createdAt: 'asc' },
-        }),
-        // Dépenses payées et parts de chacun, remboursements compris.
-        this.prisma.expense.findMany({
-          where: {
-            OR: [
-              { paidById: { in: memberIds } },
-              { shares: { some: { memberId: { in: memberIds } } } },
-            ],
-          },
-          select: {
-            kind: true,
-            date: true,
-            title: true,
-            amountCents: true,
-            category: true,
-            split: true,
-            note: true,
-            paidById: true,
-            shares: { where: { memberId: { in: memberIds } }, select: { amountCents: true } },
-            receipt: { select: { filename: true, size: true } },
-          },
-          orderBy: { date: 'asc' },
-        }),
-        // Échanges de tour demandés ou reçus (avec le mot laissé).
-        this.prisma.swapRequest.findMany({
-          where: { OR: [{ fromMemberId: { in: memberIds } }, { toMemberId: { in: memberIds } }] },
-          select: {
-            fromMemberId: true,
-            status: true,
-            note: true,
-            createdAt: true,
-            answeredAt: true,
-            occurrence: { select: { task: { select: { title: true } } } },
-          },
-          orderBy: { createdAt: 'asc' },
-        }),
-      ]);
+        },
+        orderBy: { createdAt: 'asc' },
+      }),
+      this.prisma.taskOccurrence.findMany({
+        where: {
+          assignees: { some: { memberId: { in: memberIds } } },
+          task: { deletedAt: null },
+        },
+        select: {
+          date: true,
+          status: true,
+          completedAt: true,
+          task: { select: { title: true } },
+        },
+        orderBy: { date: 'asc' },
+      }),
+      this.prisma.shoppingItem.findMany({
+        where: { createdById: { in: memberIds } },
+        select: { text: true, done: true, createdAt: true, doneAt: true },
+        orderBy: { createdAt: 'asc' },
+      }),
+      // Fichiers joints : la liste (le contenu se télécharge depuis chaque tâche).
+      this.prisma.taskAttachment.findMany({
+        where: { createdById: { in: memberIds } },
+        select: {
+          filename: true,
+          contentType: true,
+          size: true,
+          createdAt: true,
+          task: { select: { title: true } },
+        },
+        orderBy: { createdAt: 'asc' },
+      }),
+      this.prisma.taskComment.findMany({
+        where: { authorId: { in: memberIds } },
+        select: { body: true, createdAt: true, task: { select: { title: true } } },
+        orderBy: { createdAt: 'asc' },
+      }),
+      this.prisma.report.findMany({
+        where: { userId },
+        select: {
+          kind: true,
+          status: true,
+          title: true,
+          description: true,
+          allowContact: true,
+          diagnostics: true,
+          screenshotType: true,
+          reply: true,
+          repliedAt: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: 'asc' },
+      }),
+      // Dépenses payées et parts de chacun, remboursements compris.
+      this.prisma.expense.findMany({
+        where: {
+          OR: [
+            { paidById: { in: memberIds } },
+            { shares: { some: { memberId: { in: memberIds } } } },
+          ],
+        },
+        select: {
+          kind: true,
+          date: true,
+          title: true,
+          amountCents: true,
+          category: true,
+          split: true,
+          note: true,
+          paidById: true,
+          shares: { where: { memberId: { in: memberIds } }, select: { amountCents: true } },
+          receipt: { select: { filename: true, size: true } },
+        },
+        orderBy: { date: 'asc' },
+      }),
+      // Échanges de tour demandés ou reçus (avec le mot laissé).
+      this.prisma.swapRequest.findMany({
+        where: { OR: [{ fromMemberId: { in: memberIds } }, { toMemberId: { in: memberIds } }] },
+        select: {
+          fromMemberId: true,
+          status: true,
+          note: true,
+          createdAt: true,
+          answeredAt: true,
+          occurrence: { select: { task: { select: { title: true } } } },
+        },
+        orderBy: { createdAt: 'asc' },
+      }),
+      // Notes partagées écrites par la personne (elles restent au foyer après suppression).
+      this.prisma.note.findMany({
+        where: { createdById: { in: memberIds } },
+        select: { title: true, body: true, pinned: true, createdAt: true, updatedAt: true },
+        orderBy: { createdAt: 'asc' },
+      }),
+      // Dates importantes ajoutées par la personne (anniversaires d'autres personnes compris).
+      this.prisma.importantDate.findMany({
+        where: { createdById: { in: memberIds } },
+        select: {
+          title: true,
+          kind: true,
+          month: true,
+          day: true,
+          year: true,
+          repeatsYearly: true,
+          remindDaysBefore: true,
+          createdAt: true,
+        },
+        orderBy: { createdAt: 'asc' },
+      }),
+    ]);
     return {
       format: 'tandem-export/1',
       exportedAt: new Date().toISOString(),
@@ -234,6 +265,8 @@ export class PrivacyService {
         createdAt: w.createdAt,
         answeredAt: w.answeredAt,
       })),
+      notesCreated: notes,
+      importantDatesCreated: dates,
       reports: reports.map(({ screenshotType, ...r }) => ({
         ...r,
         screenshot: screenshotType !== null,

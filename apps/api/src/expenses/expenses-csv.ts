@@ -94,6 +94,10 @@ const TEXT: Record<
   },
 };
 
+/** Nom d'une catégorie dans la langue de la personne (« Courses », « Groceries »…). */
+export const categoryLabel = (locale: Locale, category: ExpenseCategory): string =>
+  TEXT[locale].categories[category];
+
 /**
  * Cellule CSV : entre guillemets si besoin. Un texte qui commence par = + - @ (ou une
  * tabulation) est préfixé d'une apostrophe : le tableur ne l'exécute pas comme une formule.

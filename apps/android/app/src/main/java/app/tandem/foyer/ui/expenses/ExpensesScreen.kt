@@ -369,6 +369,7 @@ fun ExpensesScreen(
                             )
                             AmountLine(stringResource(R.string.expenses_common), money(s.commonCents))
                             BudgetMeter(s.commonCents, s.budgetCents, money, enabled = !state.offline) { budgetOpen = true }
+                            CategoryBudgets(s, money)
                             s.members.forEach { m ->
                                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                                     members.firstOrNull { it.id == m.memberId }?.let { MemberAvatar(it, 28) }
@@ -541,6 +542,44 @@ private fun BudgetMeter(spentCents: Long, budgetCents: Long?, money: (Long) -> S
             },
             style = MaterialTheme.typography.bodySmall,
             color = if (level == 100) color else MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+/** Budgets par catégorie : une jauge chacun (dépenses communes du mois) ; réglés sur le site. */
+@Composable
+private fun CategoryBudgets(s: ExpenseSummaryDto, money: (Long) -> String) {
+    if (s.categoryBudgets.isEmpty()) return
+    val warning = if (isSystemInDarkTheme()) Tokens.Dark.warning else Tokens.Light.warning
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        s.categoryBudgets.forEach { b ->
+            val used = s.byCategory.firstOrNull { it.category == b.category }?.amountCents ?: 0L
+            val level = Money.budgetLevel(used, b.budgetCents)
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        "${Money.CATEGORY_EMOJI[b.category] ?: "📦"} ${categoryLabel(b.category)}",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Text(
+                        stringResource(R.string.expenses_category_budget_line, money(used), money(b.budgetCents)),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = if (level == 100) warning else MaterialTheme.colorScheme.onSurface,
+                    )
+                }
+                LinearProgressIndicator(
+                    progress = { (used.toFloat() / b.budgetCents).coerceIn(0f, 1f) },
+                    color = if (level == 100) warning else MaterialTheme.colorScheme.primary,
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                    modifier = Modifier.fillMaxWidth().height(6.dp).clip(RoundedCornerShape(3.dp)),
+                )
+            }
+        }
+        Text(
+            stringResource(R.string.expenses_category_budgets_web),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
@@ -723,19 +762,7 @@ private fun ExpenseRow(e: ExpenseDto, name: (String?) -> String, money: (Long) -
 }
 
 @Composable
-private fun categoryLabel(category: String): String = stringResource(
-    when (category) {
-        "GROCERIES" -> R.string.expense_cat_groceries
-        "HOUSING" -> R.string.expense_cat_housing
-        "UTILITIES" -> R.string.expense_cat_utilities
-        "TRANSPORT" -> R.string.expense_cat_transport
-        "LEISURE" -> R.string.expense_cat_leisure
-        "HEALTH" -> R.string.expense_cat_health
-        "KIDS" -> R.string.expense_cat_kids
-        "GIFTS" -> R.string.expense_cat_gifts
-        else -> R.string.expense_cat_other
-    },
-)
+private fun categoryLabel(category: String): String = stringResource(Money.categoryRes(category))
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable

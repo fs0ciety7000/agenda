@@ -73,6 +73,16 @@ mois en cours atteignent **80 %** puis **100 %** du budget, le reste du foyer re
 notification (une seule par seuil et par mois ; jamais pour la dépense qu'on vient soi-même
 d'enregistrer). **Budget → Enlever le budget** le supprime.
 
+## Budget par catégorie
+
+En plus du budget global, chaque catégorie peut avoir son propre budget mensuel : **Fixer un
+budget par catégorie** (sous la jauge du budget), un montant par catégorie, vide pour aucune.
+Une jauge par catégorie apparaît dans **Ce mois-ci** (« 86,40 € sur 400,00 € »), en couleur
+d'alerte et en texte une fois dépassée. Vous êtes prévenus tous les deux à **80 %** et à
+**100 %** de chaque budget, une fois par seuil et par mois (« Courses · octobre : 80 %
+atteint »). Seules les dépenses communes comptent. Sur Android, les jauges s'affichent ; les
+montants se règlent sur le site.
+
 ## Sur 6 mois
 
 Sous les totaux, **Sur 6 mois** montre les dépenses communes des six derniers mois (jusqu'au

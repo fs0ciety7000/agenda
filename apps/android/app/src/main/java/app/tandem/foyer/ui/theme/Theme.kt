@@ -13,6 +13,9 @@ import androidx.compose.ui.graphics.compositeOver
 internal val LightColors = lightColorScheme(
     primary = Tokens.Light.accent,
     onPrimary = Tokens.Light.accentFg,
+    // Boutons flottants (« + », « Nouvelle note ») : l'accent, pas le violet Material par défaut.
+    primaryContainer = Tokens.Light.accent,
+    onPrimaryContainer = Tokens.Light.accentFg,
     background = Tokens.Light.bg,
     onBackground = Tokens.Light.text,
     surface = Tokens.Light.surface,
@@ -32,6 +35,9 @@ internal val LightColors = lightColorScheme(
 internal val DarkColors = darkColorScheme(
     primary = Tokens.Dark.accent,
     onPrimary = Tokens.Dark.accentFg,
+    // Boutons flottants (« + », « Nouvelle note ») : l'accent, pas le violet Material par défaut.
+    primaryContainer = Tokens.Dark.accent,
+    onPrimaryContainer = Tokens.Dark.accentFg,
     background = Tokens.Dark.bg,
     onBackground = Tokens.Dark.text,
     surface = Tokens.Dark.surface,

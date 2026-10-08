@@ -90,20 +90,25 @@ Courses et repas :
 Dépenses :
 
 - [ ] **Saisie du ticket par photo** (lecture du montant et de la date) (L)
-- [ ] **Budget par catégorie** en plus du budget global (M)
+- [x] **Budget par catégorie** en plus du budget global (M) ⚙️🌐🤖 (#89)
+  - [ ] Android : régler les budgets par catégorie dans l'app (le site seulement pour l'instant) (S) 🤖
 - [ ] **Rapprochement mensuel** : « ce mois-ci, chacun a payé… », envoyé le 1er (S)
 
 Vie à deux :
 
-- [ ] **Notes partagées** (codes Wi-Fi, mesures, idées cadeaux) : petits mémos épinglés (M)
-- [ ] **Dates importantes** (anniversaires, entretiens annuels) avec rappel à l'avance (M)
+- [x] **Notes partagées** (codes Wi-Fi, mesures, idées cadeaux) : petits mémos épinglés (M) ⚙️🌐🤖 (#89)
+  - [ ] Android : « Annuler » après la suppression d'une note (le site l'a déjà) (S) 🤖
+  - [ ] Android : icônes punaise et copier (absentes de `material-icons-core` ; étoile et bouton texte en attendant) (S) 🤖
+- [x] **Dates importantes** (anniversaires, entretiens annuels) avec rappel à l'avance (M) ⚙️🌐🤖 (#89)
 - [ ] **Widget Android « Dépenses »** : solde et ajout rapide (M) 🤖
 
 Fiabilité et sécurité :
 
-- [ ] **Journal des connexions** (appareils, dernière activité, déconnexion à distance) (M)
+- [x] **Journal des connexions** (appareils, dernière activité, déconnexion à distance) (M) ⚙️🌐🤖 (#89)
 - [ ] **Sauvegarde exportable** du foyer (JSON) et restauration sur une autre instance (M)
 - [ ] **Budget de performance en CI** (Lighthouse ≥ 90 sur `/login` et `/`) (S)
+- [x] **Avertissement Google Play (0.3.58)** : `androidx.fragment` 1.1.0, tiré par Firebase Messaging, signalé obsolète ; forcé en 1.8.9 (S) 🤖 (#89)
+- [ ] **Avertissements Google Play bord à bord (0.3.58)** : l'app appelle déjà `enableEdgeToEdge()` et gère les encarts ; identifier, dans le détail de l'avertissement de la Play Console, les classes qui utilisent les API obsolètes d'Android 15 (probablement le code de compatibilité d'`androidx.activity`), puis les remplacer ou mettre la bibliothèque à jour (S) 🤖
 
 ### Propositions de design
 

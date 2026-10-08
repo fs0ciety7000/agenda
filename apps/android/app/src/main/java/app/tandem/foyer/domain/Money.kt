@@ -1,11 +1,25 @@
 package app.tandem.foyer.domain
 
+import app.tandem.foyer.R
 import java.text.NumberFormat
 import java.util.Currency
 import java.util.Locale
 
 /** Montants en centimes entiers (comme l'API), affichés dans la langue de l'app. */
 object Money {
+    /** Nom affiché d'une catégorie de dépense (ressource traduite). */
+    fun categoryRes(category: String?): Int = when (category) {
+        "GROCERIES" -> R.string.expense_cat_groceries
+        "HOUSING" -> R.string.expense_cat_housing
+        "UTILITIES" -> R.string.expense_cat_utilities
+        "TRANSPORT" -> R.string.expense_cat_transport
+        "LEISURE" -> R.string.expense_cat_leisure
+        "HEALTH" -> R.string.expense_cat_health
+        "KIDS" -> R.string.expense_cat_kids
+        "GIFTS" -> R.string.expense_cat_gifts
+        else -> R.string.expense_cat_other
+    }
+
     /** « 12,50 », « 12.5 », « 1 234,56 € » → 1250, 1250, 123456 ; null si illisible ou ≤ 0. */
     fun parseCents(text: String): Long? {
         val cleaned = text.replace(Regex("[€\\s\\u00a0\\u202f]"), "")

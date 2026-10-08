@@ -80,6 +80,7 @@ export default function ExpensesPage() {
   const [editing, setEditing] = useState<Editing>(null);
   const [weightsOpen, setWeightsOpen] = useState(false);
   const [budgetOpen, setBudgetOpen] = useState(false);
+  const [categoryBudgetsOpen, setCategoryBudgetsOpen] = useState(false);
   const [exportOpen, setExportOpen] = useState(false);
   const stats = useExpenseStats(household.id, month);
   const recurring = useRecurringExpenses(household.id);
@@ -230,6 +231,11 @@ export default function ExpensesPage() {
             spentCents={s.commonCents}
             budgetCents={s.budgetCents}
             onEdit={() => setBudgetOpen(true)}
+          />
+          <CategoryBudgets
+            budgets={s.categoryBudgets}
+            spent={s.byCategory}
+            onEdit={() => setCategoryBudgetsOpen(true)}
           />
           <ul className="flex flex-col gap-2">
             {s.members.map((m) => {
@@ -416,6 +422,12 @@ export default function ExpensesPage() {
       )}
       {budgetOpen && s && (
         <BudgetDialog initial={s.budgetCents} onClose={() => setBudgetOpen(false)} />
+      )}
+      {s && categoryBudgetsOpen && (
+        <CategoryBudgetsDialog
+          initial={s.categoryBudgets}
+          onClose={() => setCategoryBudgetsOpen(false)}
+        />
       )}
       {exportOpen && <ExportDialog month={month} onClose={() => setExportOpen(false)} />}
       {weightsOpen && s && (
@@ -1018,6 +1030,151 @@ function BudgetDialog({ initial, onClose }: { initial: number | null; onClose: (
               </Button>
             )}
             <Button type="submit" loading={actions.budget.isPending}>
+              {t('save')}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/** Budgets par catégorie : une jauge par budget (dépenses communes du mois). */
+function CategoryBudgets({
+  budgets,
+  spent,
+  onEdit,
+}: {
+  budgets: { category: ExpenseCategory; budgetCents: number }[];
+  spent: { category: ExpenseCategory; amountCents: number }[];
+  onEdit: () => void;
+}) {
+  const t = useTranslations('expenses');
+  const money = useMoney();
+  return (
+    <div className="flex flex-col gap-2">
+      {budgets.length > 0 && (
+        <ul className="flex flex-col gap-3" aria-label={t('categoryBudgetsTitle')}>
+          {budgets.map((b) => {
+            const used = spent.find((c) => c.category === b.category)?.amountCents ?? 0;
+            const level = budgetLevel(used, b.budgetCents);
+            const percent = Math.round((used / b.budgetCents) * 100);
+            const name = t(`categories.${b.category}`);
+            return (
+              <li key={b.category} className="flex flex-col gap-1">
+                <span className="flex flex-wrap justify-between gap-x-3 text-[0.9375rem]">
+                  <span>
+                    <span aria-hidden>{CATEGORY_EMOJI[b.category]} </span>
+                    {name}
+                  </span>
+                  <span className={cn('tabular-nums', level === 100 && 'text-warning')}>
+                    {t('categoryBudgetLine', { spent: money(used), budget: money(b.budgetCents) })}
+                  </span>
+                </span>
+                <div
+                  role="meter"
+                  aria-label={t('categoryBudgetMeter', { category: name })}
+                  aria-valuemin={0}
+                  aria-valuemax={b.budgetCents}
+                  aria-valuenow={Math.min(used, b.budgetCents)}
+                  aria-valuetext={t('budgetPercent', { percent })}
+                  className="h-1.5 overflow-hidden rounded-full bg-surface-muted"
+                >
+                  <div
+                    className={cn(
+                      'h-full rounded-full',
+                      level === 100 ? 'bg-warning' : 'bg-accent',
+                    )}
+                    style={{ width: `${Math.min(100, percent)}%` }}
+                  />
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+      <button
+        type="button"
+        onClick={onEdit}
+        className="inline-flex min-h-11 items-center gap-1.5 self-start text-sm text-accent underline-offset-4 hover:underline"
+      >
+        <Target aria-hidden className="size-4" />
+        {t(budgets.length ? 'categoryBudgetsEdit' : 'categoryBudgetsSet')}
+      </button>
+    </div>
+  );
+}
+
+/** Un champ par catégorie ; vide = pas de budget pour cette catégorie. */
+function CategoryBudgetsDialog({
+  initial,
+  onClose,
+}: {
+  initial: { category: ExpenseCategory; budgetCents: number }[];
+  onClose: () => void;
+}) {
+  const t = useTranslations('expenses');
+  const tc = useTranslations('common');
+  const te = useTranslations('errors');
+  const { household } = useSession();
+  const actions = useExpenseActions(household.id);
+  const asText = (cents: number) => (cents / 100).toFixed(2).replace('.', ',').replace(',00', '');
+  const [amounts, setAmounts] = useState<Record<string, string>>(
+    Object.fromEntries(initial.map((b) => [b.category, asText(b.budgetCents)])),
+  );
+  const [invalid, setInvalid] = useState<ExpenseCategory | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = (e: FormEvent) => {
+    e.preventDefault();
+    const budgets: { category: ExpenseCategory; budgetCents: number }[] = [];
+    for (const category of Categories.options) {
+      const text = amounts[category]?.trim();
+      if (!text) continue;
+      const cents = parseAmountToCents(text);
+      if (!cents) {
+        setInvalid(category);
+        document.getElementById(`budget-${category}`)?.focus();
+        return;
+      }
+      budgets.push({ category, budgetCents: cents });
+    }
+    actions.categoryBudgets.mutate(
+      { budgets },
+      { onSuccess: onClose, onError: (err) => setError(te(errorKey(err) as 'generic')) },
+    );
+  };
+
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent title={t('categoryBudgetsTitle')} closeLabel={tc('close')}>
+        <form onSubmit={submit} noValidate className="flex flex-col gap-4">
+          <p className="text-[0.9375rem] text-text-muted">{t('categoryBudgetsHint')}</p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {Categories.options.map((c) => (
+              <Field
+                key={c}
+                id={`budget-${c}`}
+                label={`${CATEGORY_EMOJI[c]} ${t(`categories.${c}`)}`}
+                inputMode="decimal"
+                autoComplete="off"
+                placeholder={t('categoryBudgetNone')}
+                value={amounts[c] ?? ''}
+                error={invalid === c ? t('amountInvalid') : undefined}
+                onChange={(e) => {
+                  setInvalid(null);
+                  setAmounts({ ...amounts, [c]: e.target.value });
+                }}
+              />
+            ))}
+          </div>
+          {error && (
+            <p role="alert" className="text-sm text-danger">
+              {error}
+            </p>
+          )}
+          <div className="flex justify-end">
+            <Button type="submit" loading={actions.categoryBudgets.isPending}>
               {t('save')}
             </Button>
           </div>

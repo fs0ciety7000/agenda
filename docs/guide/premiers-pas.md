@@ -54,9 +54,11 @@ publiée. Voir [App Android](android.md).
 
 | Écran | Rôle |
 |---|---|
-| **Aujourd'hui** | En retard, du jour, « qui fait quoi » sur 7 jours, « à faire cette semaine », les 7 prochains jours et la répartition |
+| **Aujourd'hui** | En retard, du jour, « qui fait quoi » sur 7 jours, les dates importantes à venir, « à faire cette semaine », les 7 prochains jours et la répartition |
 | **Tâches** | Toutes les tâches, avec recherche et filtres (personne, catégorie, priorité, récurrentes…) |
 | **Calendrier** | Vues mois, semaine, jour ; glisser-déposer pour déplacer |
 | **Courses** | Liste de courses partagée |
+| **Notes** | Codes Wi-Fi, mesures, idées cadeaux, partagés (dans **Plus** sur téléphone) |
+| **Dates importantes** | Anniversaires et entretiens, rappelés à l'avance (dans **Plus** sur téléphone) |
 | **Bilan** | Ce qui a été fait sur 7 ou 30 jours, par catégorie et par personne |
 | **Réglages** | Foyer, catégories, modèles, notifications, calendrier, compte, données |

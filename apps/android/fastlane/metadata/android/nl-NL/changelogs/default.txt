@@ -1,8 +1,8 @@
-Nieuw: Uitgaven (tabblad Meer → Uitgaven).
-• Start: "Wie doet wat" voor de komende 7 dagen.
-• Wie wat betaalde: gedeeld, voor de ander of persoonlijk.
-• "Nicolas is Grace € 42,50 schuldig", terugbetalen met één tik.
-• Zelf verdelen, vaste kosten, kasticket als foto.
-• Maandbudget met melding, verloop over 6 maanden, export.
-• Nieuwe look: ronde vinkjes, taken in kaarten, zoals op de site.
-• Winkelmodus, en vraag de ander om een taak over te nemen.
+Nieuw in het tabblad Meer: Uitgaven, Notities en Data.
+• Uitgaven: wie wat betaalde, "Nicolas is Grace € 42,50 schuldig", terugbetalen met één tik.
+• Zelf verdelen, vaste kosten, kasticket als foto, budget per categorie, export.
+• Gedeelde notities; belangrijke data met herinnering.
+• Start: "Wie doet wat" voor 7 dagen.
+• Winkelmodus; vraag de ander een taak over te nemen.
+• Instellingen: aangemelde apparaten, op afstand afmelden.
+• Nieuwe look: ronde vinkjes, kaarten.

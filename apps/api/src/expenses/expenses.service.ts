@@ -3,7 +3,7 @@ import { Prisma, type Expense, type ExpenseShare, type RecurringExpense } from '
 import {
   ATTACHMENT_MAX_BYTES,
   EXPENSE_CURRENCY,
-  type ExpenseCategory,
+  ExpenseCategory,
   type ExpenseDto,
   type ExpenseInput,
   type ExpenseMonthStats,
@@ -303,7 +303,10 @@ export class ExpensesService {
       }),
       this.prisma.household.findUniqueOrThrow({
         where: { id: householdId },
-        select: { expenseBudgetCents: true },
+        select: {
+          expenseBudgetCents: true,
+          categoryBudgets: { select: { category: true, budgetCents: true } },
+        },
       }),
     ]);
     const paid = new Map(paidAll.map((p) => [p.paidById, p._sum.amountCents ?? 0]));
@@ -343,6 +346,10 @@ export class ExpensesService {
       ),
       byCategory: totals.byCategory,
       budgetCents: household.expenseBudgetCents,
+      categoryBudgets: [...household.categoryBudgets].sort(
+        (a, b) =>
+          ExpenseCategory.options.indexOf(a.category) - ExpenseCategory.options.indexOf(b.category),
+      ),
     };
   }
 
@@ -389,6 +396,21 @@ export class ExpensesService {
     await this.checkBudget(ctx.householdId, ctx.memberId);
   }
 
+  /** Budgets par catégorie : remplacent les précédents (liste vide = aucun). */
+  async setCategoryBudgets(
+    ctx: HouseholdContext,
+    budgets: { category: ExpenseCategory; budgetCents: number }[],
+  ): Promise<void> {
+    await this.prisma.$transaction([
+      this.prisma.expenseCategoryBudget.deleteMany({ where: { householdId: ctx.householdId } }),
+      this.prisma.expenseCategoryBudget.createMany({
+        data: budgets.map((b) => ({ ...b, householdId: ctx.householdId })),
+      }),
+    ]);
+    this.events.publish(ctx.householdId, 'expenses');
+    await this.checkBudget(ctx.householdId, ctx.memberId);
+  }
+
   /**
    * Export tableur, dans la langue de la personne : une ligne par dépense ou remboursement, avec
    * la part de chacun. Ses dépenses personnelles y sont, pas celles des autres.
@@ -430,12 +452,13 @@ export class ExpensesService {
     try {
       const household = await this.prisma.household.findUniqueOrThrow({
         where: { id: householdId },
-        select: { expenseBudgetCents: true, timezone: true },
+        select: { expenseBudgetCents: true, timezone: true, categoryBudgets: true },
       });
       const budgetCents = household.expenseBudgetCents;
-      if (!budgetCents) return;
+      if (!budgetCents && !household.categoryBudgets.length) return;
       const month = todayIn(household.timezone).slice(0, 7);
-      const spent = await this.prisma.expense.aggregate({
+      const spent = await this.prisma.expense.groupBy({
+        by: ['category'],
         where: {
           householdId,
           kind: 'EXPENSE',
@@ -444,15 +467,33 @@ export class ExpensesService {
         },
         _sum: { amountCents: true },
       });
-      const amountCents = spent._sum.amountCents ?? 0;
-      const level = amountCents >= budgetCents ? 100 : amountCents * 5 >= budgetCents * 4 ? 80 : 0;
-      if (!level) return;
-      await this.notifications.notifyBudget(householdId, actorMemberId, {
-        month,
-        level,
-        amountCents,
-        budgetCents,
-      });
+      const byCategory = new Map(spent.map((r) => [r.category, r._sum.amountCents ?? 0]));
+      const levelOf = (amount: number, budget: number) =>
+        amount >= budget ? 100 : amount * 5 >= budget * 4 ? 80 : 0;
+      const checks: {
+        category: ExpenseCategory | null;
+        amountCents: number;
+        budgetCents: number;
+      }[] = household.categoryBudgets.map((b) => ({
+        category: b.category,
+        amountCents: byCategory.get(b.category) ?? 0,
+        budgetCents: b.budgetCents,
+      }));
+      if (budgetCents) {
+        const total = [...byCategory.values()].reduce((a, b) => a + b, 0);
+        checks.unshift({ category: null, amountCents: total, budgetCents });
+      }
+      for (const c of checks) {
+        const level = levelOf(c.amountCents, c.budgetCents);
+        if (!level) continue;
+        await this.notifications.notifyBudget(householdId, actorMemberId, {
+          month,
+          level,
+          amountCents: c.amountCents,
+          budgetCents: c.budgetCents,
+          category: c.category,
+        });
+      }
     } catch {
       // Notification manquée : la dépense est enregistrée, c'est l'essentiel.
     }

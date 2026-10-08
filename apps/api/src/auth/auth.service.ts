@@ -2,13 +2,15 @@ import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { Prisma, type User } from '@prisma/client';
 import { randomUUID } from 'node:crypto';
 import type {
+  DeviceSessionDto,
   ChangePasswordInput,
   LoginInput,
   MeResponse,
   RegisterInput,
   UpdateMeInput,
 } from '@agenda/contracts';
-import { AppException } from '../common/app-exception';
+import { parseUserAgent } from './user-agent';
+import { AppException, notFound } from '../common/app-exception';
 import type { AuthUser } from '../common/request-context';
 import { randomToken, sha256Hex } from '../common/crypto';
 import { env } from '../config/env';
@@ -129,6 +131,51 @@ export class AuthService {
       where: { userId, revokedAt: null },
       data: { revokedAt: new Date() },
     });
+  }
+
+  /**
+   * Appareils connectés : une ligne par connexion (famille de sessions) encore valable, avec la
+   * date de connexion et la dernière activité (dernier rafraîchissement du jeton).
+   */
+  async listSessions(user: AuthUser): Promise<DeviceSessionDto[]> {
+    const [active, current] = await Promise.all([
+      this.prisma.session.findMany({
+        where: {
+          userId: user.userId,
+          revokedAt: null,
+          replacedAt: null,
+          expiresAt: { gt: new Date() },
+        },
+        orderBy: { lastUsedAt: 'desc' },
+      }),
+      this.prisma.session.findUnique({ where: { id: user.sessionId }, select: { familyId: true } }),
+    ]);
+    const firsts = await this.prisma.session.groupBy({
+      by: ['familyId'],
+      where: { familyId: { in: active.map((s) => s.familyId) } },
+      _min: { createdAt: true },
+    });
+    const since = new Map(firsts.map((f) => [f.familyId, f._min.createdAt]));
+    const seen = new Set<string>();
+    return active
+      .filter((s) => !seen.has(s.familyId) && seen.add(s.familyId))
+      .map((s) => ({
+        id: s.familyId,
+        ...parseUserAgent(s.userAgent),
+        createdAt: (since.get(s.familyId) ?? s.createdAt).toISOString(),
+        lastUsedAt: s.lastUsedAt.toISOString(),
+        current: s.familyId === current?.familyId,
+      }));
+  }
+
+  /** Déconnecter un appareil (famille de sessions) de ce compte ; inconnu ou d'un autre : 404. */
+  async revokeSession(user: AuthUser, familyId: string): Promise<void> {
+    const owned = await this.prisma.session.findFirst({
+      where: { familyId, userId: user.userId },
+      select: { id: true },
+    });
+    if (!owned) throw notFound();
+    await this.revokeFamily(familyId);
   }
 
   /** Utilisé par le guard : la session doit exister et ne pas être révoquée. */

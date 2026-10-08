@@ -7,6 +7,9 @@ import app.tandem.foyer.data.ExpensesRemote
 import app.tandem.foyer.data.SwapsRemote
 import app.tandem.foyer.data.ActivityRemote
 import app.tandem.foyer.data.CommentsRemote
+import app.tandem.foyer.data.DatesRemote
+import app.tandem.foyer.data.DevicesRemote
+import app.tandem.foyer.data.NotesRemote
 import app.tandem.foyer.data.DataStoreSettingsStore
 import app.tandem.foyer.data.ReportsRemote
 import app.tandem.foyer.data.SettingsStore
@@ -54,6 +57,9 @@ class AppContainer(context: Context) {
     val expenses = ExpensesRemote(api, database, app.cacheDir)
     val swaps = SwapsRemote(api, database)
     val comments = CommentsRemote(api, database)
+    val notes = NotesRemote(api, database)
+    val dates = DatesRemote(api, database)
+    val devices = DevicesRemote(api)
     val reports = ReportsRemote(app, api, database)
     val reminders = ReminderScheduler(app, repository, settings)
     val recap = RecapScheduler(app, settings)
