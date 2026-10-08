@@ -14,8 +14,10 @@ import {
   MessageCircle,
   Repeat,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/cn';
+import { looksLikePayment, newExpenseHref } from '@/lib/expenses';
 import { formatDuration, formatTime, useDayLabel, useDueLabel } from '@/lib/format';
 import { useThanks, useToggleDone } from '@/lib/tasks';
 import { useToast } from '@/components/ui/toast';
@@ -42,6 +44,7 @@ export function TaskRow({
   const dueLabel = useDueLabel();
   const toggle = useToggleDone(household.id);
   const toast = useToast();
+  const router = useRouter();
   const done = o.status === 'DONE';
   const nameOf = (id: string) => household.members.find((m) => m.id === id)?.displayName ?? '?';
   const thankedBy = o.thankedBy ?? [];
@@ -68,6 +71,16 @@ export function TaskRow({
                 onClick: () => toggle.mutate({ hid: household.id, id: o.id, done: false }),
               },
             });
+            // « Payer la facture » cochée : proposer de noter la dépense.
+            if (looksLikePayment(o.title, o.category?.emoji)) {
+              toast({
+                message: t('paidToast'),
+                action: {
+                  label: t('noteExpense'),
+                  onClick: () => router.push(newExpenseHref({ title: o.title })),
+                },
+              });
+            }
           }
         },
         onError: () => toast({ message: t('toggleError'), tone: 'error' }),

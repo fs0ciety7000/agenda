@@ -12,6 +12,9 @@ Elke dag, op weekdagen, elke week, om de week, elke maand, de laatste dag van de
 ★ Boodschappen en maaltijden
 Een gedeelde boodschappenlijst, live bijgewerkt, per afdeling. Plan de maaltijden van de week en zet hun ingrediënten met één tik op de lijst.
 
+★ Gedeelde uitgaven
+Wie wat betaalde, ieders aandeel (half-half of volgens jullie verhouding), persoonlijke uitgaven, en "Nicolas is Grace € 42,50 schuldig" met de terugbetaling in één tik.
+
 ★ Bedanken en weekoverzicht
 Zeg "dank je" voor een taak die de ander heeft gedaan. Op zondagavond: wat er deze week gedaan is en wat er volgende week komt.
 

@@ -1,5 +1,5 @@
-Tandem now speaks Dutch!
-• Say "thanks" for a task the other person did.
-• Weekly review on Sunday evening.
-• This week's meals → shopping list in one tap.
-• iCal subscription for Apple Calendar and Outlook (on the website).
+New: Expenses (Settings → Expenses).
+• Who paid what: shared, paid for the other person, or personal.
+• "Nicolas owes Grace €42.50", and the payback in one tap.
+• Monthly totals: shared expenses, each person's share, my personal expenses.
+• Custom split, monthly fixed expenses, receipt photo.

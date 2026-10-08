@@ -80,7 +80,7 @@ logo), accent rose poudré en mode sombre. Toutes les paires texte/fond respecte
 
 ## 7. Layout
 
-- Mobile (< 768) : barre d'onglets en bas (Aujourd'hui · Tâches · Calendrier · Réglages), bouton flottant « + ».
+- Mobile (< 768) : barre d'onglets en bas, cinq au plus (Aujourd'hui · Tâches · Courses · Calendrier · Réglages), bouton flottant « + ». Les autres pages (Repas, Statistiques…) sont liées depuis un onglet.
 - Tablette (768–1199) : rail de navigation latéral compact.
 - Desktop (≥ 1200) : sidebar 240 px + contenu max 960 px (listes) / pleine largeur (calendrier) ; quick add toujours visible en haut.
 
@@ -95,5 +95,7 @@ logo), accent rose poudré en mode sombre. Toutes les paires texte/fond respecte
 
 ## 9. Voix & ton (FR)
 
-Tutoiement ? **Non** — vouvoiement collectif chaleureux (« Organisons votre quotidien ensemble »),
+Néerlandais : **tutoiement** (« je »), ton direct et chaleureux. Anglais : « you », simple.
+
+Français : tutoiement ? **Non** — vouvoiement collectif chaleureux (« Organisons votre quotidien ensemble »),
 phrases courtes, pas de culpabilisation (« 2 tâches à rattraper » plutôt que « 2 tâches en retard ! »).

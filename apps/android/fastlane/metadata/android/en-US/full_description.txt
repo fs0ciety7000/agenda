@@ -9,8 +9,17 @@ Type "Take the bins out tomorrow 7pm Grace": date, time and person are recognise
 ★ Repeats and taking turns
 Every day, weekdays, every week, every other week, every month, last day of the month… and above all who takes care of it: always the same person, together, taking turns, a custom rotation or depending on the day. The preview shows the next dates and who is responsible for each.
 
+★ Shopping and meals
+A shared shopping list, live, sorted by aisle. This week's meals send their ingredients to the list in one tap.
+
+★ Shared expenses
+Who paid what, each person's share (half-half or your own split), personal expenses, and "Nicolas owes Grace €42.50" with the payback in one tap.
+
+★ Thanks and weekly review
+Say thanks for a task the other person did; on Sunday evening, what got done and what's next.
+
 ★ Lists and subtasks
-A shopping list or the steps of a task, checked off as you go.
+The steps of a task, checked off as you go.
 
 ★ Calendar
 Month and day views; long-press to move a task to another day.
@@ -30,6 +39,6 @@ Dated tasks can be published to a shared Google calendar for the household.
 ★ Also on the web
 The same agenda from a computer, with a single account.
 
-Privacy first: no ads, no data resale, export and delete your account at any time. Dark mode, English and French, TalkBack support.
+Privacy first: no ads, no data resale, export and delete your account at any time. Dark mode, English, French and Dutch, TalkBack support.
 
-An Tandem account is required (sign up on the website, then invite your partner to the household).
+A Tandem account is required (sign up on the website, then invite your partner to the household).

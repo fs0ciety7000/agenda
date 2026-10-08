@@ -22,6 +22,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { PrivacyModule } from './privacy/privacy.module';
 import { RealtimeModule } from './realtime/realtime.module';
 import { ShoppingModule } from './shopping/shopping.module';
+import { ExpensesModule } from './expenses/expenses.module';
 import { InboundEmailModule } from './inbound/inbound-email.module';
 import { TasksModule } from './tasks/tasks.module';
 
@@ -52,6 +53,7 @@ import { TasksModule } from './tasks/tasks.module';
     AppDistributionModule,
     NotificationsModule,
     ShoppingModule,
+    ExpensesModule,
     RealtimeModule,
     AdminModule,
     MonitoringModule,

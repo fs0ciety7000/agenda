@@ -1,0 +1,78 @@
+name: Google Play — mettre à jour la fiche
+
+# À la demande (Actions → « Google Play — mettre à jour la fiche » → Run workflow) : envoie la fiche
+# du Play Store depuis apps/android/fastlane/metadata/android (titre, descriptions courte et
+# complète, et si demandé icône, image de présentation et captures), pour fr-FR et en-US, et
+# nl-NL quand la variable PLAY_LISTING_NL vaut true (la traduction doit exister dans la console).
+# Les notes de version partent avec chaque version (workflow « Android — APK à installer »).
+# Secret requis : PLAY_SERVICE_ACCOUNT_JSON (même compte de service, docs/play-store.md).
+on:
+  workflow_dispatch:
+    inputs:
+      images:
+        description: 'Envoyer aussi icône, image de présentation et captures'
+        type: boolean
+        default: false
+      validate_only:
+        description: 'Vérifier seulement (rien n’est publié)'
+        type: boolean
+        default: false
+
+concurrency:
+  group: play-listing
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  listing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Secret présent ?
+        run: |
+          if [ -z "$PLAY_SERVICE_ACCOUNT_JSON" ]; then
+            echo "::error::Secret PLAY_SERVICE_ACCOUNT_JSON absent : voir docs/play-store.md."
+            exit 1
+          fi
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+      - name: Installer fastlane
+        run: gem install fastlane --no-document
+      - name: Préparer la fiche (langues publiées)
+        run: |
+          out="$RUNNER_TEMP/metadata/android"
+          mkdir -p "$out"
+          for lang in fr-FR en-US nl-NL; do
+            if [ "$lang" = "nl-NL" ] && [ "${{ vars.PLAY_LISTING_NL }}" != "true" ]; then
+              echo "nl-NL ignoré : variable PLAY_LISTING_NL absente."
+              continue
+            fi
+            cp -r "apps/android/fastlane/metadata/android/$lang" "$out/$lang"
+            # Les notes de version accompagnent une version précise : pas ici.
+            rm -rf "$out/$lang/changelogs"
+          done
+          ls -R "$out" | head -50
+      - name: Envoyer sur Google Play
+        run: |
+          umask 077
+          key="$RUNNER_TEMP/play.json"
+          printf '%s' "$PLAY_SERVICE_ACCOUNT_JSON" > "$key"
+          skip_images=true
+          [ "${{ inputs.images }}" = "true" ] && skip_images=false
+          fastlane run supply \
+            package_name:app.tandem.foyer \
+            json_key:"$key" \
+            metadata_path:"$RUNNER_TEMP/metadata/android" \
+            skip_upload_apk:true \
+            skip_upload_aab:true \
+            skip_upload_changelogs:true \
+            skip_upload_images:$skip_images \
+            skip_upload_screenshots:$skip_images \
+            validate_only:${{ inputs.validate_only }}
+          rm -f "$key"

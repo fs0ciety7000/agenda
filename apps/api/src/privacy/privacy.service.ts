@@ -49,77 +49,108 @@ export class PrivacyService {
       },
     });
     const memberIds = user.memberships.map((m) => m.id);
-    const [createdTasks, assigned, shopping, attachments, comments, reports] = await Promise.all([
-      this.prisma.task.findMany({
-        where: { createdById: { in: memberIds }, deletedAt: null },
-        include: {
-          category: { select: { name: true } },
-          series: {
-            select: {
-              rule: true,
-              startDate: true,
-              untilDate: true,
-              startMinute: true,
-              durationMinutes: true,
+    const [createdTasks, assigned, shopping, attachments, comments, reports, expenses] =
+      await Promise.all([
+        this.prisma.task.findMany({
+          where: { createdById: { in: memberIds }, deletedAt: null },
+          include: {
+            category: { select: { name: true } },
+            series: {
+              select: {
+                rule: true,
+                startDate: true,
+                untilDate: true,
+                startMinute: true,
+                durationMinutes: true,
+              },
+            },
+            occurrences: {
+              select: {
+                date: true,
+                startMinute: true,
+                durationMinutes: true,
+                status: true,
+                completedAt: true,
+                checklist: { select: { text: true, done: true }, orderBy: { position: 'asc' } },
+              },
             },
           },
-          occurrences: {
-            select: {
-              date: true,
-              startMinute: true,
-              durationMinutes: true,
-              status: true,
-              completedAt: true,
-              checklist: { select: { text: true, done: true }, orderBy: { position: 'asc' } },
-            },
+          orderBy: { createdAt: 'asc' },
+        }),
+        this.prisma.taskOccurrence.findMany({
+          where: {
+            assignees: { some: { memberId: { in: memberIds } } },
+            task: { deletedAt: null },
           },
-        },
-        orderBy: { createdAt: 'asc' },
-      }),
-      this.prisma.taskOccurrence.findMany({
-        where: { assignees: { some: { memberId: { in: memberIds } } }, task: { deletedAt: null } },
-        select: { date: true, status: true, completedAt: true, task: { select: { title: true } } },
-        orderBy: { date: 'asc' },
-      }),
-      this.prisma.shoppingItem.findMany({
-        where: { createdById: { in: memberIds } },
-        select: { text: true, done: true, createdAt: true, doneAt: true },
-        orderBy: { createdAt: 'asc' },
-      }),
-      // Fichiers joints : la liste (le contenu se télécharge depuis chaque tâche).
-      this.prisma.taskAttachment.findMany({
-        where: { createdById: { in: memberIds } },
-        select: {
-          filename: true,
-          contentType: true,
-          size: true,
-          createdAt: true,
-          task: { select: { title: true } },
-        },
-        orderBy: { createdAt: 'asc' },
-      }),
-      this.prisma.taskComment.findMany({
-        where: { authorId: { in: memberIds } },
-        select: { body: true, createdAt: true, task: { select: { title: true } } },
-        orderBy: { createdAt: 'asc' },
-      }),
-      this.prisma.report.findMany({
-        where: { userId },
-        select: {
-          kind: true,
-          status: true,
-          title: true,
-          description: true,
-          allowContact: true,
-          diagnostics: true,
-          screenshotType: true,
-          reply: true,
-          repliedAt: true,
-          createdAt: true,
-        },
-        orderBy: { createdAt: 'asc' },
-      }),
-    ]);
+          select: {
+            date: true,
+            status: true,
+            completedAt: true,
+            task: { select: { title: true } },
+          },
+          orderBy: { date: 'asc' },
+        }),
+        this.prisma.shoppingItem.findMany({
+          where: { createdById: { in: memberIds } },
+          select: { text: true, done: true, createdAt: true, doneAt: true },
+          orderBy: { createdAt: 'asc' },
+        }),
+        // Fichiers joints : la liste (le contenu se télécharge depuis chaque tâche).
+        this.prisma.taskAttachment.findMany({
+          where: { createdById: { in: memberIds } },
+          select: {
+            filename: true,
+            contentType: true,
+            size: true,
+            createdAt: true,
+            task: { select: { title: true } },
+          },
+          orderBy: { createdAt: 'asc' },
+        }),
+        this.prisma.taskComment.findMany({
+          where: { authorId: { in: memberIds } },
+          select: { body: true, createdAt: true, task: { select: { title: true } } },
+          orderBy: { createdAt: 'asc' },
+        }),
+        this.prisma.report.findMany({
+          where: { userId },
+          select: {
+            kind: true,
+            status: true,
+            title: true,
+            description: true,
+            allowContact: true,
+            diagnostics: true,
+            screenshotType: true,
+            reply: true,
+            repliedAt: true,
+            createdAt: true,
+          },
+          orderBy: { createdAt: 'asc' },
+        }),
+        // Dépenses payées et parts de chacun, remboursements compris.
+        this.prisma.expense.findMany({
+          where: {
+            OR: [
+              { paidById: { in: memberIds } },
+              { shares: { some: { memberId: { in: memberIds } } } },
+            ],
+          },
+          select: {
+            kind: true,
+            date: true,
+            title: true,
+            amountCents: true,
+            category: true,
+            split: true,
+            note: true,
+            paidById: true,
+            shares: { where: { memberId: { in: memberIds } }, select: { amountCents: true } },
+            receipt: { select: { filename: true, size: true } },
+          },
+          orderBy: { date: 'asc' },
+        }),
+      ]);
     return {
       format: 'tandem-export/1',
       exportedAt: new Date().toISOString(),
@@ -170,6 +201,18 @@ export class PrivacyService {
         createdAt: a.createdAt,
       })),
       comments: comments.map((c) => ({ task: c.task.title, body: c.body, createdAt: c.createdAt })),
+      expenses: expenses.map((e) => ({
+        kind: e.kind,
+        date: fromDbDate(e.date),
+        title: e.title,
+        amountCents: e.amountCents,
+        category: e.category,
+        split: e.split,
+        note: e.note,
+        paidByMe: memberIds.includes(e.paidById),
+        myShareCents: e.shares.reduce((a, x) => a + x.amountCents, 0),
+        receipt: e.receipt,
+      })),
       reports: reports.map(({ screenshotType, ...r }) => ({
         ...r,
         screenshot: screenshotType !== null,
@@ -236,6 +279,14 @@ export class PrivacyService {
         // Plus de responsabilités futures : ces tâches deviennent « à définir » ou passent à l'autre membre.
         await tx.occurrenceAssignee.deleteMany({
           where: { memberId: m.id, occurrence: { status: 'TODO' } },
+        });
+        // Dépenses personnelles : effacées. Dépenses communes : restent au foyer (soldes).
+        await tx.expense.deleteMany({ where: { paidById: m.id, split: 'PERSONAL' } });
+        // Ses charges fixes perso disparaissent ; celles qui le concernent s'arrêtent.
+        await tx.recurringExpense.deleteMany({ where: { paidById: m.id, split: 'PERSONAL' } });
+        await tx.recurringExpense.updateMany({
+          where: { OR: [{ paidById: m.id }, { forMemberId: m.id }], endedAt: null },
+          data: { endedAt: new Date() },
         });
         await tx.rotationSlot.deleteMany({ where: { memberId: m.id } });
         await tx.notification.deleteMany({ where: { memberId: m.id } });

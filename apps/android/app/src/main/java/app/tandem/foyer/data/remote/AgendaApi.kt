@@ -219,6 +219,44 @@ interface AgendaApi {
     @DELETE("v1/households/{h}/absences/{id}")
     suspend fun deleteAbsence(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
 
+    @GET("v1/households/{h}/expenses")
+    suspend fun expenses(@Path("h") householdId: String, @Query("month") month: String): Response<List<ExpenseDto>>
+
+    @GET("v1/households/{h}/expenses/summary")
+    suspend fun expenseSummary(@Path("h") householdId: String, @Query("month") month: String): Response<ExpenseSummaryDto>
+
+    @POST("v1/households/{h}/expenses")
+    suspend fun createExpense(@Path("h") householdId: String, @Body body: ExpenseBody): Response<ExpenseDto>
+
+    @PATCH("v1/households/{h}/expenses/{id}")
+    suspend fun updateExpense(@Path("h") householdId: String, @Path("id") id: String, @Body body: ExpenseBody): Response<ExpenseDto>
+
+    @POST("v1/households/{h}/expenses/settle")
+    suspend fun settleExpenses(@Path("h") householdId: String, @Body body: SettleBody): Response<ExpenseDto>
+
+    @DELETE("v1/households/{h}/expenses/{id}")
+    suspend fun deleteExpense(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
+
+    @GET("v1/households/{h}/expenses/recurring")
+    suspend fun recurringExpenses(@Path("h") householdId: String): Response<List<RecurringExpenseDto>>
+
+    @POST("v1/households/{h}/expenses/recurring")
+    suspend fun createRecurringExpense(@Path("h") householdId: String, @Body body: RecurringExpenseBody): Response<RecurringExpenseDto>
+
+    @DELETE("v1/households/{h}/expenses/recurring/{id}")
+    suspend fun stopRecurringExpense(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
+
+    @Multipart
+    @POST("v1/households/{h}/expenses/{id}/receipt")
+    suspend fun uploadReceipt(@Path("h") householdId: String, @Path("id") id: String, @Part file: MultipartBody.Part): Response<ExpenseDto>
+
+    @Streaming
+    @GET("v1/households/{h}/expenses/{id}/receipt")
+    suspend fun receipt(@Path("h") householdId: String, @Path("id") id: String): Response<ResponseBody>
+
+    @DELETE("v1/households/{h}/expenses/{id}/receipt")
+    suspend fun deleteReceipt(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
+
     /** Contenu d'une pièce jointe (téléchargé à la demande, puis ouvert par une autre app). */
     @Streaming
     @GET("v1/households/{h}/attachments/{id}")

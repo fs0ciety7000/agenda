@@ -68,6 +68,8 @@ import app.tandem.foyer.ui.report.ReportScreen
 import app.tandem.foyer.ui.report.ReportViewModel
 import app.tandem.foyer.ui.comments.CommentsSection
 import app.tandem.foyer.ui.absences.AbsencesViewModel
+import app.tandem.foyer.ui.expenses.ExpensesScreen
+import app.tandem.foyer.ui.expenses.ExpensesViewModel
 import app.tandem.foyer.ui.history.HistoryScreen
 import app.tandem.foyer.ui.history.HistoryViewModel
 import androidx.lifecycle.viewmodel.initializer
@@ -334,6 +336,9 @@ private fun MainScaffold(
     val attachmentError = stringResource(R.string.attachment_error)
     val attachmentNoApp = stringResource(R.string.attachment_no_app)
     val onMessage: (String) -> Unit = { message -> scope.launch { snackbar.showSnackbar(message) } }
+    val clearedLabel = stringResource(R.string.shopping_cleared)
+    val noteExpenseLabel = stringResource(R.string.shopping_note_expense)
+    val shoppingTitle = stringResource(R.string.shopping_title)
     // Pièce jointe : téléchargée puis ouverte par l'app adaptée (lecteur PDF, galerie…).
     val onOpenAttachment: (Attachment) -> Unit = { a ->
         scope.launch {
@@ -475,7 +480,20 @@ private fun MainScaffold(
                     onAdd = { scope.launch { container.repository.addShopping(it) } },
                     onToggle = { scope.launch { container.repository.setShoppingDone(it, !it.done) } },
                     onRemove = { scope.launch { container.repository.removeShopping(it) } },
-                    onClearDone = { scope.launch { container.repository.clearShoppingDone() } },
+                    onClearDone = {
+                        scope.launch {
+                            container.repository.clearShoppingDone()
+                            // Retour du magasin : proposer de noter ce qui a été payé.
+                            val result = snackbar.showSnackbar(
+                                clearedLabel,
+                                actionLabel = noteExpenseLabel,
+                                duration = SnackbarDuration.Long,
+                            )
+                            if (result == SnackbarResult.ActionPerformed) {
+                                nav.navigate("expenses?title=${Uri.encode(shoppingTitle)}&category=GROCERIES")
+                            }
+                        }
+                    },
                     contentPadding = padding,
                     suggestions = shoppingSuggestions,
                     onAisle = { item, aisle -> scope.launch { container.repository.setShoppingAisle(item, aisle) } },
@@ -534,6 +552,7 @@ private fun MainScaffold(
                     onRetryPush = { scope.launch { container.push.register() } },
                     onOpenHistory = { nav.navigate("history") },
                     onOpenAbsences = { nav.navigate("absences") },
+                    onOpenExpenses = { nav.navigate("expenses") },
                     onOpenReport = { nav.navigate("report") },
                     language = remember { AppLanguage.current(context) },
                     onLanguage = { tag ->
@@ -570,6 +589,25 @@ private fun MainScaffold(
                     members.firstOrNull { it.userId != null && it.userId == user?.id }?.id,
                     onBack = { nav.popBackStack() },
                     onMessage = onMessage,
+                )
+            }
+            composable(
+                "expenses?title={title}&category={category}",
+                arguments = listOf(
+                    navArgument("title") { type = NavType.StringType; nullable = true },
+                    navArgument("category") { type = NavType.StringType; nullable = true },
+                ),
+            ) { entry ->
+                val expensesVm: ExpensesViewModel = viewModel(factory = viewModelFactory { initializer { ExpensesViewModel(container.expenses) } })
+                val members = state.household?.members.orEmpty()
+                ExpensesScreen(
+                    expensesVm,
+                    members,
+                    members.firstOrNull { it.userId != null && it.userId == user?.id }?.id,
+                    onBack = { nav.popBackStack() },
+                    onMessage = onMessage,
+                    prefillTitle = entry.arguments?.getString("title"),
+                    prefillCategory = entry.arguments?.getString("category"),
                 )
             }
             composable("history") {

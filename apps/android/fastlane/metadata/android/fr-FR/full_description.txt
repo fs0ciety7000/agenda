@@ -9,8 +9,17 @@ Les tâches en retard, celles du jour et de la semaine, cochées d'un geste. La 
 ★ Répétitions et tour de rôle
 Chaque jour, jours ouvrés, chaque semaine, tous les 15 jours, chaque mois, dernier jour du mois… et surtout qui s'en occupe : toujours la même personne, à deux, chacun son tour, une rotation personnalisée ou selon le jour. L'aperçu montre les prochaines dates et le responsable de chacune.
 
+★ Courses et menus
+Une liste de courses partagée en direct, rangée par rayon. Les menus de la semaine envoient leurs ingrédients aux courses en un geste.
+
+★ Dépenses communes
+Qui a payé quoi, la part de chacun (moitié-moitié ou selon vos proportions), les dépenses perso, et « Nicolas doit 42,50 € à Grace » avec le remboursement en un geste.
+
+★ Merci et revue de la semaine
+Un merci pour une tâche faite par l'autre ; le dimanche soir, ce qui a été fait et ce qui vient.
+
 ★ Listes et sous-tâches
-Une liste de courses ou les étapes d'une tâche, à cocher au fil de l'eau.
+Les étapes d'une tâche, à cocher au fil de l'eau.
 
 ★ Calendrier
 Vue mois et jour ; appui long pour déplacer une tâche vers un autre jour.
@@ -30,6 +39,6 @@ Les tâches datées peuvent être publiées dans un calendrier Google partagé d
 ★ Aussi sur le web
 Le même agenda depuis un ordinateur, avec un compte unique.
 
-Respect de la vie privée : pas de publicité, pas de revente de données, export et suppression du compte à tout moment. Mode sombre, français et anglais, compatible TalkBack.
+Respect de la vie privée : pas de publicité, pas de revente de données, export et suppression du compte à tout moment. Mode sombre, français, anglais et néerlandais, compatible TalkBack.
 
 Un compte Tandem est nécessaire (création sur le site, puis invitation de votre partenaire dans le foyer).

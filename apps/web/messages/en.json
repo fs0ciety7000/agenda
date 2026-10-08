@@ -15,7 +15,9 @@
     "main": "Main navigation",
     "stats": "Summary",
     "shopping": "Shopping",
-    "meals": "Meals"
+    "meals": "Meals",
+    "expenses": "Expenses",
+    "more": "More"
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -260,7 +262,9 @@
     "commentCount": "{count, plural, one {# comment} other {# comments}}",
     "sayThanks": "Say thanks to {name}",
     "thanksSent": "Thanks sent to {name}",
-    "thanksFrom": "Thanks from {names}"
+    "thanksFrom": "Thanks from {names}",
+    "paidToast": "Paid? Record the expense.",
+    "noteExpense": "Record the expense"
   },
   "balance": {
     "bothOfUs": "Together",
@@ -527,7 +531,7 @@
     },
     "data": {
       "title": "Data processed",
-      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, sub-tasks, comments, declared absences, activity history (who did what, when).\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; their attachments are added to the task.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it.\nReports (if you send any): the type, title and text of your message, a screenshot if you attach one, whether you agree to be contacted and, only if you tick the box, technical information shown before sending (browser or phone model, system, app version, language, time zone, screen size, open page). Never the content of your tasks. Only the app's administrators read them.\nBrowser notifications (if you turn them on): the subscription address provided by your browser, deleted when you turn them off or sign out."
+      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, sub-tasks, comments, declared absences, activity history (who did what, when).\nExpenses (if you use them): amount, date, label, category, comment, who paid and each person's share. A personal expense is visible to you only. An attached receipt (photo or PDF) is kept with the expense and deleted with it.\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; their attachments are added to the task.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it.\nReports (if you send any): the type, title and text of your message, a screenshot if you attach one, whether you agree to be contacted and, only if you tick the box, technical information shown before sending (browser or phone model, system, app version, language, time zone, screen size, open page). Never the content of your tasks. Only the app's administrators read them.\nBrowser notifications (if you turn them on): the subscription address provided by your browser, deleted when you turn them off or sign out."
     },
     "google": {
       "title": "Google data",
@@ -692,7 +696,9 @@
     },
     "suggestions": "Often bought",
     "addSuggestion": "Add {text}",
-    "aisleOf": "Aisle for {text}"
+    "aisleOf": "Aisle for {text}",
+    "noteExpense": "Record the expense",
+    "cleared": "Basket emptied."
   },
   "meals": {
     "title": "Meals",
@@ -1182,5 +1188,118 @@
     },
     "yes": "Yes",
     "no": "No"
+  },
+  "more": {
+    "title": "More",
+    "expenses": {
+      "title": "Expenses",
+      "hint": "Who paid what, and who owes how much"
+    },
+    "meals": {
+      "title": "Meals",
+      "hint": "This week’s meals, ingredients to shopping"
+    },
+    "stats": {
+      "title": "Summary",
+      "hint": "What got done, and by whom"
+    },
+    "review": {
+      "title": "Weekly review",
+      "hint": "The past week and the next one"
+    },
+    "history": {
+      "title": "Activity and trash",
+      "hint": "Who did what, deleted tasks"
+    },
+    "settings": {
+      "title": "Settings",
+      "hint": "Household, account, notifications, language"
+    }
+  },
+  "expenses": {
+    "title": "Expenses",
+    "prev": "Previous month",
+    "next": "Next month",
+    "add": "Expense",
+    "balanceTitle": "Who owes what",
+    "even": "You’re all square.",
+    "owes": "{from} owes {to} {amount}",
+    "settle": "Record the payback",
+    "settled": "Payback from {from} to {to} recorded.",
+    "splitLabel": "Split {split}",
+    "monthTitle": "This month",
+    "common": "Shared expenses",
+    "memberLine": "paid {paid} · their share {share}",
+    "mine": "My personal expenses",
+    "byCategory": "By category",
+    "emptyTitle": "No expenses this month",
+    "emptyBody": "Note what you pay for the household: Tandem works out who owes whom.",
+    "settlement": "Payback",
+    "to": "to",
+    "settlementText": "{from} paid {to} back {amount}. Delete it if it was recorded by mistake.",
+    "meta": {
+      "SHARED": "Paid by {payer} · shared",
+      "FOR_OTHER": "Paid by {payer} for {for}",
+      "PERSONAL": "Paid by {payer} · personal",
+      "CUSTOM": "Paid by {payer} · custom split"
+    },
+    "formerMember": "Former member",
+    "newTitle": "New expense",
+    "editTitle": "Edit expense",
+    "amount": "Amount (€)",
+    "date": "Date",
+    "what": "What?",
+    "whatPlaceholder": "Groceries, rent, cinema…",
+    "paidBy": "Paid by",
+    "forWhom": "For whom?",
+    "split": {
+      "SHARED": "Shared",
+      "FOR_OTHER": "For {name}",
+      "PERSONAL": "Personal",
+      "CUSTOM": "Custom"
+    },
+    "splitHint": {
+      "SHARED": "Split using the household’s shares.",
+      "FOR_OTHER": "Paid for them: they owe all of it.",
+      "PERSONAL": "Just for you: only you see it, and it stays out of the shared total.",
+      "CUSTOM": "Enter each person’s share; they must add up to the amount."
+    },
+    "category": "Category",
+    "note": "Comment (optional)",
+    "amountInvalid": "Enter an amount, e.g. 12.50.",
+    "titleRequired": "Say what it was.",
+    "delete": "Delete",
+    "save": "Save",
+    "weightsTitle": "Shared expense split",
+    "weightsHint": "As percentages: 50 and 50 for half-half, 60 and 40 by income… Expenses already recorded keep their split.",
+    "weightsEqual": "Equal shares",
+    "weightsInvalid": "Each share is between 1 and 100.",
+    "categories": {
+      "GROCERIES": "Groceries",
+      "HOUSING": "Housing",
+      "UTILITIES": "Utilities and subscriptions",
+      "TRANSPORT": "Transport",
+      "LEISURE": "Leisure and outings",
+      "HEALTH": "Health",
+      "KIDS": "Kids",
+      "GIFTS": "Gifts",
+      "OTHER": "Other"
+    },
+    "customShare": "{name}’s share (€)",
+    "customOk": "It adds up.",
+    "customLeft": "Left to split: {amount}",
+    "customInvalid": "The shares must add up to {amount}.",
+    "repeatMonthly": "Every month",
+    "repeatMonthlyHint": "Added automatically every month, on the same day (rent, subscriptions…).",
+    "receipt": "Receipt",
+    "receiptOpen": "View the receipt",
+    "receiptRemove": "Remove the receipt",
+    "receiptAdd": "Attach the receipt (photo or PDF)",
+    "monthly": "Every month",
+    "recurringTitle": "Fixed expenses",
+    "recurringLine": "On the {day} of each month · paid by {payer}",
+    "recurringStop": "Stop",
+    "recurringStopLabel": "Stop “{title}”",
+    "recurringStopConfirm": "Stop “{title}”? Expenses already added stay."
   }
 }

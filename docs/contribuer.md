@@ -75,5 +75,6 @@ Le dépôt est privé : les minutes sont comptées. Chaque workflow ne tourne qu
 | `Android` | quand `apps/android/**` change |
 | `Android (émulateur)` | à la demande (*Run workflow*) ou étiquette `emulateur` sur la PR |
 | `Android — APK à installer` | sur `main` quand l'app Android change |
+| `Google Play — mettre à jour la fiche` | à la demande (*Run workflow*) |
 | `Documentation` | quand `docs/**` ou `apps/docs/**` change |
 | `Disponibilité` | toutes les 2 heures |
