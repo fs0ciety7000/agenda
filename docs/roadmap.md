@@ -69,10 +69,13 @@ Source : [audit du 8 octobre 2026](audits/2026-10-08.md). Légende : effort S / 
 
 ### Lot 4 — Nouvelles fonctions (à prioriser ensemble)
 
+Validés par l'utilisateur : mode magasin, échange de tour. La suite est choisie avec l'utilisateur avant
+d'être codée.
+
 Organisation du foyer :
 
 - [ ] **Tableau « cette semaine »** sur l'écran d'accueil : qui fait quoi chaque jour, d'un coup d'œil (S)
-- [ ] **Échange de tour** : « Peux-tu prendre ma vaisselle jeudi ? », accepter ou refuser en un geste (M) ⚙️🌐🤖
+- [x] **Échange de tour** : « Peux-tu prendre ma vaisselle jeudi ? », accepter ou refuser en un geste (M) ⚙️🌐🤖 (#88)
 - [ ] **Tâches « quand on peut »** avec charge estimée (petite, moyenne, grosse) pour mieux équilibrer (M)
 - [ ] **Routines** (matin, soir, départ en vacances) : une liste cochée en séquence, réutilisable (M)
 - [ ] **Rappel partagé de lieu** : « en passant à la pharmacie » (géolocalisation, Android) (L) 🤖

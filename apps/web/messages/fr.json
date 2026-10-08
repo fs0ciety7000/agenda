@@ -544,7 +544,7 @@
     },
     "data": {
       "title": "Données traitées",
-      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations, liste de courses.\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, sous-tâches, commentaires, absences déclarées, historique des actions (qui a fait quoi, quand).\nDépenses (si vous les utilisez) : montant, date, libellé, catégorie, commentaire, qui a payé et la part de chacun. Une dépense personnelle n'est visible que de vous. Le ticket joint (photo ou PDF) est conservé avec la dépense et supprimé avec elle.\nSessions : appareil (navigateur ou application) et dates de connexion, pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion.\nAjout par e-mail (si vous l'activez) : l'expéditeur, le sujet et le texte des e-mails que vous transférez à votre adresse personnelle sont enregistrés dans les notes de la tâche créée. Ils sont reçus par Resend, notre prestataire d'e-mails ; leurs pièces jointes sont jointes à la tâche.\nPièces jointes : les fichiers que vous joignez à une tâche (ou joints à un e-mail transféré) sont stockés sur notre serveur avec la tâche, visibles par les membres du foyer (par vous seul pour une tâche personnelle), et supprimés avec elle.\nSignalements (si vous en envoyez) : le type, le titre et le texte de votre message, une capture d'écran si vous en joignez une, votre choix d'être recontacté·e ou non et, seulement si vous cochez la case, des informations techniques affichées avant l'envoi (navigateur ou modèle de téléphone, système, version de l'app, langue, fuseau horaire, taille d'écran, page ouverte). Jamais le contenu de vos tâches. Seuls les administrateurs de l'app les lisent.\nNotifications du navigateur (si vous les activez) : l'adresse d'abonnement fournie par votre navigateur, supprimée quand vous les désactivez ou vous déconnectez."
+      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations, liste de courses.\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, sous-tâches, commentaires, demandes d'échange de tour (avec le mot laissé), absences déclarées, historique des actions (qui a fait quoi, quand).\nDépenses (si vous les utilisez) : montant, date, libellé, catégorie, commentaire, qui a payé et la part de chacun. Une dépense personnelle n'est visible que de vous. Le ticket joint (photo ou PDF) est conservé avec la dépense et supprimé avec elle.\nSessions : appareil (navigateur ou application) et dates de connexion, pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion.\nAjout par e-mail (si vous l'activez) : l'expéditeur, le sujet et le texte des e-mails que vous transférez à votre adresse personnelle sont enregistrés dans les notes de la tâche créée. Ils sont reçus par Resend, notre prestataire d'e-mails ; leurs pièces jointes sont jointes à la tâche.\nPièces jointes : les fichiers que vous joignez à une tâche (ou joints à un e-mail transféré) sont stockés sur notre serveur avec la tâche, visibles par les membres du foyer (par vous seul pour une tâche personnelle), et supprimés avec elle.\nSignalements (si vous en envoyez) : le type, le titre et le texte de votre message, une capture d'écran si vous en joignez une, votre choix d'être recontacté·e ou non et, seulement si vous cochez la case, des informations techniques affichées avant l'envoi (navigateur ou modèle de téléphone, système, version de l'app, langue, fuseau horaire, taille d'écran, page ouverte). Jamais le contenu de vos tâches. Seuls les administrateurs de l'app les lisent.\nNotifications du navigateur (si vous les activez) : l'adresse d'abonnement fournie par votre navigateur, supprimée quand vous les désactivez ou vous déconnectez."
     },
     "google": {
       "title": "Données Google",
@@ -595,7 +595,11 @@
     "commentedDeleted": "{by} a commenté une tâche, supprimée depuis",
     "thanked": "{by} vous dit merci pour « {title} »",
     "thankedDeleted": "{by} vous dit merci",
-    "budget": "Budget commun · {month} : {level} % atteint ({amount} sur {budget})"
+    "budget": "Budget commun · {month} : {level} % atteint ({amount} sur {budget})",
+    "swapRequest": "{by} vous demande de prendre « {title} »",
+    "swapAccepted": "{by} prend « {title} » à votre place",
+    "swapDeclined": "{by} ne peut pas prendre « {title} »",
+    "swapDeleted": "Échange de tour pour une tâche supprimée depuis"
   },
   "notificationSettings": {
     "title": "Préférences de notification",
@@ -607,7 +611,9 @@
       "CALENDAR_SYNC_FAILED": "Problème de synchronisation Google Calendar",
       "TASK_COMMENT": "Quelqu'un commente une de mes tâches",
       "TASK_THANKS": "Quelqu'un me dit merci pour une tâche faite",
-      "EXPENSE_BUDGET": "Le budget commun du mois atteint 80 % ou 100 %"
+      "EXPENSE_BUDGET": "Le budget commun du mois atteint 80 % ou 100 %",
+      "TASK_SWAP_REQUEST": "Quelqu’un me propose de prendre sa tâche",
+      "TASK_SWAP_ANSWER": "Réponse à ma demande d’échange"
     },
     "status": {
       "title": "Notifications instantanées sur le téléphone : pas encore actives",
@@ -1340,5 +1346,23 @@
     "trendTitle": "Sur {count} mois",
     "trendHint": "Dépenses communes, mois par mois",
     "trendBudget": "Repère : budget de {budget}"
+  },
+  "swaps": {
+    "title": "Échanges de tour",
+    "someone": "Quelqu’un",
+    "incoming": "{name} vous demande de prendre « {title} »",
+    "outgoing": "En attente de {name} : « {title} »",
+    "accept": "Je la prends",
+    "decline": "Pas cette fois",
+    "cancel": "Annuler",
+    "accepted": "« {title} » est pour vous.",
+    "ask": "Proposer à quelqu’un d’autre",
+    "askOne": "Proposer à {name}",
+    "to": "À qui ?",
+    "note": "Un mot (facultatif)",
+    "notePlaceholder": "Je rentre tard jeudi",
+    "send": "Envoyer la demande",
+    "sent": "Demande envoyée à {name}.",
+    "waiting": "Demande envoyée à {name}, en attente de réponse."
   }
 }

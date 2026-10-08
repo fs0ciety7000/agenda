@@ -28,6 +28,9 @@ d'elle-même (ou via Google Play).
 - ⚙️ Rapport d'audit et plan de travail suivi dans la roadmap.
 - ✨ **Mode magasin** (Courses, site et Android) : la liste en plein écran, en gros caractères,
   rangée par rayon, et l'écran qui reste allumé.
+- ✨ **Échange de tour** (site et Android) : « Peux-tu prendre ma vaisselle jeudi ? » depuis la
+  fiche d'une tâche, avec un mot si besoin ; l'autre accepte ou refuse en un geste depuis
+  Aujourd'hui, et la tâche change de responsable.
 - ✨ **Sur grand écran**, Aujourd'hui passe en deux colonnes : la liste à gauche ; répartition,
   courses à acheter et budget du mois à droite. Les Menus s'affichent en deux colonnes.
 - ✨ **Raccourcis clavier** : « / » pour chercher une tâche, « T » pour revenir à Aujourd'hui (en

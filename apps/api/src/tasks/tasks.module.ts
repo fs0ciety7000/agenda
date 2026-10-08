@@ -11,6 +11,8 @@ import { AttachmentsService } from './attachments.service';
 import { ActivityService } from './activity.service';
 import { TasksController } from './tasks.controller';
 import { SeriesService } from './series.service';
+import { SwapsController } from './swaps.controller';
+import { SwapsService } from './swaps.service';
 import { ReviewService } from './review.service';
 import { TasksService } from './tasks.service';
 import { TemplatesController } from './templates.controller';
@@ -25,6 +27,7 @@ import { TemplatesService } from './templates.service';
     AttachmentsController,
     AbsencesController,
     CommentsController,
+    SwapsController,
   ],
   providers: [
     TasksService,
@@ -35,6 +38,7 @@ import { TemplatesService } from './templates.service';
     AbsencesService,
     CommentsService,
     ReviewService,
+    SwapsService,
   ],
   exports: [SeriesService, TasksService, AttachmentsService],
 })

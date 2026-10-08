@@ -48,6 +48,7 @@ import {
   useSeriesDetail,
   useUpdateOccurrence,
 } from '@/lib/tasks';
+import { SwapAsk } from './swaps';
 import { Attachments } from './attachments';
 import { Comments } from './comments';
 import { ChecklistEditor, type ChecklistRow } from './checklist';
@@ -562,6 +563,7 @@ export function TaskFormDialog({
               <p className="text-sm text-text-muted">{lastDoneText(occurrence.lastDone)}</p>
             )}
             {occurrence?.seriesId && <SeriesHistory seriesId={occurrence.seriesId} />}
+            {occurrence && <SwapAsk occurrence={occurrence} />}
             {occurrence && <Comments occurrence={occurrence} />}
 
             {error && (

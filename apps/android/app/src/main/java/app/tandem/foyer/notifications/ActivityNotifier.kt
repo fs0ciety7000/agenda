@@ -76,6 +76,12 @@ class ActivityNotifier(
             )
             "TASK_COMMENT" -> context.getString(R.string.activity_commented, n.byName ?: "?", n.title ?: "")
             "TASK_THANKS" -> context.getString(R.string.activity_thanked, n.byName ?: "?", n.title ?: "")
+            "TASK_SWAP_REQUEST" -> context.getString(R.string.activity_swap_request, n.byName ?: "?", n.title ?: "")
+            "TASK_SWAP_ANSWER" -> context.getString(
+                if (n.code == "ACCEPTED") R.string.activity_swap_accepted else R.string.activity_swap_declined,
+                n.byName ?: "?",
+                n.title ?: "",
+            )
             "EXPENSE_BUDGET" -> budgetText(n)
             else -> context.getString(R.string.activity_calendar_failed)
         }

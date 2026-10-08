@@ -557,4 +557,20 @@
     <string name="store_title">Au magasin</string>
     <string name="store_all_in_cart">Tout est dans le panier</string>
     <plurals name="store_left"><item quantity="one">Encore %d article</item><item quantity="many">Encore %d articles</item><item quantity="other">Encore %d articles</item></plurals>
+    <string name="swap_someone">Quelqu’un</string>
+    <string name="swap_failed">Envoi impossible. Vérifiez la connexion.</string>
+    <string name="swap_accepted">Vous prenez « %1$s »</string>
+    <string name="swap_incoming">%1$s vous demande de prendre « %2$s »</string>
+    <string name="swap_outgoing">En attente de %1$s : « %2$s »</string>
+    <string name="swap_accept">Accepter</string>
+    <string name="swap_decline">Refuser</string>
+    <string name="swap_ask">Proposer à quelqu’un</string>
+    <string name="swap_ask_one">Proposer à %1$s</string>
+    <string name="swap_note">Un mot (facultatif)</string>
+    <string name="swap_send">Envoyer</string>
+    <string name="swap_sent">Demande envoyée à %1$s</string>
+    <string name="swap_waiting">En attente de la réponse de %1$s</string>
+    <string name="activity_swap_request">%1$s vous demande de prendre « %2$s »</string>
+    <string name="activity_swap_accepted">%1$s prend « %2$s »</string>
+    <string name="activity_swap_declined">%1$s ne peut pas prendre « %2$s »</string>
 </resources>

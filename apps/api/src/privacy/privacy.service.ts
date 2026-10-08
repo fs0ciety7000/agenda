@@ -49,7 +49,7 @@ export class PrivacyService {
       },
     });
     const memberIds = user.memberships.map((m) => m.id);
-    const [createdTasks, assigned, shopping, attachments, comments, reports, expenses] =
+    const [createdTasks, assigned, shopping, attachments, comments, reports, expenses, swaps] =
       await Promise.all([
         this.prisma.task.findMany({
           where: { createdById: { in: memberIds }, deletedAt: null },
@@ -150,6 +150,19 @@ export class PrivacyService {
           },
           orderBy: { date: 'asc' },
         }),
+        // Échanges de tour demandés ou reçus (avec le mot laissé).
+        this.prisma.swapRequest.findMany({
+          where: { OR: [{ fromMemberId: { in: memberIds } }, { toMemberId: { in: memberIds } }] },
+          select: {
+            fromMemberId: true,
+            status: true,
+            note: true,
+            createdAt: true,
+            answeredAt: true,
+            occurrence: { select: { task: { select: { title: true } } } },
+          },
+          orderBy: { createdAt: 'asc' },
+        }),
       ]);
     return {
       format: 'tandem-export/1',
@@ -212,6 +225,14 @@ export class PrivacyService {
         paidByMe: memberIds.includes(e.paidById),
         myShareCents: e.shares.reduce((a, x) => a + x.amountCents, 0),
         receipt: e.receipt,
+      })),
+      swaps: swaps.map((w) => ({
+        task: w.occurrence.task.title,
+        askedByMe: memberIds.includes(w.fromMemberId),
+        status: w.status,
+        note: w.note,
+        createdAt: w.createdAt,
+        answeredAt: w.answeredAt,
       })),
       reports: reports.map(({ screenshotType, ...r }) => ({
         ...r,
@@ -287,6 +308,10 @@ export class PrivacyService {
         await tx.recurringExpense.updateMany({
           where: { OR: [{ paidById: m.id }, { forMemberId: m.id }], endedAt: null },
           data: { endedAt: new Date() },
+        });
+        // Échanges de tour (et les mots laissés) : effacés.
+        await tx.swapRequest.deleteMany({
+          where: { OR: [{ fromMemberId: m.id }, { toMemberId: m.id }] },
         });
         await tx.rotationSlot.deleteMany({ where: { memberId: m.id } });
         await tx.notification.deleteMany({ where: { memberId: m.id } });

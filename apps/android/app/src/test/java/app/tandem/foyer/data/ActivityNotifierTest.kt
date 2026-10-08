@@ -74,4 +74,27 @@ class ActivityNotifierTest {
             .extras.getCharSequence(androidx.core.app.NotificationCompat.EXTRA_TEXT).toString()
         assertTrue(text, text.startsWith("Shared budget · October: 80% reached"))
     }
+
+    @Test
+    fun `echange de tour demande puis reponse`() = runBlocking {
+        org.robolectric.Shadows.shadowOf(context as android.app.Application)
+            .grantPermissions(android.Manifest.permission.POST_NOTIFICATIONS)
+        context.getSharedPreferences("activity", android.content.Context.MODE_PRIVATE).edit()
+            .putString("since", "2026-10-08T10:00:00Z").commit()
+        val notifier = ActivityNotifier(context, ApiClient.create(server.url("/").toString(), FakeTokenStore()))
+        server.enqueue(
+            MockResponse().setHeader("content-type", "application/json").setBody(
+                """{"unread":2,"items":[
+                {"id":"s1","type":"TASK_SWAP_REQUEST","createdAt":"2026-10-08T10:05:00.000Z","push":true,"title":"Vaisselle","byName":"Nicolas"},
+                {"id":"s2","type":"TASK_SWAP_ANSWER","createdAt":"2026-10-08T10:06:00.000Z","push":true,"title":"Lessive","byName":"Grace","code":"DECLINED"}
+                ]}""",
+            ),
+        )
+        assertEquals(listOf("s1", "s2"), notifier.poll("h1").map { it.id })
+        val manager = context.getSystemService(android.app.NotificationManager::class.java)
+        val texts = org.robolectric.Shadows.shadowOf(manager).allNotifications
+            .map { it.extras.getCharSequence(androidx.core.app.NotificationCompat.EXTRA_TEXT).toString() }
+        assertTrue(texts.toString(), "Nicolas asks if you can take “Vaisselle”" in texts)
+        assertTrue(texts.toString(), "Grace can’t take “Lessive”" in texts)
+    }
 }

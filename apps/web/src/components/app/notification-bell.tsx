@@ -89,22 +89,33 @@ function NotificationRow({ n, onOpen }: { n: NotificationDto; onOpen: () => void
           amount: money(n.amountCents ?? 0),
           budget: money(n.budgetCents ?? 0),
         })
-      : n.type === 'TASK_THANKS'
+      : n.type === 'TASK_SWAP_REQUEST' || n.type === 'TASK_SWAP_ANSWER'
         ? n.title
-          ? t('thanked', { by: n.byName ?? '?', title: n.title })
-          : t('thankedDeleted', { by: n.byName ?? '?' })
-        : n.type === 'TASK_COMMENT'
+          ? t(
+              n.type === 'TASK_SWAP_REQUEST'
+                ? 'swapRequest'
+                : n.code === 'ACCEPTED'
+                  ? 'swapAccepted'
+                  : 'swapDeclined',
+              { by: n.byName ?? '?', title: n.title },
+            )
+          : t('swapDeleted')
+        : n.type === 'TASK_THANKS'
           ? n.title
-            ? t('commented', { by: n.byName ?? '?', title: n.title })
-            : t('commentedDeleted', { by: n.byName ?? '?' })
-          : n.type === 'TASK_ASSIGNED'
+            ? t('thanked', { by: n.byName ?? '?', title: n.title })
+            : t('thankedDeleted', { by: n.byName ?? '?' })
+          : n.type === 'TASK_COMMENT'
             ? n.title
-              ? t(n.recurring ? 'assignedRecurring' : 'assigned', {
-                  by: n.byName ?? '?',
-                  title: n.title,
-                })
-              : t('assignedDeleted', { by: n.byName ?? '?' })
-            : t('calendarFailed');
+              ? t('commented', { by: n.byName ?? '?', title: n.title })
+              : t('commentedDeleted', { by: n.byName ?? '?' })
+            : n.type === 'TASK_ASSIGNED'
+              ? n.title
+                ? t(n.recurring ? 'assignedRecurring' : 'assigned', {
+                    by: n.byName ?? '?',
+                    title: n.title,
+                  })
+                : t('assignedDeleted', { by: n.byName ?? '?' })
+              : t('calendarFailed');
   return (
     <button
       type="button"

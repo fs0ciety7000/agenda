@@ -9,6 +9,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Balance } from '@/components/app/balance';
 import { AbsenceBanner } from '@/components/app/absences';
 import { ReviewBanner } from '@/components/app/review-banner';
+import { SwapBanner } from '@/components/app/swaps';
 import { CalendarBanner } from '@/components/app/calendar-banner';
 import { useSession } from '@/components/app/household-context';
 import { NotificationBell } from '@/components/app/notification-bell';
@@ -95,6 +96,7 @@ export default function TodayPage() {
         <CalendarBanner />
         <AbsenceBanner />
         <ReviewBanner />
+        <SwapBanner />
 
         <QuickAdd onMoreOptions={dialog.openNew} extra={<ApplyTemplateButton />} />
 

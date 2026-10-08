@@ -21,6 +21,9 @@ Fichiers importés, à respecter au même titre que celui-ci :
 - Les audits sont rangés dans `docs/audits/AAAA-MM-JJ.md` ; leurs bloquants se corrigent dans la
   même PR, le reste va dans le plan.
 - Les décisions qui engagent la suite sont notées ci-dessous (une ligne, avec la PR).
+- **Un lot ou une tâche « à prioriser ensemble » ne se code pas sans accord** : proposer, puis
+  attendre que l'utilisateur choisisse quoi et dans quel ordre. « Go lot N » sur un tel lot veut
+  dire « discutons-en », pas « code tout ».
 
 ## Décisions prises
 

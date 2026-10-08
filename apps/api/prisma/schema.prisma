@@ -162,6 +162,7 @@ model Household {
   meals             Meal[]
   expenses          Expense[]
   recurringExpenses RecurringExpense[]
+  swapRequests      SwapRequest[]
 }
 
 enum HouseholdRole {
@@ -235,6 +236,8 @@ model HouseholdMember {
   absences             MemberAbsence[]
   comments             TaskComment[]
   thanks               OccurrenceThanks[]
+  swapsSent            SwapRequest[]            @relation("SwapFrom")
+  swapsReceived        SwapRequest[]            @relation("SwapTo")
   expensesPaid         Expense[]                @relation("ExpensePaidBy")
   expensesFor          Expense[]                @relation("ExpenseFor")
   expenseShares        ExpenseShare[]
@@ -422,14 +425,15 @@ model TaskOccurrence {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
 
-  household   Household            @relation(fields: [householdId], references: [id], onDelete: Cascade)
-  task        Task                 @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  series      TaskSeries?          @relation(fields: [seriesId], references: [id], onDelete: SetNull)
-  completedBy HouseholdMember?     @relation("OccurrenceCompletedBy", fields: [completedById], references: [id], onDelete: SetNull)
-  assignees   OccurrenceAssignee[]
-  eventLink   CalendarEventLink?
-  checklist   ChecklistItem[]
-  thanks      OccurrenceThanks[]
+  household    Household            @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  task         Task                 @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  series       TaskSeries?          @relation(fields: [seriesId], references: [id], onDelete: SetNull)
+  completedBy  HouseholdMember?     @relation("OccurrenceCompletedBy", fields: [completedById], references: [id], onDelete: SetNull)
+  assignees    OccurrenceAssignee[]
+  swapRequests SwapRequest[]
+  eventLink    CalendarEventLink?
+  checklist    ChecklistItem[]
+  thanks       OccurrenceThanks[]
 
   @@unique([seriesId, originalDate])
   @@index([householdId, date])
@@ -555,6 +559,34 @@ model ShoppingProduct {
   household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
 
   @@unique([householdId, key])
+}
+
+enum SwapStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  CANCELLED
+}
+
+/// Échange de tour : une personne responsable propose sa tâche à un autre membre.
+model SwapRequest {
+  id           String     @id @default(uuid()) @db.Uuid
+  householdId  String     @db.Uuid
+  occurrenceId String     @db.Uuid
+  fromMemberId String     @db.Uuid
+  toMemberId   String     @db.Uuid
+  note         String?    @db.VarChar(200)
+  status       SwapStatus @default(PENDING)
+  createdAt    DateTime   @default(now())
+  answeredAt   DateTime?
+
+  household  Household       @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  occurrence TaskOccurrence  @relation(fields: [occurrenceId], references: [id], onDelete: Cascade)
+  fromMember HouseholdMember @relation("SwapFrom", fields: [fromMemberId], references: [id], onDelete: Cascade)
+  toMember   HouseholdMember @relation("SwapTo", fields: [toMemberId], references: [id], onDelete: Cascade)
+
+  @@index([householdId, status])
+  @@index([occurrenceId])
 }
 
 /// « Merci » d'un membre pour une tâche faite par un autre (un par membre et par occurrence).
@@ -688,6 +720,9 @@ enum NotificationType {
   TASK_THANKS
   /// 80 % ou 100 % du budget commun du mois atteint.
   EXPENSE_BUDGET
+  /// « Nicolas te demande de prendre … » (échange de tour) ; et la réponse.
+  TASK_SWAP_REQUEST
+  TASK_SWAP_ANSWER
 }
 
 model Notification {

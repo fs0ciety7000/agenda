@@ -8,6 +8,9 @@
   « Plan UI/UX et fonctionnalités ») : à quel lot appartient la demande ?
 - Lire le code concerné avant de le modifier : les contrats (`packages/contracts`), le service
   API, la page web et l'écran Android. Une fonction existe souvent déjà à moitié.
+- Une demande qui porte sur des tâches marquées « à prioriser ensemble », ou sur de nouvelles
+  fonctions proposées par Claude, attend l'accord explicite de l'utilisateur sur la liste et
+  l'ordre avant tout code.
 - Si la demande est ambiguë sur un point qui change ce qu'on construit, poser la question. Sinon
   choisir l'option la plus simple et le dire dans le compte rendu.
 

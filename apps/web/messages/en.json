@@ -544,7 +544,7 @@
     },
     "data": {
       "title": "Data processed",
-      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, sub-tasks, comments, declared absences, activity history (who did what, when).\nExpenses (if you use them): amount, date, label, category, comment, who paid and each person's share. A personal expense is visible to you only. An attached receipt (photo or PDF) is kept with the expense and deleted with it.\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; their attachments are added to the task.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it.\nReports (if you send any): the type, title and text of your message, a screenshot if you attach one, whether you agree to be contacted and, only if you tick the box, technical information shown before sending (browser or phone model, system, app version, language, time zone, screen size, open page). Never the content of your tasks. Only the app's administrators read them.\nBrowser notifications (if you turn them on): the subscription address provided by your browser, deleted when you turn them off or sign out."
+      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, sub-tasks, comments, turn-swap requests (with any note), declared absences, activity history (who did what, when).\nExpenses (if you use them): amount, date, label, category, comment, who paid and each person's share. A personal expense is visible to you only. An attached receipt (photo or PDF) is kept with the expense and deleted with it.\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; their attachments are added to the task.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it.\nReports (if you send any): the type, title and text of your message, a screenshot if you attach one, whether you agree to be contacted and, only if you tick the box, technical information shown before sending (browser or phone model, system, app version, language, time zone, screen size, open page). Never the content of your tasks. Only the app's administrators read them.\nBrowser notifications (if you turn them on): the subscription address provided by your browser, deleted when you turn them off or sign out."
     },
     "google": {
       "title": "Google data",
@@ -595,7 +595,11 @@
     "commentedDeleted": "{by} commented on a task that has since been deleted",
     "thanked": "{by} says thanks for “{title}”",
     "thankedDeleted": "{by} says thanks",
-    "budget": "Shared budget · {month}: {level}% reached ({amount} of {budget})"
+    "budget": "Shared budget · {month}: {level}% reached ({amount} of {budget})",
+    "swapRequest": "{by} asks you to take “{title}”",
+    "swapAccepted": "{by} is taking “{title}” for you",
+    "swapDeclined": "{by} can’t take “{title}”",
+    "swapDeleted": "Turn swap for a task deleted since"
   },
   "notificationSettings": {
     "title": "Notification preferences",
@@ -607,7 +611,9 @@
       "CALENDAR_SYNC_FAILED": "Google Calendar sync problem",
       "TASK_COMMENT": "Someone comments on one of my tasks",
       "TASK_THANKS": "Someone thanks me for a task I did",
-      "EXPENSE_BUDGET": "The month's shared budget reaches 80% or 100%"
+      "EXPENSE_BUDGET": "The month's shared budget reaches 80% or 100%",
+      "TASK_SWAP_REQUEST": "Someone asks me to take their task",
+      "TASK_SWAP_ANSWER": "An answer to my swap request"
     },
     "status": {
       "title": "Instant phone notifications: not active yet",
@@ -1340,5 +1346,23 @@
     "trendTitle": "Over {count} months",
     "trendHint": "Shared expenses, month by month",
     "trendBudget": "Marker: {budget} budget"
+  },
+  "swaps": {
+    "title": "Turn swaps",
+    "someone": "Someone",
+    "incoming": "{name} asks you to take “{title}”",
+    "outgoing": "Waiting for {name}: “{title}”",
+    "accept": "I’ll take it",
+    "decline": "Not this time",
+    "cancel": "Cancel",
+    "accepted": "“{title}” is yours.",
+    "ask": "Ask someone else",
+    "askOne": "Ask {name}",
+    "to": "Who?",
+    "note": "A note (optional)",
+    "notePlaceholder": "I’m home late on Thursday",
+    "send": "Send request",
+    "sent": "Request sent to {name}.",
+    "waiting": "Request sent to {name}, waiting for an answer."
   }
 }

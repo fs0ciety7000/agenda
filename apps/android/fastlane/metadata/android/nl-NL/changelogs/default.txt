@@ -4,4 +4,4 @@ Nieuw: Uitgaven (tabblad Meer → Uitgaven).
 • Zelf verdelen, vaste kosten, kasticket als foto.
 • Maandbudget met melding, verloop over 6 maanden, export.
 • Nieuwe look: ronde vinkjes, taken in kaarten, zoals op de site.
-• Beter leesbaar: initialen, kleuren, prioriteiten; "Nog in te halen".
+• Winkelmodus, en vraag de ander om een taak over te nemen.

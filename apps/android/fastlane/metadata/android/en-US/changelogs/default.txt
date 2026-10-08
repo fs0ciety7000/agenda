@@ -4,4 +4,4 @@ New: Expenses (More tab → Expenses).
 • Custom split, monthly fixed expenses, receipt photo.
 • Monthly budget with alerts, 6-month trend, spreadsheet export.
 • New look: round checkboxes, tasks in cards, like the website.
-• Easier to read: initials, colours, priorities; "To catch up".
+• Store mode, and ask the other to take a task for you.
