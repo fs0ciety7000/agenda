@@ -75,7 +75,7 @@ connexions (une PR chacun). Le reste attend son accord.
 
 Organisation du foyer :
 
-- [x] **Tableau « cette semaine »** sur l'écran d'accueil : qui fait quoi chaque jour, d'un coup d'œil (S) 🌐🤖 (#89)
+- [x] **Tableau « cette semaine »** sur l'écran d'accueil : qui fait quoi chaque jour, d'un coup d'œil (S) 🌐🤖 (#88)
 - [x] **Échange de tour** : « Peux-tu prendre ma vaisselle jeudi ? », accepter ou refuser en un geste (M) ⚙️🌐🤖 (#88)
 - [ ] **Tâches « quand on peut »** avec charge estimée (petite, moyenne, grosse) pour mieux équilibrer (M)
 - [ ] **Routines** (matin, soir, départ en vacances) : une liste cochée en séquence, réutilisable (M)

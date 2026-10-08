@@ -15,7 +15,7 @@ d'elle-même (ou via Google Play).
 
 ## 8 octobre 2026
 
-### Qui fait quoi cette semaine (#89)
+### Qui fait quoi cette semaine (#88)
 
 - ✨ **Tableau « Qui fait quoi »** sur Aujourd'hui (site et Android) : les 7 prochains jours,
   une ligne par personne, le nombre de tâches par case ; une case touchée affiche ses tâches.
