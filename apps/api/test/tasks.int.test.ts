@@ -395,12 +395,12 @@ describe('Tâches (intégration)', () => {
     const t = await http()
       .post(`${h.base}/tasks`)
       .set(h.grace.auth)
-      .send({ title: 'Titre', notes: 'Code de la porte 1234' })
+      .send({ title: 'Titre', notes: 'Code de la porte : zèbre' })
       .expect(201);
     await http()
       .patch(`${h.base}/occurrences/${t.body.id}`)
       .set(h.grace.auth)
-      .send({ version: 1, title: 'Nouveau titre', notes: 'Code 5678' })
+      .send({ version: 1, title: 'Nouveau titre', notes: 'Code : girafe' })
       .expect(200);
     const logs = await prisma.activityLog.findMany({
       where: { householdId: h.householdId },
@@ -411,7 +411,8 @@ describe('Tâches (intégration)', () => {
       ['occurrence.updated', 'Nouveau titre'],
     ]);
     expect(logs[1]!.data).toMatchObject({ fields: ['title', 'notes'] });
-    expect(JSON.stringify(logs)).not.toMatch(/1234|5678/);
+    // Mots absents des identifiants (des chiffres comme « 5678 » peuvent tomber dans un UUID).
+    expect(JSON.stringify(logs)).not.toMatch(/zèbre|girafe/);
   });
 });
 
