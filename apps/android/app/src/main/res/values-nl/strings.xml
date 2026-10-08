@@ -17,6 +17,7 @@
     <string name="nav_today">Vandaag</string>
     <string name="nav_tasks">Taken</string>
     <string name="nav_calendar">Agenda</string>
+    <string name="nav_more">Meer</string>
     <string name="nav_settings">Instellingen</string>
     <string name="quick_add">Snel toevoegen</string>
     <string name="back">Terug</string>
@@ -515,4 +516,26 @@
     <string name="expenses_custom_invalid">De aandelen moeten samen %1$s zijn.</string>
     <string name="shopping_cleared">Mandje leeggemaakt</string>
     <string name="shopping_note_expense">Uitgave noteren</string>
+    <string name="activity_budget">Gezamenlijk budget · %1$s: %2$d%% bereikt (%3$s van %4$s)</string>
+    <string name="expenses_export">Exporteren</string>
+    <string name="expenses_export_title">Exporteren als spreadsheet (CSV)</string>
+    <string name="expenses_export_hint">Een bestand voor Excel, LibreOffice of Google Sheets, om te versturen of te bewaren. Je persoonlijke uitgaven staan erin, die van anderen niet.</string>
+    <string name="expenses_export_month">Deze maand</string>
+    <string name="expenses_export_year">Sinds januari</string>
+    <string name="expenses_export_12">De laatste 12 maanden</string>
+    <string name="expenses_budget_set">Budget instellen</string>
+    <string name="expenses_budget_edit">Budget</string>
+    <string name="expenses_budget_line">Gezamenlijk budget: %1$s van %2$s</string>
+    <string name="expenses_budget_left">%1$d%% · nog %2$s</string>
+    <string name="expenses_budget_over">%1$d%% · %2$s boven het budget</string>
+    <string name="expenses_budget_title">Gezamenlijk maandbudget</string>
+    <string name="expenses_budget_hint" formatted="false">Voor de gezamenlijke uitgaven van de maand. Het huishouden krijgt een melding bij 80% en bij 100%.</string>
+    <string name="expenses_budget_amount">Bedrag per maand (€)</string>
+    <string name="expenses_budget_remove">Budget verwijderen</string>
+    <plurals name="expenses_trend_title">
+        <item quantity="one">Over %1$d maand</item>
+        <item quantity="other">Over %1$d maanden</item>
+    </plurals>
+    <string name="expenses_trend_hint">Gezamenlijke uitgaven, maand per maand</string>
+    <string name="expenses_trend_budget">Markering: budget van %1$s</string>
 </resources>

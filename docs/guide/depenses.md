@@ -6,7 +6,7 @@ description: Qui a payé quoi, la part de chacun, le solde et les remboursements
 # Dépenses
 
 **Dépenses** (menu de gauche sur ordinateur ; **Plus → Dépenses** sur téléphone ; dans l'app
-Android, **Réglages → Dépenses**) : on note ce qu'on paie pour le foyer, et Tandem calcule qui
+Android, onglet **Plus → Dépenses**) : on note ce qu'on paie pour le foyer, et Tandem calcule qui
 doit combien à qui.
 
 ## Ajouter une dépense
@@ -64,6 +64,29 @@ zéro. Un remboursement enregistré par erreur se supprime comme une dépense.
 
 Les flèches changent de mois.
 
+## Budget du mois
+
+**Définir un budget** (sous les dépenses communes) fixe un montant mensuel pour les dépenses
+**communes** (les dépenses perso et les avances n'y comptent pas). Une jauge montre « 85 € sur
+100 € » et ce qu'il reste, ou de combien le budget est dépassé. Quand les dépenses communes du
+mois en cours atteignent **80 %** puis **100 %** du budget, le reste du foyer reçoit une
+notification (une seule par seuil et par mois ; jamais pour la dépense qu'on vient soi-même
+d'enregistrer). **Budget → Enlever le budget** le supprime.
+
+## Sur 6 mois
+
+Sous les totaux, **Sur 6 mois** montre les dépenses communes des six derniers mois (jusqu'au
+mois affiché), une barre par mois, avec le budget en repère.
+
+## Exporter en tableur
+
+**Exporter** (en haut de la page ; dans l'app Android, en haut à droite) produit un fichier
+**CSV** pour Excel, LibreOffice ou Google Sheets : une ligne par dépense ou remboursement, avec
+la date, le montant, qui a payé, le partage et la part de chacun. Sur le site, on choisit les
+mois (cinq ans au plus) ; sur Android : ce mois-ci, depuis janvier ou les 12 derniers mois, puis
+le fichier se partage (Drive, e-mail, Fichiers…). Les en-têtes sont dans la langue de votre
+compte. Vos dépenses perso y figurent, pas celles des autres.
+
 ## Partage 60 / 40
 
 **Partage 50 / 50** (au-dessus du solde, sur le site) règle les proportions des dépenses
@@ -79,5 +102,5 @@ partage** : changer les proportions ne réécrit pas le passé.
 - Les dépenses font partie de l'**export de vos données** (Réglages → Données & confidentialité).
   À la suppression d'un compte, ses dépenses perso sont effacées ; les dépenses communes restent
   pour que les soldes de l'autre restent justes, au nom d'« Ancien membre ».
-- Sur Android, les dépenses demandent une connexion ; les proportions se règlent sur le site, et
+- Sur Android, les dépenses demandent une connexion (budget et export compris) ; les proportions se règlent sur le site, et
   la proposition « Noter la dépense » après une tâche cochée n'existe que sur le site.

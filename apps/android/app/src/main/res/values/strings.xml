@@ -20,6 +20,7 @@
     <string name="nav_today">Today</string>
     <string name="nav_tasks">Tasks</string>
     <string name="nav_calendar">Calendar</string>
+    <string name="nav_more">More</string>
     <string name="nav_settings">Settings</string>
     <string name="quick_add">Quick add</string>
     <string name="back">Back</string>
@@ -518,4 +519,26 @@
     <string name="expenses_custom_invalid">The shares must add up to %1$s.</string>
     <string name="shopping_cleared">Basket emptied</string>
     <string name="shopping_note_expense">Record the expense</string>
+    <string name="activity_budget">Shared budget · %1$s: %2$d%% reached (%3$s of %4$s)</string>
+    <string name="expenses_export">Export</string>
+    <string name="expenses_export_title">Export as a spreadsheet (CSV)</string>
+    <string name="expenses_export_hint">A file for Excel, LibreOffice or Google Sheets, to send or save. Your personal expenses are included, not other people\'s.</string>
+    <string name="expenses_export_month">This month</string>
+    <string name="expenses_export_year">Since January</string>
+    <string name="expenses_export_12">Last 12 months</string>
+    <string name="expenses_budget_set">Set a budget</string>
+    <string name="expenses_budget_edit">Budget</string>
+    <string name="expenses_budget_line">Shared budget: %1$s of %2$s</string>
+    <string name="expenses_budget_left">%1$d%% · %2$s left</string>
+    <string name="expenses_budget_over">%1$d%% · %2$s over budget</string>
+    <string name="expenses_budget_title">Monthly shared budget</string>
+    <string name="expenses_budget_hint" formatted="false">For the month\'s shared expenses. The household gets a notification at 80% and at 100%.</string>
+    <string name="expenses_budget_amount">Amount per month (€)</string>
+    <string name="expenses_budget_remove">Remove the budget</string>
+    <plurals name="expenses_trend_title">
+        <item quantity="one">Over %1$d month</item>
+        <item quantity="other">Over %1$d months</item>
+    </plurals>
+    <string name="expenses_trend_hint">Shared expenses, month by month</string>
+    <string name="expenses_trend_budget">Marker: %1$s budget</string>
 </resources>

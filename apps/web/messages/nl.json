@@ -581,7 +581,8 @@
     "commented": "{by} heeft gereageerd op “{title}”",
     "commentedDeleted": "{by} heeft gereageerd op een taak die intussen is verwijderd",
     "thanked": "{by} bedankt je voor “{title}”",
-    "thankedDeleted": "{by} bedankt je"
+    "thankedDeleted": "{by} bedankt je",
+    "budget": "Gezamenlijk budget · {month}: {level}% bereikt ({amount} van {budget})"
   },
   "notificationSettings": {
     "title": "Meldingsvoorkeuren",
@@ -592,7 +593,8 @@
       "TASK_ASSIGNED": "Iemand geeft me een taak",
       "CALENDAR_SYNC_FAILED": "Probleem met de synchronisatie van Google Agenda",
       "TASK_COMMENT": "Iemand reageert op een van mijn taken",
-      "TASK_THANKS": "Iemand bedankt me voor een taak die ik heb gedaan"
+      "TASK_THANKS": "Iemand bedankt me voor een taak die ik heb gedaan",
+      "EXPENSE_BUDGET": "Het gezamenlijke budget van de maand bereikt 80% of 100%"
     },
     "status": {
       "title": "Directe meldingen op de telefoon: nog niet actief",
@@ -1300,6 +1302,27 @@
     "recurringLine": "Op de {day}e van elke maand · betaald door {payer}",
     "recurringStop": "Stoppen",
     "recurringStopLabel": "“{title}” stoppen",
-    "recurringStopConfirm": "“{title}” stoppen? Uitgaven die al zijn toegevoegd, blijven."
+    "recurringStopConfirm": "“{title}” stoppen? Uitgaven die al zijn toegevoegd, blijven.",
+    "export": "Exporteren",
+    "exportTitle": "Exporteren als spreadsheet (CSV)",
+    "exportHint": "Een bestand voor Excel, LibreOffice of Google Sheets: één regel per uitgave, met ieders deel. Je persoonlijke uitgaven staan erin, die van anderen niet.",
+    "exportFrom": "Van maand",
+    "exportTo": "Tot maand",
+    "exportDownload": "Downloaden",
+    "exportInvalid": "Kies een eerste maand vóór de tweede, hooguit vijf jaar.",
+    "budgetSet": "Budget instellen",
+    "budgetEdit": "Budget",
+    "budgetLine": "Gezamenlijk budget: {spent} van {budget}",
+    "budgetMeter": "Gezamenlijk budget van de maand",
+    "budgetPercent": "{percent}% van het budget",
+    "budgetLeft": "{percent}% · nog {amount}",
+    "budgetOver": "{percent}% · {amount} boven het budget",
+    "budgetTitle": "Gezamenlijk maandbudget",
+    "budgetHint": "Voor de gezamenlijke uitgaven van de maand. Het huishouden krijgt een melding bij 80% en bij 100%.",
+    "budgetAmount": "Bedrag per maand (€)",
+    "budgetRemove": "Budget verwijderen",
+    "trendTitle": "Over {count} maanden",
+    "trendHint": "Gezamenlijke uitgaven, maand per maand",
+    "trendBudget": "Markering: budget van {budget}"
   }
 }

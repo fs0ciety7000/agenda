@@ -53,4 +53,25 @@ class ActivityNotifierTest {
         notifier.poll("h1")
         assertTrue(server.takeRequest().path!!.contains("since=2026-09-26T10%3A05%3A00.000Z"))
     }
+
+    @Test
+    fun `alerte budget affichee avec le mois et les montants`() = runBlocking {
+        org.robolectric.Shadows.shadowOf(context as android.app.Application)
+            .grantPermissions(android.Manifest.permission.POST_NOTIFICATIONS)
+        context.getSharedPreferences("activity", android.content.Context.MODE_PRIVATE).edit()
+            .putString("since", "2026-10-08T10:00:00Z").commit()
+        val notifier = ActivityNotifier(context, ApiClient.create(server.url("/").toString(), FakeTokenStore()))
+        server.enqueue(
+            MockResponse().setHeader("content-type", "application/json").setBody(
+                """{"unread":1,"items":[
+                {"id":"b1","type":"EXPENSE_BUDGET","createdAt":"2026-10-08T10:05:00.000Z","push":true,"month":"2026-10","level":80,"amountCents":64000,"budgetCents":80000}
+                ]}""",
+            ),
+        )
+        assertEquals(listOf("b1"), notifier.poll("h1").map { it.id })
+        val manager = context.getSystemService(android.app.NotificationManager::class.java)
+        val text = org.robolectric.Shadows.shadowOf(manager).allNotifications.single()
+            .extras.getCharSequence(androidx.core.app.NotificationCompat.EXTRA_TEXT).toString()
+        assertTrue(text, text.startsWith("Shared budget · October: 80% reached"))
+    }
 }

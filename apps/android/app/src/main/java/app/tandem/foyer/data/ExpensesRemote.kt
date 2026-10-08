@@ -5,12 +5,16 @@ import app.tandem.foyer.data.local.AgendaDatabase
 import app.tandem.foyer.data.remote.AgendaApi
 import app.tandem.foyer.data.remote.ExpenseBody
 import app.tandem.foyer.data.remote.ExpenseDto
+import app.tandem.foyer.data.remote.ExpenseStatsDto
 import app.tandem.foyer.data.remote.ExpenseSummaryDto
 import app.tandem.foyer.data.remote.RecurringExpenseBody
 import app.tandem.foyer.data.remote.RecurringExpenseDto
 import app.tandem.foyer.data.remote.SettleBody
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.buildJsonObject
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
@@ -18,11 +22,12 @@ import java.io.File
 import java.io.IOException
 import java.util.UUID
 
-/** Un mois de dépenses : la liste, les totaux et soldes, et les charges fixes en cours. */
+/** Un mois de dépenses : la liste, les totaux et soldes, les charges fixes, l'évolution sur 6 mois. */
 data class ExpensesMonth(
     val items: List<ExpenseDto>,
     val summary: ExpenseSummaryDto,
     val recurring: List<RecurringExpenseDto>,
+    val stats: ExpenseStatsDto? = null,
 )
 
 /**
@@ -38,7 +43,7 @@ class ExpensesRemote(
         val list = api.expenses(h, month).body() ?: return@call null
         val summary = api.expenseSummary(h, month).body() ?: return@call null
         val recurring = api.recurringExpenses(h).body() ?: emptyList()
-        ExpensesMonth(list, summary, recurring)
+        ExpensesMonth(list, summary, recurring, api.expenseStats(h, month).body())
     }
 
     /** Enregistre la dépense ; renvoie la dépense enregistrée (pour y joindre un ticket). */
@@ -86,6 +91,27 @@ class ExpensesRemote(
         val file = File(dir, if (type == "application/pdf") "ticket.pdf" else "ticket")
         body.byteStream().use { input -> file.outputStream().use { input.copyTo(it) } }
         file to type
+    }
+
+    /** Budget mensuel commun en centimes ; null l'enlève. */
+    suspend fun setBudget(cents: Long?): Boolean = call { h ->
+        val body = buildJsonObject { put("budgetCents", cents?.let { JsonPrimitive(it) } ?: JsonNull) }
+        api.setExpenseBudget(h, body).isSuccessful.takeIf { it }
+    } ?: false
+
+    /** Export CSV téléchargé dans le cache (partagé ensuite vers Drive, Sheets, un e-mail…). */
+    suspend fun exportCsv(from: String, to: String): File? = call { h ->
+        val res = api.exportExpenses(h, from, to)
+        val body = res.body() ?: return@call null
+        if (!res.isSuccessful) return@call null
+        val name = res.headers()["content-disposition"]
+            ?.let { Regex("filename=\"([^\"]+)\"").find(it)?.groupValues?.get(1) }
+            ?.let(AttachmentFiles::safeName)
+            ?: "tandem-$from-$to.csv"
+        val dir = File(cacheDir, "attachments/exports").apply { mkdirs() }
+        val file = File(dir, name)
+        body.byteStream().use { input -> file.outputStream().use { input.copyTo(it) } }
+        file
     }
 
     suspend fun deleteReceipt(expenseId: String): Boolean =

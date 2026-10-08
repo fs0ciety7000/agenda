@@ -20,6 +20,11 @@ data class NotificationDto(
     val title: String? = null,
     val recurring: Boolean = false,
     val byName: String? = null,
+    /** EXPENSE_BUDGET : mois (« 2026-10 »), seuil atteint (80 ou 100), dépensé et budget. */
+    val month: String? = null,
+    val level: Int? = null,
+    val amountCents: Long? = null,
+    val budgetCents: Long? = null,
 )
 
 @Serializable
@@ -409,4 +414,23 @@ data class ExpenseSummaryDto(
     val members: List<ExpenseMemberSummaryDto> = emptyList(),
     val transfers: List<ExpenseTransferDto> = emptyList(),
     val byCategory: List<ExpenseCategoryTotalDto> = emptyList(),
+    /** Budget mensuel des dépenses communes (null = aucun). */
+    val budgetCents: Long? = null,
+)
+
+/** Un mois de l'évolution : dépenses communes, les miennes, par catégorie. */
+@Serializable
+data class ExpenseMonthStatsDto(
+    val month: String,
+    val commonCents: Long,
+    val mineCents: Long = 0,
+    val byCategory: List<ExpenseCategoryTotalDto> = emptyList(),
+)
+
+@Serializable
+data class ExpenseStatsDto(
+    val currency: String = "EUR",
+    val budgetCents: Long? = null,
+    /** Du plus ancien au plus récent. */
+    val months: List<ExpenseMonthStatsDto> = emptyList(),
 )

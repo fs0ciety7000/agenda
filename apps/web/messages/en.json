@@ -581,7 +581,8 @@
     "commented": "{by} commented on “{title}”",
     "commentedDeleted": "{by} commented on a task that has since been deleted",
     "thanked": "{by} says thanks for “{title}”",
-    "thankedDeleted": "{by} says thanks"
+    "thankedDeleted": "{by} says thanks",
+    "budget": "Shared budget · {month}: {level}% reached ({amount} of {budget})"
   },
   "notificationSettings": {
     "title": "Notification preferences",
@@ -592,7 +593,8 @@
       "TASK_ASSIGNED": "Someone gives me a task",
       "CALENDAR_SYNC_FAILED": "Google Calendar sync problem",
       "TASK_COMMENT": "Someone comments on one of my tasks",
-      "TASK_THANKS": "Someone thanks me for a task I did"
+      "TASK_THANKS": "Someone thanks me for a task I did",
+      "EXPENSE_BUDGET": "The month's shared budget reaches 80% or 100%"
     },
     "status": {
       "title": "Instant phone notifications: not active yet",
@@ -1300,6 +1302,27 @@
     "recurringLine": "On the {day} of each month · paid by {payer}",
     "recurringStop": "Stop",
     "recurringStopLabel": "Stop “{title}”",
-    "recurringStopConfirm": "Stop “{title}”? Expenses already added stay."
+    "recurringStopConfirm": "Stop “{title}”? Expenses already added stay.",
+    "export": "Export",
+    "exportTitle": "Export as a spreadsheet (CSV)",
+    "exportHint": "A file for Excel, LibreOffice or Google Sheets: one row per expense, with everyone's share. Your personal expenses are included, not other people's.",
+    "exportFrom": "From",
+    "exportTo": "To",
+    "exportDownload": "Download",
+    "exportInvalid": "Pick a first month before the second one, five years at most.",
+    "budgetSet": "Set a budget",
+    "budgetEdit": "Budget",
+    "budgetLine": "Shared budget: {spent} of {budget}",
+    "budgetMeter": "This month's shared budget",
+    "budgetPercent": "{percent}% of the budget",
+    "budgetLeft": "{percent}% · {amount} left",
+    "budgetOver": "{percent}% · {amount} over budget",
+    "budgetTitle": "Monthly shared budget",
+    "budgetHint": "For the month's shared expenses. The household gets a notification at 80% and at 100%.",
+    "budgetAmount": "Amount per month (€)",
+    "budgetRemove": "Remove the budget",
+    "trendTitle": "Over {count} months",
+    "trendHint": "Shared expenses, month by month",
+    "trendBudget": "Marker: {budget} budget"
   }
 }

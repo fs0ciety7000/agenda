@@ -6,6 +6,7 @@ export const NotificationKind = z.enum([
   'CALENDAR_SYNC_FAILED',
   'TASK_COMMENT',
   'TASK_THANKS',
+  'EXPENSE_BUDGET',
 ]);
 export type NotificationKind = z.infer<typeof NotificationKind>;
 
@@ -25,6 +26,11 @@ export const NotificationDto = z.object({
   byName: z.string().nullable(),
   /** CALENDAR_SYNC_FAILED : code d'erreur (CalendarErrorCode). */
   code: z.string().nullable(),
+  /** EXPENSE_BUDGET : mois (« 2026-10 »), seuil atteint (80 ou 100), dépensé et budget. */
+  month: z.string().nullable(),
+  level: z.number().int().nullable(),
+  amountCents: z.number().int().nullable(),
+  budgetCents: z.number().int().nullable(),
 });
 export type NotificationDto = z.infer<typeof NotificationDto>;
 

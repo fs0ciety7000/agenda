@@ -1,6 +1,8 @@
 import type {
+  ExpenseBudgetInput,
   ExpenseDto,
   ExpenseInput,
+  ExpenseStatsDto,
   ExpenseSummaryDto,
   RecurringExpenseDto,
   RecurringExpenseInput,
@@ -18,6 +20,8 @@ export const expenseKeys = {
   month: (hid: string, month: string) => ['households', hid, 'expenses', month] as const,
   summary: (hid: string, month: string) =>
     ['households', hid, 'expenses', 'summary', month] as const,
+  stats: (hid: string, month: string, months: number) =>
+    ['households', hid, 'expenses', 'stats', month, months] as const,
 };
 
 export const useExpenses = (hid: string, month: string) =>
@@ -31,6 +35,18 @@ export const useExpenseSummary = (hid: string, month: string) =>
     queryKey: expenseKeys.summary(hid, month),
     queryFn: () => api<ExpenseSummaryDto>(`/v1/households/${hid}/expenses/summary?month=${month}`),
   });
+
+/** Évolution sur `months` mois, jusqu'à `month` compris. */
+export const useExpenseStats = (hid: string, month: string, months = 6) =>
+  useQuery({
+    queryKey: expenseKeys.stats(hid, month, months),
+    queryFn: () =>
+      api<ExpenseStatsDto>(`/v1/households/${hid}/expenses/stats?month=${month}&months=${months}`),
+  });
+
+/** Fichier CSV des dépenses de `from` à `to` (téléchargé par le navigateur, cookie compris). */
+export const exportUrl = (hid: string, from: string, to: string) =>
+  `/v1/households/${hid}/expenses/export?from=${from}&to=${to}`;
 
 export const useRecurringExpenses = (hid: string) =>
   useQuery({
@@ -98,6 +114,11 @@ export function useExpenseActions(hid: string) {
       mutationFn: (id: string) => api<void>(`${base}/${id}/receipt`, { method: 'DELETE' }),
       onSettled: invalidate,
     }),
+    budget: useMutation({
+      mutationFn: (input: ExpenseBudgetInput) =>
+        api<void>(`${base}/budget`, { method: 'PUT', json: input }),
+      onSettled: invalidate,
+    }),
     weights: useMutation({
       mutationFn: (input: ExpenseWeightsInput) =>
         api<void>(`${base}/weights`, { method: 'PUT', json: input }),
@@ -131,6 +152,19 @@ export const newExpenseHref = (prefill: { title?: string; category?: string }) =
   if (prefill.category) q.set('category', prefill.category);
   return `/expenses?${q}`;
 };
+
+/** Nombre de mois de `from` à `to` inclus (« 2026-01 » → « 2026-10 » : 10). */
+export function monthSpan(from: string, to: string): number {
+  const n = (m: string) => Number(m.slice(0, 4)) * 12 + Number(m.slice(5, 7));
+  return n(to) - n(from) + 1;
+}
+
+/** Seuil d'alerte atteint : 100, 80 ou 0 (comme l'API). */
+export function budgetLevel(spentCents: number, budgetCents: number | null): 0 | 80 | 100 {
+  if (!budgetCents) return 0;
+  if (spentCents >= budgetCents) return 100;
+  return spentCents * 5 >= budgetCents * 4 ? 80 : 0;
+}
 
 /** « 2026-10 » → mois précédent / suivant. */
 export function shiftMonth(month: string, delta: number): string {

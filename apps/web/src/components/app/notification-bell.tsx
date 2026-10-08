@@ -8,6 +8,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { cn } from '@/lib/cn';
+import { useMoney } from '@/lib/expenses';
 import { useMarkNotificationsRead, useNotifications } from '@/lib/notifications';
 import { useSession } from './household-context';
 
@@ -28,6 +29,7 @@ export function NotificationBell({ className }: { className?: string }) {
     setOpen(false);
     if (n.occurrenceId) router.push(`/?open=${n.occurrenceId}`);
     else if (n.type === 'CALENDAR_SYNC_FAILED') router.push('/settings');
+    else if (n.type === 'EXPENSE_BUDGET') router.push('/expenses');
   };
 
   return (
@@ -78,23 +80,31 @@ export function NotificationBell({ className }: { className?: string }) {
 function NotificationRow({ n, onOpen }: { n: NotificationDto; onOpen: () => void }) {
   const t = useTranslations('notifications');
   const format = useFormatter();
+  const money = useMoney();
   const text =
-    n.type === 'TASK_THANKS'
-      ? n.title
-        ? t('thanked', { by: n.byName ?? '?', title: n.title })
-        : t('thankedDeleted', { by: n.byName ?? '?' })
-      : n.type === 'TASK_COMMENT'
+    n.type === 'EXPENSE_BUDGET'
+      ? t('budget', {
+          month: format.dateTime(new Date(`${n.month}-15T12:00:00`), { month: 'long' }),
+          level: n.level ?? 80,
+          amount: money(n.amountCents ?? 0),
+          budget: money(n.budgetCents ?? 0),
+        })
+      : n.type === 'TASK_THANKS'
         ? n.title
-          ? t('commented', { by: n.byName ?? '?', title: n.title })
-          : t('commentedDeleted', { by: n.byName ?? '?' })
-        : n.type === 'TASK_ASSIGNED'
+          ? t('thanked', { by: n.byName ?? '?', title: n.title })
+          : t('thankedDeleted', { by: n.byName ?? '?' })
+        : n.type === 'TASK_COMMENT'
           ? n.title
-            ? t(n.recurring ? 'assignedRecurring' : 'assigned', {
-                by: n.byName ?? '?',
-                title: n.title,
-              })
-            : t('assignedDeleted', { by: n.byName ?? '?' })
-          : t('calendarFailed');
+            ? t('commented', { by: n.byName ?? '?', title: n.title })
+            : t('commentedDeleted', { by: n.byName ?? '?' })
+          : n.type === 'TASK_ASSIGNED'
+            ? n.title
+              ? t(n.recurring ? 'assignedRecurring' : 'assigned', {
+                  by: n.byName ?? '?',
+                  title: n.title,
+                })
+              : t('assignedDeleted', { by: n.byName ?? '?' })
+            : t('calendarFailed');
   return (
     <button
       type="button"

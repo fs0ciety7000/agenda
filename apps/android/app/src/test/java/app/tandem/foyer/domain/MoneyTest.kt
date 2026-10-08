@@ -24,4 +24,12 @@ class MoneyTest {
         assertEquals("12,50", Money.editable(1250, Locale.FRANCE))
         assertEquals("12.50", Money.editable(1250, Locale.UK))
     }
+
+    @Test
+    fun `seuil du budget commun comme l'API`() {
+        assertEquals(0, Money.budgetLevel(7_999, 10_000))
+        assertEquals(80, Money.budgetLevel(8_000, 10_000))
+        assertEquals(100, Money.budgetLevel(10_000, 10_000))
+        assertEquals(0, Money.budgetLevel(50_000, null))
+    }
 }

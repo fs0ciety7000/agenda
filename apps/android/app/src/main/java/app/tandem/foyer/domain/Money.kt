@@ -30,6 +30,14 @@ object Money {
             isGroupingUsed = false
         }.format(cents / 100.0)
 
+    /** Seuil d'alerte du budget commun atteint : 100, 80 ou 0 (comme l'API). */
+    fun budgetLevel(spentCents: Long, budgetCents: Long?): Int = when {
+        budgetCents == null || budgetCents <= 0 -> 0
+        spentCents >= budgetCents -> 100
+        spentCents * 5 >= budgetCents * 4 -> 80
+        else -> 0
+    }
+
     /** Emoji des catégories (mêmes que sur le site). */
     val CATEGORY_EMOJI = linkedMapOf(
         "GROCERIES" to "🛒",

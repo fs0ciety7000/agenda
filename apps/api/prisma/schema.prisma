@@ -136,12 +136,14 @@ model PasswordResetToken {
 // ───────────────────────────── Foyer ─────────────────────────────
 
 model Household {
-  id        String    @id @default(uuid()) @db.Uuid
-  name      String    @db.VarChar(80)
-  timezone  String    @default("Europe/Brussels") @db.VarChar(64)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
+  id                 String    @id @default(uuid()) @db.Uuid
+  name               String    @db.VarChar(80)
+  timezone           String    @default("Europe/Brussels") @db.VarChar(64)
+  /// Budget mensuel des dépenses communes, en centimes (null = aucun).
+  expenseBudgetCents Int?
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  deletedAt          DateTime?
 
   members           HouseholdMember[]
   invitations       HouseholdInvitation[]
@@ -684,6 +686,8 @@ enum NotificationType {
   CALENDAR_SYNC_FAILED
   TASK_COMMENT
   TASK_THANKS
+  /// 80 % ou 100 % du budget commun du mois atteint.
+  EXPENSE_BUDGET
 }
 
 model Notification {

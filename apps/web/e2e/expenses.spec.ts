@@ -87,3 +87,36 @@ test('dépenses : parts à la main, charge fixe, ticket, lien depuis les courses
   await expect(dialog.getByLabel('Quoi ?')).toHaveValue('Courses');
   await expect(dialog.getByLabel('Catégorie')).toHaveValue('GROCERIES');
 });
+
+test('dépenses : budget commun, évolution sur 6 mois, export CSV', async ({ page, baseURL }) => {
+  await signUpWithHousehold(page, 'Grace');
+  await addPartner(page, baseURL!, 'Nicolas');
+  await page.goto('/expenses');
+  const dialog = page.getByRole('dialog');
+
+  await page.getByRole('button', { name: 'Définir un budget' }).click();
+  await dialog.getByLabel('Montant par mois (€)').fill('100');
+  await dialog.getByRole('button', { name: 'Enregistrer' }).click();
+  await expect(dialog).toBeHidden();
+  await expect(page.getByText(/Budget commun : 0,00\s€ sur 100,00\s€/)).toBeVisible();
+
+  await page.getByRole('button', { name: 'Dépense', exact: true }).first().click();
+  await dialog.getByLabel('Montant (€)').fill('85');
+  await dialog.getByLabel('Quoi ?').fill('Courses');
+  await dialog.getByRole('button', { name: 'Enregistrer' }).click();
+  await expect(dialog).toBeHidden();
+  await expect(page.getByText(/Budget commun : 85,00\s€ sur 100,00\s€/)).toBeVisible();
+  await expect(page.getByText(/85\s% · reste 15,00\s€/)).toBeVisible();
+  await expect(page.getByRole('meter', { name: 'Budget commun du mois' })).toHaveAttribute(
+    'aria-valuetext',
+    /85\s% du budget/,
+  );
+  await expect(page.getByRole('heading', { name: 'Sur 6 mois' })).toBeVisible();
+  await expect(page.getByText(/Repère : budget de 100,00\s€/)).toBeVisible();
+
+  await page.getByRole('button', { name: 'Exporter' }).click();
+  await expect(dialog.getByLabel('Du mois')).toBeVisible();
+  const download = page.waitForEvent('download');
+  await dialog.getByRole('button', { name: 'Télécharger' }).click();
+  expect((await download).suggestedFilename()).toMatch(/^tandem-depenses-\d{4}-\d{2}.*\.csv$/);
+});

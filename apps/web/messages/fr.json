@@ -581,7 +581,8 @@
     "commented": "{by} a commenté « {title} »",
     "commentedDeleted": "{by} a commenté une tâche, supprimée depuis",
     "thanked": "{by} vous dit merci pour « {title} »",
-    "thankedDeleted": "{by} vous dit merci"
+    "thankedDeleted": "{by} vous dit merci",
+    "budget": "Budget commun · {month} : {level} % atteint ({amount} sur {budget})"
   },
   "notificationSettings": {
     "title": "Préférences de notification",
@@ -592,7 +593,8 @@
       "TASK_ASSIGNED": "Quelqu'un me confie une tâche",
       "CALENDAR_SYNC_FAILED": "Problème de synchronisation Google Calendar",
       "TASK_COMMENT": "Quelqu'un commente une de mes tâches",
-      "TASK_THANKS": "Quelqu'un me dit merci pour une tâche faite"
+      "TASK_THANKS": "Quelqu'un me dit merci pour une tâche faite",
+      "EXPENSE_BUDGET": "Le budget commun du mois atteint 80 % ou 100 %"
     },
     "status": {
       "title": "Notifications instantanées sur le téléphone : pas encore actives",
@@ -1300,6 +1302,27 @@
     "recurringLine": "Le {day} de chaque mois · payé par {payer}",
     "recurringStop": "Arrêter",
     "recurringStopLabel": "Arrêter « {title} »",
-    "recurringStopConfirm": "Arrêter « {title} » ? Les dépenses déjà ajoutées restent."
+    "recurringStopConfirm": "Arrêter « {title} » ? Les dépenses déjà ajoutées restent.",
+    "export": "Exporter",
+    "exportTitle": "Exporter en tableur (CSV)",
+    "exportHint": "Un fichier pour Excel, LibreOffice ou Google Sheets : une ligne par dépense, avec la part de chacun. Vos dépenses perso y figurent, pas celles des autres.",
+    "exportFrom": "Du mois",
+    "exportTo": "Au mois",
+    "exportDownload": "Télécharger",
+    "exportInvalid": "Choisissez un premier mois avant le second, sur cinq ans au plus.",
+    "budgetSet": "Définir un budget",
+    "budgetEdit": "Budget",
+    "budgetLine": "Budget commun : {spent} sur {budget}",
+    "budgetMeter": "Budget commun du mois",
+    "budgetPercent": "{percent} % du budget",
+    "budgetLeft": "{percent} % · reste {amount}",
+    "budgetOver": "{percent} % · {amount} au-delà du budget",
+    "budgetTitle": "Budget mensuel commun",
+    "budgetHint": "Pour les dépenses communes du mois. Une notification prévient le foyer à 80 % puis à 100 %.",
+    "budgetAmount": "Montant par mois (€)",
+    "budgetRemove": "Enlever le budget",
+    "trendTitle": "Sur {count} mois",
+    "trendHint": "Dépenses communes, mois par mois",
+    "trendBudget": "Repère : budget de {budget}"
   }
 }

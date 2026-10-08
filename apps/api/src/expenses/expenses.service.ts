@@ -6,7 +6,9 @@ import {
   type ExpenseCategory,
   type ExpenseDto,
   type ExpenseInput,
+  type ExpenseMonthStats,
   type ExpenseSplit,
+  type ExpenseStatsDto,
   type ExpenseSummaryDto,
   type ExpenseWeightsInput,
   HOUSEHOLD_ATTACHMENTS_MAX_BYTES,
@@ -17,7 +19,10 @@ import {
   type UpdateExpenseInput,
 } from '@agenda/contracts';
 import { daysInMonth, settleTransfers, splitCents, todayIn } from '@agenda/domain';
+import { mailLocale } from '../mail/templates';
+import { NotificationsService } from '../notifications/notifications.service';
 import { safeFilename } from '../tasks/attachments.service';
+import { expensesCsv } from './expenses-csv';
 import { AppException, notFound } from '../common/app-exception';
 import { fromDbDate, toDbDate } from '../common/dates';
 import { DomainEvents } from '../common/domain-events';
@@ -88,6 +93,34 @@ function monthRange(month: string): { gte: Date; lte: Date } {
   return { gte: new Date(Date.UTC(y, m - 1, 1)), lte: new Date(Date.UTC(y, m, 0)) };
 }
 
+/** Dépense commune : partagée selon les proportions ou à la main. */
+const isCommon = (split: ExpenseSplit) => split === 'SHARED' || split === 'CUSTOM';
+
+/** Totaux d'un mois : commun, « pour moi » (perso et avancé pour moi), par catégorie. */
+function monthTotals(
+  month: string,
+  rows: (Expense & { shares: ExpenseShare[] })[],
+  memberId: string,
+): ExpenseMonthStats {
+  const byCategory = new Map<ExpenseCategory, number>();
+  let commonCents = 0;
+  let mineCents = 0;
+  for (const e of rows) {
+    if (e.kind !== 'EXPENSE') continue;
+    byCategory.set(e.category, (byCategory.get(e.category) ?? 0) + e.amountCents);
+    if (isCommon(e.split)) commonCents += e.amountCents;
+    else mineCents += e.shares.find((s) => s.memberId === memberId)?.amountCents ?? 0;
+  }
+  return {
+    month,
+    commonCents,
+    mineCents,
+    byCategory: [...byCategory.entries()]
+      .map(([category, amountCents]) => ({ category, amountCents }))
+      .sort((a, b) => b.amountCents - a.amountCents),
+  };
+}
+
 /** Une dépense personnelle n'est visible que de la personne qui l'a payée. */
 const visibleTo = (memberId: string): Prisma.ExpenseWhereInput => ({
   OR: [{ split: { not: 'PERSONAL' } }, { paidById: memberId }],
@@ -103,6 +136,7 @@ export class ExpensesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly events: DomainEvents,
+    private readonly notifications: NotificationsService,
   ) {}
 
   async list(ctx: HouseholdContext, month: string): Promise<ExpenseDto[]> {
@@ -147,6 +181,7 @@ export class ExpensesService {
       include: INCLUDE,
     });
     this.events.publish(ctx.householdId, 'expenses');
+    await this.checkBudget(ctx.householdId, ctx.memberId);
     return toDto(expense);
   }
 
@@ -232,6 +267,7 @@ export class ExpensesService {
       });
     });
     this.events.publish(ctx.householdId, 'expenses');
+    await this.checkBudget(ctx.householdId, ctx.memberId);
     return toDto(expense);
   }
 
@@ -244,7 +280,7 @@ export class ExpensesService {
   async summary(ctx: HouseholdContext, month: string): Promise<ExpenseSummaryDto> {
     const householdId = ctx.householdId;
     await this.materialize(householdId);
-    const [members, paidAll, sharesAll, monthRows] = await Promise.all([
+    const [members, paidAll, sharesAll, monthRows, household] = await Promise.all([
       this.allMembers(householdId),
       this.prisma.expense.groupBy({
         by: ['paidById'],
@@ -265,6 +301,10 @@ export class ExpensesService {
         },
         include: INCLUDE,
       }),
+      this.prisma.household.findUniqueOrThrow({
+        where: { id: householdId },
+        select: { expenseBudgetCents: true },
+      }),
     ]);
     const paid = new Map(paidAll.map((p) => [p.paidById, p._sum.amountCents ?? 0]));
     const owed = new Map(sharesAll.map((s) => [s.memberId, s._sum.amountCents ?? 0]));
@@ -272,31 +312,25 @@ export class ExpensesService {
 
     const monthPaid = new Map<string, number>();
     const monthShare = new Map<string, number>();
-    const byCategory = new Map<ExpenseCategory, number>();
-    let commonCents = 0;
-    let mineCents = 0;
     for (const e of monthRows) {
-      byCategory.set(e.category, (byCategory.get(e.category) ?? 0) + e.amountCents);
       if (e.split !== 'PERSONAL') {
         monthPaid.set(e.paidById, (monthPaid.get(e.paidById) ?? 0) + e.amountCents);
       }
-      if (e.split === 'SHARED' || e.split === 'CUSTOM') {
-        commonCents += e.amountCents;
+      if (isCommon(e.split)) {
         for (const s of e.shares) {
           monthShare.set(s.memberId, (monthShare.get(s.memberId) ?? 0) + s.amountCents);
         }
-      } else {
-        mineCents += e.shares.find((s) => s.memberId === ctx.memberId)?.amountCents ?? 0;
       }
     }
+    const totals = monthTotals(month, monthRows, ctx.memberId);
 
     // Membres actifs, et anciens membres dont le solde n'est pas nul.
     const shown = members.filter((m) => m.leftAt === null || balance(m.id) !== 0);
     return {
       month,
       currency: EXPENSE_CURRENCY,
-      commonCents,
-      mineCents,
+      commonCents: totals.commonCents,
+      mineCents: totals.mineCents,
       members: shown.map((m) => ({
         memberId: m.id,
         weight: m.expenseWeight,
@@ -307,10 +341,121 @@ export class ExpensesService {
       transfers: settleTransfers(members.map((m) => ({ id: m.id, balance: balance(m.id) }))).map(
         (t) => ({ fromMemberId: t.from, toMemberId: t.to, amountCents: t.amount }),
       ),
-      byCategory: [...byCategory.entries()]
-        .map(([category, amountCents]) => ({ category, amountCents }))
-        .sort((a, b) => b.amountCents - a.amountCents),
+      byCategory: totals.byCategory,
+      budgetCents: household.expenseBudgetCents,
     };
+  }
+
+  /** Évolution mois par mois (du plus ancien au plus récent), jusqu'à `month` compris. */
+  async stats(ctx: HouseholdContext, month: string, months: number): Promise<ExpenseStatsDto> {
+    await this.materialize(ctx.householdId);
+    const from = addMonths(month, -(months - 1));
+    const [rows, household] = await Promise.all([
+      this.prisma.expense.findMany({
+        where: {
+          householdId: ctx.householdId,
+          kind: 'EXPENSE',
+          date: { gte: monthRange(from).gte, lte: monthRange(month).lte },
+          ...visibleTo(ctx.memberId),
+        },
+        include: { shares: true },
+      }),
+      this.prisma.household.findUniqueOrThrow({
+        where: { id: ctx.householdId },
+        select: { expenseBudgetCents: true },
+      }),
+    ]);
+    const list = Array.from({ length: months }, (_, i) => addMonths(from, i));
+    return {
+      currency: EXPENSE_CURRENCY,
+      budgetCents: household.expenseBudgetCents,
+      months: list.map((m) =>
+        monthTotals(
+          m,
+          rows.filter((e) => fromDbDate(e.date)!.startsWith(m)),
+          ctx.memberId,
+        ),
+      ),
+    };
+  }
+
+  /** Budget mensuel des dépenses communes (null = aucun). */
+  async setBudget(ctx: HouseholdContext, budgetCents: number | null): Promise<void> {
+    await this.prisma.household.update({
+      where: { id: ctx.householdId },
+      data: { expenseBudgetCents: budgetCents },
+    });
+    this.events.publish(ctx.householdId, 'expenses');
+    await this.checkBudget(ctx.householdId, ctx.memberId);
+  }
+
+  /**
+   * Export tableur, dans la langue de la personne : une ligne par dépense ou remboursement, avec
+   * la part de chacun. Ses dépenses personnelles y sont, pas celles des autres.
+   */
+  async exportCsv(
+    ctx: HouseholdContext,
+    from: string,
+    to: string,
+  ): Promise<{ filename: string; body: string }> {
+    await this.materialize(ctx.householdId);
+    const [rows, members, me] = await Promise.all([
+      this.prisma.expense.findMany({
+        where: {
+          householdId: ctx.householdId,
+          date: { gte: monthRange(from).gte, lte: monthRange(to).lte },
+          ...visibleTo(ctx.memberId),
+        },
+        include: { shares: true },
+        orderBy: [{ date: 'asc' }, { createdAt: 'asc' }],
+      }),
+      this.prisma.householdMember.findMany({
+        where: { householdId: ctx.householdId },
+        orderBy: { joinedAt: 'asc' },
+        select: { id: true, displayName: true, leftAt: true },
+      }),
+      this.prisma.householdMember.findUniqueOrThrow({
+        where: { id: ctx.memberId },
+        select: { user: { select: { locale: true } } },
+      }),
+    ]);
+    return expensesCsv(mailLocale(me.user?.locale), from, to, rows, members);
+  }
+
+  /**
+   * Alerte budget : à 80 % puis à 100 % des dépenses communes du mois en cours (une fois par
+   * seuil). Une alerte qui échoue ne fait jamais échouer l'enregistrement.
+   */
+  private async checkBudget(householdId: string, actorMemberId: string | null): Promise<void> {
+    try {
+      const household = await this.prisma.household.findUniqueOrThrow({
+        where: { id: householdId },
+        select: { expenseBudgetCents: true, timezone: true },
+      });
+      const budgetCents = household.expenseBudgetCents;
+      if (!budgetCents) return;
+      const month = todayIn(household.timezone).slice(0, 7);
+      const spent = await this.prisma.expense.aggregate({
+        where: {
+          householdId,
+          kind: 'EXPENSE',
+          split: { in: ['SHARED', 'CUSTOM'] },
+          date: monthRange(month),
+        },
+        _sum: { amountCents: true },
+      });
+      const amountCents = spent._sum.amountCents ?? 0;
+      const level = amountCents >= budgetCents ? 100 : amountCents * 5 >= budgetCents * 4 ? 80 : 0;
+      if (!level) return;
+      await this.notifications.notifyBudget(householdId, actorMemberId, {
+        month,
+        level,
+        amountCents,
+        budgetCents,
+      });
+    } catch {
+      // Notification manquée : la dépense est enregistrée, c'est l'essentiel.
+    }
   }
 
   async setWeights(ctx: HouseholdContext, input: ExpenseWeightsInput): Promise<void> {
@@ -485,7 +630,10 @@ export class ExpensesService {
         month = addMonths(month, 1);
       }
     }
-    if (created) this.events.publish(householdId, 'expenses');
+    if (created) {
+      this.events.publish(householdId, 'expenses');
+      await this.checkBudget(householdId, null);
+    }
   }
 
   // ───────────── Tickets ─────────────

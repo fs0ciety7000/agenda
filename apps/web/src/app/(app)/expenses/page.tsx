@@ -12,10 +12,12 @@ import {
   ArrowRight,
   ChevronLeft,
   ChevronRight,
+  Download,
   Paperclip,
   Plus,
   Repeat,
   Scale,
+  Target,
   Wallet,
 } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
@@ -31,11 +33,16 @@ import { Select } from '@/components/ui/select';
 import { EmptyState, ErrorState, Skeleton } from '@/components/ui/states';
 import { useToast } from '@/components/ui/toast';
 import { errorKey } from '@/lib/api';
+import { cn } from '@/lib/cn';
 import {
+  budgetLevel,
+  exportUrl,
+  monthSpan,
   receiptUrl,
   shiftMonth,
   useExpenseActions,
   useExpenses,
+  useExpenseStats,
   useExpenseSummary,
   useMoney,
   useRecurringExpenses,
@@ -72,6 +79,9 @@ export default function ExpensesPage() {
   const actions = useExpenseActions(household.id);
   const [editing, setEditing] = useState<Editing>(null);
   const [weightsOpen, setWeightsOpen] = useState(false);
+  const [budgetOpen, setBudgetOpen] = useState(false);
+  const [exportOpen, setExportOpen] = useState(false);
+  const stats = useExpenseStats(household.id, month);
   const recurring = useRecurringExpenses(household.id);
 
   // Lien « Noter la dépense » (Courses, tâche payée) : ?new=1&title=…&category=…
@@ -131,7 +141,7 @@ export default function ExpensesPage() {
           <h1 className="text-[2rem] font-semibold leading-tight tracking-tight">{t('title')}</h1>
           <p className="text-[0.9375rem] capitalize text-text-muted">{monthLabel}</p>
         </div>
-        <div className="flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-1">
           <Button
             variant="ghost"
             size="sm"
@@ -147,6 +157,10 @@ export default function ExpensesPage() {
             onClick={() => setMonth(shiftMonth(month, 1))}
           >
             <ChevronRight aria-hidden className="size-4" />
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => setExportOpen(true)}>
+            <Download aria-hidden className="size-4" />
+            {t('export')}
           </Button>
           <Button onClick={() => setEditing({})}>
             <Plus aria-hidden className="size-4" />
@@ -212,6 +226,11 @@ export default function ExpensesPage() {
             <span>{t('common')}</span>
             <span className="font-medium tabular-nums">{money(s.commonCents)}</span>
           </p>
+          <BudgetMeter
+            spentCents={s.commonCents}
+            budgetCents={s.budgetCents}
+            onEdit={() => setBudgetOpen(true)}
+          />
           <ul className="flex flex-col gap-2">
             {s.members.map((m) => {
               const member = members.find((x) => x.id === m.memberId);
@@ -251,6 +270,14 @@ export default function ExpensesPage() {
             </details>
           )}
         </Card>
+      )}
+
+      {stats.data && stats.data.months.some((m) => m.commonCents > 0) && (
+        <TrendCard
+          months={stats.data.months}
+          budgetCents={stats.data.budgetCents}
+          current={month}
+        />
       )}
 
       {(recurring.data?.length ?? 0) > 0 && (
@@ -387,6 +414,10 @@ export default function ExpensesPage() {
           onClose={() => setEditing(null)}
         />
       )}
+      {budgetOpen && s && (
+        <BudgetDialog initial={s.budgetCents} onClose={() => setBudgetOpen(false)} />
+      )}
+      {exportOpen && <ExportDialog month={month} onClose={() => setExportOpen(false)} />}
       {weightsOpen && s && (
         <WeightsDialog members={members} initial={weights} onClose={() => setWeightsOpen(false)} />
       )}
@@ -811,6 +842,240 @@ function WeightsDialog({
           <div className="flex justify-end">
             <Button type="submit" loading={actions.weights.isPending}>
               {t('save')}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/** Budget commun du mois : jauge et reste (ou dépassement), en texte comme en couleur. */
+function BudgetMeter({
+  spentCents,
+  budgetCents,
+  onEdit,
+}: {
+  spentCents: number;
+  budgetCents: number | null;
+  onEdit: () => void;
+}) {
+  const t = useTranslations('expenses');
+  const money = useMoney();
+  const edit = (
+    <button
+      type="button"
+      onClick={onEdit}
+      className="inline-flex min-h-11 items-center gap-1.5 text-sm text-accent underline-offset-4 hover:underline"
+    >
+      <Target aria-hidden className="size-4" />
+      {budgetCents ? t('budgetEdit') : t('budgetSet')}
+    </button>
+  );
+  if (!budgetCents) return <div>{edit}</div>;
+  const level = budgetLevel(spentCents, budgetCents);
+  const percent = Math.round((spentCents / budgetCents) * 100);
+  return (
+    <div className="flex flex-col gap-1.5">
+      <div className="flex flex-wrap items-center justify-between gap-x-3">
+        <span className="text-[0.9375rem] tabular-nums">
+          {t('budgetLine', { spent: money(spentCents), budget: money(budgetCents) })}
+        </span>
+        {edit}
+      </div>
+      <div
+        role="meter"
+        aria-label={t('budgetMeter')}
+        aria-valuemin={0}
+        aria-valuemax={budgetCents}
+        aria-valuenow={Math.min(spentCents, budgetCents)}
+        aria-valuetext={t('budgetPercent', { percent })}
+        className="h-2 overflow-hidden rounded-full bg-surface-muted"
+      >
+        <div
+          className={cn('h-full rounded-full', level === 100 ? 'bg-warning' : 'bg-accent')}
+          style={{ width: `${Math.min(100, percent)}%` }}
+        />
+      </div>
+      <p
+        className={cn(
+          'text-[0.8125rem] tabular-nums',
+          level === 100 ? 'text-warning' : 'text-text-muted',
+        )}
+      >
+        {spentCents > budgetCents
+          ? t('budgetOver', { amount: money(spentCents - budgetCents), percent })
+          : t('budgetLeft', { amount: money(budgetCents - spentCents), percent })}
+      </p>
+    </div>
+  );
+}
+
+/** Dépenses communes des derniers mois : une barre par mois, le budget en repère. */
+function TrendCard({
+  months,
+  budgetCents,
+  current,
+}: {
+  months: { month: string; commonCents: number }[];
+  budgetCents: number | null;
+  current: string;
+}) {
+  const t = useTranslations('expenses');
+  const format = useFormatter();
+  const money = useMoney();
+  const max = Math.max(budgetCents ?? 0, ...months.map((m) => m.commonCents), 1);
+  const label = (m: string) =>
+    format.dateTime(new Date(`${m}-15T12:00:00`), { month: 'short', year: '2-digit' });
+  return (
+    <Card className="flex flex-col gap-3 p-4" aria-labelledby="trend-title">
+      <div>
+        <h2 id="trend-title" className="font-semibold">
+          {t('trendTitle', { count: months.length })}
+        </h2>
+        <p className="text-[0.8125rem] text-text-muted">{t('trendHint')}</p>
+      </div>
+      <ul className="flex flex-col gap-2">
+        {months.map((m) => (
+          <li
+            key={m.month}
+            className="grid grid-cols-[4.5rem_1fr_auto] items-center gap-3 text-[0.9375rem]"
+          >
+            <span className={cn(m.month === current && 'font-semibold')}>{label(m.month)}</span>
+            <span aria-hidden className="relative h-3 rounded-sm bg-surface-muted">
+              {m.commonCents > 0 && (
+                <span
+                  className="absolute inset-y-0 left-0 rounded-sm bg-accent"
+                  style={{ width: `${(m.commonCents / max) * 100}%` }}
+                />
+              )}
+              {budgetCents && (
+                <span
+                  className="absolute -inset-y-1 w-0.5 bg-text"
+                  style={{ left: `calc(${(budgetCents / max) * 100}% - 1px)` }}
+                />
+              )}
+            </span>
+            <span className="text-right tabular-nums">{money(m.commonCents)}</span>
+          </li>
+        ))}
+      </ul>
+      {budgetCents && (
+        <p className="flex items-center gap-2 text-[0.8125rem] text-text-muted">
+          <span aria-hidden className="h-3 w-0.5 bg-text" />
+          {t('trendBudget', { budget: money(budgetCents) })}
+        </p>
+      )}
+    </Card>
+  );
+}
+
+function BudgetDialog({ initial, onClose }: { initial: number | null; onClose: () => void }) {
+  const t = useTranslations('expenses');
+  const tc = useTranslations('common');
+  const te = useTranslations('errors');
+  const { household } = useSession();
+  const actions = useExpenseActions(household.id);
+  const [amount, setAmount] = useState(
+    initial ? (initial / 100).toFixed(2).replace('.', ',').replace(',00', '') : '',
+  );
+  const [error, setError] = useState<string | null>(null);
+
+  const save = (budgetCents: number | null) =>
+    actions.budget.mutate(
+      { budgetCents },
+      { onSuccess: onClose, onError: (err) => setError(te(errorKey(err) as 'generic')) },
+    );
+  const submit = (e: FormEvent) => {
+    e.preventDefault();
+    const cents = parseAmountToCents(amount);
+    if (!cents) return setError(t('amountInvalid'));
+    save(cents);
+  };
+
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent title={t('budgetTitle')} closeLabel={tc('close')}>
+        <form onSubmit={submit} noValidate className="flex flex-col gap-4">
+          <p className="text-[0.9375rem] text-text-muted">{t('budgetHint')}</p>
+          <Field
+            label={t('budgetAmount')}
+            inputMode="decimal"
+            autoComplete="off"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+            error={error ?? undefined}
+          />
+          <div className="flex flex-wrap justify-end gap-2">
+            {initial && (
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => save(null)}
+                disabled={actions.budget.isPending}
+              >
+                {t('budgetRemove')}
+              </Button>
+            )}
+            <Button type="submit" loading={actions.budget.isPending}>
+              {t('save')}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+/** Export tableur : de janvier au mois affiché par défaut. */
+function ExportDialog({ month, onClose }: { month: string; onClose: () => void }) {
+  const t = useTranslations('expenses');
+  const tc = useTranslations('common');
+  const { household } = useSession();
+  const [from, setFrom] = useState(`${month.slice(0, 4)}-01`);
+  const [to, setTo] = useState(month);
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = (e: FormEvent) => {
+    e.preventDefault();
+    const valid = /^\d{4}-\d{2}$/;
+    const span = monthSpan(from, to);
+    if (!valid.test(from) || !valid.test(to) || span < 1 || span > 60) {
+      return setError(t('exportInvalid'));
+    }
+    // Réponse « attachment » : le navigateur télécharge sans quitter la page.
+    window.location.assign(exportUrl(household.id, from, to));
+    onClose();
+  };
+
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent title={t('exportTitle')} closeLabel={tc('close')}>
+        <form onSubmit={submit} noValidate className="flex flex-col gap-4">
+          <p className="text-[0.9375rem] text-text-muted">{t('exportHint')}</p>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field
+              label={t('exportFrom')}
+              type="month"
+              value={from}
+              onChange={(e) => setFrom(e.target.value)}
+            />
+            <Field
+              label={t('exportTo')}
+              type="month"
+              value={to}
+              onChange={(e) => setTo(e.target.value)}
+            />
+          </div>
+          {error && (
+            <p role="alert" className="rounded-md bg-danger/10 px-3 py-2 text-sm text-danger">
+              {error}
+            </p>
+          )}
+          <div className="flex justify-end">
+            <Button type="submit">
+              <Download aria-hidden className="size-4" />
+              {t('exportDownload')}
             </Button>
           </div>
         </form>
