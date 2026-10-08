@@ -594,4 +594,58 @@
     <string name="notes_offline">Offline: notities hebben een verbinding nodig.</string>
     <string name="notes_conflict">Deze notitie is intussen gewijzigd. Dit is de nieuwste versie: controleer ze en sla opnieuw op.</string>
     <string name="notes_pinned_meta">Vastgezet · %1$s</string>
+    <string name="dates_title">Belangrijke data</string>
+    <string name="dates_hint">Verjaardagen, jubilea, jaarlijks onderhoud.</string>
+    <string name="dates_intro">Verjaardagen, jubilea, jaarlijks onderhoud: Tandem herinnert jullie allebei op tijd.</string>
+    <string name="dates_new">Nieuwe datum</string>
+    <string name="dates_edit">Datum bewerken</string>
+    <string name="dates_add">Toevoegen</string>
+    <string name="dates_save">Opslaan</string>
+    <string name="dates_delete">Verwijderen</string>
+    <string name="dates_field_title">Titel</string>
+    <string name="dates_field_kind">Soort</string>
+    <string name="dates_field_date">Datum: %1$s</string>
+    <string name="dates_field_repeats">Elk jaar</string>
+    <string name="dates_field_with_year">Jaar bekend (toont de leeftijd)</string>
+    <string name="dates_field_reminder">Herinnering</string>
+    <string name="dates_kind_birthday">Verjaardag</string>
+    <string name="dates_kind_anniversary">Jubileum</string>
+    <string name="dates_kind_maintenance">Onderhoud</string>
+    <string name="dates_kind_other">Andere</string>
+    <string name="dates_today">vandaag</string>
+    <string name="dates_past">Voorbij</string>
+    <string name="dates_soon">Binnenkort</string>
+    <string name="dates_empty_title">Nog geen data.</string>
+    <string name="dates_empty_body">Voeg de verjaardagen en het onderhoud toe die je niet mag vergeten: jullie krijgen allebei op tijd een herinnering.</string>
+    <string name="dates_created">Datum toegevoegd</string>
+    <string name="dates_saved">Datum opgeslagen</string>
+    <string name="dates_deleted">“%1$s” verwijderd</string>
+    <string name="dates_failed">Opslaan lukt niet. Controleer je verbinding.</string>
+    <string name="dates_offline">Offline: data hebben een verbinding nodig.</string>
+    <string name="activity_date_today">%1$s: vandaag</string>
+    <plurals name="dates_when">
+        <item quantity="one">over %d dag</item>
+        <item quantity="other">over %d dagen</item>
+    </plurals>
+    <plurals name="dates_years">
+        <item quantity="one">%d jaar</item>
+        <item quantity="other">%d jaar</item>
+    </plurals>
+    <plurals name="dates_remind">
+        <item quantity="one">%d dag ervoor</item>
+        <item quantity="other">%d dagen ervoor</item>
+    </plurals>
+    <plurals name="dates_remind_short">
+        <item quantity="one">Herinnering %d d ervoor</item>
+        <item quantity="other">Herinnering %d d ervoor</item>
+    </plurals>
+    <plurals name="activity_date_in">
+        <item quantity="one">%1$s: over %2$d dag</item>
+        <item quantity="other">%1$s: over %2$d dagen</item>
+    </plurals>
+    <string name="dates_tomorrow">morgen</string>
+    <string name="dates_remind_same_day">Op de dag zelf</string>
+    <string name="dates_remind_day_before">De dag ervoor</string>
+    <string name="dates_remind_short_same_day">Herinnering op de dag</string>
+    <string name="activity_date_tomorrow">%1$s: morgen</string>
 </resources>

@@ -83,6 +83,11 @@ class ActivityNotifier(
                 n.title ?: "",
             )
             "EXPENSE_BUDGET" -> budgetText(n)
+            "IMPORTANT_DATE" -> when (val d = n.daysLeft ?: 0) {
+                0 -> context.getString(R.string.activity_date_today, n.title ?: "")
+                1 -> context.getString(R.string.activity_date_tomorrow, n.title ?: "")
+                else -> context.resources.getQuantityString(R.plurals.activity_date_in, d, n.title ?: "", d)
+            }
             else -> context.getString(R.string.activity_calendar_failed)
         }
         val open = PendingIntent.getActivity(

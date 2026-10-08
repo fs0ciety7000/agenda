@@ -70,6 +70,9 @@ import app.tandem.foyer.ui.comments.CommentsSection
 import app.tandem.foyer.ui.absences.AbsencesViewModel
 import app.tandem.foyer.ui.expenses.ExpensesScreen
 import app.tandem.foyer.ui.expenses.ExpensesViewModel
+import app.tandem.foyer.ui.dates.DatesScreen
+import app.tandem.foyer.ui.dates.DatesViewModel
+import app.tandem.foyer.ui.dates.UpcomingDates
 import app.tandem.foyer.ui.notes.NotesScreen
 import app.tandem.foyer.ui.notes.NotesViewModel
 import app.tandem.foyer.ui.history.HistoryScreen
@@ -275,6 +278,7 @@ private fun MainScaffold(
                         "notifications" -> launch { container.activityNotifier.poll(hid) }
                         "comments" -> container.comments.changed()
                         "notes" -> container.notes.changed()
+                        "dates" -> container.dates.changed()
                     }
                 }
             } finally {
@@ -452,6 +456,7 @@ private fun MainScaffold(
                     banner = {
                         updateBanner()
                         SwapBanner(container.swaps, state.household?.members.orEmpty(), state.occurrences, vm::refresh, onMessage)
+                        UpcomingDates(container.dates, state.occurrences) { nav.navigate("dates") }
                     },
                     onShowUnscheduled = {
                         filter = filter.copy(view = Agenda.View.UNSCHEDULED)
@@ -562,6 +567,7 @@ private fun MainScaffold(
                     onOpenAbsences = { nav.navigate("absences") },
                     onOpenExpenses = { nav.navigate("expenses") },
                     onOpenNotes = { nav.navigate("notes") },
+                    onOpenDates = { nav.navigate("dates") },
                     onOpenReport = { nav.navigate("report") },
                     language = remember { AppLanguage.current(context) },
                     onLanguage = { tag ->
@@ -618,6 +624,10 @@ private fun MainScaffold(
                     prefillTitle = entry.arguments?.getString("title"),
                     prefillCategory = entry.arguments?.getString("category"),
                 )
+            }
+            composable("dates") {
+                val datesVm: DatesViewModel = viewModel(factory = viewModelFactory { initializer { DatesViewModel(container.dates) } })
+                DatesScreen(datesVm, onBack = { nav.popBackStack() }, onMessage = onMessage)
             }
             composable("notes") {
                 val notesVm: NotesViewModel = viewModel(factory = viewModelFactory { initializer { NotesViewModel(container.notes) } })

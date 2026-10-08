@@ -608,4 +608,63 @@
     <string name="notes_offline">Hors ligne : les notes demandent une connexion.</string>
     <string name="notes_conflict">Cette note a été modifiée entre-temps. Voici la dernière version : vérifiez, puis enregistrez à nouveau.</string>
     <string name="notes_pinned_meta">Épinglée · %1$s</string>
+    <string name="dates_title">Dates importantes</string>
+    <string name="dates_hint">Anniversaires, fêtes, entretiens annuels.</string>
+    <string name="dates_intro">Anniversaires, fêtes, entretiens annuels : Tandem vous prévient tous les deux à l’avance.</string>
+    <string name="dates_new">Nouvelle date</string>
+    <string name="dates_edit">Modifier la date</string>
+    <string name="dates_add">Ajouter</string>
+    <string name="dates_save">Enregistrer</string>
+    <string name="dates_delete">Supprimer</string>
+    <string name="dates_field_title">Titre</string>
+    <string name="dates_field_kind">Type</string>
+    <string name="dates_field_date">Date : %1$s</string>
+    <string name="dates_field_repeats">Chaque année</string>
+    <string name="dates_field_with_year">Année connue (affiche l’âge)</string>
+    <string name="dates_field_reminder">Rappel</string>
+    <string name="dates_kind_birthday">Anniversaire</string>
+    <string name="dates_kind_anniversary">Fête</string>
+    <string name="dates_kind_maintenance">Entretien</string>
+    <string name="dates_kind_other">Autre</string>
+    <string name="dates_today">aujourd’hui</string>
+    <string name="dates_past">Passée</string>
+    <string name="dates_soon">Bientôt</string>
+    <string name="dates_empty_title">Aucune date pour l’instant.</string>
+    <string name="dates_empty_body">Ajoutez les anniversaires et les entretiens à ne pas oublier : vous serez prévenus tous les deux à l’avance.</string>
+    <string name="dates_created">Date ajoutée</string>
+    <string name="dates_saved">Date enregistrée</string>
+    <string name="dates_deleted">« %1$s » supprimée</string>
+    <string name="dates_failed">Enregistrement impossible. Vérifiez la connexion.</string>
+    <string name="dates_offline">Hors ligne : les dates demandent une connexion.</string>
+    <string name="activity_date_today">%1$s : c’est aujourd’hui</string>
+    <plurals name="dates_when">
+        <item quantity="one">dans %d jour</item>
+        <item quantity="many">dans %d jours</item>
+        <item quantity="other">dans %d jours</item>
+    </plurals>
+    <plurals name="dates_years">
+        <item quantity="one">%d an</item>
+        <item quantity="many">%d ans</item>
+        <item quantity="other">%d ans</item>
+    </plurals>
+    <plurals name="dates_remind">
+        <item quantity="one">%d jour avant</item>
+        <item quantity="many">%d jours avant</item>
+        <item quantity="other">%d jours avant</item>
+    </plurals>
+    <plurals name="dates_remind_short">
+        <item quantity="one">Rappel %d j avant</item>
+        <item quantity="many">Rappel %d j avant</item>
+        <item quantity="other">Rappel %d j avant</item>
+    </plurals>
+    <plurals name="activity_date_in">
+        <item quantity="one">%1$s : dans %2$d jour</item>
+        <item quantity="many">%1$s : dans %2$d jours</item>
+        <item quantity="other">%1$s : dans %2$d jours</item>
+    </plurals>
+    <string name="dates_tomorrow">demain</string>
+    <string name="dates_remind_same_day">Le jour même</string>
+    <string name="dates_remind_day_before">La veille</string>
+    <string name="dates_remind_short_same_day">Rappel le jour même</string>
+    <string name="activity_date_tomorrow">%1$s : demain</string>
 </resources>

@@ -69,6 +69,7 @@ fun SettingsScreen(
     onOpenAbsences: () -> Unit = {},
     onOpenExpenses: () -> Unit = {},
     onOpenNotes: () -> Unit = {},
+    onOpenDates: () -> Unit = {},
     onOpenReport: () -> Unit = {},
     /** Langue de l'app : "" (téléphone), "fr", "en" ou "nl". */
     language: String = "",
@@ -100,6 +101,15 @@ fun SettingsScreen(
         OutlinedCard(onClick = onOpenNotes, modifier = Modifier.fillMaxWidth()) {
             Text(
                 stringResource(R.string.notes_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp),
+            )
+        }
+
+        SectionHeader(stringResource(R.string.dates_title))
+        OutlinedCard(onClick = onOpenDates, modifier = Modifier.fillMaxWidth()) {
+            Text(
+                stringResource(R.string.dates_hint),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(16.dp),
             )

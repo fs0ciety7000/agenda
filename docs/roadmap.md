@@ -98,7 +98,7 @@ Vie à deux :
 - [x] **Notes partagées** (codes Wi-Fi, mesures, idées cadeaux) : petits mémos épinglés (M) ⚙️🌐🤖 (#89)
   - [ ] Android : « Annuler » après la suppression d'une note (le site l'a déjà) (S) 🤖
   - [ ] Android : icônes punaise et copier (absentes de `material-icons-core` ; étoile et bouton texte en attendant) (S) 🤖
-- [ ] **Dates importantes** (anniversaires, entretiens annuels) avec rappel à l'avance (M)
+- [x] **Dates importantes** (anniversaires, entretiens annuels) avec rappel à l'avance (M) ⚙️🌐🤖 (#89)
 - [ ] **Widget Android « Dépenses »** : solde et ajout rapide (M) 🤖
 
 Fiabilité et sécurité :

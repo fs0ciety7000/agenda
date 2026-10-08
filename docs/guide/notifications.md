@@ -13,6 +13,7 @@ description: Centre de notifications, notifications du navigateur et du téléph
 | Un commentaire sur une de vos tâches | « Grace a commenté « Vidange » » (sans le texte) |
 | Un merci pour une tâche que vous avez faite | « Nicolas vous dit merci pour « Sortir les poubelles » » |
 | Une demande d'échange de tour, et sa réponse | « Nicolas vous demande de prendre « Vaisselle » », « Grace prend « Vaisselle » » |
+| Une date importante approche (rappel réglé sur la date) | « Anniversaire de mamie : dans 7 jours (mercredi 14 octobre) » |
 | Le budget commun du mois atteint 80 % ou 100 % | « Budget commun · octobre : 80 % atteint (640 € sur 800 €) » |
 | Problème de synchronisation Google Agenda | « La synchronisation est interrompue » |
 

@@ -15,6 +15,12 @@ d'elle-même (ou via Google Play).
 
 ## 8 octobre 2026
 
+### Dates importantes (#89)
+
+- ✨ **Dates importantes** (site et Android, dans « Plus ») : anniversaires, fêtes, entretiens
+  annuels, avec l'âge si l'année est connue. Rappel à tout le foyer le jour choisi (la veille,
+  7 jours avant…), et rubrique « Bientôt » sur Aujourd'hui.
+
 ### Notes partagées (#89)
 
 - ✨ **Notes** (site et Android, dans « Plus ») : codes Wi-Fi, mesures, idées cadeaux. Épingler,

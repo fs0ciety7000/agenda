@@ -7470,6 +7470,270 @@
         ]
       }
     },
+    "/v1/households/{householdId}/important-dates": {
+      "get": {
+        "operationId": "ImportantDatesController_list_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ImportantDateDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Dates importantes du foyer, les plus proches d'abord",
+        "tags": [
+          "important-dates"
+        ]
+      },
+      "post": {
+        "operationId": "ImportantDatesController_create_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportantDateInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportantDateDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Ajouter une date importante",
+        "tags": [
+          "important-dates"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/important-dates/{dateId}": {
+      "put": {
+        "operationId": "ImportantDatesController_update_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "dateId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImportantDateInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportantDateDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Modifier une date importante",
+        "tags": [
+          "important-dates"
+        ]
+      },
+      "delete": {
+        "operationId": "ImportantDatesController_remove_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "dateId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Supprimer une date importante",
+        "tags": [
+          "important-dates"
+        ]
+      }
+    },
     "/v1/households/{householdId}/expenses": {
       "get": {
         "operationId": "ExpensesController_list_v1",
@@ -12630,6 +12894,141 @@
         ],
         "additionalProperties": false
       },
+      "ImportantDateDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "BIRTHDAY",
+              "ANNIVERSARY",
+              "MAINTENANCE",
+              "OTHER"
+            ]
+          },
+          "month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12
+          },
+          "day": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31
+          },
+          "year": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "repeatsYearly": {
+            "type": "boolean"
+          },
+          "remindDaysBefore": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 60
+          },
+          "createdById": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          "nextDate": {
+            "nullable": true,
+            "type": "string",
+            "format": "date"
+          },
+          "daysLeft": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "years": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "kind",
+          "month",
+          "day",
+          "year",
+          "repeatsYearly",
+          "remindDaysBefore",
+          "createdById",
+          "nextDate",
+          "daysLeft",
+          "years"
+        ],
+        "additionalProperties": false
+      },
+      "ImportantDateInput": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "kind": {
+            "default": "OTHER",
+            "type": "string",
+            "enum": [
+              "BIRTHDAY",
+              "ANNIVERSARY",
+              "MAINTENANCE",
+              "OTHER"
+            ]
+          },
+          "month": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 12
+          },
+          "day": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 31
+          },
+          "year": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": 1900,
+            "maximum": 2200
+          },
+          "repeatsYearly": {
+            "default": true,
+            "type": "boolean"
+          },
+          "remindDaysBefore": {
+            "default": 7,
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 60
+          }
+        },
+        "required": [
+          "title",
+          "month",
+          "day"
+        ]
+      },
       "InboundEmailSettingsDto": {
         "type": "object",
         "properties": {
@@ -13003,7 +13402,8 @@
                     "TASK_THANKS",
                     "EXPENSE_BUDGET",
                     "TASK_SWAP_REQUEST",
-                    "TASK_SWAP_ANSWER"
+                    "TASK_SWAP_ANSWER",
+                    "IMPORTANT_DATE"
                   ]
                 },
                 "createdAt": {
@@ -13061,6 +13461,12 @@
                   "type": "integer",
                   "minimum": -9007199254740991,
                   "maximum": 9007199254740991
+                },
+                "daysLeft": {
+                  "nullable": true,
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
                 }
               },
               "required": [
@@ -13078,7 +13484,8 @@
                 "month",
                 "level",
                 "amountCents",
-                "budgetCents"
+                "budgetCents",
+                "daysLeft"
               ],
               "additionalProperties": false
             }
@@ -13102,7 +13509,8 @@
               "TASK_THANKS",
               "EXPENSE_BUDGET",
               "TASK_SWAP_REQUEST",
-              "TASK_SWAP_ANSWER"
+              "TASK_SWAP_ANSWER",
+              "IMPORTANT_DATE"
             ]
           },
           "inApp": {
@@ -16343,7 +16751,8 @@
                     "TASK_THANKS",
                     "EXPENSE_BUDGET",
                     "TASK_SWAP_REQUEST",
-                    "TASK_SWAP_ANSWER"
+                    "TASK_SWAP_ANSWER",
+                    "IMPORTANT_DATE"
                   ]
                 },
                 "inApp": {

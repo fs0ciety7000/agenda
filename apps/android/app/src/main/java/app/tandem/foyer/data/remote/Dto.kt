@@ -27,6 +27,9 @@ data class NotificationDto(
     val level: Int? = null,
     val amountCents: Long? = null,
     val budgetCents: Long? = null,
+    /** IMPORTANT_DATE : jours restants (0 = aujourd'hui), avec le titre et la date de l'occurrence. */
+    val daysLeft: Int? = null,
+    val date: String? = null,
 )
 
 @Serializable
@@ -264,6 +267,34 @@ data class AbsenceDto(val id: String, val memberId: String, val startDate: Strin
 
 @Serializable
 data class CreateAbsenceBody(val memberId: String, val startDate: String, val endDate: String)
+
+/** Date importante du foyer (cf. packages/contracts/src/important-dates.ts). */
+@Serializable
+data class ImportantDateDto(
+    val id: String,
+    val title: String,
+    val kind: String = "OTHER",
+    val month: Int,
+    val day: Int,
+    val year: Int? = null,
+    val repeatsYearly: Boolean = true,
+    val remindDaysBefore: Int = 7,
+    val nextDate: String? = null,
+    val daysLeft: Int? = null,
+    val years: Int? = null,
+)
+
+/** Sans `year` (omis quand null) : l'API l'enregistre comme « pas d'année ». */
+@Serializable
+data class ImportantDateBody(
+    val title: String,
+    val kind: String,
+    val month: Int,
+    val day: Int,
+    val year: Int?,
+    val repeatsYearly: Boolean,
+    val remindDaysBefore: Int,
+)
 
 /** Note partagée du foyer (cf. packages/contracts/src/notes.ts). */
 @Serializable

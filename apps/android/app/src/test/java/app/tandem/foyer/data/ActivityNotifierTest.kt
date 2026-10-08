@@ -97,4 +97,29 @@ class ActivityNotifierTest {
         assertTrue(texts.toString(), "Nicolas asks you to take “Vaisselle”" in texts)
         assertTrue(texts.toString(), "Grace can’t take “Lessive”" in texts)
     }
+
+    @Test
+    fun `date importante dans quelques jours, demain, aujourd'hui`() = runBlocking {
+        org.robolectric.Shadows.shadowOf(context as android.app.Application)
+            .grantPermissions(android.Manifest.permission.POST_NOTIFICATIONS)
+        context.getSharedPreferences("activity", android.content.Context.MODE_PRIVATE).edit()
+            .putString("since", "2026-10-08T10:00:00Z").commit()
+        val notifier = ActivityNotifier(context, ApiClient.create(server.url("/").toString(), FakeTokenStore()))
+        server.enqueue(
+            MockResponse().setHeader("content-type", "application/json").setBody(
+                """{"unread":3,"items":[
+                {"id":"d1","type":"IMPORTANT_DATE","createdAt":"2026-10-08T10:05:00.000Z","push":true,"title":"Granny’s birthday","date":"2026-10-13","daysLeft":5},
+                {"id":"d2","type":"IMPORTANT_DATE","createdAt":"2026-10-08T10:06:00.000Z","push":true,"title":"Boiler","date":"2026-10-09","daysLeft":1},
+                {"id":"d3","type":"IMPORTANT_DATE","createdAt":"2026-10-08T10:07:00.000Z","push":true,"title":"Wedding","date":"2026-10-08","daysLeft":0}
+                ]}""",
+            ),
+        )
+        assertEquals(listOf("d1", "d2", "d3"), notifier.poll("h1").map { it.id })
+        val manager = context.getSystemService(android.app.NotificationManager::class.java)
+        val texts = org.robolectric.Shadows.shadowOf(manager).allNotifications
+            .map { it.extras.getCharSequence(androidx.core.app.NotificationCompat.EXTRA_TEXT).toString() }
+        assertTrue(texts.toString(), "Granny’s birthday: in 5 days" in texts)
+        assertTrue(texts.toString(), "Boiler: tomorrow" in texts)
+        assertTrue(texts.toString(), "Wedding: today" in texts)
+    }
 }

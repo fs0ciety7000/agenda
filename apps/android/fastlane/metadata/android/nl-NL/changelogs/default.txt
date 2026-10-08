@@ -1,7 +1,7 @@
-Nieuw in het tabblad Meer: Uitgaven en Notities.
+Nieuw in het tabblad Meer: Uitgaven, Notities en Data.
 • Uitgaven: wie wat betaalde, "Nicolas is Grace € 42,50 schuldig", terugbetalen met één tik.
 • Zelf verdelen, vaste kosten, kasticket als foto, budgetmelding, export.
-• Gedeelde notities: wifi-code, maten, cadeau-ideeën.
+• Gedeelde notities (wifi-code, cadeau-ideeën); belangrijke data met herinnering.
 • Start: "Wie doet wat" voor 7 dagen.
 • Winkelmodus; vraag de ander een taak over te nemen.
 • Nieuwe look: ronde vinkjes, taken in kaarten.
