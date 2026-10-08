@@ -15,7 +15,9 @@
     "main": "Navigation principale",
     "stats": "Bilan",
     "shopping": "Courses",
-    "meals": "Menus"
+    "meals": "Menus",
+    "expenses": "Dépenses",
+    "more": "Plus"
   },
   "auth": {
     "loginTitle": "Bon retour",
@@ -527,7 +529,7 @@
     },
     "data": {
       "title": "Données traitées",
-      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations, liste de courses.\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, sous-tâches, commentaires, absences déclarées, historique des actions (qui a fait quoi, quand).\nSessions : appareil (navigateur ou application) et dates de connexion, pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion.\nAjout par e-mail (si vous l'activez) : l'expéditeur, le sujet et le texte des e-mails que vous transférez à votre adresse personnelle sont enregistrés dans les notes de la tâche créée. Ils sont reçus par Resend, notre prestataire d'e-mails ; leurs pièces jointes sont jointes à la tâche.\nPièces jointes : les fichiers que vous joignez à une tâche (ou joints à un e-mail transféré) sont stockés sur notre serveur avec la tâche, visibles par les membres du foyer (par vous seul pour une tâche personnelle), et supprimés avec elle.\nSignalements (si vous en envoyez) : le type, le titre et le texte de votre message, une capture d'écran si vous en joignez une, votre choix d'être recontacté·e ou non et, seulement si vous cochez la case, des informations techniques affichées avant l'envoi (navigateur ou modèle de téléphone, système, version de l'app, langue, fuseau horaire, taille d'écran, page ouverte). Jamais le contenu de vos tâches. Seuls les administrateurs de l'app les lisent.\nNotifications du navigateur (si vous les activez) : l'adresse d'abonnement fournie par votre navigateur, supprimée quand vous les désactivez ou vous déconnectez."
+      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations, liste de courses.\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, sous-tâches, commentaires, absences déclarées, historique des actions (qui a fait quoi, quand).\nDépenses (si vous les utilisez) : montant, date, libellé, catégorie, commentaire, qui a payé et la part de chacun. Une dépense personnelle n'est visible que de vous.\nSessions : appareil (navigateur ou application) et dates de connexion, pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion.\nAjout par e-mail (si vous l'activez) : l'expéditeur, le sujet et le texte des e-mails que vous transférez à votre adresse personnelle sont enregistrés dans les notes de la tâche créée. Ils sont reçus par Resend, notre prestataire d'e-mails ; leurs pièces jointes sont jointes à la tâche.\nPièces jointes : les fichiers que vous joignez à une tâche (ou joints à un e-mail transféré) sont stockés sur notre serveur avec la tâche, visibles par les membres du foyer (par vous seul pour une tâche personnelle), et supprimés avec elle.\nSignalements (si vous en envoyez) : le type, le titre et le texte de votre message, une capture d'écran si vous en joignez une, votre choix d'être recontacté·e ou non et, seulement si vous cochez la case, des informations techniques affichées avant l'envoi (navigateur ou modèle de téléphone, système, version de l'app, langue, fuseau horaire, taille d'écran, page ouverte). Jamais le contenu de vos tâches. Seuls les administrateurs de l'app les lisent.\nNotifications du navigateur (si vous les activez) : l'adresse d'abonnement fournie par votre navigateur, supprimée quand vous les désactivez ou vous déconnectez."
     },
     "google": {
       "title": "Données Google",
@@ -1182,5 +1184,99 @@
     },
     "yes": "Oui",
     "no": "Non"
+  },
+  "more": {
+    "title": "Plus",
+    "expenses": {
+      "title": "Dépenses",
+      "hint": "Qui a payé quoi, et qui doit combien"
+    },
+    "meals": {
+      "title": "Menus",
+      "hint": "Les repas de la semaine, ingrédients vers les courses"
+    },
+    "stats": {
+      "title": "Bilan",
+      "hint": "Ce qui a été fait, par qui"
+    },
+    "review": {
+      "title": "Revue de la semaine",
+      "hint": "La semaine passée et celle qui vient"
+    },
+    "history": {
+      "title": "Journal et corbeille",
+      "hint": "Qui a fait quoi, tâches supprimées"
+    },
+    "settings": {
+      "title": "Réglages",
+      "hint": "Foyer, compte, notifications, langue"
+    }
+  },
+  "expenses": {
+    "title": "Dépenses",
+    "prev": "Mois précédent",
+    "next": "Mois suivant",
+    "add": "Dépense",
+    "balanceTitle": "Qui doit quoi",
+    "even": "Vous êtes à l’équilibre.",
+    "owes": "{from} doit {amount} à {to}",
+    "settle": "Enregistrer le remboursement",
+    "settled": "Remboursement de {from} à {to} enregistré.",
+    "splitLabel": "Partage {split}",
+    "monthTitle": "Ce mois-ci",
+    "common": "Dépenses communes",
+    "memberLine": "a payé {paid} · sa part {share}",
+    "mine": "Mes dépenses personnelles",
+    "byCategory": "Par catégorie",
+    "emptyTitle": "Aucune dépense ce mois-ci",
+    "emptyBody": "Notez ce que vous payez pour le foyer : Tandem calcule qui doit combien à qui.",
+    "settlement": "Remboursement",
+    "to": "à",
+    "settlementText": "{from} a remboursé {amount} à {to}. Supprimez-le s’il a été enregistré par erreur.",
+    "meta": {
+      "SHARED": "Payé par {payer} · commune",
+      "FOR_OTHER": "Payé par {payer} pour {for}",
+      "PERSONAL": "Payé par {payer} · personnelle"
+    },
+    "formerMember": "Ancien membre",
+    "newTitle": "Nouvelle dépense",
+    "editTitle": "Modifier la dépense",
+    "amount": "Montant (€)",
+    "date": "Date",
+    "what": "Quoi ?",
+    "whatPlaceholder": "Courses, loyer, cinéma…",
+    "paidBy": "Payé par",
+    "forWhom": "Pour qui ?",
+    "split": {
+      "SHARED": "Commune",
+      "FOR_OTHER": "Pour {name}",
+      "PERSONAL": "Perso"
+    },
+    "splitHint": {
+      "SHARED": "Partagée selon les proportions du foyer.",
+      "FOR_OTHER": "Avancée : l’autre en doit la totalité.",
+      "PERSONAL": "Pour vous seul : visible de vous seul, hors du calcul commun."
+    },
+    "category": "Catégorie",
+    "note": "Commentaire (facultatif)",
+    "amountInvalid": "Indiquez un montant, par exemple 12,50.",
+    "titleRequired": "Dites ce que c’était.",
+    "delete": "Supprimer",
+    "save": "Enregistrer",
+    "weightsTitle": "Partage des dépenses communes",
+    "weightsHint": "En pourcentage : 50 et 50 pour moitié-moitié, 60 et 40 selon les revenus… Les dépenses déjà enregistrées gardent leur partage.",
+    "weightsEqual": "Parts égales",
+    "weightsInvalid": "Chaque part va de 1 à 100.",
+    "categories": {
+      "GROCERIES": "Courses",
+      "HOUSING": "Logement",
+      "UTILITIES": "Énergie et abonnements",
+      "TRANSPORT": "Transport",
+      "LEISURE": "Loisirs et sorties",
+      "HEALTH": "Santé",
+      "KIDS": "Enfants",
+      "GIFTS": "Cadeaux",
+      "OTHER": "Autre"
+    }
   }
 }

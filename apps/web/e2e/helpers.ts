@@ -65,3 +65,14 @@ export async function addPartner(page: Page, baseURL: string, name = 'Nicolas') 
 /** Date du jour à Bruxelles (YYYY-MM-DD). */
 export const todayBrussels = () =>
   new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Brussels' }).format(new Date());
+
+/** Ouvre les Réglages : lien de la navigation (desktop) ou « Plus » → Réglages (mobile). */
+export async function openSettings(page: Page) {
+  const direct = page.getByRole('link', { name: 'Réglages', exact: true });
+  if (await direct.first().isVisible()) await direct.first().click();
+  else {
+    await page.getByRole('link', { name: 'Plus', exact: true }).click();
+    await page.getByRole('link', { name: /^Réglages/ }).click();
+  }
+  await page.waitForURL(/\/settings/);
+}

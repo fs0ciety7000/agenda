@@ -67,6 +67,7 @@ fun SettingsScreen(
     onRetryPush: () -> Unit = {},
     onOpenHistory: () -> Unit = {},
     onOpenAbsences: () -> Unit = {},
+    onOpenExpenses: () -> Unit = {},
     onOpenReport: () -> Unit = {},
     /** Langue de l'app : "" (téléphone), "fr", "en" ou "nl". */
     language: String = "",
@@ -95,6 +96,15 @@ fun SettingsScreen(
                     }
                 }
             }
+        }
+
+        SectionHeader(stringResource(R.string.expenses_title))
+        OutlinedCard(onClick = onOpenExpenses, modifier = Modifier.fillMaxWidth()) {
+            Text(
+                stringResource(R.string.expenses_settings_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp),
+            )
         }
 
         SectionHeader(stringResource(R.string.settings_calendar))

@@ -4,11 +4,13 @@ import {
   BarChart3,
   CalendarDays,
   ListChecks,
+  Menu,
   Settings,
   ShoppingCart,
   Sun,
   type LucideIcon,
   UtensilsCrossed,
+  Wallet,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -23,17 +25,34 @@ import { useHouseholds, useMe } from '@/lib/queries';
 import { useRealtime } from '@/lib/realtime';
 import { SessionContext } from './household-context';
 
-type NavKey = 'today' | 'tasks' | 'shopping' | 'meals' | 'calendar' | 'stats' | 'settings';
-/** `mobile: false` : absent de la barre du bas (cinq onglets au plus), lien depuis Aujourd'hui. */
-const NAV: { href: string; key: NavKey; icon: LucideIcon; mobile?: false }[] = [
+type NavKey =
+  | 'today'
+  | 'tasks'
+  | 'shopping'
+  | 'meals'
+  | 'expenses'
+  | 'calendar'
+  | 'stats'
+  | 'settings'
+  | 'more';
+/**
+ * Barre du bas (mobile) : cinq onglets au plus. Les pages `mobile: false` sont regroupées dans
+ * « Plus » (`/more`), qui n'existe que sur mobile (`desktop: false`).
+ */
+const NAV: { href: string; key: NavKey; icon: LucideIcon; mobile?: false; desktop?: false }[] = [
   { href: '/', key: 'today', icon: Sun },
   { href: '/tasks', key: 'tasks', icon: ListChecks },
   { href: '/shopping', key: 'shopping', icon: ShoppingCart },
   { href: '/meals', key: 'meals', icon: UtensilsCrossed, mobile: false },
+  { href: '/expenses', key: 'expenses', icon: Wallet, mobile: false },
   { href: '/calendar', key: 'calendar', icon: CalendarDays },
   { href: '/stats', key: 'stats', icon: BarChart3, mobile: false },
-  { href: '/settings', key: 'settings', icon: Settings },
+  { href: '/settings', key: 'settings', icon: Settings, mobile: false },
+  { href: '/more', key: 'more', icon: Menu, desktop: false },
 ];
+
+/** Pages accessibles depuis « Plus » sur mobile (onglet actif quand on y est). */
+export const MORE_PAGES = ['/expenses', '/meals', '/stats', '/review', '/settings', '/history'];
 
 export function AppShell({ children }: { children: ReactNode }) {
   const t = useTranslations();
@@ -65,7 +84,11 @@ export function AppShell({ children }: { children: ReactNode }) {
     );
   }
 
-  const isActive = (href: string) => (href === '/' ? pathname === '/' : pathname.startsWith(href));
+  const isActive = (href: string) =>
+    href === '/'
+      ? pathname === '/'
+      : pathname.startsWith(href) ||
+        (href === '/more' && MORE_PAGES.some((p) => pathname.startsWith(p)));
 
   return (
     <div className="min-h-dvh md:flex">
@@ -83,7 +106,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             {t('app.name')}
           </span>
         </Link>
-        {NAV.map(({ href, key, icon: Icon }) => (
+        {NAV.filter((n) => n.desktop !== false).map(({ href, key, icon: Icon }) => (
           <Link
             key={href}
             href={href}

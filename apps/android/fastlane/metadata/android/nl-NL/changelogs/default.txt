@@ -1,5 +1,4 @@
-Tandem spreekt nu Nederlands!
-• Zeg "dank je" voor een taak die de ander heeft gedaan.
-• Weekoverzicht op zondagavond.
-• Maaltijden van de week → boodschappenlijst in één tik.
-• iCal-abonnement voor Apple Agenda en Outlook (op de website).
+Nieuw: Uitgaven (Instellingen → Uitgaven).
+• Wie wat betaalde: gedeeld, voorgeschoten voor de ander of persoonlijk.
+• "Nicolas is Grace € 42,50 schuldig", en de terugbetaling met één tik.
+• Totalen van de maand: gedeelde uitgaven, ieders aandeel, mijn persoonlijke uitgaven.

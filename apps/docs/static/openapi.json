@@ -6871,6 +6871,476 @@
         ]
       }
     },
+    "/v1/households/{householdId}/expenses": {
+      "get": {
+        "operationId": "ExpensesController_list_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "month",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ExpenseDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Dépenses et remboursements d'un mois (les dépenses personnelles des autres sont exclues)",
+        "tags": [
+          "expenses"
+        ]
+      },
+      "post": {
+        "description": "Enregistrer une dépense (identifiant facultatif : un renvoi ne crée pas de doublon).",
+        "operationId": "ExpensesController_create_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpenseInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpenseDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Enregistrer une dépense (identifiant facultatif ",
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/expenses/summary": {
+      "get": {
+        "operationId": "ExpensesController_summary_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "month",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpenseSummaryDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Soldes (qui doit combien à qui), totaux du mois et par catégorie",
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/expenses/settle": {
+      "post": {
+        "operationId": "ExpensesController_settle_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SettleInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpenseDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Enregistrer un remboursement d'un membre à un autre",
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/expenses/weights": {
+      "put": {
+        "operationId": "ExpensesController_weights_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpenseWeightsInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Proportions de partage des dépenses communes (1 et 1 = moitié-moitié)",
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/expenses/{expenseId}": {
+      "patch": {
+        "operationId": "ExpensesController_update_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "expenseId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateExpenseInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpenseDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Modifier une dépense (les parts sont recalculées si le montant ou le partage change)",
+        "tags": [
+          "expenses"
+        ]
+      },
+      "delete": {
+        "operationId": "ExpensesController_remove_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "expenseId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Supprimer une dépense ou un remboursement",
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
     "/v1/households/{householdId}/events": {
       "get": {
         "operationId": "RealtimeController_stream_v1",
@@ -10426,6 +10896,344 @@
           }
         }
       },
+      "ExpenseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "EXPENSE",
+              "SETTLEMENT"
+            ]
+          },
+          "paidById": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amountCents": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "title": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "GROCERIES",
+              "HOUSING",
+              "UTILITIES",
+              "TRANSPORT",
+              "LEISURE",
+              "HEALTH",
+              "KIDS",
+              "GIFTS",
+              "OTHER"
+            ]
+          },
+          "split": {
+            "type": "string",
+            "enum": [
+              "SHARED",
+              "FOR_OTHER",
+              "PERSONAL"
+            ]
+          },
+          "forMemberId": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          "note": {
+            "nullable": true,
+            "type": "string"
+          },
+          "shares": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "memberId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "amountCents": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "memberId",
+                "amountCents"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "createdById": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "paidById",
+          "amountCents",
+          "date",
+          "title",
+          "category",
+          "split",
+          "forMemberId",
+          "note",
+          "shares",
+          "createdById",
+          "createdAt"
+        ],
+        "additionalProperties": false
+      },
+      "ExpenseInput": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "paidById": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amountCents": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000000
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "category": {
+            "default": "OTHER",
+            "type": "string",
+            "enum": [
+              "GROCERIES",
+              "HOUSING",
+              "UTILITIES",
+              "TRANSPORT",
+              "LEISURE",
+              "HEALTH",
+              "KIDS",
+              "GIFTS",
+              "OTHER"
+            ]
+          },
+          "split": {
+            "default": "SHARED",
+            "type": "string",
+            "enum": [
+              "SHARED",
+              "FOR_OTHER",
+              "PERSONAL"
+            ]
+          },
+          "forMemberId": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          "note": {
+            "nullable": true,
+            "type": "string",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "paidById",
+          "amountCents",
+          "date",
+          "title"
+        ]
+      },
+      "ExpenseSummaryDto": {
+        "type": "object",
+        "properties": {
+          "month": {
+            "type": "string",
+            "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "commonCents": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "mineCents": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "members": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "memberId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "weight": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "balanceCents": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "paidCents": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "shareCents": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "memberId",
+                "weight",
+                "balanceCents",
+                "paidCents",
+                "shareCents"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "transfers": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "fromMemberId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "toMemberId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "amountCents": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "fromMemberId",
+                "toMemberId",
+                "amountCents"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "byCategory": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "GROCERIES",
+                    "HOUSING",
+                    "UTILITIES",
+                    "TRANSPORT",
+                    "LEISURE",
+                    "HEALTH",
+                    "KIDS",
+                    "GIFTS",
+                    "OTHER"
+                  ]
+                },
+                "amountCents": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "category",
+                "amountCents"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "month",
+          "currency",
+          "commonCents",
+          "mineCents",
+          "members",
+          "transfers",
+          "byCategory"
+        ],
+        "additionalProperties": false
+      },
+      "ExpenseWeightsInput": {
+        "type": "object",
+        "properties": {
+          "weights": {
+            "minItems": 1,
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "memberId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "weight": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 100
+                }
+              },
+              "required": [
+                "memberId",
+                "weight"
+              ]
+            }
+          }
+        },
+        "required": [
+          "weights"
+        ]
+      },
       "ForgotPasswordInput": {
         "type": "object",
         "properties": {
@@ -12530,6 +13338,37 @@
         ],
         "additionalProperties": false
       },
+      "SettleInput": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "fromMemberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "toMemberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amountCents": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000000
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "fromMemberId",
+          "toMemberId",
+          "amountCents"
+        ]
+      },
       "ShoppingItemDto": {
         "type": "object",
         "properties": {
@@ -13153,6 +13992,61 @@
           },
           "done": {
             "type": "boolean"
+          }
+        }
+      },
+      "UpdateExpenseInput": {
+        "type": "object",
+        "properties": {
+          "paidById": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amountCents": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000000
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "GROCERIES",
+              "HOUSING",
+              "UTILITIES",
+              "TRANSPORT",
+              "LEISURE",
+              "HEALTH",
+              "KIDS",
+              "GIFTS",
+              "OTHER"
+            ]
+          },
+          "split": {
+            "type": "string",
+            "enum": [
+              "SHARED",
+              "FOR_OTHER",
+              "PERSONAL"
+            ]
+          },
+          "forMemberId": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          "note": {
+            "nullable": true,
+            "type": "string",
+            "maxLength": 500
           }
         }
       },

@@ -13,6 +13,7 @@ métier propre à Android : les règles (récurrence, rotation, quick add) reste
 | **Tâches** | Recherche, filtres À faire / À venir / Sans date / Faites, « Les miennes », regroupement par jour |
 | **Courses** | Liste de courses permanente du foyer : ajout de plusieurs articles d'un coup (« lait, pain »), cocher au magasin, « Dans le panier (pris par Nicolas) », « Vider le panier ». **Hors ligne** (affiché tout de suite, envoyé au retour du réseau, sans doublon) et **en temps réel** (indicateur « En direct ») |
 | **Calendrier** | Mois (lundi → dimanche, pastilles = tâches à faire), liste du jour choisi, « Ajouter ce jour-là » ; **glisser-déposer** : appui long sur une tâche puis la lâcher sur un jour (heure conservée, cette occurrence seulement, « Annuler » dans le message ; TalkBack : actions « jour précédent / suivant ») |
+| **Dépenses** (depuis Réglages) | Qui doit quoi et « Enregistrer le remboursement », totaux du mois (communes, part de chacun, mes dépenses perso), liste par jour ; ajouter, modifier, supprimer (montant, quoi, date, payé par, pour qui : commune / pour l'autre / perso, catégorie, commentaire). En ligne seulement ; les proportions se règlent sur le site |
 | **Réglages** | Foyer et membres, état du calendrier partagé (Google), rappels, compte, déconnexion |
 
 - **Ajout rapide** (bouton +) : « Sortir les poubelles mardi 20h Nicolas », aperçu analysé par l'API.

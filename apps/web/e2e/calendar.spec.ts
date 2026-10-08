@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { signUpWithHousehold, todayBrussels } from './helpers';
+import { openSettings, signUpWithHousehold, todayBrussels } from './helpers';
 
 /**
  * Parcours Google Calendar avec le faux Google du mode démo (API lancée avec
@@ -12,7 +12,7 @@ test('calendrier partagé : connecter Google, choisir « Commun G & N », synchr
 }) => {
   test.skip(!FAKE, 'Nécessite le mode démo Google (E2E_FAKE_GOOGLE=1)');
   await signUpWithHousehold(page, 'Nicolas');
-  await page.getByRole('link', { name: 'Réglages' }).first().click();
+  await openSettings(page);
   await page.getByRole('link', { name: 'Connecter Google Calendar' }).click();
 
   await expect(page.getByText('Google Calendar connecté.')).toBeVisible();
@@ -40,14 +40,14 @@ test('calendrier partagé : connecter Google, choisir « Commun G & N », synchr
     .filter({ hasText: 'Sortir les poubelles' });
   await expect(row.getByText('Synchronisé', { exact: true })).toBeAttached({ timeout: 15_000 });
 
-  await page.getByRole('link', { name: 'Réglages' }).first().click();
+  await openSettings(page);
   await expect(page.getByText('1 tâche synchronisée')).toBeVisible();
 });
 
 test('calendrier partagé non configuré : message clair', async ({ page }) => {
   test.skip(FAKE, 'Le mode démo rend l’intégration disponible');
   await signUpWithHousehold(page, 'Grace');
-  await page.getByRole('link', { name: 'Réglages' }).first().click();
+  await openSettings(page);
   await expect(
     page.getByText("La connexion à Google Calendar n'est pas activée sur ce serveur."),
   ).toBeVisible();

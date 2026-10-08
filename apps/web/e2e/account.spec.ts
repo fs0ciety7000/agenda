@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { signUpWithHousehold } from './helpers';
+import { openSettings, signUpWithHousehold } from './helpers';
 
 test('changer son mot de passe depuis les Réglages, puis se reconnecter avec', async ({ page }) => {
   const { email } = await signUpWithHousehold(page, 'Grace');
-  await page.getByRole('link', { name: 'Réglages' }).first().click();
+  await openSettings(page);
 
   await page.getByLabel('Mot de passe actuel').fill('pas le bon mot de passe');
   await page.getByLabel('Nouveau mot de passe', { exact: true }).fill('une phrase toute neuve');

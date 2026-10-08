@@ -68,5 +68,12 @@ export const ShoppingSuggestionDto = z.object({
 export type ShoppingSuggestionDto = z.infer<typeof ShoppingSuggestionDto>;
 
 /** Ce qui a changé dans le foyer (événements temps réel, `GET …/events`). */
-export const RealtimeTopic = z.enum(['tasks', 'shopping', 'notifications', 'comments', 'meals']);
+export const RealtimeTopic = z.enum([
+  'tasks',
+  'shopping',
+  'notifications',
+  'comments',
+  'meals',
+  'expenses',
+]);
 export type RealtimeTopic = z.infer<typeof RealtimeTopic>;

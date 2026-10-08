@@ -1,5 +1,4 @@
-Tandem parle maintenant néerlandais !
-• Dites « merci » pour une tâche faite par l'autre.
-• Revue de la semaine, le dimanche soir.
-• Menus de la semaine → liste de courses en un geste.
-• Abonnement iCal pour Apple Calendrier et Outlook (sur le site).
+Nouveau : les Dépenses (Réglages → Dépenses).
+• Qui a payé quoi : commune, avancée pour l'autre ou perso.
+• « Nicolas doit 42,50 € à Grace », et le remboursement en un geste.
+• Totaux du mois : dépenses communes, part de chacun, mes dépenses perso.

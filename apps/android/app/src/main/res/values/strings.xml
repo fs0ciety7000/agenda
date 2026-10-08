@@ -447,4 +447,56 @@
     <string name="meals_edit_web">Plan on the website</string>
     <plurals name="meals_to_shopping"><item quantity="one">Ingredients of %d meal → shopping</item><item quantity="other">Ingredients of %d meals → shopping</item></plurals>
     <plurals name="meals_added"><item quantity="one">%d item added to shopping.</item><item quantity="other">%d items added to shopping.</item></plurals>
+    <!-- Dépenses -->
+    <string name="expenses_title">Expenses</string>
+    <string name="expenses_settings_hint">Who paid what, and who owes how much.</string>
+    <string name="expenses_add">Expense</string>
+    <string name="expenses_prev_month">Previous month</string>
+    <string name="expenses_next_month">Next month</string>
+    <string name="expenses_offline">Offline: expenses need a connection.</string>
+    <string name="expenses_failed">Not possible right now (connection?)</string>
+    <string name="expenses_balance_title">Who owes what</string>
+    <string name="expenses_even">You\'re all square.</string>
+    <string name="expenses_owes">%1$s owes %2$s %3$s</string>
+    <string name="expenses_settle">Record the payback</string>
+    <string name="expenses_settled">Payback recorded</string>
+    <string name="expenses_split_hint">Split %1$s (changed on the website)</string>
+    <string name="expenses_month_title">This month</string>
+    <string name="expenses_common">Shared expenses</string>
+    <string name="expenses_member_line">paid %1$s · their share %2$s</string>
+    <string name="expenses_mine">My personal expenses</string>
+    <string name="expenses_empty_title">No expenses this month</string>
+    <string name="expenses_empty_body">Note what you pay for the household: Tandem works out who owes whom.</string>
+    <string name="expenses_settlement">Payback</string>
+    <string name="expenses_meta_settlement">%1$s → %2$s</string>
+    <string name="expenses_meta_shared">Paid by %1$s · shared</string>
+    <string name="expenses_meta_for_other">Paid by %1$s for %2$s</string>
+    <string name="expenses_meta_personal">Paid by %1$s · personal</string>
+    <string name="expenses_new">New expense</string>
+    <string name="expenses_edit">Edit expense</string>
+    <string name="expenses_amount">Amount (€)</string>
+    <string name="expenses_what">What?</string>
+    <string name="expenses_what_hint">Groceries, rent, cinema…</string>
+    <string name="expenses_date">Date: %1$s</string>
+    <string name="expenses_paid_by">Paid by</string>
+    <string name="expenses_for_whom">For whom?</string>
+    <string name="expenses_split_shared">Shared</string>
+    <string name="expenses_split_for">For %1$s</string>
+    <string name="expenses_split_personal">Personal</string>
+    <string name="expenses_hint_shared">Split using the household\'s shares.</string>
+    <string name="expenses_hint_for_other">Paid for them: they owe all of it.</string>
+    <string name="expenses_hint_personal">Just for you: only you see it, and it stays out of the shared total.</string>
+    <string name="expenses_category">Category</string>
+    <string name="expenses_note">Comment (optional)</string>
+    <string name="expenses_amount_invalid">Enter an amount, e.g. 12.50.</string>
+    <string name="expenses_title_required">Say what it was.</string>
+    <string name="expense_cat_groceries">Groceries</string>
+    <string name="expense_cat_housing">Housing</string>
+    <string name="expense_cat_utilities">Utilities and subscriptions</string>
+    <string name="expense_cat_transport">Transport</string>
+    <string name="expense_cat_leisure">Leisure and outings</string>
+    <string name="expense_cat_health">Health</string>
+    <string name="expense_cat_kids">Kids</string>
+    <string name="expense_cat_gifts">Gifts</string>
+    <string name="expense_cat_other">Other</string>
 </resources>

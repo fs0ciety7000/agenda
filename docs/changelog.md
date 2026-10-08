@@ -13,6 +13,27 @@ d'elle-même (ou via Google Play).
 **Légende** : ✨ nouveau · 🛠 amélioration · 🐞 correction · 🔒 sécurité et confidentialité ·
 ⚙️ technique
 
+## 8 octobre 2026
+
+### Dépenses (#86)
+
+- ✨ **Dépenses** : qui a payé quoi, la date, le montant, la catégorie et un commentaire. Une
+  dépense est **commune** (partagée moitié-moitié, ou selon des proportions comme 60 / 40),
+  **avancée pour l'autre**, ou **perso** (visible de vous seul).
+- ✨ **Qui doit quoi** : « Nicolas doit 42,50 € à Grace », et **Enregistrer le remboursement**
+  pour remettre les compteurs à zéro.
+- ✨ Totaux du mois : dépenses communes, ce que chacun a payé et sa part, mes dépenses perso,
+  par catégorie. Sur le site et dans l'app Android (Réglages → Dépenses).
+- 🛠 Sur téléphone, le dernier onglet du site devient **Plus** : Dépenses, Menus, Bilan, Revue,
+  Journal et Réglages.
+- 🔒 Les dépenses perso ne sont visibles que de leur auteur ; toutes les dépenses font partie de
+  l'export de vos données.
+
+### Instructions de travail
+
+- ⚙️ Fichier `CLAUDE.md`, déroulé de travail et grille d'audit UI/UX (site, app web, Android),
+  appliqués à chaque modification.
+
 ## 1er octobre 2026
 
 ### Passkeys plus robustes

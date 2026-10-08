@@ -317,3 +317,65 @@ data class MealsToShoppingRequest(val mealIds: List<String>)
 
 @Serializable
 data class MealsToShoppingDto(val added: Int, val skipped: Int)
+
+/** Dépenses du foyer (cf. packages/contracts/src/expenses.ts). Montants en centimes d'euro. */
+@Serializable
+data class ExpenseShareDto(val memberId: String, val amountCents: Long)
+
+@Serializable
+data class ExpenseDto(
+    val id: String,
+    val kind: String,
+    val paidById: String,
+    val amountCents: Long,
+    val date: String,
+    val title: String,
+    val category: String,
+    val split: String,
+    val forMemberId: String? = null,
+    val note: String? = null,
+    val shares: List<ExpenseShareDto> = emptyList(),
+)
+
+/** Création (avec identifiant : un renvoi ne crée pas de doublon) ou modification. */
+@Serializable
+data class ExpenseBody(
+    val id: String? = null,
+    val paidById: String,
+    val amountCents: Long,
+    val date: String,
+    val title: String,
+    val category: String,
+    val split: String,
+    val forMemberId: String? = null,
+    val note: String,
+)
+
+@Serializable
+data class SettleBody(val id: String, val fromMemberId: String, val toMemberId: String, val amountCents: Long)
+
+@Serializable
+data class ExpenseMemberSummaryDto(
+    val memberId: String,
+    val weight: Int,
+    val balanceCents: Long,
+    val paidCents: Long,
+    val shareCents: Long,
+)
+
+@Serializable
+data class ExpenseTransferDto(val fromMemberId: String, val toMemberId: String, val amountCents: Long)
+
+@Serializable
+data class ExpenseCategoryTotalDto(val category: String, val amountCents: Long)
+
+@Serializable
+data class ExpenseSummaryDto(
+    val month: String,
+    val currency: String = "EUR",
+    val commonCents: Long,
+    val mineCents: Long,
+    val members: List<ExpenseMemberSummaryDto> = emptyList(),
+    val transfers: List<ExpenseTransferDto> = emptyList(),
+    val byCategory: List<ExpenseCategoryTotalDto> = emptyList(),
+)

@@ -24,7 +24,7 @@ Pour une liste liée à une tâche précise (« Valise »), utilisez plutôt les
 
 ## Menus de la semaine
 
-**Menus** (lien en haut de la liste de courses, ou dans le menu sur ordinateur) : un repas par
+**Menus** (lien en haut de la liste de courses ; **Plus → Menus** sur téléphone ; dans le menu sur ordinateur) : un repas par
 jour, le midi et le soir, avec ses ingrédients (un par ligne).
 
 - **Ajouter les ingrédients aux courses** envoie les ingrédients des repas de la semaine dans la

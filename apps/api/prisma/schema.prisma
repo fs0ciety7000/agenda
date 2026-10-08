@@ -27,16 +27,16 @@ model User {
   /// Compte désactivé par un administrateur : plus aucune connexion possible.
   disabledAt   DateTime?
 
-  sessions          Session[]
-  identities        AuthIdentity[]
-  memberships       HouseholdMember[]
-  googleConnections GoogleConnection[]
-  resetTokens       PasswordResetToken[]
-  mobileAuthCodes   MobileAuthCode[]
-  pushTokens        PushToken[]
+  sessions             Session[]
+  identities           AuthIdentity[]
+  memberships          HouseholdMember[]
+  googleConnections    GoogleConnection[]
+  resetTokens          PasswordResetToken[]
+  mobileAuthCodes      MobileAuthCode[]
+  pushTokens           PushToken[]
   webPushSubscriptions WebPushSubscription[]
-  reports           Report[]
-  passkeys          Passkey[]
+  reports              Report[]
+  passkeys             Passkey[]
 }
 
 /// Passkey (WebAuthn) : clé publique d'un appareil ou d'un gestionnaire de mots de passe.
@@ -158,6 +158,7 @@ model Household {
   comments       TaskComment[]
   products       ShoppingProduct[]
   meals          Meal[]
+  expenses       Expense[]
 }
 
 enum HouseholdRole {
@@ -199,22 +200,24 @@ model MemberAbsence {
 }
 
 model HouseholdMember {
-  id           String        @id @default(uuid()) @db.Uuid
-  householdId  String        @db.Uuid
+  id            String        @id @default(uuid()) @db.Uuid
+  householdId   String        @db.Uuid
   /// null = compte supprimé (RGPD) : le membre reste, anonymisé, pour l'historique partagé.
-  userId       String?       @db.Uuid
-  role         HouseholdRole @default(MEMBER)
-  displayName  String        @db.VarChar(40)
+  userId        String?       @db.Uuid
+  role          HouseholdRole @default(MEMBER)
+  displayName   String        @db.VarChar(40)
   /// Nom d'un token de couleur (sage, ocean…), jamais un hex libre.
-  color        String        @db.VarChar(16)
-  joinedAt     DateTime      @default(now())
-  leftAt       DateTime?
+  color         String        @db.VarChar(16)
+  joinedAt      DateTime      @default(now())
+  leftAt        DateTime?
   /// Adresse « créer une tâche par e-mail » (partie après le +). Secrète ; null = désactivée.
-  inboundToken String?       @unique @db.VarChar(40)
+  inboundToken  String?       @unique @db.VarChar(40)
   /// Accusé de réception des tâches créées par e-mail.
-  inboundAck   Boolean       @default(true)
+  inboundAck    Boolean       @default(true)
   /// Abonnement iCal (lecture seule, Apple Calendrier, Outlook…). Secret ; null = désactivé.
-  icalToken    String?       @unique @db.VarChar(40)
+  icalToken     String?       @unique @db.VarChar(40)
+  /// Proportion de partage des dépenses communes (poids relatif ; 1 et 1 = moitié-moitié).
+  expenseWeight Int           @default(1)
 
   household            Household                @relation(fields: [householdId], references: [id], onDelete: Cascade)
   user                 User?                    @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -229,6 +232,9 @@ model HouseholdMember {
   absences             MemberAbsence[]
   comments             TaskComment[]
   thanks               OccurrenceThanks[]
+  expensesPaid         Expense[]                @relation("ExpensePaidBy")
+  expensesFor          Expense[]                @relation("ExpenseFor")
+  expenseShares        ExpenseShare[]
 
   @@unique([householdId, userId])
   @@index([userId])
@@ -884,4 +890,67 @@ model Report {
 
   @@index([userId, createdAt])
   @@index([status, createdAt])
+}
+
+/// Dépenses du foyer : qui a payé quoi, et la part de chacun (montants en centimes d'euro).
+enum ExpenseKind {
+  EXPENSE
+  SETTLEMENT
+}
+
+enum ExpenseSplit {
+  SHARED
+  FOR_OTHER
+  PERSONAL
+}
+
+enum ExpenseCategory {
+  GROCERIES
+  HOUSING
+  UTILITIES
+  TRANSPORT
+  LEISURE
+  HEALTH
+  KIDS
+  GIFTS
+  OTHER
+}
+
+model Expense {
+  id          String          @id @default(uuid()) @db.Uuid
+  householdId String          @db.Uuid
+  kind        ExpenseKind     @default(EXPENSE)
+  paidById    String          @db.Uuid
+  amountCents Int
+  date        DateTime        @db.Date
+  title       String          @db.VarChar(120)
+  category    ExpenseCategory @default(OTHER)
+  split       ExpenseSplit    @default(SHARED)
+  /// FOR_OTHER : pour qui ; SETTLEMENT : qui est remboursé.
+  forMemberId String?         @db.Uuid
+  note        String?         @db.VarChar(500)
+  createdById String?         @db.Uuid
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  household Household        @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  paidBy    HouseholdMember  @relation("ExpensePaidBy", fields: [paidById], references: [id], onDelete: Cascade)
+  forMember HouseholdMember? @relation("ExpenseFor", fields: [forMemberId], references: [id], onDelete: SetNull)
+  shares    ExpenseShare[]
+
+  @@index([householdId, date])
+}
+
+/// Part de chacun dans une dépense, figée à l'enregistrement (changer les proportions du foyer
+/// ne réécrit pas le passé).
+model ExpenseShare {
+  expenseId   String @db.Uuid
+  memberId    String @db.Uuid
+  amountCents Int
+
+  expense Expense         @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  member  HouseholdMember @relation(fields: [memberId], references: [id], onDelete: Cascade)
+
+  @@id([expenseId, memberId])
+  @@index([memberId])
 }
