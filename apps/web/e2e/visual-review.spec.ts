@@ -82,6 +82,16 @@ for (const scheme of ['light', 'dark'] as const) {
       { title: 'Mesures', body: 'Fenêtre du salon : 120 × 140 cm' },
     ])
       await page.request.post(`/v1/households/${hid}/notes`, { headers: H, data });
+    const md = (n: number) => {
+      const x = new Date(`${d(n)}T12:00:00Z`);
+      return { month: x.getUTCMonth() + 1, day: x.getUTCDate() };
+    };
+    for (const data of [
+      { title: 'Anniversaire de mamie', kind: 'BIRTHDAY', ...md(5), year: 1950 },
+      { title: 'Entretien chaudière', kind: 'MAINTENANCE', ...md(40), remindDaysBefore: 14 },
+      { title: 'Anniversaire de mariage', kind: 'ANNIVERSARY', ...md(120), year: 2015 },
+    ])
+      await page.request.post(`/v1/households/${hid}/important-dates`, { headers: H, data });
     await page.request.post(`/v1/households/${hid}/templates`, {
       headers: H,
       data: {
@@ -101,6 +111,7 @@ for (const scheme of ['light', 'dark'] as const) {
       ['stats', '/stats'],
       ['expenses', '/expenses'],
       ['notes', '/notes'],
+      ['dates', '/dates'],
       ['meals', '/meals'],
       ['more', '/more'],
       ['review', '/review'],

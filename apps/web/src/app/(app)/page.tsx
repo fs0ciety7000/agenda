@@ -16,6 +16,7 @@ import { NotificationBell } from '@/components/app/notification-bell';
 import { QuickAdd } from '@/components/app/quick-add';
 import { ApplyTemplateButton } from '@/components/app/templates';
 import { TaskList } from '@/components/app/task-row';
+import { UpcomingDates } from '@/components/app/upcoming-dates';
 import { WeekBoard } from '@/components/app/week-board';
 import { useTaskDialog } from '@/components/app/use-task-dialog';
 import { SectionTitle } from '@/components/ui/card';
@@ -133,6 +134,8 @@ export default function TodayPage() {
             <TaskList items={todayItems} onOpen={dialog.openEdit} label={t('sectionToday')} />
           )}
         </section>
+
+        <UpcomingDates />
 
         {todayQ.data && weekQ.data && (
           <WeekBoard

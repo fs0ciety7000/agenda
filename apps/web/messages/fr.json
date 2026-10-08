@@ -18,7 +18,8 @@
     "meals": "Menus",
     "expenses": "Dépenses",
     "more": "Plus",
-    "notes": "Notes"
+    "notes": "Notes",
+    "dates": "Dates"
   },
   "auth": {
     "loginTitle": "Bon retour",
@@ -548,7 +549,7 @@
     },
     "data": {
       "title": "Données traitées",
-      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations, liste de courses, notes partagées (titre, contenu, qui les a écrites).\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, sous-tâches, commentaires, demandes d'échange de tour (avec le mot laissé), absences déclarées, historique des actions (qui a fait quoi, quand).\nDépenses (si vous les utilisez) : montant, date, libellé, catégorie, commentaire, qui a payé et la part de chacun. Une dépense personnelle n'est visible que de vous. Le ticket joint (photo ou PDF) est conservé avec la dépense et supprimé avec elle.\nSessions : appareil (navigateur ou application) et dates de connexion, pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion.\nAjout par e-mail (si vous l'activez) : l'expéditeur, le sujet et le texte des e-mails que vous transférez à votre adresse personnelle sont enregistrés dans les notes de la tâche créée. Ils sont reçus par Resend, notre prestataire d'e-mails ; leurs pièces jointes sont jointes à la tâche.\nPièces jointes : les fichiers que vous joignez à une tâche (ou joints à un e-mail transféré) sont stockés sur notre serveur avec la tâche, visibles par les membres du foyer (par vous seul pour une tâche personnelle), et supprimés avec elle.\nSignalements (si vous en envoyez) : le type, le titre et le texte de votre message, une capture d'écran si vous en joignez une, votre choix d'être recontacté·e ou non et, seulement si vous cochez la case, des informations techniques affichées avant l'envoi (navigateur ou modèle de téléphone, système, version de l'app, langue, fuseau horaire, taille d'écran, page ouverte). Jamais le contenu de vos tâches. Seuls les administrateurs de l'app les lisent.\nNotifications du navigateur (si vous les activez) : l'adresse d'abonnement fournie par votre navigateur, supprimée quand vous les désactivez ou vous déconnectez."
+      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations, liste de courses, notes partagées (titre, contenu, qui les a écrites), dates importantes (titre, jour, mois et année facultative ; elles peuvent concerner des proches, par exemple un anniversaire).\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, sous-tâches, commentaires, demandes d'échange de tour (avec le mot laissé), absences déclarées, historique des actions (qui a fait quoi, quand).\nDépenses (si vous les utilisez) : montant, date, libellé, catégorie, commentaire, qui a payé et la part de chacun. Une dépense personnelle n'est visible que de vous. Le ticket joint (photo ou PDF) est conservé avec la dépense et supprimé avec elle.\nSessions : appareil (navigateur ou application) et dates de connexion, pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion.\nAjout par e-mail (si vous l'activez) : l'expéditeur, le sujet et le texte des e-mails que vous transférez à votre adresse personnelle sont enregistrés dans les notes de la tâche créée. Ils sont reçus par Resend, notre prestataire d'e-mails ; leurs pièces jointes sont jointes à la tâche.\nPièces jointes : les fichiers que vous joignez à une tâche (ou joints à un e-mail transféré) sont stockés sur notre serveur avec la tâche, visibles par les membres du foyer (par vous seul pour une tâche personnelle), et supprimés avec elle.\nSignalements (si vous en envoyez) : le type, le titre et le texte de votre message, une capture d'écran si vous en joignez une, votre choix d'être recontacté·e ou non et, seulement si vous cochez la case, des informations techniques affichées avant l'envoi (navigateur ou modèle de téléphone, système, version de l'app, langue, fuseau horaire, taille d'écran, page ouverte). Jamais le contenu de vos tâches. Seuls les administrateurs de l'app les lisent.\nNotifications du navigateur (si vous les activez) : l'adresse d'abonnement fournie par votre navigateur, supprimée quand vous les désactivez ou vous déconnectez."
     },
     "google": {
       "title": "Données Google",
@@ -603,7 +604,9 @@
     "swapRequest": "{by} vous demande de prendre « {title} »",
     "swapAccepted": "{by} prend « {title} » à votre place",
     "swapDeclined": "{by} ne peut pas prendre « {title} »",
-    "swapDeleted": "Échange de tour pour une tâche supprimée depuis"
+    "swapDeleted": "Échange de tour pour une tâche supprimée depuis",
+    "importantDate": "{title} : {days, plural, =0 {c’est aujourd’hui} =1 {demain} other {dans # jours}}",
+    "importantDateDeleted": "Rappel d’une date supprimée depuis"
   },
   "notificationSettings": {
     "title": "Préférences de notification",
@@ -617,7 +620,8 @@
       "TASK_THANKS": "Quelqu'un me dit merci pour une tâche faite",
       "EXPENSE_BUDGET": "Le budget commun du mois atteint 80 % ou 100 %",
       "TASK_SWAP_REQUEST": "Quelqu’un me propose de prendre sa tâche",
-      "TASK_SWAP_ANSWER": "Réponse à ma demande d’échange"
+      "TASK_SWAP_ANSWER": "Réponse à ma demande d’échange",
+      "IMPORTANT_DATE": "Date importante qui approche"
     },
     "status": {
       "title": "Notifications instantanées sur le téléphone : pas encore actives",
@@ -1246,6 +1250,10 @@
     "notes": {
       "title": "Notes",
       "hint": "Codes Wi-Fi, mesures, idées cadeaux"
+    },
+    "dates": {
+      "title": "Dates importantes",
+      "hint": "Anniversaires, fêtes, entretiens annuels"
     }
   },
   "expenses": {
@@ -1403,5 +1411,45 @@
     "someone": "un ancien membre",
     "offline": "Hors ligne : les notes se lisent, mais se modifient une fois reconnecté.",
     "conflict": "Cette note a été modifiée entre-temps. Voici la dernière version : vérifiez, puis enregistrez à nouveau."
+  },
+  "importantDates": {
+    "title": "Dates importantes",
+    "intro": "Anniversaires, fêtes, entretiens annuels : Tandem vous prévient tous les deux à l’avance.",
+    "new": "Nouvelle date",
+    "edit": "Modifier la date",
+    "add": "Ajouter",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "close": "Fermer",
+    "fieldTitle": "Titre",
+    "titlePlaceholder": "Anniversaire de mamie",
+    "fieldKind": "Type",
+    "fieldDay": "Jour",
+    "fieldMonth": "Mois",
+    "fieldYear": "Année",
+    "fieldYearOptional": "Année (facultatif)",
+    "yearHint": "Pour afficher l’âge ou le nombre d’années.",
+    "yearRequired": "Indiquez l’année d’une date qui ne se répète pas.",
+    "fieldRepeats": "Chaque année",
+    "fieldReminder": "Rappel",
+    "kind": {
+      "BIRTHDAY": "Anniversaire",
+      "ANNIVERSARY": "Fête (mariage, rencontre…)",
+      "MAINTENANCE": "Entretien (chaudière, voiture…)",
+      "OTHER": "Autre"
+    },
+    "remind": "{days, plural, =0 {Le jour même} =1 {La veille} other {# jours avant}}",
+    "remindShort": "{days, plural, =0 {le jour même} other {# j avant}}",
+    "when": "{days, plural, =0 {aujourd’hui} =1 {demain} other {dans # jours}}",
+    "years": "{years, plural, =0 {cette année} one {# an} other {# ans}}",
+    "past": "Passée",
+    "emptyTitle": "Aucune date pour l’instant.",
+    "emptyBody": "Ajoutez les anniversaires et les entretiens à ne pas oublier : vous serez prévenus tous les deux à l’avance.",
+    "created": "Date ajoutée",
+    "saved": "Date enregistrée",
+    "deleted": "« {title} » supprimée",
+    "offline": "Hors ligne : les dates se lisent, mais se modifient une fois reconnecté.",
+    "soon": "Bientôt",
+    "seeAll": "Toutes les dates"
   }
 }

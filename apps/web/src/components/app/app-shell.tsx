@@ -2,6 +2,7 @@
 
 import {
   BarChart3,
+  Cake,
   CalendarDays,
   ListChecks,
   Menu,
@@ -35,6 +36,7 @@ type NavKey =
   | 'calendar'
   | 'stats'
   | 'notes'
+  | 'dates'
   | 'settings'
   | 'more';
 /**
@@ -48,6 +50,7 @@ const NAV: { href: string; key: NavKey; icon: LucideIcon; mobile?: false; deskto
   { href: '/meals', key: 'meals', icon: UtensilsCrossed, mobile: false },
   { href: '/expenses', key: 'expenses', icon: Wallet, mobile: false },
   { href: '/notes', key: 'notes', icon: StickyNote, mobile: false },
+  { href: '/dates', key: 'dates', icon: Cake, mobile: false },
   { href: '/calendar', key: 'calendar', icon: CalendarDays },
   { href: '/stats', key: 'stats', icon: BarChart3, mobile: false },
   { href: '/settings', key: 'settings', icon: Settings, mobile: false },

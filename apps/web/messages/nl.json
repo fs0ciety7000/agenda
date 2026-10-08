@@ -18,7 +18,8 @@
     "meals": "Maaltijden",
     "expenses": "Uitgaven",
     "more": "Meer",
-    "notes": "Notities"
+    "notes": "Notities",
+    "dates": "Data"
   },
   "auth": {
     "loginTitle": "Welkom terug",
@@ -548,7 +549,7 @@
     },
     "data": {
       "title": "Verwerkte gegevens",
-      "body": "Account: voornaam, e-mailadres, wachtwoord (alleen als Argon2-hash, nooit leesbaar), taal.\nHuishouden: naam van het huishouden, leden, categorieën, uitnodigingen, boodschappenlijst, gedeelde notities (titel, inhoud, wie ze schreef).\nTaken: titels, notities, datums, tijden, duur, verantwoordelijken, herhalingen, status, subtaken, reacties, ruilverzoeken (met het berichtje), opgegeven afwezigheden, activiteitengeschiedenis (wie wat deed, en wanneer).\nUitgaven (als je ze gebruikt): bedrag, datum, omschrijving, categorie, opmerking, wie betaalde en ieders aandeel. Een persoonlijke uitgave zie alleen jij. Een toegevoegd kasticket (foto of pdf) wordt bij de uitgave bewaard en samen met haar verwijderd.\nSessies: apparaat (browser of app) en aanmeldingsdatums, zodat je op afstand kunt afmelden. Android-app: de meldingsidentificatie van de telefoon (als directe meldingen aan staan), verwijderd bij het afmelden.\nDe Android-app bewaart een kopie van je taken op de telefoon om offline te werken; die wordt gewist bij het afmelden.\nToevoegen per e-mail (als je het inschakelt): de afzender, het onderwerp en de tekst van e-mails die je naar je persoonlijke adres doorstuurt, worden opgeslagen in de notities van de aangemaakte taak. Ze worden ontvangen door Resend, onze e-mailprovider; hun bijlagen worden aan de taak toegevoegd.\nBijlagen: bestanden die je aan een taak toevoegt (of die bij een doorgestuurde e-mail zaten) worden met de taak op onze server bewaard, zijn zichtbaar voor de leden van het huishouden (alleen voor jou bij een persoonlijke taak) en worden samen met de taak verwijderd.\nMeldingen van problemen (als je er stuurt): het type, de titel en de tekst van je bericht, een schermafbeelding als je die toevoegt, of je gecontacteerd mag worden en, alleen als je het vakje aanvinkt, technische informatie die vóór het verzenden wordt getoond (browser of telefoonmodel, systeem, appversie, taal, tijdzone, schermgrootte, geopende pagina). Nooit de inhoud van je taken. Alleen de beheerders van de app lezen ze.\nBrowsermeldingen (als je ze inschakelt): het abonnementsadres dat je browser geeft, verwijderd wanneer je ze uitschakelt of afmeldt."
+      "body": "Account: voornaam, e-mailadres, wachtwoord (alleen als Argon2-hash, nooit leesbaar), taal.\nHuishouden: naam van het huishouden, leden, categorieën, uitnodigingen, boodschappenlijst, gedeelde notities (titel, inhoud, wie ze schreef), belangrijke data (titel, dag, maand en optioneel jaar; ze kunnen over naasten gaan, bijvoorbeeld een verjaardag).\nTaken: titels, notities, datums, tijden, duur, verantwoordelijken, herhalingen, status, subtaken, reacties, ruilverzoeken (met het berichtje), opgegeven afwezigheden, activiteitengeschiedenis (wie wat deed, en wanneer).\nUitgaven (als je ze gebruikt): bedrag, datum, omschrijving, categorie, opmerking, wie betaalde en ieders aandeel. Een persoonlijke uitgave zie alleen jij. Een toegevoegd kasticket (foto of pdf) wordt bij de uitgave bewaard en samen met haar verwijderd.\nSessies: apparaat (browser of app) en aanmeldingsdatums, zodat je op afstand kunt afmelden. Android-app: de meldingsidentificatie van de telefoon (als directe meldingen aan staan), verwijderd bij het afmelden.\nDe Android-app bewaart een kopie van je taken op de telefoon om offline te werken; die wordt gewist bij het afmelden.\nToevoegen per e-mail (als je het inschakelt): de afzender, het onderwerp en de tekst van e-mails die je naar je persoonlijke adres doorstuurt, worden opgeslagen in de notities van de aangemaakte taak. Ze worden ontvangen door Resend, onze e-mailprovider; hun bijlagen worden aan de taak toegevoegd.\nBijlagen: bestanden die je aan een taak toevoegt (of die bij een doorgestuurde e-mail zaten) worden met de taak op onze server bewaard, zijn zichtbaar voor de leden van het huishouden (alleen voor jou bij een persoonlijke taak) en worden samen met de taak verwijderd.\nMeldingen van problemen (als je er stuurt): het type, de titel en de tekst van je bericht, een schermafbeelding als je die toevoegt, of je gecontacteerd mag worden en, alleen als je het vakje aanvinkt, technische informatie die vóór het verzenden wordt getoond (browser of telefoonmodel, systeem, appversie, taal, tijdzone, schermgrootte, geopende pagina). Nooit de inhoud van je taken. Alleen de beheerders van de app lezen ze.\nBrowsermeldingen (als je ze inschakelt): het abonnementsadres dat je browser geeft, verwijderd wanneer je ze uitschakelt of afmeldt."
     },
     "google": {
       "title": "Google-gegevens",
@@ -603,7 +604,9 @@
     "swapRequest": "{by} vraagt of je “{title}” wilt overnemen",
     "swapAccepted": "{by} neemt “{title}” van je over",
     "swapDeclined": "{by} kan “{title}” niet overnemen",
-    "swapDeleted": "Beurt ruilen voor een taak die intussen verwijderd is"
+    "swapDeleted": "Beurt ruilen voor een taak die intussen verwijderd is",
+    "importantDate": "{title}: {days, plural, =0 {vandaag} =1 {morgen} other {over # dagen}}",
+    "importantDateDeleted": "Herinnering voor een intussen verwijderde datum"
   },
   "notificationSettings": {
     "title": "Meldingsvoorkeuren",
@@ -617,7 +620,8 @@
       "TASK_THANKS": "Iemand bedankt me voor een taak die ik heb gedaan",
       "EXPENSE_BUDGET": "Het gezamenlijke budget van de maand bereikt 80% of 100%",
       "TASK_SWAP_REQUEST": "Iemand vraagt of ik een taak wil overnemen",
-      "TASK_SWAP_ANSWER": "Antwoord op mijn ruilverzoek"
+      "TASK_SWAP_ANSWER": "Antwoord op mijn ruilverzoek",
+      "IMPORTANT_DATE": "Een belangrijke datum komt eraan"
     },
     "status": {
       "title": "Directe meldingen op de telefoon: nog niet actief",
@@ -1246,6 +1250,10 @@
     "notes": {
       "title": "Notities",
       "hint": "Wifi-codes, maten, cadeau-ideeën"
+    },
+    "dates": {
+      "title": "Belangrijke data",
+      "hint": "Verjaardagen, jubilea, jaarlijks onderhoud"
     }
   },
   "expenses": {
@@ -1403,5 +1411,45 @@
     "someone": "een voormalig lid",
     "offline": "Offline: je kunt notities lezen, en ze bewerken zodra je weer online bent.",
     "conflict": "Deze notitie is intussen gewijzigd. Dit is de nieuwste versie: controleer ze en sla opnieuw op."
+  },
+  "importantDates": {
+    "title": "Belangrijke data",
+    "intro": "Verjaardagen, jubilea, jaarlijks onderhoud: Tandem herinnert jullie allebei op tijd.",
+    "new": "Nieuwe datum",
+    "edit": "Datum bewerken",
+    "add": "Toevoegen",
+    "save": "Opslaan",
+    "delete": "Verwijderen",
+    "close": "Sluiten",
+    "fieldTitle": "Titel",
+    "titlePlaceholder": "Verjaardag oma",
+    "fieldKind": "Soort",
+    "fieldDay": "Dag",
+    "fieldMonth": "Maand",
+    "fieldYear": "Jaar",
+    "fieldYearOptional": "Jaar (optioneel)",
+    "yearHint": "Om de leeftijd of het aantal jaren te tonen.",
+    "yearRequired": "Vul het jaar in voor een datum die niet terugkomt.",
+    "fieldRepeats": "Elk jaar",
+    "fieldReminder": "Herinnering",
+    "kind": {
+      "BIRTHDAY": "Verjaardag",
+      "ANNIVERSARY": "Jubileum (huwelijk, eerste date…)",
+      "MAINTENANCE": "Onderhoud (ketel, auto…)",
+      "OTHER": "Andere"
+    },
+    "remind": "{days, plural, =0 {Op de dag zelf} =1 {De dag ervoor} other {# dagen ervoor}}",
+    "remindShort": "{days, plural, =0 {op de dag} other {# d ervoor}}",
+    "when": "{days, plural, =0 {vandaag} =1 {morgen} other {over # dagen}}",
+    "years": "{years, plural, one {# jaar} other {# jaar}}",
+    "past": "Voorbij",
+    "emptyTitle": "Nog geen data.",
+    "emptyBody": "Voeg de verjaardagen en het onderhoud toe die je niet mag vergeten: jullie krijgen allebei op tijd een herinnering.",
+    "created": "Datum toegevoegd",
+    "saved": "Datum opgeslagen",
+    "deleted": "“{title}” verwijderd",
+    "offline": "Offline: je kunt de data lezen, en ze bewerken zodra je weer online bent.",
+    "soon": "Binnenkort",
+    "seeAll": "Alle data"
   }
 }
