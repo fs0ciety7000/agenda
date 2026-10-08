@@ -193,8 +193,8 @@
     "queued": "“{text}” wordt toegevoegd zodra je weer online bent."
   },
   "tasks": {
-    "unassigned": "Niet toegewezen",
-    "bothOfUs": "Wij samen",
+    "unassigned": "Nog te bepalen",
+    "bothOfUs": "Samen",
     "everyone": "Iedereen",
     "personal": "Persoonlijk",
     "markDone": "“{title}” markeren als gedaan",
@@ -269,7 +269,7 @@
   "balance": {
     "bothOfUs": "Samen",
     "together": "Samen",
-    "unassigned": "Niet toegewezen",
+    "unassigned": "Nog te bepalen",
     "count": "{count, plural, =0 {geen taken} one {# taak} other {# taken}}",
     "empty": "Geen gedeelde taken gepland deze week."
   },
@@ -341,7 +341,7 @@
     "perWeek": "Elke week van persoon wisselen in plaats van elke keer",
     "next": "Volgende keren",
     "noOccurrence": "Deze herhaling levert geen datums op.",
-    "bothOfUs": "Wij samen",
+    "bothOfUs": "Samen",
     "everyone": "Iedereen",
     "eachInTurn": "Om de beurt",
     "presets": {

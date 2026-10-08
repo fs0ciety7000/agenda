@@ -57,7 +57,7 @@
     <string name="mark_done">Marquer « %1$s » comme faite</string>
     <string name="mark_todo">Marquer « %1$s » comme à faire</string>
     <string name="recurring">Récurrente</string>
-    <string name="together">à deux</string>
+    <string name="together">Tous les deux</string>
     <string name="unassigned">À définir</string>
     <string name="personal">Personnelle</string>
     <string name="priority_high">Importante</string>

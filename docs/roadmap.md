@@ -42,13 +42,16 @@ Source : [audit du 8 octobre 2026](audits/2026-10-08.md). Légende : effort S / 
 - [ ] Mois sur téléphone : glisser-déposer d'un jour à l'autre (aujourd'hui : ouvrir la tâche et
       changer la date) 🌐 — ajouté au lot 3
 
-### Lot 2 — Cohérence web / Android (M)
+### Lot 2 — Cohérence web / Android ✅ (#88)
 
-- [ ] Case de tâche ronde 22 px avec coche animée sur Android (composant `TaskCheck`) 🤖
-- [ ] Lignes de tâche en cartes `surface` arrondies sur Android, comme le web 🤖
-- [ ] Titre « Tâches » et bouton « Nouvelle tâche » sur l'écran Tâches Android 🤖
-- [ ] Mêmes libellés partout (« À rattraper », « Tous les deux », « À définir ») : relecture croisée des trois langues 🌐🤖
-- [ ] Captures Android : Dépenses, Plus, tout en sombre, police 200 % 🤖
+- [x] Case de tâche ronde 22 px avec coche animée sur Android (composant `TaskCheck`) 🤖
+- [x] Lignes de tâche en cartes `surface` arrondies sur Android, comme le web (`groupedCard`) 🤖
+- [x] Titre « Tâches » sur l'écran Tâches Android (la création reste au bouton « + » commun) 🤖
+- [x] Mêmes libellés partout : « Tous les deux / Both of us / Samen », « À définir / Unassigned /
+      Nog te bepalen », « À rattraper » 🌐🤖
+- [x] Captures Android : Dépenses (clair, sombre), Plus en sombre, police 200 % ; captures de
+      la fiche Play régénérées (fr, en) 🤖
+- [ ] Captures de la fiche Play en néerlandais (quand la fiche nl-NL existera) 🤖
 
 ### Lot 3 — Confort et finitions (S à M)
 

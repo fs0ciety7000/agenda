@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -35,6 +36,7 @@ import app.tandem.foyer.ui.components.MemberAvatar
 import app.tandem.foyer.ui.components.SectionHeader
 import app.tandem.foyer.ui.components.SyncBanner
 import app.tandem.foyer.ui.components.TaskRow
+import app.tandem.foyer.ui.components.groupedCard
 import app.tandem.foyer.ui.components.currentLocale
 import app.tandem.foyer.ui.components.formatDuration
 import app.tandem.foyer.ui.components.formatLongDate
@@ -99,8 +101,8 @@ fun TodayScreen(
             }
             if (sections.overdue.isNotEmpty()) {
                 item { SectionHeader(stringResource(R.string.today_catch_up), trailing = sections.overdue.size.toString()) }
-                items(sections.overdue, key = { "o-" + it.id }) {
-                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, showDate = true)
+                itemsIndexed(sections.overdue, key = { _, it -> "o-" + it.id }) { i, it ->
+                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, showDate = true, modifier = Modifier.groupedCard(i, sections.overdue.size))
                 }
             }
             item {
@@ -113,12 +115,12 @@ fun TodayScreen(
             if (sections.today.isEmpty()) {
                 item { EmptyState(stringResource(R.string.today_empty_title), stringResource(R.string.today_empty_body)) }
             } else {
-                items(sections.today, key = { "t-" + it.id }) { TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }) }
+                itemsIndexed(sections.today, key = { _, it -> "t-" + it.id }) { i, it -> TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, modifier = Modifier.groupedCard(i, sections.today.size)) }
             }
             if (sections.dueThisWeek.isNotEmpty()) {
                 item { SectionHeader(stringResource(R.string.due_section), trailing = sections.dueThisWeek.size.toString()) }
-                items(sections.dueThisWeek, key = { "d-" + it.id }) {
-                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today)
+                itemsIndexed(sections.dueThisWeek, key = { _, it -> "d-" + it.id }) { i, it ->
+                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, modifier = Modifier.groupedCard(i, sections.dueThisWeek.size))
                 }
             }
             item { SectionHeader(stringResource(R.string.this_week)) }
@@ -132,8 +134,8 @@ fun TodayScreen(
                     )
                 }
             } else {
-                items(sections.upcoming, key = { "w-" + it.id }) {
-                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, showDate = true)
+                itemsIndexed(sections.upcoming, key = { _, it -> "w-" + it.id }) { i, it ->
+                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, showDate = true, modifier = Modifier.groupedCard(i, sections.upcoming.size))
                 }
             }
             if (sections.unscheduledCount > 0) {

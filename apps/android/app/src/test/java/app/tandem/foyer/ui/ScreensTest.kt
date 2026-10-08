@@ -230,6 +230,31 @@ class ScreensTest {
     }
 
     @Test
+    @Config(qualifiers = "fr-rFR-w400dp-h860dp-xxhdpi", fontScale = 2f)
+    fun aujourdhui_police_200() {
+        // Police système à 200 % : les lignes passent à la ligne, rien n'est coupé.
+        screen { TodayScreen(state, {}, {}, {}, {}) }
+        compose.onNodeWithText("Bonjour Grace 👋").assertIsDisplayed()
+        compose.onNodeWithText("Nettoyer la salle de bain").assertIsDisplayed()
+        shot("today-font-200")
+    }
+
+    @Test
+    fun plus_sombre() {
+        screen(dark = true) {
+            SettingsScreen(
+                state, User("u", "grace@example.be", "Grace"),
+                CalendarStatus(CalendarLinkState.ACTIVE, "Commun G & N", "foyer@example.be", null, 12, 0, 0),
+                ReminderSettings(true, 15), notificationsAllowed = true, version = "0.2.0",
+                onReminders = {}, onRequestNotifications = {}, onOpenWeb = {}, onSignOut = {},
+                push = PushState.Registered,
+            )
+        }
+        compose.onNodeWithText("Plus").assertIsDisplayed()
+        shot("more-dark")
+    }
+
+    @Test
     fun reglages() {
         screen {
             SettingsScreen(

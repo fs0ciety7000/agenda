@@ -1,7 +1,7 @@
 Nieuw: Uitgaven (tabblad Meer → Uitgaven).
 • Wie wat betaalde: gedeeld, voor de ander of persoonlijk.
 • "Nicolas is Grace € 42,50 schuldig", terugbetalen met één tik.
-• Maandtotalen, ieders aandeel, mijn persoonlijke uitgaven.
 • Zelf verdelen, vaste kosten, kasticket als foto.
 • Maandbudget met melding, verloop over 6 maanden, export.
-• Beter leesbaar: initialen, kleuren en prioriteiten; "Nog in te halen".
+• Nieuwe look: ronde vinkjes, taken in kaarten, zoals op de site.
+• Beter leesbaar: initialen, kleuren, prioriteiten; "Nog in te halen".

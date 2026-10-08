@@ -1,6 +1,17 @@
 package app.tandem.foyer.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.selection.toggleable
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,7 +28,6 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -117,6 +127,8 @@ fun TaskRow(
     members: Map<String, Member>,
     onToggle: () -> Unit,
     onOpen: () -> Unit,
+    /** Par exemple [groupedCard] : les lignes d'une section dans une même carte, comme sur le site. */
+    modifier: Modifier = Modifier,
     today: LocalDate? = null,
     showDate: Boolean = false,
     myMemberId: String? = null,
@@ -148,14 +160,10 @@ fun TaskRow(
     }
     val toggleLabel = stringResource(if (o.isDone) R.string.mark_todo else R.string.mark_done, o.title)
     Row(
-        Modifier.fillMaxWidth().heightIn(min = 56.dp).clickable(onClick = onOpen).padding(end = 12.dp),
+        modifier.fillMaxWidth().heightIn(min = 56.dp).clickable(onClick = onOpen).padding(end = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Checkbox(
-            checked = o.isDone,
-            onCheckedChange = { onToggle() },
-            modifier = Modifier.semantics { contentDescription = toggleLabel },
-        )
+        TaskCheck(checked = o.isDone, onToggle = onToggle, label = toggleLabel)
         Column(Modifier.weight(1f).padding(vertical = 8.dp)) {
             Text(
                 o.title,
@@ -267,4 +275,64 @@ fun dueLabel(due: LocalDate, today: LocalDate, locale: java.util.Locale): String
         due == app.tandem.foyer.domain.Agenda.endOfMonth(today) -> stringResource(R.string.due_this_month)
         else -> stringResource(R.string.due_by, date)
     }
+}
+
+/**
+ * Case de tâche du design system : cercle de 22 dp dans une cible de 48 dp, coche animée
+ * (180 ms, rebond léger ; instantanée si les animations sont réduites).
+ */
+@Composable
+fun TaskCheck(checked: Boolean, onToggle: () -> Unit, label: String) {
+    val dark = isSystemInDarkTheme()
+    val success = if (dark) Tokens.Dark.success else Tokens.Light.success
+    val scale by animateFloatAsState(
+        targetValue = if (checked) 1f else 0f,
+        animationSpec = spring(dampingRatio = 0.55f, stiffness = 900f),
+        label = "check",
+    )
+    Box(
+        Modifier
+            .size(48.dp)
+            .toggleable(value = checked, role = Role.Checkbox, onValueChange = { onToggle() })
+            .semantics { contentDescription = label },
+        contentAlignment = Alignment.Center,
+    ) {
+        Box(
+            Modifier
+                .size(22.dp)
+                .border(1.5.dp, if (checked) success else MaterialTheme.colorScheme.onSurfaceVariant, CircleShape)
+                .background(if (checked) success else Color.Transparent, CircleShape),
+            contentAlignment = Alignment.Center,
+        ) {
+            if (scale > 0f) {
+                Icon(
+                    Icons.Filled.Check,
+                    contentDescription = null,
+                    tint = if (dark) Tokens.Dark.surface else Tokens.Light.surface,
+                    modifier = Modifier.size(14.dp).scale(scale),
+                )
+            }
+        }
+    }
+}
+
+/**
+ * Une ligne d'une section affichée comme une carte commune (surface, bordure fine, rayon `lg`) :
+ * coins arrondis en haut pour la première, en bas pour la dernière. Les lignes suivantes
+ * remontent d'1 dp pour que deux bordures voisines n'en fassent qu'une.
+ */
+@Composable
+fun Modifier.groupedCard(index: Int, count: Int): Modifier {
+    val radius = Tokens.Radius.lg
+    val shape = RoundedCornerShape(
+        topStart = if (index == 0) radius else 0.dp,
+        topEnd = if (index == 0) radius else 0.dp,
+        bottomStart = if (index == count - 1) radius else 0.dp,
+        bottomEnd = if (index == count - 1) radius else 0.dp,
+    )
+    return this
+        .offset(y = if (index == 0) 0.dp else (-1).dp * index)
+        .clip(shape)
+        .background(MaterialTheme.colorScheme.surface, shape)
+        .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape)
 }

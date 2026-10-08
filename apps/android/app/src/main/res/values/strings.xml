@@ -54,7 +54,7 @@
     <string name="mark_done">Mark “%1$s” as done</string>
     <string name="mark_todo">Mark “%1$s” as to do</string>
     <string name="recurring">Recurring</string>
-    <string name="together">together</string>
+    <string name="together">Both of us</string>
     <string name="unassigned">Unassigned</string>
     <string name="personal">Personal</string>
     <string name="priority_high">Important</string>
