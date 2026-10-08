@@ -52,6 +52,9 @@ export function useShoppingActions(hid: string, memberId: string) {
     return { previous };
   };
   const common = {
+    // Une seule file pour la liste : un rayon changé juste après l'ajout part après la création
+    // de l'article (sinon le serveur ne le connaît pas encore et le changement est perdu).
+    scope: { id: `shopping-${hid}` },
     onError: (_e: unknown, _v: unknown, ctx?: Ctx) => qc.setQueryData(key, ctx?.previous),
     // Préfixe : la liste et les suggestions.
     onSettled: () => qc.invalidateQueries({ queryKey: key }),
