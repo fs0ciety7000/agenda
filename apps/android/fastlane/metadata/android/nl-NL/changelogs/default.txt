@@ -1,4 +1,5 @@
 Nieuw: Uitgaven (tabblad Meer → Uitgaven).
+• Start: "Wie doet wat" voor de komende 7 dagen.
 • Wie wat betaalde: gedeeld, voor de ander of persoonlijk.
 • "Nicolas is Grace € 42,50 schuldig", terugbetalen met één tik.
 • Zelf verdelen, vaste kosten, kasticket als foto.

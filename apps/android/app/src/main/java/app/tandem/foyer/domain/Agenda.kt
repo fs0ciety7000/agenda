@@ -134,6 +134,29 @@ object Agenda {
         )
     }
 
+    enum class BoardRowKind { MEMBER, TOGETHER, UNASSIGNED }
+
+    data class BoardRow(val kind: BoardRowKind, val member: Member?, val cells: List<List<Occurrence>>)
+
+    data class WeekBoard(val days: List<LocalDate>, val rows: List<BoardRow>)
+
+    /**
+     * Tableau « qui fait quoi » sur les 7 jours qui commencent aujourd'hui (même règle que le web,
+     * `packages/domain/src/week-board.ts`) : une ligne par membre seul responsable, puis « à deux » et
+     * « à définir » seulement si elles servent. Pas de total par personne : il informe, il ne classe pas.
+     */
+    fun weekBoard(all: List<Occurrence>, today: LocalDate, members: List<Member>): WeekBoard {
+        val days = (0L until 7L).map { today.plusDays(it) }
+        val kept = all.filter { it.date != null && it.date in days && it.status !in hidden }.distinctBy { it.id }
+        fun cells(match: (Occurrence) -> Boolean) = days.map { d -> kept.filter { it.date == d && match(it) } }
+        val rows = members.map { m -> BoardRow(BoardRowKind.MEMBER, m, cells { it.assigneeIds == listOf(m.id) }) } +
+            listOf(
+                BoardRow(BoardRowKind.TOGETHER, null, cells { it.assigneeIds.size > 1 }),
+                BoardRow(BoardRowKind.UNASSIGNED, null, cells { it.assigneeIds.isEmpty() }),
+            ).filter { r -> r.cells.any { it.isNotEmpty() } }
+        return WeekBoard(days, rows)
+    }
+
     /**
      * Suggestion de répartition (même règle que le web, `packages/domain/src/balance.ts`) :
      * personne la moins chargée de la semaine, charge = minutes + 15 min par tâche ; égalité → aucune.

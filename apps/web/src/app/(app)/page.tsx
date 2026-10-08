@@ -16,6 +16,7 @@ import { NotificationBell } from '@/components/app/notification-bell';
 import { QuickAdd } from '@/components/app/quick-add';
 import { ApplyTemplateButton } from '@/components/app/templates';
 import { TaskList } from '@/components/app/task-row';
+import { WeekBoard } from '@/components/app/week-board';
 import { useTaskDialog } from '@/components/app/use-task-dialog';
 import { SectionTitle } from '@/components/ui/card';
 import { Confetti } from '@/components/ui/confetti';
@@ -132,6 +133,14 @@ export default function TodayPage() {
             <TaskList items={todayItems} onOpen={dialog.openEdit} label={t('sectionToday')} />
           )}
         </section>
+
+        {todayQ.data && weekQ.data && (
+          <WeekBoard
+            items={[...todayQ.data, ...weekQ.data]}
+            today={today}
+            onOpen={dialog.openEdit}
+          />
+        )}
 
         {dueThisWeek.length > 0 && (
           <section aria-labelledby="due-heading" className="flex flex-col gap-3">

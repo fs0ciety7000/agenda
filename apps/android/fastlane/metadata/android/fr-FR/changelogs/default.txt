@@ -1,4 +1,5 @@
 Nouveau : les Dépenses (onglet Plus → Dépenses).
+• Accueil : « Qui fait quoi » sur les 7 jours.
 • Qui a payé quoi : commune, pour l'autre ou perso.
 • « Nicolas doit 42,50 € à Grace », remboursement en un geste.
 • Parts à la main, charges fixes, ticket en photo.

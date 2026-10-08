@@ -54,7 +54,7 @@ publiée. Voir [App Android](android.md).
 
 | Écran | Rôle |
 |---|---|
-| **Aujourd'hui** | En retard, du jour, « à faire cette semaine », les 7 prochains jours et la répartition |
+| **Aujourd'hui** | En retard, du jour, « qui fait quoi » sur 7 jours, « à faire cette semaine », les 7 prochains jours et la répartition |
 | **Tâches** | Toutes les tâches, avec recherche et filtres (personne, catégorie, priorité, récurrentes…) |
 | **Calendrier** | Vues mois, semaine, jour ; glisser-déposer pour déplacer |
 | **Courses** | Liste de courses partagée |

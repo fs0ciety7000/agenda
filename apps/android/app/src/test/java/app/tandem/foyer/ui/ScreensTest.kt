@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsOn
@@ -91,6 +92,16 @@ class ScreensTest {
         compose.onNodeWithContentDescription("Marquer « Sortir les poubelles » comme faite").performClick()
         assertEquals(listOf("Sortir les poubelles"), toggled)
         shot("today")
+    }
+
+    @Test
+    fun aujourdhui_qui_fait_quoi() {
+        screen { TodayScreen(state, {}, {}, {}, {}) }
+        compose.onNodeWithText("QUI FAIT QUOI").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithContentDescription("Grace, Mardi 29 septembre : 2 tâches").performScrollTo().performClick()
+        compose.onNodeWithText("Grace · Mardi 29 septembre").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithContentDescription("Nicolas, Jeudi 1 octobre : rien").assertExists()
+        shot("today-board")
     }
 
     @Test
@@ -227,6 +238,22 @@ class ScreensTest {
         compose.onNodeWithContentDescription("Mettre dans la liste").performClick()
         assertEquals(listOf("Café"), added)
         compose.onNodeWithContentDescription("Retirer « Lait »").assertExists()
+    }
+
+    @Test
+    @Config(qualifiers = "fr-rFR-w360dp-h860dp-xxhdpi", fontScale = 2f)
+    fun qui_fait_quoi_police_200() {
+        // Petit écran et police à 200 % : jours en une lettre, aucune case coupée.
+        screen {
+            androidx.compose.foundation.layout.Column(Modifier.padding(androidx.compose.ui.unit.Dp(16f))) {
+                app.tandem.foyer.ui.today.WeekBoard(
+                    app.tandem.foyer.domain.Agenda.weekBoard(state.occurrences, state.today, Fixtures.household.members),
+                    Fixtures.household.members,
+                ) { _, _, _ -> }
+            }
+        }
+        compose.onNodeWithText("QUI FAIT QUOI").assertIsDisplayed()
+        shot("board-font-200")
     }
 
     @Test

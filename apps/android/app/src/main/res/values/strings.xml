@@ -563,4 +563,11 @@
     <string name="activity_swap_request">%1$s asks you to take “%2$s”</string>
     <string name="activity_swap_accepted">%1$s is taking “%2$s”</string>
     <string name="activity_swap_declined">%1$s can’t take “%2$s”</string>
+    <string name="board_title">Who does what</string>
+    <string name="board_hint">Tap a cell to see its tasks.</string>
+    <string name="board_cell_empty">%1$s, %2$s: nothing</string>
+    <plurals name="board_cell">
+        <item quantity="one">%1$s, %2$s: %3$d task</item>
+        <item quantity="other">%1$s, %2$s: %3$d tasks</item>
+    </plurals>
 </resources>

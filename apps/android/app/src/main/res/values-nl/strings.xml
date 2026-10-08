@@ -560,4 +560,11 @@
     <string name="activity_swap_request">%1$s vraagt of je “%2$s” wilt overnemen</string>
     <string name="activity_swap_accepted">%1$s neemt “%2$s”</string>
     <string name="activity_swap_declined">%1$s kan “%2$s” niet nemen</string>
+    <string name="board_title">Wie doet wat</string>
+    <string name="board_hint">Tik op een vakje om de taken te zien.</string>
+    <string name="board_cell_empty">%1$s, %2$s: niets</string>
+    <plurals name="board_cell">
+        <item quantity="one">%1$s, %2$s: %3$d taak</item>
+        <item quantity="other">%1$s, %2$s: %3$d taken</item>
+    </plurals>
 </resources>

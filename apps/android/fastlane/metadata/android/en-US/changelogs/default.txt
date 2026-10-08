@@ -1,4 +1,5 @@
 New: Expenses (More tab → Expenses).
+• Home: "Who does what" over the next 7 days.
 • Who paid what: shared, for the other person, or personal.
 • "Nicolas owes Grace €42.50", payback in one tap.
 • Custom split, monthly fixed expenses, receipt photo.

@@ -117,6 +117,13 @@ fun TodayScreen(
             } else {
                 itemsIndexed(sections.today, key = { _, it -> "t-" + it.id }) { i, it -> TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, modifier = Modifier.groupedCard(i, sections.today.size)) }
             }
+            state.household?.let { household ->
+                item(key = "board") {
+                    WeekBoard(Agenda.weekBoard(state.occurrences, state.today, household.members), household.members) { o, i, n ->
+                        TaskRow(o, members, { onToggle(o) }, { onOpen(o) }, myMemberId = state.myMemberId, onThank = { t -> onThank(o, t) }, modifier = Modifier.groupedCard(i, n))
+                    }
+                }
+            }
             if (sections.dueThisWeek.isNotEmpty()) {
                 item { SectionHeader(stringResource(R.string.due_section), trailing = sections.dueThisWeek.size.toString()) }
                 itemsIndexed(sections.dueThisWeek, key = { _, it -> "d-" + it.id }) { i, it ->

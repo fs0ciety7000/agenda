@@ -83,4 +83,22 @@ class AgendaTest {
         assertEquals(2, counts[TODAY])
         assertEquals(null, counts[TODAY.plusDays(3)])
     }
+
+    @Test
+    fun `qui fait quoi sur 7 jours, a deux et a definir si utiles`() {
+        val board = Agenda.weekBoard(Fixtures.week(), TODAY, Fixtures.household.members)
+        assertEquals(TODAY, board.days.first())
+        assertEquals(7, board.days.size)
+        assertEquals(
+            listOf(Agenda.BoardRowKind.MEMBER, Agenda.BoardRowKind.MEMBER, Agenda.BoardRowKind.TOGETHER, Agenda.BoardRowKind.UNASSIGNED),
+            board.rows.map { it.kind },
+        )
+        val grace = board.rows.first { it.member?.id == GRACE }
+        // Aujourd'hui : salle de bain et plantes (faite) ; demain : dentiste (perso, visible pour moi).
+        assertEquals(listOf(2, 1, 0, 0, 0, 0, 0), grace.cells.map { it.size })
+        // En retard (avant aujourd'hui) et sans date : pas dans le tableau.
+        assertEquals(listOf(1, 0, 0, 0, 0, 0, 0), board.rows.first { it.member?.id == NICOLAS }.cells.map { it.size })
+        assertEquals(1, board.rows[2].cells[2].size)
+        assertEquals(1, board.rows[3].cells[4].size)
+    }
 }

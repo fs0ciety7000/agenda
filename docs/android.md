@@ -9,7 +9,7 @@ métier propre à Android : les règles (récurrence, rotation, quick add) reste
 
 | Onglet | Contenu |
 |---|---|
-| **Aujourd'hui** | « Bonjour Grace 👋 », en retard, aujourd'hui (x sur y faites), 7 prochains jours, tâches sans date, répartition de la semaine (tâches partagées, non compétitive) |
+| **Aujourd'hui** | « Bonjour Grace 👋 », en retard, aujourd'hui (x sur y faites), « Qui fait quoi » (7 jours × personnes, `ui/today/WeekBoard.kt`), 7 prochains jours, tâches sans date, répartition de la semaine (tâches partagées, non compétitive) |
 | **Tâches** | Recherche, filtres À faire / À venir / Sans date / Faites, « Les miennes », regroupement par jour |
 | **Courses** | Liste de courses permanente du foyer : ajout de plusieurs articles d'un coup (« lait, pain »), cocher au magasin, « Dans le panier (pris par Nicolas) », « Vider le panier », **Mode magasin** (plein écran, gros caractères, par rayon, écran allumé). **Hors ligne** (affiché tout de suite, envoyé au retour du réseau, sans doublon) et **en temps réel** (indicateur « En direct ») |
 | **Calendrier** | Mois (lundi → dimanche, pastilles = tâches à faire), liste du jour choisi, « Ajouter ce jour-là » ; **glisser-déposer** : appui long sur une tâche puis la lâcher sur un jour (heure conservée, cette occurrence seulement, « Annuler » dans le message ; TalkBack : actions « jour précédent / suivant ») |
