@@ -27,6 +27,8 @@ data class NotificationDto(
     val level: Int? = null,
     val amountCents: Long? = null,
     val budgetCents: Long? = null,
+    /** EXPENSE_BUDGET : catégorie du budget atteint (null = budget global). */
+    val category: String? = null,
     /** IMPORTANT_DATE : jours restants (0 = aujourd'hui), avec le titre et la date de l'occurrence. */
     val daysLeft: Int? = null,
     val date: String? = null,
@@ -475,7 +477,12 @@ data class ExpenseSummaryDto(
     val byCategory: List<ExpenseCategoryTotalDto> = emptyList(),
     /** Budget mensuel des dépenses communes (null = aucun). */
     val budgetCents: Long? = null,
+    /** Budgets par catégorie (réglés sur le site). */
+    val categoryBudgets: List<ExpenseCategoryBudgetDto> = emptyList(),
 )
+
+@Serializable
+data class ExpenseCategoryBudgetDto(val category: String, val budgetCents: Long)
 
 /** Un mois de l'évolution : dépenses communes, les miennes, par catégorie. */
 @Serializable

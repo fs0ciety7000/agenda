@@ -34,6 +34,8 @@ export const NotificationDto = z.object({
   level: z.number().int().nullable(),
   amountCents: z.number().int().nullable(),
   budgetCents: z.number().int().nullable(),
+  /** EXPENSE_BUDGET : catégorie du budget atteint (null = budget global du mois). */
+  category: z.string().nullable(),
   /** IMPORTANT_DATE : jours restants avant la date (0 = aujourd'hui) ; titre et date ci-dessus. */
   daysLeft: z.number().int().nullable(),
 });

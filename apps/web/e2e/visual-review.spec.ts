@@ -92,6 +92,30 @@ for (const scheme of ['light', 'dark'] as const) {
       { title: 'Anniversaire de mariage', kind: 'ANNIVERSARY', ...md(120), year: 2015 },
     ])
       await page.request.post(`/v1/households/${hid}/important-dates`, { headers: H, data });
+    for (const data of [
+      {
+        paidById: grace.id,
+        amountCents: 8640,
+        date: today,
+        title: 'Courses de la semaine',
+        category: 'GROCERIES',
+      },
+      { paidById: nico.id, amountCents: 4200, date: today, title: 'Cinéma', category: 'LEISURE' },
+    ])
+      await page.request.post(`/v1/households/${hid}/expenses`, { headers: H, data });
+    await page.request.put(`/v1/households/${hid}/expenses/budget`, {
+      headers: H,
+      data: { budgetCents: 80000 },
+    });
+    await page.request.put(`/v1/households/${hid}/expenses/budget/categories`, {
+      headers: H,
+      data: {
+        budgets: [
+          { category: 'GROCERIES', budgetCents: 40000 },
+          { category: 'LEISURE', budgetCents: 4500 },
+        ],
+      },
+    });
     await page.request.post(`/v1/households/${hid}/templates`, {
       headers: H,
       data: {

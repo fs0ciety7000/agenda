@@ -15,6 +15,12 @@ d'elle-même (ou via Google Play).
 
 ## 8 octobre 2026
 
+### Budget par catégorie (#89)
+
+- ✨ **Budget par catégorie** (Dépenses) : un budget mensuel par catégorie en plus du budget global,
+  une jauge chacun, et une alerte à 80 % et à 100 % (« Courses · octobre : 80 % atteint »). Réglage
+  sur le site, jauges aussi sur Android.
+
 ### Dates importantes (#89)
 
 - ✨ **Dates importantes** (site et Android, dans « Plus ») : anniversaires, fêtes, entretiens

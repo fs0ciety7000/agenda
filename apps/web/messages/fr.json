@@ -606,7 +606,8 @@
     "swapDeclined": "{by} ne peut pas prendre « {title} »",
     "swapDeleted": "Échange de tour pour une tâche supprimée depuis",
     "importantDate": "{title} : {days, plural, =0 {c’est aujourd’hui} =1 {demain} other {dans # jours}}",
-    "importantDateDeleted": "Rappel d’une date supprimée depuis"
+    "importantDateDeleted": "Rappel d’une date supprimée depuis",
+    "budgetCategory": "{category} · {month} : {level} % atteint ({amount} sur {budget})"
   },
   "notificationSettings": {
     "title": "Préférences de notification",
@@ -1361,7 +1362,14 @@
     "budgetRemove": "Enlever le budget",
     "trendTitle": "Sur {count} mois",
     "trendHint": "Dépenses communes, mois par mois",
-    "trendBudget": "Repère : budget de {budget}"
+    "trendBudget": "Repère : budget de {budget}",
+    "categoryBudgetsTitle": "Budgets par catégorie",
+    "categoryBudgetsHint": "Un montant par mois pour les dépenses communes d’une catégorie, en plus du budget global. Vous êtes prévenus tous les deux à 80 % et à 100 %. Laissez vide pour ne pas en fixer.",
+    "categoryBudgetsEdit": "Budgets par catégorie",
+    "categoryBudgetsSet": "Fixer un budget par catégorie",
+    "categoryBudgetMeter": "Budget {category}",
+    "categoryBudgetNone": "Aucun",
+    "categoryBudgetLine": "{spent} sur {budget}"
   },
   "swaps": {
     "title": "Échanges de tour",

@@ -1,6 +1,7 @@
 import { DomainEvents } from '../common/domain-events';
 import { Injectable } from '@nestjs/common';
 import type {
+  ExpenseCategory,
   NotificationDto,
   NotificationKind,
   NotificationListDto,
@@ -13,6 +14,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { PushService } from './push.service';
 import { type WebPushMessage, WebPushService } from './web-push.service';
 import { type Locale } from '../mail/templates';
+import { categoryLabel } from '../expenses/expenses-csv';
 
 export const NOTIFICATION_KINDS: NotificationKind[] = [
   'TASK_ASSIGNED',
@@ -46,6 +48,8 @@ interface AssignedPayload {
 
 /** Budget commun du mois : seuil atteint (80 ou 100 %), dépensé et budget à ce moment-là. */
 export interface BudgetPayload {
+  /** Budget d'une catégorie ; null ou absent = budget global du mois. */
+  category?: ExpenseCategory | null;
   month: string;
   level: 80 | 100;
   amountCents: number;
@@ -231,7 +235,7 @@ export class NotificationsService {
     actorMemberId: string | null,
     budget: BudgetPayload,
   ): Promise<void> {
-    const already = await this.prisma.notification.findFirst({
+    const sent = await this.prisma.notification.findMany({
       where: {
         type: 'EXPENSE_BUDGET',
         member: { householdId },
@@ -241,9 +245,14 @@ export class NotificationsService {
           { payload: { path: ['budgetCents'], equals: budget.budgetCents } },
         ],
       },
-      select: { id: true },
+      select: { payload: true },
     });
-    if (already) return;
+    // Même seuil déjà signalé pour ce budget (global : sans catégorie).
+    const category = budget.category ?? null;
+    if (
+      sent.some((n) => ((n.payload as { category?: string | null }).category ?? null) === category)
+    )
+      return;
     const members = await this.prisma.householdMember.findMany({
       where: {
         householdId,
@@ -364,6 +373,10 @@ export class NotificationsService {
         level: r.type === 'EXPENSE_BUDGET' ? Number(payload.level) : null,
         amountCents: r.type === 'EXPENSE_BUDGET' ? Number(payload.amountCents) : null,
         budgetCents: r.type === 'EXPENSE_BUDGET' ? Number(payload.budgetCents) : null,
+        category:
+          r.type === 'EXPENSE_BUDGET' && typeof payload.category === 'string'
+            ? payload.category
+            : null,
         daysLeft: r.type === 'IMPORTANT_DATE' ? Number(payload.daysLeft) : null,
       };
     });
@@ -486,12 +499,20 @@ export function budgetPushText(locale: Locale, b: BudgetPayload): WebPushMessage
   );
   const spent = money(b.amountCents);
   const budget = money(b.budgetCents);
+  const name = b.category
+    ? categoryLabel(locale, b.category)
+    : { fr: 'Budget commun', en: 'Shared budget', nl: 'Gezamenlijk budget' }[locale];
   const body = {
-    fr: `Budget commun · ${month} : ${b.level} % atteint (${spent} sur ${budget})`,
-    en: `Shared budget · ${month}: ${b.level}% reached (${spent} of ${budget})`,
-    nl: `Gezamenlijk budget · ${month}: ${b.level}% bereikt (${spent} van ${budget})`,
+    fr: `${name} · ${month} : ${b.level} % atteint (${spent} sur ${budget})`,
+    en: `${name} · ${month}: ${b.level}% reached (${spent} of ${budget})`,
+    nl: `${name} · ${month}: ${b.level}% bereikt (${spent} van ${budget})`,
   }[locale];
-  return { title: 'Tandem', body, url: '/expenses', tag: `budget-${b.month}` };
+  return {
+    title: 'Tandem',
+    body,
+    url: '/expenses',
+    tag: `budget-${b.month}${b.category ? `-${b.category}` : ''}`,
+  };
 }
 
 /** Texte du rappel : « Anniversaire de mamie : dans 7 jours (mercredi 14 octobre) ». */

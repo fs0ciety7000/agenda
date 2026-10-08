@@ -116,6 +116,16 @@ class ActivityNotifier(
         val month = runCatching {
             YearMonth.parse(n.month).month.getDisplayName(TextStyle.FULL_STANDALONE, locale)
         }.getOrDefault(n.month.orEmpty())
+        n.category?.let { cat ->
+            return context.getString(
+                R.string.activity_budget_category,
+                context.getString(Money.categoryRes(cat)),
+                month,
+                n.level ?: 80,
+                Money.format(n.amountCents ?: 0, locale),
+                Money.format(n.budgetCents ?: 0, locale),
+            )
+        }
         return context.getString(
             R.string.activity_budget,
             month,

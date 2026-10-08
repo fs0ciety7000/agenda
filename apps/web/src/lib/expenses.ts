@@ -1,5 +1,6 @@
 import type {
   ExpenseBudgetInput,
+  ExpenseCategoryBudgetsInput,
   ExpenseDto,
   ExpenseInput,
   ExpenseStatsDto,
@@ -117,6 +118,11 @@ export function useExpenseActions(hid: string) {
     budget: useMutation({
       mutationFn: (input: ExpenseBudgetInput) =>
         api<void>(`${base}/budget`, { method: 'PUT', json: input }),
+      onSettled: invalidate,
+    }),
+    categoryBudgets: useMutation({
+      mutationFn: (input: ExpenseCategoryBudgetsInput) =>
+        api<void>(`${base}/budget/categories`, { method: 'PUT', json: input }),
       onSettled: invalidate,
     }),
     weights: useMutation({

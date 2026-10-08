@@ -90,7 +90,8 @@ Courses et repas :
 Dépenses :
 
 - [ ] **Saisie du ticket par photo** (lecture du montant et de la date) (L)
-- [ ] **Budget par catégorie** en plus du budget global (M)
+- [x] **Budget par catégorie** en plus du budget global (M) ⚙️🌐🤖 (#89)
+  - [ ] Android : régler les budgets par catégorie dans l'app (le site seulement pour l'instant) (S) 🤖
 - [ ] **Rapprochement mensuel** : « ce mois-ci, chacun a payé… », envoyé le 1er (S)
 
 Vie à deux :

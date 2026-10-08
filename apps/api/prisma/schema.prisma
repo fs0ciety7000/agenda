@@ -165,6 +165,7 @@ model Household {
   swapRequests      SwapRequest[]
   notes             Note[]
   importantDates    ImportantDate[]
+  categoryBudgets   ExpenseCategoryBudget[]
 }
 
 enum HouseholdRole {
@@ -550,6 +551,17 @@ model ImportantDate {
   household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
 
   @@index([householdId])
+}
+
+/// Budget mensuel d'une catégorie de dépenses communes (en plus du budget global du foyer).
+model ExpenseCategoryBudget {
+  householdId String          @db.Uuid
+  category    ExpenseCategory
+  budgetCents Int
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@id([householdId, category])
 }
 
 /// Note partagée du foyer (codes, mesures, idées cadeaux). Modifiable par chaque membre.

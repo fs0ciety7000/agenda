@@ -606,7 +606,8 @@
     "swapDeclined": "{by} kan “{title}” niet overnemen",
     "swapDeleted": "Beurt ruilen voor een taak die intussen verwijderd is",
     "importantDate": "{title}: {days, plural, =0 {vandaag} =1 {morgen} other {over # dagen}}",
-    "importantDateDeleted": "Herinnering voor een intussen verwijderde datum"
+    "importantDateDeleted": "Herinnering voor een intussen verwijderde datum",
+    "budgetCategory": "{category} · {month}: {level}% bereikt ({amount} van {budget})"
   },
   "notificationSettings": {
     "title": "Meldingsvoorkeuren",
@@ -1361,7 +1362,14 @@
     "budgetRemove": "Budget verwijderen",
     "trendTitle": "Over {count} maanden",
     "trendHint": "Gezamenlijke uitgaven, maand per maand",
-    "trendBudget": "Markering: budget van {budget}"
+    "trendBudget": "Markering: budget van {budget}",
+    "categoryBudgetsTitle": "Budget per categorie",
+    "categoryBudgetsHint": "Een bedrag per maand voor de gedeelde uitgaven van een categorie, bovenop het totale budget. Jullie krijgen allebei een melding bij 80% en 100%. Laat leeg voor geen budget.",
+    "categoryBudgetsEdit": "Budget per categorie",
+    "categoryBudgetsSet": "Budget per categorie instellen",
+    "categoryBudgetMeter": "Budget {category}",
+    "categoryBudgetNone": "Geen",
+    "categoryBudgetLine": "{spent} van {budget}"
   },
   "swaps": {
     "title": "Beurten ruilen",

@@ -606,7 +606,8 @@
     "swapDeclined": "{by} can’t take “{title}”",
     "swapDeleted": "Turn swap for a task deleted since",
     "importantDate": "{title}: {days, plural, =0 {today} =1 {tomorrow} other {in # days}}",
-    "importantDateDeleted": "Reminder for a date deleted since"
+    "importantDateDeleted": "Reminder for a date deleted since",
+    "budgetCategory": "{category} · {month}: {level}% reached ({amount} of {budget})"
   },
   "notificationSettings": {
     "title": "Notification preferences",
@@ -1361,7 +1362,14 @@
     "budgetRemove": "Remove the budget",
     "trendTitle": "Over {count} months",
     "trendHint": "Shared expenses, month by month",
-    "trendBudget": "Marker: {budget} budget"
+    "trendBudget": "Marker: {budget} budget",
+    "categoryBudgetsTitle": "Budgets by category",
+    "categoryBudgetsHint": "A monthly amount for a category’s shared expenses, on top of the overall budget. You’re both notified at 80% and 100%. Leave empty for no budget.",
+    "categoryBudgetsEdit": "Budgets by category",
+    "categoryBudgetsSet": "Set a budget by category",
+    "categoryBudgetMeter": "{category} budget",
+    "categoryBudgetNone": "None",
+    "categoryBudgetLine": "{spent} of {budget}"
   },
   "swaps": {
     "title": "Turn swaps",

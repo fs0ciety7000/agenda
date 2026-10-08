@@ -56,7 +56,8 @@ class ExpensesScreenTest {
                         "members":[{"memberId":"$g","weight":1,"balanceCents":4250,"paidCents":8500,"shareCents":4250},
                         {"memberId":"$n","weight":1,"balanceCents":-4250,"paidCents":0,"shareCents":4250}],
                         "transfers":[{"fromMemberId":"$n","toMemberId":"$g","amountCents":4250}],
-                        "byCategory":[{"category":"GROCERIES","amountCents":8500}],"budgetCents":10000}"""
+                        "byCategory":[{"category":"GROCERIES","amountCents":8500}],"budgetCents":10000,
+                        "categoryBudgets":[{"category":"GROCERIES","budgetCents":8000}]}"""
                     "/expenses/stats" in path -> """{"budgetCents":10000,"months":[""" +
                         (5 downTo 0).joinToString(",") { i ->
                             val m = YearMonth.now().minusMonths(i.toLong())
@@ -102,6 +103,9 @@ class ExpensesScreenTest {
         compose.onNodeWithText("Nicolas doit", substring = true).assertIsDisplayed()
         compose.onNodeWithText("Budget commun :", substring = true).performScrollTo().assertIsDisplayed()
         compose.onNodeWithText("85 % · reste", substring = true).assertIsDisplayed()
+        // Budget Courses dépassé (85 € sur 80 €) : montant en clair, réglé sur le site.
+        compose.onNodeWithText("sur 80,00", substring = true).performScrollTo().assertIsDisplayed()
+        compose.onNodeWithText("Les budgets par catégorie se règlent sur le site.").assertIsDisplayed()
         compose.onRoot().captureRoboImage("../../../docs/screenshots/android/expenses.png")
         compose.onNodeWithText("Sur 6 mois").performScrollTo().assertIsDisplayed()
     }

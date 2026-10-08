@@ -667,4 +667,7 @@
     <string name="dates_remind_day_before">La veille</string>
     <string name="dates_remind_short_same_day">Rappel le jour même</string>
     <string name="activity_date_tomorrow">%1$s : demain</string>
+    <string name="expenses_category_budget_line">%1$s sur %2$s</string>
+    <string name="expenses_category_budgets_web">Les budgets par catégorie se règlent sur le site.</string>
+    <string name="activity_budget_category">%1$s · %2$s : %3$d %% atteint (%4$s sur %5$s)</string>
 </resources>

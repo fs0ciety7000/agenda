@@ -64,15 +64,17 @@ class ActivityNotifierTest {
         server.enqueue(
             MockResponse().setHeader("content-type", "application/json").setBody(
                 """{"unread":1,"items":[
-                {"id":"b1","type":"EXPENSE_BUDGET","createdAt":"2026-10-08T10:05:00.000Z","push":true,"month":"2026-10","level":80,"amountCents":64000,"budgetCents":80000}
+                {"id":"b1","type":"EXPENSE_BUDGET","createdAt":"2026-10-08T10:05:00.000Z","push":true,"month":"2026-10","level":80,"amountCents":64000,"budgetCents":80000},
+                {"id":"b2","type":"EXPENSE_BUDGET","createdAt":"2026-10-08T10:06:00.000Z","push":true,"month":"2026-10","level":100,"amountCents":41000,"budgetCents":40000,"category":"GROCERIES"}
                 ]}""",
             ),
         )
-        assertEquals(listOf("b1"), notifier.poll("h1").map { it.id })
+        assertEquals(listOf("b1", "b2"), notifier.poll("h1").map { it.id })
         val manager = context.getSystemService(android.app.NotificationManager::class.java)
-        val text = org.robolectric.Shadows.shadowOf(manager).allNotifications.single()
-            .extras.getCharSequence(androidx.core.app.NotificationCompat.EXTRA_TEXT).toString()
-        assertTrue(text, text.startsWith("Shared budget · October: 80% reached"))
+        val texts = org.robolectric.Shadows.shadowOf(manager).allNotifications
+            .map { it.extras.getCharSequence(androidx.core.app.NotificationCompat.EXTRA_TEXT).toString() }
+        assertTrue(texts.toString(), texts.any { it.startsWith("Shared budget · October: 80% reached") })
+        assertTrue(texts.toString(), texts.any { it.startsWith("Groceries · October: 100% reached") })
     }
 
     @Test

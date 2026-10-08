@@ -648,4 +648,7 @@
     <string name="dates_remind_day_before">De dag ervoor</string>
     <string name="dates_remind_short_same_day">Herinnering op de dag</string>
     <string name="activity_date_tomorrow">%1$s: morgen</string>
+    <string name="expenses_category_budget_line">%1$s van %2$s</string>
+    <string name="expenses_category_budgets_web">Het budget per categorie stel je in op de website.</string>
+    <string name="activity_budget_category">%1$s · %2$s: %3$d%% bereikt (%4$s van %5$s)</string>
 </resources>
