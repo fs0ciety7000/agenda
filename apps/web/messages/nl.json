@@ -102,7 +102,15 @@
     "weekEmpty": "Niets gepland voor de komende dagen.",
     "seeStats": "Overzicht bekijken",
     "sectionDue": "Te doen deze week",
-    "allDone": "Alles gedaan voor vandaag 🎉"
+    "allDone": "Alles gedaan voor vandaag 🎉",
+    "glanceShopping": "Boodschappen",
+    "glanceShoppingCount": "{count, plural, =0 {Niets te kopen} one {# artikel te kopen} other {# artikels te kopen}}",
+    "glanceExpenses": "Uitgaven van de maand",
+    "glanceBudget": "{spent} van {budget}",
+    "glanceCommon": "{amount} aan gedeelde uitgaven",
+    "boardTitle": "Wie doet wat",
+    "boardCell": "{who}, {day}: {count, plural, =0 {niets} one {# taak} other {# taken}}",
+    "boardHint": "Tik op een vakje om de taken te zien."
   },
   "placeholder": {
     "title": "Binnenkort",
@@ -193,8 +201,8 @@
     "queued": "“{text}” wordt toegevoegd zodra je weer online bent."
   },
   "tasks": {
-    "unassigned": "Niet toegewezen",
-    "bothOfUs": "Wij samen",
+    "unassigned": "Nog te bepalen",
+    "bothOfUs": "Samen",
     "everyone": "Iedereen",
     "personal": "Persoonlijk",
     "markDone": "“{title}” markeren als gedaan",
@@ -269,7 +277,7 @@
   "balance": {
     "bothOfUs": "Samen",
     "together": "Samen",
-    "unassigned": "Niet toegewezen",
+    "unassigned": "Nog te bepalen",
     "count": "{count, plural, =0 {geen taken} one {# taak} other {# taken}}",
     "empty": "Geen gedeelde taken gepland deze week."
   },
@@ -341,7 +349,7 @@
     "perWeek": "Elke week van persoon wisselen in plaats van elke keer",
     "next": "Volgende keren",
     "noOccurrence": "Deze herhaling levert geen datums op.",
-    "bothOfUs": "Wij samen",
+    "bothOfUs": "Samen",
     "everyone": "Iedereen",
     "eachInTurn": "Om de beurt",
     "presets": {
@@ -412,7 +420,8 @@
     "views": {
       "day": "Dag",
       "week": "Week",
-      "month": "Maand"
+      "month": "Maand",
+      "threeDays": "3 dagen"
     },
     "weekOf": "Week van {date}",
     "allDay": "Hele dag",
@@ -423,7 +432,14 @@
     "resized": "Duur van “{title}” gewijzigd",
     "undo": "Ongedaan maken",
     "moveError": "De taak kon niet worden verplaatst. Probeer opnieuw.",
-    "dragHint": "Tip: sleep een taak om ze te verplaatsen (lang indrukken op mobiel) en sleep de onderrand om de duur te wijzigen. Met het toetsenbord, op een taak: Alt + ↑/↓ verschuift 15 minuten, Alt + ←/→ wijzigt de dag, voeg Shift toe voor de duur."
+    "dragHint": "Tip: sleep een taak om ze te verplaatsen (lang indrukken op mobiel) en sleep de onderrand om de duur te wijzigen. Met het toetsenbord, op een taak: Alt + ↑/↓ verschuift 15 minuten, Alt + ←/→ wijzigt de dag, voeg Shift toe voor de duur.",
+    "dayWithCount": "{date}, {count, plural, =0 {geen taken} one {# taak} other {# taken}}",
+    "dayEmpty": "Niets gepland op die dag.",
+    "addOnDay": "Op deze dag toevoegen",
+    "dragHintTouch": "Tip: houd een taak ingedrukt om ze te verplaatsen en sleep de onderrand om de duur te wijzigen.",
+    "moveTo": "“{title}” naar een andere dag verplaatsen",
+    "movePick": "Tik op de dag waarnaar je “{title}” wilt verplaatsen.",
+    "moveCancel": "Annuleren"
   },
   "privacy": {
     "google": "Aanmelden met Google",
@@ -531,7 +547,7 @@
     },
     "data": {
       "title": "Verwerkte gegevens",
-      "body": "Account: voornaam, e-mailadres, wachtwoord (alleen als Argon2-hash, nooit leesbaar), taal.\nHuishouden: naam van het huishouden, leden, categorieën, uitnodigingen, boodschappenlijst.\nTaken: titels, notities, datums, tijden, duur, verantwoordelijken, herhalingen, status, subtaken, reacties, opgegeven afwezigheden, activiteitengeschiedenis (wie wat deed, en wanneer).\nUitgaven (als je ze gebruikt): bedrag, datum, omschrijving, categorie, opmerking, wie betaalde en ieders aandeel. Een persoonlijke uitgave zie alleen jij. Een toegevoegd kasticket (foto of pdf) wordt bij de uitgave bewaard en samen met haar verwijderd.\nSessies: apparaat (browser of app) en aanmeldingsdatums, zodat je op afstand kunt afmelden. Android-app: de meldingsidentificatie van de telefoon (als directe meldingen aan staan), verwijderd bij het afmelden.\nDe Android-app bewaart een kopie van je taken op de telefoon om offline te werken; die wordt gewist bij het afmelden.\nToevoegen per e-mail (als je het inschakelt): de afzender, het onderwerp en de tekst van e-mails die je naar je persoonlijke adres doorstuurt, worden opgeslagen in de notities van de aangemaakte taak. Ze worden ontvangen door Resend, onze e-mailprovider; hun bijlagen worden aan de taak toegevoegd.\nBijlagen: bestanden die je aan een taak toevoegt (of die bij een doorgestuurde e-mail zaten) worden met de taak op onze server bewaard, zijn zichtbaar voor de leden van het huishouden (alleen voor jou bij een persoonlijke taak) en worden samen met de taak verwijderd.\nMeldingen van problemen (als je er stuurt): het type, de titel en de tekst van je bericht, een schermafbeelding als je die toevoegt, of je gecontacteerd mag worden en, alleen als je het vakje aanvinkt, technische informatie die vóór het verzenden wordt getoond (browser of telefoonmodel, systeem, appversie, taal, tijdzone, schermgrootte, geopende pagina). Nooit de inhoud van je taken. Alleen de beheerders van de app lezen ze.\nBrowsermeldingen (als je ze inschakelt): het abonnementsadres dat je browser geeft, verwijderd wanneer je ze uitschakelt of afmeldt."
+      "body": "Account: voornaam, e-mailadres, wachtwoord (alleen als Argon2-hash, nooit leesbaar), taal.\nHuishouden: naam van het huishouden, leden, categorieën, uitnodigingen, boodschappenlijst.\nTaken: titels, notities, datums, tijden, duur, verantwoordelijken, herhalingen, status, subtaken, reacties, ruilverzoeken (met het berichtje), opgegeven afwezigheden, activiteitengeschiedenis (wie wat deed, en wanneer).\nUitgaven (als je ze gebruikt): bedrag, datum, omschrijving, categorie, opmerking, wie betaalde en ieders aandeel. Een persoonlijke uitgave zie alleen jij. Een toegevoegd kasticket (foto of pdf) wordt bij de uitgave bewaard en samen met haar verwijderd.\nSessies: apparaat (browser of app) en aanmeldingsdatums, zodat je op afstand kunt afmelden. Android-app: de meldingsidentificatie van de telefoon (als directe meldingen aan staan), verwijderd bij het afmelden.\nDe Android-app bewaart een kopie van je taken op de telefoon om offline te werken; die wordt gewist bij het afmelden.\nToevoegen per e-mail (als je het inschakelt): de afzender, het onderwerp en de tekst van e-mails die je naar je persoonlijke adres doorstuurt, worden opgeslagen in de notities van de aangemaakte taak. Ze worden ontvangen door Resend, onze e-mailprovider; hun bijlagen worden aan de taak toegevoegd.\nBijlagen: bestanden die je aan een taak toevoegt (of die bij een doorgestuurde e-mail zaten) worden met de taak op onze server bewaard, zijn zichtbaar voor de leden van het huishouden (alleen voor jou bij een persoonlijke taak) en worden samen met de taak verwijderd.\nMeldingen van problemen (als je er stuurt): het type, de titel en de tekst van je bericht, een schermafbeelding als je die toevoegt, of je gecontacteerd mag worden en, alleen als je het vakje aanvinkt, technische informatie die vóór het verzenden wordt getoond (browser of telefoonmodel, systeem, appversie, taal, tijdzone, schermgrootte, geopende pagina). Nooit de inhoud van je taken. Alleen de beheerders van de app lezen ze.\nBrowsermeldingen (als je ze inschakelt): het abonnementsadres dat je browser geeft, verwijderd wanneer je ze uitschakelt of afmeldt."
     },
     "google": {
       "title": "Google-gegevens",
@@ -582,7 +598,11 @@
     "commentedDeleted": "{by} heeft gereageerd op een taak die intussen is verwijderd",
     "thanked": "{by} bedankt je voor “{title}”",
     "thankedDeleted": "{by} bedankt je",
-    "budget": "Gezamenlijk budget · {month}: {level}% bereikt ({amount} van {budget})"
+    "budget": "Gezamenlijk budget · {month}: {level}% bereikt ({amount} van {budget})",
+    "swapRequest": "{by} vraagt of je “{title}” wilt overnemen",
+    "swapAccepted": "{by} neemt “{title}” van je over",
+    "swapDeclined": "{by} kan “{title}” niet overnemen",
+    "swapDeleted": "Beurt ruilen voor een taak die intussen verwijderd is"
   },
   "notificationSettings": {
     "title": "Meldingsvoorkeuren",
@@ -594,7 +614,9 @@
       "CALENDAR_SYNC_FAILED": "Probleem met de synchronisatie van Google Agenda",
       "TASK_COMMENT": "Iemand reageert op een van mijn taken",
       "TASK_THANKS": "Iemand bedankt me voor een taak die ik heb gedaan",
-      "EXPENSE_BUDGET": "Het gezamenlijke budget van de maand bereikt 80% of 100%"
+      "EXPENSE_BUDGET": "Het gezamenlijke budget van de maand bereikt 80% of 100%",
+      "TASK_SWAP_REQUEST": "Iemand vraagt of ik een taak wil overnemen",
+      "TASK_SWAP_ANSWER": "Antwoord op mijn ruilverzoek"
     },
     "status": {
       "title": "Directe meldingen op de telefoon: nog niet actief",
@@ -700,7 +722,10 @@
     "addSuggestion": "{text} toevoegen",
     "aisleOf": "Afdeling voor {text}",
     "noteExpense": "Uitgave noteren",
-    "cleared": "Mandje leeggemaakt."
+    "cleared": "Mandje leeggemaakt.",
+    "storeOpen": "Winkelmodus",
+    "storeTitle": "In de winkel",
+    "storeLeft": "{count, plural, =0 {Alles zit in het mandje} one {Nog # artikel} other {Nog # artikels}}"
   },
   "meals": {
     "title": "Maaltijden",
@@ -1324,5 +1349,23 @@
     "trendTitle": "Over {count} maanden",
     "trendHint": "Gezamenlijke uitgaven, maand per maand",
     "trendBudget": "Markering: budget van {budget}"
+  },
+  "swaps": {
+    "title": "Beurten ruilen",
+    "someone": "Iemand",
+    "incoming": "{name} vraagt of je “{title}” wilt overnemen",
+    "outgoing": "Wachten op {name}: “{title}”",
+    "accept": "Ik neem het over",
+    "decline": "Deze keer niet",
+    "cancel": "Annuleren",
+    "accepted": "“{title}” is voor jou.",
+    "ask": "Aan iemand anders vragen",
+    "askOne": "Aan {name} vragen",
+    "to": "Aan wie?",
+    "note": "Een berichtje (optioneel)",
+    "notePlaceholder": "Ik ben donderdag laat thuis",
+    "send": "Vraag versturen",
+    "sent": "Vraag verstuurd naar {name}.",
+    "waiting": "Vraag verstuurd naar {name}, wachten op antwoord."
   }
 }

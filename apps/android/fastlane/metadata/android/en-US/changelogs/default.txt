@@ -1,6 +1,8 @@
 New: Expenses (More tab → Expenses).
-• Who paid what: shared, paid for the other person, or personal.
-• "Nicolas owes Grace €42.50", and the payback in one tap.
-• Monthly totals: shared expenses, each person's share, my personal expenses.
+• Home: "Who does what" over the next 7 days.
+• Who paid what: shared, for the other person, or personal.
+• "Nicolas owes Grace €42.50", payback in one tap.
 • Custom split, monthly fixed expenses, receipt photo.
-• Monthly shared budget with alerts, 6-month trend, spreadsheet export.
+• Monthly budget with alerts, 6-month trend, spreadsheet export.
+• New look: round checkboxes, tasks in cards, like the website.
+• Store mode, and ask the other to take a task for you.

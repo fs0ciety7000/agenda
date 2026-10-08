@@ -20,6 +20,8 @@ data class NotificationDto(
     val title: String? = null,
     val recurring: Boolean = false,
     val byName: String? = null,
+    /** TASK_SWAP_ANSWER : ACCEPTED ou DECLINED. */
+    val code: String? = null,
     /** EXPENSE_BUDGET : mois (« 2026-10 »), seuil atteint (80 ou 100), dépensé et budget. */
     val month: String? = null,
     val level: Int? = null,
@@ -434,3 +436,22 @@ data class ExpenseStatsDto(
     /** Du plus ancien au plus récent. */
     val months: List<ExpenseMonthStatsDto> = emptyList(),
 )
+
+/** Échange de tour : une tâche proposée à un autre membre. */
+@Serializable
+data class SwapDto(
+    val id: String,
+    val occurrenceId: String,
+    val title: String,
+    val date: String? = null,
+    val fromMemberId: String,
+    val toMemberId: String,
+    val note: String? = null,
+    val status: String,
+)
+
+@Serializable
+data class SwapListDto(val incoming: List<SwapDto> = emptyList(), val outgoing: List<SwapDto> = emptyList())
+
+@Serializable
+data class SwapRequestBody(val toMemberId: String, val note: String? = null)

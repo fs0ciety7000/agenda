@@ -105,6 +105,8 @@ import androidx.compose.material3.SnackbarResult
 import app.tandem.foyer.ui.quickadd.QuickAddSheet
 import app.tandem.foyer.ui.settings.SettingsScreen
 import app.tandem.foyer.ui.shopping.ShoppingScreen
+import app.tandem.foyer.ui.swaps.SwapAsk
+import app.tandem.foyer.ui.swaps.SwapBanner
 import app.tandem.foyer.data.remote.RealtimeClient
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.compose.material.icons.filled.ShoppingCart
@@ -444,7 +446,10 @@ private fun MainScaffold(
                 TodayScreen(
                     state, vm::refresh, vm::toggle, { open(it.id) },
                     onThank = vm::thank,
-                    banner = updateBanner,
+                    banner = {
+                        updateBanner()
+                        SwapBanner(container.swaps, state.household?.members.orEmpty(), state.occurrences, vm::refresh, onMessage)
+                    },
                     onShowUnscheduled = {
                         filter = filter.copy(view = Agenda.View.UNSCHEDULED)
                         nav.navigate(Tab.TASKS.route) { launchSingleTop = true }
@@ -764,6 +769,7 @@ private fun TaskForm(
         comments = {
             val o = form.original
             if (o != null && !o.isLocal) {
+                SwapAsk(container.swaps, o, state.household?.members.orEmpty(), state.myMemberId, onMessage)
                 CommentsSection(container.comments, o.id, state.household?.members.orEmpty(), state.myMemberId, onMessage)
             }
         },

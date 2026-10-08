@@ -24,6 +24,7 @@
 
     <string name="greeting">Hallo %1$s 👋</string>
     <string name="today">Vandaag</string>
+    <string name="today_catch_up">Nog in te halen</string>
     <string name="overdue">Te laat</string>
     <string name="this_week">Deze week</string>
     <string name="today_progress">%1$d van %2$d gedaan</string>
@@ -50,7 +51,7 @@
     <string name="mark_done">“%1$s” als gedaan markeren</string>
     <string name="mark_todo">“%1$s” als te doen markeren</string>
     <string name="recurring">Terugkerend</string>
-    <string name="together">samen</string>
+    <string name="together">Samen</string>
     <string name="unassigned">Nog te bepalen</string>
     <string name="personal">Persoonlijk</string>
     <string name="priority_high">Belangrijk</string>
@@ -538,4 +539,32 @@
     </plurals>
     <string name="expenses_trend_hint">Gezamenlijke uitgaven, maand per maand</string>
     <string name="expenses_trend_budget">Markering: budget van %1$s</string>
+    <string name="close">Sluiten</string>
+    <string name="store_open">Winkelmodus</string>
+    <string name="store_title">In de winkel</string>
+    <string name="store_all_in_cart">Alles zit in het mandje</string>
+    <plurals name="store_left"><item quantity="one">Nog %d artikel</item><item quantity="other">Nog %d artikels</item></plurals>
+    <string name="swap_someone">Iemand</string>
+    <string name="swap_failed">Versturen lukt niet. Controleer je verbinding.</string>
+    <string name="swap_accepted">“%1$s” is voor jou.</string>
+    <string name="swap_incoming">%1$s vraagt of je “%2$s” wilt overnemen</string>
+    <string name="swap_outgoing">Wachten op %1$s: “%2$s”</string>
+    <string name="swap_accept">Ik neem het over</string>
+    <string name="swap_decline">Deze keer niet</string>
+    <string name="swap_ask">Aan iemand anders vragen</string>
+    <string name="swap_ask_one">Aan %1$s vragen</string>
+    <string name="swap_note">Een berichtje (optioneel)</string>
+    <string name="swap_send">Vraag versturen</string>
+    <string name="swap_sent">Vraag verstuurd naar %1$s.</string>
+    <string name="swap_waiting">Vraag verstuurd naar %1$s, wachten op antwoord.</string>
+    <string name="activity_swap_request">%1$s vraagt of je “%2$s” wilt overnemen</string>
+    <string name="activity_swap_accepted">%1$s neemt “%2$s”</string>
+    <string name="activity_swap_declined">%1$s kan “%2$s” niet nemen</string>
+    <string name="board_title">Wie doet wat</string>
+    <string name="board_hint">Tik op een vakje om de taken te zien.</string>
+    <string name="board_cell_empty">%1$s, %2$s: niets</string>
+    <plurals name="board_cell">
+        <item quantity="one">%1$s, %2$s: %3$d taak</item>
+        <item quantity="other">%1$s, %2$s: %3$d taken</item>
+    </plurals>
 </resources>

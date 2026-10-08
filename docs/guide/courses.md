@@ -22,6 +22,13 @@ direct (indicateur **En direct**).
 Pour une liste liée à une tâche précise (« Valise »), utilisez plutôt les
 [sous-tâches](taches.md#sous-tâches-et-listes).
 
+## Mode magasin
+
+**Mode magasin** (sur le site et dans l'app Android) affiche la liste en plein écran, en gros
+caractères, rangée par rayon, et garde l'écran allumé. Toucher un article le met dans le panier ;
+le toucher à nouveau l'en ressort. L'autre voit les coches en direct. **Échap**, le geste retour
+ou ✕ pour quitter.
+
 ## Menus de la semaine
 
 **Menus** (lien en haut de la liste de courses ; **Plus → Menus** sur téléphone ; dans le menu sur ordinateur) : un repas par

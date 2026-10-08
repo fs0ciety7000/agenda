@@ -9,9 +9,9 @@ métier propre à Android : les règles (récurrence, rotation, quick add) reste
 
 | Onglet | Contenu |
 |---|---|
-| **Aujourd'hui** | « Bonjour Grace 👋 », en retard, aujourd'hui (x sur y faites), 7 prochains jours, tâches sans date, répartition de la semaine (tâches partagées, non compétitive) |
+| **Aujourd'hui** | « Bonjour Grace 👋 », en retard, aujourd'hui (x sur y faites), « Qui fait quoi » (7 jours × personnes, `ui/today/WeekBoard.kt`), 7 prochains jours, tâches sans date, répartition de la semaine (tâches partagées, non compétitive) |
 | **Tâches** | Recherche, filtres À faire / À venir / Sans date / Faites, « Les miennes », regroupement par jour |
-| **Courses** | Liste de courses permanente du foyer : ajout de plusieurs articles d'un coup (« lait, pain »), cocher au magasin, « Dans le panier (pris par Nicolas) », « Vider le panier ». **Hors ligne** (affiché tout de suite, envoyé au retour du réseau, sans doublon) et **en temps réel** (indicateur « En direct ») |
+| **Courses** | Liste de courses permanente du foyer : ajout de plusieurs articles d'un coup (« lait, pain »), cocher au magasin, « Dans le panier (pris par Nicolas) », « Vider le panier », **Mode magasin** (plein écran, gros caractères, par rayon, écran allumé). **Hors ligne** (affiché tout de suite, envoyé au retour du réseau, sans doublon) et **en temps réel** (indicateur « En direct ») |
 | **Calendrier** | Mois (lundi → dimanche, pastilles = tâches à faire), liste du jour choisi, « Ajouter ce jour-là » ; **glisser-déposer** : appui long sur une tâche puis la lâcher sur un jour (heure conservée, cette occurrence seulement, « Annuler » dans le message ; TalkBack : actions « jour précédent / suivant ») |
 | **Dépenses** (onglet Plus) | Qui doit quoi et « Enregistrer le remboursement », totaux du mois (communes, part de chacun, mes dépenses perso), liste par jour ; ajouter, modifier, supprimer (montant, quoi, date, payé par, pour qui : commune / pour l'autre / perso, catégorie, commentaire). Parts à la main, **Chaque mois** (charges fixes, à arrêter depuis la liste), **ticket** (photo ou PDF, ouvert par l'app adaptée). « Noter la dépense » après **Vider le panier** dans les Courses. **Budget** du mois (jauge, alerte à 80 % et 100 % par notification), **Sur 6 mois**, **Exporter** (CSV partagé vers une autre app). En ligne seulement ; les proportions se règlent sur le site |
 | **Plus** | Dépenses, Journal et corbeille, Absences, Signaler un problème ; puis les réglages : foyer et membres, état du calendrier partagé (Google), rappels, compte, déconnexion |
@@ -20,6 +20,10 @@ métier propre à Android : les règles (récurrence, rotation, quick add) reste
 - **Formulaire** : titre, date, heure, durée, responsables, répétition et tour de rôle (mêmes
   choix que sur le site, aperçu des prochaines dates), catégorie, priorité, notes, personnelle,
   calendrier partagé. Modifier / supprimer une tâche récurrente demande la portée (celle-ci, les suivantes, toute la série).
+- **Échange de tour** (`ui/swaps/Swaps.kt`, `SwapsRemote`) : « Proposer à … » sur la fiche d'une
+  tâche partagée à faire dont je suis responsable ; demandes reçues (Je la prends / Pas cette fois) et
+  envoyées (Annuler) en haut d'Aujourd'hui. En ligne seulement, comme les commentaires ;
+  notifications `TASK_SWAP_REQUEST` et `TASK_SWAP_ANSWER`.
 - **Rappels** : notification avant chaque tâche planifiée qui me concerne (moi, à deux, à définir),
   délai réglable, boutons **Fait**, **Demain** et **Ce week-end** dans la notification (hors ligne
   compris : le report part dès que le réseau revient).

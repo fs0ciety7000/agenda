@@ -25,7 +25,7 @@ export const Field = React.forwardRef<HTMLInputElement, FieldProps>(
           aria-invalid={!!error || undefined}
           aria-describedby={[hintId, errorId].filter(Boolean).join(' ') || undefined}
           className={cn(
-            'h-11 rounded-md border border-border bg-surface px-3 text-[0.9375rem] text-text placeholder:text-text-muted',
+            'h-11 rounded-md border border-border-strong bg-surface px-3 text-[0.9375rem] text-text placeholder:text-text-muted',
             'transition-colors focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent',
             error && 'border-danger',
             className,

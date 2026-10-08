@@ -4,6 +4,7 @@ import android.content.Context
 import app.tandem.foyer.BuildConfig
 import app.tandem.foyer.data.AbsencesRemote
 import app.tandem.foyer.data.ExpensesRemote
+import app.tandem.foyer.data.SwapsRemote
 import app.tandem.foyer.data.ActivityRemote
 import app.tandem.foyer.data.CommentsRemote
 import app.tandem.foyer.data.DataStoreSettingsStore
@@ -51,6 +52,7 @@ class AppContainer(context: Context) {
     val activity = ActivityRemote(api, database) { repositoryImpl.refresh() }
     val absences = AbsencesRemote(api, database) { repositoryImpl.refresh() }
     val expenses = ExpensesRemote(api, database, app.cacheDir)
+    val swaps = SwapsRemote(api, database)
     val comments = CommentsRemote(api, database)
     val reports = ReportsRemote(app, api, database)
     val reminders = ReminderScheduler(app, repository, settings)

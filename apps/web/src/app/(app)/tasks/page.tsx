@@ -76,6 +76,11 @@ function TasksView() {
   const categoryId = params.get('category') ?? '';
   const priority = (params.get('priority') ?? '') as TaskPriority | '';
   const [search, setSearch] = useState(params.get('q') ?? '');
+  // Raccourci « / » depuis une autre page : la recherche prend le focus à l'arrivée.
+  useEffect(() => {
+    if (params.get('search') === '1') document.getElementById('task-search')?.focus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [q, setQ] = useState(search);
   useEffect(() => {
     const timer = setTimeout(() => setQ(search.trim()), 250);
@@ -111,10 +116,11 @@ function TasksView() {
         </Button>
       </div>
 
-      {/* Marge verticale dans la zone qui défile : sinon elle rogne les pastilles (texte agrandi). */}
+      {/* Marge verticale dans la zone qui défile : sinon elle rogne les pastilles (texte agrandi).
+          Fondu au bord droit (mobile) : il reste des onglets à faire défiler. */}
       <nav
         aria-label={t('views')}
-        className="-mx-4 -my-1 overflow-x-auto px-4 py-1 [scrollbar-width:none] md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden"
+        className="-mx-4 -my-1 overflow-x-auto px-4 py-1 [mask-image:linear-gradient(to_right,black_85%,transparent)] [scrollbar-width:none] md:mx-0 md:px-0 md:[mask-image:none] [&::-webkit-scrollbar]:hidden"
       >
         <ul className="flex gap-1.5">
           {TABS.map((key) => {
@@ -140,8 +146,13 @@ function TasksView() {
         </ul>
       </nav>
 
-      <div className={cn('grid grid-cols-2 gap-3 md:grid-cols-4', tab === 'recurring' && 'hidden')}>
-        <div className="relative col-span-2 md:col-span-1">
+      <div
+        className={cn(
+          'grid grid-cols-1 gap-3 min-[360px]:grid-cols-2 md:grid-cols-4',
+          tab === 'recurring' && 'hidden',
+        )}
+      >
+        <div className="relative min-[360px]:col-span-2 md:col-span-1">
           <label htmlFor="task-search" className="sr-only">
             {t('search')}
           </label>
@@ -158,7 +169,7 @@ function TasksView() {
               setSearch(e.target.value);
               setParam('q', e.target.value.trim());
             }}
-            className="h-11 w-full rounded-md border border-border bg-surface pl-9 pr-3 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
+            className="h-11 w-full rounded-md border border-border-strong bg-surface pl-9 pr-3 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
           />
         </div>
         {tab !== 'together' && tab !== 'personal' && (

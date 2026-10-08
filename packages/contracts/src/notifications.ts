@@ -7,6 +7,8 @@ export const NotificationKind = z.enum([
   'TASK_COMMENT',
   'TASK_THANKS',
   'EXPENSE_BUDGET',
+  'TASK_SWAP_REQUEST',
+  'TASK_SWAP_ANSWER',
 ]);
 export type NotificationKind = z.infer<typeof NotificationKind>;
 
@@ -24,7 +26,7 @@ export const NotificationDto = z.object({
   recurring: z.boolean(),
   /** Qui a fait l'action (prénom), si applicable. */
   byName: z.string().nullable(),
-  /** CALENDAR_SYNC_FAILED : code d'erreur (CalendarErrorCode). */
+  /** CALENDAR_SYNC_FAILED : code d'erreur (CalendarErrorCode) ; TASK_SWAP_ANSWER : ACCEPTED ou DECLINED. */
   code: z.string().nullable(),
   /** EXPENSE_BUDGET : mois (« 2026-10 »), seuil atteint (80 ou 100), dépensé et budget. */
   month: z.string().nullable(),

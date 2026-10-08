@@ -75,7 +75,7 @@ export function ChecklistEditor({
                   <span
                     className={cn(
                       'flex size-5 items-center justify-center rounded-sm border-[1.5px]',
-                      item.done ? 'border-success bg-success text-white' : 'border-text-muted/70',
+                      item.done ? 'border-success bg-success text-surface' : 'border-text-muted/70',
                     )}
                   >
                     {item.done && <Check aria-hidden className="size-3.5 stroke-[3]" />}
@@ -115,7 +115,7 @@ export function ChecklistEditor({
           placeholder={t('placeholder')}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={onKeyDown}
-          className="min-h-11 min-w-0 flex-1 rounded-md border border-border bg-surface px-3 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
+          className="min-h-11 min-w-0 flex-1 rounded-md border border-border-strong bg-surface px-3 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
         />
         <button
           type="button"

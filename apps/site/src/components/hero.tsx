@@ -35,7 +35,7 @@ export function Hero({ t }: { t: Content }) {
     <section
       ref={ref}
       id="top"
-      className="relative isolate overflow-hidden pt-28 pb-20 sm:pt-36 lg:pb-28"
+      className="relative isolate overflow-hidden pt-24 pb-20 sm:pt-36 lg:pb-28"
     >
       {/* Halo d'ambiance : couleurs de l'app, en mouvement lent. */}
       <motion.div
@@ -60,7 +60,7 @@ export function Hero({ t }: { t: Content }) {
         />
       </motion.div>
 
-      <div className="mx-auto grid max-w-6xl items-center gap-16 px-5 lg:grid-cols-[1.05fr_0.95fr]">
+      <div className="mx-auto grid max-w-6xl items-center gap-10 px-5 lg:gap-16 lg:grid-cols-[1.05fr_0.95fr]">
         <motion.div
           initial="hidden"
           animate="show"

@@ -5,3 +5,4 @@ export * from './rotation';
 export * from './balance';
 export * from './shopping';
 export * from './money';
+export * from './week-board';

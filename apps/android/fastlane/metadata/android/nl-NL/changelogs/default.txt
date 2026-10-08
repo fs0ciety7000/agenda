@@ -1,6 +1,8 @@
 Nieuw: Uitgaven (tabblad Meer → Uitgaven).
-• Wie wat betaalde: gedeeld, voorgeschoten voor de ander of persoonlijk.
-• "Nicolas is Grace € 42,50 schuldig", en de terugbetaling met één tik.
-• Totalen van de maand: gedeelde uitgaven, ieders aandeel, mijn persoonlijke uitgaven.
-• Zelf verdelen, vaste kosten elke maand, kasticket als foto.
-• Gezamenlijk maandbudget met melding, verloop over 6 maanden, export naar spreadsheet.
+• Start: "Wie doet wat" voor de komende 7 dagen.
+• Wie wat betaalde: gedeeld, voor de ander of persoonlijk.
+• "Nicolas is Grace € 42,50 schuldig", terugbetalen met één tik.
+• Zelf verdelen, vaste kosten, kasticket als foto.
+• Maandbudget met melding, verloop over 6 maanden, export.
+• Nieuwe look: ronde vinkjes, taken in kaarten, zoals op de site.
+• Winkelmodus, en vraag de ander om een taak over te nemen.

@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
@@ -23,6 +24,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import app.tandem.foyer.R
@@ -32,6 +37,7 @@ import app.tandem.foyer.ui.components.EmptyState
 import app.tandem.foyer.ui.components.SectionHeader
 import app.tandem.foyer.ui.components.SyncBanner
 import app.tandem.foyer.ui.components.TaskRow
+import app.tandem.foyer.ui.components.groupedCard
 import app.tandem.foyer.ui.components.currentLocale
 import app.tandem.foyer.ui.components.formatLongDate
 import app.tandem.foyer.ui.main.AgendaUiState
@@ -50,7 +56,13 @@ fun TasksScreen(
     val list = Agenda.filter(state.occurrences, filter, state.today, state.myMemberId)
     val locale = currentLocale()
     Column(Modifier.fillMaxSize().padding(contentPadding)) {
-        Column(Modifier.padding(horizontal = 16.dp).padding(top = 16.dp)) {
+        Column(Modifier.padding(horizontal = 16.dp).padding(top = 24.dp)) {
+            Text(
+                stringResource(R.string.nav_tasks),
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.padding(bottom = 12.dp).semantics { heading() },
+            )
             OutlinedTextField(
                 value = filter.query,
                 onValueChange = { onFilter(filter.copy(query = it)) },
@@ -109,7 +121,13 @@ fun TasksScreen(
                             )
                         }
                     }
-                    items(rows, key = { it.id }) { TaskRow(it, state.members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId) }
+                    itemsIndexed(rows, key = { _, it -> it.id }) { i, it ->
+                        TaskRow(
+                            it, state.members, { onToggle(it) }, { onOpen(it) },
+                            myMemberId = state.myMemberId,
+                            modifier = Modifier.groupedCard(i, rows.size),
+                        )
+                    }
                 }
             }
         }

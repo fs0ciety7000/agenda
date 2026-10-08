@@ -28,6 +28,7 @@
     <!-- Aujourd'hui -->
     <string name="greeting">Bonjour %1$s 👋</string>
     <string name="today">Aujourd\'hui</string>
+    <string name="today_catch_up">À rattraper</string>
     <string name="overdue">En retard</string>
     <string name="this_week">Cette semaine</string>
     <string name="today_progress">%1$d sur %2$d faites</string>
@@ -56,7 +57,7 @@
     <string name="mark_done">Marquer « %1$s » comme faite</string>
     <string name="mark_todo">Marquer « %1$s » comme à faire</string>
     <string name="recurring">Récurrente</string>
-    <string name="together">à deux</string>
+    <string name="together">Tous les deux</string>
     <string name="unassigned">À définir</string>
     <string name="personal">Personnelle</string>
     <string name="priority_high">Importante</string>
@@ -551,4 +552,33 @@
     </plurals>
     <string name="expenses_trend_hint">Dépenses communes, mois par mois</string>
     <string name="expenses_trend_budget">Repère : budget de %1$s</string>
+    <string name="close">Fermer</string>
+    <string name="store_open">Mode magasin</string>
+    <string name="store_title">Au magasin</string>
+    <string name="store_all_in_cart">Tout est dans le panier</string>
+    <plurals name="store_left"><item quantity="one">Encore %d article</item><item quantity="many">Encore %d articles</item><item quantity="other">Encore %d articles</item></plurals>
+    <string name="swap_someone">Quelqu’un</string>
+    <string name="swap_failed">Envoi impossible. Vérifiez la connexion.</string>
+    <string name="swap_accepted">« %1$s » est pour vous.</string>
+    <string name="swap_incoming">%1$s vous demande de prendre « %2$s »</string>
+    <string name="swap_outgoing">En attente de %1$s : « %2$s »</string>
+    <string name="swap_accept">Je la prends</string>
+    <string name="swap_decline">Pas cette fois</string>
+    <string name="swap_ask">Proposer à quelqu’un d’autre</string>
+    <string name="swap_ask_one">Proposer à %1$s</string>
+    <string name="swap_note">Un mot (facultatif)</string>
+    <string name="swap_send">Envoyer la demande</string>
+    <string name="swap_sent">Demande envoyée à %1$s.</string>
+    <string name="swap_waiting">Demande envoyée à %1$s, en attente de réponse.</string>
+    <string name="activity_swap_request">%1$s vous demande de prendre « %2$s »</string>
+    <string name="activity_swap_accepted">%1$s prend « %2$s »</string>
+    <string name="activity_swap_declined">%1$s ne peut pas prendre « %2$s »</string>
+    <string name="board_title">Qui fait quoi</string>
+    <string name="board_hint">Touchez une case pour voir ses tâches.</string>
+    <string name="board_cell_empty">%1$s, %2$s : rien</string>
+    <plurals name="board_cell">
+        <item quantity="one">%1$s, %2$s : %3$d tâche</item>
+        <item quantity="many">%1$s, %2$s : %3$d tâches</item>
+        <item quantity="other">%1$s, %2$s : %3$d tâches</item>
+    </plurals>
 </resources>

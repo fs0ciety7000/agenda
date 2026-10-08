@@ -10,6 +10,7 @@ object Tokens {
         val surface = Color(0xFFFFFFFF)
         val surfaceMuted = Color(0xFFF2EAE4)
         val border = Color(0xFFE6DAD2)
+        val borderStrong = Color(0xFF9A7F8B)
         val text = Color(0xFF24181D)
         val textMuted = Color(0xFF6F5F66)
         val accent = Color(0xFF7D4460)
@@ -17,12 +18,14 @@ object Tokens {
         val success = Color(0xFF2B7349)
         val warning = Color(0xFF8C5A00)
         val danger = Color(0xFFB3261E)
+        val onMember = Color(0xFFFFFFFF)
     }
     object Dark {
         val bg = Color(0xFF141012)
         val surface = Color(0xFF1D171A)
         val surfaceMuted = Color(0xFF261F23)
         val border = Color(0xFF372C32)
+        val borderStrong = Color(0xFF7C6672)
         val text = Color(0xFFF1E9EC)
         val textMuted = Color(0xFFB3A5AB)
         val accent = Color(0xFFE0A9C3)
@@ -30,11 +33,12 @@ object Tokens {
         val success = Color(0xFF6FCF97)
         val warning = Color(0xFFF2C46D)
         val danger = Color(0xFFF28B82)
+        val onMember = Color(0xFF141012)
     }
     object MemberLight {
-        val sage = Color(0xFF5E8C6A)
-        val ocean = Color(0xFF3D7EA6)
-        val amber = Color(0xFFB7791F)
+        val sage = Color(0xFF557E60)
+        val ocean = Color(0xFF3C7BA2)
+        val amber = Color(0xFF9F691B)
         val plum = Color(0xFF7A5C99)
         val clay = Color(0xFFA65D3D)
         val slate = Color(0xFF5B6770)

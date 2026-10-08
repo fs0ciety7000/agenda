@@ -17,3 +17,4 @@ export * from './monitoring';
 export * from './reports';
 export * from './meals';
 export * from './expenses';
+export * from './swaps';

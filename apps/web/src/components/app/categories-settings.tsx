@@ -12,7 +12,7 @@ import { useCategories, useCategoryMutations } from '@/lib/tasks';
 import { useSession } from './household-context';
 
 const inputClass =
-  'h-10 rounded-md border border-border bg-surface px-3 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent';
+  'h-10 rounded-md border border-border-strong bg-surface px-3 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent';
 
 function CategoryEditor({
   initial,

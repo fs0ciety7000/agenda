@@ -4,9 +4,13 @@
 
 ## 1. Comprendre
 
-- Relire `CLAUDE.md` et les fichiers qu'il importe.
+- Relire `CLAUDE.md` et les fichiers qu'il importe, puis le plan de `docs/roadmap.md` (section
+  « Plan UI/UX et fonctionnalités ») : à quel lot appartient la demande ?
 - Lire le code concerné avant de le modifier : les contrats (`packages/contracts`), le service
   API, la page web et l'écran Android. Une fonction existe souvent déjà à moitié.
+- Une demande qui porte sur des tâches marquées « à prioriser ensemble », ou sur de nouvelles
+  fonctions proposées par Claude, attend l'accord explicite de l'utilisateur sur la liste et
+  l'ordre avant tout code.
 - Si la demande est ambiguë sur un point qui change ce qu'on construit, poser la question. Sinon
   choisir l'option la plus simple et le dire dans le compte rendu.
 
@@ -72,7 +76,10 @@ Dans la même PR (tableau détaillé dans `docs/contribuer.md`) :
 - le guide utilisateur `docs/guide/` ;
 - l'entrée « Nouveautés » `docs/changelog.md` ;
 - la doc technique concernée (`docs/android.md`, `docs/deployment.md`, `docs/rgpd.md`…) ;
-- les notes Play `fastlane/metadata/android/*/changelogs/default.txt` si l'app Android change.
+- les notes Play `fastlane/metadata/android/*/changelogs/default.txt` si l'app Android change
+  (500 caractères au plus par langue : resserrer les lignes plus anciennes plutôt que dépasser) ;
+- le plan de `docs/roadmap.md` : tâches cochées avec le numéro de PR, tâches découvertes
+  ajoutées ; une décision durable va dans « Décisions prises » de `CLAUDE.md`.
 
 ## 7. Livrer
 
@@ -93,6 +100,7 @@ Dans la même PR (tableau détaillé dans `docs/contribuer.md`) :
 Un compte rendu court en français :
 
 - ce qui a été fait, et le lien de la PR ;
+- où en est le plan (lot en cours, tâches cochées, tâches ajoutées) ;
 - ce qui a été vérifié, et comment ;
 - ce qui reste à faire par l'utilisateur ;
 - ce qui n'a pas été fait, et pourquoi.

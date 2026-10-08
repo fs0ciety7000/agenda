@@ -20,12 +20,22 @@ export const NOTIFICATION_KINDS: NotificationKind[] = [
   'TASK_COMMENT',
   'TASK_THANKS',
   'EXPENSE_BUDGET',
+  'TASK_SWAP_REQUEST',
+  'TASK_SWAP_ANSWER',
 ];
 const DEFAULT_PREF = { inApp: true, push: true };
 
-type TaskNotification = 'TASK_ASSIGNED' | 'TASK_COMMENT' | 'TASK_THANKS';
+type TaskNotification =
+  'TASK_ASSIGNED' | 'TASK_COMMENT' | 'TASK_THANKS' | 'TASK_SWAP_REQUEST' | 'TASK_SWAP_ANSWER';
+const TASK_NOTIFICATIONS: string[] = [
+  'TASK_ASSIGNED',
+  'TASK_COMMENT',
+  'TASK_THANKS',
+  'TASK_SWAP_REQUEST',
+  'TASK_SWAP_ANSWER',
+];
 const isTaskNotification = (type: string): type is TaskNotification =>
-  type === 'TASK_ASSIGNED' || type === 'TASK_COMMENT' || type === 'TASK_THANKS';
+  TASK_NOTIFICATIONS.includes(type);
 
 interface AssignedPayload {
   occurrenceId: string;
@@ -84,12 +94,36 @@ export class NotificationsService {
     await this.notifyTask(ctx, 'TASK_THANKS', occurrenceId, [memberId], recurring);
   }
 
+  /** « Nicolas te demande de prendre « Vaisselle » » (échange de tour). */
+  async notifySwapRequest(
+    ctx: HouseholdContext,
+    occurrenceId: string,
+    memberId: string,
+    recurring: boolean,
+  ): Promise<void> {
+    await this.notifyTask(ctx, 'TASK_SWAP_REQUEST', occurrenceId, [memberId], recurring);
+  }
+
+  /** « Grace a accepté / ne peut pas prendre « Vaisselle » ». */
+  async notifySwapAnswer(
+    ctx: HouseholdContext,
+    occurrenceId: string,
+    memberId: string,
+    recurring: boolean,
+    accepted: boolean,
+  ): Promise<void> {
+    await this.notifyTask(ctx, 'TASK_SWAP_ANSWER', occurrenceId, [memberId], recurring, {
+      code: accepted ? 'ACCEPTED' : 'DECLINED',
+    });
+  }
+
   private async notifyTask(
     ctx: HouseholdContext,
     type: TaskNotification,
     occurrenceId: string,
     memberIds: string[],
     recurring: boolean,
+    extra: { code?: string } = {},
   ): Promise<void> {
     const targets = [...new Set(memberIds)].filter((id) => id !== ctx.memberId);
     if (!targets.length) return;
@@ -102,7 +136,12 @@ export class NotificationsService {
       },
       select: { id: true, preferences: { where: { type } } },
     });
-    const payload: AssignedPayload = { occurrenceId, byMemberId: ctx.memberId, recurring };
+    const payload: AssignedPayload & { code?: string } = {
+      occurrenceId,
+      byMemberId: ctx.memberId,
+      recurring,
+      ...extra,
+    };
     const data = members
       .map((m) => ({ member: m, pref: m.preferences[0] ?? DEFAULT_PREF }))
       .filter(({ pref }) => pref.inApp || pref.push)
@@ -131,7 +170,15 @@ export class NotificationsService {
       ]);
       const title = occ?.titleOverride ?? occ?.task.title ?? '';
       void this.webPush.sendToMembers(ctx.householdId, pushIds, (locale) =>
-        webPushText(locale, type, by?.displayName ?? '?', title, recurring, occurrenceId),
+        webPushText(
+          locale,
+          type,
+          by?.displayName ?? '?',
+          title,
+          recurring,
+          occurrenceId,
+          extra.code,
+        ),
       );
     }
   }
@@ -313,33 +360,49 @@ export function webPushText(
   title: string,
   recurring: boolean,
   occurrenceId: string,
+  code?: string,
 ): WebPushMessage {
   const kind =
-    type === 'TASK_THANKS'
-      ? 'thanks'
-      : type === 'TASK_COMMENT'
-        ? 'comment'
-        : recurring
-          ? 'recurring'
-          : 'assigned';
+    type === 'TASK_SWAP_REQUEST'
+      ? 'swapRequest'
+      : type === 'TASK_SWAP_ANSWER'
+        ? code === 'ACCEPTED'
+          ? 'swapAccepted'
+          : 'swapDeclined'
+        : type === 'TASK_THANKS'
+          ? 'thanks'
+          : type === 'TASK_COMMENT'
+            ? 'comment'
+            : recurring
+              ? 'recurring'
+              : 'assigned';
   const body = {
     fr: {
       thanks: `${by} vous dit merci pour « ${title} »`,
       comment: `${by} a commenté « ${title} »`,
       recurring: `${by} vous a inclus dans « ${title} » (récurrente)`,
       assigned: `${by} vous a confié « ${title} »`,
+      swapRequest: `${by} vous demande de prendre « ${title} »`,
+      swapAccepted: `${by} prend « ${title} » à votre place`,
+      swapDeclined: `${by} ne peut pas prendre « ${title} »`,
     },
     en: {
       thanks: `${by} says thanks for “${title}”`,
       comment: `${by} commented on “${title}”`,
       recurring: `${by} included you in “${title}” (recurring)`,
       assigned: `${by} assigned you “${title}”`,
+      swapRequest: `${by} asks you to take “${title}”`,
+      swapAccepted: `${by} is taking “${title}” for you`,
+      swapDeclined: `${by} can't take “${title}”`,
     },
     nl: {
       thanks: `${by} bedankt je voor “${title}”`,
       comment: `${by} heeft gereageerd op “${title}”`,
       recurring: `${by} heeft je toegevoegd aan “${title}” (terugkerend)`,
       assigned: `${by} heeft je “${title}” gegeven`,
+      swapRequest: `${by} vraagt of je “${title}” wilt overnemen`,
+      swapAccepted: `${by} neemt “${title}” van je over`,
+      swapDeclined: `${by} kan “${title}” niet overnemen`,
     },
   }[locale][kind];
   return {

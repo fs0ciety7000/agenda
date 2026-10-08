@@ -688,7 +688,7 @@ function ExpenseDialog({
               maxLength={500}
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="rounded-md border border-border bg-surface px-3 py-2 text-[0.9375rem]"
+              className="rounded-md border border-border-strong bg-surface px-3 py-2 text-[0.9375rem]"
             />
           </div>
           {canRepeat && (

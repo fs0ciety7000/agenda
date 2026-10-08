@@ -108,6 +108,8 @@ fun ShoppingScreen(
     }
     val toBuy = items.filter { !it.done }
     val inCart = items.filter { it.done }
+    var storeMode by rememberSaveable { mutableStateOf(false) }
+    if (storeMode) StoreMode(items, onToggle) { storeMode = false }
 
     Column(Modifier.fillMaxSize().padding(contentPadding)) {
         Column(Modifier.padding(horizontal = 16.dp).padding(top = 16.dp)) {
@@ -151,6 +153,11 @@ fun ShoppingScreen(
                             modifier = Modifier.semantics { contentDescription = label },
                         )
                     }
+                }
+            }
+            if (toBuy.isNotEmpty()) {
+                OutlinedButton(onClick = { storeMode = true }, modifier = Modifier.padding(top = 8.dp).heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.store_open))
                 }
             }
             SyncBanner(online, sync)

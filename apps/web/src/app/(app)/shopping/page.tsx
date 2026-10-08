@@ -2,12 +2,13 @@
 
 import type { Aisle, ShoppingItemDto } from '@agenda/contracts';
 import { AISLES } from '@agenda/domain';
-import { Check, Plus, ShoppingCart, X } from 'lucide-react';
+import { Check, Plus, ShoppingCart, Store, X } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useId, useState, type FormEvent } from 'react';
 import { useSession } from '@/components/app/household-context';
+import { StoreMode } from '@/components/app/store-mode';
 import { Button } from '@/components/ui/button';
 import { SectionTitle } from '@/components/ui/card';
 import { EmptyState, ErrorState, Skeleton } from '@/components/ui/states';
@@ -41,6 +42,7 @@ export default function ShoppingPage() {
   const router = useRouter();
   const live = useRealtimeStatus();
   const [text, setText] = useState('');
+  const [store, setStore] = useState(false);
   const inputId = useId();
 
   const submit = (e: FormEvent) => {
@@ -81,6 +83,20 @@ export default function ShoppingPage() {
         </span>
       </div>
 
+      {items.some((i) => !i.done) && (
+        <Button variant="secondary" className="self-start" onClick={() => setStore(true)}>
+          <Store aria-hidden className="size-4" />
+          {t('storeOpen')}
+        </Button>
+      )}
+      {store && (
+        <StoreMode
+          items={items}
+          onToggle={(i) => actions.toggle.mutate({ id: i.id, done: !i.done })}
+          onClose={() => setStore(false)}
+        />
+      )}
+
       <form onSubmit={submit} className="flex gap-2">
         <label htmlFor={inputId} className="sr-only">
           {t('add')}
@@ -92,7 +108,7 @@ export default function ShoppingPage() {
           autoComplete="off"
           placeholder={t('placeholder')}
           onChange={(e) => setText(e.target.value)}
-          className="min-h-11 min-w-0 flex-1 rounded-md border border-border bg-surface px-3 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
+          className="min-h-11 min-w-0 flex-1 rounded-md border border-border-strong bg-surface px-3 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
         />
         <Button type="submit" disabled={!text.trim()} aria-label={t('add')} title={t('add')}>
           <Plus aria-hidden className="size-5" />
@@ -252,7 +268,7 @@ function ItemList({
             <span
               className={cn(
                 'flex size-5 items-center justify-center rounded-sm border-[1.5px]',
-                item.done ? 'border-success bg-success text-white' : 'border-text-muted/70',
+                item.done ? 'border-success bg-success text-surface' : 'border-text-muted/70',
               )}
             >
               {item.done && <Check aria-hidden className="size-3.5 stroke-[3]" />}
@@ -277,18 +293,23 @@ function ItemList({
             )}
           </span>
           {onAisle && (
-            <select
-              aria-label={t('aisleOf', { text: item.text })}
-              value={item.aisle ?? 'OTHER'}
-              onChange={(e) => onAisle(item, e.target.value as Aisle)}
-              className="h-9 w-11 shrink-0 cursor-pointer appearance-none rounded-md bg-transparent text-center text-base hover:bg-surface-muted"
-            >
-              {AISLES.map((a) => (
-                <option key={a} value={a}>
-                  {t(`aisles.${a}`)}
-                </option>
-              ))}
-            </select>
+            // Seul l'emoji du rayon est visible (le libellé complet ne tient pas dans 44 px) ;
+            // le menu natif garde les libellés entiers.
+            <span className="relative flex h-9 w-11 shrink-0 items-center justify-center rounded-md text-base hover:bg-surface-muted">
+              <span aria-hidden>{t(`aisles.${item.aisle ?? 'OTHER'}`).split(' ')[0]}</span>
+              <select
+                aria-label={t('aisleOf', { text: item.text })}
+                value={item.aisle ?? 'OTHER'}
+                onChange={(e) => onAisle(item, e.target.value as Aisle)}
+                className="absolute inset-0 cursor-pointer appearance-none rounded-md bg-transparent text-transparent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent [&>option]:text-text"
+              >
+                {AISLES.map((a) => (
+                  <option key={a} value={a}>
+                    {t(`aisles.${a}`)}
+                  </option>
+                ))}
+              </select>
+            </span>
           )}
           <button
             type="button"

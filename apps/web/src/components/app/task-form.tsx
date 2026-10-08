@@ -48,6 +48,7 @@ import {
   useSeriesDetail,
   useUpdateOccurrence,
 } from '@/lib/tasks';
+import { SwapAsk } from './swaps';
 import { Attachments } from './attachments';
 import { Comments } from './comments';
 import { ChecklistEditor, type ChecklistRow } from './checklist';
@@ -461,7 +462,7 @@ export function TaskFormDialog({
                 maxLength={5000}
                 rows={2}
                 onChange={(e) => set('notes', e.target.value)}
-                className="min-h-11 rounded-md border border-border bg-surface px-3 py-2.5 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
+                className="min-h-11 rounded-md border border-border-strong bg-surface px-3 py-2.5 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
               />
             </div>
 
@@ -562,6 +563,7 @@ export function TaskFormDialog({
               <p className="text-sm text-text-muted">{lastDoneText(occurrence.lastDone)}</p>
             )}
             {occurrence?.seriesId && <SeriesHistory seriesId={occurrence.seriesId} />}
+            {occurrence && <SwapAsk occurrence={occurrence} />}
             {occurrence && <Comments occurrence={occurrence} />}
 
             {error && (

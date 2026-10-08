@@ -15,6 +15,109 @@ Une phase n'est « terminée » que si la CI est verte et la documentation à jo
 | **6 — Polish** | Drag & drop calendrier, animations, accessibilité (audit axe + TalkBack), dark mode fin, onboarding complet, statistiques, notifications & préférences | Audit a11y sans violation AA | ✅ Livré (cf. §Phase 6) ; TalkBack à vérifier en recette |
 | **7 — Production** | Coolify + Cloudflare (`docs/deployment.md`), Sentry, backups vérifiés (restauration testée), passage de l'app OAuth Google en production, politique de confidentialité, AAB Play Store (test interne) | Checklist de mise en production signée | ✅ Livré (cf. §Phase 7) ; Play Store prêt, publication dans la console à faire |
 
+## Plan UI/UX et fonctionnalités (octobre 2026)
+
+Suivi vivant : chaque PR coche ses tâches ici (avec son numéro) et ajoute celles qu'elle découvre.
+Source : [audit du 8 octobre 2026](audits/2026-10-08.md). Légende : effort S / M / L ; 🌐 web,
+🤖 Android, 🪧 site vitrine, ⚙️ API.
+
+### Lot 0 — Bloquants de l'audit ✅ (#88)
+
+- [x] Contraste des pastilles de membre (token `on-member`, teintes claires assombries) 🌐🤖
+- [x] Blanc sur `danger` / `success` en sombre (boutons, toasts, coches) 🌐
+- [x] Courses : rayon coupé sur chaque ligne → emoji seul 🌐
+- [x] Tâches : filtres coupés à 320 px 🌐
+- [x] Répartition : noms coupés (nl, 320 px) et barres aux couleurs des membres → neutres 🌐🤖
+- [x] Site : contenu invisible sans JavaScript, défilement horizontal à 360 px 🪧
+- [x] Android : « À rattraper » et priorité seule en couleur (plus de ligne rouge) 🤖
+- [x] Outils d'audit : captures en/nl (`VISUAL_LOCALE`), 320 px, pages Dépenses/Menus/Plus/Revue 🌐
+
+### Lot 1 — Calendrier lisible sur téléphone ✅ (#88)
+
+- [x] Mois : points par jour (comme Android) + liste du jour touché sous la grille 🌐
+- [x] Semaine : vue 3 jours sur mobile, semaine complète dès 768 px 🌐
+- [x] Astuce tactile sur mobile, astuce clavier sur desktop 🌐
+- [x] Android : glisser une tâche d'un jour à l'autre dans la vue mois — déjà en place
+      (appui long), vérifié 🤖
+- [ ] Mois sur téléphone : glisser-déposer d'un jour à l'autre (aujourd'hui : ouvrir la tâche et
+      changer la date) 🌐 — ajouté au lot 3
+
+### Lot 2 — Cohérence web / Android ✅ (#88)
+
+- [x] Case de tâche ronde 22 px avec coche animée sur Android (composant `TaskCheck`) 🤖
+- [x] Lignes de tâche en cartes `surface` arrondies sur Android, comme le web (`groupedCard`) 🤖
+- [x] Titre « Tâches » sur l'écran Tâches Android (la création reste au bouton « + » commun) 🤖
+- [x] Mêmes libellés partout : « Tous les deux / Both of us / Samen », « À définir / Unassigned /
+      Nog te bepalen », « À rattraper » 🌐🤖
+- [x] Captures Android : Dépenses (clair, sombre), Plus en sombre, police 200 % ; captures de
+      la fiche Play régénérées (fr, en) 🤖
+- [ ] Captures de la fiche Play en néerlandais (quand la fiche nl-NL existera) 🤖
+
+### Lot 3 — Confort et finitions ✅ (#88)
+
+- [x] Aujourd'hui en deux colonnes dès 1280 px (liste · répartition, courses, budget du mois) 🌐
+- [x] Bordures de champ à 3:1 (token `border-strong`, contour Material sur Android) 🌐🤖
+- [x] Titres de tâche sur deux lignes avant l'ellipse (Android l'avait déjà) 🌐
+- [x] Fondu au bord droit des onglets de filtre sur mobile 🌐
+- [x] Barre d'onglets sous 360 px : icônes seules, libellés lus par les lecteurs d'écran 🌐
+- [x] Raccourcis « / » (recherche) et « T » (aujourd'hui) ajoutés — seul « N » existait — et
+      parcours E2E des trois 🌐
+- [x] Menus : deux colonnes de jours dès 768 px 🌐
+- [x] Site : en-tête resserré, l'aperçu de l'app apparaît au bas du premier écran à 360 px 🪧
+- [x] Mois sur téléphone : déplacer une tâche en deux touches (icône, puis jour), plus sûr au
+      doigt qu'un glisser 🌐
+
+### Lot 4 — Nouvelles fonctions (à prioriser ensemble)
+
+Validés par l'utilisateur : mode magasin, échange de tour. Ordre choisi ensuite : tableau
+« cette semaine », notes partagées, dates importantes, budget par catégorie, journal des
+connexions (une PR chacun). Le reste attend son accord.
+
+Organisation du foyer :
+
+- [x] **Tableau « cette semaine »** sur l'écran d'accueil : qui fait quoi chaque jour, d'un coup d'œil (S) 🌐🤖 (#88)
+- [x] **Échange de tour** : « Peux-tu prendre ma vaisselle jeudi ? », accepter ou refuser en un geste (M) ⚙️🌐🤖 (#88)
+- [ ] **Tâches « quand on peut »** avec charge estimée (petite, moyenne, grosse) pour mieux équilibrer (M)
+- [ ] **Routines** (matin, soir, départ en vacances) : une liste cochée en séquence, réutilisable (M)
+- [ ] **Rappel partagé de lieu** : « en passant à la pharmacie » (géolocalisation, Android) (L) 🤖
+
+Courses et repas :
+
+- [ ] **Recettes enregistrées** : ingrédients réutilisés d'un menu à l'autre (M)
+- [ ] **Prix habituels** des articles → estimation du ticket et lien avec le budget (M)
+- [x] **Mode magasin** : écran plein, gros caractères, tri par rayon, écran toujours allumé (S) 🌐🤖 (#88)
+
+Dépenses :
+
+- [ ] **Saisie du ticket par photo** (lecture du montant et de la date) (L)
+- [ ] **Budget par catégorie** en plus du budget global (M)
+- [ ] **Rapprochement mensuel** : « ce mois-ci, chacun a payé… », envoyé le 1er (S)
+
+Vie à deux :
+
+- [ ] **Notes partagées** (codes Wi-Fi, mesures, idées cadeaux) : petits mémos épinglés (M)
+- [ ] **Dates importantes** (anniversaires, entretiens annuels) avec rappel à l'avance (M)
+- [ ] **Widget Android « Dépenses »** : solde et ajout rapide (M) 🤖
+
+Fiabilité et sécurité :
+
+- [ ] **Journal des connexions** (appareils, dernière activité, déconnexion à distance) (M)
+- [ ] **Sauvegarde exportable** du foyer (JSON) et restauration sur une autre instance (M)
+- [ ] **Budget de performance en CI** (Lighthouse ≥ 90 sur `/login` et `/`) (S)
+
+### Propositions de design
+
+- **Hiérarchie de l'accueil** : une seule action principale (ajout rapide) ; les sections
+  « À rattraper », « Aujourd'hui », « Cette semaine » deviennent repliables et mémorisées.
+- **Couleur = sens, toujours** : les couleurs de membres servent aux pastilles seulement ;
+  graphiques et jauges en couleur neutre ou accent (fait pour la répartition).
+- **Densité réglable** : « Confortable » (actuel) ou « Compact » pour les longues listes.
+- **États vides illustrés** : une illustration linéaire monochrome par écran (Courses, Menus,
+  Dépenses), dans le style du logo, avec une phrase et une action.
+- **Mouvement** : transition partagée ligne → détail de tâche (180 ms), et coche avec
+  léger rebond, en respectant « réduire les animations ».
+- **Thème « Nuit »** : variante très sombre (OLED) pour Android, à partir des mêmes tokens.
+
 ## Risques principaux
 
 | # | Risque | Impact | Mitigation |

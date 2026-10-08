@@ -15,6 +15,41 @@ d'elle-même (ou via Google Play).
 
 ## 8 octobre 2026
 
+### Qui fait quoi cette semaine (#88)
+
+- ✨ **Tableau « Qui fait quoi »** sur Aujourd'hui (site et Android) : les 7 prochains jours,
+  une ligne par personne, le nombre de tâches par case ; une case touchée affiche ses tâches.
+
+### Audit UI/UX et corrections (#88)
+
+- 🛠 **Lisibilité** : les initiales des pastilles de membre, les boutons « Supprimer » et les coches
+  sont lisibles en sombre ; trois couleurs de membre un peu plus foncées en clair.
+- 🛠 **Répartition** : une seule couleur neutre pour chacun (on informe, on ne classe pas), et
+  plus aucun nom coupé, même en néerlandais sur petit écran.
+- 🐞 Courses : le nom du rayon n'est plus coupé sur chaque article (seul son emoji s'affiche).
+- 🐞 Tâches : les filtres ne sont plus coupés sur les très petits écrans.
+- 🛠 Android : « À rattraper » au lieu de « En retard », et seule la priorité est en couleur.
+- 🐞 Site vitrine : tout le contenu s'affiche même sans JavaScript ; plus de défilement horizontal.
+- ⚙️ Rapport d'audit et plan de travail suivi dans la roadmap.
+- ✨ **Mode magasin** (Courses, site et Android) : la liste en plein écran, en gros caractères,
+  rangée par rayon, et l'écran qui reste allumé.
+- ✨ **Échange de tour** (site et Android) : « Peux-tu prendre ma vaisselle jeudi ? » depuis la
+  fiche d'une tâche, avec un mot si besoin ; l'autre accepte ou refuse en un geste depuis
+  Aujourd'hui, et la tâche change de responsable.
+- ✨ **Sur grand écran**, Aujourd'hui passe en deux colonnes : la liste à gauche ; répartition,
+  courses à acheter et budget du mois à droite. Les Menus s'affichent en deux colonnes.
+- ✨ **Raccourcis clavier** : « / » pour chercher une tâche, « T » pour revenir à Aujourd'hui (en
+  plus de « N »).
+- ✨ Calendrier sur téléphone : changer une tâche de jour en deux touches depuis le mois.
+- 🛠 Champs de saisie mieux délimités ; titres de tâche sur deux lignes au lieu d'être coupés ;
+  barre d'onglets lisible sur les très petits écrans.
+- 🛠 **Android, même allure que le site** : cases de tâche rondes avec une coche animée, tâches
+  regroupées en cartes, titre « Tâches », et les mêmes mots partout (« Tous les deux »,
+  « À définir »).
+- ✨ **Calendrier sur téléphone** (site) : le mois montre un point par tâche et la liste du jour
+  touché, avec « Ajouter ce jour-là » ; la semaine devient une vue de 3 jours lisible ; l'astuce
+  parle de gestes, plus de raccourcis clavier.
+
 ### Dépenses (#86)
 
 - ✨ **Dépenses** : qui a payé quoi, la date, le montant, la catégorie et un commentaire. Une

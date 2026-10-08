@@ -1,5 +1,7 @@
 'use client';
 
+import type * as React from 'react';
+
 import type { OccurrenceDto } from '@agenda/contracts';
 import {
   AlertTriangle,
@@ -29,10 +31,13 @@ export function TaskRow({
   occurrence: o,
   onOpen,
   showDate = false,
+  trailing,
 }: {
   occurrence: OccurrenceDto;
   onOpen: (o: OccurrenceDto) => void;
   showDate?: boolean;
+  /** Action en bout de ligne (ex. « Déplacer » dans le calendrier). */
+  trailing?: React.ReactNode;
 }) {
   const t = useTranslations('tasks');
   const tl = useTranslations('checklist');
@@ -109,7 +114,7 @@ export function TaskRow({
           className={cn(
             'flex size-[1.375rem] items-center justify-center rounded-full border-[1.5px] transition-colors duration-(--gn-motion-base)',
             done
-              ? 'animate-[check-pop_280ms_ease-out] border-success bg-success text-white'
+              ? 'animate-[check-pop_280ms_ease-out] border-success bg-success text-surface'
               : 'border-text-muted/60 group-hover:border-text-muted',
           )}
         >
@@ -124,7 +129,7 @@ export function TaskRow({
         <span className="flex items-baseline justify-between gap-3">
           <span
             className={cn(
-              'truncate text-[0.9375rem] transition-colors duration-(--gn-motion-base)',
+              'line-clamp-2 break-words text-[0.9375rem] transition-colors duration-(--gn-motion-base)',
               done && 'text-text-muted line-through',
             )}
           >
@@ -234,6 +239,7 @@ export function TaskRow({
           />
         </button>
       )}
+      {trailing}
     </li>
   );
 }
@@ -243,11 +249,13 @@ export function TaskList({
   onOpen,
   showDate,
   label,
+  trailing,
 }: {
   items: OccurrenceDto[];
   onOpen: (o: OccurrenceDto) => void;
   showDate?: boolean;
   label?: string;
+  trailing?: (o: OccurrenceDto) => React.ReactNode;
 }) {
   return (
     <ul
@@ -255,7 +263,13 @@ export function TaskList({
       className="divide-y divide-border rounded-lg border border-border bg-surface"
     >
       {items.map((o) => (
-        <TaskRow key={o.id} occurrence={o} onOpen={onOpen} showDate={showDate} />
+        <TaskRow
+          key={o.id}
+          occurrence={o}
+          onOpen={onOpen}
+          showDate={showDate}
+          trailing={trailing?.(o)}
+        />
       ))}
     </ul>
   );

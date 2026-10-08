@@ -254,6 +254,21 @@ interface AgendaApi {
     @GET("v1/households/{h}/expenses/{id}/receipt")
     suspend fun receipt(@Path("h") householdId: String, @Path("id") id: String): Response<ResponseBody>
 
+    @GET("v1/households/{h}/swaps")
+    suspend fun swaps(@Path("h") householdId: String): Response<SwapListDto>
+
+    @POST("v1/households/{h}/occurrences/{id}/swap")
+    suspend fun requestSwap(@Path("h") householdId: String, @Path("id") occurrenceId: String, @Body body: SwapRequestBody): Response<SwapDto>
+
+    @POST("v1/households/{h}/swaps/{id}/accept")
+    suspend fun acceptSwap(@Path("h") householdId: String, @Path("id") id: String): Response<SwapDto>
+
+    @POST("v1/households/{h}/swaps/{id}/decline")
+    suspend fun declineSwap(@Path("h") householdId: String, @Path("id") id: String): Response<SwapDto>
+
+    @DELETE("v1/households/{h}/swaps/{id}")
+    suspend fun cancelSwap(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
+
     @DELETE("v1/households/{h}/expenses/{id}/receipt")
     suspend fun deleteReceipt(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
 

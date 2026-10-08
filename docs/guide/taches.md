@@ -23,6 +23,11 @@ L'ajout rapide comprend le français, l'anglais et le néerlandais (`morgen 19u`
 « Appeler Grace demain » garde « Grace » dans le titre : un prénom placé **avant** la date fait
 partie du titre.
 
+## Raccourcis clavier (ordinateur)
+
+Hors d'un champ de saisie : **N** place le curseur dans l'ajout rapide, **/** ouvre la recherche
+des tâches (depuis n'importe quelle page), **T** revient à Aujourd'hui.
+
 ## Le formulaire
 
 **Plus d'options** (ou toucher une tâche) ouvre le formulaire complet :
@@ -63,6 +68,22 @@ tâche et sont supprimés avec elle.
 
 Sous chaque tâche : « Le produit est sous l'évier ». L'autre les voit en direct et reçoit une
 notification (sans le texte du commentaire). Chacun peut supprimer ses propres commentaires.
+
+## Qui fait quoi cette semaine
+
+Sur **Aujourd'hui**, un tableau montre les 7 jours qui viennent : une ligne par personne, puis
+« Tous les deux » et « À définir » quand il y en a, et dans chaque case le nombre de tâches.
+Touchez une case pour voir ses tâches juste dessous ; touchez-la de nouveau pour les cacher. Le
+tableau ne fait pas de total par personne : il sert à s'organiser, pas à compter.
+
+## Échanger un tour
+
+Empêché jeudi ? Sur la fiche d'une tâche partagée dont vous êtes responsable, **Proposer à
+Nicolas** envoie la demande, avec un mot si besoin (« J'ai piscine »). L'autre la voit en haut
+d'**Aujourd'hui** et reçoit une notification : **Je la prends** lui confie cette occurrence (les
+suivantes ne changent pas), **Pas cette fois** vous prévient. Vous pouvez annuler une demande tant qu'elle
+attend. Si la tâche a été faite ou modifiée entre-temps, l'échange est refusé et la dernière
+version s'affiche. Un échange demande une connexion.
 
 ## Dire merci
 

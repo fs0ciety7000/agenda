@@ -4554,6 +4554,341 @@
         ]
       }
     },
+    "/v1/households/{householdId}/swaps": {
+      "get": {
+        "operationId": "SwapsController_list_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SwapListDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Échanges de tour en attente qui me concernent (reçus et envoyés)",
+        "tags": [
+          "swaps"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/occurrences/{occurrenceId}/swap": {
+      "post": {
+        "description": "Proposer sa tâche à un autre membre (« Peux-tu prendre ma vaisselle jeudi ? »).",
+        "operationId": "SwapsController_request_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "occurrenceId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SwapRequestInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SwapDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Proposer sa tâche à un autre membre (« Peux-tu prendre ma vaisselle jeudi ?",
+        "tags": [
+          "swaps"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/swaps/{swapId}/accept": {
+      "post": {
+        "description": "Accepter une demande reçue : la tâche me revient.",
+        "operationId": "SwapsController_accept_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "swapId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SwapDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Accepter une demande reçue ",
+        "tags": [
+          "swaps"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/swaps/{swapId}/decline": {
+      "post": {
+        "operationId": "SwapsController_decline_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "swapId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SwapDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Refuser une demande reçue (la personne qui l'a envoyée est prévenue)",
+        "tags": [
+          "swaps"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/swaps/{swapId}": {
+      "delete": {
+        "operationId": "SwapsController_cancel_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "swapId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Retirer une demande envoyée, tant qu'elle attend une réponse",
+        "tags": [
+          "swaps"
+        ]
+      }
+    },
     "/v1/households/{householdId}/notifications": {
       "get": {
         "operationId": "NotificationsController_list_v1",
@@ -12329,7 +12664,9 @@
                     "CALENDAR_SYNC_FAILED",
                     "TASK_COMMENT",
                     "TASK_THANKS",
-                    "EXPENSE_BUDGET"
+                    "EXPENSE_BUDGET",
+                    "TASK_SWAP_REQUEST",
+                    "TASK_SWAP_ANSWER"
                   ]
                 },
                 "createdAt": {
@@ -12426,7 +12763,9 @@
               "CALENDAR_SYNC_FAILED",
               "TASK_COMMENT",
               "TASK_THANKS",
-              "EXPENSE_BUDGET"
+              "EXPENSE_BUDGET",
+              "TASK_SWAP_REQUEST",
+              "TASK_SWAP_ANSWER"
             ]
           },
           "inApp": {
@@ -14635,6 +14974,210 @@
         ],
         "additionalProperties": false
       },
+      "SwapDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "occurrenceId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "date": {
+            "nullable": true,
+            "type": "string",
+            "format": "date"
+          },
+          "fromMemberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "toMemberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "note": {
+            "nullable": true,
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "ACCEPTED",
+              "DECLINED",
+              "CANCELLED"
+            ]
+          },
+          "createdAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "occurrenceId",
+          "title",
+          "date",
+          "fromMemberId",
+          "toMemberId",
+          "note",
+          "status",
+          "createdAt"
+        ],
+        "additionalProperties": false
+      },
+      "SwapListDto": {
+        "type": "object",
+        "properties": {
+          "incoming": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "occurrenceId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "date": {
+                  "nullable": true,
+                  "type": "string",
+                  "format": "date"
+                },
+                "fromMemberId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "toMemberId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "note": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "PENDING",
+                    "ACCEPTED",
+                    "DECLINED",
+                    "CANCELLED"
+                  ]
+                },
+                "createdAt": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "occurrenceId",
+                "title",
+                "date",
+                "fromMemberId",
+                "toMemberId",
+                "note",
+                "status",
+                "createdAt"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "outgoing": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "occurrenceId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "title": {
+                  "type": "string"
+                },
+                "date": {
+                  "nullable": true,
+                  "type": "string",
+                  "format": "date"
+                },
+                "fromMemberId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "toMemberId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "note": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "status": {
+                  "type": "string",
+                  "enum": [
+                    "PENDING",
+                    "ACCEPTED",
+                    "DECLINED",
+                    "CANCELLED"
+                  ]
+                },
+                "createdAt": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id",
+                "occurrenceId",
+                "title",
+                "date",
+                "fromMemberId",
+                "toMemberId",
+                "note",
+                "status",
+                "createdAt"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "incoming",
+          "outgoing"
+        ],
+        "additionalProperties": false
+      },
+      "SwapRequestInput": {
+        "type": "object",
+        "properties": {
+          "toMemberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "note": {
+            "nullable": true,
+            "type": "string",
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "toMemberId"
+        ]
+      },
       "TaskTemplateDto": {
         "type": "object",
         "properties": {
@@ -15436,7 +15979,9 @@
                     "CALENDAR_SYNC_FAILED",
                     "TASK_COMMENT",
                     "TASK_THANKS",
-                    "EXPENSE_BUDGET"
+                    "EXPENSE_BUDGET",
+                    "TASK_SWAP_REQUEST",
+                    "TASK_SWAP_ANSWER"
                   ]
                 },
                 "inApp": {
