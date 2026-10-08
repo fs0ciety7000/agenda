@@ -17,7 +17,8 @@
     "shopping": "Shopping",
     "meals": "Meals",
     "expenses": "Expenses",
-    "more": "More"
+    "more": "More",
+    "notes": "Notes"
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -547,7 +548,7 @@
     },
     "data": {
       "title": "Data processed",
-      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, sub-tasks, comments, turn-swap requests (with any note), declared absences, activity history (who did what, when).\nExpenses (if you use them): amount, date, label, category, comment, who paid and each person's share. A personal expense is visible to you only. An attached receipt (photo or PDF) is kept with the expense and deleted with it.\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; their attachments are added to the task.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it.\nReports (if you send any): the type, title and text of your message, a screenshot if you attach one, whether you agree to be contacted and, only if you tick the box, technical information shown before sending (browser or phone model, system, app version, language, time zone, screen size, open page). Never the content of your tasks. Only the app's administrators read them.\nBrowser notifications (if you turn them on): the subscription address provided by your browser, deleted when you turn them off or sign out."
+      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list, shared notes (title, content, who wrote them).\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, sub-tasks, comments, turn-swap requests (with any note), declared absences, activity history (who did what, when).\nExpenses (if you use them): amount, date, label, category, comment, who paid and each person's share. A personal expense is visible to you only. An attached receipt (photo or PDF) is kept with the expense and deleted with it.\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; their attachments are added to the task.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it.\nReports (if you send any): the type, title and text of your message, a screenshot if you attach one, whether you agree to be contacted and, only if you tick the box, technical information shown before sending (browser or phone model, system, app version, language, time zone, screen size, open page). Never the content of your tasks. Only the app's administrators read them.\nBrowser notifications (if you turn them on): the subscription address provided by your browser, deleted when you turn them off or sign out."
     },
     "google": {
       "title": "Google data",
@@ -1241,6 +1242,10 @@
     "settings": {
       "title": "Settings",
       "hint": "Household, account, notifications, language"
+    },
+    "notes": {
+      "title": "Notes",
+      "hint": "Wi-Fi codes, measurements, gift ideas"
     }
   },
   "expenses": {
@@ -1367,5 +1372,36 @@
     "send": "Send request",
     "sent": "Request sent to {name}.",
     "waiting": "Request sent to {name}, waiting for an answer."
+  },
+  "notes": {
+    "title": "Notes",
+    "new": "New note",
+    "edit": "Edit note",
+    "editOne": "Edit “{title}”",
+    "add": "Add",
+    "save": "Save",
+    "delete": "Delete",
+    "close": "Close",
+    "undo": "Undo",
+    "fieldTitle": "Title",
+    "fieldBody": "Content",
+    "fieldPinned": "Pin to the top",
+    "titlePlaceholder": "Wi-Fi code",
+    "bodyPlaceholder": "Network: Home\nPassword: …",
+    "emptyTitle": "No notes yet.",
+    "emptyBody": "Wi-Fi codes, measurements, gift ideas: everything you keep asking each other, in one place.",
+    "created": "Note added",
+    "saved": "Note saved",
+    "deleted": "“{title}” deleted",
+    "copied": "“{title}” copied",
+    "copyFailed": "Couldn’t copy. Select the text by hand.",
+    "pin": "Pin “{title}”",
+    "unpin": "Unpin “{title}”",
+    "pinned": "Pinned",
+    "copy": "Copy “{title}”",
+    "updated": "Edited on {date} by {name}",
+    "someone": "a former member",
+    "offline": "Offline: you can read notes, and edit them once you’re back online.",
+    "conflict": "This note was changed in the meantime. Here is the latest version: check it, then save again."
   }
 }

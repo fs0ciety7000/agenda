@@ -570,4 +570,31 @@
         <item quantity="one">%1$s, %2$s: %3$d task</item>
         <item quantity="other">%1$s, %2$s: %3$d tasks</item>
     </plurals>
+    <string name="notes_title">Notes</string>
+    <string name="notes_hint">Wi-Fi codes, measurements, gift ideas.</string>
+    <string name="notes_new">New note</string>
+    <string name="notes_edit">Edit note</string>
+    <string name="notes_edit_one">Edit “%1$s”</string>
+    <string name="notes_add">Add</string>
+    <string name="notes_save">Save</string>
+    <string name="notes_delete">Delete</string>
+    <string name="notes_field_title">Title</string>
+    <string name="notes_field_body">Content</string>
+    <string name="notes_field_pinned">Pin to the top</string>
+    <string name="notes_empty_title">No notes yet.</string>
+    <string name="notes_empty_body">Wi-Fi codes, measurements, gift ideas: everything you keep asking each other, in one place.</string>
+    <string name="notes_created">Note added</string>
+    <string name="notes_saved">Note saved</string>
+    <string name="notes_deleted">“%1$s” deleted</string>
+    <string name="notes_copied">“%1$s” copied</string>
+    <string name="notes_failed">Couldn’t save. Check your connection.</string>
+    <string name="notes_pin">Pin “%1$s”</string>
+    <string name="notes_unpin">Unpin “%1$s”</string>
+    <string name="notes_copy">Copy “%1$s”</string>
+    <string name="notes_copy_short">Copy</string>
+    <string name="notes_updated">Edited on %1$s by %2$s</string>
+    <string name="notes_someone">a former member</string>
+    <string name="notes_offline">Offline: notes need a connection.</string>
+    <string name="notes_conflict">This note was changed in the meantime. Here is the latest version: check it, then save again.</string>
+    <string name="notes_pinned_meta">Pinned · %1$s</string>
 </resources>

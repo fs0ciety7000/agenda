@@ -15,6 +15,7 @@ const sidebars: SidebarsConfig = {
         'guide/calendrier',
         'guide/courses',
         'guide/depenses',
+        'guide/notes',
         'guide/notifications',
         'guide/email',
         'guide/android',

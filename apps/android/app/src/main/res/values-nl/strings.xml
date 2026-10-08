@@ -567,4 +567,31 @@
         <item quantity="one">%1$s, %2$s: %3$d taak</item>
         <item quantity="other">%1$s, %2$s: %3$d taken</item>
     </plurals>
+    <string name="notes_title">Notities</string>
+    <string name="notes_hint">Wifi-codes, maten, cadeau-ideeën.</string>
+    <string name="notes_new">Nieuwe notitie</string>
+    <string name="notes_edit">Notitie bewerken</string>
+    <string name="notes_edit_one">“%1$s” bewerken</string>
+    <string name="notes_add">Toevoegen</string>
+    <string name="notes_save">Opslaan</string>
+    <string name="notes_delete">Verwijderen</string>
+    <string name="notes_field_title">Titel</string>
+    <string name="notes_field_body">Inhoud</string>
+    <string name="notes_field_pinned">Bovenaan vastzetten</string>
+    <string name="notes_empty_title">Nog geen notities.</string>
+    <string name="notes_empty_body">Wifi-codes, maten, cadeau-ideeën: alles wat jullie elkaar steeds opnieuw vragen, op één plek.</string>
+    <string name="notes_created">Notitie toegevoegd</string>
+    <string name="notes_saved">Notitie opgeslagen</string>
+    <string name="notes_deleted">“%1$s” verwijderd</string>
+    <string name="notes_copied">“%1$s” gekopieerd</string>
+    <string name="notes_failed">Opslaan lukt niet. Controleer je verbinding.</string>
+    <string name="notes_pin">“%1$s” vastzetten</string>
+    <string name="notes_unpin">“%1$s” losmaken</string>
+    <string name="notes_copy">“%1$s” kopiëren</string>
+    <string name="notes_copy_short">Kopiëren</string>
+    <string name="notes_updated">Bewerkt op %1$s door %2$s</string>
+    <string name="notes_someone">een voormalig lid</string>
+    <string name="notes_offline">Offline: notities hebben een verbinding nodig.</string>
+    <string name="notes_conflict">Deze notitie is intussen gewijzigd. Dit is de nieuwste versie: controleer ze en sla opnieuw op.</string>
+    <string name="notes_pinned_meta">Vastgezet · %1$s</string>
 </resources>

@@ -58,5 +58,6 @@ publiée. Voir [App Android](android.md).
 | **Tâches** | Toutes les tâches, avec recherche et filtres (personne, catégorie, priorité, récurrentes…) |
 | **Calendrier** | Vues mois, semaine, jour ; glisser-déposer pour déplacer |
 | **Courses** | Liste de courses partagée |
+| **Notes** | Codes Wi-Fi, mesures, idées cadeaux, partagés (dans **Plus** sur téléphone) |
 | **Bilan** | Ce qui a été fait sur 7 ou 30 jours, par catégorie et par personne |
 | **Réglages** | Foyer, catégories, modèles, notifications, calendrier, compte, données |

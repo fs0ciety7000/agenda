@@ -581,4 +581,31 @@
         <item quantity="many">%1$s, %2$s : %3$d tâches</item>
         <item quantity="other">%1$s, %2$s : %3$d tâches</item>
     </plurals>
+    <string name="notes_title">Notes</string>
+    <string name="notes_hint">Codes Wi-Fi, mesures, idées cadeaux.</string>
+    <string name="notes_new">Nouvelle note</string>
+    <string name="notes_edit">Modifier la note</string>
+    <string name="notes_edit_one">Modifier « %1$s »</string>
+    <string name="notes_add">Ajouter</string>
+    <string name="notes_save">Enregistrer</string>
+    <string name="notes_delete">Supprimer</string>
+    <string name="notes_field_title">Titre</string>
+    <string name="notes_field_body">Contenu</string>
+    <string name="notes_field_pinned">Épingler en haut</string>
+    <string name="notes_empty_title">Aucune note pour l’instant.</string>
+    <string name="notes_empty_body">Codes Wi-Fi, mesures, idées cadeaux : tout ce qu’on se redemande, au même endroit.</string>
+    <string name="notes_created">Note ajoutée</string>
+    <string name="notes_saved">Note enregistrée</string>
+    <string name="notes_deleted">« %1$s » supprimée</string>
+    <string name="notes_copied">« %1$s » copiée</string>
+    <string name="notes_failed">Enregistrement impossible. Vérifiez la connexion.</string>
+    <string name="notes_pin">Épingler « %1$s »</string>
+    <string name="notes_unpin">Désépingler « %1$s »</string>
+    <string name="notes_copy">Copier « %1$s »</string>
+    <string name="notes_copy_short">Copier</string>
+    <string name="notes_updated">Modifiée le %1$s par %2$s</string>
+    <string name="notes_someone">un ancien membre</string>
+    <string name="notes_offline">Hors ligne : les notes demandent une connexion.</string>
+    <string name="notes_conflict">Cette note a été modifiée entre-temps. Voici la dernière version : vérifiez, puis enregistrez à nouveau.</string>
+    <string name="notes_pinned_meta">Épinglée · %1$s</string>
 </resources>

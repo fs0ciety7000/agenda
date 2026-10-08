@@ -76,6 +76,12 @@ for (const scheme of ['light', 'dark'] as const) {
         headers: H,
         data: { id: crypto.randomUUID(), text },
       });
+    for (const data of [
+      { title: 'Wi-Fi', body: 'Réseau : Maison\nCode : 4F7K-29QM', pinned: true },
+      { title: 'Idées cadeaux', body: 'Grace : un livre de cuisine\nNicolas : des gants de vélo' },
+      { title: 'Mesures', body: 'Fenêtre du salon : 120 × 140 cm' },
+    ])
+      await page.request.post(`/v1/households/${hid}/notes`, { headers: H, data });
     await page.request.post(`/v1/households/${hid}/templates`, {
       headers: H,
       data: {
@@ -94,6 +100,7 @@ for (const scheme of ['light', 'dark'] as const) {
       ['cal-day', `/calendar?view=day&date=${today}`],
       ['stats', '/stats'],
       ['expenses', '/expenses'],
+      ['notes', '/notes'],
       ['meals', '/meals'],
       ['more', '/more'],
       ['review', '/review'],

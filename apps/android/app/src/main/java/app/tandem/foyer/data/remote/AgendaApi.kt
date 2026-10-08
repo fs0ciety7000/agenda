@@ -219,6 +219,18 @@ interface AgendaApi {
     @DELETE("v1/households/{h}/absences/{id}")
     suspend fun deleteAbsence(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
 
+    @GET("v1/households/{h}/notes")
+    suspend fun notes(@Path("h") householdId: String): Response<List<NoteDto>>
+
+    @POST("v1/households/{h}/notes")
+    suspend fun createNote(@Path("h") householdId: String, @Body body: NoteBody): Response<NoteDto>
+
+    @PATCH("v1/households/{h}/notes/{id}")
+    suspend fun updateNote(@Path("h") householdId: String, @Path("id") id: String, @Body body: UpdateNoteBody): Response<NoteDto>
+
+    @DELETE("v1/households/{h}/notes/{id}")
+    suspend fun deleteNote(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
+
     @GET("v1/households/{h}/expenses")
     suspend fun expenses(@Path("h") householdId: String, @Query("month") month: String): Response<List<ExpenseDto>>
 

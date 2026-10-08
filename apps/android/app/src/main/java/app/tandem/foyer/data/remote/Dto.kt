@@ -265,6 +265,32 @@ data class AbsenceDto(val id: String, val memberId: String, val startDate: Strin
 @Serializable
 data class CreateAbsenceBody(val memberId: String, val startDate: String, val endDate: String)
 
+/** Note partagée du foyer (cf. packages/contracts/src/notes.ts). */
+@Serializable
+data class NoteDto(
+    val id: String,
+    val title: String,
+    val body: String = "",
+    val pinned: Boolean = false,
+    val createdById: String? = null,
+    val updatedById: String? = null,
+    val createdAt: String,
+    val updatedAt: String,
+    val version: Int,
+)
+
+@Serializable
+data class NoteBody(val title: String, val body: String, val pinned: Boolean)
+
+/** Champs absents = inchangés (`explicitNulls = false`). */
+@Serializable
+data class UpdateNoteBody(
+    val title: String? = null,
+    val body: String? = null,
+    val pinned: Boolean? = null,
+    val version: Int,
+)
+
 /** Commentaire sur une tâche (cf. packages/contracts/src/comments.ts). */
 @Serializable
 data class CommentDto(val id: String, val authorId: String? = null, val body: String, val createdAt: String)

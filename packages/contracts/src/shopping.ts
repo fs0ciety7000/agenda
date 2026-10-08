@@ -75,5 +75,6 @@ export const RealtimeTopic = z.enum([
   'comments',
   'meals',
   'expenses',
+  'notes',
 ]);
 export type RealtimeTopic = z.infer<typeof RealtimeTopic>;

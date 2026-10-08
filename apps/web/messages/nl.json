@@ -17,7 +17,8 @@
     "shopping": "Boodschappen",
     "meals": "Maaltijden",
     "expenses": "Uitgaven",
-    "more": "Meer"
+    "more": "Meer",
+    "notes": "Notities"
   },
   "auth": {
     "loginTitle": "Welkom terug",
@@ -547,7 +548,7 @@
     },
     "data": {
       "title": "Verwerkte gegevens",
-      "body": "Account: voornaam, e-mailadres, wachtwoord (alleen als Argon2-hash, nooit leesbaar), taal.\nHuishouden: naam van het huishouden, leden, categorieën, uitnodigingen, boodschappenlijst.\nTaken: titels, notities, datums, tijden, duur, verantwoordelijken, herhalingen, status, subtaken, reacties, ruilverzoeken (met het berichtje), opgegeven afwezigheden, activiteitengeschiedenis (wie wat deed, en wanneer).\nUitgaven (als je ze gebruikt): bedrag, datum, omschrijving, categorie, opmerking, wie betaalde en ieders aandeel. Een persoonlijke uitgave zie alleen jij. Een toegevoegd kasticket (foto of pdf) wordt bij de uitgave bewaard en samen met haar verwijderd.\nSessies: apparaat (browser of app) en aanmeldingsdatums, zodat je op afstand kunt afmelden. Android-app: de meldingsidentificatie van de telefoon (als directe meldingen aan staan), verwijderd bij het afmelden.\nDe Android-app bewaart een kopie van je taken op de telefoon om offline te werken; die wordt gewist bij het afmelden.\nToevoegen per e-mail (als je het inschakelt): de afzender, het onderwerp en de tekst van e-mails die je naar je persoonlijke adres doorstuurt, worden opgeslagen in de notities van de aangemaakte taak. Ze worden ontvangen door Resend, onze e-mailprovider; hun bijlagen worden aan de taak toegevoegd.\nBijlagen: bestanden die je aan een taak toevoegt (of die bij een doorgestuurde e-mail zaten) worden met de taak op onze server bewaard, zijn zichtbaar voor de leden van het huishouden (alleen voor jou bij een persoonlijke taak) en worden samen met de taak verwijderd.\nMeldingen van problemen (als je er stuurt): het type, de titel en de tekst van je bericht, een schermafbeelding als je die toevoegt, of je gecontacteerd mag worden en, alleen als je het vakje aanvinkt, technische informatie die vóór het verzenden wordt getoond (browser of telefoonmodel, systeem, appversie, taal, tijdzone, schermgrootte, geopende pagina). Nooit de inhoud van je taken. Alleen de beheerders van de app lezen ze.\nBrowsermeldingen (als je ze inschakelt): het abonnementsadres dat je browser geeft, verwijderd wanneer je ze uitschakelt of afmeldt."
+      "body": "Account: voornaam, e-mailadres, wachtwoord (alleen als Argon2-hash, nooit leesbaar), taal.\nHuishouden: naam van het huishouden, leden, categorieën, uitnodigingen, boodschappenlijst, gedeelde notities (titel, inhoud, wie ze schreef).\nTaken: titels, notities, datums, tijden, duur, verantwoordelijken, herhalingen, status, subtaken, reacties, ruilverzoeken (met het berichtje), opgegeven afwezigheden, activiteitengeschiedenis (wie wat deed, en wanneer).\nUitgaven (als je ze gebruikt): bedrag, datum, omschrijving, categorie, opmerking, wie betaalde en ieders aandeel. Een persoonlijke uitgave zie alleen jij. Een toegevoegd kasticket (foto of pdf) wordt bij de uitgave bewaard en samen met haar verwijderd.\nSessies: apparaat (browser of app) en aanmeldingsdatums, zodat je op afstand kunt afmelden. Android-app: de meldingsidentificatie van de telefoon (als directe meldingen aan staan), verwijderd bij het afmelden.\nDe Android-app bewaart een kopie van je taken op de telefoon om offline te werken; die wordt gewist bij het afmelden.\nToevoegen per e-mail (als je het inschakelt): de afzender, het onderwerp en de tekst van e-mails die je naar je persoonlijke adres doorstuurt, worden opgeslagen in de notities van de aangemaakte taak. Ze worden ontvangen door Resend, onze e-mailprovider; hun bijlagen worden aan de taak toegevoegd.\nBijlagen: bestanden die je aan een taak toevoegt (of die bij een doorgestuurde e-mail zaten) worden met de taak op onze server bewaard, zijn zichtbaar voor de leden van het huishouden (alleen voor jou bij een persoonlijke taak) en worden samen met de taak verwijderd.\nMeldingen van problemen (als je er stuurt): het type, de titel en de tekst van je bericht, een schermafbeelding als je die toevoegt, of je gecontacteerd mag worden en, alleen als je het vakje aanvinkt, technische informatie die vóór het verzenden wordt getoond (browser of telefoonmodel, systeem, appversie, taal, tijdzone, schermgrootte, geopende pagina). Nooit de inhoud van je taken. Alleen de beheerders van de app lezen ze.\nBrowsermeldingen (als je ze inschakelt): het abonnementsadres dat je browser geeft, verwijderd wanneer je ze uitschakelt of afmeldt."
     },
     "google": {
       "title": "Google-gegevens",
@@ -1241,6 +1242,10 @@
     "settings": {
       "title": "Instellingen",
       "hint": "Huishouden, account, meldingen, taal"
+    },
+    "notes": {
+      "title": "Notities",
+      "hint": "Wifi-codes, maten, cadeau-ideeën"
     }
   },
   "expenses": {
@@ -1367,5 +1372,36 @@
     "send": "Vraag versturen",
     "sent": "Vraag verstuurd naar {name}.",
     "waiting": "Vraag verstuurd naar {name}, wachten op antwoord."
+  },
+  "notes": {
+    "title": "Notities",
+    "new": "Nieuwe notitie",
+    "edit": "Notitie bewerken",
+    "editOne": "“{title}” bewerken",
+    "add": "Toevoegen",
+    "save": "Opslaan",
+    "delete": "Verwijderen",
+    "close": "Sluiten",
+    "undo": "Ongedaan maken",
+    "fieldTitle": "Titel",
+    "fieldBody": "Inhoud",
+    "fieldPinned": "Bovenaan vastzetten",
+    "titlePlaceholder": "Wifi-code",
+    "bodyPlaceholder": "Netwerk: Thuis\nWachtwoord: …",
+    "emptyTitle": "Nog geen notities.",
+    "emptyBody": "Wifi-codes, maten, cadeau-ideeën: alles wat jullie elkaar steeds opnieuw vragen, op één plek.",
+    "created": "Notitie toegevoegd",
+    "saved": "Notitie opgeslagen",
+    "deleted": "“{title}” verwijderd",
+    "copied": "“{title}” gekopieerd",
+    "copyFailed": "Kopiëren lukt niet. Selecteer de tekst zelf.",
+    "pin": "“{title}” vastzetten",
+    "unpin": "“{title}” losmaken",
+    "pinned": "Vastgezet",
+    "copy": "“{title}” kopiëren",
+    "updated": "Bewerkt op {date} door {name}",
+    "someone": "een voormalig lid",
+    "offline": "Offline: je kunt notities lezen, en ze bewerken zodra je weer online bent.",
+    "conflict": "Deze notitie is intussen gewijzigd. Dit is de nieuwste versie: controleer ze en sla opnieuw op."
   }
 }

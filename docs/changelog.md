@@ -15,6 +15,13 @@ d'elle-même (ou via Google Play).
 
 ## 8 octobre 2026
 
+### Notes partagées (#89)
+
+- ✨ **Notes** (site et Android, dans « Plus ») : codes Wi-Fi, mesures, idées cadeaux. Épingler,
+  copier en un geste, modifier à deux ; si l'autre a modifié entre-temps, sa version s'affiche.
+- 🐞 Android : les boutons flottants (« + », « Dépense ») prennent la couleur de Tandem au lieu
+  d'un violet par défaut.
+
 ### Qui fait quoi cette semaine (#88)
 
 - ✨ **Tableau « Qui fait quoi »** sur Aujourd'hui (site et Android) : les 7 prochains jours,

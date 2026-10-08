@@ -7,6 +7,7 @@ import {
   type LucideIcon,
   Settings,
   Sparkles,
+  StickyNote,
   UtensilsCrossed,
   Wallet,
 } from 'lucide-react';
@@ -15,10 +16,11 @@ import { useTranslations } from 'next-intl';
 
 const LINKS: {
   href: string;
-  key: 'expenses' | 'meals' | 'stats' | 'review' | 'history' | 'settings';
+  key: 'expenses' | 'notes' | 'meals' | 'stats' | 'review' | 'history' | 'settings';
   icon: LucideIcon;
 }[] = [
   { href: '/expenses', key: 'expenses', icon: Wallet },
+  { href: '/notes', key: 'notes', icon: StickyNote },
   { href: '/meals', key: 'meals', icon: UtensilsCrossed },
   { href: '/stats', key: 'stats', icon: BarChart3 },
   { href: '/review', key: 'review', icon: Sparkles },
