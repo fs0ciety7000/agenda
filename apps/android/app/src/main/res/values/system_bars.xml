@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Barre de navigation avant Android 10 (pas de contraste automatique) : voile clair. -->
+    <color name="system_nav_bar">#E6FFFFFF</color>
+</resources>

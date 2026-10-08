@@ -104,6 +104,7 @@ UI (Compose) ──▶ ViewModel ──▶ AgendaRepository
 | « Continuer avec Google » | Custom Tab sur le site + retour `app.tandem.foyer://auth?code=…`, code à usage unique (2 min) échangé avec un verifier PKCE resté dans l'app | Aucun nouveau client OAuth ni URI dans la console Google ; une app qui intercepterait le lien ne peut rien en faire sans le verifier |
 | Récurrence sur mobile | Préréglages + « chacun son tour » | Rotations avancées (séquences, jours fixes) restent sur le web |
 | Base locale | Room, migration destructive | C'est un cache ; migrations obligatoires dès que le schéma change en production (sinon l'outbox non envoyée serait perdue) |
+| Bord à bord | Thème `Theme.Tandem` (barres transparentes, voile de navigation avant Android 10, mode encoche `shortEdges`) + `WindowCompat.setDecorFitsSystemWindows(false)` avant Android 15 ; pas d'`enableEdgeToEdge()` | Celui-ci appelle `Window.setStatusBarColor`, `setNavigationBarColor` et `layoutInDisplayCutoutMode`, obsolètes depuis Android 15 et signalés par Google Play. Vérifier : `dexdump -d` sur l'APK `play` minifié, aucune occurrence |
 | En-tête `User-Agent` | `Tandem-Android/<version> (Android <n°>)` | « Appareils connectés » reconnaît l'app et sa version ; pas de modèle de téléphone (donnée inutile) |
 | Tests d'interface | Robolectric (JVM) + émulateur | Robolectric à chaque PR Android (rapide, captures) ; émulateur à la demande (SQLite, Keystore, lancement réels) |
 

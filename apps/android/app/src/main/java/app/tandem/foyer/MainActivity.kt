@@ -6,9 +6,9 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.core.view.WindowCompat
 import app.tandem.foyer.data.AppLanguage
 import app.tandem.foyer.notifications.ReminderScheduler
 import app.tandem.foyer.ui.navigation.AppNavHost
@@ -52,7 +52,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        // Bord à bord : le contenu passe sous les barres système, dont les couleurs viennent du
+        // thème (res/values*/themes.xml). Pas d'enableEdgeToEdge(), qui appelle des API rendues
+        // obsolètes par Android 15 (signalées par Google Play). Android 15+ l'impose de lui-même.
+        if (android.os.Build.VERSION.SDK_INT < 35) WindowCompat.setDecorFitsSystemWindows(window, false)
         handle(intent)
         val container = (application as AgendaApplication).container
         setContent {

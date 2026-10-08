@@ -15,6 +15,11 @@ d'elle-même (ou via Google Play).
 
 ## 8 octobre 2026
 
+### Affichage bord à bord sans API obsolètes (#91)
+
+- ⚙️ App Android : l'affichage sous les barres système n'utilise plus les fonctions qu'Android 15
+  a rendues obsolètes (avertissements de Google Play). Rien ne change à l'écran.
+
 ### Tiroir « Plus » et déconnexion des autres appareils (#90)
 
 - 🛠 **Barre du bas** (téléphone, site et Android) : **Plus** ouvre un tiroir avec toutes les
