@@ -109,7 +109,7 @@ Fiabilité et sécurité :
 - [ ] **Budget de performance en CI** (Lighthouse ≥ 90 sur `/login` et `/`) (S)
 - [x] **Déconnecter les autres appareils d'un coup** (demande de l'utilisateur) (S) ⚙️🌐🤖 (#90)
 - [x] **Avertissement Google Play (0.3.58)** : `androidx.fragment` 1.1.0, tiré par Firebase Messaging, signalé obsolète ; forcé en 1.8.9 (S) 🤖 (#89)
-- [ ] **Avertissements Google Play bord à bord (0.3.58)** : l'app appelle déjà `enableEdgeToEdge()` et gère les encarts ; identifier, dans le détail de l'avertissement de la Play Console, les classes qui utilisent les API obsolètes d'Android 15 (probablement le code de compatibilité d'`androidx.activity`), puis les remplacer ou mettre la bibliothèque à jour (S) 🤖
+- [x] **Avertissements Google Play bord à bord (0.3.58)** : les API obsolètes d'Android 15 (`Window.setStatusBarColor`, `setNavigationBarColor`, `layoutInDisplayCutoutMode`) venaient d'`enableEdgeToEdge()` (`androidx.activity`, classes `EdgeToEdgeApi26/29/35`) ; remplacé par un thème (barres transparentes, mode encoche) et `WindowCompat` avant Android 15 ; plus aucun appel dans la version Play minifiée (S) 🤖 (#91)
 
 Navigation (demande de l'utilisateur) :
 
