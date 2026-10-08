@@ -1247,6 +1247,104 @@
         "security": []
       }
     },
+    "/v1/me/sessions": {
+      "get": {
+        "description": "Appareils connectés : connexions actives, la plus récemment utilisée d'abord.",
+        "operationId": "SessionsController_list_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DeviceSessionDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Appareils connectés ",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/me/sessions/{id}": {
+      "delete": {
+        "operationId": "SessionsController_revoke_v1",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Déconnecter un appareil à distance (le sien compris)",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
     "/v1/households": {
       "post": {
         "operationId": "HouseholdsController_create_v1",
@@ -8123,6 +8221,71 @@
         ]
       }
     },
+    "/v1/households/{householdId}/expenses/budget/categories": {
+      "put": {
+        "operationId": "ExpensesController_categoryBudgets_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpenseCategoryBudgetsInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Budgets mensuels par catégorie (remplacent les précédents)",
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
     "/v1/households/{householdId}/expenses/settle": {
       "post": {
         "operationId": "ExpensesController_settle_v1",
@@ -12322,6 +12485,55 @@
           }
         }
       },
+      "DeviceSessionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "ANDROID_APP",
+              "BROWSER",
+              "OTHER"
+            ]
+          },
+          "browser": {
+            "nullable": true,
+            "type": "string"
+          },
+          "os": {
+            "nullable": true,
+            "type": "string"
+          },
+          "appVersion": {
+            "nullable": true,
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string"
+          },
+          "lastUsedAt": {
+            "type": "string"
+          },
+          "current": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "browser",
+          "os",
+          "appVersion",
+          "createdAt",
+          "lastUsedAt",
+          "current"
+        ],
+        "additionalProperties": false
+      },
       "ExpenseBudgetInput": {
         "type": "object",
         "properties": {
@@ -12334,6 +12546,46 @@
         },
         "required": [
           "budgetCents"
+        ]
+      },
+      "ExpenseCategoryBudgetsInput": {
+        "type": "object",
+        "properties": {
+          "budgets": {
+            "maxItems": 9,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "GROCERIES",
+                    "HOUSING",
+                    "UTILITIES",
+                    "TRANSPORT",
+                    "LEISURE",
+                    "HEALTH",
+                    "KIDS",
+                    "GIFTS",
+                    "OTHER"
+                  ]
+                },
+                "budgetCents": {
+                  "type": "integer",
+                  "minimum": 1,
+                  "maximum": 10000000
+                }
+              },
+              "required": [
+                "category",
+                "budgetCents"
+              ]
+            }
+          }
+        },
+        "required": [
+          "budgets"
         ]
       },
       "ExpenseDto": {
@@ -12753,6 +13005,38 @@
             "type": "integer",
             "minimum": -9007199254740991,
             "maximum": 9007199254740991
+          },
+          "categoryBudgets": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "category": {
+                  "type": "string",
+                  "enum": [
+                    "GROCERIES",
+                    "HOUSING",
+                    "UTILITIES",
+                    "TRANSPORT",
+                    "LEISURE",
+                    "HEALTH",
+                    "KIDS",
+                    "GIFTS",
+                    "OTHER"
+                  ]
+                },
+                "budgetCents": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                }
+              },
+              "required": [
+                "category",
+                "budgetCents"
+              ],
+              "additionalProperties": false
+            }
           }
         },
         "required": [
@@ -12763,7 +13047,8 @@
           "members",
           "transfers",
           "byCategory",
-          "budgetCents"
+          "budgetCents",
+          "categoryBudgets"
         ],
         "additionalProperties": false
       },
@@ -13462,6 +13747,10 @@
                   "minimum": -9007199254740991,
                   "maximum": 9007199254740991
                 },
+                "category": {
+                  "nullable": true,
+                  "type": "string"
+                },
                 "daysLeft": {
                   "nullable": true,
                   "type": "integer",
@@ -13485,6 +13774,7 @@
                 "level",
                 "amountCents",
                 "budgetCents",
+                "category",
                 "daysLeft"
               ],
               "additionalProperties": false

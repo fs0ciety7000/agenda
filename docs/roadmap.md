@@ -104,9 +104,11 @@ Vie à deux :
 
 Fiabilité et sécurité :
 
-- [ ] **Journal des connexions** (appareils, dernière activité, déconnexion à distance) (M)
+- [x] **Journal des connexions** (appareils, dernière activité, déconnexion à distance) (M) ⚙️🌐🤖 (#89)
 - [ ] **Sauvegarde exportable** du foyer (JSON) et restauration sur une autre instance (M)
 - [ ] **Budget de performance en CI** (Lighthouse ≥ 90 sur `/login` et `/`) (S)
+- [x] **Avertissement Google Play (0.3.58)** : `androidx.fragment` 1.1.0, tiré par Firebase Messaging, signalé obsolète ; forcé en 1.8.9 (S) 🤖 (#89)
+- [ ] **Avertissements Google Play bord à bord (0.3.58)** : l'app appelle déjà `enableEdgeToEdge()` et gère les encarts ; identifier, dans le détail de l'avertissement de la Play Console, les classes qui utilisent les API obsolètes d'Android 15 (probablement le code de compatibilité d'`androidx.activity`), puis les remplacer ou mettre la bibliothèque à jour (S) 🤖
 
 ### Propositions de design
 

@@ -20,3 +20,4 @@ export * from './expenses';
 export * from './swaps';
 export * from './notes';
 export * from './important-dates';
+export * from './sessions';

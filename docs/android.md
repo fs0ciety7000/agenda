@@ -16,7 +16,7 @@ métier propre à Android : les règles (récurrence, rotation, quick add) reste
 | **Dépenses** (onglet Plus) | Qui doit quoi et « Enregistrer le remboursement », totaux du mois (communes, part de chacun, mes dépenses perso), liste par jour ; ajouter, modifier, supprimer (montant, quoi, date, payé par, pour qui : commune / pour l'autre / perso, catégorie, commentaire). Parts à la main, **Chaque mois** (charges fixes, à arrêter depuis la liste), **ticket** (photo ou PDF, ouvert par l'app adaptée). « Noter la dépense » après **Vider le panier** dans les Courses. **Budget** du mois (jauge, alerte à 80 % et 100 % par notification), budgets par catégorie (jauges ; réglés sur le site), **Sur 6 mois**, **Exporter** (CSV partagé vers une autre app). En ligne seulement ; les proportions se règlent sur le site |
 | **Notes** (onglet Plus) | Notes partagées du foyer (`ui/notes/NotesScreen.kt`, `NotesRemote`) : liste épinglées d'abord, ajouter, modifier, épingler (étoile), copier, supprimer ; conflit de version affiché dans la feuille. En ligne seulement, mise à jour en direct (sujet `notes`) |
 | **Dates** (onglet Plus) | Dates importantes (`ui/dates/DatesScreen.kt`, `DatesRemote`) : les plus proches d'abord, âge, rappel ; feuille d'édition (sélecteur de date, « Chaque année », « Année connue », rappel). « Bientôt » sur Aujourd'hui (14 jours). En ligne seulement, en direct (sujet `dates`) ; notification `IMPORTANT_DATE` |
-| **Plus** | Dépenses, Notes, Dates importantes, Journal et corbeille, Absences, Signaler un problème ; puis les réglages : foyer et membres, état du calendrier partagé (Google), rappels, compte, déconnexion |
+| **Plus** | Dépenses, Notes, Dates importantes, Journal et corbeille, Absences, Signaler un problème ; puis les réglages : foyer et membres, état du calendrier partagé (Google), rappels, compte (**Appareils connectés** : liste et déconnexion à distance, `DevicesRemote`, en ligne), déconnexion |
 
 - **Ajout rapide** (bouton +) : « Sortir les poubelles mardi 20h Nicolas », aperçu analysé par l'API.
 - **Formulaire** : titre, date, heure, durée, responsables, répétition et tour de rôle (mêmes
@@ -104,6 +104,7 @@ UI (Compose) ──▶ ViewModel ──▶ AgendaRepository
 | « Continuer avec Google » | Custom Tab sur le site + retour `app.tandem.foyer://auth?code=…`, code à usage unique (2 min) échangé avec un verifier PKCE resté dans l'app | Aucun nouveau client OAuth ni URI dans la console Google ; une app qui intercepterait le lien ne peut rien en faire sans le verifier |
 | Récurrence sur mobile | Préréglages + « chacun son tour » | Rotations avancées (séquences, jours fixes) restent sur le web |
 | Base locale | Room, migration destructive | C'est un cache ; migrations obligatoires dès que le schéma change en production (sinon l'outbox non envoyée serait perdue) |
+| En-tête `User-Agent` | `Tandem-Android/<version> (Android <n°>)` | « Appareils connectés » reconnaît l'app et sa version ; pas de modèle de téléphone (donnée inutile) |
 | Tests d'interface | Robolectric (JVM) + émulateur | Robolectric à chaque PR Android (rapide, captures) ; émulateur à la demande (SQLite, Keystore, lancement réels) |
 
 ## 4. Construire et installer

@@ -549,7 +549,7 @@
     },
     "data": {
       "title": "Data processed",
-      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list, shared notes (title, content, who wrote them), important dates (title, day, month and optional year; they may concern relatives, such as a birthday).\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, sub-tasks, comments, turn-swap requests (with any note), declared absences, activity history (who did what, when).\nExpenses (if you use them): amount, date, label, category, comment, who paid and each person's share. A personal expense is visible to you only. An attached receipt (photo or PDF) is kept with the expense and deleted with it.\nSessions: device (browser or app) and sign-in dates, so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; their attachments are added to the task.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it.\nReports (if you send any): the type, title and text of your message, a screenshot if you attach one, whether you agree to be contacted and, only if you tick the box, technical information shown before sending (browser or phone model, system, app version, language, time zone, screen size, open page). Never the content of your tasks. Only the app's administrators read them.\nBrowser notifications (if you turn them on): the subscription address provided by your browser, deleted when you turn them off or sign out."
+      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list, shared notes (title, content, who wrote them), important dates (title, day, month and optional year; they may concern relatives, such as a birthday).\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, sub-tasks, comments, turn-swap requests (with any note), declared absences, activity history (who did what, when).\nExpenses (if you use them): amount, date, label, category, comment, who paid and each person's share. A personal expense is visible to you only. An attached receipt (photo or PDF) is kept with the expense and deleted with it.\nSessions: device (browser and system, or Android app version), sign-in date and last activity, shown in “Signed-in devices” so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; their attachments are added to the task.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it.\nReports (if you send any): the type, title and text of your message, a screenshot if you attach one, whether you agree to be contacted and, only if you tick the box, technical information shown before sending (browser or phone model, system, app version, language, time zone, screen size, open page). Never the content of your tasks. Only the app's administrators read them.\nBrowser notifications (if you turn them on): the subscription address provided by your browser, deleted when you turn them off or sign out."
     },
     "google": {
       "title": "Google data",
@@ -1459,5 +1459,16 @@
     "offline": "Offline: you can read dates, and edit them once you’re back online.",
     "soon": "Coming up",
     "seeAll": "All dates"
+  },
+  "devices": {
+    "title": "Signed-in devices",
+    "hint": "Where your account is open. A lost or shared device? Sign it out from here.",
+    "androidApp": "Android app",
+    "unknown": "Unknown browser",
+    "current": "This device",
+    "activity": "Active {last} · signed in {since}",
+    "revoke": "Sign out",
+    "revokeOne": "Sign out {device}",
+    "revoked": "{device} is signed out."
   }
 }

@@ -519,3 +519,17 @@ data class SwapListDto(val incoming: List<SwapDto> = emptyList(), val outgoing: 
 
 @Serializable
 data class SwapRequestBody(val toMemberId: String, val note: String? = null)
+
+/** Connexion active du compte (cf. packages/contracts/src/sessions.ts). */
+@Serializable
+data class DeviceSessionDto(
+    val id: String,
+    /** ANDROID_APP, BROWSER ou OTHER. */
+    val kind: String = "OTHER",
+    val browser: String? = null,
+    val os: String? = null,
+    val appVersion: String? = null,
+    val createdAt: String,
+    val lastUsedAt: String,
+    val current: Boolean = false,
+)

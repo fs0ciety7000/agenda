@@ -107,7 +107,7 @@ describe('Dépenses : budgets par catégorie', () => {
 
   it('texte de l’alerte avec la catégorie', () => {
     const b = { month: '2026-10', level: 80 as const, amountCents: 32000, budgetCents: 40000 };
-    const clean = (t: string) => t.replace(/[  ]/g, ' ');
+    const clean = (t: string) => t.replace(/[\u00a0\u202f]/g, ' ');
     expect(clean(budgetPushText('fr', { ...b, category: 'GROCERIES' }).body)).toBe(
       'Courses · octobre : 80 % atteint (320,00 € sur 400,00 €)',
     );

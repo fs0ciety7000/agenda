@@ -108,6 +108,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import app.tandem.foyer.ui.quickadd.QuickAddSheet
+import app.tandem.foyer.ui.settings.DeviceSessions
 import app.tandem.foyer.ui.settings.SettingsScreen
 import app.tandem.foyer.ui.shopping.ShoppingScreen
 import app.tandem.foyer.ui.swaps.SwapAsk
@@ -581,6 +582,7 @@ private fun MainScaffold(
                         }
                         AppLanguage.set(activity, tag)
                     },
+                    devices = { DeviceSessions(container.devices, onMessage) },
                 )
             }
             composable("report") {

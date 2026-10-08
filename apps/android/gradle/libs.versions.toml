@@ -22,12 +22,15 @@ androidxTestCore = "1.7.0"
 androidxTestJunit = "1.3.0"
 androidxTestRunner = "1.7.0"
 browser = "1.10.0"
+# Tiré en 1.1.0 (signalée obsolète par Google Play) par play-services-base, via Firebase Messaging.
+fragment = "1.8.9"
 glance = "1.1.1"
 firebaseBom = "34.19.0"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "activityCompose" }
+androidx-fragment = { module = "androidx.fragment:fragment", version.ref = "fragment" }
 androidx-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version.ref = "lifecycle" }
 androidx-lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigation" }

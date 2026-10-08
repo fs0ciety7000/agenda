@@ -651,4 +651,15 @@
     <string name="expenses_category_budget_line">%1$s van %2$s</string>
     <string name="expenses_category_budgets_web">Het budget per categorie stel je in op de website.</string>
     <string name="activity_budget_category">%1$s · %2$s: %3$d%% bereikt (%4$s van %5$s)</string>
+    <string name="devices_title">Aangemelde apparaten</string>
+    <string name="devices_hint">Waar je account open staat. Een verloren of gedeeld apparaat? Meld het hier af.</string>
+    <string name="devices_android_app">Android-app</string>
+    <string name="devices_unknown">Onbekende browser</string>
+    <string name="devices_current">Dit apparaat</string>
+    <string name="devices_activity">Actief %1$s · aangemeld %2$s</string>
+    <string name="devices_revoke">Afmelden</string>
+    <string name="devices_revoke_one">%1$s afmelden</string>
+    <string name="devices_revoked">%1$s is afgemeld.</string>
+    <string name="devices_loading">Apparaten laden…</string>
+    <string name="devices_offline">Voor de lijst met apparaten heb je verbinding nodig.</string>
 </resources>

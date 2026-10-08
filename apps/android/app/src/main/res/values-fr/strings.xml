@@ -670,4 +670,15 @@
     <string name="expenses_category_budget_line">%1$s sur %2$s</string>
     <string name="expenses_category_budgets_web">Les budgets par catégorie se règlent sur le site.</string>
     <string name="activity_budget_category">%1$s · %2$s : %3$d %% atteint (%4$s sur %5$s)</string>
+    <string name="devices_title">Appareils connectés</string>
+    <string name="devices_hint">Là où votre compte est ouvert. Un appareil perdu ou partagé ? Déconnectez-le d’ici.</string>
+    <string name="devices_android_app">App Android</string>
+    <string name="devices_unknown">Navigateur inconnu</string>
+    <string name="devices_current">Cet appareil</string>
+    <string name="devices_activity">Actif %1$s · connecté %2$s</string>
+    <string name="devices_revoke">Déconnecter</string>
+    <string name="devices_revoke_one">Déconnecter %1$s</string>
+    <string name="devices_revoked">%1$s est déconnecté.</string>
+    <string name="devices_loading">Chargement des appareils…</string>
+    <string name="devices_offline">La liste des appareils demande une connexion.</string>
 </resources>

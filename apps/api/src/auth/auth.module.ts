@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthController } from './auth.controller';
+import { SessionsController } from './sessions.controller';
 import { GoogleOidcClient } from './google-oidc.client';
 import { GoogleSignInController } from './google-sign-in.controller';
 import { PasskeysService } from './passkeys.service';
@@ -12,7 +13,7 @@ import { PasswordService } from './password.service';
 import { TokenService } from './token.service';
 
 @Module({
-  controllers: [AuthController, GoogleSignInController],
+  controllers: [AuthController, GoogleSignInController, SessionsController],
   providers: [
     AuthService,
     PasswordService,

@@ -12,6 +12,10 @@ description: Mot de passe, Google, sessions, export et suppression de ses donné
   êtes déconnecté·e de tous vos appareils.
 - **Réglages → Compte** : changer de mot de passe, **se déconnecter de tous les appareils**
   (téléphone perdu).
+- **Appareils connectés** (**Réglages → Compte**, sur le site et sur Android) : chaque appareil
+  où votre compte est ouvert (« Chrome · Windows », « App Android · Android 14 »), avec sa dernière
+  activité et la date de connexion. **Déconnecter** ferme la session de cet appareil seulement ;
+  « Cet appareil » marque celui que vous utilisez. La liste demande une connexion.
 - **Passkeys** (connexion sans mot de passe) : **Réglages → Compte → Ajouter une passkey**, puis
   **Se connecter avec une passkey** sur la page de connexion. La passkey reste sur votre appareil
   (empreinte, visage ou code) ou dans votre trousseau (iCloud, Google) ; l'app ne garde qu'une

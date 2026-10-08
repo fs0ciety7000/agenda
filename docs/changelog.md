@@ -15,6 +15,13 @@ d'elle-même (ou via Google Play).
 
 ## 8 octobre 2026
 
+### Appareils connectés (#89)
+
+- 🔒 **Appareils connectés** (Réglages → Compte, site et Android) : où votre compte est ouvert, la
+  dernière activité de chaque appareil, et **Déconnecter** pour un téléphone perdu ou un ordinateur
+  partagé, sans toucher aux autres.
+- ⚙️ App Android : bibliothèque `androidx.fragment` à jour (avertissement de Google Play).
+
 ### Budget par catégorie (#89)
 
 - ✨ **Budget par catégorie** (Dépenses) : un budget mensuel par catégorie en plus du budget global,

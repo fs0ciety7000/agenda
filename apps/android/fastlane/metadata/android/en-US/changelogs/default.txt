@@ -1,7 +1,8 @@
 New in the More tab: Expenses, Notes and Dates.
 • Expenses: who paid what, "Nicolas owes Grace €42.50", payback in one tap.
-• Custom split, fixed expenses, receipt photo, budget alerts, spreadsheet export.
-• Shared notes (Wi-Fi code, gift ideas); important dates with reminders.
+• Custom split, fixed expenses, receipt photo, category budgets, export.
+• Shared notes; important dates with reminders.
 • Home: "Who does what" over 7 days.
 • Store mode; ask the other to take a task.
-• New look: round checkboxes, tasks in cards.
+• Settings: signed-in devices, remote sign-out.
+• New look: round checkboxes, cards.

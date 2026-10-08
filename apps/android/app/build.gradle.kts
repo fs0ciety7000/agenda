@@ -156,6 +156,8 @@ dependencies {
     implementation(libs.androidx.glance.appwidget)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.messaging)
+    // Remplace fragment 1.1.0 (dépendance de play-services-base), signalée obsolète par Google Play.
+    implementation(libs.androidx.fragment)
     implementation(libs.androidx.glance.material3)
 
     testImplementation(libs.junit)

@@ -17,11 +17,15 @@ import java.util.concurrent.TimeUnit
 val json = Json { ignoreUnknownKeys = true; explicitNulls = false }
 
 /** En-têtes communs : client mobile (jetons dans le corps) + en-tête anti-CSRF exigé par l'API. */
+private val USER_AGENT = "Tandem-Android/${app.tandem.foyer.BuildConfig.VERSION_NAME} (Android ${android.os.Build.VERSION.RELEASE})"
+
 private class DefaultHeadersInterceptor(private val tokens: TokenStore) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val builder = chain.request().newBuilder()
             .header("X-Client", "mobile")
             .header("X-Requested-With", "tandem")
+            // « Appareils connectés » : l'API reconnaît l'app et sa version (pas le modèle du téléphone).
+            .header("User-Agent", USER_AGENT)
         val access = runBlocking { tokens.accessToken() }
         if (access != null && chain.request().header("Authorization") == null) {
             builder.header("Authorization", "Bearer $access")

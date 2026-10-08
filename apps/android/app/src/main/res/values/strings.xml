@@ -654,4 +654,15 @@
     <string name="expenses_category_budget_line">%1$s of %2$s</string>
     <string name="expenses_category_budgets_web">Budgets by category are set on the website.</string>
     <string name="activity_budget_category">%1$s · %2$s: %3$d%% reached (%4$s of %5$s)</string>
+    <string name="devices_title">Signed-in devices</string>
+    <string name="devices_hint">Where your account is open. A lost or shared device? Sign it out from here.</string>
+    <string name="devices_android_app">Android app</string>
+    <string name="devices_unknown">Unknown browser</string>
+    <string name="devices_current">This device</string>
+    <string name="devices_activity">Active %1$s · signed in %2$s</string>
+    <string name="devices_revoke">Sign out</string>
+    <string name="devices_revoke_one">Sign out %1$s</string>
+    <string name="devices_revoked">%1$s is signed out.</string>
+    <string name="devices_loading">Loading devices…</string>
+    <string name="devices_offline">The device list needs a connection.</string>
 </resources>
