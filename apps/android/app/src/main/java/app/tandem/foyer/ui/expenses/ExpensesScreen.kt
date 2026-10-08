@@ -1,6 +1,18 @@
 package app.tandem.foyer.ui.expenses
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -52,7 +64,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -79,12 +94,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import app.tandem.foyer.data.remote.ExpenseBody
 import app.tandem.foyer.data.remote.ExpenseDto
+import app.tandem.foyer.data.remote.ExpenseStatsDto
 import app.tandem.foyer.data.remote.ExpenseSummaryDto
 import app.tandem.foyer.domain.Money
 import app.tandem.foyer.domain.model.Member
 import app.tandem.foyer.ui.components.EmptyState
 import app.tandem.foyer.ui.components.MemberAvatar
 import app.tandem.foyer.ui.components.currentLocale
+import app.tandem.foyer.ui.theme.Tokens
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -102,6 +119,7 @@ data class ExpensesState(
     val items: List<ExpenseDto> = emptyList(),
     val summary: ExpenseSummaryDto? = null,
     val recurring: List<RecurringExpenseDto> = emptyList(),
+    val stats: ExpenseStatsDto? = null,
     val loading: Boolean = true,
     val offline: Boolean = false,
     val saving: Boolean = false,
@@ -127,6 +145,7 @@ class ExpensesViewModel(private val remote: ExpensesRemote) : ViewModel() {
                     items = result?.items ?: it.items,
                     summary = result?.summary ?: it.summary,
                     recurring = result?.recurring ?: it.recurring,
+                    stats = result?.stats ?: it.stats,
                     loading = false,
                     offline = result == null,
                 )
@@ -156,6 +175,10 @@ class ExpensesViewModel(private val remote: ExpensesRemote) : ViewModel() {
     fun stopRecurring(id: String, done: (Boolean) -> Unit) = perform(done) { remote.stopRecurring(id) }
 
     fun deleteReceipt(id: String, done: (Boolean) -> Unit) = perform(done) { remote.deleteReceipt(id) }
+
+    fun setBudget(cents: Long?, done: (Boolean) -> Unit) = perform(done) { remote.setBudget(cents) }
+
+    suspend fun exportCsv(from: String, to: String) = remote.exportCsv(from, to)
 
     suspend fun downloadReceipt(id: String) = remote.downloadReceipt(id)
 
@@ -199,6 +222,8 @@ fun ExpensesScreen(
     val name = { id: String? -> members.firstOrNull { it.id == id }?.displayName ?: former }
     val dayFormat = remember(locale) { DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale) }
     var editing by remember { mutableStateOf<Editing?>(null) }
+    var budgetOpen by rememberSaveable { mutableStateOf(false) }
+    var exportOpen by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(prefillTitle, prefillCategory) {
         if (prefillTitle != null || prefillCategory != null) editing = Editing(null, prefillTitle, prefillCategory)
     }
@@ -217,6 +242,24 @@ fun ExpensesScreen(
         }
     }
     val settledMsg = stringResource(R.string.expenses_settled)
+    val exportChooser = stringResource(R.string.expenses_export_title)
+    // Export : fichier CSV partagé vers l'app choisie (Drive, Sheets, e-mail, Fichiers…).
+    val shareExport: (String, String) -> Unit = { from, to ->
+        scope.launch {
+            val file = vm.exportCsv(from, to) ?: return@launch onMessage(failed)
+            val uri = FileProvider.getUriForFile(context, "${context.packageName}.attachments", file)
+            val send = Intent(Intent.ACTION_SEND)
+                .setType("text/csv")
+                .putExtra(Intent.EXTRA_STREAM, uri)
+                .putExtra(Intent.EXTRA_SUBJECT, file.name)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            try {
+                context.startActivity(Intent.createChooser(send, exportChooser))
+            } catch (_: ActivityNotFoundException) {
+                onMessage(noApp)
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -225,6 +268,13 @@ fun ExpensesScreen(
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
+                    }
+                },
+                actions = {
+                    if (!state.offline) {
+                        TextButton(onClick = { exportOpen = true }, modifier = Modifier.heightIn(min = 48.dp)) {
+                            Text(stringResource(R.string.expenses_export))
+                        }
                     }
                 },
             )
@@ -318,6 +368,7 @@ fun ExpensesScreen(
                                 modifier = Modifier.semantics { heading() },
                             )
                             AmountLine(stringResource(R.string.expenses_common), money(s.commonCents))
+                            BudgetMeter(s.commonCents, s.budgetCents, money, enabled = !state.offline) { budgetOpen = true }
                             s.members.forEach { m ->
                                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                                     members.firstOrNull { it.id == m.memberId }?.let { MemberAvatar(it, 28) }
@@ -335,6 +386,11 @@ fun ExpensesScreen(
                             AmountLine(stringResource(R.string.expenses_mine), money(s.mineCents))
                         }
                     }
+                }
+            }
+            state.stats?.takeIf { st -> st.months.any { it.commonCents > 0 } }?.let { st ->
+                item(key = "trend") {
+                    TrendCard(st, state.month.toString(), money, locale)
                 }
             }
             if (state.recurring.isNotEmpty()) {
@@ -388,6 +444,25 @@ fun ExpensesScreen(
         }
     }
 
+    if (budgetOpen) {
+        BudgetDialog(
+            initial = state.summary?.budgetCents,
+            saving = state.saving,
+            onDismiss = { budgetOpen = false },
+            onSave = { cents -> vm.setBudget(cents) { ok -> if (ok) budgetOpen = false else onMessage(failed) } },
+        )
+    }
+    if (exportOpen) {
+        ExportDialog(
+            month = state.month,
+            onDismiss = { exportOpen = false },
+            onExport = { from, to ->
+                exportOpen = false
+                shareExport(from.toString(), to.toString())
+            },
+        )
+    }
+
     editing?.let { current ->
         ExpenseSheet(
             expense = current.expense,
@@ -425,6 +500,172 @@ fun ExpensesScreen(
             },
         )
     }
+}
+
+/** Budget commun du mois : jauge, reste ou dépassement (en texte, pas seulement en couleur). */
+@Composable
+private fun BudgetMeter(spentCents: Long, budgetCents: Long?, money: (Long) -> String, enabled: Boolean, onEdit: () -> Unit) {
+    val edit = @Composable {
+        TextButton(onClick = onEdit, enabled = enabled, modifier = Modifier.heightIn(min = 48.dp)) {
+            Text(stringResource(if (budgetCents == null) R.string.expenses_budget_set else R.string.expenses_budget_edit))
+        }
+    }
+    if (budgetCents == null || budgetCents <= 0) {
+        edit()
+        return
+    }
+    val level = Money.budgetLevel(spentCents, budgetCents)
+    val percent = Math.round(spentCents * 100.0 / budgetCents).toInt()
+    val warning = if (isSystemInDarkTheme()) Tokens.Dark.warning else Tokens.Light.warning
+    val color = if (level == 100) warning else MaterialTheme.colorScheme.primary
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                stringResource(R.string.expenses_budget_line, money(spentCents), money(budgetCents)),
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.weight(1f),
+            )
+            edit()
+        }
+        LinearProgressIndicator(
+            progress = { (spentCents.toFloat() / budgetCents).coerceIn(0f, 1f) },
+            color = color,
+            trackColor = MaterialTheme.colorScheme.surfaceVariant,
+            modifier = Modifier.fillMaxWidth().height(8.dp).clip(RoundedCornerShape(4.dp)),
+        )
+        Text(
+            if (spentCents > budgetCents) {
+                stringResource(R.string.expenses_budget_over, percent, money(spentCents - budgetCents))
+            } else {
+                stringResource(R.string.expenses_budget_left, percent, money(budgetCents - spentCents))
+            },
+            style = MaterialTheme.typography.bodySmall,
+            color = if (level == 100) color else MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+/** Dépenses communes des derniers mois : une barre par mois, le budget en repère. */
+@Composable
+private fun TrendCard(stats: ExpenseStatsDto, current: String, money: (Long) -> String, locale: java.util.Locale) {
+    val max = maxOf(stats.budgetCents ?: 0L, stats.months.maxOf { it.commonCents }, 1L)
+    val monthFormat = remember(locale) { DateTimeFormatter.ofPattern("MMM yy", locale) }
+    val barColor = MaterialTheme.colorScheme.primary
+    val track = MaterialTheme.colorScheme.surfaceVariant
+    val marker = MaterialTheme.colorScheme.onSurface
+    OutlinedCard(Modifier.fillMaxWidth()) {
+        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Text(
+                pluralStringResource(R.plurals.expenses_trend_title, stats.months.size, stats.months.size),
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.semantics { heading() },
+            )
+            Text(
+                stringResource(R.string.expenses_trend_hint),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            stats.months.forEach { m ->
+                val label = YearMonth.parse(m.month).format(monthFormat)
+                val amount = money(m.commonCents)
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.clearAndSetSemantics { contentDescription = "$label : $amount" },
+                ) {
+                    Text(
+                        label,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = if (m.month == current) FontWeight.SemiBold else null,
+                        modifier = Modifier.widthIn(min = 64.dp),
+                    )
+                    androidx.compose.foundation.layout.BoxWithConstraints(Modifier.weight(1f).height(16.dp)) {
+                        Box(Modifier.fillMaxWidth().height(12.dp).align(Alignment.Center).clip(RoundedCornerShape(6.dp)).background(track))
+                        if (m.commonCents > 0) {
+                            Box(
+                                Modifier.width(maxWidth * (m.commonCents.toFloat() / max)).height(12.dp)
+                                    .align(Alignment.CenterStart).clip(RoundedCornerShape(6.dp)).background(barColor),
+                            )
+                        }
+                        stats.budgetCents?.let { b ->
+                            Box(Modifier.offset(x = maxWidth * (b.toFloat() / max) - 1.dp).width(2.dp).fillMaxHeight().background(marker))
+                        }
+                    }
+                    Text(amount, style = MaterialTheme.typography.bodyMedium)
+                }
+            }
+            stats.budgetCents?.let { b ->
+                Text(
+                    "| " + stringResource(R.string.expenses_trend_budget, money(b)),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun BudgetDialog(initial: Long?, saving: Boolean, onDismiss: () -> Unit, onSave: (Long?) -> Unit) {
+    val locale = currentLocale()
+    var amount by rememberSaveable { mutableStateOf(initial?.let { Money.editable(it, locale) } ?: "") }
+    var invalid by rememberSaveable { mutableStateOf(false) }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.expenses_budget_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                Text(stringResource(R.string.expenses_budget_hint))
+                OutlinedTextField(
+                    value = amount,
+                    onValueChange = { amount = it; invalid = false },
+                    label = { Text(stringResource(R.string.expenses_budget_amount)) },
+                    isError = invalid,
+                    supportingText = if (invalid) ({ Text(stringResource(R.string.expenses_amount_invalid)) }) else null,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                    singleLine = true,
+                )
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = { Money.parseCents(amount)?.let(onSave) ?: run { invalid = true } },
+                enabled = !saving,
+            ) { Text(stringResource(R.string.save)) }
+        },
+        dismissButton = {
+            if (initial != null) {
+                TextButton(onClick = { onSave(null) }, enabled = !saving) { Text(stringResource(R.string.expenses_budget_remove)) }
+            } else {
+                TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) }
+            }
+        },
+    )
+}
+
+/** Export : le mois affiché, depuis janvier, ou les 12 derniers mois. */
+@Composable
+private fun ExportDialog(month: YearMonth, onDismiss: () -> Unit, onExport: (YearMonth, YearMonth) -> Unit) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.expenses_export_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.expenses_export_hint))
+                OutlinedButton(onClick = { onExport(month, month) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.expenses_export_month))
+                }
+                OutlinedButton(onClick = { onExport(month.withMonth(1), month) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.expenses_export_year))
+                }
+                OutlinedButton(onClick = { onExport(month.minusMonths(11), month) }, modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.expenses_export_12))
+                }
+            }
+        },
+        confirmButton = {},
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
 }
 
 @Composable

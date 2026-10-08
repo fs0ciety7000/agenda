@@ -527,4 +527,27 @@
     <string name="expenses_custom_invalid">Les parts doivent faire %1$s au total.</string>
     <string name="shopping_cleared">Panier vidé</string>
     <string name="shopping_note_expense">Noter la dépense</string>
+    <string name="activity_budget">Budget commun · %1$s : %2$d %% atteint (%3$s sur %4$s)</string>
+    <string name="expenses_export">Exporter</string>
+    <string name="expenses_export_title">Exporter en tableur (CSV)</string>
+    <string name="expenses_export_hint">Un fichier pour Excel, LibreOffice ou Google Sheets, à envoyer ou enregistrer. Vos dépenses perso y figurent, pas celles des autres.</string>
+    <string name="expenses_export_month">Ce mois-ci</string>
+    <string name="expenses_export_year">Depuis janvier</string>
+    <string name="expenses_export_12">Les 12 derniers mois</string>
+    <string name="expenses_budget_set">Définir un budget</string>
+    <string name="expenses_budget_edit">Budget</string>
+    <string name="expenses_budget_line">Budget commun : %1$s sur %2$s</string>
+    <string name="expenses_budget_left">%1$d %% · reste %2$s</string>
+    <string name="expenses_budget_over">%1$d %% · %2$s au-delà du budget</string>
+    <string name="expenses_budget_title">Budget mensuel commun</string>
+    <string name="expenses_budget_hint" formatted="false">Pour les dépenses communes du mois. Une notification prévient le foyer à 80 % puis à 100 %.</string>
+    <string name="expenses_budget_amount">Montant par mois (€)</string>
+    <string name="expenses_budget_remove">Enlever le budget</string>
+    <plurals name="expenses_trend_title">
+        <item quantity="one">Sur %1$d mois</item>
+        <item quantity="many">Sur %1$d mois</item>
+        <item quantity="other">Sur %1$d mois</item>
+    </plurals>
+    <string name="expenses_trend_hint">Dépenses communes, mois par mois</string>
+    <string name="expenses_trend_budget">Repère : budget de %1$s</string>
 </resources>

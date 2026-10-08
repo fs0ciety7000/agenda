@@ -7063,6 +7063,203 @@
         ]
       }
     },
+    "/v1/households/{householdId}/expenses/stats": {
+      "get": {
+        "description": "Évolution sur plusieurs mois : dépenses communes, les miennes, par catégorie.",
+        "operationId": "ExpensesController_stats_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "month",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+            }
+          },
+          {
+            "name": "months",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 6,
+              "type": "integer",
+              "minimum": 2,
+              "maximum": 24
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpenseStatsDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Évolution sur plusieurs mois ",
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/expenses/export": {
+      "get": {
+        "operationId": "ExpensesController_export_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Exporter les dépenses en tableur (CSV, dans la langue du compte), de `from` à `to` inclus",
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/expenses/budget": {
+      "put": {
+        "operationId": "ExpensesController_budget_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExpenseBudgetInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Budget mensuel des dépenses communes (alerte à 80 % et à 100 %) ; null pour l'enlever",
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
     "/v1/households/{householdId}/expenses/settle": {
       "post": {
         "operationId": "ExpensesController_settle_v1",
@@ -11262,6 +11459,20 @@
           }
         }
       },
+      "ExpenseBudgetInput": {
+        "type": "object",
+        "properties": {
+          "budgetCents": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000000
+          }
+        },
+        "required": [
+          "budgetCents"
+        ]
+      },
       "ExpenseDto": {
         "type": "object",
         "properties": {
@@ -11474,6 +11685,87 @@
           "title"
         ]
       },
+      "ExpenseStatsDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string"
+          },
+          "budgetCents": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "months": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "month": {
+                  "type": "string",
+                  "pattern": "^\\d{4}-(0[1-9]|1[0-2])$"
+                },
+                "commonCents": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "mineCents": {
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "byCategory": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "category": {
+                        "type": "string",
+                        "enum": [
+                          "GROCERIES",
+                          "HOUSING",
+                          "UTILITIES",
+                          "TRANSPORT",
+                          "LEISURE",
+                          "HEALTH",
+                          "KIDS",
+                          "GIFTS",
+                          "OTHER"
+                        ]
+                      },
+                      "amountCents": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "category",
+                      "amountCents"
+                    ],
+                    "additionalProperties": false
+                  }
+                }
+              },
+              "required": [
+                "month",
+                "commonCents",
+                "mineCents",
+                "byCategory"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "currency",
+          "budgetCents",
+          "months"
+        ],
+        "additionalProperties": false
+      },
       "ExpenseSummaryDto": {
         "type": "object",
         "properties": {
@@ -11592,6 +11884,12 @@
               ],
               "additionalProperties": false
             }
+          },
+          "budgetCents": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
           }
         },
         "required": [
@@ -11601,7 +11899,8 @@
           "mineCents",
           "members",
           "transfers",
-          "byCategory"
+          "byCategory",
+          "budgetCents"
         ],
         "additionalProperties": false
       },
@@ -12029,7 +12328,8 @@
                     "TASK_ASSIGNED",
                     "CALENDAR_SYNC_FAILED",
                     "TASK_COMMENT",
-                    "TASK_THANKS"
+                    "TASK_THANKS",
+                    "EXPENSE_BUDGET"
                   ]
                 },
                 "createdAt": {
@@ -12065,6 +12365,28 @@
                 "code": {
                   "nullable": true,
                   "type": "string"
+                },
+                "month": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "level": {
+                  "nullable": true,
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "amountCents": {
+                  "nullable": true,
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "budgetCents": {
+                  "nullable": true,
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
                 }
               },
               "required": [
@@ -12078,7 +12400,11 @@
                 "date",
                 "recurring",
                 "byName",
-                "code"
+                "code",
+                "month",
+                "level",
+                "amountCents",
+                "budgetCents"
               ],
               "additionalProperties": false
             }
@@ -12099,7 +12425,8 @@
               "TASK_ASSIGNED",
               "CALENDAR_SYNC_FAILED",
               "TASK_COMMENT",
-              "TASK_THANKS"
+              "TASK_THANKS",
+              "EXPENSE_BUDGET"
             ]
           },
           "inApp": {
@@ -15108,7 +15435,8 @@
                     "TASK_ASSIGNED",
                     "CALENDAR_SYNC_FAILED",
                     "TASK_COMMENT",
-                    "TASK_THANKS"
+                    "TASK_THANKS",
+                    "EXPENSE_BUDGET"
                   ]
                 },
                 "inApp": {

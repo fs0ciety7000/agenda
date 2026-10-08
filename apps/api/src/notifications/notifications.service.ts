@@ -19,6 +19,7 @@ export const NOTIFICATION_KINDS: NotificationKind[] = [
   'CALENDAR_SYNC_FAILED',
   'TASK_COMMENT',
   'TASK_THANKS',
+  'EXPENSE_BUDGET',
 ];
 const DEFAULT_PREF = { inApp: true, push: true };
 
@@ -30,6 +31,14 @@ interface AssignedPayload {
   occurrenceId: string;
   byMemberId: string;
   recurring: boolean;
+}
+
+/** Budget commun du mois : seuil atteint (80 ou 100 %), dépensé et budget à ce moment-là. */
+export interface BudgetPayload {
+  month: string;
+  level: 80 | 100;
+  amountCents: number;
+  budgetCents: number;
 }
 
 /**
@@ -127,6 +136,58 @@ export class NotificationsService {
     }
   }
 
+  /**
+   * « 80 % du budget commun d'octobre » : une seule fois par mois, seuil et budget (un budget
+   * modifié peut donc prévenir à nouveau). Pas pour la personne qui vient d'enregistrer la dépense.
+   */
+  async notifyBudget(
+    householdId: string,
+    actorMemberId: string | null,
+    budget: BudgetPayload,
+  ): Promise<void> {
+    const already = await this.prisma.notification.findFirst({
+      where: {
+        type: 'EXPENSE_BUDGET',
+        member: { householdId },
+        AND: [
+          { payload: { path: ['month'], equals: budget.month } },
+          { payload: { path: ['level'], equals: budget.level } },
+          { payload: { path: ['budgetCents'], equals: budget.budgetCents } },
+        ],
+      },
+      select: { id: true },
+    });
+    if (already) return;
+    const members = await this.prisma.householdMember.findMany({
+      where: {
+        householdId,
+        leftAt: null,
+        userId: { not: null },
+        ...(actorMemberId ? { id: { not: actorMemberId } } : {}),
+      },
+      select: { id: true, preferences: { where: { type: 'EXPENSE_BUDGET' } } },
+    });
+    const targets = members
+      .map((m) => ({ id: m.id, pref: m.preferences[0] ?? DEFAULT_PREF }))
+      .filter(({ pref }) => pref.inApp || pref.push);
+    if (!targets.length) return;
+    await this.prisma.notification.createMany({
+      data: targets.map(({ id, pref }) => ({
+        memberId: id,
+        type: 'EXPENSE_BUDGET' as const,
+        payload: { ...budget, push: pref.push } as unknown as Prisma.InputJsonValue,
+      })),
+    });
+    this.events.publish(householdId, 'notifications');
+    const pushIds = targets.filter(({ pref }) => pref.push).map(({ id }) => id);
+    void this.push.wakeMembers(householdId, pushIds);
+    if (this.webPush.enabled && pushIds.length) {
+      void this.webPush.sendToMembers(householdId, pushIds, (locale) =>
+        budgetPushText(locale, budget),
+      );
+    }
+  }
+
   async list(ctx: HouseholdContext, query: NotificationQuery): Promise<NotificationListDto> {
     const prefs = await this.preferencesMap(ctx);
     const visibleTypes = NOTIFICATION_KINDS.filter((k) => prefs[k].inApp || prefs[k].push);
@@ -181,9 +242,8 @@ export class NotificationsService {
         type: r.type as NotificationKind,
         createdAt: r.createdAt.toISOString(),
         readAt: r.readAt?.toISOString() ?? null,
-        push: isTaskNotification(r.type)
-          ? payload.push !== false && prefs[r.type].push
-          : prefs[r.type as NotificationKind].push,
+        // Préférence « push » au moment de la création, et toujours voulue aujourd'hui.
+        push: payload.push !== false && prefs[r.type as NotificationKind].push,
         occurrenceId: occ?.id ?? null,
         title: occ ? (occ.titleOverride ?? occ.task.title) : null,
         date: occ?.date ? occ.date.toISOString().slice(0, 10) : null,
@@ -193,6 +253,10 @@ export class NotificationsService {
             ? (nameById.get(payload.byMemberId) ?? null)
             : null,
         code: typeof payload.code === 'string' ? payload.code : null,
+        month: r.type === 'EXPENSE_BUDGET' ? String(payload.month) : null,
+        level: r.type === 'EXPENSE_BUDGET' ? Number(payload.level) : null,
+        amountCents: r.type === 'EXPENSE_BUDGET' ? Number(payload.amountCents) : null,
+        budgetCents: r.type === 'EXPENSE_BUDGET' ? Number(payload.budgetCents) : null,
       };
     });
     return { unread, items };
@@ -284,4 +348,24 @@ export function webPushText(
     url: `/?open=${occurrenceId}`,
     tag: `occurrence-${occurrenceId}`,
   };
+}
+
+const INTL_LOCALE: Record<Locale, string> = { fr: 'fr-FR', en: 'en-GB', nl: 'nl-BE' };
+
+/** « Budget commun · octobre : 80 % atteint (640,00 € sur 800,00 €) » (comme dans la cloche). */
+export function budgetPushText(locale: Locale, b: BudgetPayload): WebPushMessage {
+  const tag = INTL_LOCALE[locale];
+  const money = (cents: number) =>
+    new Intl.NumberFormat(tag, { style: 'currency', currency: 'EUR' }).format(cents / 100);
+  const month = new Intl.DateTimeFormat(tag, { month: 'long', timeZone: 'UTC' }).format(
+    new Date(`${b.month}-15T12:00:00Z`),
+  );
+  const spent = money(b.amountCents);
+  const budget = money(b.budgetCents);
+  const body = {
+    fr: `Budget commun · ${month} : ${b.level} % atteint (${spent} sur ${budget})`,
+    en: `Shared budget · ${month}: ${b.level}% reached (${spent} of ${budget})`,
+    nl: `Gezamenlijk budget · ${month}: ${b.level}% bereikt (${spent} van ${budget})`,
+  }[locale];
+  return { title: 'Tandem', body, url: '/expenses', tag: `budget-${b.month}` };
 }

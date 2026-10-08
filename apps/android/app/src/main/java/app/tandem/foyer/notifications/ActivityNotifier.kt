@@ -18,7 +18,10 @@ import app.tandem.foyer.data.remote.NotificationDto
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.io.IOException
+import app.tandem.foyer.domain.Money
 import java.time.Instant
+import java.time.YearMonth
+import java.time.format.TextStyle
 
 /**
  * Notifications du foyer (« Nicolas vous a confié… ») affichées sur le téléphone : relevées tout
@@ -50,7 +53,8 @@ class ActivityNotifier(
             return emptyList()
         }
         val toShow = items.filter {
-            it.push && it.readAt == null && (it.type == "CALENDAR_SYNC_FAILED" || it.title != null)
+            it.push && it.readAt == null &&
+                (it.type == "CALENDAR_SYNC_FAILED" || it.type == "EXPENSE_BUDGET" || it.title != null)
         }
         toShow.forEach(::show)
         items.maxOfOrNull { it.createdAt }?.let { prefs.edit().putString(KEY_SINCE, it).apply() }
@@ -72,6 +76,7 @@ class ActivityNotifier(
             )
             "TASK_COMMENT" -> context.getString(R.string.activity_commented, n.byName ?: "?", n.title ?: "")
             "TASK_THANKS" -> context.getString(R.string.activity_thanked, n.byName ?: "?", n.title ?: "")
+            "EXPENSE_BUDGET" -> budgetText(n)
             else -> context.getString(R.string.activity_calendar_failed)
         }
         val open = PendingIntent.getActivity(
@@ -91,6 +96,21 @@ class ActivityNotifier(
                 .setContentIntent(open)
                 .setAutoCancel(true)
                 .build(),
+        )
+    }
+
+    /** « Budget commun · octobre : 80 % atteint (640,00 € sur 800,00 €) », comme sur le site. */
+    private fun budgetText(n: NotificationDto): String {
+        val locale = context.resources.configuration.locales[0]
+        val month = runCatching {
+            YearMonth.parse(n.month).month.getDisplayName(TextStyle.FULL_STANDALONE, locale)
+        }.getOrDefault(n.month.orEmpty())
+        return context.getString(
+            R.string.activity_budget,
+            month,
+            n.level ?: 80,
+            Money.format(n.amountCents ?: 0, locale),
+            Money.format(n.budgetCents ?: 0, locale),
         )
     }
 

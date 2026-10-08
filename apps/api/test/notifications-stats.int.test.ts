@@ -104,6 +104,7 @@ describe('Notifications et statistiques (intégration)', () => {
         { type: 'CALENDAR_SYNC_FAILED', inApp: true, push: true },
         { type: 'TASK_COMMENT', inApp: true, push: true },
         { type: 'TASK_THANKS', inApp: true, push: true },
+        { type: 'EXPENSE_BUDGET', inApp: true, push: true },
       ]);
       await http()
         .put(`${h.base}/notification-preferences`)

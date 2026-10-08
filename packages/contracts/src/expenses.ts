@@ -166,6 +166,8 @@ export const ExpenseSummaryDto = z.object({
   members: z.array(ExpenseMemberSummary),
   transfers: z.array(ExpenseTransfer),
   byCategory: z.array(z.object({ category: ExpenseCategory, amountCents: z.number().int() })),
+  /** Budget mensuel des dépenses communes (null = pas de budget). */
+  budgetCents: z.number().int().nullable(),
 });
 export type ExpenseSummaryDto = z.infer<typeof ExpenseSummaryDto>;
 
@@ -219,3 +221,45 @@ export const RECEIPT_TYPES = [
   'image/heic',
   'application/pdf',
 ];
+
+/** Budget mensuel des dépenses communes : une alerte part à 80 % et à 100 %. null = aucun. */
+export const ExpenseBudgetInput = z.object({ budgetCents: Cents.nullable() });
+export type ExpenseBudgetInput = z.infer<typeof ExpenseBudgetInput>;
+
+/** Évolution sur plusieurs mois, jusqu'à `month` compris. */
+export const ExpenseStatsQuery = z.object({
+  month: IsoMonth,
+  months: z.coerce.number().int().min(2).max(24).default(6),
+});
+export type ExpenseStatsQuery = z.infer<typeof ExpenseStatsQuery>;
+
+export const ExpenseMonthStats = z.object({
+  month: IsoMonth,
+  /** Total des dépenses communes du mois. */
+  commonCents: z.number().int(),
+  /** Mes dépenses personnelles et celles avancées pour moi. */
+  mineCents: z.number().int(),
+  byCategory: z.array(z.object({ category: ExpenseCategory, amountCents: z.number().int() })),
+});
+export type ExpenseMonthStats = z.infer<typeof ExpenseMonthStats>;
+
+export const ExpenseStatsDto = z.object({
+  currency: z.string(),
+  budgetCents: z.number().int().nullable(),
+  /** Du plus ancien au plus récent. */
+  months: z.array(ExpenseMonthStats),
+});
+export type ExpenseStatsDto = z.infer<typeof ExpenseStatsDto>;
+
+/** Export tableur (CSV), de `from` à `to` inclus, cinq ans au plus. */
+export const ExpenseExportQuery = z
+  .object({ from: IsoMonth, to: IsoMonth })
+  .refine((v) => v.from <= v.to, { message: 'from must not be after to', path: ['from'] })
+  .refine(
+    (v) => {
+      const n = (m: string) => Number(m.slice(0, 4)) * 12 + Number(m.slice(5, 7));
+      return n(v.to) - n(v.from) < 60;
+    },
+    { message: 'at most 60 months', path: ['from'] },
+  );
+export type ExpenseExportQuery = z.infer<typeof ExpenseExportQuery>;

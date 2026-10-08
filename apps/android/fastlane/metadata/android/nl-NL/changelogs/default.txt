@@ -3,3 +3,4 @@ Nieuw: Uitgaven (Instellingen → Uitgaven).
 • "Nicolas is Grace € 42,50 schuldig", en de terugbetaling met één tik.
 • Totalen van de maand: gedeelde uitgaven, ieders aandeel, mijn persoonlijke uitgaven.
 • Zelf verdelen, vaste kosten elke maand, kasticket als foto.
+• Gezamenlijk maandbudget met melding, verloop over 6 maanden, export naar spreadsheet.

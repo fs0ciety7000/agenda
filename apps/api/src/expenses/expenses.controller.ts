@@ -21,9 +21,13 @@ import type { Response } from 'express';
 import { AppException } from '../common/app-exception';
 import {
   ATTACHMENT_MAX_BYTES,
+  ExpenseBudgetInput,
   type ExpenseDto,
+  ExpenseExportQuery,
   ExpenseInput,
   ExpensesQuery,
+  ExpenseStatsQuery,
+  type ExpenseStatsDto,
   type ExpenseSummaryDto,
   ExpenseWeightsInput,
   type RecurringExpenseDto,
@@ -66,6 +70,40 @@ export class ExpensesController {
     @Query(new ZodPipe(ExpensesQuery)) query: ExpensesQuery,
   ): Promise<ExpenseSummaryDto> {
     return this.expenses.summary(ctx, query.month);
+  }
+
+  /** Évolution sur plusieurs mois : dépenses communes, les miennes, par catégorie. */
+  @Get('stats')
+  stats(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Query(new ZodPipe(ExpenseStatsQuery)) query: ExpenseStatsQuery,
+  ): Promise<ExpenseStatsDto> {
+    return this.expenses.stats(ctx, query.month, query.months);
+  }
+
+  /** Exporter les dépenses en tableur (CSV, dans la langue du compte), de `from` à `to` inclus. */
+  @Get('export')
+  async export(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Query(new ZodPipe(ExpenseExportQuery)) query: ExpenseExportQuery,
+    @Res() res: Response,
+  ): Promise<void> {
+    const file = await this.expenses.exportCsv(ctx, query.from, query.to);
+    res.setHeader('content-type', 'text/csv; charset=utf-8');
+    res.setHeader('content-disposition', `attachment; filename="${file.filename}"`);
+    res.setHeader('x-content-type-options', 'nosniff');
+    res.setHeader('cache-control', 'private, no-store');
+    res.end(file.body);
+  }
+
+  /** Budget mensuel des dépenses communes (alerte à 80 % et à 100 %) ; null pour l'enlever. */
+  @Put('budget')
+  @HttpCode(204)
+  budget(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Body(new ZodPipe(ExpenseBudgetInput)) body: ExpenseBudgetInput,
+  ): Promise<void> {
+    return this.expenses.setBudget(ctx, body.budgetCents);
   }
 
   /** Enregistrer une dépense (identifiant facultatif : un renvoi ne crée pas de doublon). */

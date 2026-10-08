@@ -40,6 +40,15 @@ d'elle-même (ou via Google Play).
 - ⚙️ Workflow « Google Play — mettre à jour la fiche » : descriptions et captures envoyées
   d'un clic, dans les trois langues.
 
+### Dépenses : budget, évolution, export (#87)
+
+- ✨ **Budget commun du mois** : une jauge « 85 € sur 100 € », et une notification au foyer à
+  80 % puis à 100 % (réglable dans Réglages → Notifications).
+- ✨ **Sur 6 mois** : les dépenses communes mois par mois, avec le budget en repère.
+- ✨ **Exporter** en tableur (CSV pour Excel, LibreOffice ou Google Sheets), dans la langue de
+  votre compte, avec la part de chacun. Sur Android, le fichier se partage vers l'app de votre
+  choix.
+
 ### Instructions de travail
 
 - ⚙️ Fichier `CLAUDE.md`, déroulé de travail et grille d'audit UI/UX (site, app web, Android),

@@ -257,6 +257,26 @@ interface AgendaApi {
     @DELETE("v1/households/{h}/expenses/{id}/receipt")
     suspend fun deleteReceipt(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
 
+    @GET("v1/households/{h}/expenses/stats")
+    suspend fun expenseStats(
+        @Path("h") householdId: String,
+        @Query("month") month: String,
+        @Query("months") months: Int = 6,
+    ): Response<ExpenseStatsDto>
+
+    /** Corps `{ "budgetCents": 12000 }` ou `{ "budgetCents": null }` (null explicite : pas de budget). */
+    @PUT("v1/households/{h}/expenses/budget")
+    suspend fun setExpenseBudget(@Path("h") householdId: String, @Body body: JsonObject): Response<Unit>
+
+    /** Export tableur (CSV, dans la langue du compte), de `from` à `to` inclus. */
+    @Streaming
+    @GET("v1/households/{h}/expenses/export")
+    suspend fun exportExpenses(
+        @Path("h") householdId: String,
+        @Query("from") from: String,
+        @Query("to") to: String,
+    ): Response<ResponseBody>
+
     /** Contenu d'une pièce jointe (téléchargé à la demande, puis ouvert par une autre app). */
     @Streaming
     @GET("v1/households/{h}/attachments/{id}")
