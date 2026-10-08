@@ -6,7 +6,7 @@ description: Qui a payé quoi, la part de chacun, le solde et les remboursements
 # Dépenses
 
 **Dépenses** (menu de gauche sur ordinateur ; **Plus → Dépenses** sur téléphone ; dans l'app
-Android, **Réglages → Dépenses**) : on note ce qu'on paie pour le foyer, et Tandem calcule qui
+Android, onglet **Plus → Dépenses**) : on note ce qu'on paie pour le foyer, et Tandem calcule qui
 doit combien à qui.
 
 ## Ajouter une dépense

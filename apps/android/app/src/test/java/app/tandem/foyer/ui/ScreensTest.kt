@@ -240,7 +240,11 @@ class ScreensTest {
                 push = PushState.Registered,
             )
         }
-        compose.onNodeWithText("✓ Synchronisé avec « Commun G & N »").assertIsDisplayed()
+        // Onglet « Plus » : les pages du foyer (Dépenses en tête) avant les réglages.
+        compose.onNodeWithText("Plus").assertIsDisplayed()
+        compose.onNodeWithText("DÉPENSES").assertIsDisplayed()
+        compose.onNodeWithText("Qui a payé quoi, et qui doit combien.").assertIsDisplayed()
+        compose.onNodeWithText("✓ Synchronisé avec « Commun G & N »").performScrollTo().assertIsDisplayed()
         compose.onNodeWithText("Actives : ce téléphone est enregistré.", substring = true).performScrollTo().assertIsDisplayed()
         shot("settings")
     }

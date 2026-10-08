@@ -79,12 +79,57 @@ fun SettingsScreen(
             .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 32.dp),
     ) {
         Text(
-            stringResource(R.string.nav_settings),
+            stringResource(R.string.nav_more),
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.SemiBold,
             modifier = Modifier.semantics { heading() },
         )
 
+        // Pages du foyer d'abord (comme l'onglet « Plus » du site), puis les réglages.
+        SectionHeader(stringResource(R.string.expenses_title))
+        OutlinedCard(onClick = onOpenExpenses, modifier = Modifier.fillMaxWidth()) {
+            Text(
+                stringResource(R.string.expenses_settings_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp),
+            )
+        }
+
+        SectionHeader(stringResource(R.string.settings_history))
+        OutlinedCard(onClick = onOpenHistory, modifier = Modifier.fillMaxWidth()) {
+            Text(
+                stringResource(R.string.settings_history_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp),
+            )
+        }
+
+        if ((state.household?.members?.size ?: 0) > 1) {
+            SectionHeader(stringResource(R.string.absences_title))
+            OutlinedCard(onClick = onOpenAbsences, modifier = Modifier.fillMaxWidth()) {
+                Text(
+                    stringResource(R.string.absences_hint),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(16.dp),
+                )
+            }
+        }
+
+        SectionHeader(stringResource(R.string.report_section))
+        OutlinedCard(onClick = onOpenReport, modifier = Modifier.fillMaxWidth()) {
+            Text(
+                stringResource(R.string.report_section_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(16.dp),
+            )
+        }
+
+        Text(
+            stringResource(R.string.nav_settings),
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.padding(top = 32.dp).semantics { heading() },
+        )
         SectionHeader(stringResource(R.string.settings_household))
         OutlinedCard(Modifier.fillMaxWidth()) {
             Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -96,15 +141,6 @@ fun SettingsScreen(
                     }
                 }
             }
-        }
-
-        SectionHeader(stringResource(R.string.expenses_title))
-        OutlinedCard(onClick = onOpenExpenses, modifier = Modifier.fillMaxWidth()) {
-            Text(
-                stringResource(R.string.expenses_settings_hint),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(16.dp),
-            )
         }
 
         SectionHeader(stringResource(R.string.settings_calendar))
@@ -139,35 +175,6 @@ fun SettingsScreen(
                     Text(stringResource(R.string.calendar_manage_web))
                 }
             }
-        }
-
-        if ((state.household?.members?.size ?: 0) > 1) {
-            SectionHeader(stringResource(R.string.absences_title))
-            OutlinedCard(onClick = onOpenAbsences, modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    stringResource(R.string.absences_hint),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(16.dp),
-                )
-            }
-        }
-
-        SectionHeader(stringResource(R.string.report_section))
-        OutlinedCard(onClick = onOpenReport, modifier = Modifier.fillMaxWidth()) {
-            Text(
-                stringResource(R.string.report_section_hint),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(16.dp),
-            )
-        }
-
-        SectionHeader(stringResource(R.string.settings_history))
-        OutlinedCard(onClick = onOpenHistory, modifier = Modifier.fillMaxWidth()) {
-            Text(
-                stringResource(R.string.settings_history_hint),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(16.dp),
-            )
         }
 
         SectionHeader(stringResource(R.string.settings_reminders))

@@ -17,6 +17,7 @@
     <string name="nav_today">Vandaag</string>
     <string name="nav_tasks">Taken</string>
     <string name="nav_calendar">Agenda</string>
+    <string name="nav_more">Meer</string>
     <string name="nav_settings">Instellingen</string>
     <string name="quick_add">Snel toevoegen</string>
     <string name="back">Terug</string>

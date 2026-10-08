@@ -1,4 +1,4 @@
-Nieuw: Uitgaven (Instellingen → Uitgaven).
+Nieuw: Uitgaven (tabblad Meer → Uitgaven).
 • Wie wat betaalde: gedeeld, voorgeschoten voor de ander of persoonlijk.
 • "Nicolas is Grace € 42,50 schuldig", en de terugbetaling met één tik.
 • Totalen van de maand: gedeelde uitgaven, ieders aandeel, mijn persoonlijke uitgaven.

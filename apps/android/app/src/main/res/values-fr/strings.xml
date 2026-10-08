@@ -20,6 +20,7 @@
     <string name="nav_today">Aujourd\'hui</string>
     <string name="nav_tasks">Tâches</string>
     <string name="nav_calendar">Calendrier</string>
+    <string name="nav_more">Plus</string>
     <string name="nav_settings">Réglages</string>
     <string name="quick_add">Ajout rapide</string>
     <string name="back">Retour</string>

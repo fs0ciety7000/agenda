@@ -23,7 +23,7 @@ d'elle-même (ou via Google Play).
 - ✨ **Qui doit quoi** : « Nicolas doit 42,50 € à Grace », et **Enregistrer le remboursement**
   pour remettre les compteurs à zéro.
 - ✨ Totaux du mois : dépenses communes, ce que chacun a payé et sa part, mes dépenses perso,
-  par catégorie. Sur le site et dans l'app Android (Réglages → Dépenses).
+  par catégorie. Sur le site et dans l'app Android (Plus → Dépenses).
 - 🛠 Sur téléphone, le dernier onglet du site devient **Plus** : Dépenses, Menus, Bilan, Revue,
   Journal et Réglages.
 - 🔒 Les dépenses perso ne sont visibles que de leur auteur ; toutes les dépenses font partie de
@@ -48,6 +48,8 @@ d'elle-même (ou via Google Play).
 - ✨ **Exporter** en tableur (CSV pour Excel, LibreOffice ou Google Sheets), dans la langue de
   votre compte, avec la part de chacun. Sur Android, le fichier se partage vers l'app de votre
   choix.
+- 🛠 Android : l'onglet **Réglages** devient **Plus**, comme sur le site : Dépenses, Journal,
+  Absences et Signaler un problème en tête, puis les réglages.
 
 ### Instructions de travail
 

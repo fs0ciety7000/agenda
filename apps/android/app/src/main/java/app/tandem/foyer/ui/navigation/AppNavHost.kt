@@ -33,7 +33,7 @@ import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -163,7 +163,7 @@ private enum class Tab(val route: String, val label: Int) {
     TASKS("tasks", R.string.nav_tasks),
     SHOPPING("shopping", R.string.nav_shopping),
     CALENDAR("calendar", R.string.nav_calendar),
-    SETTINGS("settings", R.string.nav_settings),
+    SETTINGS("settings", R.string.nav_more),
 }
 
 @Composable
@@ -420,7 +420,7 @@ private fun MainScaffold(
                                         Tab.TASKS -> Icons.AutoMirrored.Filled.List
                                         Tab.SHOPPING -> Icons.Filled.ShoppingCart
                                         Tab.CALENDAR -> Icons.Filled.DateRange
-                                        Tab.SETTINGS -> Icons.Filled.Settings
+                                        Tab.SETTINGS -> Icons.Filled.Menu
                                     },
                                     contentDescription = null,
                                 )

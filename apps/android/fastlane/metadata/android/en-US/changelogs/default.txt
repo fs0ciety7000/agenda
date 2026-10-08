@@ -1,4 +1,4 @@
-New: Expenses (Settings → Expenses).
+New: Expenses (More tab → Expenses).
 • Who paid what: shared, paid for the other person, or personal.
 • "Nicolas owes Grace €42.50", and the payback in one tap.
 • Monthly totals: shared expenses, each person's share, my personal expenses.
