@@ -91,9 +91,9 @@ test('calendrier : vues jour / semaine / mois et création sur un créneau', asy
   await expect(dialog.getByLabel('Heure')).toHaveValue('09:00');
   await dialog.getByLabel('Titre').fill('Rendez-vous plombier');
   await dialog.getByRole('button', { name: 'Ajouter' }).click();
-  await expect(page.getByRole('button', { name: /Rendez-vous plombier/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Rendez-vous plombier/ })).toBeVisible();
   await page.getByRole('radio', { name: 'Mois' }).click();
-  await expect(page.getByRole('button', { name: /Rendez-vous plombier/ })).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Rendez-vous plombier/ })).toBeVisible();
 });
 
 test('mot de passe oublié : message neutre (pas d’énumération des comptes)', async ({ page }) => {

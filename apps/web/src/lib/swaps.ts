@@ -15,11 +15,12 @@ export const useSwaps = (hid: string) =>
 export function useSwapActions(hid: string) {
   const qc = useQueryClient();
   const base = `/v1/households/${hid}`;
-  const invalidate = () =>
-    Promise.all([
-      qc.invalidateQueries({ queryKey: swapsKey(hid) }),
-      qc.invalidateQueries({ queryKey: ['households', hid, 'occurrences'] }),
-    ]);
+  // Sans attendre le rechargement : le message de l'appelant (« Demande envoyée ») s'affiche tout
+  // de suite, la liste suit dès que les données arrivent.
+  const invalidate = () => {
+    void qc.invalidateQueries({ queryKey: swapsKey(hid) });
+    void qc.invalidateQueries({ queryKey: ['households', hid, 'occurrences'] });
+  };
   return {
     request: useMutation({
       mutationFn: ({ occurrenceId, input }: { occurrenceId: string; input: SwapRequestInput }) =>
