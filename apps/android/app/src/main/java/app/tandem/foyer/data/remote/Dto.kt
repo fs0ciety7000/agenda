@@ -335,6 +335,8 @@ data class ExpenseDto(
     val forMemberId: String? = null,
     val note: String? = null,
     val shares: List<ExpenseShareDto> = emptyList(),
+    val hasReceipt: Boolean = false,
+    val recurringId: String? = null,
 )
 
 /** Création (avec identifiant : un renvoi ne crée pas de doublon) ou modification. */
@@ -349,6 +351,35 @@ data class ExpenseBody(
     val split: String,
     val forMemberId: String? = null,
     val note: String,
+    /** Parts saisies à la main (partage « CUSTOM ») ; leur somme vaut le montant. */
+    val shares: List<ExpenseShareDto>? = null,
+)
+
+/** Charge fixe : une dépense ajoutée chaque mois, le même jour. */
+@Serializable
+data class RecurringExpenseDto(
+    val id: String,
+    val paidById: String,
+    val amountCents: Long,
+    val title: String,
+    val category: String,
+    val split: String,
+    val forMemberId: String? = null,
+    val note: String? = null,
+    val dayOfMonth: Int,
+    val startDate: String,
+)
+
+@Serializable
+data class RecurringExpenseBody(
+    val paidById: String,
+    val amountCents: Long,
+    val title: String,
+    val category: String,
+    val split: String,
+    val forMemberId: String? = null,
+    val note: String,
+    val startDate: String,
 )
 
 @Serializable

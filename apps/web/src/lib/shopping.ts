@@ -133,7 +133,11 @@ export function useShoppingActions(hid: string, memberId: string) {
       mutate: ({ id, aisle }: { id: string; aisle: Aisle }) => update.mutate({ hid, id, aisle }),
     },
     remove: { ...remove, mutate: (id: string) => remove.mutate({ hid, id }) },
-    clearDone: { ...clearDone, mutate: () => clearDone.mutate({ hid }) },
+    clearDone: {
+      ...clearDone,
+      mutate: (_?: undefined, options?: { onSuccess?: () => void }) =>
+        clearDone.mutate({ hid }, { onSuccess: () => options?.onSuccess?.() }),
+    },
   };
 }
 

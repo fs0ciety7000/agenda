@@ -62,7 +62,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import app.tandem.foyer.R
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.Checkbox
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.FileProvider
 import app.tandem.foyer.data.ExpensesRemote
+import app.tandem.foyer.data.remote.ExpenseShareDto
+import app.tandem.foyer.data.remote.RecurringExpenseBody
+import app.tandem.foyer.data.remote.RecurringExpenseDto
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import app.tandem.foyer.data.remote.ExpenseBody
 import app.tandem.foyer.data.remote.ExpenseDto
 import app.tandem.foyer.data.remote.ExpenseSummaryDto
@@ -87,6 +101,7 @@ data class ExpensesState(
     val month: YearMonth = YearMonth.now(),
     val items: List<ExpenseDto> = emptyList(),
     val summary: ExpenseSummaryDto? = null,
+    val recurring: List<RecurringExpenseDto> = emptyList(),
     val loading: Boolean = true,
     val offline: Boolean = false,
     val saving: Boolean = false,
@@ -109,8 +124,9 @@ class ExpensesViewModel(private val remote: ExpensesRemote) : ViewModel() {
             if (_state.value.month != month) return@launch
             _state.update {
                 it.copy(
-                    items = result?.first ?: it.items,
-                    summary = result?.second ?: it.summary,
+                    items = result?.items ?: it.items,
+                    summary = result?.summary ?: it.summary,
+                    recurring = result?.recurring ?: it.recurring,
                     loading = false,
                     offline = result == null,
                 )
@@ -123,7 +139,25 @@ class ExpensesViewModel(private val remote: ExpensesRemote) : ViewModel() {
         load()
     }
 
-    fun save(editingId: String?, body: ExpenseBody, done: (Boolean) -> Unit) = perform(done) { remote.save(editingId, body) }
+    /** Enregistre, puis joint le ticket choisi (lu par [readReceipt]) s'il y en a un. */
+    fun save(
+        editingId: String?,
+        body: ExpenseBody,
+        receipt: (suspend () -> Triple<String, String, ByteArray>?)?,
+        done: (Boolean) -> Unit,
+    ) = perform(done) {
+        val saved = remote.save(editingId, body) ?: return@perform false
+        val file = receipt?.invoke() ?: return@perform true
+        remote.uploadReceipt(saved.id, file.first, file.second, file.third)
+    }
+
+    fun createRecurring(body: RecurringExpenseBody, done: (Boolean) -> Unit) = perform(done) { remote.createRecurring(body) }
+
+    fun stopRecurring(id: String, done: (Boolean) -> Unit) = perform(done) { remote.stopRecurring(id) }
+
+    fun deleteReceipt(id: String, done: (Boolean) -> Unit) = perform(done) { remote.deleteReceipt(id) }
+
+    suspend fun downloadReceipt(id: String) = remote.downloadReceipt(id)
 
     fun settle(from: String, to: String, cents: Long, done: (Boolean) -> Unit) = perform(done) { remote.settle(from, to, cents) }
 
@@ -140,8 +174,8 @@ class ExpensesViewModel(private val remote: ExpensesRemote) : ViewModel() {
     }
 }
 
-/** Ce qu'édite la feuille : null = fermée ; expense null = nouvelle dépense. */
-private data class Editing(val expense: ExpenseDto?)
+/** Ce qu'édite la feuille : null = fermée ; expense null = nouvelle dépense (préremplie ou non). */
+private data class Editing(val expense: ExpenseDto?, val title: String? = null, val category: String? = null)
 
 /** Dépenses du foyer : qui a payé quoi, la part de chacun, et qui doit combien à qui. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -152,15 +186,36 @@ fun ExpensesScreen(
     myMemberId: String?,
     onBack: () -> Unit,
     onMessage: (String) -> Unit,
+    /** Ouvert depuis « Noter la dépense » (Courses) : formulaire prérempli. */
+    prefillTitle: String? = null,
+    prefillCategory: String? = null,
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
     val locale = currentLocale()
     val money = { cents: Long -> Money.format(cents, locale) }
     val former = stringResource(R.string.history_former_member)
     val name = { id: String? -> members.firstOrNull { it.id == id }?.displayName ?: former }
     val dayFormat = remember(locale) { DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale) }
     var editing by remember { mutableStateOf<Editing?>(null) }
+    LaunchedEffect(prefillTitle, prefillCategory) {
+        if (prefillTitle != null || prefillCategory != null) editing = Editing(null, prefillTitle, prefillCategory)
+    }
     val failed = stringResource(R.string.expenses_failed)
+    val noApp = stringResource(R.string.attachment_no_app)
+    // Ticket : téléchargé puis ouvert par l'app adaptée (galerie, lecteur PDF).
+    val openReceipt: (String) -> Unit = { id ->
+        scope.launch {
+            val (file, type) = vm.downloadReceipt(id) ?: return@launch onMessage(failed)
+            val uri = FileProvider.getUriForFile(context, "${context.packageName}.attachments", file)
+            try {
+                context.startActivity(Intent(Intent.ACTION_VIEW).setDataAndType(uri, type).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION))
+            } catch (_: ActivityNotFoundException) {
+                onMessage(noApp)
+            }
+        }
+    }
     val settledMsg = stringResource(R.string.expenses_settled)
 
     Scaffold(
@@ -282,6 +337,36 @@ fun ExpensesScreen(
                     }
                 }
             }
+            if (state.recurring.isNotEmpty()) {
+                item(key = "recurring") {
+                    OutlinedCard(Modifier.fillMaxWidth()) {
+                        Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                            Text(
+                                stringResource(R.string.expenses_recurring_title),
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.semantics { heading() },
+                            )
+                            state.recurring.forEach { r ->
+                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                    Column(Modifier.weight(1f)) {
+                                        Text("${Money.CATEGORY_EMOJI[r.category] ?: "📦"} ${r.title} · ${money(r.amountCents)}", style = MaterialTheme.typography.bodyLarge)
+                                        Text(
+                                            stringResource(R.string.expenses_recurring_line, r.dayOfMonth, name(r.paidById)),
+                                            style = MaterialTheme.typography.bodySmall,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        )
+                                    }
+                                    TextButton(
+                                        onClick = { vm.stopRecurring(r.id) { ok -> if (!ok) onMessage(failed) } },
+                                        enabled = !state.saving,
+                                        modifier = Modifier.heightIn(min = 48.dp),
+                                    ) { Text(stringResource(R.string.expenses_recurring_stop)) }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             if (!state.loading && !state.offline && state.items.isEmpty()) {
                 item(key = "empty") {
                     EmptyState(stringResource(R.string.expenses_empty_title), stringResource(R.string.expenses_empty_body))
@@ -306,15 +391,33 @@ fun ExpensesScreen(
     editing?.let { current ->
         ExpenseSheet(
             expense = current.expense,
+            prefillTitle = current.title,
+            prefillCategory = current.category,
             members = members,
             defaultPayer = myMemberId ?: members.firstOrNull()?.id.orEmpty(),
             saving = state.saving,
             onDismiss = { editing = null },
-            onSave = { body ->
-                vm.save(current.expense?.id, body) { ok ->
+            onSave = { body, receiptUri ->
+                val receipt: (suspend () -> Triple<String, String, ByteArray>?)? = receiptUri?.let { uri ->
+                    {
+                        withContext(Dispatchers.IO) {
+                            runCatching {
+                                val type = context.contentResolver.getType(uri) ?: "image/jpeg"
+                                val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
+                                bytes?.let { Triple(if (type == "application/pdf") "ticket.pdf" else "ticket.jpg", type, it) }
+                            }.getOrNull()
+                        }
+                    }
+                }
+                vm.save(current.expense?.id, body, receipt) { ok ->
                     if (ok) editing = null else onMessage(failed)
                 }
             },
+            onSaveRecurring = { body ->
+                vm.createRecurring(body) { ok -> if (ok) editing = null else onMessage(failed) }
+            },
+            onOpenReceipt = openReceipt,
+            onDeleteReceipt = { id -> vm.deleteReceipt(id) { ok -> if (ok) editing = null else onMessage(failed) } },
             onDelete = { id ->
                 vm.delete(id) { ok ->
                     if (ok) editing = null else onMessage(failed)
@@ -353,11 +456,22 @@ private fun ExpenseRow(e: ExpenseDto, name: (String?) -> String, money: (Long) -
                         settlement -> stringResource(R.string.expenses_meta_settlement, name(e.paidById), name(e.forMemberId))
                         e.split == "FOR_OTHER" -> stringResource(R.string.expenses_meta_for_other, name(e.paidById), name(e.forMemberId))
                         e.split == "PERSONAL" -> stringResource(R.string.expenses_meta_personal, name(e.paidById))
+                        e.split == "CUSTOM" -> stringResource(R.string.expenses_meta_custom, name(e.paidById))
                         else -> stringResource(R.string.expenses_meta_shared, name(e.paidById))
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
+                if (e.recurringId != null || e.hasReceipt) {
+                    Text(
+                        listOfNotNull(
+                            if (e.recurringId != null) "↻ " + stringResource(R.string.expenses_monthly) else null,
+                            if (e.hasReceipt) "📎 " + stringResource(R.string.expenses_receipt) else null,
+                        ).joinToString("  "),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
                 e.note?.let {
                     Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 2)
                 }
@@ -386,31 +500,50 @@ private fun categoryLabel(category: String): String = stringResource(
 @Composable
 private fun ExpenseSheet(
     expense: ExpenseDto?,
+    prefillTitle: String?,
+    prefillCategory: String?,
     members: List<Member>,
     defaultPayer: String,
     saving: Boolean,
     onDismiss: () -> Unit,
-    onSave: (ExpenseBody) -> Unit,
+    onSave: (ExpenseBody, Uri?) -> Unit,
+    onSaveRecurring: (RecurringExpenseBody) -> Unit,
+    onOpenReceipt: (String) -> Unit,
+    onDeleteReceipt: (String) -> Unit,
     onDelete: (String) -> Unit,
 ) {
     val locale = currentLocale()
     val settlement = expense?.kind == "SETTLEMENT"
     var amount by rememberSaveable { mutableStateOf(expense?.let { Money.editable(it.amountCents, locale) } ?: "") }
-    var title by rememberSaveable { mutableStateOf(expense?.title ?: "") }
+    var title by rememberSaveable { mutableStateOf(expense?.title ?: prefillTitle ?: "") }
     var date by rememberSaveable { mutableStateOf(expense?.date ?: LocalDate.now().toString()) }
     var paidBy by rememberSaveable { mutableStateOf(expense?.paidById ?: defaultPayer) }
     // « SHARED », « PERSONAL » ou l'identifiant du membre pour qui la dépense a été avancée.
     var target by rememberSaveable {
         mutableStateOf(if (expense?.split == "FOR_OTHER") expense.forMemberId ?: "SHARED" else expense?.split ?: "SHARED")
     }
-    var category by rememberSaveable { mutableStateOf(expense?.category ?: "OTHER") }
+    var category by rememberSaveable { mutableStateOf(expense?.category ?: prefillCategory ?: "OTHER") }
+    // Parts à la main (« CUSTOM »), en texte par membre.
+    var custom by remember {
+        mutableStateOf(
+            members.associate { m ->
+                m.id to (expense?.takeIf { it.split == "CUSTOM" }?.shares?.firstOrNull { it.memberId == m.id }
+                    ?.let { Money.editable(it.amountCents, locale) } ?: "")
+            },
+        )
+    }
+    var monthly by rememberSaveable { mutableStateOf(false) }
+    var receiptUri by remember { mutableStateOf<Uri?>(null) }
+    val pickReceipt = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> if (uri != null) receiptUri = uri }
     var note by rememberSaveable { mutableStateOf(expense?.note ?: "") }
     var error by remember { mutableStateOf<String?>(null) }
     var pickingDate by remember { mutableStateOf(false) }
     val amountInvalid = stringResource(R.string.expenses_amount_invalid)
     val titleRequired = stringResource(R.string.expenses_title_required)
     val dateFormat = remember(locale) { DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale) }
-    val validTarget = target == "SHARED" || target == "PERSONAL" || (target != paidBy && members.any { it.id == target })
+    val customInvalid = stringResource(R.string.expenses_custom_invalid)
+    val validTarget = target == "SHARED" || target == "CUSTOM" || target == "PERSONAL" ||
+        (target != paidBy && members.any { it.id == target })
     val safeTarget = if (validTarget) target else "SHARED"
 
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
@@ -471,6 +604,7 @@ private fun ExpenseSheet(
             Text(stringResource(R.string.expenses_for_whom), style = MaterialTheme.typography.titleSmall)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 FilterChip(selected = safeTarget == "SHARED", onClick = { target = "SHARED" }, label = { Text(stringResource(R.string.expenses_split_shared)) })
+                FilterChip(selected = safeTarget == "CUSTOM", onClick = { target = "CUSTOM" }, label = { Text(stringResource(R.string.expenses_split_custom)) })
                 members.filter { it.id != paidBy }.forEach { m ->
                     FilterChip(
                         selected = safeTarget == m.id,
@@ -484,6 +618,7 @@ private fun ExpenseSheet(
                 stringResource(
                     when (safeTarget) {
                         "SHARED" -> R.string.expenses_hint_shared
+                        "CUSTOM" -> R.string.expenses_hint_custom
                         "PERSONAL" -> R.string.expenses_hint_personal
                         else -> R.string.expenses_hint_for_other
                     },
@@ -491,6 +626,27 @@ private fun ExpenseSheet(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            val totalCents = Money.parseCents(amount) ?: 0L
+            val customCents = members.map { m -> custom[m.id].orEmpty().trim().let { if (it.isEmpty()) 0L else Money.parseCents(it) } }
+            val customLeft = totalCents - customCents.sumOf { it ?: 0L }
+            if (safeTarget == "CUSTOM") {
+                members.forEach { m ->
+                    OutlinedTextField(
+                        value = custom[m.id].orEmpty(),
+                        onValueChange = { v -> custom = custom + (m.id to v) },
+                        label = { Text(stringResource(R.string.expenses_custom_share, m.displayName)) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+                Text(
+                    if (customLeft == 0L) "✓ " + stringResource(R.string.expenses_custom_ok)
+                    else stringResource(R.string.expenses_custom_left, Money.format(customLeft, locale)),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (customLeft == 0L) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             Text(stringResource(R.string.expenses_category), style = MaterialTheme.typography.titleSmall)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Money.CATEGORY_EMOJI.forEach { (key, emoji) ->
@@ -504,6 +660,46 @@ private fun ExpenseSheet(
                 modifier = Modifier.fillMaxWidth(),
                 minLines = 2,
             )
+            val canRepeat = expense == null && safeTarget != "CUSTOM"
+            if (canRepeat) {
+                Row(
+                    Modifier.fillMaxWidth().heightIn(min = 48.dp).clickable { monthly = !monthly },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Checkbox(checked = monthly, onCheckedChange = null)
+                    Column(Modifier.padding(start = 8.dp)) {
+                        Text(stringResource(R.string.expenses_monthly))
+                        Text(
+                            stringResource(R.string.expenses_monthly_hint),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                }
+            }
+            if (!(canRepeat && monthly)) {
+                Text(stringResource(R.string.expenses_receipt), style = MaterialTheme.typography.titleSmall)
+                if (expense?.hasReceipt == true) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        OutlinedButton(onClick = { onOpenReceipt(expense.id) }, modifier = Modifier.heightIn(min = 48.dp)) {
+                            Text(stringResource(R.string.expenses_receipt_open))
+                        }
+                        TextButton(onClick = { onDeleteReceipt(expense.id) }, enabled = !saving, modifier = Modifier.heightIn(min = 48.dp)) {
+                            Text(stringResource(R.string.expenses_receipt_remove))
+                        }
+                    }
+                } else {
+                    OutlinedButton(
+                        onClick = { pickReceipt.launch(arrayOf("image/*", "application/pdf")) },
+                        modifier = Modifier.heightIn(min = 48.dp),
+                    ) {
+                        Text(
+                            if (receiptUri != null) "✓ " + stringResource(R.string.expenses_receipt_chosen)
+                            else stringResource(R.string.expenses_receipt_add),
+                        )
+                    }
+                }
+            }
             error?.let { Text(it, color = MaterialTheme.colorScheme.error) }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 if (expense != null) {
@@ -518,20 +714,41 @@ private fun ExpenseSheet(
                         when {
                             cents == null -> error = amountInvalid
                             title.isBlank() -> error = titleRequired
+                            safeTarget == "CUSTOM" && (customCents.any { it == null } || customLeft != 0L) ->
+                                error = customInvalid.format(Money.format(cents, locale))
                             else -> {
-                                val split = if (safeTarget == "SHARED" || safeTarget == "PERSONAL") safeTarget else "FOR_OTHER"
-                                onSave(
-                                    ExpenseBody(
-                                        paidById = paidBy,
-                                        amountCents = cents,
-                                        date = date,
-                                        title = title.trim(),
-                                        category = category,
-                                        split = split,
-                                        forMemberId = if (split == "FOR_OTHER") safeTarget else null,
-                                        note = note.trim(),
-                                    ),
-                                )
+                                val split = if (safeTarget in listOf("SHARED", "CUSTOM", "PERSONAL")) safeTarget else "FOR_OTHER"
+                                if (canRepeat && monthly) {
+                                    onSaveRecurring(
+                                        RecurringExpenseBody(
+                                            paidById = paidBy,
+                                            amountCents = cents,
+                                            title = title.trim(),
+                                            category = category,
+                                            split = split,
+                                            forMemberId = if (split == "FOR_OTHER") safeTarget else null,
+                                            note = note.trim(),
+                                            startDate = date,
+                                        ),
+                                    )
+                                } else {
+                                    onSave(
+                                        ExpenseBody(
+                                            paidById = paidBy,
+                                            amountCents = cents,
+                                            date = date,
+                                            title = title.trim(),
+                                            category = category,
+                                            split = split,
+                                            forMemberId = if (split == "FOR_OTHER") safeTarget else null,
+                                            note = note.trim(),
+                                            shares = if (split == "CUSTOM") {
+                                                members.mapIndexed { i, m -> ExpenseShareDto(m.id, customCents[i] ?: 0L) }
+                                            } else null,
+                                        ),
+                                        receiptUri,
+                                    )
+                                }
                             }
                         }
                     },

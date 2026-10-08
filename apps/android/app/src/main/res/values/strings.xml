@@ -499,4 +499,23 @@
     <string name="expense_cat_kids">Kids</string>
     <string name="expense_cat_gifts">Gifts</string>
     <string name="expense_cat_other">Other</string>
+    <string name="expenses_recurring_title">Fixed expenses</string>
+    <string name="expenses_recurring_line">On day %1$d of each month · paid by %2$s</string>
+    <string name="expenses_recurring_stop">Stop</string>
+    <string name="expenses_monthly">Every month</string>
+    <string name="expenses_monthly_hint">Added automatically every month, on the same day (rent, subscriptions…).</string>
+    <string name="expenses_receipt">Receipt</string>
+    <string name="expenses_receipt_open">View the receipt</string>
+    <string name="expenses_receipt_remove">Remove the receipt</string>
+    <string name="expenses_receipt_add">Attach the receipt (photo or PDF)</string>
+    <string name="expenses_receipt_chosen">Receipt chosen</string>
+    <string name="expenses_meta_custom">Paid by %1$s · custom split</string>
+    <string name="expenses_split_custom">Custom</string>
+    <string name="expenses_hint_custom">Enter each person\'s share; they must add up to the amount.</string>
+    <string name="expenses_custom_share">%1$s\'s share (€)</string>
+    <string name="expenses_custom_ok">It adds up.</string>
+    <string name="expenses_custom_left">Left to split: %1$s</string>
+    <string name="expenses_custom_invalid">The shares must add up to %1$s.</string>
+    <string name="shopping_cleared">Basket emptied</string>
+    <string name="shopping_note_expense">Record the expense</string>
 </resources>

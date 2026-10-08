@@ -508,4 +508,23 @@
     <string name="expense_cat_kids">Enfants</string>
     <string name="expense_cat_gifts">Cadeaux</string>
     <string name="expense_cat_other">Autre</string>
+    <string name="expenses_recurring_title">Charges fixes</string>
+    <string name="expenses_recurring_line">Le %1$d de chaque mois · payé par %2$s</string>
+    <string name="expenses_recurring_stop">Arrêter</string>
+    <string name="expenses_monthly">Chaque mois</string>
+    <string name="expenses_monthly_hint">Ajoutée automatiquement chaque mois, le même jour (loyer, abonnements…).</string>
+    <string name="expenses_receipt">Ticket</string>
+    <string name="expenses_receipt_open">Voir le ticket</string>
+    <string name="expenses_receipt_remove">Retirer le ticket</string>
+    <string name="expenses_receipt_add">Joindre le ticket (photo ou PDF)</string>
+    <string name="expenses_receipt_chosen">Ticket choisi</string>
+    <string name="expenses_meta_custom">Payé par %1$s · parts à la main</string>
+    <string name="expenses_split_custom">À la main</string>
+    <string name="expenses_hint_custom">Indiquez la part de chacun ; leur total doit faire le montant.</string>
+    <string name="expenses_custom_share">Part de %1$s (€)</string>
+    <string name="expenses_custom_ok">Le compte est bon.</string>
+    <string name="expenses_custom_left">Reste à répartir : %1$s</string>
+    <string name="expenses_custom_invalid">Les parts doivent faire %1$s au total.</string>
+    <string name="shopping_cleared">Panier vidé</string>
+    <string name="shopping_note_expense">Noter la dépense</string>
 </resources>

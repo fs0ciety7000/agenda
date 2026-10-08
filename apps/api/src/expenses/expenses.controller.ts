@@ -4,20 +4,30 @@ import {
   Delete,
   Get,
   HttpCode,
+  HttpStatus,
   Param,
   Patch,
   Post,
   Put,
   Query,
+  Res,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
+import type { Response } from 'express';
+import { AppException } from '../common/app-exception';
 import {
+  ATTACHMENT_MAX_BYTES,
   type ExpenseDto,
   ExpenseInput,
   ExpensesQuery,
   type ExpenseSummaryDto,
   ExpenseWeightsInput,
+  type RecurringExpenseDto,
+  RecurringExpenseInput,
   SettleInput,
   UpdateExpenseInput,
 } from '@agenda/contracts';
@@ -26,6 +36,13 @@ import { assertUuid } from '../common/uuid';
 import { ZodPipe } from '../common/zod.pipe';
 import { HouseholdMemberGuard } from '../households/household-member.guard';
 import { ExpensesService } from './expenses.service';
+
+interface UploadedMulterFile {
+  originalname: string;
+  mimetype: string;
+  size: number;
+  buffer: Buffer;
+}
 
 @ApiTags('expenses')
 @UseGuards(HouseholdMemberGuard)
@@ -77,6 +94,87 @@ export class ExpensesController {
     @Body(new ZodPipe(ExpenseWeightsInput)) body: ExpenseWeightsInput,
   ): Promise<void> {
     return this.expenses.setWeights(ctx, body);
+  }
+
+  /** Charges fixes en cours (une dépense créée chaque mois, le même jour). */
+  @Get('recurring')
+  recurring(@CurrentHousehold() ctx: HouseholdContext): Promise<RecurringExpenseDto[]> {
+    return this.expenses.listRecurring(ctx);
+  }
+
+  /** Créer une charge fixe (l'échéance du mois, si passée, est créée tout de suite). */
+  @Post('recurring')
+  createRecurring(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Body(new ZodPipe(RecurringExpenseInput)) body: RecurringExpenseInput,
+  ): Promise<RecurringExpenseDto> {
+    return this.expenses.createRecurring(ctx, body);
+  }
+
+  /** Arrêter une charge fixe (les dépenses déjà créées restent). */
+  @Delete('recurring/:recurringId')
+  @HttpCode(204)
+  stopRecurring(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Param('recurringId') id: string,
+  ): Promise<void> {
+    return this.expenses.stopRecurring(ctx, assertUuid(id));
+  }
+
+  /** Joindre le ticket d'une dépense (image ou PDF, multipart, champ `file`, 10 Mo au plus). */
+  @Post(':expenseId/receipt')
+  @UseInterceptors(
+    FileInterceptor('file', { limits: { fileSize: ATTACHMENT_MAX_BYTES + 1, files: 1 } }),
+  )
+  addReceipt(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Param('expenseId') id: string,
+    @UploadedFile() file: UploadedMulterFile | undefined,
+  ): Promise<ExpenseDto> {
+    if (!file) {
+      throw new AppException('VALIDATION_FAILED', HttpStatus.BAD_REQUEST, 'Missing file', {
+        fieldErrors: { file: ['Required'] },
+      });
+    }
+    return this.expenses.addReceipt(ctx, assertUuid(id), {
+      filename: Buffer.from(file.originalname, 'latin1').toString('utf8'),
+      contentType: file.mimetype,
+      data: file.buffer,
+    });
+  }
+
+  /** Afficher le ticket d'une dépense. */
+  @Get(':expenseId/receipt')
+  async receipt(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Param('expenseId') id: string,
+    @Res() res: Response,
+  ): Promise<void> {
+    const file = await this.expenses.getReceipt(ctx, assertUuid(id));
+    res.setHeader('content-type', file.contentType);
+    res.setHeader(
+      'content-disposition',
+      `inline; filename*=UTF-8''${encodeURIComponent(file.filename)}`,
+    );
+    res.setHeader('content-length', String(file.size));
+    res.setHeader('x-content-type-options', 'nosniff');
+    // Ouvert dans le navigateur, le fichier ne peut rien exécuter sur l'origine de l'app.
+    res.setHeader(
+      'content-security-policy',
+      "sandbox; default-src 'none'; img-src 'self'; style-src 'unsafe-inline'",
+    );
+    res.setHeader('cache-control', 'private, max-age=3600');
+    res.end(Buffer.from(file.data));
+  }
+
+  /** Retirer le ticket d'une dépense. */
+  @Delete(':expenseId/receipt')
+  @HttpCode(204)
+  removeReceipt(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Param('expenseId') id: string,
+  ): Promise<void> {
+    return this.expenses.removeReceipt(ctx, assertUuid(id));
   }
 
   /** Modifier une dépense (les parts sont recalculées si le montant ou le partage change). */

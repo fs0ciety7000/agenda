@@ -146,6 +146,7 @@ export class PrivacyService {
             note: true,
             paidById: true,
             shares: { where: { memberId: { in: memberIds } }, select: { amountCents: true } },
+            receipt: { select: { filename: true, size: true } },
           },
           orderBy: { date: 'asc' },
         }),
@@ -210,6 +211,7 @@ export class PrivacyService {
         note: e.note,
         paidByMe: memberIds.includes(e.paidById),
         myShareCents: e.shares.reduce((a, x) => a + x.amountCents, 0),
+        receipt: e.receipt,
       })),
       reports: reports.map(({ screenshotType, ...r }) => ({
         ...r,
@@ -280,6 +282,12 @@ export class PrivacyService {
         });
         // Dépenses personnelles : effacées. Dépenses communes : restent au foyer (soldes).
         await tx.expense.deleteMany({ where: { paidById: m.id, split: 'PERSONAL' } });
+        // Ses charges fixes perso disparaissent ; celles qui le concernent s'arrêtent.
+        await tx.recurringExpense.deleteMany({ where: { paidById: m.id, split: 'PERSONAL' } });
+        await tx.recurringExpense.updateMany({
+          where: { OR: [{ paidById: m.id }, { forMemberId: m.id }], endedAt: null },
+          data: { endedAt: new Date() },
+        });
         await tx.rotationSlot.deleteMany({ where: { memberId: m.id } });
         await tx.notification.deleteMany({ where: { memberId: m.id } });
         await tx.notificationPreference.deleteMany({ where: { memberId: m.id } });

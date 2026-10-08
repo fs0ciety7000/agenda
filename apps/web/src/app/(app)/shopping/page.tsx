@@ -4,12 +4,15 @@ import type { Aisle, ShoppingItemDto } from '@agenda/contracts';
 import { AISLES } from '@agenda/domain';
 import { Check, Plus, ShoppingCart, X } from 'lucide-react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useId, useState, type FormEvent } from 'react';
 import { useSession } from '@/components/app/household-context';
 import { Button } from '@/components/ui/button';
 import { SectionTitle } from '@/components/ui/card';
 import { EmptyState, ErrorState, Skeleton } from '@/components/ui/states';
+import { useToast } from '@/components/ui/toast';
+import { newExpenseHref } from '@/lib/expenses';
 import { errorKey } from '@/lib/api';
 import { cn } from '@/lib/cn';
 import { useRealtimeStatus } from '@/lib/realtime';
@@ -34,6 +37,8 @@ export default function ShoppingPage() {
   const list = useShopping(household.id);
   const suggestions = useShoppingSuggestions(household.id);
   const actions = useShoppingActions(household.id, memberId);
+  const toast = useToast();
+  const router = useRouter();
   const live = useRealtimeStatus();
   const [text, setText] = useState('');
   const inputId = useId();
@@ -169,7 +174,22 @@ export default function ShoppingPage() {
                 <SectionTitle id="in-cart">{t('inCart', { count: inCart.length })}</SectionTitle>
                 <button
                   type="button"
-                  onClick={() => actions.clearDone.mutate()}
+                  onClick={() =>
+                    actions.clearDone.mutate(undefined, {
+                      // Retour du magasin : proposer de noter ce qui a été payé.
+                      onSuccess: () =>
+                        toast({
+                          message: t('cleared'),
+                          action: {
+                            label: t('noteExpense'),
+                            onClick: () =>
+                              router.push(
+                                newExpenseHref({ title: t('title'), category: 'GROCERIES' }),
+                              ),
+                          },
+                        }),
+                    })
+                  }
                   className="min-h-11 rounded-md px-2 text-sm text-accent hover:bg-surface-muted"
                 >
                   {t('clear')}

@@ -496,4 +496,23 @@
     <string name="expense_cat_kids">Kinderen</string>
     <string name="expense_cat_gifts">Cadeaus</string>
     <string name="expense_cat_other">Overige</string>
+    <string name="expenses_recurring_title">Vaste kosten</string>
+    <string name="expenses_recurring_line">Op dag %1$d van elke maand · betaald door %2$s</string>
+    <string name="expenses_recurring_stop">Stoppen</string>
+    <string name="expenses_monthly">Elke maand</string>
+    <string name="expenses_monthly_hint">Wordt elke maand automatisch toegevoegd, op dezelfde dag (huur, abonnementen…).</string>
+    <string name="expenses_receipt">Kasticket</string>
+    <string name="expenses_receipt_open">Kasticket bekijken</string>
+    <string name="expenses_receipt_remove">Kasticket verwijderen</string>
+    <string name="expenses_receipt_add">Kasticket toevoegen (foto of pdf)</string>
+    <string name="expenses_receipt_chosen">Kasticket gekozen</string>
+    <string name="expenses_meta_custom">Betaald door %1$s · eigen verdeling</string>
+    <string name="expenses_split_custom">Zelf verdelen</string>
+    <string name="expenses_hint_custom">Vul ieders aandeel in; samen moeten ze het bedrag vormen.</string>
+    <string name="expenses_custom_share">Aandeel van %1$s (€)</string>
+    <string name="expenses_custom_ok">Het klopt.</string>
+    <string name="expenses_custom_left">Nog te verdelen: %1$s</string>
+    <string name="expenses_custom_invalid">De aandelen moeten samen %1$s zijn.</string>
+    <string name="shopping_cleared">Mandje leeggemaakt</string>
+    <string name="shopping_note_expense">Uitgave noteren</string>
 </resources>

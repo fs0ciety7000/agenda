@@ -7200,6 +7200,372 @@
         ]
       }
     },
+    "/v1/households/{householdId}/expenses/recurring": {
+      "get": {
+        "operationId": "ExpensesController_recurring_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RecurringExpenseDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Charges fixes en cours (une dépense créée chaque mois, le même jour)",
+        "tags": [
+          "expenses"
+        ]
+      },
+      "post": {
+        "operationId": "ExpensesController_createRecurring_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecurringExpenseInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RecurringExpenseDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Créer une charge fixe (l'échéance du mois, si passée, est créée tout de suite)",
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/expenses/recurring/{recurringId}": {
+      "delete": {
+        "operationId": "ExpensesController_stopRecurring_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "recurringId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Arrêter une charge fixe (les dépenses déjà créées restent)",
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/expenses/{expenseId}/receipt": {
+      "post": {
+        "operationId": "ExpensesController_addReceipt_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "expenseId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpenseDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Joindre le ticket d'une dépense (image ou PDF, multipart, champ `file`, 10 Mo au plus)",
+        "tags": [
+          "expenses"
+        ]
+      },
+      "get": {
+        "operationId": "ExpensesController_receipt_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "expenseId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Afficher le ticket d'une dépense",
+        "tags": [
+          "expenses"
+        ]
+      },
+      "delete": {
+        "operationId": "ExpensesController_removeReceipt_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "expenseId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Retirer le ticket d'une dépense",
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
     "/v1/households/{householdId}/expenses/{expenseId}": {
       "patch": {
         "operationId": "ExpensesController_update_v1",
@@ -10944,6 +11310,7 @@
             "type": "string",
             "enum": [
               "SHARED",
+              "CUSTOM",
               "FOR_OTHER",
               "PERSONAL"
             ]
@@ -10979,6 +11346,14 @@
               "additionalProperties": false
             }
           },
+          "hasReceipt": {
+            "type": "boolean"
+          },
+          "recurringId": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid"
+          },
           "createdById": {
             "nullable": true,
             "type": "string",
@@ -11000,6 +11375,8 @@
           "forMemberId",
           "note",
           "shares",
+          "hasReceipt",
+          "recurringId",
           "createdById",
           "createdAt"
         ],
@@ -11050,6 +11427,7 @@
             "type": "string",
             "enum": [
               "SHARED",
+              "CUSTOM",
               "FOR_OTHER",
               "PERSONAL"
             ]
@@ -11063,6 +11441,30 @@
             "nullable": true,
             "type": "string",
             "maxLength": 500
+          },
+          "shares": {
+            "nullable": true,
+            "minItems": 1,
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "memberId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "amountCents": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 10000000
+                }
+              },
+              "required": [
+                "memberId",
+                "amountCents"
+              ]
+            }
           }
         },
         "required": [
@@ -12606,6 +13008,144 @@
         ],
         "additionalProperties": false
       },
+      "RecurringExpenseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "paidById": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amountCents": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "title": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "GROCERIES",
+              "HOUSING",
+              "UTILITIES",
+              "TRANSPORT",
+              "LEISURE",
+              "HEALTH",
+              "KIDS",
+              "GIFTS",
+              "OTHER"
+            ]
+          },
+          "split": {
+            "type": "string",
+            "enum": [
+              "SHARED",
+              "CUSTOM",
+              "FOR_OTHER",
+              "PERSONAL"
+            ]
+          },
+          "forMemberId": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          "note": {
+            "nullable": true,
+            "type": "string"
+          },
+          "dayOfMonth": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "id",
+          "paidById",
+          "amountCents",
+          "title",
+          "category",
+          "split",
+          "forMemberId",
+          "note",
+          "dayOfMonth",
+          "startDate"
+        ],
+        "additionalProperties": false
+      },
+      "RecurringExpenseInput": {
+        "type": "object",
+        "properties": {
+          "paidById": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "amountCents": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 10000000
+          },
+          "title": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "category": {
+            "default": "OTHER",
+            "type": "string",
+            "enum": [
+              "GROCERIES",
+              "HOUSING",
+              "UTILITIES",
+              "TRANSPORT",
+              "LEISURE",
+              "HEALTH",
+              "KIDS",
+              "GIFTS",
+              "OTHER"
+            ]
+          },
+          "split": {
+            "default": "SHARED",
+            "type": "string",
+            "enum": [
+              "SHARED",
+              "FOR_OTHER",
+              "PERSONAL"
+            ]
+          },
+          "forMemberId": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          "note": {
+            "nullable": true,
+            "type": "string",
+            "maxLength": 500
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date"
+          }
+        },
+        "required": [
+          "paidById",
+          "amountCents",
+          "title",
+          "startDate"
+        ]
+      },
       "RefreshInput": {
         "type": "object",
         "properties": {
@@ -14034,6 +14574,7 @@
             "type": "string",
             "enum": [
               "SHARED",
+              "CUSTOM",
               "FOR_OTHER",
               "PERSONAL"
             ]
@@ -14047,6 +14588,30 @@
             "nullable": true,
             "type": "string",
             "maxLength": 500
+          },
+          "shares": {
+            "nullable": true,
+            "minItems": 1,
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "memberId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "amountCents": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 10000000
+                }
+              },
+              "required": [
+                "memberId",
+                "amountCents"
+              ]
+            }
           }
         }
       },

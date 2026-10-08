@@ -143,22 +143,23 @@ model Household {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  members        HouseholdMember[]
-  invitations    HouseholdInvitation[]
-  categories     Category[]
-  tasks          Task[]
-  occurrences    TaskOccurrence[]
-  checklistItems ChecklistItem[]
-  shoppingItems  ShoppingItem[]
-  templates      TaskTemplate[]
-  attachments    TaskAttachment[]
-  calendarLink   HouseholdCalendarLink?
-  activity       ActivityLog[]
-  absences       MemberAbsence[]
-  comments       TaskComment[]
-  products       ShoppingProduct[]
-  meals          Meal[]
-  expenses       Expense[]
+  members           HouseholdMember[]
+  invitations       HouseholdInvitation[]
+  categories        Category[]
+  tasks             Task[]
+  occurrences       TaskOccurrence[]
+  checklistItems    ChecklistItem[]
+  shoppingItems     ShoppingItem[]
+  templates         TaskTemplate[]
+  attachments       TaskAttachment[]
+  calendarLink      HouseholdCalendarLink?
+  activity          ActivityLog[]
+  absences          MemberAbsence[]
+  comments          TaskComment[]
+  products          ShoppingProduct[]
+  meals             Meal[]
+  expenses          Expense[]
+  recurringExpenses RecurringExpense[]
 }
 
 enum HouseholdRole {
@@ -900,6 +901,7 @@ enum ExpenseKind {
 
 enum ExpenseSplit {
   SHARED
+  CUSTOM
   FOR_OTHER
   PERSONAL
 }
@@ -917,28 +919,76 @@ enum ExpenseCategory {
 }
 
 model Expense {
+  id             String          @id @default(uuid()) @db.Uuid
+  householdId    String          @db.Uuid
+  kind           ExpenseKind     @default(EXPENSE)
+  paidById       String          @db.Uuid
+  amountCents    Int
+  date           DateTime        @db.Date
+  title          String          @db.VarChar(120)
+  category       ExpenseCategory @default(OTHER)
+  split          ExpenseSplit    @default(SHARED)
+  /// FOR_OTHER : pour qui ; SETTLEMENT : qui est remboursé.
+  forMemberId    String?         @db.Uuid
+  note           String?         @db.VarChar(500)
+  createdById    String?         @db.Uuid
+  /// Charge fixe d'origine, et mois (« 2026-10 ») de cette échéance : jamais deux fois la même.
+  recurringId    String?         @db.Uuid
+  recurringMonth String?         @db.VarChar(7)
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  household Household         @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  paidBy    HouseholdMember   @relation("ExpensePaidBy", fields: [paidById], references: [id], onDelete: Cascade)
+  forMember HouseholdMember?  @relation("ExpenseFor", fields: [forMemberId], references: [id], onDelete: SetNull)
+  recurring RecurringExpense? @relation(fields: [recurringId], references: [id], onDelete: SetNull)
+  shares    ExpenseShare[]
+  receipt   ExpenseReceipt?
+
+  @@unique([recurringId, recurringMonth])
+  @@index([householdId, date])
+}
+
+/// Charge fixe : une dépense créée chaque mois, le même jour (loyer, abonnements…). Arrêtée
+/// (`endedAt`), elle ne crée plus rien ; les dépenses déjà créées restent.
+model RecurringExpense {
   id          String          @id @default(uuid()) @db.Uuid
   householdId String          @db.Uuid
-  kind        ExpenseKind     @default(EXPENSE)
   paidById    String          @db.Uuid
   amountCents Int
-  date        DateTime        @db.Date
   title       String          @db.VarChar(120)
   category    ExpenseCategory @default(OTHER)
   split       ExpenseSplit    @default(SHARED)
-  /// FOR_OTHER : pour qui ; SETTLEMENT : qui est remboursé.
   forMemberId String?         @db.Uuid
   note        String?         @db.VarChar(500)
+  dayOfMonth  Int
+  startDate   DateTime        @db.Date
+  /// Dernier mois créé (« 2026-10 ») ; null = aucun encore.
+  lastMonth   String?         @db.VarChar(7)
+  endedAt     DateTime?
   createdById String?         @db.Uuid
   createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
 
-  household Household        @relation(fields: [householdId], references: [id], onDelete: Cascade)
-  paidBy    HouseholdMember  @relation("ExpensePaidBy", fields: [paidById], references: [id], onDelete: Cascade)
-  forMember HouseholdMember? @relation("ExpenseFor", fields: [forMemberId], references: [id], onDelete: SetNull)
-  shares    ExpenseShare[]
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  expenses  Expense[]
 
-  @@index([householdId, date])
+  @@index([householdId])
+}
+
+/// Ticket d'une dépense (photo ou PDF), stocké en base comme les pièces jointes des tâches.
+model ExpenseReceipt {
+  expenseId   String   @id @db.Uuid
+  householdId String   @db.Uuid
+  filename    String   @db.VarChar(255)
+  contentType String   @db.VarChar(127)
+  size        Int
+  data        Bytes
+  createdById String?  @db.Uuid
+  createdAt   DateTime @default(now())
+
+  expense Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+
+  @@index([householdId])
 }
 
 /// Part de chacun dans une dépense, figée à l'enregistrement (changer les proportions du foyer

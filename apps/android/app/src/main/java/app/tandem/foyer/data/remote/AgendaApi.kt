@@ -237,6 +237,26 @@ interface AgendaApi {
     @DELETE("v1/households/{h}/expenses/{id}")
     suspend fun deleteExpense(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
 
+    @GET("v1/households/{h}/expenses/recurring")
+    suspend fun recurringExpenses(@Path("h") householdId: String): Response<List<RecurringExpenseDto>>
+
+    @POST("v1/households/{h}/expenses/recurring")
+    suspend fun createRecurringExpense(@Path("h") householdId: String, @Body body: RecurringExpenseBody): Response<RecurringExpenseDto>
+
+    @DELETE("v1/households/{h}/expenses/recurring/{id}")
+    suspend fun stopRecurringExpense(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
+
+    @Multipart
+    @POST("v1/households/{h}/expenses/{id}/receipt")
+    suspend fun uploadReceipt(@Path("h") householdId: String, @Path("id") id: String, @Part file: MultipartBody.Part): Response<ExpenseDto>
+
+    @Streaming
+    @GET("v1/households/{h}/expenses/{id}/receipt")
+    suspend fun receipt(@Path("h") householdId: String, @Path("id") id: String): Response<ResponseBody>
+
+    @DELETE("v1/households/{h}/expenses/{id}/receipt")
+    suspend fun deleteReceipt(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
+
     /** Contenu d'une pièce jointe (téléchargé à la demande, puis ouvert par une autre app). */
     @Streaming
     @GET("v1/households/{h}/attachments/{id}")

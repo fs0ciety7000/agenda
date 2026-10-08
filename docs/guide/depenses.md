@@ -17,6 +17,8 @@ doit combien à qui.
 - **Payé par** : qui a sorti la carte ;
 - **Pour qui ?**
   - **Commune** : partagée selon les proportions du foyer (moitié-moitié par défaut) ;
+  - **À la main** : vous indiquez la part de chacun (par exemple 30 € et 60 € pour un
+    restaurant de 90 €) ; Tandem affiche ce qu'il reste à répartir ;
   - **Pour Nicolas** : vous avez avancé pour l'autre, qui en doit la totalité ;
   - **Perso** : pour vous seul ; **visible de vous seul**, elle n'entre pas dans le calcul
     commun mais compte dans « Mes dépenses personnelles » ;
@@ -24,6 +26,26 @@ doit combien à qui.
   un **commentaire** facultatif.
 
 Toucher une dépense permet de la modifier ou de la supprimer.
+
+## Le ticket
+
+**Joindre le ticket** (photo ou PDF, 10 Mo au plus) dans le formulaire ; la dépense affiche
+📎 **Ticket**, et **Voir le ticket** l'ouvre. Il est visible comme la dépense (une dépense perso :
+de vous seul) et supprimé avec elle.
+
+## Charges fixes (chaque mois)
+
+Pour le loyer ou un abonnement, cochez **Chaque mois** en créant la dépense : elle est ajoutée
+automatiquement chaque mois, le même jour (le 31 devient le dernier jour des mois plus courts).
+Les charges en cours sont listées sous **Charges fixes** ; **Arrêter** n'efface pas les dépenses
+déjà ajoutées. Pour changer le montant, arrêtez-la et recréez-la.
+
+## Depuis les courses et les tâches
+
+- Après **Vider le panier** (liste de courses), **Noter la dépense** ouvre le formulaire déjà
+  rempli (« Courses », catégorie courses) : il reste à indiquer le montant.
+- En cochant une tâche qui ressemble à un paiement (« Payer la facture », « Loyer »… ou rangée
+  dans la catégorie 💰), le site propose aussi **Noter la dépense**.
 
 ## Qui doit quoi
 
@@ -57,4 +79,5 @@ partage** : changer les proportions ne réécrit pas le passé.
 - Les dépenses font partie de l'**export de vos données** (Réglages → Données & confidentialité).
   À la suppression d'un compte, ses dépenses perso sont effacées ; les dépenses communes restent
   pour que les soldes de l'autre restent justes, au nom d'« Ancien membre ».
-- Sur Android, les dépenses demandent une connexion ; les proportions se règlent sur le site.
+- Sur Android, les dépenses demandent une connexion ; les proportions se règlent sur le site, et
+  la proposition « Noter la dépense » après une tâche cochée n'existe que sur le site.

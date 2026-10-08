@@ -1,6 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { Prisma, type Expense, type ExpenseShare } from '@prisma/client';
+import { Prisma, type Expense, type ExpenseShare, type RecurringExpense } from '@prisma/client';
 import {
+  ATTACHMENT_MAX_BYTES,
   EXPENSE_CURRENCY,
   type ExpenseCategory,
   type ExpenseDto,
@@ -8,17 +9,30 @@ import {
   type ExpenseSplit,
   type ExpenseSummaryDto,
   type ExpenseWeightsInput,
+  HOUSEHOLD_ATTACHMENTS_MAX_BYTES,
+  RECEIPT_TYPES,
+  type RecurringExpenseDto,
+  type RecurringExpenseInput,
   type SettleInput,
   type UpdateExpenseInput,
 } from '@agenda/contracts';
-import { settleTransfers, splitCents, todayIn } from '@agenda/domain';
+import { daysInMonth, settleTransfers, splitCents, todayIn } from '@agenda/domain';
+import { safeFilename } from '../tasks/attachments.service';
 import { AppException, notFound } from '../common/app-exception';
 import { fromDbDate, toDbDate } from '../common/dates';
 import { DomainEvents } from '../common/domain-events';
 import type { HouseholdContext } from '../common/request-context';
 import { PrismaService } from '../prisma/prisma.service';
 
-type ExpenseWithShares = Expense & { shares: ExpenseShare[] };
+type ExpenseWithShares = Expense & {
+  shares: ExpenseShare[];
+  receipt: { expenseId: string } | null;
+};
+
+/** Toujours lu avec ses parts et la présence d'un ticket (pas son contenu). */
+const INCLUDE = { shares: true, receipt: { select: { expenseId: true } } } as const;
+
+type Share = { memberId: string; amountCents: number };
 
 const invalid = (message: string) =>
   new AppException('VALIDATION_FAILED', HttpStatus.BAD_REQUEST, message);
@@ -37,9 +51,36 @@ const toDto = (e: ExpenseWithShares): ExpenseDto => ({
   shares: e.shares
     .map((s) => ({ memberId: s.memberId, amountCents: s.amountCents }))
     .sort((a, b) => a.memberId.localeCompare(b.memberId)),
+  hasReceipt: e.receipt !== null,
+  recurringId: e.recurringId,
   createdById: e.createdById,
   createdAt: e.createdAt.toISOString(),
 });
+
+const toRecurringDto = (r: RecurringExpense): RecurringExpenseDto => ({
+  id: r.id,
+  paidById: r.paidById,
+  amountCents: r.amountCents,
+  title: r.title,
+  category: r.category,
+  split: r.split,
+  forMemberId: r.forMemberId,
+  note: r.note,
+  dayOfMonth: r.dayOfMonth,
+  startDate: fromDbDate(r.startDate)!,
+});
+
+/** « 2026-10 » + n mois. */
+function addMonths(month: string, n: number): string {
+  const [y, m] = month.split('-').map(Number) as [number, number];
+  return new Date(Date.UTC(y, m - 1 + n, 1)).toISOString().slice(0, 7);
+}
+
+/** Échéance d'une charge fixe pour un mois : son jour, ou le dernier jour d'un mois plus court. */
+function dueDate(month: string, day: number): string {
+  const [y, m] = month.split('-').map(Number) as [number, number];
+  return `${month}-${String(Math.min(day, daysInMonth(y, m))).padStart(2, '0')}`;
+}
 
 /** Premier et dernier jour d'un mois « 2026-10 ». */
 function monthRange(month: string): { gte: Date; lte: Date } {
@@ -65,9 +106,10 @@ export class ExpensesService {
   ) {}
 
   async list(ctx: HouseholdContext, month: string): Promise<ExpenseDto[]> {
+    await this.materialize(ctx.householdId);
     const rows = await this.prisma.expense.findMany({
       where: { householdId: ctx.householdId, date: monthRange(month), ...visibleTo(ctx.memberId) },
-      include: { shares: true },
+      include: INCLUDE,
       orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
     });
     return rows.map(toDto);
@@ -77,7 +119,7 @@ export class ExpensesService {
     if (input.id) {
       const existing = await this.prisma.expense.findUnique({
         where: { id: input.id },
-        include: { shares: true },
+        include: INCLUDE,
       });
       // Renvoi d'un appareil hors ligne : même dépense, pas de doublon.
       if (existing) {
@@ -102,7 +144,7 @@ export class ExpensesService {
         createdById: ctx.memberId,
         shares: { create: shares },
       },
-      include: { shares: true },
+      include: INCLUDE,
     });
     this.events.publish(ctx.householdId, 'expenses');
     return toDto(expense);
@@ -112,7 +154,7 @@ export class ExpensesService {
     if (input.id) {
       const existing = await this.prisma.expense.findUnique({
         where: { id: input.id },
-        include: { shares: true },
+        include: INCLUDE,
       });
       if (existing) {
         if (existing.householdId !== ctx.householdId) throw notFound();
@@ -138,7 +180,7 @@ export class ExpensesService {
         createdById: ctx.memberId,
         shares: { create: [{ memberId: input.toMemberId, amountCents: input.amountCents }] },
       },
-      include: { shares: true },
+      include: INCLUDE,
     });
     this.events.publish(ctx.householdId, 'expenses');
     return toDto(expense);
@@ -162,9 +204,14 @@ export class ExpensesService {
       input.paidById !== undefined ||
       input.amountCents !== undefined ||
       input.split !== undefined ||
-      input.forMemberId !== undefined;
+      input.forMemberId !== undefined ||
+      input.shares !== undefined;
+    // Parts à la main : celles envoyées, sinon les actuelles si le montant n'a pas changé.
+    const custom =
+      input.shares ??
+      (current.split === 'CUSTOM' && input.amountCents === undefined ? current.shares : null);
     const shares = sharesChanged
-      ? this.computeShares(next, await this.activeMembers(ctx.householdId))
+      ? this.computeShares({ ...next, shares: custom }, await this.activeMembers(ctx.householdId))
       : null;
     const expense = await this.prisma.$transaction(async (tx) => {
       if (shares) await tx.expenseShare.deleteMany({ where: { expenseId: id } });
@@ -181,7 +228,7 @@ export class ExpensesService {
           ...(input.note !== undefined ? { note: input.note || null } : {}),
           ...(shares ? { shares: { create: shares } } : {}),
         },
-        include: { shares: true },
+        include: INCLUDE,
       });
     });
     this.events.publish(ctx.householdId, 'expenses');
@@ -196,6 +243,7 @@ export class ExpensesService {
 
   async summary(ctx: HouseholdContext, month: string): Promise<ExpenseSummaryDto> {
     const householdId = ctx.householdId;
+    await this.materialize(householdId);
     const [members, paidAll, sharesAll, monthRows] = await Promise.all([
       this.allMembers(householdId),
       this.prisma.expense.groupBy({
@@ -215,7 +263,7 @@ export class ExpensesService {
           date: monthRange(month),
           ...visibleTo(ctx.memberId),
         },
-        include: { shares: true },
+        include: INCLUDE,
       }),
     ]);
     const paid = new Map(paidAll.map((p) => [p.paidById, p._sum.amountCents ?? 0]));
@@ -232,7 +280,7 @@ export class ExpensesService {
       if (e.split !== 'PERSONAL') {
         monthPaid.set(e.paidById, (monthPaid.get(e.paidById) ?? 0) + e.amountCents);
       }
-      if (e.split === 'SHARED') {
+      if (e.split === 'SHARED' || e.split === 'CUSTOM') {
         commonCents += e.amountCents;
         for (const s of e.shares) {
           monthShare.set(s.memberId, (monthShare.get(s.memberId) ?? 0) + s.amountCents);
@@ -283,11 +331,28 @@ export class ExpensesService {
 
   /** Parts de chacun : figées à l'enregistrement, leur somme vaut toujours le montant. */
   private computeShares(
-    e: { paidById: string; amountCents: number; split: ExpenseSplit; forMemberId?: string | null },
+    e: {
+      paidById: string;
+      amountCents: number;
+      split: ExpenseSplit;
+      forMemberId?: string | null;
+      shares?: Share[] | null;
+    },
     members: { id: string; expenseWeight: number }[],
-  ): { memberId: string; amountCents: number }[] {
+  ): Share[] {
     const known = (id: string | null | undefined) => !!id && members.some((m) => m.id === id);
     if (!known(e.paidById)) throw invalid('Unknown payer');
+    if (e.split === 'CUSTOM') {
+      const shares = (e.shares ?? []).filter((x) => x.amountCents > 0);
+      if (!shares.length || shares.reduce((a, x) => a + x.amountCents, 0) !== e.amountCents) {
+        throw invalid('shares must add up to amountCents');
+      }
+      if (shares.some((x) => !known(x.memberId))) throw invalid('Unknown member');
+      if (new Set(shares.map((x) => x.memberId)).size !== shares.length) {
+        throw invalid('Duplicate member in shares');
+      }
+      return shares.map((x) => ({ memberId: x.memberId, amountCents: x.amountCents }));
+    }
     if (e.split === 'PERSONAL') return [{ memberId: e.paidById, amountCents: e.amountCents }];
     if (e.split === 'FOR_OTHER') {
       if (!known(e.forMemberId)) throw invalid('Unknown member');
@@ -300,6 +365,190 @@ export class ExpensesService {
     return members
       .map((m, i) => ({ memberId: m.id, amountCents: parts[i]! }))
       .filter((s) => s.amountCents > 0);
+  }
+
+  // ───────────── Charges fixes ─────────────
+
+  async listRecurring(ctx: HouseholdContext): Promise<RecurringExpenseDto[]> {
+    const rows = await this.prisma.recurringExpense.findMany({
+      where: {
+        householdId: ctx.householdId,
+        endedAt: null,
+        OR: [{ split: { not: 'PERSONAL' } }, { paidById: ctx.memberId }],
+      },
+      orderBy: [{ dayOfMonth: 'asc' }, { createdAt: 'asc' }],
+    });
+    return rows.map(toRecurringDto);
+  }
+
+  /** Créer une charge fixe ; l'échéance du mois en cours (si passée) est créée tout de suite. */
+  async createRecurring(
+    ctx: HouseholdContext,
+    input: RecurringExpenseInput,
+  ): Promise<RecurringExpenseDto> {
+    // Valide le payeur, le bénéficiaire et le partage avec les membres actuels.
+    this.computeShares(input, await this.activeMembers(ctx.householdId));
+    const recurring = await this.prisma.recurringExpense.create({
+      data: {
+        householdId: ctx.householdId,
+        paidById: input.paidById,
+        amountCents: input.amountCents,
+        title: input.title,
+        category: input.category,
+        split: input.split,
+        forMemberId: input.split === 'FOR_OTHER' ? input.forMemberId! : null,
+        note: input.note || null,
+        dayOfMonth: Number(input.startDate.slice(8, 10)),
+        startDate: toDbDate(input.startDate),
+        createdById: ctx.memberId,
+      },
+    });
+    await this.materialize(ctx.householdId);
+    this.events.publish(ctx.householdId, 'expenses');
+    return toRecurringDto(recurring);
+  }
+
+  /** Arrêter une charge fixe : plus rien n'est créé, les dépenses déjà créées restent. */
+  async stopRecurring(ctx: HouseholdContext, id: string): Promise<void> {
+    const stopped = await this.prisma.recurringExpense.updateMany({
+      where: {
+        id,
+        householdId: ctx.householdId,
+        endedAt: null,
+        OR: [{ split: { not: 'PERSONAL' } }, { paidById: ctx.memberId }],
+      },
+      data: { endedAt: new Date() },
+    });
+    if (!stopped.count) throw notFound();
+    this.events.publish(ctx.householdId, 'expenses');
+  }
+
+  /**
+   * Crée les échéances dues des charges fixes, jusqu'à aujourd'hui (fuseau du foyer). Appelé à
+   * chaque lecture : pas de tâche planifiée à surveiller. L'index unique (charge, mois) empêche
+   * les doublons si deux lectures se croisent.
+   */
+  private async materialize(householdId: string): Promise<void> {
+    const rules = await this.prisma.recurringExpense.findMany({
+      where: { householdId, endedAt: null },
+    });
+    if (!rules.length) return;
+    const today = todayIn(await this.timezone(householdId));
+    const thisMonth = today.slice(0, 7);
+    const members = await this.activeMembers(householdId);
+    let created = false;
+    for (const rule of rules) {
+      const start = fromDbDate(rule.startDate)!;
+      let month = rule.lastMonth ? addMonths(rule.lastMonth, 1) : start.slice(0, 7);
+      while (month <= thisMonth) {
+        const date = dueDate(month, rule.dayOfMonth);
+        if (date > today) break;
+        if (date >= start) {
+          let shares: Share[];
+          try {
+            shares = this.computeShares(rule, members);
+          } catch {
+            // Payeur ou bénéficiaire parti du foyer : la charge s'arrête d'elle-même.
+            await this.prisma.recurringExpense.update({
+              where: { id: rule.id },
+              data: { endedAt: new Date() },
+            });
+            break;
+          }
+          try {
+            await this.prisma.expense.create({
+              data: {
+                householdId,
+                paidById: rule.paidById,
+                amountCents: rule.amountCents,
+                date: toDbDate(date),
+                title: rule.title,
+                category: rule.category,
+                split: rule.split,
+                forMemberId: rule.forMemberId,
+                note: rule.note,
+                createdById: rule.createdById,
+                recurringId: rule.id,
+                recurringMonth: month,
+                shares: { create: shares },
+              },
+            });
+            created = true;
+          } catch (e) {
+            if (!(e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002')) throw e;
+          }
+        }
+        await this.prisma.recurringExpense.update({
+          where: { id: rule.id },
+          data: { lastMonth: month },
+        });
+        month = addMonths(month, 1);
+      }
+    }
+    if (created) this.events.publish(householdId, 'expenses');
+  }
+
+  // ───────────── Tickets ─────────────
+
+  async addReceipt(
+    ctx: HouseholdContext,
+    id: string,
+    file: { filename: string; contentType: string; data: Buffer },
+  ): Promise<ExpenseDto> {
+    const expense = await this.find(ctx, id);
+    if (!RECEIPT_TYPES.includes(file.contentType.toLowerCase())) {
+      throw invalid('Receipt must be an image or a PDF');
+    }
+    if (file.data.length > ATTACHMENT_MAX_BYTES) {
+      throw new AppException(
+        'ATTACHMENT_TOO_LARGE',
+        HttpStatus.PAYLOAD_TOO_LARGE,
+        'File too large',
+      );
+    }
+    // Même quota que les pièces jointes des tâches (tout le stockage du foyer).
+    const [tasks, receipts] = await Promise.all([
+      this.prisma.taskAttachment.aggregate({
+        where: { householdId: ctx.householdId },
+        _sum: { size: true },
+      }),
+      this.prisma.expenseReceipt.aggregate({
+        where: { householdId: ctx.householdId, expenseId: { not: id } },
+        _sum: { size: true },
+      }),
+    ]);
+    const used = (tasks._sum.size ?? 0) + (receipts._sum.size ?? 0);
+    if (used + file.data.length > HOUSEHOLD_ATTACHMENTS_MAX_BYTES) {
+      throw new AppException('ATTACHMENTS_QUOTA', HttpStatus.PAYLOAD_TOO_LARGE, 'Quota exceeded');
+    }
+    const data = {
+      householdId: ctx.householdId,
+      filename: safeFilename(file.filename),
+      contentType: file.contentType.toLowerCase(),
+      size: file.data.length,
+      data: new Uint8Array(file.data),
+      createdById: ctx.memberId,
+    };
+    await this.prisma.expenseReceipt.upsert({
+      where: { expenseId: expense.id },
+      create: { expenseId: expense.id, ...data },
+      update: data,
+    });
+    this.events.publish(ctx.householdId, 'expenses');
+    return toDto(await this.find(ctx, id));
+  }
+
+  async getReceipt(ctx: HouseholdContext, id: string) {
+    await this.find(ctx, id);
+    const receipt = await this.prisma.expenseReceipt.findUnique({ where: { expenseId: id } });
+    if (!receipt) throw notFound();
+    return receipt;
+  }
+
+  async removeReceipt(ctx: HouseholdContext, id: string): Promise<void> {
+    await this.find(ctx, id);
+    await this.prisma.expenseReceipt.deleteMany({ where: { expenseId: id } });
+    this.events.publish(ctx.householdId, 'expenses');
   }
 
   private async timezone(householdId: string): Promise<string> {
@@ -330,7 +579,7 @@ export class ExpensesService {
   private async find(ctx: HouseholdContext, id: string): Promise<ExpenseWithShares> {
     const expense = await this.prisma.expense.findFirst({
       where: { id, householdId: ctx.householdId, ...visibleTo(ctx.memberId) },
-      include: { shares: true },
+      include: INCLUDE,
     });
     if (!expense) throw notFound();
     return expense;

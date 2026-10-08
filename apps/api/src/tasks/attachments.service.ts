@@ -85,12 +85,20 @@ export class AttachmentsService {
         'File too large',
       );
     }
-    const used = await this.prisma.taskAttachment.aggregate({
-      where: { householdId: ctx.householdId },
-      _sum: { size: true },
-    });
+    // Quota commun aux pièces jointes et aux tickets de dépenses.
+    const [used, receipts] = await Promise.all([
+      this.prisma.taskAttachment.aggregate({
+        where: { householdId: ctx.householdId },
+        _sum: { size: true },
+      }),
+      this.prisma.expenseReceipt.aggregate({
+        where: { householdId: ctx.householdId },
+        _sum: { size: true },
+      }),
+    ]);
     const incoming = files.reduce((n, f) => n + f.data.length, 0);
-    if ((used._sum.size ?? 0) + incoming > HOUSEHOLD_ATTACHMENTS_MAX_BYTES) {
+    const stored = (used._sum.size ?? 0) + (receipts._sum.size ?? 0);
+    if (stored + incoming > HOUSEHOLD_ATTACHMENTS_MAX_BYTES) {
       throw new AppException('ATTACHMENTS_QUOTA', HttpStatus.PAYLOAD_TOO_LARGE, 'Quota exceeded');
     }
     const created = await this.prisma.$transaction(async (tx) => {

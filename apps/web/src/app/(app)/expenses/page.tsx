@@ -8,9 +8,18 @@ import type {
 } from '@agenda/contracts';
 import { ExpenseCategory as Categories } from '@agenda/contracts';
 import { parseAmountToCents } from '@agenda/domain';
-import { ArrowRight, ChevronLeft, ChevronRight, Plus, Scale, Wallet } from 'lucide-react';
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Paperclip,
+  Plus,
+  Repeat,
+  Scale,
+  Wallet,
+} from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
-import { useState, type FormEvent } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import { useSession } from '@/components/app/household-context';
 import { MemberAvatar } from '@/components/app/member-avatar';
 import { Button } from '@/components/ui/button';
@@ -23,11 +32,13 @@ import { EmptyState, ErrorState, Skeleton } from '@/components/ui/states';
 import { useToast } from '@/components/ui/toast';
 import { errorKey } from '@/lib/api';
 import {
+  receiptUrl,
   shiftMonth,
   useExpenseActions,
   useExpenses,
   useExpenseSummary,
   useMoney,
+  useRecurringExpenses,
 } from '@/lib/expenses';
 import { useToday } from '@/lib/format';
 
@@ -43,7 +54,8 @@ const CATEGORY_EMOJI: Record<ExpenseCategory, string> = {
   OTHER: '📦',
 };
 
-type Editing = { expense?: ExpenseDto } | null;
+type Prefill = { title?: string; category?: ExpenseCategory };
+type Editing = { expense?: ExpenseDto; prefill?: Prefill } | null;
 
 /** Dépenses du foyer : qui a payé quoi, la part de chacun, et qui doit combien à qui. */
 export default function ExpensesPage() {
@@ -60,6 +72,23 @@ export default function ExpensesPage() {
   const actions = useExpenseActions(household.id);
   const [editing, setEditing] = useState<Editing>(null);
   const [weightsOpen, setWeightsOpen] = useState(false);
+  const recurring = useRecurringExpenses(household.id);
+
+  // Lien « Noter la dépense » (Courses, tâche payée) : ?new=1&title=…&category=…
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (!params.has('new')) return;
+    const category = params.get('category');
+    setEditing({
+      prefill: {
+        title: params.get('title')?.slice(0, 120) ?? undefined,
+        category: Categories.options.includes(category as ExpenseCategory)
+          ? (category as ExpenseCategory)
+          : undefined,
+      },
+    });
+    window.history.replaceState(null, '', '/expenses');
+  }, []);
 
   const members = household.members;
   const myMemberId = members.find((m) => m.userId === me.id)?.id;
@@ -224,6 +253,44 @@ export default function ExpensesPage() {
         </Card>
       )}
 
+      {(recurring.data?.length ?? 0) > 0 && (
+        <Card className="flex flex-col gap-3 p-4" aria-labelledby="recurring-title">
+          <h2 id="recurring-title" className="font-semibold">
+            {t('recurringTitle')}
+          </h2>
+          <ul className="flex flex-col gap-2">
+            {recurring.data!.map((r) => (
+              <li key={r.id} className="flex flex-wrap items-center gap-3 text-[0.9375rem]">
+                <span aria-hidden>{CATEGORY_EMOJI[r.category]}</span>
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <span>
+                    {r.title} · <span className="tabular-nums">{money(r.amountCents)}</span>
+                  </span>
+                  <span className="text-[0.8125rem] text-text-muted">
+                    {t('recurringLine', { day: r.dayOfMonth, payer: memberName(r.paidById) })}
+                  </span>
+                </span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    if (window.confirm(t('recurringStopConfirm', { title: r.title }))) {
+                      actions.stopRecurring.mutate(r.id, {
+                        onError: (e) =>
+                          toast({ message: te(errorKey(e) as 'generic'), tone: 'error' }),
+                      });
+                    }
+                  }}
+                  aria-label={t('recurringStopLabel', { title: r.title })}
+                >
+                  {t('recurringStop')}
+                </Button>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      )}
+
       {expenses.error ? (
         <ErrorState
           message={te(errorKey(expenses.error) as 'generic')}
@@ -280,6 +347,22 @@ export default function ExpensesPage() {
                             })
                           )}
                         </span>
+                        {(e.recurringId || e.hasReceipt) && (
+                          <span className="flex gap-2 text-[0.75rem] text-text-muted">
+                            {e.recurringId && (
+                              <span className="inline-flex items-center gap-1">
+                                <Repeat aria-hidden className="size-3" />
+                                {t('monthly')}
+                              </span>
+                            )}
+                            {e.hasReceipt && (
+                              <span className="inline-flex items-center gap-1">
+                                <Paperclip aria-hidden className="size-3" />
+                                {t('receipt')}
+                              </span>
+                            )}
+                          </span>
+                        )}
                         {e.note && (
                           <span className="line-clamp-2 text-[0.8125rem] text-text-muted">
                             {e.note}
@@ -299,6 +382,7 @@ export default function ExpensesPage() {
       {editing && (
         <ExpenseDialog
           expense={editing.expense}
+          prefill={editing.prefill}
           defaultPayer={myMemberId ?? members[0]!.id}
           onClose={() => setEditing(null)}
         />
@@ -312,10 +396,12 @@ export default function ExpensesPage() {
 
 function ExpenseDialog({
   expense,
+  prefill,
   defaultPayer,
   onClose,
 }: {
   expense?: ExpenseDto;
+  prefill?: Prefill;
   defaultPayer: string;
   onClose: () => void;
 }) {
@@ -328,38 +414,80 @@ function ExpenseDialog({
   const actions = useExpenseActions(household.id);
   const members = household.members;
   const settlement = expense?.kind === 'SETTLEMENT';
-  const [amount, setAmount] = useState(
-    expense ? (expense.amountCents / 100).toFixed(2).replace('.', ',') : '',
-  );
-  const [title, setTitle] = useState(expense?.title ?? '');
+  const editable = (cents: number) => (cents / 100).toFixed(2).replace('.', ',');
+  const [amount, setAmount] = useState(expense ? editable(expense.amountCents) : '');
+  const [title, setTitle] = useState(expense?.title ?? prefill?.title ?? '');
   const [date, setDate] = useState(expense?.date ?? today);
   const [paidById, setPaidById] = useState(expense?.paidById ?? defaultPayer);
-  // « SHARED », « PERSONAL », ou l'identifiant du membre pour qui la dépense a été avancée.
+  // « SHARED », « CUSTOM », « PERSONAL », ou l'identifiant du membre pour qui la dépense a été
+  // avancée.
   const [target, setTarget] = useState<string>(
     expense?.split === 'FOR_OTHER'
       ? (expense.forMemberId ?? 'SHARED')
       : (expense?.split ?? 'SHARED'),
   );
-  const [category, setCategory] = useState<ExpenseCategory>(expense?.category ?? 'OTHER');
+  // Parts à la main, en texte (« 12,50 ») par membre.
+  const [custom, setCustom] = useState<Record<string, string>>(() =>
+    Object.fromEntries(
+      members.map((m) => {
+        const share =
+          expense?.split === 'CUSTOM' ? expense.shares.find((x) => x.memberId === m.id) : null;
+        return [m.id, share ? editable(share.amountCents) : ''];
+      }),
+    ),
+  );
+  const [category, setCategory] = useState<ExpenseCategory>(
+    expense?.category ?? prefill?.category ?? 'OTHER',
+  );
   const [note, setNote] = useState(expense?.note ?? '');
+  const [monthly, setMonthly] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const others = members.filter((m) => m.id !== paidById);
   const targetOptions = [
     { value: 'SHARED', label: t('split.SHARED') },
+    { value: 'CUSTOM', label: t('split.CUSTOM') },
     ...others.map((m) => ({ value: m.id, label: t('split.FOR_OTHER', { name: m.displayName }) })),
     { value: 'PERSONAL', label: t('split.PERSONAL') },
   ];
   // Payeur changé : une avancée « pour lui-même » redevient commune.
   const safeTarget = targetOptions.some((o) => o.value === target) ? target : 'SHARED';
+  const split: ExpenseSplit = ['SHARED', 'CUSTOM', 'PERSONAL'].includes(safeTarget)
+    ? (safeTarget as ExpenseSplit)
+    : 'FOR_OTHER';
+  const totalCents = parseAmountToCents(amount) ?? 0;
+  const customCents = members.map((m) =>
+    custom[m.id]?.trim() ? parseAmountToCents(custom[m.id]!) : 0,
+  );
+  const customLeft = totalCents - customCents.reduce<number>((a, c) => a + (c ?? 0), 0);
+  const canRepeat = !expense && split !== 'CUSTOM';
 
-  const submit = (e: FormEvent) => {
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
     const cents = parseAmountToCents(amount);
     if (!cents) return setError(t('amountInvalid'));
     if (!title.trim()) return setError(t('titleRequired'));
-    const split: ExpenseSplit =
-      safeTarget === 'SHARED' || safeTarget === 'PERSONAL' ? safeTarget : 'FOR_OTHER';
+    if (split === 'CUSTOM' && (customCents.some((c) => c === null) || customLeft !== 0)) {
+      return setError(t('customInvalid', { amount: money(cents) }));
+    }
+    const fail = (err: unknown) => setError(te(errorKey(err) as 'generic'));
+    if (canRepeat && monthly) {
+      actions.createRecurring.mutate(
+        {
+          paidById,
+          amountCents: cents,
+          title: title.trim(),
+          category,
+          split: split as 'SHARED' | 'FOR_OTHER' | 'PERSONAL',
+          forMemberId: split === 'FOR_OTHER' ? safeTarget : null,
+          note: note.trim() || null,
+          startDate: date,
+        },
+        { onSuccess: onClose, onError: fail },
+      );
+      return;
+    }
     actions.save.mutate(
       {
         editingId: expense?.id,
@@ -373,9 +501,22 @@ function ExpenseDialog({
           split,
           forMemberId: split === 'FOR_OTHER' ? safeTarget : null,
           note: note.trim() || null,
+          shares:
+            split === 'CUSTOM'
+              ? members.map((m, i) => ({ memberId: m.id, amountCents: customCents[i] ?? 0 }))
+              : null,
         },
       },
-      { onSuccess: onClose, onError: (err) => setError(te(errorKey(err) as 'generic')) },
+      {
+        onSuccess: (saved) => {
+          if (!file) return onClose();
+          actions.uploadReceipt.mutate(
+            { id: saved.id, file },
+            { onSuccess: onClose, onError: fail },
+          );
+        },
+        onError: fail,
+      },
     );
   };
 
@@ -466,11 +607,35 @@ function ExpenseDialog({
               onChange={setTarget}
             />
           </div>
-          <p className="-mt-2 text-[0.8125rem] text-text-muted">
-            {t(
-              `splitHint.${safeTarget === 'SHARED' || safeTarget === 'PERSONAL' ? safeTarget : 'FOR_OTHER'}`,
-            )}
-          </p>
+          <p className="-mt-2 text-[0.8125rem] text-text-muted">{t(`splitHint.${split}`)}</p>
+          {split === 'CUSTOM' && (
+            <div className="flex flex-col gap-2">
+              <div className="grid gap-3 sm:grid-cols-2">
+                {members.map((m) => (
+                  <Field
+                    key={m.id}
+                    label={t('customShare', { name: m.displayName })}
+                    value={custom[m.id] ?? ''}
+                    inputMode="decimal"
+                    placeholder="0,00"
+                    onChange={(e) => setCustom((c) => ({ ...c, [m.id]: e.target.value }))}
+                  />
+                ))}
+              </div>
+              <p
+                aria-live="polite"
+                className={
+                  customLeft === 0
+                    ? 'text-[0.8125rem] text-success'
+                    : 'text-[0.8125rem] text-text-muted'
+                }
+              >
+                {customLeft === 0
+                  ? `✓ ${t('customOk')}`
+                  : t('customLeft', { amount: money(customLeft) })}
+              </p>
+            </div>
+          )}
           <Select
             label={t('category')}
             value={category}
@@ -495,6 +660,54 @@ function ExpenseDialog({
               className="rounded-md border border-border bg-surface px-3 py-2 text-[0.9375rem]"
             />
           </div>
+          {canRepeat && (
+            <label className="flex min-h-11 items-start gap-3 text-[0.9375rem]">
+              <input
+                type="checkbox"
+                checked={monthly}
+                onChange={(e) => setMonthly(e.target.checked)}
+                className="mt-1 size-4 accent-accent"
+              />
+              <span className="flex flex-col">
+                <span>{t('repeatMonthly')}</span>
+                <span className="text-[0.8125rem] text-text-muted">{t('repeatMonthlyHint')}</span>
+              </span>
+            </label>
+          )}
+          {!(canRepeat && monthly) && (
+            <div className="flex flex-col gap-1.5">
+              <span className="text-sm font-medium">{t('receipt')}</span>
+              {expense?.hasReceipt ? (
+                <div className="flex flex-wrap items-center gap-3 text-[0.9375rem]">
+                  <a
+                    href={receiptUrl(household.id, expense.id)}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-accent underline-offset-4 hover:underline"
+                  >
+                    {t('receiptOpen')}
+                  </a>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    loading={actions.removeReceipt.isPending}
+                    onClick={() => actions.removeReceipt.mutate(expense.id, { onSuccess: onClose })}
+                  >
+                    {t('receiptRemove')}
+                  </Button>
+                </div>
+              ) : (
+                <input
+                  type="file"
+                  accept="image/*,application/pdf"
+                  aria-label={t('receiptAdd')}
+                  onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+                  className="text-[0.9375rem] file:mr-3 file:min-h-11 file:rounded-md file:border file:border-border file:bg-surface file:px-4 file:text-text"
+                />
+              )}
+            </div>
+          )}
           {error && (
             <p role="alert" className="rounded-md bg-danger/10 px-3 py-2 text-sm text-danger">
               {error}
@@ -513,7 +726,14 @@ function ExpenseDialog({
                 </Button>
               )}
             </div>
-            <Button type="submit" loading={actions.save.isPending}>
+            <Button
+              type="submit"
+              loading={
+                actions.save.isPending ||
+                actions.createRecurring.isPending ||
+                actions.uploadReceipt.isPending
+              }
+            >
               {t('save')}
             </Button>
           </div>

@@ -262,7 +262,9 @@
     "commentCount": "{count, plural, one {# reactie} other {# reacties}}",
     "sayThanks": "{name} bedanken",
     "thanksSent": "Bedankje gestuurd naar {name}",
-    "thanksFrom": "Bedankt door {names}"
+    "thanksFrom": "Bedankt door {names}",
+    "paidToast": "Betaald? Noteer de uitgave.",
+    "noteExpense": "Uitgave noteren"
   },
   "balance": {
     "bothOfUs": "Samen",
@@ -529,7 +531,7 @@
     },
     "data": {
       "title": "Verwerkte gegevens",
-      "body": "Account: voornaam, e-mailadres, wachtwoord (alleen als Argon2-hash, nooit leesbaar), taal.\nHuishouden: naam van het huishouden, leden, categorieën, uitnodigingen, boodschappenlijst.\nTaken: titels, notities, datums, tijden, duur, verantwoordelijken, herhalingen, status, subtaken, reacties, opgegeven afwezigheden, activiteitengeschiedenis (wie wat deed, en wanneer).\nUitgaven (als je ze gebruikt): bedrag, datum, omschrijving, categorie, opmerking, wie betaalde en ieders aandeel. Een persoonlijke uitgave zie alleen jij.\nSessies: apparaat (browser of app) en aanmeldingsdatums, zodat je op afstand kunt afmelden. Android-app: de meldingsidentificatie van de telefoon (als directe meldingen aan staan), verwijderd bij het afmelden.\nDe Android-app bewaart een kopie van je taken op de telefoon om offline te werken; die wordt gewist bij het afmelden.\nToevoegen per e-mail (als je het inschakelt): de afzender, het onderwerp en de tekst van e-mails die je naar je persoonlijke adres doorstuurt, worden opgeslagen in de notities van de aangemaakte taak. Ze worden ontvangen door Resend, onze e-mailprovider; hun bijlagen worden aan de taak toegevoegd.\nBijlagen: bestanden die je aan een taak toevoegt (of die bij een doorgestuurde e-mail zaten) worden met de taak op onze server bewaard, zijn zichtbaar voor de leden van het huishouden (alleen voor jou bij een persoonlijke taak) en worden samen met de taak verwijderd.\nMeldingen van problemen (als je er stuurt): het type, de titel en de tekst van je bericht, een schermafbeelding als je die toevoegt, of je gecontacteerd mag worden en, alleen als je het vakje aanvinkt, technische informatie die vóór het verzenden wordt getoond (browser of telefoonmodel, systeem, appversie, taal, tijdzone, schermgrootte, geopende pagina). Nooit de inhoud van je taken. Alleen de beheerders van de app lezen ze.\nBrowsermeldingen (als je ze inschakelt): het abonnementsadres dat je browser geeft, verwijderd wanneer je ze uitschakelt of afmeldt."
+      "body": "Account: voornaam, e-mailadres, wachtwoord (alleen als Argon2-hash, nooit leesbaar), taal.\nHuishouden: naam van het huishouden, leden, categorieën, uitnodigingen, boodschappenlijst.\nTaken: titels, notities, datums, tijden, duur, verantwoordelijken, herhalingen, status, subtaken, reacties, opgegeven afwezigheden, activiteitengeschiedenis (wie wat deed, en wanneer).\nUitgaven (als je ze gebruikt): bedrag, datum, omschrijving, categorie, opmerking, wie betaalde en ieders aandeel. Een persoonlijke uitgave zie alleen jij. Een toegevoegd kasticket (foto of pdf) wordt bij de uitgave bewaard en samen met haar verwijderd.\nSessies: apparaat (browser of app) en aanmeldingsdatums, zodat je op afstand kunt afmelden. Android-app: de meldingsidentificatie van de telefoon (als directe meldingen aan staan), verwijderd bij het afmelden.\nDe Android-app bewaart een kopie van je taken op de telefoon om offline te werken; die wordt gewist bij het afmelden.\nToevoegen per e-mail (als je het inschakelt): de afzender, het onderwerp en de tekst van e-mails die je naar je persoonlijke adres doorstuurt, worden opgeslagen in de notities van de aangemaakte taak. Ze worden ontvangen door Resend, onze e-mailprovider; hun bijlagen worden aan de taak toegevoegd.\nBijlagen: bestanden die je aan een taak toevoegt (of die bij een doorgestuurde e-mail zaten) worden met de taak op onze server bewaard, zijn zichtbaar voor de leden van het huishouden (alleen voor jou bij een persoonlijke taak) en worden samen met de taak verwijderd.\nMeldingen van problemen (als je er stuurt): het type, de titel en de tekst van je bericht, een schermafbeelding als je die toevoegt, of je gecontacteerd mag worden en, alleen als je het vakje aanvinkt, technische informatie die vóór het verzenden wordt getoond (browser of telefoonmodel, systeem, appversie, taal, tijdzone, schermgrootte, geopende pagina). Nooit de inhoud van je taken. Alleen de beheerders van de app lezen ze.\nBrowsermeldingen (als je ze inschakelt): het abonnementsadres dat je browser geeft, verwijderd wanneer je ze uitschakelt of afmeldt."
     },
     "google": {
       "title": "Google-gegevens",
@@ -694,7 +696,9 @@
     },
     "suggestions": "Vaak gekocht",
     "addSuggestion": "{text} toevoegen",
-    "aisleOf": "Afdeling voor {text}"
+    "aisleOf": "Afdeling voor {text}",
+    "noteExpense": "Uitgave noteren",
+    "cleared": "Mandje leeggemaakt."
   },
   "meals": {
     "title": "Maaltijden",
@@ -1236,7 +1240,8 @@
     "meta": {
       "SHARED": "Betaald door {payer} · gedeeld",
       "FOR_OTHER": "Betaald door {payer} voor {for}",
-      "PERSONAL": "Betaald door {payer} · persoonlijk"
+      "PERSONAL": "Betaald door {payer} · persoonlijk",
+      "CUSTOM": "Betaald door {payer} · eigen verdeling"
     },
     "formerMember": "Voormalig lid",
     "newTitle": "Nieuwe uitgave",
@@ -1250,12 +1255,14 @@
     "split": {
       "SHARED": "Gedeeld",
       "FOR_OTHER": "Voor {name}",
-      "PERSONAL": "Persoonlijk"
+      "PERSONAL": "Persoonlijk",
+      "CUSTOM": "Zelf verdelen"
     },
     "splitHint": {
       "SHARED": "Verdeeld volgens de verhouding van het huishouden.",
       "FOR_OTHER": "Voorgeschoten: de ander is het volledige bedrag schuldig.",
-      "PERSONAL": "Alleen voor jou: alleen jij ziet het, en het telt niet mee in het gedeelde totaal."
+      "PERSONAL": "Alleen voor jou: alleen jij ziet het, en het telt niet mee in het gedeelde totaal.",
+      "CUSTOM": "Vul ieders aandeel in; samen moeten ze het bedrag vormen."
     },
     "category": "Categorie",
     "note": "Opmerking (optioneel)",
@@ -1277,6 +1284,22 @@
       "KIDS": "Kinderen",
       "GIFTS": "Cadeaus",
       "OTHER": "Overige"
-    }
+    },
+    "customShare": "Aandeel van {name} (€)",
+    "customOk": "Het klopt.",
+    "customLeft": "Nog te verdelen: {amount}",
+    "customInvalid": "De aandelen moeten samen {amount} zijn.",
+    "repeatMonthly": "Elke maand",
+    "repeatMonthlyHint": "Wordt elke maand automatisch toegevoegd, op dezelfde dag (huur, abonnementen…).",
+    "receipt": "Kasticket",
+    "receiptOpen": "Kasticket bekijken",
+    "receiptRemove": "Kasticket verwijderen",
+    "receiptAdd": "Kasticket toevoegen (foto of pdf)",
+    "monthly": "Elke maand",
+    "recurringTitle": "Vaste kosten",
+    "recurringLine": "Op de {day}e van elke maand · betaald door {payer}",
+    "recurringStop": "Stoppen",
+    "recurringStopLabel": "“{title}” stoppen",
+    "recurringStopConfirm": "“{title}” stoppen? Uitgaven die al zijn toegevoegd, blijven."
   }
 }

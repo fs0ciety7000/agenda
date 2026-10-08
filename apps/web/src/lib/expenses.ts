@@ -2,6 +2,8 @@ import type {
   ExpenseDto,
   ExpenseInput,
   ExpenseSummaryDto,
+  RecurringExpenseDto,
+  RecurringExpenseInput,
   ExpenseWeightsInput,
   SettleInput,
   UpdateExpenseInput,
@@ -30,6 +32,16 @@ export const useExpenseSummary = (hid: string, month: string) =>
     queryFn: () => api<ExpenseSummaryDto>(`/v1/households/${hid}/expenses/summary?month=${month}`),
   });
 
+export const useRecurringExpenses = (hid: string) =>
+  useQuery({
+    queryKey: [...expenseKeys.all(hid), 'recurring'],
+    queryFn: () => api<RecurringExpenseDto[]>(`/v1/households/${hid}/expenses/recurring`),
+  });
+
+/** Adresse du ticket d'une dépense (ouvert dans un nouvel onglet). */
+export const receiptUrl = (hid: string, id: string) =>
+  `/v1/households/${hid}/expenses/${id}/receipt`;
+
 export function useExpenseActions(hid: string) {
   const qc = useQueryClient();
   const base = `/v1/households/${hid}/expenses`;
@@ -50,6 +62,7 @@ export function useExpenseActions(hid: string) {
                 split: input.split,
                 forMemberId: input.forMemberId ?? null,
                 note: input.note ?? null,
+                shares: input.shares ?? null,
               } satisfies UpdateExpenseInput,
             })
           : api<ExpenseDto>(base, { method: 'POST', json: input }),
@@ -62,6 +75,27 @@ export function useExpenseActions(hid: string) {
     }),
     remove: useMutation({
       mutationFn: (id: string) => api<void>(`${base}/${id}`, { method: 'DELETE' }),
+      onSettled: invalidate,
+    }),
+    createRecurring: useMutation({
+      mutationFn: (input: RecurringExpenseInput) =>
+        api<RecurringExpenseDto>(`${base}/recurring`, { method: 'POST', json: input }),
+      onSettled: invalidate,
+    }),
+    stopRecurring: useMutation({
+      mutationFn: (id: string) => api<void>(`${base}/recurring/${id}`, { method: 'DELETE' }),
+      onSettled: invalidate,
+    }),
+    uploadReceipt: useMutation({
+      mutationFn: ({ id, file }: { id: string; file: File }) => {
+        const body = new FormData();
+        body.append('file', file);
+        return api<ExpenseDto>(`${base}/${id}/receipt`, { method: 'POST', body });
+      },
+      onSettled: invalidate,
+    }),
+    removeReceipt: useMutation({
+      mutationFn: (id: string) => api<void>(`${base}/${id}/receipt`, { method: 'DELETE' }),
       onSettled: invalidate,
     }),
     weights: useMutation({
@@ -78,6 +112,25 @@ export function useMoney() {
   return (cents: number) =>
     format.number(cents / 100, { style: 'currency', currency: EXPENSE_CURRENCY });
 }
+
+/**
+ * Tâche qui ressemble à un paiement (« Payer la facture », « Pay rent », « Huur betalen »…), ou
+ * rangée dans la catégorie 💰 : en la cochant, on propose de noter la dépense.
+ */
+export function looksLikePayment(title: string, categoryEmoji?: string | null): boolean {
+  if (categoryEmoji === '💰') return true;
+  return /\b(payer|payez|paye|pay|paid|factures?|bill|rent|loyer|betalen|betaal|factuur|huur|rembourser)\b/i.test(
+    title.normalize('NFD').replace(/\p{M}/gu, ''),
+  );
+}
+
+/** Lien qui ouvre le formulaire de dépense prérempli. */
+export const newExpenseHref = (prefill: { title?: string; category?: string }) => {
+  const q = new URLSearchParams({ new: '1' });
+  if (prefill.title) q.set('title', prefill.title);
+  if (prefill.category) q.set('category', prefill.category);
+  return `/expenses?${q}`;
+};
 
 /** « 2026-10 » → mois précédent / suivant. */
 export function shiftMonth(month: string, delta: number): string {

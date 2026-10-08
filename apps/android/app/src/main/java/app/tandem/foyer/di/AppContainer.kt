@@ -50,7 +50,7 @@ class AppContainer(context: Context) {
     val repository: AgendaRepository = repositoryImpl
     val activity = ActivityRemote(api, database) { repositoryImpl.refresh() }
     val absences = AbsencesRemote(api, database) { repositoryImpl.refresh() }
-    val expenses = ExpensesRemote(api, database)
+    val expenses = ExpensesRemote(api, database, app.cacheDir)
     val comments = CommentsRemote(api, database)
     val reports = ReportsRemote(app, api, database)
     val reminders = ReminderScheduler(app, repository, settings)
