@@ -11,7 +11,7 @@ test('notes partagées : créer, épingler, modifier ; conflit avec l’autre ; 
 
   // Depuis « Plus » sur téléphone, depuis le menu sur ordinateur.
   if (info.project.name === 'mobile') {
-    await page.getByRole('link', { name: 'Plus' }).click();
+    await page.getByRole('button', { name: 'Plus', exact: true }).click();
     await page.getByRole('link', { name: /^Notes/ }).click();
   } else {
     await page.getByRole('link', { name: 'Notes' }).first().click();

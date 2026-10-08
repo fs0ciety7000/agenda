@@ -15,6 +15,8 @@ description: Mot de passe, Google, sessions, export et suppression de ses donné
 - **Appareils connectés** (**Réglages → Compte**, sur le site et sur Android) : chaque appareil
   où votre compte est ouvert (« Chrome · Windows », « App Android · Android 14 »), avec sa dernière
   activité et la date de connexion. **Déconnecter** ferme la session de cet appareil seulement ;
+  **Déconnecter les autres appareils** (dès deux autres) les ferme toutes d'un coup, sauf celui
+  que vous utilisez ;
   « Cet appareil » marque celui que vous utilisez. La liste demande une connexion.
 - **Passkeys** (connexion sans mot de passe) : **Réglages → Compte → Ajouter une passkey**, puis
   **Se connecter avec une passkey** sur la page de connexion. La passkey reste sur votre appareil

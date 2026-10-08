@@ -17,7 +17,7 @@ test('dates importantes : ajouter, retrouver sur Aujourd’hui, date unique sans
   );
 
   if (info.project.name === 'mobile') {
-    await page.getByRole('link', { name: 'Plus' }).click();
+    await page.getByRole('button', { name: 'Plus', exact: true }).click();
     await page.getByRole('link', { name: /^Dates importantes/ }).click();
   } else {
     await page.getByRole('link', { name: 'Dates' }).first().click();

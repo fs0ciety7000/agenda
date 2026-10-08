@@ -1,8 +1,8 @@
-Nouveau dans l'onglet Plus : Dépenses, Notes et Dates.
-• Dépenses : qui a payé quoi, « Nicolas doit 42,50 € à Grace », remboursement en un geste.
+Nouveau tiroir « Plus » (toucher ou tirer la barre) : Dépenses, Notes, Dates…
+• Dépenses : qui a payé quoi, qui doit combien, remboursement en un geste.
 • Parts à la main, charges fixes, ticket photo, budgets par catégorie, export.
 • Notes partagées ; dates importantes avec rappel.
 • Accueil : « Qui fait quoi » sur 7 jours.
-• Mode magasin ; « Peux-tu prendre ma tâche ? ».
-• Réglages : appareils connectés, déconnexion à distance.
-• Nouveau look : cases rondes, cartes.
+• Mode magasin ; échange de tâche.
+• Appareils connectés : déconnexion à distance, un ou tous.
+• Cases rondes, tâches en cartes.

@@ -52,6 +52,11 @@ publiée. Voir [App Android](android.md).
 
 ## Se repérer
 
+Sur téléphone (site et app Android), la barre du bas garde **Aujourd'hui**, **Tâches**,
+**Courses** et **Calendrier**. Toutes les autres pages (Dépenses, Notes, Dates importantes,
+Réglages…) sont dans le tiroir **Plus** : touchez **Plus**, ou tirez la barre du bas vers le
+haut.
+
 | Écran | Rôle |
 |---|---|
 | **Aujourd'hui** | En retard, du jour, « qui fait quoi » sur 7 jours, les dates importantes à venir, « à faire cette semaine », les 7 prochains jours et la répartition |

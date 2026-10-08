@@ -10,7 +10,7 @@ test('dépenses : une dépense commune, le solde, le remboursement', async ({
   await page.goto('/');
   // Mobile : « Plus » → Dépenses ; desktop : menu latéral.
   if (info.project.name === 'mobile') {
-    await page.getByRole('link', { name: 'Plus', exact: true }).click();
+    await page.getByRole('button', { name: 'Plus', exact: true }).click();
     await page.getByRole('link', { name: /^Dépenses/ }).click();
   } else {
     await page.getByRole('link', { name: 'Dépenses', exact: true }).click();

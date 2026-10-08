@@ -277,8 +277,27 @@ class ScreensTest {
                 push = PushState.Registered,
             )
         }
-        compose.onNodeWithText("Plus").assertIsDisplayed()
+        compose.onNodeWithText("Réglages").assertIsDisplayed()
         shot("more-dark")
+    }
+
+    @Test
+    fun tiroir_plus() {
+        val opened = mutableListOf<String>()
+        screen {
+            app.tandem.foyer.ui.navigation.NavDrawer(
+                destinations = app.tandem.foyer.ui.navigation.drawerDestinations(withAbsences = true),
+                current = "settings",
+                onOpen = { opened += it },
+                onDismiss = {},
+            )
+        }
+        compose.onNodeWithText("Plus").assertIsDisplayed()
+        listOf("Dépenses", "Notes", "Dates importantes", "Journal et corbeille", "Absences", "Aide", "Réglages")
+            .forEach { compose.onNodeWithText(it).assertIsDisplayed() }
+        shot("nav-drawer")
+        compose.onNodeWithText("Notes").performClick()
+        assertEquals(listOf("notes"), opened)
     }
 
     @Test
@@ -306,10 +325,9 @@ class ScreensTest {
                 push = PushState.Registered,
             )
         }
-        // Onglet « Plus » : les pages du foyer (Dépenses en tête) avant les réglages.
-        compose.onNodeWithText("Plus").assertIsDisplayed()
-        compose.onNodeWithText("DÉPENSES").assertIsDisplayed()
-        compose.onNodeWithText("Qui a payé quoi, et qui doit combien.").assertIsDisplayed()
+        // Les pages du foyer sont dans le tiroir « Plus » : l'écran commence par les réglages.
+        compose.onNodeWithText("Réglages").assertIsDisplayed()
+        compose.onNodeWithText("Qui a payé quoi, et qui doit combien.").assertDoesNotExist()
         compose.onNodeWithText("✓ Synchronisé avec « Commun G & N »").performScrollTo().assertIsDisplayed()
         compose.onNodeWithText("Actives : ce téléphone est enregistré.", substring = true).performScrollTo().assertIsDisplayed()
         shot("settings")

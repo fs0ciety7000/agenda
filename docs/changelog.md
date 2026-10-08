@@ -15,6 +15,14 @@ d'elle-même (ou via Google Play).
 
 ## 8 octobre 2026
 
+### Tiroir « Plus » et déconnexion des autres appareils (#90)
+
+- 🛠 **Barre du bas** (téléphone, site et Android) : **Plus** ouvre un tiroir avec toutes les
+  autres pages en tuiles (Dépenses, Notes, Dates importantes…, Réglages en dernier). On peut aussi
+  tirer la barre vers le haut.
+- 🔒 **Déconnecter les autres appareils** (Réglages → Compte → Appareils connectés) : un seul
+  geste ferme toutes les autres connexions, celle-ci reste ouverte.
+
 ### Appareils connectés (#89)
 
 - 🔒 **Appareils connectés** (Réglages → Compte, site et Android) : où votre compte est ouvert, la

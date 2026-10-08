@@ -1,5 +1,5 @@
-New in the More tab: Expenses, Notes and Dates.
-• Expenses: who paid what, "Nicolas owes Grace €42.50", payback in one tap.
+New "More" drawer (tap or pull up the bar): Expenses, Notes, Dates…
+• Expenses: who paid what, who owes how much, payback in one tap.
 • Custom split, fixed expenses, receipt photo, category budgets, export.
 • Shared notes; important dates with reminders.
 • Home: "Who does what" over 7 days.

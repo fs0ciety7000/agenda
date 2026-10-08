@@ -1224,6 +1224,7 @@
   },
   "more": {
     "title": "More",
+    "close": "Close",
     "expenses": {
       "title": "Expenses",
       "hint": "Who paid what, and who owes how much"
@@ -1469,6 +1470,11 @@
     "activity": "Active {last} · signed in {since}",
     "revoke": "Sign out",
     "revokeOne": "Sign out {device}",
-    "revoked": "{device} is signed out."
+    "revoked": "{device} is signed out.",
+    "revokeOthers": "Sign out other devices",
+    "revokeOthersTitle": "Sign out {count, plural, one {the other device} other {the # other devices}}?",
+    "revokeOthersBody": "This device stays signed in. The others will need to sign in again.",
+    "revokedOthers": "{count, plural, one {# device signed out} other {# devices signed out}}.",
+    "cancel": "Cancel"
   }
 }

@@ -1224,6 +1224,7 @@
   },
   "more": {
     "title": "Meer",
+    "close": "Sluiten",
     "expenses": {
       "title": "Uitgaven",
       "hint": "Wie wat betaalde, en wie hoeveel schuldig is"
@@ -1469,6 +1470,11 @@
     "activity": "Actief {last} · aangemeld {since}",
     "revoke": "Afmelden",
     "revokeOne": "{device} afmelden",
-    "revoked": "{device} is afgemeld."
+    "revoked": "{device} is afgemeld.",
+    "revokeOthers": "Andere apparaten afmelden",
+    "revokeOthersTitle": "{count, plural, one {Het andere apparaat} other {De # andere apparaten}} afmelden?",
+    "revokeOthersBody": "Dit apparaat blijft aangemeld. Op de andere moet je opnieuw aanmelden.",
+    "revokedOthers": "{count, plural, one {# apparaat afgemeld} other {# apparaten afgemeld}}.",
+    "cancel": "Annuleren"
   }
 }

@@ -4,7 +4,9 @@ import type { DeviceSessionDto } from '@agenda/contracts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Globe, Monitor, Smartphone } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { ErrorState, Skeleton } from '@/components/ui/states';
 import { useToast } from '@/components/ui/toast';
 import { api, errorKey } from '@/lib/api';
@@ -39,6 +41,11 @@ export function DeviceSessions() {
     mutationFn: (id: string) => api<void>(`/v1/me/sessions/${id}`, { method: 'DELETE' }),
     onSettled: () => void qc.invalidateQueries({ queryKey: sessionsKey }),
   });
+  const revokeOthers = useMutation({
+    mutationFn: () => api<void>('/v1/me/sessions', { method: 'DELETE' }),
+    onSettled: () => void qc.invalidateQueries({ queryKey: sessionsKey }),
+  });
+  const [confirmOthers, setConfirmOthers] = useState(false);
 
   if (sessions.error) {
     return (
@@ -51,6 +58,7 @@ export function DeviceSessions() {
   }
   if (!sessions.data) return <Skeleton className="h-24 w-full" />;
   const when = (iso: string) => format.relativeTime(new Date(iso), new Date());
+  const others = sessions.data.filter((d) => !d.current).length;
   return (
     <div className="flex flex-col gap-2">
       <h3 className="font-medium">{t('title')}</h3>
@@ -101,6 +109,39 @@ export function DeviceSessions() {
           );
         })}
       </ul>
+      {others > 1 && (
+        <Button variant="secondary" className="self-start" onClick={() => setConfirmOthers(true)}>
+          {t('revokeOthers')}
+        </Button>
+      )}
+      <Dialog open={confirmOthers} onOpenChange={setConfirmOthers}>
+        <DialogContent
+          title={t('revokeOthersTitle', { count: others })}
+          description={t('revokeOthersBody')}
+          closeLabel={t('cancel')}
+        >
+          <div className="flex flex-wrap justify-end gap-2">
+            <Button variant="ghost" onClick={() => setConfirmOthers(false)}>
+              {t('cancel')}
+            </Button>
+            <Button
+              variant="danger"
+              loading={revokeOthers.isPending}
+              onClick={() =>
+                revokeOthers.mutate(undefined, {
+                  onSuccess: () => {
+                    setConfirmOthers(false);
+                    toast({ message: t('revokedOthers', { count: others }) });
+                  },
+                  onError: (e) => toast({ message: te(errorKey(e) as 'generic'), tone: 'error' }),
+                })
+              }
+            >
+              {t('revokeOthers')}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -1224,6 +1224,7 @@
   },
   "more": {
     "title": "Plus",
+    "close": "Fermer",
     "expenses": {
       "title": "Dépenses",
       "hint": "Qui a payé quoi, et qui doit combien"
@@ -1469,6 +1470,11 @@
     "activity": "Actif {last} · connecté {since}",
     "revoke": "Déconnecter",
     "revokeOne": "Déconnecter {device}",
-    "revoked": "{device} est déconnecté."
+    "revoked": "{device} est déconnecté.",
+    "revokeOthers": "Déconnecter les autres appareils",
+    "revokeOthersTitle": "Déconnecter {count, plural, one {l’autre appareil} other {les # autres appareils}} ?",
+    "revokeOthersBody": "Cet appareil reste connecté. Sur les autres, il faudra se reconnecter.",
+    "revokedOthers": "{count, plural, one {# appareil déconnecté} other {# appareils déconnectés}}.",
+    "cancel": "Annuler"
   }
 }

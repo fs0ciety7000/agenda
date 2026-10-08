@@ -343,12 +343,10 @@
     <string name="trash_restored">Tâche restaurée</string>
     <string name="trash_restore_failed">Restauration impossible</string>
     <string name="settings_history">Journal et corbeille</string>
-    <string name="settings_history_hint">Qui a fait quoi, et les tâches supprimées depuis moins de 30 jours.</string>
     <string name="repeat_after">Après la dernière fois</string>
     <string name="repeat_after_hint">La prochaine fois est comptée à partir du jour où la tâche est faite (détartrer, changer un filtre…).</string>
     <string name="last_done">Fait %1$s par %2$s</string>
     <string name="absences_title">Absences</string>
-    <string name="absences_hint">En vacances ou en déplacement ? Ses tâches partagées passent à l’autre pendant l’absence.</string>
     <string name="absences_intro">Pendant l’absence, les tâches partagées de la personne passent à l’autre (tours de rôle compris). Les tâches personnelles ne bougent pas. À la fin, tout reprend son cours.</string>
     <string name="absence_item">%1$s : du %2$s au %3$s</string>
     <string name="absence_remove">Annuler l’absence de %1$s</string>
@@ -384,7 +382,6 @@
 
     <!-- Signalements -->
     <string name="report_section">Aide</string>
-    <string name="report_section_hint">Signaler un problème, proposer une idée, poser une question.</string>
     <string name="report_title">Signaler un problème</string>
     <string name="report_intro">Un bug, une idée, une question ? L’administrateur reçoit votre message et peut vous répondre ici.</string>
     <string name="report_faq">Questions fréquentes</string>
@@ -460,7 +457,6 @@
     <plurals name="meals_added"><item quantity="one">%d article ajouté aux courses.</item><item quantity="many">%d articles ajoutés aux courses.</item><item quantity="other">%d articles ajoutés aux courses.</item></plurals>
     <!-- Dépenses -->
     <string name="expenses_title">Dépenses</string>
-    <string name="expenses_settings_hint">Qui a payé quoi, et qui doit combien.</string>
     <string name="expenses_add">Dépense</string>
     <string name="expenses_prev_month">Mois précédent</string>
     <string name="expenses_next_month">Mois suivant</string>
@@ -582,7 +578,6 @@
         <item quantity="other">%1$s, %2$s : %3$d tâches</item>
     </plurals>
     <string name="notes_title">Notes</string>
-    <string name="notes_hint">Codes Wi-Fi, mesures, idées cadeaux.</string>
     <string name="notes_new">Nouvelle note</string>
     <string name="notes_edit">Modifier la note</string>
     <string name="notes_edit_one">Modifier « %1$s »</string>
@@ -609,7 +604,6 @@
     <string name="notes_conflict">Cette note a été modifiée entre-temps. Voici la dernière version : vérifiez, puis enregistrez à nouveau.</string>
     <string name="notes_pinned_meta">Épinglée · %1$s</string>
     <string name="dates_title">Dates importantes</string>
-    <string name="dates_hint">Anniversaires, fêtes, entretiens annuels.</string>
     <string name="dates_intro">Anniversaires, fêtes, entretiens annuels : Tandem vous prévient tous les deux à l’avance.</string>
     <string name="dates_new">Nouvelle date</string>
     <string name="dates_edit">Modifier la date</string>
@@ -681,4 +675,8 @@
     <string name="devices_revoked">%1$s est déconnecté.</string>
     <string name="devices_loading">Chargement des appareils…</string>
     <string name="devices_offline">La liste des appareils demande une connexion.</string>
+    <string name="devices_revoke_others">Déconnecter les autres appareils</string>
+    <string name="devices_revoke_others_body">Cet appareil reste connecté. Sur les autres, il faudra se reconnecter.</string>
+    <plurals name="devices_revoke_others_title"><item quantity="one">Déconnecter les %d autres appareils ?</item><item quantity="many">Déconnecter les %d autres appareils ?</item><item quantity="other">Déconnecter les %d autres appareils ?</item></plurals>
+    <plurals name="devices_revoked_others"><item quantity="one">%d appareil déconnecté.</item><item quantity="many">%d appareils déconnectés.</item><item quantity="other">%d appareils déconnectés.</item></plurals>
 </resources>
