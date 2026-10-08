@@ -1289,6 +1289,50 @@
         "tags": [
           "auth"
         ]
+      },
+      "delete": {
+        "operationId": "SessionsController_revokeOthers_v1",
+        "parameters": [
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Déconnecter tous les autres appareils (la connexion en cours reste ouverte)",
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/v1/me/sessions/{id}": {

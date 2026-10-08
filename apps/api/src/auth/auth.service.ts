@@ -178,6 +178,22 @@ export class AuthService {
     await this.revokeFamily(familyId);
   }
 
+  /** « Déconnecter les autres appareils » : toutes les connexions sauf celle qui fait la requête. */
+  async revokeOtherSessions(user: AuthUser): Promise<void> {
+    const current = await this.prisma.session.findUnique({
+      where: { id: user.sessionId },
+      select: { familyId: true },
+    });
+    await this.prisma.session.updateMany({
+      where: {
+        userId: user.userId,
+        revokedAt: null,
+        ...(current ? { familyId: { not: current.familyId } } : {}),
+      },
+      data: { revokedAt: new Date() },
+    });
+  }
+
   /** Utilisé par le guard : la session doit exister et ne pas être révoquée. */
   async isSessionActive(sessionId: string, userId: string): Promise<boolean> {
     const session = await this.prisma.session.findUnique({

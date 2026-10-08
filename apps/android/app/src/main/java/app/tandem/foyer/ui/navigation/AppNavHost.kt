@@ -24,10 +24,15 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
@@ -39,6 +44,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -53,7 +59,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -401,6 +409,26 @@ private fun MainScaffold(
 
     val tabs = Tab.entries
     val onTab = route in tabs.map { it.route }
+    var showDrawer by rememberSaveable { mutableStateOf(false) }
+    if (showDrawer) {
+        NavDrawer(
+            destinations = drawerDestinations(withAbsences = (state.household?.members?.size ?: 0) > 1),
+            current = route,
+            onOpen = { target ->
+                showDrawer = false
+                if (target == Tab.SETTINGS.route) {
+                    nav.navigate(target) {
+                        popUpTo(nav.graph.findStartDestination().id) { saveState = true }
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                } else {
+                    nav.navigate(target) { launchSingleTop = true }
+                }
+            },
+            onDismiss = { showDrawer = false },
+        )
+    }
     val open = { id: String -> nav.navigate("task/$id") }
 
     if (state.loaded && state.household == null) {
@@ -412,31 +440,59 @@ private fun MainScaffold(
         snackbarHost = { SnackbarHost(snackbar) },
         bottomBar = {
             if (onTab) {
-                NavigationBar {
-                    tabs.forEach { tab ->
-                        NavigationBarItem(
-                            selected = route == tab.route,
-                            onClick = {
-                                nav.navigate(tab.route) {
-                                    popUpTo(nav.graph.findStartDestination().id) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-                            icon = {
-                                Icon(
-                                    when (tab) {
-                                        Tab.TODAY -> Icons.Filled.Home
-                                        Tab.TASKS -> Icons.AutoMirrored.Filled.List
-                                        Tab.SHOPPING -> Icons.Filled.ShoppingCart
-                                        Tab.CALENDAR -> Icons.Filled.DateRange
-                                        Tab.SETTINGS -> Icons.Filled.Menu
-                                    },
-                                    contentDescription = null,
-                                )
-                            },
-                            label = { Text(stringResource(tab.label)) },
-                        )
+                // Tirer la barre vers le haut ouvre le tiroir « Plus » (toucher « Plus » aussi).
+                val dragThreshold = with(LocalDensity.current) { 40.dp.toPx() }
+                Column(
+                    Modifier
+                        .background(NavigationBarDefaults.containerColor)
+                        .pointerInput(Unit) {
+                            var pulled = 0f
+                            detectVerticalDragGestures(
+                                onDragStart = { pulled = 0f },
+                                onVerticalDrag = { _, dy ->
+                                    pulled -= dy
+                                    if (pulled > dragThreshold) {
+                                        pulled = Float.NEGATIVE_INFINITY
+                                        showDrawer = true
+                                    }
+                                },
+                            )
+                        },
+                ) {
+                    Box(
+                        Modifier.padding(top = 6.dp).align(Alignment.CenterHorizontally).size(width = 36.dp, height = 4.dp)
+                            .background(MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(2.dp)),
+                    )
+                    NavigationBar {
+                        tabs.forEach { tab ->
+                            NavigationBarItem(
+                                selected = route == tab.route,
+                                onClick = {
+                                    if (tab == Tab.SETTINGS) {
+                                        showDrawer = true
+                                        return@NavigationBarItem
+                                    }
+                                    nav.navigate(tab.route) {
+                                        popUpTo(nav.graph.findStartDestination().id) { saveState = true }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                },
+                                icon = {
+                                    Icon(
+                                        when (tab) {
+                                            Tab.TODAY -> Icons.Filled.Home
+                                            Tab.TASKS -> Icons.AutoMirrored.Filled.List
+                                            Tab.SHOPPING -> Icons.Filled.ShoppingCart
+                                            Tab.CALENDAR -> Icons.Filled.DateRange
+                                            Tab.SETTINGS -> Icons.Filled.Menu
+                                        },
+                                        contentDescription = null,
+                                    )
+                                },
+                                label = { Text(stringResource(tab.label)) },
+                            )
+                        }
                     }
                 }
             }
@@ -564,12 +620,6 @@ private fun MainScaffold(
                     weeklyReview = weeklyReview,
                     onWeeklyReview = { scope.launch { container.settings.setWeeklyReview(it) } },
                     onRetryPush = { scope.launch { container.push.register() } },
-                    onOpenHistory = { nav.navigate("history") },
-                    onOpenAbsences = { nav.navigate("absences") },
-                    onOpenExpenses = { nav.navigate("expenses") },
-                    onOpenNotes = { nav.navigate("notes") },
-                    onOpenDates = { nav.navigate("dates") },
-                    onOpenReport = { nav.navigate("report") },
                     language = remember { AppLanguage.current(context) },
                     onLanguage = { tag ->
                         val activity = context.findActivity() ?: return@SettingsScreen

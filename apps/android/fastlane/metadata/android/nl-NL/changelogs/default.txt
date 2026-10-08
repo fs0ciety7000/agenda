@@ -1,8 +1,8 @@
-Nieuw in het tabblad Meer: Uitgaven, Notities en Data.
-• Uitgaven: wie wat betaalde, "Nicolas is Grace € 42,50 schuldig", terugbetalen met één tik.
+Nieuwe lade "Meer" (tik of trek de balk omhoog): Uitgaven, Notities, Data…
+• Uitgaven: wie wat betaalde, wie hoeveel schuldig is, terugbetalen met één tik.
 • Zelf verdelen, vaste kosten, kasticket als foto, budget per categorie, export.
 • Gedeelde notities; belangrijke data met herinnering.
 • Start: "Wie doet wat" voor 7 dagen.
 • Winkelmodus; vraag de ander een taak over te nemen.
 • Instellingen: aangemelde apparaten, op afstand afmelden.
-• Nieuwe look: ronde vinkjes, kaarten.
+• Ronde vinkjes, taken in kaarten.

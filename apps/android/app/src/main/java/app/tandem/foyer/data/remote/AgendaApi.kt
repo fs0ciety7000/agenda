@@ -359,6 +359,9 @@ interface AgendaApi {
     @GET("v1/me/sessions")
     suspend fun deviceSessions(): Response<List<DeviceSessionDto>>
 
+    @DELETE("v1/me/sessions")
+    suspend fun revokeOtherDeviceSessions(): Response<Unit>
+
     @DELETE("v1/me/sessions/{id}")
     suspend fun revokeDeviceSession(@Path("id") id: String): Response<Unit>
 }

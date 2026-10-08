@@ -13,6 +13,9 @@ class DevicesRemote(private val api: AgendaApi) {
     /** Déconnecte un autre appareil (toute sa famille de sessions). */
     suspend fun revoke(id: String): Boolean = call { api.revokeDeviceSession(id).isSuccessful.takeIf { it } } ?: false
 
+    /** Déconnecte tous les autres appareils ; celui-ci reste connecté. */
+    suspend fun revokeOthers(): Boolean = call { api.revokeOtherDeviceSessions().isSuccessful.takeIf { it } } ?: false
+
     private suspend fun <T> call(block: suspend () -> T?): T? = withContext(Dispatchers.IO) {
         try {
             block()

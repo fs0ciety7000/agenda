@@ -1,34 +1,9 @@
 'use client';
 
-import {
-  BarChart3,
-  Cake,
-  ChevronRight,
-  History,
-  type LucideIcon,
-  Settings,
-  Sparkles,
-  StickyNote,
-  UtensilsCrossed,
-  Wallet,
-} from 'lucide-react';
+import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-
-const LINKS: {
-  href: string;
-  key: 'expenses' | 'notes' | 'dates' | 'meals' | 'stats' | 'review' | 'history' | 'settings';
-  icon: LucideIcon;
-}[] = [
-  { href: '/expenses', key: 'expenses', icon: Wallet },
-  { href: '/notes', key: 'notes', icon: StickyNote },
-  { href: '/dates', key: 'dates', icon: Cake },
-  { href: '/meals', key: 'meals', icon: UtensilsCrossed },
-  { href: '/stats', key: 'stats', icon: BarChart3 },
-  { href: '/review', key: 'review', icon: Sparkles },
-  { href: '/history', key: 'history', icon: History },
-  { href: '/settings', key: 'settings', icon: Settings },
-];
+import { MORE_LINKS } from '@/components/app/nav-drawer';
 
 /** « Plus » (mobile) : les pages qui n'ont pas de place dans la barre du bas. */
 export default function MorePage() {
@@ -37,7 +12,7 @@ export default function MorePage() {
     <div className="flex flex-col gap-6">
       <h1 className="text-[2rem] font-semibold leading-tight tracking-tight">{t('title')}</h1>
       <ul className="flex flex-col divide-y divide-border rounded-lg border border-border bg-surface">
-        {LINKS.map(({ href, key, icon: Icon }) => (
+        {MORE_LINKS.map(({ href, key, icon: Icon }) => (
           <li key={href}>
             <Link
               href={href}

@@ -331,12 +331,10 @@
     <string name="trash_restored">Taak hersteld</string>
     <string name="trash_restore_failed">Herstellen niet gelukt</string>
     <string name="settings_history">Activiteit en prullenbak</string>
-    <string name="settings_history_hint">Wie wat deed, en de taken die de afgelopen 30 dagen zijn verwijderd.</string>
     <string name="repeat_after">Na de laatste keer</string>
     <string name="repeat_after_hint">De volgende keer wordt geteld vanaf de dag waarop de taak is gedaan (ontkalken, een filter vervangen…).</string>
     <string name="last_done">Gedaan %1$s door %2$s</string>
     <string name="absences_title">Afwezigheden</string>
-    <string name="absences_hint">Op vakantie of op reis? De gedeelde taken gaan tijdens de afwezigheid naar de ander.</string>
     <string name="absences_intro">Tijdens de afwezigheid gaan de gedeelde taken van de persoon naar de ander (beurten inbegrepen). Persoonlijke taken blijven zoals ze zijn. Daarna gaat alles gewoon verder.</string>
     <string name="absence_item">%1$s: %2$s tot %3$s</string>
     <string name="absence_remove">Afwezigheid van %1$s annuleren</string>
@@ -372,7 +370,6 @@
 
     <!-- Signalements -->
     <string name="report_section">Hulp</string>
-    <string name="report_section_hint">Een probleem melden, een idee voorstellen, een vraag stellen.</string>
     <string name="report_title">Een probleem melden</string>
     <string name="report_intro">Een bug, een idee, een vraag? De beheerder krijgt je bericht en kan hier antwoorden.</string>
     <string name="report_faq">Veelgestelde vragen</string>
@@ -448,7 +445,6 @@
     <plurals name="meals_added"><item quantity="one">%d item toegevoegd aan de boodschappen.</item><item quantity="other">%d items toegevoegd aan de boodschappen.</item></plurals>
     <!-- Dépenses -->
     <string name="expenses_title">Uitgaven</string>
-    <string name="expenses_settings_hint">Wie wat betaalde, en wie hoeveel schuldig is.</string>
     <string name="expenses_add">Uitgave</string>
     <string name="expenses_prev_month">Vorige maand</string>
     <string name="expenses_next_month">Volgende maand</string>
@@ -568,7 +564,6 @@
         <item quantity="other">%1$s, %2$s: %3$d taken</item>
     </plurals>
     <string name="notes_title">Notities</string>
-    <string name="notes_hint">Wifi-codes, maten, cadeau-ideeën.</string>
     <string name="notes_new">Nieuwe notitie</string>
     <string name="notes_edit">Notitie bewerken</string>
     <string name="notes_edit_one">“%1$s” bewerken</string>
@@ -595,7 +590,6 @@
     <string name="notes_conflict">Deze notitie is intussen gewijzigd. Dit is de nieuwste versie: controleer ze en sla opnieuw op.</string>
     <string name="notes_pinned_meta">Vastgezet · %1$s</string>
     <string name="dates_title">Belangrijke data</string>
-    <string name="dates_hint">Verjaardagen, jubilea, jaarlijks onderhoud.</string>
     <string name="dates_intro">Verjaardagen, jubilea, jaarlijks onderhoud: Tandem herinnert jullie allebei op tijd.</string>
     <string name="dates_new">Nieuwe datum</string>
     <string name="dates_edit">Datum bewerken</string>
@@ -662,4 +656,8 @@
     <string name="devices_revoked">%1$s is afgemeld.</string>
     <string name="devices_loading">Apparaten laden…</string>
     <string name="devices_offline">Voor de lijst met apparaten heb je verbinding nodig.</string>
+    <string name="devices_revoke_others">Andere apparaten afmelden</string>
+    <string name="devices_revoke_others_body">Dit apparaat blijft aangemeld. Op de andere moet je opnieuw aanmelden.</string>
+    <plurals name="devices_revoke_others_title"><item quantity="one">Het andere apparaat afmelden?</item><item quantity="other">De %d andere apparaten afmelden?</item></plurals>
+    <plurals name="devices_revoked_others"><item quantity="one">%d apparaat afgemeld.</item><item quantity="other">%d apparaten afgemeld.</item></plurals>
 </resources>

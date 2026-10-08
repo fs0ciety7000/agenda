@@ -16,6 +16,13 @@ export class SessionsController {
     return this.auth.listSessions(user);
   }
 
+  /** Déconnecter tous les autres appareils (la connexion en cours reste ouverte). */
+  @Delete()
+  @HttpCode(204)
+  revokeOthers(@CurrentUser() user: AuthUser): Promise<void> {
+    return this.auth.revokeOtherSessions(user);
+  }
+
   /** Déconnecter un appareil à distance (le sien compris). */
   @Delete(':id')
   @HttpCode(204)

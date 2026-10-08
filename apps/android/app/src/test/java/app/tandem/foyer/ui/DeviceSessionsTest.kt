@@ -39,6 +39,8 @@ class DeviceSessionsTest {
     @get:Rule val compose = createComposeRule()
     private val requests = mutableListOf<RecordedRequest>()
     private val now = Instant.now().truncatedTo(ChronoUnit.SECONDS)
+    /** Un troisième appareil (Edge) en plus, pour « Déconnecter les autres appareils ». */
+    private var third = false
 
     private val server = MockWebServer().apply {
         dispatcher = object : Dispatcher() {
@@ -49,7 +51,8 @@ class DeviceSessionsTest {
                     """[{"id":"s1","kind":"ANDROID_APP","browser":null,"os":"Android 14","appVersion":"1.9.0",
                     "createdAt":"${now.minus(3, ChronoUnit.DAYS)}","lastUsedAt":"$now","current":true},
                     {"id":"s2","kind":"BROWSER","browser":"Firefox","os":"Linux","appVersion":null,
-                    "createdAt":"${now.minus(10, ChronoUnit.DAYS)}","lastUsedAt":"${now.minus(1, ChronoUnit.DAYS)}","current":false}]""",
+                    "createdAt":"${now.minus(10, ChronoUnit.DAYS)}","lastUsedAt":"${now.minus(1, ChronoUnit.DAYS)}","current":false}""" +
+                        (if (third) """,{"id":"s3","kind":"BROWSER","browser":"Edge","os":"Windows","createdAt":"$now","lastUsedAt":"$now"}""" else "") + "]",
                 )
             }
         }
@@ -58,9 +61,7 @@ class DeviceSessionsTest {
 
     @After fun tearDown() = server.shutdown()
 
-    @Test
-    fun liste_et_deconnexion() {
-        val messages = mutableListOf<String>()
+    private fun render(messages: MutableList<String>) {
         val remote = DevicesRemote(ApiClient.create(server.url("/").toString(), FakeTokenStore()))
         compose.setContent {
             AgendaTheme {
@@ -72,6 +73,12 @@ class DeviceSessionsTest {
             }
         }
         compose.waitUntil(5_000) { compose.onAllNodes(hasText("Firefox · Linux")).fetchSemanticsNodes().isNotEmpty() }
+    }
+
+    @Test
+    fun liste_et_deconnexion() {
+        val messages = mutableListOf<String>()
+        render(messages)
         compose.onNodeWithText("App Android · Android 14 · Cet appareil").assertIsDisplayed()
         // L'appareil courant ne se déconnecte pas d'ici (bouton « Se déconnecter » plus haut).
         assertEquals(1, compose.onAllNodes(hasText("Déconnecter")).fetchSemanticsNodes().size)
@@ -83,5 +90,21 @@ class DeviceSessionsTest {
         assertEquals("/v1/me/sessions/s2", requests.last { it.method == "DELETE" }.path)
         // L'API reconnaît l'app à son User-Agent.
         assertTrue(requests.first().getHeader("User-Agent")!!.startsWith("Tandem-Android/"))
+    }
+
+    @Test
+    fun deconnecter_les_autres() {
+        third = true
+        val messages = mutableListOf<String>()
+        render(messages)
+        compose.onNodeWithText("Edge · Windows").assertIsDisplayed()
+        compose.onNodeWithText("Déconnecter les autres appareils").performClick()
+        compose.onNodeWithText("Déconnecter les 2 autres appareils ?").assertIsDisplayed()
+        compose.onAllNodes(hasText("Déconnecter les autres appareils"))[1].performClick()
+        compose.waitUntil(5_000) { messages.isNotEmpty() }
+        assertEquals("2 appareils déconnectés.", messages.single())
+        assertEquals("/v1/me/sessions", requests.last { it.method == "DELETE" }.path)
+        compose.waitUntil(5_000) { compose.onAllNodes(hasText("Firefox · Linux")).fetchSemanticsNodes().isEmpty() }
+        compose.onNodeWithText("App Android · Android 14 · Cet appareil").assertIsDisplayed()
     }
 }

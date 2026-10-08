@@ -75,6 +75,28 @@ describe('Appareils connectés', () => {
     expect(after.map((d) => d.kind)).not.toContain('ANDROID_APP');
   });
 
+  it('déconnecte tous les autres appareils d’un coup, garde le mien', async () => {
+    const u = await registerUser(app, 'Grace');
+    const other = await registerUser(app, 'Voisin');
+    const pc = await login(u.email, CHROME_WIN);
+    const phone = await login(u.email, ANDROID_APP);
+
+    await http().delete('/v1/me/sessions').set(pc.auth).expect(204);
+    const left = (await http().get('/v1/me/sessions').set(pc.auth).expect(200)).body as Device[];
+    expect(left).toEqual([expect.objectContaining({ current: true, browser: 'Chrome' })]);
+    // Inscription et téléphone déconnectés, rafraîchissement refusé.
+    await http().get('/v1/me/sessions').set(u.auth).expect(401);
+    await http().get('/v1/me/sessions').set(phone.auth).expect(401);
+    await http()
+      .post('/v1/auth/refresh')
+      .set(CSRF)
+      .set('x-client', 'mobile')
+      .send({ refreshToken: phone.refreshToken })
+      .expect(401);
+    // Les autres comptes ne sont pas touchés.
+    await http().get('/v1/me/sessions').set(other.auth).expect(200);
+  });
+
   it('impossible de déconnecter l’appareil d’un autre compte', async () => {
     const a = await registerUser(app, 'Grace');
     const b = await registerUser(app, 'Intrus');

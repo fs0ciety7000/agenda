@@ -71,7 +71,7 @@ export async function openSettings(page: Page) {
   const direct = page.getByRole('link', { name: 'Réglages', exact: true });
   if (await direct.first().isVisible()) await direct.first().click();
   else {
-    await page.getByRole('link', { name: 'Plus', exact: true }).click();
+    await page.getByRole('button', { name: 'Plus', exact: true }).click();
     await page.getByRole('link', { name: /^Réglages/ }).click();
   }
   await page.waitForURL(/\/settings/);

@@ -27,7 +27,8 @@ Fichiers importés, à respecter au même titre que celui-ci :
 
 ## Décisions prises
 
-- Mobile : cinq onglets au plus ; le dernier est **Plus** (pages du foyer, puis réglages), sur le
+- Mobile : cinq onglets au plus ; le dernier, **Plus**, ouvre un tiroir (toucher ou tirer la barre vers le
+  haut) avec les autres pages, Réglages en dernier (#90). Avant : page « Plus ». Sur le
   web comme sur Android (#86, #87).
 - Les couleurs de membres ne servent qu'aux pastilles ; graphiques et jauges sont neutres (#88).
 - Texte sur une couleur pleine : tokens `on-member` ou `surface`, jamais de blanc codé en dur (#88).

@@ -18,10 +18,11 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ErrorState, Skeleton } from '@/components/ui/states';
 import { ApiError, errorKey } from '@/lib/api';
 import { cn } from '@/lib/cn';
+import { MORE_LINKS, NavDrawer } from './nav-drawer';
 import { OfflineBanner } from './offline-banner';
 import { useHouseholds, useMe } from '@/lib/queries';
 import { useRealtime } from '@/lib/realtime';
@@ -58,15 +59,7 @@ const NAV: { href: string; key: NavKey; icon: LucideIcon; mobile?: false; deskto
 ];
 
 /** Pages accessibles depuis « Plus » sur mobile (onglet actif quand on y est). */
-export const MORE_PAGES = [
-  '/expenses',
-  '/notes',
-  '/meals',
-  '/stats',
-  '/review',
-  '/settings',
-  '/history',
-];
+export const MORE_PAGES = MORE_LINKS.map((l) => l.href);
 
 export function AppShell({ children }: { children: ReactNode }) {
   const t = useTranslations();
@@ -75,6 +68,9 @@ export function AppShell({ children }: { children: ReactNode }) {
   const me = useMe();
   const households = useHouseholds();
   const [mountedAt] = useState(() => Date.now());
+  const [drawer, setDrawer] = useState(false);
+  // Barre du bas tirée vers le haut : ouvre le tiroir (« Plus » fait la même chose au toucher).
+  const dragStart = useRef<number | null>(null);
   const freshHouseholds = households.isFetchedAfterMount && households.dataUpdatedAt >= mountedAt;
 
   const unauthenticated = me.error instanceof ApiError && me.error.status === 401;
@@ -193,28 +189,76 @@ export function AppShell({ children }: { children: ReactNode }) {
         )}
       </main>
 
-      {/* Mobile : barre d'onglets en bas */}
+      {/* Mobile : barre d'onglets en bas ; la tirer vers le haut ouvre le tiroir « Plus ». */}
       <nav
         aria-label={t('nav.main')}
-        className="fixed inset-x-0 bottom-0 z-40 grid grid-cols-5 border-t border-border bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
+        onPointerDown={(e) => {
+          // Suivi sur toute la fenêtre : le doigt (ou la souris) quitte vite la barre.
+          dragStart.current = e.clientY;
+          const move = (m: PointerEvent) => {
+            if (dragStart.current !== null && dragStart.current - m.clientY > 40) {
+              dragStart.current = null;
+              setDrawer(true);
+            }
+          };
+          const end = () => {
+            dragStart.current = null;
+            window.removeEventListener('pointermove', move);
+            window.removeEventListener('pointerup', end);
+            window.removeEventListener('pointercancel', end);
+          };
+          window.addEventListener('pointermove', move);
+          window.addEventListener('pointerup', end);
+          window.addEventListener('pointercancel', end);
+        }}
+        className="fixed inset-x-0 bottom-0 z-40 touch-pan-x border-t border-border bg-surface/95 pb-[env(safe-area-inset-bottom)] backdrop-blur md:hidden"
       >
-        {NAV.filter((n) => n.mobile !== false).map(({ href, key, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            aria-current={isActive(href) ? 'page' : undefined}
-            className={cn(
-              'flex h-16 flex-col items-center justify-center gap-1 text-[0.75rem] text-text-muted',
+        <span
+          aria-hidden
+          className="mx-auto mt-1.5 block h-1 w-9 rounded-full bg-border-strong/60"
+        />
+        <div className="grid grid-cols-5">
+          {NAV.filter((n) => n.mobile !== false).map(({ href, key, icon: Icon }) => {
+            const className = cn(
+              'flex h-14 flex-col items-center justify-center gap-1 text-[0.75rem] text-text-muted',
               isActive(href) && 'font-medium text-accent',
-            )}
-          >
-            <Icon aria-hidden className="size-5 stroke-[1.5]" />
-            {/* Sous 360 px, les libellés ne tiennent pas (« Boodschappen ») : icônes seules,
-                libellé lu par les lecteurs d'écran. */}
-            <span className="sr-only min-[360px]:not-sr-only">{t(`nav.${key}`)}</span>
-          </Link>
-        ))}
+            );
+            const content = (
+              <>
+                <Icon aria-hidden className="size-5 stroke-[1.5]" />
+                {/* Sous 360 px, les libellés ne tiennent pas (« Boodschappen ») : icônes seules,
+                    libellé lu par les lecteurs d'écran. */}
+                <span className="sr-only min-[360px]:not-sr-only">{t(`nav.${key}`)}</span>
+              </>
+            );
+            return href === '/more' ? (
+              <button
+                key={href}
+                type="button"
+                aria-haspopup="dialog"
+                aria-expanded={drawer}
+                aria-current={isActive(href) ? 'page' : undefined}
+                onClick={() => setDrawer(true)}
+                className={className}
+              >
+                {content}
+              </button>
+            ) : (
+              <Link
+                key={href}
+                href={href}
+                // Sinon, tirer un lien lance le glisser-déposer du navigateur et annule le geste.
+                draggable={false}
+                aria-current={isActive(href) ? 'page' : undefined}
+                className={className}
+              >
+                {content}
+              </Link>
+            );
+          })}
+        </div>
       </nav>
+      <NavDrawer open={drawer} onOpenChange={setDrawer} pathname={pathname} />
     </div>
   );
 }
