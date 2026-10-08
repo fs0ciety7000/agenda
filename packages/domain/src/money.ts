@@ -64,7 +64,7 @@ export function settleTransfers(balances: { id: string; balance: number }[]): Tr
 
 /** « 12,50 », « 12.5 », « 1 234,56 € » → 1250, 1250, 123456 ; null si illisible ou ≤ 0. */
 export function parseAmountToCents(text: string): number | null {
-  const cleaned = text.replace(/[€\s  ]/g, '');
+  const cleaned = text.replace(/[€\s\u00a0\u202f]/g, '');
   if (!/^\d+([.,]\d{1,2})?$/.test(cleaned)) return null;
   const [euros, cents = ''] = cleaned.split(/[.,]/);
   const value = Number(euros) * 100 + Number(cents.padEnd(2, '0'));
