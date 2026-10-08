@@ -32,12 +32,15 @@ Source : [audit du 8 octobre 2026](audits/2026-10-08.md). Légende : effort S / 
 - [x] Android : « À rattraper » et priorité seule en couleur (plus de ligne rouge) 🤖
 - [x] Outils d'audit : captures en/nl (`VISUAL_LOCALE`), 320 px, pages Dépenses/Menus/Plus/Revue 🌐
 
-### Lot 1 — Calendrier lisible sur téléphone (M)
+### Lot 1 — Calendrier lisible sur téléphone ✅ (#88)
 
-- [ ] Mois : points par jour (comme Android) + liste du jour touché sous la grille 🌐
-- [ ] Semaine : vue 3 jours sur mobile, semaine complète dès 768 px 🌐
-- [ ] Astuce tactile sur mobile, astuce clavier sur desktop 🌐
-- [ ] Android : glisser une tâche d'un jour à l'autre dans la vue mois (parité web) 🤖
+- [x] Mois : points par jour (comme Android) + liste du jour touché sous la grille 🌐
+- [x] Semaine : vue 3 jours sur mobile, semaine complète dès 768 px 🌐
+- [x] Astuce tactile sur mobile, astuce clavier sur desktop 🌐
+- [x] Android : glisser une tâche d'un jour à l'autre dans la vue mois — déjà en place
+      (appui long), vérifié 🤖
+- [ ] Mois sur téléphone : glisser-déposer d'un jour à l'autre (aujourd'hui : ouvrir la tâche et
+      changer la date) 🌐 — ajouté au lot 3
 
 ### Lot 2 — Cohérence web / Android (M)
 
@@ -57,6 +60,7 @@ Source : [audit du 8 octobre 2026](audits/2026-10-08.md). Légende : effort S / 
 - [ ] Parcours E2E des raccourcis clavier N, / et T 🌐
 - [ ] Menus : grille semaine compacte sur desktop 🌐
 - [ ] Site : aperçu animé de l'app au-dessus de la ligne de flottaison sur mobile 🪧
+- [ ] Calendrier mois sur téléphone : glisser une tâche de la liste vers un jour 🌐
 
 ### Lot 4 — Nouvelles fonctions (à prioriser ensemble)
 

@@ -412,7 +412,8 @@
     "views": {
       "day": "Day",
       "week": "Week",
-      "month": "Month"
+      "month": "Month",
+      "threeDays": "3 days"
     },
     "weekOf": "Week of {date}",
     "allDay": "All day",
@@ -423,7 +424,11 @@
     "resized": "Duration of “{title}” changed",
     "undo": "Undo",
     "moveError": "Couldn't move the task. Please try again.",
-    "dragHint": "Tip: drag a task to move it (long press on mobile) and drag its bottom edge to change its duration. With the keyboard, on a task: Alt + ↑/↓ shifts by 15 minutes, Alt + ←/→ changes the day, add Shift for the duration."
+    "dragHint": "Tip: drag a task to move it (long press on mobile) and drag its bottom edge to change its duration. With the keyboard, on a task: Alt + ↑/↓ shifts by 15 minutes, Alt + ←/→ changes the day, add Shift for the duration.",
+    "dayWithCount": "{date}, {count, plural, =0 {no tasks} one {# task} other {# tasks}}",
+    "dayEmpty": "Nothing planned that day.",
+    "addOnDay": "Add on this day",
+    "dragHintTouch": "Tip: long-press a task to move it, then drag its bottom edge to change its duration."
   },
   "privacy": {
     "google": "Sign in with Google",

@@ -26,6 +26,9 @@ d'elle-même (ou via Google Play).
 - 🛠 Android : « À rattraper » au lieu de « En retard », et seule la priorité est en couleur.
 - 🐞 Site vitrine : tout le contenu s'affiche même sans JavaScript ; plus de défilement horizontal.
 - ⚙️ Rapport d'audit et plan de travail suivi dans la roadmap.
+- ✨ **Calendrier sur téléphone** (site) : le mois montre un point par tâche et la liste du jour
+  touché, avec « Ajouter ce jour-là » ; la semaine devient une vue de 3 jours lisible ; l'astuce
+  parle de gestes, plus de raccourcis clavier.
 
 ### Dépenses (#86)
 

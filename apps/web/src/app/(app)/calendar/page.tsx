@@ -9,7 +9,7 @@ import {
   wallClock,
   weekdayOf,
 } from '@agenda/domain';
-import { ChevronLeft, ChevronRight, Repeat } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, Repeat } from 'lucide-react';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useFormatter, useTranslations } from 'next-intl';
 import { Suspense, useEffect, useRef, useState, type PointerEvent } from 'react';
@@ -21,6 +21,7 @@ import {
   type Placement,
 } from '@/components/app/calendar-drag';
 import { useSession } from '@/components/app/household-context';
+import { TaskList } from '@/components/app/task-row';
 import { useWeekdayName } from '@/components/app/recurrence-text';
 import { useTaskDialog } from '@/components/app/use-task-dialog';
 import { Button } from '@/components/ui/button';
@@ -52,8 +53,29 @@ function blockColor(o: OccurrenceDto, members: HouseholdMemberDto[]): string {
   return m ? MEMBER_BLOCK[m.color] : 'bg-surface-muted border-text-muted';
 }
 
-function range(view: View, anchor: string): { from: string; to: string; days: string[] } {
+/** Téléphone (< 768 px) : vue 3 jours au lieu de la semaine, mois en points. */
+function useIsMobile(): boolean {
+  const [mobile, setMobile] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia('(max-width: 767px)');
+    const update = () => setMobile(query.matches);
+    update();
+    query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, []);
+  return mobile;
+}
+
+function range(
+  view: View,
+  anchor: string,
+  threeDays = false,
+): { from: string; to: string; days: string[] } {
   if (view === 'day') return { from: anchor, to: anchor, days: [anchor] };
+  if (view === 'week' && threeDays) {
+    const days = [anchor, addDays(anchor, 1), addDays(anchor, 2)];
+    return { from: anchor, to: days[2]!, days };
+  }
   if (view === 'week') {
     const from = startOfWeek(anchor);
     const days = Array.from({ length: 7 }, (_, i) => addDays(from, i));
@@ -68,8 +90,9 @@ function range(view: View, anchor: string): { from: string; to: string; days: st
   return { from: days[0]!, to: days.at(-1)!, days: days.length ? days : [first, last] };
 }
 
-function shift(view: View, anchor: string, dir: number): string {
+function shift(view: View, anchor: string, dir: number, threeDays = false): string {
   if (view === 'day') return addDays(anchor, dir);
+  if (view === 'week' && threeDays) return addDays(anchor, 3 * dir);
   if (view === 'week') return addDays(anchor, 7 * dir);
   const { year, month } = parseIsoDate(anchor);
   const m = month - 1 + dir;
@@ -130,7 +153,18 @@ function CalendarView() {
     ['day', 'week', 'month'].includes(params.get('view') ?? '') ? params.get('view') : defaultView
   ) as View;
   const anchor = /^\d{4}-\d{2}-\d{2}$/.test(params.get('date') ?? '') ? params.get('date')! : today;
-  const { from, to, days } = range(view, anchor);
+  const mobile = useIsMobile();
+  const threeDays = mobile && view === 'week';
+  const { from, to, days } = range(view, anchor, threeDays);
+  // Mois sur téléphone : le jour touché s'affiche en liste sous la grille.
+  const [picked, setPicked] = useState<string | null>(null);
+  const monthOf = anchor.slice(0, 7);
+  const selectedDay =
+    picked?.slice(0, 7) === monthOf
+      ? picked
+      : today.slice(0, 7) === monthOf
+        ? today
+        : `${monthOf}-01`;
   const occurrences = useOccurrences(household.id, { view: 'all', from, to, limit: 500 });
   const items = occurrences.data ?? [];
   const move = useMoveOccurrence(household.id);
@@ -177,20 +211,26 @@ function CalendarView() {
           year: 'numeric',
           timeZone: 'UTC',
         })
-      : view === 'week'
-        ? t('weekOf', {
-            date: format.dateTime(new Date(`${from}T12:00:00Z`), {
-              day: 'numeric',
-              month: 'long',
-              timeZone: 'UTC',
-            }),
-          })
-        : format.dateTime(new Date(`${anchor}T12:00:00Z`), {
-            weekday: 'long',
+      : threeDays
+        ? format.dateTimeRange(new Date(`${from}T12:00:00Z`), new Date(`${to}T12:00:00Z`), {
             day: 'numeric',
             month: 'long',
             timeZone: 'UTC',
-          });
+          })
+        : view === 'week'
+          ? t('weekOf', {
+              date: format.dateTime(new Date(`${from}T12:00:00Z`), {
+                day: 'numeric',
+                month: 'long',
+                timeZone: 'UTC',
+              }),
+            })
+          : format.dateTime(new Date(`${anchor}T12:00:00Z`), {
+              weekday: 'long',
+              day: 'numeric',
+              month: 'long',
+              timeZone: 'UTC',
+            });
 
   return (
     <div className="flex flex-col gap-5">
@@ -204,7 +244,7 @@ function CalendarView() {
             variant="ghost"
             size="sm"
             aria-label={t('previous')}
-            onClick={() => go({ date: shift(view, anchor, -1) })}
+            onClick={() => go({ date: shift(view, anchor, -1, threeDays) })}
           >
             <ChevronLeft aria-hidden className="size-4" />
           </Button>
@@ -212,7 +252,7 @@ function CalendarView() {
             variant="ghost"
             size="sm"
             aria-label={t('next')}
-            onClick={() => go({ date: shift(view, anchor, 1) })}
+            onClick={() => go({ date: shift(view, anchor, 1, threeDays) })}
           >
             <ChevronRight aria-hidden className="size-4" />
           </Button>
@@ -225,12 +265,24 @@ function CalendarView() {
         onChange={(v) => go({ view: v })}
         options={(['day', 'week', 'month'] as const).map((v) => ({
           value: v,
-          label: t(`views.${v}`),
+          label: t(v === 'week' && mobile ? 'views.threeDays' : `views.${v}`),
         }))}
       />
 
       {!occurrences.data ? (
         <Skeleton className="h-[32rem] w-full" />
+      ) : view === 'month' && mobile ? (
+        <MonthDots
+          days={days}
+          anchor={anchor}
+          today={today}
+          selected={selectedDay}
+          items={items}
+          onPick={setPicked}
+          onOpen={dialog.openEdit}
+          onCreate={(date) => dialog.openNew({ date })}
+          dayName={dayName}
+        />
       ) : view === 'month' ? (
         <MonthGrid
           days={days}
@@ -253,9 +305,9 @@ function CalendarView() {
           dayName={dayName}
         />
       )}
-      {occurrences.data && (
+      {occurrences.data && !(mobile && view === 'month') && (
         <p id={DRAG_HINT_ID} className="text-xs text-text-muted">
-          {t('dragHint')}
+          {t(mobile ? 'dragHintTouch' : 'dragHint')}
         </p>
       )}
       {dialog.dialog}
@@ -324,7 +376,7 @@ function TimeGrid({
 
   return (
     <div className="overflow-x-auto rounded-lg border border-border bg-surface">
-      <div ref={gridRef} className={cn(days.length > 1 && 'min-w-[40rem]')}>
+      <div ref={gridRef} className={cn(days.length > 3 && 'min-w-[40rem]')}>
         {/* En-têtes de jours */}
         <div
           className="grid border-b border-border"
@@ -600,6 +652,118 @@ function MonthGrid({
           );
         })}
       </div>
+    </div>
+  );
+}
+
+/**
+ * Mois sur téléphone : un point par tâche (trois au plus) sous chaque jour, comme sur Android ;
+ * le jour touché s'affiche en liste dessous, avec ses tâches complètes et lisibles.
+ */
+function MonthDots({
+  days,
+  anchor,
+  today,
+  selected,
+  items,
+  onPick,
+  onOpen,
+  onCreate,
+  dayName,
+}: {
+  days: string[];
+  anchor: string;
+  today: string;
+  selected: string;
+  items: OccurrenceDto[];
+  onPick: (date: string) => void;
+  onOpen: (o: OccurrenceDto) => void;
+  onCreate: (date: string) => void;
+  dayName: (weekday: number, style?: 'long' | 'short' | 'narrow') => string;
+}) {
+  const t = useTranslations('calendar');
+  const format = useFormatter();
+  const month = anchor.slice(0, 7);
+  const longDate = (d: string) =>
+    format.dateTime(new Date(`${d}T12:00:00Z`), {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      timeZone: 'UTC',
+    });
+  const dayItems = items
+    .filter((o) => o.date === selected)
+    .sort((a, b) => (a.startMinute ?? -1) - (b.startMinute ?? -1));
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="rounded-lg border border-border bg-surface p-2">
+        <div className="grid grid-cols-7">
+          {Array.from({ length: 7 }, (_, i) => (
+            <div
+              key={i}
+              className="pb-1 text-center text-xs text-text-muted first-letter:uppercase"
+            >
+              {dayName(i, 'narrow')}
+            </div>
+          ))}
+        </div>
+        <div className="grid grid-cols-7 gap-y-1">
+          {days.map((d) => {
+            const count = items.filter((o) => o.date === d).length;
+            const outside = d.slice(0, 7) !== month;
+            return (
+              <button
+                key={d}
+                type="button"
+                onClick={() => onPick(d)}
+                aria-pressed={d === selected}
+                aria-label={t('dayWithCount', { date: longDate(d), count })}
+                className="flex min-h-12 flex-col items-center justify-start gap-1 rounded-md pt-1"
+              >
+                <span
+                  className={cn(
+                    'inline-flex size-8 items-center justify-center rounded-full text-sm tabular-nums',
+                    d === selected
+                      ? 'bg-accent font-semibold text-accent-fg'
+                      : d === today
+                        ? 'font-semibold text-accent ring-1 ring-accent'
+                        : outside
+                          ? 'text-text-muted'
+                          : 'text-text',
+                  )}
+                >
+                  {Number(d.slice(8, 10))}
+                </span>
+                <span aria-hidden className="flex h-1.5 items-center gap-0.5">
+                  {Array.from({ length: Math.min(count, 3) }, (_, i) => (
+                    <span
+                      key={i}
+                      className={cn(
+                        'size-1.5 rounded-full',
+                        outside ? 'bg-text-muted' : 'bg-accent',
+                      )}
+                    />
+                  ))}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <section aria-labelledby="picked-day" className="flex flex-col gap-2">
+        <h2 id="picked-day" className="font-semibold first-letter:uppercase">
+          {longDate(selected)}
+        </h2>
+        {dayItems.length ? (
+          <TaskList items={dayItems} onOpen={onOpen} label={longDate(selected)} />
+        ) : (
+          <p className="text-[0.9375rem] text-text-muted">{t('dayEmpty')}</p>
+        )}
+        <Button variant="ghost" size="sm" className="self-start" onClick={() => onCreate(selected)}>
+          <Plus aria-hidden className="size-4" />
+          {t('addOnDay')}
+        </Button>
+      </section>
     </div>
   );
 }

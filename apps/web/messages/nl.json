@@ -412,7 +412,8 @@
     "views": {
       "day": "Dag",
       "week": "Week",
-      "month": "Maand"
+      "month": "Maand",
+      "threeDays": "3 dagen"
     },
     "weekOf": "Week van {date}",
     "allDay": "Hele dag",
@@ -423,7 +424,11 @@
     "resized": "Duur van “{title}” gewijzigd",
     "undo": "Ongedaan maken",
     "moveError": "De taak kon niet worden verplaatst. Probeer opnieuw.",
-    "dragHint": "Tip: sleep een taak om ze te verplaatsen (lang indrukken op mobiel) en sleep de onderrand om de duur te wijzigen. Met het toetsenbord, op een taak: Alt + ↑/↓ verschuift 15 minuten, Alt + ←/→ wijzigt de dag, voeg Shift toe voor de duur."
+    "dragHint": "Tip: sleep een taak om ze te verplaatsen (lang indrukken op mobiel) en sleep de onderrand om de duur te wijzigen. Met het toetsenbord, op een taak: Alt + ↑/↓ verschuift 15 minuten, Alt + ←/→ wijzigt de dag, voeg Shift toe voor de duur.",
+    "dayWithCount": "{date}, {count, plural, =0 {geen taken} one {# taak} other {# taken}}",
+    "dayEmpty": "Niets gepland op die dag.",
+    "addOnDay": "Op deze dag toevoegen",
+    "dragHintTouch": "Tip: houd een taak ingedrukt om ze te verplaatsen en sleep de onderrand om de duur te wijzigen."
   },
   "privacy": {
     "google": "Aanmelden met Google",

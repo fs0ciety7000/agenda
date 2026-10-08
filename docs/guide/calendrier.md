@@ -8,6 +8,9 @@ description: Vues mois, semaine et jour, glisser-déposer, synchronisation avec 
 ## Le calendrier de l'app
 
 - Vues **mois**, **semaine** et **jour** ; *Aujourd'hui* pour revenir à la date du jour.
+- Sur téléphone (site) : la semaine devient **3 jours**, plus lisible ; le **mois** montre un
+  point par tâche sous chaque jour, et le jour touché s'affiche en liste dessous, avec
+  **Ajouter ce jour-là**. Le glisser-déposer reste disponible dans les vues jour et 3 jours.
 - **Glisser-déposer** une tâche pour la déplacer (appui long au doigt), tirer son bord inférieur
   pour changer sa durée. Pour une tâche répétée, seule cette occurrence bouge. *Annuler* est
   proposé juste après.

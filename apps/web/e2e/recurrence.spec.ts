@@ -77,11 +77,15 @@ test('tâche récurrente avec rotation, modification d’une occurrence, suppres
   await expect(page.getByRole('button', { name: /Nettoyer la salle de bain/ })).toHaveCount(0);
 });
 
-test('calendrier : vues jour / semaine / mois et création sur un créneau', async ({ page }) => {
+test('calendrier : vues jour / semaine / mois et création sur un créneau', async ({
+  page,
+}, info) => {
+  const mobile = info.project.name === 'mobile';
   await signUpWithHousehold(page, 'Nicolas');
   await page.getByRole('link', { name: 'Calendrier' }).first().click();
-  await page.getByRole('radio', { name: 'Semaine' }).click();
-  await expect(page.getByRole('heading', { name: /Semaine du/ })).toBeVisible();
+  // Sur téléphone, la semaine est remplacée par une vue de 3 jours.
+  await page.getByRole('radio', { name: mobile ? '3 jours' : 'Semaine' }).click();
+  if (!mobile) await expect(page.getByRole('heading', { name: /Semaine du/ })).toBeVisible();
   await page.getByRole('button', { name: 'Nouvelle tâche à 09:00' }).first().click();
   const dialog = page.getByRole('dialog', { name: 'Nouvelle tâche' });
   await expect(dialog.getByLabel('Heure')).toHaveValue('09:00');
