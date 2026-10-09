@@ -190,7 +190,10 @@ Suites validées le 9 octobre, dans cet ordre (du plus simple au plus gros) :
 3. [x] Code-barres en direct à la caméra (Google Code Scanner, services Play) (S) 🤖 (#93) :
    compilé et vérifié par la CI seulement (dépôt de Google injoignable ici, version vide en local) ;
    à essayer sur un téléphone
-4. [ ] Accueil ≥ 90 au budget Lighthouse : préparer la session côté serveur (M) 🌐
+4. [x] Accueil ≥ 90 au budget Lighthouse (M) 🌐 (#93) : 87 → 92 (médiane ; CI 88 avant). La
+   mesure a montré que le temps de blocage venait d'un seul long rendu de toute l'app, pas de la
+   session : la page se monte en différé (`useDeferredValue`), rendue par petits morceaux ; seuil
+   relevé à 90. Préparer la session côté serveur n'a donc pas été nécessaire
 
 Découvert pendant le lot 6 :
 

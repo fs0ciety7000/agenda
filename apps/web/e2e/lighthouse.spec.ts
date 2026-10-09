@@ -8,10 +8,10 @@ import { signUpWithHousehold } from './helpers';
  * une machine partagée.
  */
 const BUDGET = {
-  // Accueil : 85 pour l'instant (~87 mesuré) ; 90 demande de préparer la session côté serveur
-  // (docs/roadmap.md, lot 6). Ne baisser aucun seuil : le relever quand c'est fait.
+  // Accueil : la page se monte en différé (AppShell, useDeferredValue) ; ~92 mesuré. Ne baisser
+  // aucun seuil : chercher ce qui a ralenti.
   '/login': { performance: 90, accessibility: 95 },
-  '/': { performance: 85, accessibility: 95 },
+  '/': { performance: 90, accessibility: 95 },
 } as const;
 const RUNS = 3;
 const PORT = 9333;

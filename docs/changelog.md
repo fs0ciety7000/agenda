@@ -15,6 +15,11 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### Accueil plus réactif (#93)
+
+- 🛠 **Accueil** : la page ne fige plus le téléphone pendant son affichage (score de
+  performance 87 → 92, vérifié à chaque modification).
+
 ### Code-barres en direct sur Android (#93)
 
 - ✨ **Scanner en direct** dans l'app Android : le code-barres est lu à la caméra, sans prendre
