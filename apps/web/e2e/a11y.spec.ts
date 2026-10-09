@@ -82,6 +82,8 @@ for (const scheme of ['light', 'dark'] as const) {
         `/calendar?view=month&date=${today}`,
         '/stats',
         '/expenses',
+        '/notes',
+        '/dates',
         '/meals',
         '/more',
         '/review',

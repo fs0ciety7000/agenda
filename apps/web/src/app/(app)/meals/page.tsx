@@ -81,15 +81,18 @@ export default function MealsPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <Button
-          variant="secondary"
-          disabled={pending.length === 0}
-          loading={actions.toShopping.isPending}
-          onClick={() => sendToShopping(pending.map((m) => m.id))}
-        >
-          <ShoppingCart aria-hidden className="size-4" />
-          {t('weekToShopping', { count: pending.length })}
-        </Button>
+        {/* Rien à envoyer quand la semaine est vide : pas de bouton grisé sans raison. */}
+        {list.length > 0 && (
+          <Button
+            variant="secondary"
+            disabled={pending.length === 0}
+            loading={actions.toShopping.isPending}
+            onClick={() => sendToShopping(pending.map((m) => m.id))}
+          >
+            <ShoppingCart aria-hidden className="size-4" />
+            {t('weekToShopping', { count: pending.length })}
+          </Button>
+        )}
         <Link href="/shopping" className="text-sm text-accent underline-offset-4 hover:underline">
           {t('openShopping')}
         </Link>

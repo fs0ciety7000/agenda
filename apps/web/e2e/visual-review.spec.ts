@@ -154,12 +154,32 @@ for (const scheme of ['light', 'dark'] as const) {
     await page.waitForTimeout(600);
     await page.screenshot({ path: `${OUT}/${tag}-form.png` });
     await page.keyboard.press('Escape');
+    // Recherche globale et tiroir « Plus » (téléphone).
+    await page.keyboard.press('/');
+    await page.getByRole('searchbox').last().fill('cour');
+    await page.waitForTimeout(800);
+    await page.screenshot({ path: `${OUT}/${tag}-search.png` });
+    await page.keyboard.press('Escape');
+    if (info.project.name === 'mobile') {
+      await page.locator('nav').last().locator('button').last().click();
+      await page.waitForTimeout(500);
+      await page.screenshot({ path: `${OUT}/${tag}-drawer.png` });
+      await page.keyboard.press('Escape');
+    }
     // Écran vide : nouveau foyer.
     await page.context().clearCookies();
     await signUpWithHousehold(page, 'Nicolas');
     await switchLocale();
     await shot('today-empty');
-    await page.goto('/shopping');
-    await shot('shopping-empty');
+    for (const [name, path] of [
+      ['shopping-empty', '/shopping'],
+      ['meals-empty', '/meals'],
+      ['expenses-empty', '/expenses'],
+      ['notes-empty', '/notes'],
+      ['dates-empty', '/dates'],
+    ] as const) {
+      await page.goto(path);
+      await shot(name);
+    }
   });
 }

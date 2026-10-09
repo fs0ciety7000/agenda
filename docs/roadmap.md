@@ -132,8 +132,14 @@ Validé par l'utilisateur, dans cet ordre :
 - [x] **Tuile « Ajouter une tâche »** dans les réglages rapides Android (S) 🤖 (#92)
 - [x] **Recherche globale** : `/` cherche dans les tâches, notes, dates, dépenses et courses (M) ⚙️🌐🤖 (#92)
 - [x] **Notes et dates lisibles hors ligne** sur Android (M) 🤖 (#92)
-- [ ] **Audit UI/UX complet** après le lot 4 (M)
+- [x] **Audit UI/UX complet** après le lot 4 (M) (#92) : [rapport du 9 octobre](audits/2026-10-09.md), 3 bloquants corrigés
 - [ ] **Tests sur émulateur** : tiroir et bord à bord (S) 🤖
+
+Découvert par l'audit du 9 octobre (à prioriser ensemble) :
+
+- [ ] Android : icône par type de date importante, comme le site (S) 🤖
+- [ ] Android : un résultat de recherche « Dépense » ouvre le mois de la dépense (S) 🤖
+- [ ] Web : recherche ouverte avec « / » sans focus → rendre le focus au bouton « Rechercher » (S) 🌐
 
 Idées proposées, non retenues pour l'instant : idées cadeaux liées aux dates, échéances de
 contrats, planning du dimanche, lien « baby-sitter », packs de départ.

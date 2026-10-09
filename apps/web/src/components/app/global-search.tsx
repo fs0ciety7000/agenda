@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Cake, CheckCircle2, Circle, ShoppingCart, StickyNote, Wallet } from 'lucide-react';
 import Link from 'next/link';
 import { useFormatter, useTranslations } from 'next-intl';
-import { useEffect, useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Skeleton } from '@/components/ui/states';
 import { api } from '@/lib/api';
@@ -26,6 +26,7 @@ export function GlobalSearch({
   const online = useOnline();
   const [text, setText] = useState('');
   const [q, setQ] = useState('');
+  const input = useRef<HTMLInputElement>(null);
   // Une requête par pause de frappe, pas une par lettre.
   useEffect(() => {
     const id = setTimeout(() => setQ(text.trim()), 250);
@@ -51,10 +52,19 @@ export function GlobalSearch({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent title={t('title')} closeLabel={t('close')} className="sm:max-w-xl">
+      <DialogContent
+        title={t('title')}
+        closeLabel={t('close')}
+        className="sm:max-w-xl"
+        // Le champ prend le focus à l'ouverture ; Radix le rend ensuite à l'élément d'origine.
+        onOpenAutoFocus={(e) => {
+          e.preventDefault();
+          input.current?.focus();
+        }}
+      >
         <input
+          ref={input}
           type="search"
-          autoFocus
           value={text}
           onChange={(e) => setText(e.target.value)}
           aria-label={t('label')}

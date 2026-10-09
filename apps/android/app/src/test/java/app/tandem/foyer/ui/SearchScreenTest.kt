@@ -5,7 +5,9 @@ import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performTextInput
+import com.github.takahirom.roborazzi.captureRoboImage
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -33,7 +35,8 @@ import org.robolectric.annotation.Config
 
 /** Recherche globale (API simulée) : résultats groupés, une tâche ouvre son occurrence. */
 @RunWith(AndroidJUnit4::class)
-@Config(qualifiers = "fr-rFR-w400dp-h860dp")
+@org.robolectric.annotation.GraphicsMode(org.robolectric.annotation.GraphicsMode.Mode.NATIVE)
+@Config(qualifiers = "fr-rFR-w400dp-h860dp-xxhdpi")
 class SearchScreenTest {
     @get:Rule val compose = createComposeRule()
     private val context = ApplicationProvider.getApplicationContext<android.content.Context>()
@@ -74,6 +77,7 @@ class SearchScreenTest {
         compose.onNodeWithText("TÂCHES").assertIsDisplayed()
         compose.onNodeWithText("porte du garage 7788").assertIsDisplayed()
         compose.onNodeWithText("À acheter").assertIsDisplayed()
+        compose.onRoot().captureRoboImage("../../../docs/screenshots/android/search.png")
         compose.onNodeWithText("Réserver le garage").performClick()
         assertEquals(listOf<SearchTarget>(SearchTarget.Task("o1")), opened)
         assertTrue(paths.single(), paths.single().endsWith("/search?q=garage"))

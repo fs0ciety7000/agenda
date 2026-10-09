@@ -15,6 +15,13 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### Audit du 9 octobre (#92)
+
+- 🐞 Site vitrine : l'en-tête ne se tasse plus entre 768 et 1279 px (menu repliable).
+- 🛠 Page Tâches : le filtre s'appelle « Filtrer les tâches », distinct de la recherche globale.
+- 🛠 Au clavier, fermer une fenêtre (recherche…) rend le focus au bouton qui l'avait ouverte.
+- 🛠 Menus : plus de bouton grisé « Tout est déjà dans les courses » quand la semaine est vide.
+
 ### Notes et dates hors ligne sur Android (#92)
 
 - 🛠 App Android : les **notes** et les **dates importantes** restent lisibles sans réseau (la

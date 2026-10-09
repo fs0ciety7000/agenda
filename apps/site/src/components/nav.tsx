@@ -69,30 +69,30 @@ export function Nav({ t }: { t: Content }) {
           />
           <span className="text-lg">Tandem</span>
         </a>
-        <ul className="hidden items-center gap-1 md:flex">
+        <ul className="hidden items-center gap-1 xl:flex">
           {links.map((l) => (
             <li key={l.href}>
               <a
                 href={l.href}
-                className="rounded-full px-3.5 py-2 text-[0.9375rem] text-text-muted transition-colors hover:bg-surface-muted hover:text-text"
+                className="whitespace-nowrap rounded-full px-3.5 py-2 text-[0.9375rem] text-text-muted transition-colors hover:bg-surface-muted hover:text-text"
               >
                 {l.label}
               </a>
             </li>
           ))}
         </ul>
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-2 xl:flex">
           <OtherLangs
             t={t}
-            className="rounded-full px-2 py-2 text-sm text-text-muted hover:text-text"
+            className="whitespace-nowrap rounded-full px-2 py-2 text-sm text-text-muted hover:text-text"
           />
           <a
             href={`${APP_URL}/login`}
-            className="rounded-full px-3.5 py-2 text-[0.9375rem] font-medium text-text hover:bg-surface-muted"
+            className="whitespace-nowrap rounded-full px-3.5 py-2 text-[0.9375rem] font-medium text-text hover:bg-surface-muted"
           >
             {t.nav.login}
           </a>
-          <ButtonLink href={`${APP_URL}/register`} className="h-10 px-5 text-sm">
+          <ButtonLink href={`${APP_URL}/register`} className="h-10 whitespace-nowrap px-5 text-sm">
             {t.nav.start}
           </ButtonLink>
         </div>
@@ -102,7 +102,7 @@ export function Nav({ t }: { t: Content }) {
           aria-expanded={open}
           aria-controls="mobile-menu"
           aria-label={t.nav.menu}
-          className="flex size-10 items-center justify-center rounded-full hover:bg-surface-muted md:hidden"
+          className="flex size-10 items-center justify-center rounded-full hover:bg-surface-muted xl:hidden"
         >
           {open ? <X className="size-5" /> : <Menu className="size-5" />}
         </button>
@@ -115,7 +115,7 @@ export function Nav({ t }: { t: Content }) {
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: EASE }}
-            className="overflow-hidden md:hidden"
+            className="overflow-hidden xl:hidden"
           >
             <ul className="flex flex-col gap-1 px-5 pb-5">
               {links.map((l) => (

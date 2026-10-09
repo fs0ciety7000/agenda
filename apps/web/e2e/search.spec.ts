@@ -39,4 +39,13 @@ test('recherche globale : tâches, notes et courses ; un résultat ouvre la bonn
   await page.keyboard.press('/');
   await dialog.getByRole('searchbox').fill('zzzz introuvable');
   await expect(dialog.getByText('Rien trouvé pour « zzzz introuvable ».')).toBeVisible();
+
+  // Clavier : à la fermeture (Échap), le focus revient au bouton qui a ouvert la recherche.
+  await page.keyboard.press('Escape');
+  const open = page.getByRole('button', { name: 'Rechercher' }).locator('visible=true').first();
+  await open.focus();
+  await page.keyboard.press('Enter');
+  await expect(dialog.getByRole('searchbox')).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(open).toBeFocused();
 });
