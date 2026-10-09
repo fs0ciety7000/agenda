@@ -585,6 +585,16 @@
     <string name="notes_created">Notitie toegevoegd</string>
     <string name="notes_saved">Notitie opgeslagen</string>
     <string name="notes_deleted">“%1$s” verwijderd</string>
+    <string name="notes_field_secret">Gevoelige notitie</string>
+    <string name="notes_secret_hint">Verborgen in de lijst en bij zoeken; zichtbaar na je vingerafdruk of telefooncode.</string>
+    <string name="notes_secret_locked">Beschermde inhoud</string>
+    <string name="notes_reveal">Tonen</string>
+    <string name="notes_reveal_one">„%1$s” tonen</string>
+    <string name="notes_hide">Verbergen</string>
+    <string name="notes_hide_one">„%1$s” verbergen</string>
+    <string name="notes_reveal_to_edit">Tonen om te wijzigen</string>
+    <string name="notes_unlock_title">Gevoelige notitie</string>
+    <string name="notes_unlock_subtitle">Bevestig dat jij het bent om de inhoud te tonen</string>
     <string name="notes_history">Eerdere versies</string>
     <string name="notes_history_expanded">uitgevouwen</string>
     <string name="notes_history_collapsed">ingevouwen</string>

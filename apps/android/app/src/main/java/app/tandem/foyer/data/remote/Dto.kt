@@ -305,6 +305,8 @@ data class NoteDto(
     val title: String,
     val body: String = "",
     val pinned: Boolean = false,
+    /** Note sensible : `body` vide, contenu obtenu par `reveal` après l'empreinte ou le code. */
+    val secret: Boolean = false,
     val createdById: String? = null,
     val updatedById: String? = null,
     val createdAt: String,
@@ -313,7 +315,7 @@ data class NoteDto(
 )
 
 @Serializable
-data class NoteBody(val title: String, val body: String, val pinned: Boolean)
+data class NoteBody(val title: String, val body: String, val pinned: Boolean, val secret: Boolean = false)
 
 /** Champs absents = inchangés (`explicitNulls = false`). */
 @Serializable
@@ -321,6 +323,7 @@ data class UpdateNoteBody(
     val title: String? = null,
     val body: String? = null,
     val pinned: Boolean? = null,
+    val secret: Boolean? = null,
     val version: Int,
 )
 
@@ -337,6 +340,13 @@ data class NoteRevisionDto(
 
 @Serializable
 data class RestoreNoteBody(val version: Int)
+
+/** Vide : l'app vérifie l'empreinte ou le code du téléphone avant de demander le contenu. */
+@Serializable
+data class RevealNoteBody(val confirm: Boolean? = null)
+
+@Serializable
+data class RevealedNoteDto(val body: String)
 
 /** Commentaire sur une tâche (cf. packages/contracts/src/comments.ts). */
 @Serializable

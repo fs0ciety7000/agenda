@@ -21,8 +21,8 @@ Cloudflare). Contact : l'adresse affichée sur la page `/privacy` (variable
 | Traitement | Données | Finalité | Base légale | Conservation |
 |---|---|---|---|---|
 | **Compte** | prénom, e-mail, mot de passe **haché (Argon2id)**, langue, identité Google liée (identifiant, e-mail vérifié) | se connecter, retrouver son foyer | exécution du service | tant que le compte existe |
-| **Sessions** | appareil (en-tête User-Agent : navigateur et système, ou version de l'app Android et d'Android, sans le modèle du téléphone), date de connexion, dernière activité, jeton de rafraîchissement **haché** | rester connecté, « Appareils connectés » et déconnexion à distance | exécution du service | 60 jours d'inactivité |
-| **Foyer et tâches** | foyer, membres, catégories, tâches, notes, dates, responsables, répétitions, sous-tâches, commentaires, demandes d'échange de tour (et le mot laissé), liste de courses, notes partagées (titre, contenu, auteur ; les 20 versions précédentes de chacune, avec leur auteur et leur date, effacées avec la note), dates importantes (titre, jour, mois, année facultative, rappel ; peuvent concerner des proches, ex. un anniversaire) | le service lui-même | exécution du service | tant que le foyer existe ; tâche supprimée : **30 jours** en corbeille |
+| **Sessions** | appareil (en-tête User-Agent : navigateur et système, ou version de l'app Android et d'Android, sans le modèle du téléphone), date de connexion, dernière activité, jeton de rafraîchissement **haché**, fin d'ouverture du coffre des notes sensibles (5 minutes après le mot de passe) | rester connecté, « Appareils connectés » et déconnexion à distance | exécution du service | 60 jours d'inactivité |
+| **Foyer et tâches** | foyer, membres, catégories, tâches, notes, dates, responsables, répétitions, sous-tâches, commentaires, demandes d'échange de tour (et le mot laissé), liste de courses, notes partagées (titre, contenu, auteur, marque « sensible » ; les 20 versions précédentes de chacune, avec leur auteur et leur date, effacées avec la note), dates importantes (titre, jour, mois, année facultative, rappel ; peuvent concerner des proches, ex. un anniversaire) | le service lui-même | exécution du service | tant que le foyer existe ; tâche supprimée : **30 jours** en corbeille |
 | **Pièces jointes** | fichiers joints (PDF, photos), taille, type | joindre une facture, une photo | exécution du service | supprimées avec la tâche ; 10 Mo / fichier, 200 Mo / foyer |
 | **Journal d'activité** | qui a fait quoi, quand, champs modifiés (pas les valeurs) | transparence entre membres, annuler | intérêt légitime (vie commune) | **1 an** |
 | **Dépenses** (si utilisées) | montant, date, libellé, catégorie, commentaire, qui a payé, part de chacun, charges fixes (montant, jour du mois), ticket joint (photo ou PDF), budget mensuel commun du foyer ; photo lue par « Lire un ticket » (traitée en mémoire sur le serveur par Tesseract, aucun prestataire, effacée aussitôt, conservée seulement si l'utilisateur la joint à la dépense) ; une dépense **perso** n'est visible que de son auteur | partager les frais du foyer, calculer qui doit quoi | exécution du service | tant que le foyer existe ; dépenses perso effacées avec le compte, dépenses communes conservées (membre anonymisé) pour les soldes |
@@ -100,3 +100,11 @@ Toute nouvelle donnée collectée par l'app Android doit y être ajoutée **avan
 Toute fonction qui collecte une nouvelle donnée ou ajoute un prestataire met à jour, dans la même
 PR : ce registre, la politique en ligne (`apps/web/messages/*.json` → `privacyPolicy`) et, pour
 Android, la section Sécurité des données.
+
+**Notes sensibles.** Le contenu d'une note marquée « sensible » n'est jamais renvoyé par la
+liste, la recherche ni l'historique (il n'est donc pas non plus gardé dans les copies hors ligne
+du site et de l'app). Il s'affiche après le mot de passe du compte sur le site (une confirmation
+pour un compte sans mot de passe), ou après l'empreinte ou le code du téléphone, vérifiés par
+Android sur l'appareil : aucune donnée biométrique n'est transmise à Tandem. Le contenu reste
+stocké comme les autres notes (base chiffrée au repos selon l'hébergement) et figure dans l'export
+des données de son auteur.

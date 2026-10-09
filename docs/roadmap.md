@@ -161,8 +161,8 @@ Validé par l'utilisateur, du plus simple au plus gros :
 - [x] **Meilleure lecture des tickets** : redresser et recadrer la photo avant lecture (M) ⚙️ (#93) :
   orientation EXIF, quart de tour (détection d'orientation, en second recours), angle jusqu'à 10°,
   recadrage sur le papier, contraste et taille ; quatre photos difficiles en test
-- [ ] **Coffre pour les notes sensibles** : contenu masqué partout (liste, recherche,
-  notifications, export) et affiché après empreinte ou code du téléphone, ou mot de passe sur le
+- [x] **Coffre pour les notes sensibles** (#93) : contenu masqué partout (liste, recherche,
+  historique, copies hors ligne ; l'export RGPD le garde, la loi l'impose) et affiché après empreinte ou code du téléphone, ou mot de passe sur le
   site ; pas de chiffrement de bout en bout (choix de l'utilisateur) (M) ⚙️🌐🤖
 - [ ] **Liste pour un invité** : lien en lecture seule, sans compte, révocable (baby-sitter,
   quelqu'un qui garde la maison) (M) ⚙️🌐🤖

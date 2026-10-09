@@ -588,6 +588,16 @@
     <string name="notes_created">Note added</string>
     <string name="notes_saved">Note saved</string>
     <string name="notes_deleted">“%1$s” deleted</string>
+    <string name="notes_field_secret">Sensitive note</string>
+    <string name="notes_secret_hint">Hidden in the list and search; shown after your fingerprint or phone code.</string>
+    <string name="notes_secret_locked">Protected content</string>
+    <string name="notes_reveal">Show</string>
+    <string name="notes_reveal_one">Show “%1$s”</string>
+    <string name="notes_hide">Hide</string>
+    <string name="notes_hide_one">Hide “%1$s”</string>
+    <string name="notes_reveal_to_edit">Show to edit</string>
+    <string name="notes_unlock_title">Sensitive note</string>
+    <string name="notes_unlock_subtitle">Confirm it\'s you to show the content</string>
     <string name="notes_history">Previous versions</string>
     <string name="notes_history_expanded">expanded</string>
     <string name="notes_history_collapsed">collapsed</string>

@@ -7612,6 +7612,86 @@
         ]
       }
     },
+    "/v1/households/{householdId}/notes/{noteId}/reveal": {
+      "post": {
+        "operationId": "NotesController_reveal_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "noteId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevealNoteInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevealedNoteDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Afficher le contenu d'une note sensible (mot de passe ou confirmation sur le site, coffre ouvert 5 minutes ensuite ; vérifié sur l'appareil pour Android)",
+        "tags": [
+          "notes"
+        ]
+      }
+    },
     "/v1/households/{householdId}/notes/{noteId}/revisions": {
       "get": {
         "operationId": "NotesController_revisions_v1",
@@ -10714,6 +10794,7 @@
                   "ATTACHMENT_TOO_LARGE",
                   "ATTACHMENTS_QUOTA",
                   "RECEIPT_SCAN_UNAVAILABLE",
+                  "VAULT_LOCKED",
                   "INTERNAL"
                 ]
               },
@@ -13922,6 +14003,9 @@
           "pinned": {
             "type": "boolean"
           },
+          "secret": {
+            "type": "boolean"
+          },
           "createdById": {
             "nullable": true,
             "type": "string",
@@ -13949,6 +14033,7 @@
           "title",
           "body",
           "pinned",
+          "secret",
           "createdById",
           "updatedById",
           "createdAt",
@@ -13971,6 +14056,10 @@
             "maxLength": 4000
           },
           "pinned": {
+            "default": false,
+            "type": "boolean"
+          },
+          "secret": {
             "default": false,
             "type": "boolean"
           }
@@ -15450,6 +15539,30 @@
         "required": [
           "version"
         ]
+      },
+      "RevealNoteInput": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "confirm": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RevealedNoteDto": {
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "body"
+        ],
+        "additionalProperties": false
       },
       "SearchResultsDto": {
         "type": "object",
@@ -17137,6 +17250,9 @@
             "maxLength": 4000
           },
           "pinned": {
+            "type": "boolean"
+          },
+          "secret": {
             "type": "boolean"
           },
           "version": {

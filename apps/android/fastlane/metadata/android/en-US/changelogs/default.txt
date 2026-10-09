@@ -1,4 +1,5 @@
-Notes: previous versions you can restore.
+Sensitive notes: fingerprint or code to show them.
+• Notes: previous versions you can restore.
 • Read a receipt: amount and date read from the photo.
 • Share to Tandem: a link becomes a task, a note or shopping items.
 • "Add a task" tile in Quick Settings.
@@ -7,5 +8,3 @@ Notes: previous versions you can restore.
 • Expenses: who owes what, payback in one tap.
 • Shared notes; important dates with reminders.
 • Home: "Who does what" over 7 days.
-• Notes and dates readable offline.
-• Signed-in devices: remote sign-out.

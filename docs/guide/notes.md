@@ -22,6 +22,10 @@ approche : tout ce qu'on se redemande trouve sa place dans **Notes**. Sur télé
 - **Versions précédentes** : dans une note ouverte, ce bouton montre les 20 dernières versions
   (qui l'avait écrite, et quand). **Restaurer cette version** la remet en place ; la version
   remplacée rejoint à son tour l'historique, rien n'est perdu. Épingler ne crée pas de version.
+- **Note sensible** (codes Wi-Fi, digicode, alarme) : cochez la case en créant ou en modifiant la
+  note. Son contenu est masqué dans la liste et la recherche ; **Afficher** le montre après votre
+  mot de passe sur le site (le coffre reste ouvert 5 minutes), ou votre empreinte ou le code du
+  téléphone sur Android. **Copier** passe par la même vérification.
 - Les notes se mettent à jour **en direct** chez l'autre. Elles demandent une connexion pour
   être modifiées ; hors ligne, le site et l'app Android affichent la dernière version vue, en
   lecture.

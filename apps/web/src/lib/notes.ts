@@ -1,4 +1,11 @@
-import type { NoteDto, NoteInput, NoteRevisionDto, UpdateNoteInput } from '@agenda/contracts';
+import type {
+  NoteDto,
+  NoteInput,
+  NoteRevisionDto,
+  RevealedNoteDto,
+  RevealNoteInput,
+  UpdateNoteInput,
+} from '@agenda/contracts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from './api';
 
@@ -51,6 +58,11 @@ export function useNoteActions(hid: string) {
           json: { version },
         }),
       onSettled: refresh,
+    }),
+    // Contenu d'une note sensible (403 VAULT_LOCKED : demander le mot de passe, puis réessayer).
+    reveal: useMutation({
+      mutationFn: ({ id, ...input }: RevealNoteInput & { id: string }) =>
+        api<RevealedNoteDto>(`${base}/${id}/reveal`, { method: 'POST', json: input }),
     }),
     remove: useMutation({
       mutationFn: (id: string) => api<void>(`${base}/${id}`, { method: 'DELETE' }),

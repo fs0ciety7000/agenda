@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { coupleHousehold, createTestApp, registerUser } from './app';
+import { CSRF, coupleHousehold, createTestApp, registerUser } from './app';
 
 describe('Notes partagées', () => {
   let app: INestApplication;
@@ -176,5 +176,82 @@ describe('Notes partagées', () => {
       .send({ version: 30 })
       .expect(404);
     await http().get(`${h.base}/notes/${id}/revisions`).set(other.grace.auth).expect(404);
+  });
+
+  it('note sensible : contenu masqué partout, affiché après vérification', async () => {
+    const h = await coupleHousehold(app);
+    const url = `${h.base}/notes`;
+    const created = await http()
+      .post(url)
+      .set(h.grace.auth)
+      .send({ title: 'Digicode', body: 'A-2468-zèbre', secret: true })
+      .expect(201);
+    expect(created.body).toMatchObject({ secret: true, body: '' });
+    const id = created.body.id as string;
+
+    // Liste, recherche, historique : jamais le contenu.
+    const list = await http().get(url).set(h.nicolas.auth).expect(200);
+    expect(list.body).toEqual([expect.objectContaining({ title: 'Digicode', body: '' })]);
+    const byBody = await http().get(`${h.base}/search?q=2468`).set(h.nicolas.auth).expect(200);
+    expect(byBody.body.notes).toEqual([]);
+    const byTitle = await http().get(`${h.base}/search?q=Digi`).set(h.nicolas.auth).expect(200);
+    expect(byTitle.body.notes).toEqual([{ id, title: 'Digicode', snippet: '' }]);
+    await http()
+      .patch(`${url}/${id}`)
+      .set(h.grace.auth)
+      .send({ body: 'B-1357-girafe', version: 1 })
+      .expect(200);
+    const revisions = await http().get(`${url}/${id}/revisions`).set(h.grace.auth).expect(200);
+    expect(revisions.body).toEqual([expect.objectContaining({ body: '' })]);
+
+    // Android (jeton) : vérifié sur l'appareil.
+    const android = await http()
+      .post(`${url}/${id}/reveal`)
+      .set(h.nicolas.auth)
+      .send({})
+      .expect(200);
+    expect(android.body).toEqual({ body: 'B-1357-girafe' });
+
+    // Site (cookie) : mot de passe, puis coffre ouvert pour la session.
+    const login = await http()
+      .post('/v1/auth/login')
+      .set(CSRF)
+      .send({ email: h.grace.email, password: 'correct horse battery' })
+      .expect(200);
+    const web = {
+      cookie: (login.headers['set-cookie'] as unknown as string[]).join('; '),
+      ...CSRF,
+    };
+    const locked = await http().post(`${url}/${id}/reveal`).set(web).send({}).expect(403);
+    expect(locked.body.error).toMatchObject({
+      code: 'VAULT_LOCKED',
+      details: { method: 'password' },
+    });
+    const wrong = await http()
+      .post(`${url}/${id}/reveal`)
+      .set(web)
+      .send({ password: 'pas le bon' })
+      .expect(403);
+    expect(wrong.body.error.code).toBe('CURRENT_PASSWORD_INVALID');
+    await http()
+      .post(`${url}/${id}/reveal`)
+      .set(web)
+      .send({ password: 'correct horse battery' })
+      .expect(200);
+    const again = await http().post(`${url}/${id}/reveal`).set(web).send({}).expect(200);
+    expect(again.body).toEqual({ body: 'B-1357-girafe' });
+
+    // Un autre foyer : rien. L'export RGPD, lui, rend le contenu à son auteur.
+    const other = await coupleHousehold(app);
+    await http()
+      .post(`${other.base}/notes/${id}/reveal`)
+      .set(other.grace.auth)
+      .send({})
+      .expect(404);
+    await http().post(`${h.base}/notes/${id}/reveal`).set(other.grace.auth).send({}).expect(404);
+    const exported = await http().get('/v1/me/export').set(h.grace.auth).expect(200);
+    expect(exported.body.notesCreated).toEqual([
+      expect.objectContaining({ title: 'Digicode', body: 'B-1357-girafe' }),
+    ]);
   });
 });

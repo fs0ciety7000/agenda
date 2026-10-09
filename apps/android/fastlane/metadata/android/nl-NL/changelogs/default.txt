@@ -1,4 +1,5 @@
-Notities: eerdere versies terugzetten.
+Gevoelige notities: vingerafdruk of code om te tonen.
+• Notities: eerdere versies terugzetten.
 • Kasticket inlezen: bedrag en datum van de foto gelezen.
 • Delen naar Tandem: een link wordt een taak, notitie of boodschap.
 • Tegel "Taak toevoegen" in snelle instellingen.
@@ -6,4 +7,3 @@ Notities: eerdere versies terugzetten.
 • Lade "Meer": Uitgaven, Notities, Data…
 • Uitgaven: wie wat schuldig is, terugbetalen met één tik.
 • Gedeelde notities; belangrijke data met herinnering.
-• Notities en data ook offline te lezen.

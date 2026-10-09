@@ -88,19 +88,21 @@ model AuthIdentity {
 
 /// Une session = un appareil. Le refresh token n'est stocké que haché (SHA-256).
 model Session {
-  id               String    @id @default(uuid()) @db.Uuid
-  userId           String    @db.Uuid
+  id                 String    @id @default(uuid()) @db.Uuid
+  userId             String    @db.Uuid
   /// Tous les refresh tokens issus d'une même connexion partagent la famille.
-  familyId         String    @db.Uuid
-  refreshTokenHash String    @unique @db.Char(64)
-  userAgent        String?   @db.VarChar(255)
-  createdAt        DateTime  @default(now())
-  lastUsedAt       DateTime  @default(now())
-  expiresAt        DateTime
-  revokedAt        DateTime?
+  familyId           String    @db.Uuid
+  refreshTokenHash   String    @unique @db.Char(64)
+  userAgent          String?   @db.VarChar(255)
+  createdAt          DateTime  @default(now())
+  lastUsedAt         DateTime  @default(now())
+  expiresAt          DateTime
+  revokedAt          DateTime?
   /// Renseigné lors d'une rotation : un token déjà remplacé et rejoué = vol probable.
-  replacedAt       DateTime?
-  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  replacedAt         DateTime?
+  /// Coffre des notes sensibles ouvert jusqu'à (après le mot de passe, site).
+  vaultUnlockedUntil DateTime?
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([familyId])
@@ -571,6 +573,8 @@ model Note {
   title       String   @db.VarChar(120)
   body        String   @default("") @db.VarChar(4000)
   pinned      Boolean  @default(false)
+  /// Note sensible : contenu masqué dans les listes, la recherche et l'historique.
+  secret      Boolean  @default(false)
   /// Membres (jamais supprimés physiquement : anonymisés), sans clé étrangère.
   createdById String?  @db.Uuid
   updatedById String?  @db.Uuid

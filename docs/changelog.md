@@ -15,6 +15,11 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### Notes sensibles (#93)
+
+- ✨ **Note sensible** : codes et digicodes masqués dans la liste et la recherche, affichés après
+  votre mot de passe (site) ou votre empreinte ou le code du téléphone (Android).
+
 ### Lecture des tickets plus fiable (#93)
 
 - 🛠 **Lire un ticket** comprend mieux les photos prises au vol : tournées, penchées, posées sur

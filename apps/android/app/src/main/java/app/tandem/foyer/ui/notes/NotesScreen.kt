@@ -42,6 +42,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -108,15 +109,22 @@ class NotesViewModel(private val remote: NotesRemote) : ViewModel() {
         }
     }
 
-    fun create(title: String, body: String, pinned: Boolean, done: (Boolean) -> Unit) = save(done) {
-        remote.create(title, body, pinned)
+    fun create(title: String, body: String, pinned: Boolean, secret: Boolean = false, done: (Boolean) -> Unit) = save(done) {
+        remote.create(title, body, pinned, secret)
     }
 
     /** null = enregistrée ; sinon la note telle que l'autre l'a laissée (ou rien si échec). */
-    fun update(note: NoteDto, title: String?, body: String?, pinned: Boolean?, done: (NotesRemote.SaveResult) -> Unit) {
+    fun update(
+        note: NoteDto,
+        title: String?,
+        body: String?,
+        pinned: Boolean?,
+        secret: Boolean? = null,
+        done: (NotesRemote.SaveResult) -> Unit,
+    ) {
         _state.update { it.copy(saving = true) }
         viewModelScope.launch {
-            val result = remote.update(note, title, body, pinned)
+            val result = remote.update(note, title, body, pinned, secret)
             _state.update { it.copy(saving = false) }
             done(result)
             load()
@@ -126,6 +134,16 @@ class NotesViewModel(private val remote: NotesRemote) : ViewModel() {
     fun delete(note: NoteDto, done: (Boolean) -> Unit) = save(done) { remote.delete(note.id) }
 
     suspend fun revisions(noteId: String) = remote.revisions(noteId)
+
+    /** Contenu d'une note sensible (après vérification sur l'appareil) ; null hors ligne. */
+    suspend fun reveal(noteId: String) = remote.reveal(noteId)
+
+    /** Après l'empreinte ou le code : le coffre reste ouvert 5 minutes, comme sur le site. */
+    private var unlockedUntil = 0L
+    fun isUnlocked() = System.currentTimeMillis() < unlockedUntil
+    fun markUnlocked() {
+        unlockedUntil = System.currentTimeMillis() + 5 * 60_000
+    }
 
     fun restore(note: NoteDto, revisionId: String, done: (NotesRemote.SaveResult) -> Unit) {
         _state.update { it.copy(saving = true) }
@@ -149,7 +167,20 @@ class NotesViewModel(private val remote: NotesRemote) : ViewModel() {
 }
 
 /** Ce qu'on édite : une note existante (avec sa version) ou une nouvelle. */
-private data class Draft(val note: NoteDto?, val title: String, val body: String, val pinned: Boolean, val conflict: Boolean = false)
+private data class Draft(
+    val note: NoteDto?,
+    val title: String,
+    val body: String,
+    val pinned: Boolean,
+    val conflict: Boolean = false,
+    val secret: Boolean = false,
+    /** Note sensible pas encore affichée : contenu ni modifiable ni envoyé. */
+    val bodyLocked: Boolean = false,
+)
+
+/** Brouillon d'une note existante ; `body` : contenu affiché d'une note sensible, s'il l'est. */
+private fun draftOf(n: NoteDto, body: String? = null, conflict: Boolean = false) =
+    Draft(n, n.title, body ?: n.body, n.pinned, conflict, n.secret, bodyLocked = n.secret && body == null)
 
 /** Notes partagées : codes Wi-Fi, mesures, idées cadeaux. Épinglées d'abord. En ligne seulement. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -172,6 +203,33 @@ fun NotesScreen(
     val deletedFmt = stringResource(R.string.notes_deleted)
     val restoredFmt = stringResource(R.string.notes_restored)
     val locale = currentLocale()
+    val scope = rememberCoroutineScope()
+    // Contenus des notes sensibles affichés pendant cette visite de l'écran (jamais conservés).
+    var revealed by remember { mutableStateOf(mapOf<String, String>()) }
+    val unlock = rememberDeviceUnlock(stringResource(R.string.notes_unlock_title), stringResource(R.string.notes_unlock_subtitle))
+    /** Contenu d'une note : une note sensible demande l'empreinte ou le code (sauf coffre ouvert). */
+    val withBody: (NoteDto, (String) -> Unit) -> Unit = { note, then ->
+        val known = revealed[note.id]
+        when {
+            !note.secret -> then(note.body)
+            known != null -> then(known)
+            else -> {
+                val fetch = {
+                    scope.launch {
+                        val body = vm.reveal(note.id)
+                        if (body == null) {
+                            onMessage(failed)
+                        } else {
+                            revealed = revealed + (note.id to body)
+                            then(body)
+                        }
+                    }
+                    Unit
+                }
+                if (vm.isUnlocked()) fetch() else unlock { vm.markUnlocked(); fetch() }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -222,15 +280,20 @@ fun NotesScreen(
                     n,
                     members,
                     enabled = !state.offline,
+                    revealedBody = revealed[n.id],
                     onPin = {
                         vm.update(n, null, null, !n.pinned) { r -> if (r is NotesRemote.SaveResult.Failed) onMessage(failed) }
                     },
                     onCopy = {
-                        context.getSystemService(ClipboardManager::class.java)
-                            ?.setPrimaryClip(ClipData.newPlainText(n.title, n.body.ifBlank { n.title }))
-                        onMessage(copiedFmt.format(n.title))
+                        withBody(n) { body ->
+                            context.getSystemService(ClipboardManager::class.java)
+                                ?.setPrimaryClip(ClipData.newPlainText(n.title, body.ifBlank { n.title }))
+                            onMessage(copiedFmt.format(n.title))
+                        }
                     },
-                    onEdit = { draft = Draft(n, n.title, n.body, n.pinned) },
+                    onEdit = { draft = draftOf(n, revealed[n.id]) },
+                    onReveal = { withBody(n) {} },
+                    onHide = { revealed = revealed - n.id },
                 )
             }
         }
@@ -247,34 +310,38 @@ fun NotesScreen(
                     vm.restore(note, revision.id) { r ->
                         when (r) {
                             is NotesRemote.SaveResult.Saved -> {
-                                draft = Draft(r.note, r.note.title, r.note.body, r.note.pinned)
+                                revealed = revealed - note.id
+                                draft = draftOf(r.note)
                                 onMessage(restoredFmt.format(formatSavedAt(revision.savedAt, locale)))
                             }
                             is NotesRemote.SaveResult.Conflict ->
-                                draft = Draft(r.current, r.current.title, r.current.body, r.current.pinned, conflict = true)
+                                draft = draftOf(r.current, conflict = true)
                             NotesRemote.SaveResult.Failed -> onMessage(failed)
                         }
                     }
                 }
             },
             onChange = { draft = it },
+            onRevealBody = { note -> withBody(note) { body -> draft = draft?.copy(body = body, bodyLocked = false) } },
             onDismiss = { draft = null },
             onSave = {
                 if (d.note == null) {
-                    vm.create(d.title, d.body, d.pinned) { ok ->
+                    vm.create(d.title, d.body, d.pinned, d.secret) { ok ->
                         if (ok) draft = null
                         onMessage(if (ok) created else failed)
                     }
                 } else {
-                    vm.update(d.note, d.title, d.body, d.pinned) { r ->
+                    // Contenu verrouillé : il n'est pas envoyé (sinon il serait effacé).
+                    vm.update(d.note, d.title, if (d.bodyLocked) null else d.body, d.pinned, d.secret) { r ->
                         when (r) {
                             is NotesRemote.SaveResult.Saved -> {
+                                if (r.note.secret && !d.bodyLocked) revealed = revealed + (r.note.id to d.body)
                                 draft = null
                                 onMessage(saved)
                             }
                             // Modifiée par l'autre entre-temps : sa version s'affiche, on peut réenregistrer.
                             is NotesRemote.SaveResult.Conflict ->
-                                draft = Draft(r.current, r.current.title, r.current.body, r.current.pinned, conflict = true)
+                                draft = draftOf(r.current, conflict = true)
                             NotesRemote.SaveResult.Failed -> onMessage(failed)
                         }
                     }
@@ -282,14 +349,19 @@ fun NotesScreen(
             },
             onDelete = {
                 d.note?.let { note ->
-                    vm.delete(note) { ok ->
-                        if (ok) {
-                            draft = null
-                            onUndoable(deletedFmt.format(note.title)) {
-                                vm.create(note.title, note.body, note.pinned) { restored -> if (!restored) onMessage(failed) }
+                    scope.launch {
+                        // Note sensible : son contenu est gardé (sans l'afficher) pour « Annuler ».
+                        val body = if (note.secret) revealed[note.id] ?: vm.reveal(note.id).orEmpty() else note.body
+                        vm.delete(note) { ok ->
+                            if (ok) {
+                                draft = null
+                                revealed = revealed - note.id
+                                onUndoable(deletedFmt.format(note.title)) {
+                                    vm.create(note.title, body, note.pinned, note.secret) { restored -> if (!restored) onMessage(failed) }
+                                }
+                            } else {
+                                onMessage(failed)
                             }
-                        } else {
-                            onMessage(failed)
                         }
                     }
                 }
@@ -303,9 +375,13 @@ private fun NoteCard(
     n: NoteDto,
     members: List<Member>,
     enabled: Boolean,
+    /** Contenu d'une note sensible, une fois affiché. */
+    revealedBody: String?,
     onPin: () -> Unit,
     onCopy: () -> Unit,
     onEdit: () -> Unit,
+    onReveal: () -> Unit,
+    onHide: () -> Unit,
 ) {
     val locale = currentLocale()
     val date = remember(n.updatedAt, locale) {
@@ -347,7 +423,23 @@ private fun NoteCard(
                     )
                 }
             }
-            if (n.body.isNotBlank()) {
+            if (n.secret) {
+                // Note sensible : le contenu ne s'affiche qu'après l'empreinte ou le code.
+                if (revealedBody != null) {
+                    Text(revealedBody, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(end = 12.dp))
+                } else {
+                    Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Icon(painterResource(R.drawable.ic_note_lock), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(18.dp))
+                        Text(stringResource(R.string.notes_secret_locked), style = MaterialTheme.typography.bodyLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+                val toggleLabel = stringResource(if (revealedBody != null) R.string.notes_hide_one else R.string.notes_reveal_one, n.title)
+                TextButton(
+                    onClick = if (revealedBody != null) onHide else onReveal,
+                    enabled = revealedBody != null || enabled,
+                    modifier = Modifier.heightIn(min = 48.dp).semantics { contentDescription = toggleLabel },
+                ) { Text(stringResource(if (revealedBody != null) R.string.notes_hide else R.string.notes_reveal)) }
+            } else if (n.body.isNotBlank()) {
                 Text(n.body, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(end = 12.dp))
             }
             // L'épinglage se lit aussi en texte, pas seulement à la couleur de la punaise.
@@ -371,6 +463,7 @@ private fun NoteSheet(
     loadRevisions: suspend (noteId: String) -> List<NoteRevisionDto>?,
     onRestore: (NoteRevisionDto) -> Unit,
     onChange: (Draft) -> Unit,
+    onRevealBody: (NoteDto) -> Unit,
     onDismiss: () -> Unit,
     onSave: () -> Unit,
     onDelete: () -> Unit,
@@ -396,19 +489,40 @@ private fun NoteSheet(
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )
-            OutlinedTextField(
-                value = d.body,
-                onValueChange = { onChange(d.copy(body = it.take(4000))) },
-                label = { Text(stringResource(R.string.notes_field_body)) },
-                minLines = 4,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            if (d.bodyLocked && d.note != null) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Icon(painterResource(R.drawable.ic_note_lock), contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant, modifier = Modifier.size(18.dp))
+                    Text(stringResource(R.string.notes_secret_locked), style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                    OutlinedButton(onClick = { onRevealBody(d.note) }, enabled = !saving, modifier = Modifier.heightIn(min = 48.dp)) {
+                        Text(stringResource(R.string.notes_reveal_to_edit))
+                    }
+                }
+            } else {
+                OutlinedTextField(
+                    value = d.body,
+                    onValueChange = { onChange(d.copy(body = it.take(4000))) },
+                    label = { Text(stringResource(R.string.notes_field_body)) },
+                    minLines = 4,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
             d.note?.let { note ->
                 key(note.version) { NoteHistory(note, members, saving, loadRevisions, onRestore) }
             }
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.heightIn(min = 48.dp)) {
                 Checkbox(checked = d.pinned, onCheckedChange = { onChange(d.copy(pinned = it)) })
                 Text(stringResource(R.string.notes_field_pinned), style = MaterialTheme.typography.bodyLarge)
+            }
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.heightIn(min = 48.dp)) {
+                Checkbox(checked = d.secret, enabled = !d.bodyLocked, onCheckedChange = { onChange(d.copy(secret = it)) })
+                Column(Modifier.weight(1f)) {
+                    Text(stringResource(R.string.notes_field_secret), style = MaterialTheme.typography.bodyLarge)
+                    Text(
+                        stringResource(R.string.notes_secret_hint),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
                 if (d.note != null) {
@@ -484,7 +598,7 @@ private fun NoteHistory(
                     )
                     if (r.title != note.title) Text(r.title, style = MaterialTheme.typography.titleSmall)
                     Text(
-                        r.body.ifBlank { stringResource(R.string.notes_history_no_text) },
+                        if (note.secret) stringResource(R.string.notes_secret_locked) else r.body.ifBlank { stringResource(R.string.notes_history_no_text) },
                         style = MaterialTheme.typography.bodyMedium,
                         maxLines = 3,
                         overflow = TextOverflow.Ellipsis,

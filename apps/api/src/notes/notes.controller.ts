@@ -14,10 +14,18 @@ import {
   type NoteDto,
   NoteInput,
   type NoteRevisionDto,
+  type RevealedNoteDto,
+  RevealNoteInput,
   RestoreNoteRevisionInput,
   UpdateNoteInput,
 } from '@agenda/contracts';
-import { CurrentHousehold, HouseholdContext } from '../common/request-context';
+import { Throttle } from '@nestjs/throttler';
+import {
+  AuthUser,
+  CurrentHousehold,
+  CurrentUser,
+  HouseholdContext,
+} from '../common/request-context';
 import { assertUuid } from '../common/uuid';
 import { ZodPipe } from '../common/zod.pipe';
 import { HouseholdMemberGuard } from '../households/household-member.guard';
@@ -52,6 +60,22 @@ export class NotesController {
     @Body(new ZodPipe(UpdateNoteInput)) body: UpdateNoteInput,
   ): Promise<NoteDto> {
     return this.notes.update(ctx, assertUuid(id), body);
+  }
+
+  /**
+   * Afficher le contenu d'une note sensible (mot de passe ou confirmation sur le site, coffre
+   * ouvert 5 minutes ensuite ; vérifié sur l'appareil pour Android).
+   */
+  @Post(':noteId/reveal')
+  @HttpCode(200)
+  @Throttle({ default: { limit: 10, ttl: 60_000 } })
+  reveal(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @CurrentUser() user: AuthUser,
+    @Param('noteId') id: string,
+    @Body(new ZodPipe(RevealNoteInput)) body: RevealNoteInput,
+  ): Promise<RevealedNoteDto> {
+    return this.notes.reveal(ctx, user, assertUuid(id), body);
   }
 
   /** Versions précédentes d'une note (20 au plus), de la plus récente à la plus ancienne. */

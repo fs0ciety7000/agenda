@@ -50,8 +50,8 @@ class NotesScreenTest {
     private val db = Room.inMemoryDatabaseBuilder(context, AgendaDatabase::class.java).allowMainThreadQueries().build()
     private val g = Fixtures.GRACE
     private val n = Fixtures.NICOLAS
-    private fun note(id: String, title: String, body: String, pinned: Boolean, by: String, version: Int = 1) =
-        """{"id":"$id","title":"$title","body":"$body","pinned":$pinned,"createdById":"$g","updatedById":"$by",
+    private fun note(id: String, title: String, body: String, pinned: Boolean, by: String, version: Int = 1, secret: Boolean = false) =
+        """{"id":"$id","title":"$title","body":"$body","pinned":$pinned,"secret":$secret,"createdById":"$g","updatedById":"$by",
             "createdAt":"2026-10-01T10:00:00.000Z","updatedAt":"2026-10-08T10:00:00.000Z","version":$version}"""
     private val wifi = note("n1", "Wi-Fi", "Réseau : Maison\\nCode : 4F7K-29QM", true, g)
     private val requests = mutableListOf<String>()
@@ -66,9 +66,13 @@ class NotesScreenTest {
                         """[{"id":"r1","title":"Wi-Fi","body":"Code : ancien","version":1,"editedById":"$n",
                         "savedAt":"2026-10-07T18:30:00.000Z"}]""",
                     )
+                    request.path!!.endsWith("/reveal") -> json("""{"body":"A-2468"}""")
                     request.path!!.endsWith("/restore") -> json(note("n1", "Wi-Fi", "Code : ancien", true, g, version = 2))
                     else -> when (request.method) {
-                    "GET" -> json("[$wifi,${note("n2", "Idées cadeaux", "Livre de cuisine", false, n)}]")
+                    "GET" -> json(
+                        "[$wifi,${note("n2", "Idées cadeaux", "Livre de cuisine", false, n)}," +
+                            "${note("n4", "Digicode", "", false, g, secret = true)}]",
+                    )
                     // L'autre a modifié « Wi-Fi » entre-temps.
                     "PATCH" -> json(
                         """{"error":{"code":"VERSION_CONFLICT","message":"x","details":{"current":
@@ -188,5 +192,17 @@ class NotesScreenTest {
         idleUntil { messages.isNotEmpty() }
         assertTrue(messages.single(), messages.single().startsWith("Version du "))
         assertEquals(1, requests.count { it == "POST /v1/households/${Fixtures.HOUSEHOLD}/notes/n1/revisions/r1/restore" })
+    }
+
+    @Test
+    fun note_sensible_masquee_puis_affichee() {
+        render()
+        compose.onNodeWithText("Contenu protégé").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithContentDescription("Afficher « Digicode »").performScrollTo().performClick()
+        // Téléphone sans verrouillage (Robolectric) : rien à vérifier, le contenu est demandé.
+        idleUntil { compose.onAllNodes(androidx.compose.ui.test.hasText("A-2468")).fetchSemanticsNodes().isNotEmpty() }
+        assertEquals(1, requests.count { it == "POST /v1/households/${Fixtures.HOUSEHOLD}/notes/n4/reveal" })
+        compose.onNodeWithContentDescription("Masquer « Digicode »").performClick()
+        compose.onNodeWithText("Contenu protégé").assertIsDisplayed()
     }
 }

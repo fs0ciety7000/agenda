@@ -6,18 +6,24 @@ import {
   type NoteDto,
   type NoteInput,
   type NoteRevisionDto,
+  type RevealedNoteDto,
+  type RevealNoteInput,
   type UpdateNoteInput,
+  VAULT_UNLOCK_MINUTES,
 } from '@agenda/contracts';
+import { PasswordService } from '../auth/password.service';
 import { AppException, notFound } from '../common/app-exception';
 import { DomainEvents } from '../common/domain-events';
-import { HouseholdContext } from '../common/request-context';
+import { AuthUser, HouseholdContext } from '../common/request-context';
 import { PrismaService } from '../prisma/prisma.service';
 
+/** Une note sensible ne sort jamais avec son contenu : il passe par `reveal`. */
 const toDto = (n: Note): NoteDto => ({
   id: n.id,
   title: n.title,
-  body: n.body,
+  body: n.secret ? '' : n.body,
   pinned: n.pinned,
+  secret: n.secret,
   createdById: n.createdById,
   updatedById: n.updatedById,
   createdAt: n.createdAt.toISOString(),
@@ -25,10 +31,10 @@ const toDto = (n: Note): NoteDto => ({
   version: n.version,
 });
 
-const toRevisionDto = (r: NoteRevision): NoteRevisionDto => ({
+const toRevisionDto = (r: NoteRevision, secret: boolean): NoteRevisionDto => ({
   id: r.id,
   title: r.title,
-  body: r.body,
+  body: secret ? '' : r.body,
   version: r.version,
   editedById: r.editedById,
   savedAt: r.savedAt.toISOString(),
@@ -44,6 +50,7 @@ export class NotesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly events: DomainEvents,
+    private readonly passwords: PasswordService,
   ) {}
 
   /** Épinglées d'abord, puis les plus récemment modifiées. */
@@ -70,6 +77,7 @@ export class NotesService {
         title: input.title,
         body: input.body,
         pinned: input.pinned,
+        secret: input.secret,
         createdById: ctx.memberId,
         updatedById: ctx.memberId,
       },
@@ -132,12 +140,12 @@ export class NotesService {
 
   /** Versions précédentes d'une note, de la plus récente à la plus ancienne. */
   async revisions(ctx: HouseholdContext, id: string): Promise<NoteRevisionDto[]> {
-    await this.find(ctx, id);
+    const note = await this.find(ctx, id);
     const revisions = await this.prisma.noteRevision.findMany({
       where: { noteId: id },
       orderBy: { version: 'desc' },
     });
-    return revisions.map(toRevisionDto);
+    return revisions.map((r) => toRevisionDto(r, note.secret));
   }
 
   /**
@@ -156,6 +164,42 @@ export class NotesService {
     });
     if (!revision) throw notFound();
     return this.update(ctx, id, { title: revision.title, body: revision.body, version });
+  }
+
+  /**
+   * Contenu d'une note sensible. Android (jeton) : l'empreinte ou le code du téléphone a été
+   * vérifié sur l'appareil. Site (cookie) : coffre ouvert depuis moins de 5 minutes, sinon le mot
+   * de passe du compte, ou une confirmation pour un compte sans mot de passe (connexion Google).
+   */
+  async reveal(
+    ctx: HouseholdContext,
+    user: AuthUser,
+    id: string,
+    input: RevealNoteInput,
+  ): Promise<RevealedNoteDto> {
+    const note = await this.find(ctx, id);
+    if (!note.secret || user.via === 'bearer') return { body: note.body };
+    const now = new Date();
+    const session = await this.prisma.session.findUniqueOrThrow({
+      where: { id: user.sessionId },
+      select: { vaultUnlockedUntil: true, user: { select: { passwordHash: true } } },
+    });
+    if (session.vaultUnlockedUntil && session.vaultUnlockedUntil > now) return { body: note.body };
+    const hash = session.user.passwordHash;
+    if (hash ? !input.password : !input.confirm) {
+      // Le site demande alors le mot de passe (ou la confirmation) puis réessaie.
+      throw new AppException('VAULT_LOCKED', HttpStatus.FORBIDDEN, 'Vault is locked', {
+        method: hash ? 'password' : 'confirm',
+      });
+    }
+    if (hash && !(await this.passwords.verify(hash, input.password!))) {
+      throw new AppException('CURRENT_PASSWORD_INVALID', HttpStatus.FORBIDDEN, 'Invalid password');
+    }
+    await this.prisma.session.update({
+      where: { id: user.sessionId },
+      data: { vaultUnlockedUntil: new Date(now.getTime() + VAULT_UNLOCK_MINUTES * 60_000) },
+    });
+    return { body: note.body };
   }
 
   private async find(ctx: HouseholdContext, id: string): Promise<Note> {

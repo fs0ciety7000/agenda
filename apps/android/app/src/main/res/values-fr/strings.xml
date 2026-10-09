@@ -599,6 +599,16 @@
     <string name="notes_created">Note ajoutée</string>
     <string name="notes_saved">Note enregistrée</string>
     <string name="notes_deleted">« %1$s » supprimée</string>
+    <string name="notes_field_secret">Note sensible</string>
+    <string name="notes_secret_hint">Masquée dans la liste et la recherche ; affichée après l\'empreinte ou le code du téléphone.</string>
+    <string name="notes_secret_locked">Contenu protégé</string>
+    <string name="notes_reveal">Afficher</string>
+    <string name="notes_reveal_one">Afficher « %1$s »</string>
+    <string name="notes_hide">Masquer</string>
+    <string name="notes_hide_one">Masquer « %1$s »</string>
+    <string name="notes_reveal_to_edit">Afficher pour modifier</string>
+    <string name="notes_unlock_title">Note sensible</string>
+    <string name="notes_unlock_subtitle">Confirmez que c\'est vous pour afficher le contenu</string>
     <string name="notes_history">Versions précédentes</string>
     <string name="notes_history_expanded">développé</string>
     <string name="notes_history_collapsed">replié</string>

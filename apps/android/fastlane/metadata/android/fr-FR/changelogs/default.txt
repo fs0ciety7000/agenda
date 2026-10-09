@@ -1,4 +1,5 @@
-Notes : versions précédentes, restaurables.
+Notes sensibles : empreinte ou code pour les afficher.
+• Notes : versions précédentes, restaurables.
 • Lire un ticket : montant et date lus sur la photo.
 • Partager vers Tandem : un lien devient tâche, note ou courses.
 • Tuile « Ajouter une tâche » dans les réglages rapides.
@@ -6,4 +7,3 @@ Notes : versions précédentes, restaurables.
 • Tiroir « Plus » : Dépenses, Notes, Dates…
 • Dépenses : qui doit combien, remboursement en un geste.
 • Notes partagées ; dates importantes avec rappel.
-• Notes et dates lisibles hors ligne.

@@ -1,7 +1,7 @@
 'use client';
 
 import type { NoteDto } from '@agenda/contracts';
-import { ChevronDown, Copy, History, Pencil, Pin, Plus, StickyNote } from 'lucide-react';
+import { ChevronDown, Copy, History, Lock, Pencil, Pin, Plus, StickyNote } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
 import { useSession } from '@/components/app/household-context';
@@ -15,7 +15,18 @@ import { cn } from '@/lib/cn';
 import { useOnline } from '@/lib/offline';
 import { useNoteActions, useNoteRevisions, useNotes } from '@/lib/notes';
 
-type Editing = { note: NoteDto | null; title: string; body: string; pinned: boolean };
+type Editing = {
+  note: NoteDto | null;
+  title: string;
+  body: string;
+  pinned: boolean;
+  secret: boolean;
+  /** Note sensible pas encore affichée : son contenu n'est pas modifiable (ni envoyé). */
+  bodyLocked: boolean;
+};
+
+/** Demande de mot de passe (ou de confirmation) pour ouvrir le coffre. */
+type VaultPrompt = { method: 'password' | 'confirm'; note: NoteDto; then: (body: string) => void };
 
 /** Notes partagées : codes, mesures, idées cadeaux. Épinglées d'abord, modifiables par chacun. */
 export default function NotesPage() {
@@ -28,44 +39,90 @@ export default function NotesPage() {
   const online = useOnline();
   const [editing, setEditing] = useState<Editing | null>(null);
   const [conflict, setConflict] = useState(false);
+  // Contenus des notes sensibles affichés pendant cette visite de la page (jamais conservés).
+  const [revealed, setRevealed] = useState<Record<string, string>>({});
+  const [prompt, setPrompt] = useState<VaultPrompt | null>(null);
 
   const fail = (e: unknown) => toast({ message: te(errorKey(e) as 'generic'), tone: 'error' });
+  const edit = (note: NoteDto, body?: string): Editing => ({
+    note,
+    title: note.title,
+    body: body ?? note.body,
+    pinned: note.pinned,
+    secret: note.secret,
+    bodyLocked: note.secret && body === undefined,
+  });
   const open = (note: NoteDto | null) => {
     setConflict(false);
-    setEditing({
-      note,
-      title: note?.title ?? '',
-      body: note?.body ?? '',
-      pinned: note?.pinned ?? false,
-    });
+    setEditing(
+      note
+        ? edit(note, note.secret ? revealed[note.id] : undefined)
+        : { note: null, title: '', body: '', pinned: false, secret: false, bodyLocked: false },
+    );
   };
+  /** Contenu de la note, après le mot de passe si le coffre est fermé. */
+  const reveal = (note: NoteDto, then: (body: string) => void) => {
+    if (!note.secret) return then(note.body);
+    const known = revealed[note.id];
+    if (known !== undefined) return then(known);
+    actions.reveal.mutate(
+      { id: note.id },
+      {
+        onSuccess: ({ body }) => {
+          setRevealed((m) => ({ ...m, [note.id]: body }));
+          then(body);
+        },
+        onError: (err) => {
+          const method =
+            err instanceof ApiError && err.code === 'VAULT_LOCKED'
+              ? (err.details as { method?: string } | undefined)?.method
+              : undefined;
+          if (method === 'password' || method === 'confirm') setPrompt({ method, note, then });
+          else fail(err);
+        },
+      },
+    );
+  };
+  const hide = (note: NoteDto) => setRevealed(({ [note.id]: _, ...rest }) => rest);
   const togglePin = (n: NoteDto) =>
     actions.update.mutate({ id: n.id, pinned: !n.pinned, version: n.version }, { onError: fail });
-  const copy = async (n: NoteDto) => {
-    try {
-      await navigator.clipboard.writeText(n.body || n.title);
-      toast({ message: t('copied', { title: n.title }) });
-    } catch {
-      toast({ message: t('copyFailed'), tone: 'error' });
-    }
-  };
+  const copy = (n: NoteDto) =>
+    reveal(n, async (body) => {
+      try {
+        await navigator.clipboard.writeText(body || n.title);
+        toast({ message: t('copied', { title: n.title }) });
+      } catch {
+        toast({ message: t('copyFailed'), tone: 'error' });
+      }
+    });
 
   const save = (e: FormEvent) => {
     e.preventDefault();
     if (!editing) return;
-    const { note, title, body, pinned } = editing;
+    const { note, title, body, pinned, secret, bodyLocked } = editing;
     const done = () => {
       setEditing(null);
       toast({ message: t(note ? 'saved' : 'created') });
     };
     if (!note) {
-      actions.create.mutate({ title, body, pinned }, { onSuccess: done, onError: fail });
+      actions.create.mutate({ title, body, pinned, secret }, { onSuccess: done, onError: fail });
       return;
     }
     actions.update.mutate(
-      { id: note.id, title, body, pinned, version: note.version },
+      // Contenu verrouillé : il n'est pas envoyé (sinon il serait effacé).
       {
-        onSuccess: done,
+        id: note.id,
+        title,
+        body: bodyLocked ? undefined : body,
+        pinned,
+        secret,
+        version: note.version,
+      },
+      {
+        onSuccess: (saved) => {
+          if (saved.secret && !bodyLocked) setRevealed((m) => ({ ...m, [saved.id]: body }));
+          done();
+        },
         onError: (err) => {
           // Modifiée par l'autre entre-temps : sa version s'affiche, on peut réenregistrer.
           const current = (err instanceof ApiError &&
@@ -73,30 +130,34 @@ export default function NotesPage() {
             (err.details as { current?: NoteDto } | undefined)?.current) as NoteDto | undefined;
           if (current) {
             setConflict(true);
-            setEditing({ note: current, ...current });
+            setEditing(edit(current));
           } else fail(err);
         },
       },
     );
   };
+  // Une note sensible est d'abord affichée (mot de passe) : « Annuler » la recrée à l'identique.
   const remove = (note: NoteDto) =>
-    actions.remove.mutate(note.id, {
-      onSuccess: () => {
-        setEditing(null);
-        toast({
-          message: t('deleted', { title: note.title }),
-          action: {
-            label: t('undo'),
-            onClick: () =>
-              actions.create.mutate(
-                { title: note.title, body: note.body, pinned: note.pinned },
-                { onError: fail },
-              ),
-          },
-        });
-      },
-      onError: fail,
-    });
+    reveal(note, (body) =>
+      actions.remove.mutate(note.id, {
+        onSuccess: () => {
+          setEditing(null);
+          hide(note);
+          toast({
+            message: t('deleted', { title: note.title }),
+            action: {
+              label: t('undo'),
+              onClick: () =>
+                actions.create.mutate(
+                  { title: note.title, body, pinned: note.pinned, secret: note.secret },
+                  { onError: fail },
+                ),
+            },
+          });
+        },
+        onError: fail,
+      }),
+    );
 
   const list = notes.data ?? [];
   return (
@@ -145,9 +206,12 @@ export default function NotesPage() {
               key={n.id}
               note={n}
               disabled={!online}
+              revealedBody={revealed[n.id]}
               onEdit={() => open(n)}
               onPin={() => togglePin(n)}
-              onCopy={() => void copy(n)}
+              onCopy={() => copy(n)}
+              onReveal={() => reveal(n, () => undefined)}
+              onHide={() => hide(n)}
             />
           ))}
         </ul>
@@ -170,20 +234,44 @@ export default function NotesPage() {
                 placeholder={t('titlePlaceholder')}
                 onChange={(e) => setEditing({ ...editing, title: e.target.value })}
               />
-              <div className="flex flex-col gap-1.5">
-                <label htmlFor="note-body" className="text-sm font-medium">
-                  {t('fieldBody')}
-                </label>
-                <textarea
-                  id="note-body"
-                  value={editing.body}
-                  maxLength={4000}
-                  rows={6}
-                  placeholder={t('bodyPlaceholder')}
-                  onChange={(e) => setEditing({ ...editing, body: e.target.value })}
-                  className="min-h-32 rounded-md border border-border-strong bg-surface px-3 py-2.5 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
-                />
-              </div>
+              {editing.bodyLocked && editing.note ? (
+                <div className="flex flex-col gap-2 rounded-md border border-border bg-surface-muted p-3">
+                  <p className="flex items-center gap-2 text-[0.9375rem] text-text-muted">
+                    <Lock aria-hidden className="size-4" />
+                    {t('secretLocked')}
+                  </p>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    className="self-start"
+                    disabled={!online}
+                    loading={actions.reveal.isPending}
+                    onClick={() =>
+                      reveal(editing.note!, (body) =>
+                        setEditing((e) => (e ? { ...e, body, bodyLocked: false } : e)),
+                      )
+                    }
+                  >
+                    {t('revealToEdit')}
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex flex-col gap-1.5">
+                  <label htmlFor="note-body" className="text-sm font-medium">
+                    {t('fieldBody')}
+                  </label>
+                  <textarea
+                    id="note-body"
+                    value={editing.body}
+                    maxLength={4000}
+                    rows={6}
+                    placeholder={t('bodyPlaceholder')}
+                    onChange={(e) => setEditing({ ...editing, body: e.target.value })}
+                    className="min-h-32 rounded-md border border-border-strong bg-surface px-3 py-2.5 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
+                  />
+                </div>
+              )}
               {editing.note && (
                 <NoteHistory
                   key={editing.note.version}
@@ -191,11 +279,12 @@ export default function NotesPage() {
                   online={online}
                   onRestored={(restored) => {
                     setConflict(false);
-                    setEditing({ note: restored, ...restored });
+                    hide(restored);
+                    setEditing(edit(restored));
                   }}
                   onConflict={(current) => {
                     setConflict(true);
-                    setEditing({ note: current, ...current });
+                    setEditing(edit(current));
                   }}
                   onError={fail}
                 />
@@ -210,13 +299,27 @@ export default function NotesPage() {
                 <Pin aria-hidden className="size-4 text-text-muted" />
                 {t('fieldPinned')}
               </label>
+              <label className="flex min-h-11 cursor-pointer items-start gap-3 text-[0.9375rem]">
+                <input
+                  type="checkbox"
+                  checked={editing.secret}
+                  disabled={editing.bodyLocked}
+                  onChange={(e) => setEditing({ ...editing, secret: e.target.checked })}
+                  className="mt-0.5 size-5 accent-(--color-accent)"
+                />
+                <Lock aria-hidden className="mt-0.5 size-4 text-text-muted" />
+                <span className="flex flex-col gap-0.5">
+                  {t('fieldSecret')}
+                  <span className="text-[0.8125rem] text-text-muted">{t('secretHint')}</span>
+                </span>
+              </label>
               <div className="flex flex-wrap justify-between gap-2">
                 {editing.note ? (
                   <Button
                     type="button"
                     variant="danger"
                     onClick={() => remove(editing.note!)}
-                    loading={actions.remove.isPending}
+                    loading={actions.remove.isPending || actions.reveal.isPending}
                   >
                     {t('delete')}
                   </Button>
@@ -235,22 +338,111 @@ export default function NotesPage() {
           </DialogContent>
         )}
       </Dialog>
+
+      {prompt && (
+        <VaultDialog
+          prompt={prompt}
+          onClose={() => setPrompt(null)}
+          onRevealed={(body) => {
+            setRevealed((m) => ({ ...m, [prompt.note.id]: body }));
+            setPrompt(null);
+            prompt.then(body);
+          }}
+        />
+      )}
     </div>
+  );
+}
+
+/** Ouvrir le coffre : mot de passe du compte, ou confirmation pour un compte sans mot de passe. */
+function VaultDialog({
+  prompt,
+  onClose,
+  onRevealed,
+}: {
+  prompt: VaultPrompt;
+  onClose: () => void;
+  onRevealed: (body: string) => void;
+}) {
+  const t = useTranslations('notes');
+  const te = useTranslations('errors');
+  const { household } = useSession();
+  const actions = useNoteActions(household.id);
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const submit = (e: FormEvent) => {
+    e.preventDefault();
+    setError(null);
+    actions.reveal.mutate(
+      prompt.method === 'password'
+        ? { id: prompt.note.id, password }
+        : { id: prompt.note.id, confirm: true },
+      {
+        onSuccess: ({ body }) => onRevealed(body),
+        onError: (err) => setError(te(errorKey(err) as 'generic')),
+      },
+    );
+  };
+  return (
+    <Dialog open onOpenChange={(o) => !o && onClose()}>
+      <DialogContent
+        title={t('revealTitle')}
+        description={t(prompt.method === 'password' ? 'revealBody' : 'revealConfirmBody', {
+          title: prompt.note.title,
+        })}
+        closeLabel={t('close')}
+      >
+        <form onSubmit={submit} className="flex flex-col gap-4" noValidate>
+          {prompt.method === 'password' && (
+            <Field
+              label={t('revealPassword')}
+              type="password"
+              autoComplete="current-password"
+              autoFocus
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              error={error ?? undefined}
+            />
+          )}
+          {prompt.method === 'confirm' && error && (
+            <p role="alert" className="text-sm text-danger">
+              {error}
+            </p>
+          )}
+          <div className="flex justify-end">
+            <Button
+              type="submit"
+              disabled={prompt.method === 'password' && !password}
+              loading={actions.reveal.isPending}
+            >
+              {t('revealSubmit')}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
 
 function NoteCard({
   note: n,
   disabled,
+  revealedBody,
   onEdit,
   onPin,
   onCopy,
+  onReveal,
+  onHide,
 }: {
   note: NoteDto;
   disabled: boolean;
+  /** Contenu d'une note sensible, une fois affiché. */
+  revealedBody?: string;
   onEdit: () => void;
   onPin: () => void;
   onCopy: () => void;
+  onReveal: () => void;
+  onHide: () => void;
 }) {
   const t = useTranslations('notes');
   const format = useFormatter();
@@ -293,8 +485,33 @@ function NoteCard({
           <Pencil aria-hidden className="size-4" />
         </button>
       </div>
-      {n.body && (
-        <p className="whitespace-pre-wrap break-words text-[0.9375rem] text-text">{n.body}</p>
+      {n.secret ? (
+        <div className="flex flex-wrap items-center gap-2">
+          {revealedBody !== undefined ? (
+            <p className="w-full whitespace-pre-wrap break-words text-[0.9375rem] text-text">
+              {revealedBody}
+            </p>
+          ) : (
+            <p className="flex items-center gap-2 text-[0.9375rem] text-text-muted">
+              <Lock aria-hidden className="size-4" />
+              {t('secretLocked')}
+            </p>
+          )}
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            disabled={revealedBody === undefined && disabled}
+            aria-label={t(revealedBody !== undefined ? 'hideOne' : 'revealOne', { title: n.title })}
+            onClick={revealedBody !== undefined ? onHide : onReveal}
+          >
+            {t(revealedBody !== undefined ? 'hide' : 'reveal')}
+          </Button>
+        </div>
+      ) : (
+        n.body && (
+          <p className="whitespace-pre-wrap break-words text-[0.9375rem] text-text">{n.body}</p>
+        )
       )}
       <p className="text-[0.8125rem] text-text-muted">
         {t('updated', {
@@ -392,7 +609,7 @@ function NoteHistory({
                   </p>
                   {r.title !== note.title && <p className="break-words font-medium">{r.title}</p>}
                   <p className="line-clamp-3 whitespace-pre-wrap break-words text-[0.9375rem]">
-                    {r.body || t('historyNoText')}
+                    {note.secret ? t('secretLocked') : r.body || t('historyNoText')}
                   </p>
                   <Button
                     type="button"

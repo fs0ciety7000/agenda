@@ -5,6 +5,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Notes sensibles : empreinte, visage ou code du téléphone avant d'afficher le contenu. -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <!-- Mises à jour hors Play Store (docs/android.md §4). -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
