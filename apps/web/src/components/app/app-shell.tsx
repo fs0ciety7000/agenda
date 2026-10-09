@@ -6,6 +6,7 @@ import {
   CalendarDays,
   ListChecks,
   Menu,
+  Search,
   Settings,
   ShoppingCart,
   StickyNote,
@@ -22,6 +23,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ErrorState, Skeleton } from '@/components/ui/states';
 import { ApiError, errorKey } from '@/lib/api';
 import { cn } from '@/lib/cn';
+import { GlobalSearch } from './global-search';
 import { MORE_LINKS, NavDrawer } from './nav-drawer';
 import { OfflineBanner } from './offline-banner';
 import { useHouseholds, useMe } from '@/lib/queries';
@@ -69,6 +71,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const households = useHouseholds();
   const [mountedAt] = useState(() => Date.now());
   const [drawer, setDrawer] = useState(false);
+  const [search, setSearch] = useState(false);
   // Barre du bas tirée vers le haut : ouvre le tiroir (« Plus » fait la même chose au toucher).
   const dragStart = useRef<number | null>(null);
   const freshHouseholds = households.isFetchedAfterMount && households.dataUpdatedAt >= mountedAt;
@@ -77,7 +80,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const household = households.data?.[0];
   useRealtime(household?.id);
 
-  // Raccourcis clavier (hors saisie) : « / » recherche dans les tâches, « T » revient à
+  // Raccourcis clavier (hors saisie) : « / » ouvre la recherche globale, « T » revient à
   // Aujourd'hui. « N » (nouvelle tâche) est géré par l'ajout rapide.
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -91,9 +94,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         return;
       if (e.key === '/') {
         e.preventDefault();
-        const field = document.getElementById('task-search');
-        if (field) field.focus();
-        else router.push('/tasks?search=1');
+        setSearch(true);
       } else if (e.key.toLowerCase() === 't' && pathname !== '/') {
         e.preventDefault();
         router.push('/');
@@ -142,6 +143,19 @@ export function AppShell({ children }: { children: ReactNode }) {
             {t('app.name')}
           </span>
         </Link>
+        <button
+          type="button"
+          onClick={() => setSearch(true)}
+          data-search-trigger
+          aria-keyshortcuts="/"
+          className="mb-2 flex h-11 items-center justify-center gap-3 rounded-md border border-border px-3 text-[0.9375rem] text-text-muted transition-colors hover:bg-surface-muted hover:text-text xl:justify-start"
+        >
+          <Search aria-hidden className="size-5 stroke-[1.5]" />
+          <span className="sr-only xl:not-sr-only">{t('search.title')}</span>
+          <kbd className="ml-auto hidden rounded border border-border px-1.5 text-xs xl:inline">
+            /
+          </kbd>
+        </button>
         {NAV.filter((n) => n.desktop !== false).map(({ href, key, icon: Icon }) => (
           <Link
             key={href}
@@ -171,10 +185,21 @@ export function AppShell({ children }: { children: ReactNode }) {
         )}
       >
         {/* Mobile : logo en tête (la navigation latérale le porte sur grand écran). */}
-        <Link href="/" className="-mt-2 mb-6 flex w-fit items-center gap-2 md:hidden">
-          <Image src="/icons/icon-192.png" alt="" width={28} height={28} className="size-7" />
-          <span className="text-[0.9375rem] font-semibold">{t('app.name')}</span>
-        </Link>
+        <div className="-mt-2 mb-6 flex items-center justify-between gap-2 md:hidden">
+          <Link href="/" className="flex w-fit items-center gap-2">
+            <Image src="/icons/icon-192.png" alt="" width={28} height={28} className="size-7" />
+            <span className="text-[0.9375rem] font-semibold">{t('app.name')}</span>
+          </Link>
+          <button
+            type="button"
+            onClick={() => setSearch(true)}
+            data-search-trigger
+            aria-label={t('search.title')}
+            className="-mr-2 inline-flex size-11 items-center justify-center rounded-md text-text-muted hover:bg-surface-muted hover:text-text"
+          >
+            <Search aria-hidden className="size-5 stroke-[1.5]" />
+          </button>
+        </div>
         <OfflineBanner />
         {me.data && household ? (
           <SessionContext.Provider value={{ me: me.data, household }}>
@@ -259,6 +284,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
       </nav>
       <NavDrawer open={drawer} onOpenChange={setDrawer} pathname={pathname} />
+      {household && (
+        <GlobalSearch householdId={household.id} open={search} onOpenChange={setSearch} />
+      )}
     </div>
   );
 }

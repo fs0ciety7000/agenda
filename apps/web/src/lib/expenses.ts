@@ -5,6 +5,7 @@ import type {
   ExpenseInput,
   ExpenseStatsDto,
   ExpenseSummaryDto,
+  ReceiptScanDto,
   RecurringExpenseDto,
   RecurringExpenseInput,
   ExpenseWeightsInput,
@@ -110,6 +111,14 @@ export function useExpenseActions(hid: string) {
         return api<ExpenseDto>(`${base}/${id}/receipt`, { method: 'POST', body });
       },
       onSettled: invalidate,
+    }),
+    // Lecture d'une photo de ticket sur le serveur (rien n'est enregistré).
+    scanReceipt: useMutation({
+      mutationFn: (file: File) => {
+        const body = new FormData();
+        body.append('file', file);
+        return api<ReceiptScanDto>(`${base}/receipt/scan`, { method: 'POST', body });
+      },
     }),
     removeReceipt: useMutation({
       mutationFn: (id: string) => api<void>(`${base}/${id}/receipt`, { method: 'DELETE' }),

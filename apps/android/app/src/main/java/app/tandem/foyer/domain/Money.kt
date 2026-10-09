@@ -32,6 +32,22 @@ object Money {
         return value.takeIf { it > 0 }
     }
 
+    /**
+     * Champs « budget par catégorie » → budgets à envoyer, dans l'ordre des catégories, et
+     * catégories au montant illisible. Un champ vide n'envoie rien (pas de budget).
+     */
+    fun categoryBudgets(amounts: Map<String, String>): Pair<List<Pair<String, Long>>, Set<String>> {
+        val invalid = mutableSetOf<String>()
+        val budgets = CATEGORY_EMOJI.keys.mapNotNull { category ->
+            val text = amounts[category].orEmpty().trim()
+            if (text.isEmpty()) return@mapNotNull null
+            val cents = parseCents(text)
+            if (cents == null) invalid += category
+            cents?.let { category to it }
+        }
+        return budgets to invalid
+    }
+
     fun format(cents: Long, locale: Locale): String =
         NumberFormat.getCurrencyInstance(locale).apply { currency = Currency.getInstance("EUR") }
             .format(cents / 100.0)

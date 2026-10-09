@@ -515,6 +515,13 @@
     <string name="expenses_receipt_open">Voir le ticket</string>
     <string name="expenses_receipt_remove">Retirer le ticket</string>
     <string name="expenses_receipt_add">Joindre le ticket (photo ou PDF)</string>
+    <string name="expenses_scan">Lire un ticket</string>
+    <string name="expenses_scan_pick">Choisir une photo</string>
+    <string name="expenses_scan_hint">Prenez le ticket en photo : le montant et la date sont remplis pour vous, à vérifier.</string>
+    <string name="expenses_scan_reading">Lecture du ticket…</string>
+    <string name="expenses_scan_done">Ticket lu : vérifiez le montant et la date avant d\'enregistrer.</string>
+    <string name="expenses_scan_nothing">Rien de lisible sur cette photo : saisissez le montant à la main.</string>
+    <string name="expenses_scan_failed">Lecture du ticket impossible (pas de connexion, ou lecture indisponible). Saisissez le montant à la main.</string>
     <string name="expenses_receipt_chosen">Ticket choisi</string>
     <string name="expenses_meta_custom">Payé par %1$s · parts à la main</string>
     <string name="expenses_split_custom">À la main</string>
@@ -597,7 +604,6 @@
     <string name="notes_pin">Épingler « %1$s »</string>
     <string name="notes_unpin">Désépingler « %1$s »</string>
     <string name="notes_copy">Copier « %1$s »</string>
-    <string name="notes_copy_short">Copier</string>
     <string name="notes_updated">Modifiée le %1$s par %2$s</string>
     <string name="notes_someone">un ancien membre</string>
     <string name="notes_offline">Hors ligne : les notes demandent une connexion.</string>
@@ -662,7 +668,6 @@
     <string name="dates_remind_short_same_day">Rappel le jour même</string>
     <string name="activity_date_tomorrow">%1$s : demain</string>
     <string name="expenses_category_budget_line">%1$s sur %2$s</string>
-    <string name="expenses_category_budgets_web">Les budgets par catégorie se règlent sur le site.</string>
     <string name="activity_budget_category">%1$s · %2$s : %3$d %% atteint (%4$s sur %5$s)</string>
     <string name="devices_title">Appareils connectés</string>
     <string name="devices_hint">Là où votre compte est ouvert. Un appareil perdu ou partagé ? Déconnectez-le d’ici.</string>
@@ -679,4 +684,29 @@
     <string name="devices_revoke_others_body">Cet appareil reste connecté. Sur les autres, il faudra se reconnecter.</string>
     <plurals name="devices_revoke_others_title"><item quantity="one">Déconnecter les %d autres appareils ?</item><item quantity="many">Déconnecter les %d autres appareils ?</item><item quantity="other">Déconnecter les %d autres appareils ?</item></plurals>
     <plurals name="devices_revoked_others"><item quantity="one">%d appareil déconnecté.</item><item quantity="many">%d appareils déconnectés.</item><item quantity="other">%d appareils déconnectés.</item></plurals>
+    <string name="expenses_category_budgets_edit">Budgets par catégorie</string>
+    <string name="expenses_category_budgets_title">Budgets par catégorie</string>
+    <string name="expenses_category_budgets_hint" formatted="false">Par mois, pour les dépenses communes. Une notification prévient le foyer à 80 % puis à 100 %. Laissez vide pour ne pas fixer de budget.</string>
+    <string name="expenses_category_budgets_none">Pas de budget</string>
+    <string name="share_title">Ajouter à Tandem</string>
+    <string name="share_task">En tâche</string>
+    <string name="share_note">En note</string>
+    <string name="share_shopping">Aux courses</string>
+    <string name="share_note_added">Note « %1$s » ajoutée</string>
+    <string name="share_note_offline">Les notes demandent une connexion. Réessayez une fois en ligne.</string>
+    <plurals name="share_shopping_added"><item quantity="one">%d article ajouté aux courses.</item><item quantity="many">%d articles ajoutés aux courses.</item><item quantity="other">%d articles ajoutés aux courses.</item></plurals>
+    <string name="search_title">Rechercher</string>
+    <string name="search_label">Rechercher dans le foyer</string>
+    <string name="search_placeholder">Tâches, notes, dates, dépenses…</string>
+    <string name="search_hint">Tapez au moins 2 lettres.</string>
+    <string name="search_offline">La recherche demande une connexion.</string>
+    <string name="search_empty">Rien trouvé pour « %1$s ».</string>
+    <string name="search_tasks">Tâches</string>
+    <string name="search_notes">Notes</string>
+    <string name="search_dates">Dates importantes</string>
+    <string name="search_expenses">Dépenses</string>
+    <string name="search_shopping">Courses</string>
+    <string name="search_done">Faite</string>
+    <string name="search_in_cart">Dans le panier</string>
+    <string name="search_to_buy">À acheter</string>
 </resources>

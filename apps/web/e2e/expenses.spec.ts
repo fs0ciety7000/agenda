@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { join } from 'node:path';
 import { addPartner, signUpWithHousehold } from './helpers';
 
 test('dépenses : une dépense commune, le solde, le remboursement', async ({
@@ -119,4 +120,31 @@ test('dépenses : budget commun, évolution sur 6 mois, export CSV', async ({ pa
   const download = page.waitForEvent('download');
   await dialog.getByRole('button', { name: 'Télécharger' }).click();
   expect((await download).suggestedFilename()).toMatch(/^tandem-depenses-\d{4}-\d{2}.*\.csv$/);
+});
+
+test('dépenses : lire un ticket préremplit la dépense et joint la photo', async ({ page }) => {
+  await signUpWithHousehold(page, 'Grace');
+  await page.goto('/expenses');
+  const dialog = page.getByRole('dialog');
+  await page.getByRole('button', { name: 'Dépense', exact: true }).first().click();
+
+  // Ticket fictif de l'API (total 6,94 €, 05/10/2026), lu par Tesseract sur le serveur.
+  const chooser = page.waitForEvent('filechooser');
+  await dialog.getByRole('button', { name: 'Lire un ticket' }).click();
+  await (await chooser).setFiles(join(__dirname, '../../api/test/fixtures/receipt-fr.png'));
+  await expect(dialog.getByRole('status')).toHaveText(
+    "Ticket lu : vérifiez le montant et la date avant d'enregistrer.",
+  );
+  await expect(dialog.getByLabel('Montant (€)')).toHaveValue('6,94');
+  await expect(dialog.getByLabel('Quoi ?')).toHaveValue('Epicerie Des Tilleuls');
+  await expect(dialog.getByText('Photo du ticket jointe : receipt-fr.png')).toBeVisible();
+  // Le montant reste modifiable avant l'enregistrement.
+  await dialog.getByLabel('Montant (€)').fill('6,95');
+  // Date du ticket (ou du jour si elle a plus de deux ans, jugée improbable).
+  const date = await dialog.getByLabel('Date').inputValue();
+  await dialog.getByRole('button', { name: 'Enregistrer' }).click();
+  await expect(dialog).toBeHidden();
+  await page.goto(`/expenses?month=${date.slice(0, 7)}`);
+  await expect(page.getByText('Epicerie Des Tilleuls')).toBeVisible();
+  await expect(page.getByText('Ticket', { exact: true })).toBeVisible();
 });

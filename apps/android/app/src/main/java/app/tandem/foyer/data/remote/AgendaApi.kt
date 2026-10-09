@@ -271,6 +271,10 @@ interface AgendaApi {
     suspend fun stopRecurringExpense(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
 
     @Multipart
+    @POST("v1/households/{h}/expenses/receipt/scan")
+    suspend fun scanReceipt(@Path("h") householdId: String, @Part file: MultipartBody.Part): Response<ReceiptScanDto>
+
+    @Multipart
     @POST("v1/households/{h}/expenses/{id}/receipt")
     suspend fun uploadReceipt(@Path("h") householdId: String, @Path("id") id: String, @Part file: MultipartBody.Part): Response<ExpenseDto>
 
@@ -306,6 +310,9 @@ interface AgendaApi {
     /** Corps `{ "budgetCents": 12000 }` ou `{ "budgetCents": null }` (null explicite : pas de budget). */
     @PUT("v1/households/{h}/expenses/budget")
     suspend fun setExpenseBudget(@Path("h") householdId: String, @Body body: JsonObject): Response<Unit>
+
+    @PUT("v1/households/{h}/expenses/budget/categories")
+    suspend fun setCategoryBudgets(@Path("h") householdId: String, @Body body: CategoryBudgetsBody): Response<Unit>
 
     /** Export tableur (CSV, dans la langue du compte), de `from` à `to` inclus. */
     @Streaming
@@ -355,6 +362,9 @@ interface AgendaApi {
 
     @DELETE("v1/reports/{id}")
     suspend fun deleteReport(@Path("id") id: String): Response<Unit>
+
+    @GET("v1/households/{h}/search")
+    suspend fun search(@Path("h") householdId: String, @Query("q") q: String): Response<SearchResultsDto>
 
     @GET("v1/me/sessions")
     suspend fun deviceSessions(): Response<List<DeviceSessionDto>>

@@ -3,10 +3,13 @@ package app.tandem.foyer.data
 import app.tandem.foyer.data.files.AttachmentFiles
 import app.tandem.foyer.data.local.AgendaDatabase
 import app.tandem.foyer.data.remote.AgendaApi
+import app.tandem.foyer.data.remote.CategoryBudgetsBody
+import app.tandem.foyer.data.remote.ExpenseCategoryBudgetDto
 import app.tandem.foyer.data.remote.ExpenseBody
 import app.tandem.foyer.data.remote.ExpenseDto
 import app.tandem.foyer.data.remote.ExpenseStatsDto
 import app.tandem.foyer.data.remote.ExpenseSummaryDto
+import app.tandem.foyer.data.remote.ReceiptScanDto
 import app.tandem.foyer.data.remote.RecurringExpenseBody
 import app.tandem.foyer.data.remote.RecurringExpenseDto
 import app.tandem.foyer.data.remote.SettleBody
@@ -81,6 +84,18 @@ class ExpensesRemote(
         } ?: false
     }
 
+    /**
+     * Lit une photo de ticket (JPEG) sur le serveur ; la photo n'y est pas conservée.
+     * null : pas de connexion, ou lecture indisponible.
+     */
+    suspend fun scanReceipt(jpeg: ByteArray): ReceiptScanDto? {
+        if (jpeg.size > AttachmentFiles.MAX_BYTES) return null
+        return call { h ->
+            val part = MultipartBody.Part.createFormData("file", "ticket.jpg", jpeg.toRequestBody("image/jpeg".toMediaTypeOrNull()))
+            api.scanReceipt(h, part).takeIf { it.isSuccessful }?.body()
+        }
+    }
+
     /** Ticket téléchargé dans le cache (partagé ensuite en lecture seule), et son type. */
     suspend fun downloadReceipt(expenseId: String): Pair<File, String>? = call { h ->
         val res = api.receipt(h, expenseId)
@@ -97,6 +112,11 @@ class ExpensesRemote(
     suspend fun setBudget(cents: Long?): Boolean = call { h ->
         val body = buildJsonObject { put("budgetCents", cents?.let { JsonPrimitive(it) } ?: JsonNull) }
         api.setExpenseBudget(h, body).isSuccessful.takeIf { it }
+    } ?: false
+
+    /** Budgets mensuels par catégorie (remplace tous les précédents ; vide = aucun). */
+    suspend fun setCategoryBudgets(budgets: List<ExpenseCategoryBudgetDto>): Boolean = call { h ->
+        api.setCategoryBudgets(h, CategoryBudgetsBody(budgets)).isSuccessful.takeIf { it }
     } ?: false
 
     /** Export CSV téléchargé dans le cache (partagé ensuite vers Drive, Sheets, un e-mail…). */

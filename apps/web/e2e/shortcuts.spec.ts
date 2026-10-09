@@ -18,12 +18,13 @@ test('raccourcis clavier : N nouvelle tâche, / recherche, T aujourd’hui', asy
   await page.keyboard.type('t/');
   await expect(page).toHaveURL(/\/$/);
 
-  // / : recherche des tâches, depuis n'importe quelle page.
+  // / : recherche globale, depuis n'importe quelle page ; Échap la referme.
   await page.keyboard.press('Escape');
   await page.locator('body').click({ position: { x: 5, y: 5 } });
   await page.keyboard.press('/');
-  await expect(page).toHaveURL(/\/tasks/);
-  await expect(page.getByRole('searchbox', { name: 'Rechercher' })).toBeFocused();
+  await expect(page.getByRole('searchbox', { name: 'Rechercher dans le foyer' })).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(page.getByRole('dialog', { name: 'Rechercher' })).toBeHidden();
 
   // T : retour à Aujourd'hui (hors champ).
   await page.locator('body').click({ position: { x: 5, y: 5 } });

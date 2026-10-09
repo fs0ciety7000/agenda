@@ -13,8 +13,9 @@ métier propre à Android : les règles (récurrence, rotation, quick add) reste
 | **Tâches** | Recherche, filtres À faire / À venir / Sans date / Faites, « Les miennes », regroupement par jour |
 | **Courses** | Liste de courses permanente du foyer : ajout de plusieurs articles d'un coup (« lait, pain »), cocher au magasin, « Dans le panier (pris par Nicolas) », « Vider le panier », **Mode magasin** (plein écran, gros caractères, par rayon, écran allumé). **Hors ligne** (affiché tout de suite, envoyé au retour du réseau, sans doublon) et **en temps réel** (indicateur « En direct ») |
 | **Calendrier** | Mois (lundi → dimanche, pastilles = tâches à faire), liste du jour choisi, « Ajouter ce jour-là » ; **glisser-déposer** : appui long sur une tâche puis la lâcher sur un jour (heure conservée, cette occurrence seulement, « Annuler » dans le message ; TalkBack : actions « jour précédent / suivant ») |
-| **Dépenses** (tiroir Plus) | Qui doit quoi et « Enregistrer le remboursement », totaux du mois (communes, part de chacun, mes dépenses perso), liste par jour ; ajouter, modifier, supprimer (montant, quoi, date, payé par, pour qui : commune / pour l'autre / perso, catégorie, commentaire). Parts à la main, **Chaque mois** (charges fixes, à arrêter depuis la liste), **ticket** (photo ou PDF, ouvert par l'app adaptée). « Noter la dépense » après **Vider le panier** dans les Courses. **Budget** du mois (jauge, alerte à 80 % et 100 % par notification), budgets par catégorie (jauges ; réglés sur le site), **Sur 6 mois**, **Exporter** (CSV partagé vers une autre app). En ligne seulement ; les proportions se règlent sur le site |
-| **Notes** (tiroir Plus) | Notes partagées du foyer (`ui/notes/NotesScreen.kt`, `NotesRemote`) : liste épinglées d'abord, ajouter, modifier, épingler (étoile), copier, supprimer ; conflit de version affiché dans la feuille. En ligne seulement, mise à jour en direct (sujet `notes`) |
+| **Dépenses** (tiroir Plus) | Qui doit quoi et « Enregistrer le remboursement », totaux du mois (communes, part de chacun, mes dépenses perso), liste par jour ; ajouter, modifier, supprimer (montant, quoi, date, payé par, pour qui : commune / pour l'autre / perso, catégorie, commentaire). Parts à la main, **Chaque mois** (charges fixes, à arrêter depuis la liste), **ticket** (photo ou PDF, ouvert par l'app adaptée). « Noter la dépense » après **Vider le panier** dans les Courses. **Budget** du mois (jauge, alerte à 80 % et 100 % par notification), budgets par catégorie (jauges, **Budgets par catégorie** : un montant par catégorie), **Sur 6 mois**, **Exporter** (CSV partagé vers une autre app). En ligne seulement ; les proportions se règlent sur le site |
+| **Notes et dates hors ligne** | Dernière liste lue gardée dans Room (`cached_documents`, base v9, migration 8 → 9) : affichée sans réseau, en lecture ; « dans N jours » des dates recalculé (`DatesRemote.refreshed`). Effacée à la déconnexion (`clearAllTables`) |
+| **Notes** (tiroir Plus) | Notes partagées du foyer (`ui/notes/NotesScreen.kt`, `NotesRemote`) : liste épinglées d'abord, ajouter, modifier, épingler (punaise), copier, supprimer avec « Annuler » (snackbar, la note est recréée) ; conflit de version affiché dans la feuille. En ligne seulement, mise à jour en direct (sujet `notes`) |
 | **Dates** (tiroir Plus) | Dates importantes (`ui/dates/DatesScreen.kt`, `DatesRemote`) : les plus proches d'abord, âge, rappel ; feuille d'édition (sélecteur de date, « Chaque année », « Année connue », rappel). « Bientôt » sur Aujourd'hui (14 jours). En ligne seulement, en direct (sujet `dates`) ; notification `IMPORTANT_DATE` |
 | **Plus** (tiroir) | Toucher « Plus » ou tirer la barre du bas vers le haut ouvre un tiroir (`ui/navigation/NavDrawer.kt`, `ModalBottomSheet`) : Dépenses, Notes, Dates importantes, Journal et corbeille, Absences, Aide, Réglages. **Réglages** : foyer et membres, état du calendrier partagé (Google), rappels, compte (**Appareils connectés** : liste, déconnexion d'un appareil ou de tous les autres, `DevicesRemote`, en ligne), déconnexion |
 
@@ -37,7 +38,13 @@ métier propre à Android : les règles (récurrence, rotation, quick add) reste
 - **Raccourcis** (appui long sur l'icône) : Nouvelle tâche, Dicter, Courses, Aujourd'hui.
 - **Dictée** : raccourci « Dicter » ou micro dans l'ajout rapide ; la reconnaissance vocale du
   téléphone remplit l'ajout rapide (« Sortir les poubelles demain 19 h Grace »), à valider.
-  **Partager** un texte depuis une autre app vers Tandem l'ouvre aussi dans l'ajout rapide.
+  **Partager** un texte depuis une autre app (`ACTION_SEND`) ouvre `ui/share/ShareSheet.kt` : en
+  tâche (ajout rapide), en note (`noteFromShare` : sujet ou première ligne en titre ; en ligne
+  seulement) ou aux courses (`splitShoppingItems`, par l'outbox, hors ligne compris).
+  **Recherche globale** (loupe sur Aujourd'hui, `ui/search/SearchScreen.kt`, `SearchRemote`) :
+  `GET /households/:id/search`, en ligne ; une tâche ouvre son occurrence, le reste sa page.
+  **Tuile** des réglages rapides `tile/QuickAddTileService` : ouvre l'ajout rapide
+  (`ACTION_QUICK_ADD`, déverrouillage d'abord si besoin).
   Google Assistant : « Ok Google, ouvre Tandem » ; la capacité App Actions
   `CREATE_THING` (« crée … dans Tandem ») est déclarée et ne fonctionne qu'avec l'app
   publiée sur le Play Store.
@@ -227,7 +234,7 @@ cd apps/android
 - `LiveApiTest` : connexion, synchro, créations hors ligne rejouées, série « les suivantes »,
   conflit, suppression — contre la vraie API.
 
-**Sur émulateur** (`app/src/androidTest`, workflow `android-emulator.yml`, API 34) : ce que
+**Sur émulateur** (`app/src/androidTest`, workflow `android-emulator.yml`, API 34 et 35) : ce que
 Robolectric simule seulement. Une dizaine de minutes de runner, donc **à la demande** : onglet
 *Actions → Android (émulateur) → Run workflow*, ou étiquette `emulateur` sur la PR (à poser avant
 une version qui touche la base, les fichiers ou le démarrage de l'app).
@@ -236,6 +243,12 @@ une version qui touche la base, les fichiers ou le démarrage de l'app).
   SQLite de l'appareil, puis ouverture par Room ; actions hors ligne conservées.
 - `LaunchTest` : premier lancement réel (Room, WorkManager, DataStore chiffré par le Keystore),
   écran de connexion, erreur réseau affichée sans plantage quand le serveur est injoignable.
+- `EdgeToEdgeTest` : bord à bord réel (activé par l'app en API 34, imposé par Android en 35) :
+  l'écran occupe tout l'écran, mais le logo et le bouton de connexion restent hors des barres
+  système.
+- `NavDrawerDeviceTest` : la barre du bas et le tiroir « Plus » : toucher « Plus » ou tirer la
+  barre vers le haut l'ouvre (tirer vers le bas, non), la touche retour le referme, et ni les
+  onglets ni les tuiles ne passent sous la barre de gestes.
 - `AttachmentProviderTest` : le FileProvider des pièces jointes et photos partage bien les
   fichiers du cache.
 

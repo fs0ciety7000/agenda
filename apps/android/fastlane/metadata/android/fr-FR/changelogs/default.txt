@@ -1,8 +1,9 @@
-Nouveau tiroir « Plus » (toucher ou tirer la barre) : Dépenses, Notes, Dates…
-• Dépenses : qui a payé quoi, qui doit combien, remboursement en un geste.
-• Parts à la main, charges fixes, ticket photo, budgets par catégorie, export.
+Lire un ticket : montant et date lus sur la photo.
+• Partager vers Tandem : un lien devient tâche, note ou courses.
+• Tuile « Ajouter une tâche » dans les réglages rapides.
+• Budgets par catégorie dans l'app ; « Annuler » sur les notes.
+• Tiroir « Plus » : Dépenses, Notes, Dates…
+• Dépenses : qui doit combien, remboursement en un geste.
 • Notes partagées ; dates importantes avec rappel.
-• Accueil : « Qui fait quoi » sur 7 jours.
-• Mode magasin ; échange de tâche.
-• Appareils connectés : déconnexion à distance, un ou tous.
-• Cases rondes, tâches en cartes.
+• Notes et dates lisibles hors ligne.
+• Appareils connectés : déconnexion à distance.

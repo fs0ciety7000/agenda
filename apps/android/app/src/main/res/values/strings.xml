@@ -506,6 +506,13 @@
     <string name="expenses_receipt_open">View the receipt</string>
     <string name="expenses_receipt_remove">Remove the receipt</string>
     <string name="expenses_receipt_add">Attach the receipt (photo or PDF)</string>
+    <string name="expenses_scan">Read a receipt</string>
+    <string name="expenses_scan_pick">Choose a photo</string>
+    <string name="expenses_scan_hint">Take a photo of the receipt: the amount and date are filled in for you to check.</string>
+    <string name="expenses_scan_reading">Reading the receipt…</string>
+    <string name="expenses_scan_done">Receipt read: check the amount and date before saving.</string>
+    <string name="expenses_scan_nothing">Nothing readable in this photo: enter the amount yourself.</string>
+    <string name="expenses_scan_failed">Couldn\'t read the receipt (no connection, or reading unavailable). Enter the amount yourself.</string>
     <string name="expenses_receipt_chosen">Receipt chosen</string>
     <string name="expenses_meta_custom">Paid by %1$s · custom split</string>
     <string name="expenses_split_custom">Custom</string>
@@ -586,7 +593,6 @@
     <string name="notes_pin">Pin “%1$s”</string>
     <string name="notes_unpin">Unpin “%1$s”</string>
     <string name="notes_copy">Copy “%1$s”</string>
-    <string name="notes_copy_short">Copy</string>
     <string name="notes_updated">Edited on %1$s by %2$s</string>
     <string name="notes_someone">a former member</string>
     <string name="notes_offline">Offline: notes need a connection.</string>
@@ -646,7 +652,6 @@
     <string name="dates_remind_short_same_day">Reminder on the day</string>
     <string name="activity_date_tomorrow">%1$s: tomorrow</string>
     <string name="expenses_category_budget_line">%1$s of %2$s</string>
-    <string name="expenses_category_budgets_web">Budgets by category are set on the website.</string>
     <string name="activity_budget_category">%1$s · %2$s: %3$d%% reached (%4$s of %5$s)</string>
     <string name="devices_title">Signed-in devices</string>
     <string name="devices_hint">Where your account is open. A lost or shared device? Sign it out from here.</string>
@@ -663,4 +668,29 @@
     <string name="devices_revoke_others_body">This device stays signed in. The others will need to sign in again.</string>
     <plurals name="devices_revoke_others_title"><item quantity="one">Sign out the other device?</item><item quantity="other">Sign out the %d other devices?</item></plurals>
     <plurals name="devices_revoked_others"><item quantity="one">%d device signed out.</item><item quantity="other">%d devices signed out.</item></plurals>
+    <string name="expenses_category_budgets_edit">Budgets by category</string>
+    <string name="expenses_category_budgets_title">Budgets by category</string>
+    <string name="expenses_category_budgets_hint" formatted="false">Per month, for shared expenses. The household gets a notification at 80% then 100%. Leave a field empty for no budget.</string>
+    <string name="expenses_category_budgets_none">No budget</string>
+    <string name="share_title">Add to Tandem</string>
+    <string name="share_task">As a task</string>
+    <string name="share_note">As a note</string>
+    <string name="share_shopping">To the shopping list</string>
+    <string name="share_note_added">Note “%1$s” added</string>
+    <string name="share_note_offline">Notes need a connection. Try again once online.</string>
+    <plurals name="share_shopping_added"><item quantity="one">%d item added to the shopping list.</item><item quantity="other">%d items added to the shopping list.</item></plurals>
+    <string name="search_title">Search</string>
+    <string name="search_label">Search the household</string>
+    <string name="search_placeholder">Tasks, notes, dates, expenses…</string>
+    <string name="search_hint">Type at least 2 letters.</string>
+    <string name="search_offline">Search needs a connection.</string>
+    <string name="search_empty">Nothing found for “%1$s”.</string>
+    <string name="search_tasks">Tasks</string>
+    <string name="search_notes">Notes</string>
+    <string name="search_dates">Important dates</string>
+    <string name="search_expenses">Expenses</string>
+    <string name="search_shopping">Shopping</string>
+    <string name="search_done">Done</string>
+    <string name="search_in_cart">In the cart</string>
+    <string name="search_to_buy">To buy</string>
 </resources>

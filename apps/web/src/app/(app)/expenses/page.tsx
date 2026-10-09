@@ -1,5 +1,6 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import type {
   ExpenseCategory,
   ExpenseDto,
@@ -17,11 +18,12 @@ import {
   Plus,
   Repeat,
   Scale,
+  ScanLine,
   Target,
   Wallet,
 } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
-import { useEffect, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useSession } from '@/components/app/household-context';
 import { MemberAvatar } from '@/components/app/member-avatar';
 import { Button } from '@/components/ui/button';
@@ -48,6 +50,7 @@ import {
   useRecurringExpenses,
 } from '@/lib/expenses';
 import { useToday } from '@/lib/format';
+import { useOnline } from '@/lib/offline';
 
 const CATEGORY_EMOJI: Record<ExpenseCategory, string> = {
   GROCERIES: '🛒',
@@ -73,7 +76,12 @@ export default function ExpensesPage() {
   const toast = useToast();
   const { household, me } = useSession();
   const today = useToday();
-  const [month, setMonth] = useState(() => today.slice(0, 7));
+  // ?month=AAAA-MM (lien depuis la recherche) ; sinon le mois en cours.
+  const params = useSearchParams();
+  const [month, setMonth] = useState(() => {
+    const asked = params.get('month');
+    return asked && /^\d{4}-(0[1-9]|1[0-2])$/.test(asked) ? asked : today.slice(0, 7);
+  });
   const expenses = useExpenses(household.id, month);
   const summary = useExpenseSummary(household.id, month);
   const actions = useExpenseActions(household.id);
@@ -335,6 +343,7 @@ export default function ExpensesPage() {
       ) : list.length === 0 ? (
         <EmptyState
           icon={Wallet}
+          illustration="expenses"
           title={t('emptyTitle')}
           body={t('emptyBody')}
           action={
@@ -486,6 +495,26 @@ function ExpenseDialog({
   const [monthly, setMonthly] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const online = useOnline();
+  // Lecture d'un ticket : la photo préremplit le formulaire puis est jointe à la dépense.
+  const scanInput = useRef<HTMLInputElement>(null);
+  const [scanned, setScanned] = useState(false);
+  const [scanNote, setScanNote] = useState<string | null>(null);
+  const scan = (photo: File) => {
+    setError(null);
+    setScanNote(null);
+    actions.scanReceipt.mutate(photo, {
+      onSuccess: (r) => {
+        if (r.amountCents != null) setAmount(editable(r.amountCents));
+        if (r.date) setDate(r.date);
+        if (r.merchant && !title.trim()) setTitle(r.merchant);
+        setFile(photo);
+        setScanned(true);
+        setScanNote(t(r.amountCents != null || r.date ? 'scanDone' : 'scanNothing'));
+      },
+      onError: (err) => setError(te(errorKey(err) as 'generic')),
+    });
+  };
 
   const others = members.filter((m) => m.id !== paidById);
   const targetOptions = [
@@ -602,6 +631,41 @@ function ExpenseDialog({
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent title={t(expense ? 'editTitle' : 'newTitle')} closeLabel={tc('close')}>
         <form onSubmit={submit} noValidate className="flex flex-col gap-4">
+          {!expense && (
+            <div className="flex flex-col gap-1.5">
+              <input
+                ref={scanInput}
+                type="file"
+                // JPEG, PNG ou WebP : iOS convertit ses photos HEIC à l'envoi.
+                accept="image/jpeg,image/png,image/webp"
+                hidden
+                onChange={(e) => {
+                  const photo = e.target.files?.[0];
+                  e.target.value = '';
+                  if (photo) scan(photo);
+                }}
+              />
+              <Button
+                type="button"
+                variant="secondary"
+                className="self-start"
+                disabled={!online}
+                loading={actions.scanReceipt.isPending}
+                onClick={() => scanInput.current?.click()}
+              >
+                <ScanLine aria-hidden className="size-5 stroke-[1.5]" />
+                {actions.scanReceipt.isPending ? t('scanReading') : t('scan')}
+              </Button>
+              {!scanNote && (
+                <p className="text-[0.8125rem] text-text-muted">
+                  {online ? t('scanHint') : t('scanOffline')}
+                </p>
+              )}
+              <p role="status" className="text-[0.8125rem] empty:hidden">
+                {scanNote}
+              </p>
+            </div>
+          )}
           <div className="grid gap-4 sm:grid-cols-2">
             <Field
               label={t('amount')}
@@ -738,6 +802,23 @@ function ExpenseDialog({
                     onClick={() => actions.removeReceipt.mutate(expense.id, { onSuccess: onClose })}
                   >
                     {t('receiptRemove')}
+                  </Button>
+                </div>
+              ) : scanned && file ? (
+                <div className="flex flex-wrap items-center gap-3 text-[0.9375rem]">
+                  <span className="min-w-0 break-words">
+                    {t('scanAttached', { name: file.name })}
+                  </span>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setFile(null);
+                      setScanned(false);
+                    }}
+                  >
+                    {t('scanDetach')}
                   </Button>
                 </div>
               ) : (

@@ -22,7 +22,11 @@ description: Installer l'app, mises à jour, widgets, raccourcis, dictée, rappe
 - **Raccourcis** (appui long sur l'icône) : Nouvelle tâche, Dicter, Courses, Aujourd'hui.
 - **Dictée** : le micro de l'ajout rapide remplit la phrase (« Sortir les poubelles demain 19 h
   Grace »), à valider.
-- **Partager** un texte depuis une autre app vers Tandem l'ouvre dans l'ajout rapide.
+- **Partager** un texte ou un lien depuis une autre app vers Tandem : choisissez **En tâche**
+  (ajout rapide prérempli), **En note** (le titre de la page ou la première ligne devient le titre)
+  ou **Aux courses** (une ligne ou une virgule = un article, même hors ligne).
+- **Tuile « Ajouter une tâche »** dans les réglages rapides (tirez le haut de l'écran, puis le
+  crayon ✎ pour ajouter la tuile) : l'ajout rapide s'ouvre d'un geste, même écran verrouillé.
 - **Photo** directement jointe à une tâche.
 - Mode sombre, TalkBack.
 

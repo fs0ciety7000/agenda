@@ -1,6 +1,7 @@
 package app.tandem.foyer.data
 
 import app.tandem.foyer.data.local.AgendaDatabase
+import app.tandem.foyer.data.local.CachedDocumentEntity
 import app.tandem.foyer.data.remote.AgendaApi
 import app.tandem.foyer.data.remote.NoteBody
 import app.tandem.foyer.data.remote.NoteDto
@@ -10,8 +11,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.jsonObject
 import java.io.IOException
+import java.time.Instant
 
 /**
  * Notes partagées du foyer : lues et modifiées en ligne, comme les dépenses. Une modification
@@ -32,7 +36,25 @@ class NotesRemote(private val api: AgendaApi, private val db: AgendaDatabase) {
         _updates.tryEmit(Unit)
     }
 
-    suspend fun list(): List<NoteDto>? = call { h -> api.notes(h).body() }
+    /** Liste en ligne ; chaque lecture réussie est gardée pour la consultation hors ligne. */
+    suspend fun list(): List<NoteDto>? = call { h ->
+        api.notes(h).body()?.also { remember(h, it) }
+    }
+
+    /** Dernière liste lue (hors ligne, en lecture), ou null si jamais lue sur ce téléphone. */
+    suspend fun cached(): List<NoteDto>? = withContext(Dispatchers.IO) {
+        val h = db.households().current() ?: return@withContext null
+        runCatching { db.cachedDocuments().get(key(h.id)) }.getOrNull()?.let { runCatching { json.decodeFromString<List<NoteDto>>(it) }.getOrNull() }
+    }
+
+    /** Copie pour le hors ligne : un échec ne gêne jamais la lecture en ligne. */
+    private suspend fun remember(householdId: String, items: List<NoteDto>) {
+        runCatching {
+            db.cachedDocuments().put(CachedDocumentEntity(key(householdId), json.encodeToString(items), Instant.now().toString()))
+        }
+    }
+
+    private fun key(householdId: String) = "notes:$householdId"
 
     suspend fun create(title: String, body: String, pinned: Boolean): Boolean =
         call { h -> api.createNote(h, NoteBody(title.trim(), body.trim(), pinned)).isSuccessful.takeIf { it } } ?: false

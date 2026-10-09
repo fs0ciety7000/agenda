@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
+import { Illustration } from '@/components/ui/illustration';
 import { ErrorState, Skeleton } from '@/components/ui/states';
 import { useToast } from '@/components/ui/toast';
 import { errorKey } from '@/lib/api';
@@ -80,15 +81,18 @@ export default function MealsPage() {
       </div>
 
       <div className="flex flex-wrap items-center gap-3">
-        <Button
-          variant="secondary"
-          disabled={pending.length === 0}
-          loading={actions.toShopping.isPending}
-          onClick={() => sendToShopping(pending.map((m) => m.id))}
-        >
-          <ShoppingCart aria-hidden className="size-4" />
-          {t('weekToShopping', { count: pending.length })}
-        </Button>
+        {/* Rien à envoyer quand la semaine est vide : pas de bouton grisé sans raison. */}
+        {list.length > 0 && (
+          <Button
+            variant="secondary"
+            disabled={pending.length === 0}
+            loading={actions.toShopping.isPending}
+            onClick={() => sendToShopping(pending.map((m) => m.id))}
+          >
+            <ShoppingCart aria-hidden className="size-4" />
+            {t('weekToShopping', { count: pending.length })}
+          </Button>
+        )}
         <Link href="/shopping" className="text-sm text-accent underline-offset-4 hover:underline">
           {t('openShopping')}
         </Link>
@@ -103,53 +107,62 @@ export default function MealsPage() {
       ) : !meals.data ? (
         <Skeleton className="h-96 w-full" />
       ) : (
-        <ol className="grid grid-cols-1 gap-3 md:grid-cols-2">
-          {days.map((d) => (
-            <li key={d}>
-              <Card className="flex h-full flex-col gap-3 p-4">
-                <h2 className={d === today ? 'font-semibold text-accent' : 'font-semibold'}>
-                  {dayLabel(d)}
-                </h2>
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {SLOTS.map((slot) => {
-                    const meal = list.find((m) => m.date === d && m.slot === slot);
-                    return meal ? (
-                      <button
-                        key={slot}
-                        type="button"
-                        onClick={() => setEditing({ meal, date: d, slot })}
-                        className="flex flex-col gap-1 rounded-md border border-border px-3 py-2 text-left hover:bg-surface-muted"
-                      >
-                        <span className="text-[0.75rem] font-medium uppercase tracking-wide text-text-muted">
-                          {t(`slot.${slot}`)}
-                        </span>
-                        <span className="font-medium">{meal.title}</span>
-                        {meal.ingredients.length > 0 && (
-                          <span className="line-clamp-2 text-[0.8125rem] text-text-muted">
-                            {meal.ingredients.join(', ')}
+        <>
+          {list.length === 0 && (
+            <div className="flex flex-col items-center gap-2 text-center">
+              <Illustration name="meals" className="h-24 w-[7.5rem]" />
+              <p className="text-[1.0625rem] font-medium">{t('emptyTitle')}</p>
+              <p className="max-w-sm text-[0.9375rem] text-text-muted">{t('emptyBody')}</p>
+            </div>
+          )}
+          <ol className="grid grid-cols-1 gap-3 md:grid-cols-2">
+            {days.map((d) => (
+              <li key={d}>
+                <Card className="flex h-full flex-col gap-3 p-4">
+                  <h2 className={d === today ? 'font-semibold text-accent' : 'font-semibold'}>
+                    {dayLabel(d)}
+                  </h2>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {SLOTS.map((slot) => {
+                      const meal = list.find((m) => m.date === d && m.slot === slot);
+                      return meal ? (
+                        <button
+                          key={slot}
+                          type="button"
+                          onClick={() => setEditing({ meal, date: d, slot })}
+                          className="flex flex-col gap-1 rounded-md border border-border px-3 py-2 text-left hover:bg-surface-muted"
+                        >
+                          <span className="text-[0.75rem] font-medium uppercase tracking-wide text-text-muted">
+                            {t(`slot.${slot}`)}
                           </span>
-                        )}
-                        {meal.addedToShoppingAt && (
-                          <span className="text-[0.75rem] text-success">✓ {t('inShopping')}</span>
-                        )}
-                      </button>
-                    ) : (
-                      <button
-                        key={slot}
-                        type="button"
-                        onClick={() => setEditing({ date: d, slot })}
-                        className="flex min-h-11 items-center gap-2 rounded-md border border-dashed border-border px-3 py-2 text-sm text-text-muted hover:bg-surface-muted"
-                      >
-                        <Plus aria-hidden className="size-4" />
-                        {t('add', { slot: t(`slot.${slot}`) })}
-                      </button>
-                    );
-                  })}
-                </div>
-              </Card>
-            </li>
-          ))}
-        </ol>
+                          <span className="font-medium">{meal.title}</span>
+                          {meal.ingredients.length > 0 && (
+                            <span className="line-clamp-2 text-[0.8125rem] text-text-muted">
+                              {meal.ingredients.join(', ')}
+                            </span>
+                          )}
+                          {meal.addedToShoppingAt && (
+                            <span className="text-[0.75rem] text-success">✓ {t('inShopping')}</span>
+                          )}
+                        </button>
+                      ) : (
+                        <button
+                          key={slot}
+                          type="button"
+                          onClick={() => setEditing({ date: d, slot })}
+                          className="flex min-h-11 items-center gap-2 rounded-md border border-dashed border-border px-3 py-2 text-sm text-text-muted hover:bg-surface-muted"
+                        >
+                          <Plus aria-hidden className="size-4" />
+                          {t('add', { slot: t(`slot.${slot}`) })}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </Card>
+              </li>
+            ))}
+          </ol>
+        </>
       )}
 
       {editing && (

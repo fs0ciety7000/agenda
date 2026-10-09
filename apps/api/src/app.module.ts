@@ -23,6 +23,7 @@ import { PrivacyModule } from './privacy/privacy.module';
 import { RealtimeModule } from './realtime/realtime.module';
 import { ImportantDatesModule } from './important-dates/important-dates.module';
 import { NotesModule } from './notes/notes.module';
+import { SearchModule } from './search/search.module';
 import { ShoppingModule } from './shopping/shopping.module';
 import { ExpensesModule } from './expenses/expenses.module';
 import { InboundEmailModule } from './inbound/inbound-email.module';
@@ -56,6 +57,7 @@ import { TasksModule } from './tasks/tasks.module';
     NotificationsModule,
     ShoppingModule,
     NotesModule,
+    SearchModule,
     ImportantDatesModule,
     ExpensesModule,
     RealtimeModule,

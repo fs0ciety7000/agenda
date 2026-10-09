@@ -119,7 +119,29 @@ class MigrationTest {
         }
     }
 
+    @Test
+    fun `v8 vers v9 - cache des notes et dates cree, outbox conservee`() {
+        helper.createDatabase(DB9, 8).use { db ->
+            db.execSQL(
+                """INSERT INTO pending_operations (householdId, type, occurrenceId, payload, idempotencyKey, createdAt, attempts)
+                VALUES ('h1', 'COMPLETE', 'o1', NULL, 'k1', 0, 0)""",
+            )
+        }
+        helper.runMigrationsAndValidate(DB9, 9, true, *AgendaDatabase.MIGRATIONS).use { db ->
+            db.query("SELECT COUNT(*) FROM pending_operations").use { c ->
+                c.moveToFirst()
+                assertEquals(1, c.getInt(0))
+            }
+            db.execSQL("INSERT INTO cached_documents (`key`, json, updatedAt) VALUES ('notes:h1', '[]', '2026-10-09')")
+            db.query("SELECT json FROM cached_documents WHERE `key` = 'notes:h1'").use { c ->
+                c.moveToFirst()
+                assertEquals("[]", c.getString(0))
+            }
+        }
+    }
+
     private companion object {
+        const val DB9 = "migration-test-9.db"
         const val DB7 = "migration-test-7.db"
         const val DB5 = "migration-test-5.db"
         const val DB4 = "migration-test-4.db"

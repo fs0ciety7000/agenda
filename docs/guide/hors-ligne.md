@@ -13,6 +13,7 @@ Le site comme l'app Android restent utilisables **sans réseau** (métro, cave, 
 | Cocher une tâche, un article de courses | ✓ | ✓ |
 | Ajout rapide, ajouter des courses | ✓ | ✓ |
 | Créer ou modifier une tâche en détail, reporter | — | ✓ |
+| Lire les notes et les dates importantes (dernière version vue) | ✓ | ✓ |
 | Sous-tâches, pièces jointes, modèles, réglages | — | — |
 
 Un bandeau indique le mode hors ligne et le nombre de **modifications en attente**. Au retour du

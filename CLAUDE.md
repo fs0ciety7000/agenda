@@ -34,6 +34,8 @@ Fichiers importés, à respecter au même titre que celui-ci :
 - Texte sur une couleur pleine : tokens `on-member` ou `surface`, jamais de blanc codé en dur (#88).
 - Retard : « À rattraper », couleur `warning` ; `danger` réservé aux erreurs et à l'urgent (#88).
 - Dépenses : montants en centimes entiers, parts figées à l'enregistrement (#86).
+- Lecture des tickets : Tesseract sur le serveur, aucun service extérieur, photo non conservée ;
+  seules de vraies images (signature vérifiée) lui sont passées (#92).
 
 ## Règles permanentes
 

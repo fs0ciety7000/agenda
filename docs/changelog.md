@@ -13,6 +13,61 @@ d'elle-même (ou via Google Play).
 **Légende** : ✨ nouveau · 🛠 amélioration · 🐞 correction · 🔒 sécurité et confidentialité ·
 ⚙️ technique
 
+## 9 octobre 2026
+
+### Lire un ticket (#92)
+
+- ✨ **Lire un ticket** : dans une nouvelle dépense, prenez le ticket en photo ; le montant, la
+  date et le commerçant sont proposés, à vérifier. Sur le site et dans l'app Android.
+- 🔒 La photo est lue sur le serveur de Tandem, sans service extérieur, puis effacée ; elle n'est
+  gardée que jointe à la dépense.
+
+### Bord à bord et tiroir vérifiés sur émulateur (#92)
+
+- 🐞 App Android : l'écran de connexion ne passe plus sous les barres système ni sous le clavier.
+- ⚙️ Tests sur émulateur (Android 14 et 15) du tiroir « Plus » (toucher, geste, retour) et du
+  bord à bord.
+
+### Audit du 9 octobre (#92)
+
+- 🐞 Site vitrine : l'en-tête ne se tasse plus entre 768 et 1279 px (menu repliable).
+- 🛠 Page Tâches : le filtre s'appelle « Filtrer les tâches », distinct de la recherche globale.
+- 🛠 Au clavier, fermer une fenêtre (recherche…) rend le focus au bouton qui l'avait ouverte.
+- 🛠 Menus : plus de bouton grisé « Tout est déjà dans les courses » quand la semaine est vide.
+- 🛠 App Android : une icône par type de date importante, comme sur le site.
+- 🐞 App Android : une dépense trouvée par la recherche ouvre son mois, plus le mois en cours.
+- 🛠 Recherche ouverte avec « / » : à la fermeture, le focus revient au bouton « Rechercher ».
+
+### Notes et dates hors ligne sur Android (#92)
+
+- 🛠 App Android : les **notes** et les **dates importantes** restent lisibles sans réseau (la
+  dernière version vue) ; les modifications demandent toujours une connexion.
+- 🔒 Cette copie est effacée à la déconnexion, comme le reste des données du téléphone.
+
+### Recherche globale (#92)
+
+- ✨ **Rechercher partout** (loupe, ou **/** sur ordinateur) : tâches, notes, dates importantes,
+  dépenses et courses en une seule recherche, sur le site et sur Android. Un résultat ouvre
+  directement la tâche ou la page.
+
+### Partager vers Tandem, tuile « Ajouter une tâche » (#92)
+
+- ✨ **Partager vers Tandem** (Android) : un texte ou un lien partagé depuis une autre app devient,
+  au choix, une tâche, une note ou des articles de courses.
+- ✨ **Tuile « Ajouter une tâche »** dans les réglages rapides d'Android : l'ajout rapide d'un
+  geste, depuis n'importe où.
+
+### États vides illustrés (#92)
+
+- 🛠 **Écrans vides illustrés** (Aujourd'hui, Courses, Menus, Dépenses, Notes, Dates) : un petit
+  dessin au trait, le même sur le site et sur Android, en clair comme en sombre.
+
+### Finitions Android (#92)
+
+- ✨ **Budgets par catégorie** réglables dans l'app Android (Dépenses → Budgets par catégorie).
+- 🛠 Notes sur Android : **Annuler** juste après une suppression, et icônes punaise, copier et
+  modifier comme sur le site.
+
 ## 8 octobre 2026
 
 ### Affichage bord à bord sans API obsolètes (#91)

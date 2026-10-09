@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextReplacement
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
@@ -66,6 +67,8 @@ class NotesScreenTest {
                         """{"error":{"code":"VERSION_CONFLICT","message":"x","details":{"current":
                         ${note("n1", "Wi-Fi", "Code : 9999", true, n, version = 2)}}}}""",
                     ).setResponseCode(409)
+                    "DELETE" -> MockResponse().setResponseCode(204)
+                    "POST" -> json(note("n3", "Wi-Fi", "Code : 4F7K-29QM", true, g)).setResponseCode(201)
                     else -> MockResponse().setResponseCode(404)
                 }
             }
@@ -78,6 +81,8 @@ class NotesScreenTest {
         db.close()
     }
 
+    private val undoable = mutableListOf<Pair<String, () -> Unit>>()
+
     private fun render(dark: Boolean = false) {
         runBlocking { db.households().insertHousehold(HouseholdEntity(Fixtures.HOUSEHOLD, "Grace & Nico", "Europe/Brussels", g)) }
         val remote = NotesRemote(ApiClient.create(server.url("/").toString(), FakeTokenStore()), db)
@@ -85,7 +90,13 @@ class NotesScreenTest {
         compose.setContent {
             AgendaTheme(darkTheme = dark) {
                 Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
-                    NotesScreen(vm, Fixtures.household.members, onBack = {}, onMessage = {})
+                    NotesScreen(
+                        vm,
+                        Fixtures.household.members,
+                        onBack = {},
+                        onMessage = {},
+                        onUndoable = { m, undo -> undoable += m to undo },
+                    )
                 }
             }
         }
@@ -123,5 +134,28 @@ class NotesScreenTest {
         assertEquals("Wi-Fi", current?.title)
         assertEquals(1, current?.version)
         assertNull(NotesRemote.conflictOf("""{"error":{"code":"VERSION_CONFLICT"}}"""))
+    }
+
+    @Test
+    fun supprimer_puis_annuler() {
+        render()
+        compose.onNodeWithContentDescription("Modifier « Wi-Fi »").performClick()
+        compose.onNodeWithText("Supprimer").performScrollTo().performClick()
+        // La réponse arrive sur un autre fil : on fait tourner la file principale en l'attendant.
+        val deadline = System.currentTimeMillis() + 10_000
+        while (undoable.isEmpty() && System.currentTimeMillis() < deadline) {
+            org.robolectric.shadows.ShadowLooper.idleMainLooper()
+            Thread.sleep(20)
+        }
+        assertEquals("« Wi-Fi » supprimée", undoable.single().first)
+        // « Annuler » recrée la note (titre, contenu, épinglage).
+        undoable.single().second()
+        val posted = System.currentTimeMillis() + 10_000
+        while (requests.none { it.startsWith("POST") } && System.currentTimeMillis() < posted) {
+            org.robolectric.shadows.ShadowLooper.idleMainLooper()
+            Thread.sleep(20)
+        }
+        assertEquals(1, requests.count { it.startsWith("POST") })
+        assertEquals(1, requests.count { it.startsWith("DELETE") })
     }
 }

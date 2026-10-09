@@ -71,7 +71,8 @@ Source : [audit du 8 octobre 2026](audits/2026-10-08.md). Légende : effort S / 
 
 Validés par l'utilisateur : mode magasin, échange de tour. Ordre choisi ensuite : tableau
 « cette semaine », notes partagées, dates importantes, budget par catégorie, journal des
-connexions (une PR chacun). Le reste attend son accord.
+connexions (une PR chacun). Puis, le 9 octobre : saisie du ticket par photo (lecture sur le serveur).
+Le reste attend son accord.
 
 Organisation du foyer :
 
@@ -89,16 +90,17 @@ Courses et repas :
 
 Dépenses :
 
-- [ ] **Saisie du ticket par photo** (lecture du montant et de la date) (L)
+- [x] **Saisie du ticket par photo** (lecture du montant et de la date) (L) ⚙️🌐🤖 (#92) : Tesseract sur le serveur, photo non conservée
+  - [ ] Lecture moins bonne sur un ticket froissé ou très long : redresser et recadrer la photo avant lecture (M), à prioriser ensemble
 - [x] **Budget par catégorie** en plus du budget global (M) ⚙️🌐🤖 (#89)
-  - [ ] Android : régler les budgets par catégorie dans l'app (le site seulement pour l'instant) (S) 🤖
+  - [x] Android : régler les budgets par catégorie dans l'app (S) 🤖 (#92)
 - [ ] **Rapprochement mensuel** : « ce mois-ci, chacun a payé… », envoyé le 1er (S)
 
 Vie à deux :
 
 - [x] **Notes partagées** (codes Wi-Fi, mesures, idées cadeaux) : petits mémos épinglés (M) ⚙️🌐🤖 (#89)
-  - [ ] Android : « Annuler » après la suppression d'une note (le site l'a déjà) (S) 🤖
-  - [ ] Android : icônes punaise et copier (absentes de `material-icons-core` ; étoile et bouton texte en attendant) (S) 🤖
+  - [x] Android : « Annuler » après la suppression d'une note (S) 🤖 (#92)
+  - [x] Android : icônes punaise et copier (S) 🤖 (#92)
 - [x] **Dates importantes** (anniversaires, entretiens annuels) avec rappel à l'avance (M) ⚙️🌐🤖 (#89)
 - [ ] **Widget Android « Dépenses »** : solde et ajout rapide (M) 🤖
 
@@ -116,6 +118,33 @@ Navigation (demande de l'utilisateur) :
 - [x] **Tiroir « Plus »** : la barre du bas garde quatre onglets ; « Plus » (ou la barre tirée vers le
   haut) ouvre une grille avec toutes les autres pages, Réglages en dernier ; site mobile et Android
   (S) 🌐🤖 (#90)
+
+### Lot 5 — Finitions, accès rapides, recherche, qualité (validé le 9 octobre)
+
+Validé par l'utilisateur, dans cet ordre :
+
+- [x] **Finitions Android** (S) 🤖 (#92)
+  - [x] Budgets par catégorie réglables dans l'app
+  - [x] « Annuler » après la suppression d'une note
+  - [x] Icônes punaise, copier et modifier (vecteurs, comme le tiroir)
+- [x] **États vides illustrés** : illustration au trait, monochrome, style du logo, pour
+  Aujourd'hui, Courses, Menus, Dépenses, Notes, Dates ; site et Android, clair et sombre (M) 🌐🤖 (#92)
+- [x] **Partager vers Tandem** : un lien ou un texte partagé depuis une autre app devient une
+  tâche, une note ou un article de courses (S) 🤖 (#92)
+- [x] **Tuile « Ajouter une tâche »** dans les réglages rapides Android (S) 🤖 (#92)
+- [x] **Recherche globale** : `/` cherche dans les tâches, notes, dates, dépenses et courses (M) ⚙️🌐🤖 (#92)
+- [x] **Notes et dates lisibles hors ligne** sur Android (M) 🤖 (#92)
+- [x] **Audit UI/UX complet** après le lot 4 (M) (#92) : [rapport du 9 octobre](audits/2026-10-09.md), 3 bloquants corrigés
+- [x] **Tests sur émulateur** : tiroir et bord à bord, API 34 et 35 (S) 🤖 (#92)
+
+Découvert par l'audit du 9 octobre (validé par l'utilisateur) :
+
+- [x] Android : icône par type de date importante, comme le site (S) 🤖 (#92)
+- [x] Android : un résultat de recherche « Dépense » ouvre le mois de la dépense (S) 🤖 (#92)
+- [x] Web : recherche ouverte avec « / » sans focus → rendre le focus au bouton « Rechercher » (S) 🌐 (#92)
+
+Idées proposées, non retenues pour l'instant : idées cadeaux liées aux dates, échéances de
+contrats, planning du dimanche, lien « baby-sitter », packs de départ.
 
 ### Propositions de design
 

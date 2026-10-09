@@ -503,6 +503,13 @@
     <string name="expenses_receipt_open">Kasticket bekijken</string>
     <string name="expenses_receipt_remove">Kasticket verwijderen</string>
     <string name="expenses_receipt_add">Kasticket toevoegen (foto of pdf)</string>
+    <string name="expenses_scan">Kasticket inlezen</string>
+    <string name="expenses_scan_pick">Foto kiezen</string>
+    <string name="expenses_scan_hint">Maak een foto van het kasticket: bedrag en datum worden voor je ingevuld, controleer ze even.</string>
+    <string name="expenses_scan_reading">Kasticket wordt gelezen…</string>
+    <string name="expenses_scan_done">Kasticket gelezen: controleer bedrag en datum voor je opslaat.</string>
+    <string name="expenses_scan_nothing">Niets leesbaars op deze foto: vul het bedrag zelf in.</string>
+    <string name="expenses_scan_failed">Kasticket inlezen lukte niet (geen verbinding, of inlezen niet beschikbaar). Vul het bedrag zelf in.</string>
     <string name="expenses_receipt_chosen">Kasticket gekozen</string>
     <string name="expenses_meta_custom">Betaald door %1$s · eigen verdeling</string>
     <string name="expenses_split_custom">Zelf verdelen</string>
@@ -583,7 +590,6 @@
     <string name="notes_pin">“%1$s” vastzetten</string>
     <string name="notes_unpin">“%1$s” losmaken</string>
     <string name="notes_copy">“%1$s” kopiëren</string>
-    <string name="notes_copy_short">Kopiëren</string>
     <string name="notes_updated">Bewerkt op %1$s door %2$s</string>
     <string name="notes_someone">een voormalig lid</string>
     <string name="notes_offline">Offline: notities hebben een verbinding nodig.</string>
@@ -643,7 +649,6 @@
     <string name="dates_remind_short_same_day">Herinnering op de dag</string>
     <string name="activity_date_tomorrow">%1$s: morgen</string>
     <string name="expenses_category_budget_line">%1$s van %2$s</string>
-    <string name="expenses_category_budgets_web">Het budget per categorie stel je in op de website.</string>
     <string name="activity_budget_category">%1$s · %2$s: %3$d%% bereikt (%4$s van %5$s)</string>
     <string name="devices_title">Aangemelde apparaten</string>
     <string name="devices_hint">Waar je account open staat. Een verloren of gedeeld apparaat? Meld het hier af.</string>
@@ -660,4 +665,29 @@
     <string name="devices_revoke_others_body">Dit apparaat blijft aangemeld. Op de andere moet je opnieuw aanmelden.</string>
     <plurals name="devices_revoke_others_title"><item quantity="one">Het andere apparaat afmelden?</item><item quantity="other">De %d andere apparaten afmelden?</item></plurals>
     <plurals name="devices_revoked_others"><item quantity="one">%d apparaat afgemeld.</item><item quantity="other">%d apparaten afgemeld.</item></plurals>
+    <string name="expenses_category_budgets_edit">Budget per categorie</string>
+    <string name="expenses_category_budgets_title">Budget per categorie</string>
+    <string name="expenses_category_budgets_hint" formatted="false">Per maand, voor gedeelde uitgaven. Het huishouden krijgt een melding bij 80% en 100%. Laat leeg voor geen budget.</string>
+    <string name="expenses_category_budgets_none">Geen budget</string>
+    <string name="share_title">Toevoegen aan Tandem</string>
+    <string name="share_task">Als taak</string>
+    <string name="share_note">Als notitie</string>
+    <string name="share_shopping">Naar de boodschappen</string>
+    <string name="share_note_added">Notitie “%1$s” toegevoegd</string>
+    <string name="share_note_offline">Notities hebben verbinding nodig. Probeer het opnieuw als je online bent.</string>
+    <plurals name="share_shopping_added"><item quantity="one">%d artikel toegevoegd aan de boodschappen.</item><item quantity="other">%d artikelen toegevoegd aan de boodschappen.</item></plurals>
+    <string name="search_title">Zoeken</string>
+    <string name="search_label">Zoeken in het huishouden</string>
+    <string name="search_placeholder">Taken, notities, data, uitgaven…</string>
+    <string name="search_hint">Typ minstens 2 letters.</string>
+    <string name="search_offline">Zoeken heeft verbinding nodig.</string>
+    <string name="search_empty">Niets gevonden voor “%1$s”.</string>
+    <string name="search_tasks">Taken</string>
+    <string name="search_notes">Notities</string>
+    <string name="search_dates">Belangrijke data</string>
+    <string name="search_expenses">Uitgaven</string>
+    <string name="search_shopping">Boodschappen</string>
+    <string name="search_done">Gedaan</string>
+    <string name="search_in_cart">In het mandje</string>
+    <string name="search_to_buy">Te kopen</string>
 </resources>

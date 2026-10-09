@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -59,16 +60,21 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -80,6 +86,7 @@ import app.tandem.foyer.R
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import app.tandem.foyer.data.remote.ReceiptScanDto
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Checkbox
@@ -95,6 +102,7 @@ import kotlinx.coroutines.withContext
 import app.tandem.foyer.data.remote.ExpenseBody
 import app.tandem.foyer.data.remote.ExpenseDto
 import app.tandem.foyer.data.remote.ExpenseStatsDto
+import app.tandem.foyer.data.remote.ExpenseCategoryBudgetDto
 import app.tandem.foyer.data.remote.ExpenseSummaryDto
 import app.tandem.foyer.domain.Money
 import app.tandem.foyer.domain.model.Member
@@ -125,8 +133,9 @@ data class ExpensesState(
     val saving: Boolean = false,
 )
 
-class ExpensesViewModel(private val remote: ExpensesRemote) : ViewModel() {
-    private val _state = MutableStateFlow(ExpensesState())
+/** `initialMonth` : mois affiché à l'ouverture (ex. celui d'une dépense trouvée par la recherche). */
+class ExpensesViewModel(private val remote: ExpensesRemote, initialMonth: YearMonth = YearMonth.now()) : ViewModel() {
+    private val _state = MutableStateFlow(ExpensesState(month = initialMonth))
     val state: StateFlow<ExpensesState> = _state
 
     init {
@@ -178,9 +187,14 @@ class ExpensesViewModel(private val remote: ExpensesRemote) : ViewModel() {
 
     fun setBudget(cents: Long?, done: (Boolean) -> Unit) = perform(done) { remote.setBudget(cents) }
 
+    fun setCategoryBudgets(budgets: List<ExpenseCategoryBudgetDto>, done: (Boolean) -> Unit) =
+        perform(done) { remote.setCategoryBudgets(budgets) }
+
     suspend fun exportCsv(from: String, to: String) = remote.exportCsv(from, to)
 
     suspend fun downloadReceipt(id: String) = remote.downloadReceipt(id)
+
+    suspend fun scanReceipt(jpeg: ByteArray) = remote.scanReceipt(jpeg)
 
     fun settle(from: String, to: String, cents: Long, done: (Boolean) -> Unit) = perform(done) { remote.settle(from, to, cents) }
 
@@ -223,6 +237,7 @@ fun ExpensesScreen(
     val dayFormat = remember(locale) { DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale) }
     var editing by remember { mutableStateOf<Editing?>(null) }
     var budgetOpen by rememberSaveable { mutableStateOf(false) }
+    var categoryBudgetsOpen by rememberSaveable { mutableStateOf(false) }
     var exportOpen by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(prefillTitle, prefillCategory) {
         if (prefillTitle != null || prefillCategory != null) editing = Editing(null, prefillTitle, prefillCategory)
@@ -369,7 +384,7 @@ fun ExpensesScreen(
                             )
                             AmountLine(stringResource(R.string.expenses_common), money(s.commonCents))
                             BudgetMeter(s.commonCents, s.budgetCents, money, enabled = !state.offline) { budgetOpen = true }
-                            CategoryBudgets(s, money)
+                            CategoryBudgets(s, money, enabled = !state.offline) { categoryBudgetsOpen = true }
                             s.members.forEach { m ->
                                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                                     members.firstOrNull { it.id == m.memberId }?.let { MemberAvatar(it, 28) }
@@ -426,7 +441,7 @@ fun ExpensesScreen(
             }
             if (!state.loading && !state.offline && state.items.isEmpty()) {
                 item(key = "empty") {
-                    EmptyState(stringResource(R.string.expenses_empty_title), stringResource(R.string.expenses_empty_body))
+                    EmptyState(stringResource(R.string.expenses_empty_title), stringResource(R.string.expenses_empty_body), illustration = R.drawable.ill_empty_expenses)
                 }
             }
             state.items.groupBy { it.date }.forEach { (date, items) ->
@@ -445,6 +460,14 @@ fun ExpensesScreen(
         }
     }
 
+    if (categoryBudgetsOpen) {
+        CategoryBudgetsDialog(
+            initial = state.summary?.categoryBudgets.orEmpty(),
+            saving = state.saving,
+            onDismiss = { categoryBudgetsOpen = false },
+            onSave = { list -> vm.setCategoryBudgets(list) { ok -> if (ok) categoryBudgetsOpen = false else onMessage(failed) } },
+        )
+    }
     if (budgetOpen) {
         BudgetDialog(
             initial = state.summary?.budgetCents,
@@ -494,6 +517,7 @@ fun ExpensesScreen(
             },
             onOpenReceipt = openReceipt,
             onDeleteReceipt = { id -> vm.deleteReceipt(id) { ok -> if (ok) editing = null else onMessage(failed) } },
+            onScan = if (current.expense == null) vm::scanReceipt else null,
             onDelete = { id ->
                 vm.delete(id) { ok ->
                     if (ok) editing = null else onMessage(failed)
@@ -546,10 +570,9 @@ private fun BudgetMeter(spentCents: Long, budgetCents: Long?, money: (Long) -> S
     }
 }
 
-/** Budgets par catégorie : une jauge chacun (dépenses communes du mois) ; réglés sur le site. */
+/** Budgets par catégorie : une jauge chacun (dépenses communes du mois), réglables ici ou sur le site. */
 @Composable
-private fun CategoryBudgets(s: ExpenseSummaryDto, money: (Long) -> String) {
-    if (s.categoryBudgets.isEmpty()) return
+private fun CategoryBudgets(s: ExpenseSummaryDto, money: (Long) -> String, enabled: Boolean, onEdit: () -> Unit) {
     val warning = if (isSystemInDarkTheme()) Tokens.Dark.warning else Tokens.Light.warning
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         s.categoryBudgets.forEach { b ->
@@ -576,12 +599,62 @@ private fun CategoryBudgets(s: ExpenseSummaryDto, money: (Long) -> String) {
                 )
             }
         }
-        Text(
-            stringResource(R.string.expenses_category_budgets_web),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        TextButton(onClick = onEdit, enabled = enabled, modifier = Modifier.heightIn(min = 48.dp)) {
+            Text(stringResource(R.string.expenses_category_budgets_edit))
+        }
     }
+}
+
+/** Un montant par catégorie ; un champ vide enlève le budget de la catégorie. */
+@Composable
+private fun CategoryBudgetsDialog(
+    initial: List<ExpenseCategoryBudgetDto>,
+    saving: Boolean,
+    onDismiss: () -> Unit,
+    onSave: (List<ExpenseCategoryBudgetDto>) -> Unit,
+) {
+    val locale = currentLocale()
+    val amounts = remember {
+        mutableStateMapOf<String, String>().apply {
+            initial.forEach { put(it.category, Money.editable(it.budgetCents, locale)) }
+        }
+    }
+    val invalid = remember { mutableStateListOf<String>() }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.expenses_category_budgets_title)) },
+        text = {
+            Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.expenses_category_budgets_hint))
+                Money.CATEGORY_EMOJI.forEach { (category, emoji) ->
+                    val error = category in invalid
+                    OutlinedTextField(
+                        value = amounts[category].orEmpty(),
+                        onValueChange = { amounts[category] = it; invalid.remove(category) },
+                        label = { Text("$emoji ${categoryLabel(category)}") },
+                        placeholder = { Text(stringResource(R.string.expenses_category_budgets_none)) },
+                        isError = error,
+                        supportingText = if (error) ({ Text(stringResource(R.string.expenses_amount_invalid)) }) else null,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val (budgets, bad) = Money.categoryBudgets(amounts)
+                    invalid.clear()
+                    invalid += bad
+                    if (bad.isEmpty()) onSave(budgets.map { (category, cents) -> ExpenseCategoryBudgetDto(category, cents) })
+                },
+                enabled = !saving,
+            ) { Text(stringResource(R.string.save)) }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
 }
 
 /** Dépenses communes des derniers mois : une barre par mois, le budget en repère. */
@@ -779,6 +852,8 @@ private fun ExpenseSheet(
     onOpenReceipt: (String) -> Unit,
     onDeleteReceipt: (String) -> Unit,
     onDelete: (String) -> Unit,
+    /** Lecture d'une photo de ticket (nouvelle dépense seulement) ; null : bouton masqué. */
+    onScan: (suspend (ByteArray) -> ReceiptScanDto?)? = null,
 ) {
     val locale = currentLocale()
     val settlement = expense?.kind == "SETTLEMENT"
@@ -803,6 +878,41 @@ private fun ExpenseSheet(
     var monthly by rememberSaveable { mutableStateOf(false) }
     var receiptUri by remember { mutableStateOf<Uri?>(null) }
     val pickReceipt = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> if (uri != null) receiptUri = uri }
+    // Lecture du ticket : la photo préremplit montant, date et titre, puis est jointe à la dépense.
+    val context = LocalContext.current
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    var scanning by remember { mutableStateOf(false) }
+    var scanNote by remember { mutableStateOf<String?>(null) }
+    var cameraUri by remember { mutableStateOf<Uri?>(null) }
+    val scanDone = stringResource(R.string.expenses_scan_done)
+    val scanNothing = stringResource(R.string.expenses_scan_nothing)
+    val scanFailed = stringResource(R.string.expenses_scan_failed)
+    val runScan: (Uri) -> Unit = { uri ->
+        receiptUri = uri
+        scanning = true
+        scanNote = null
+        scope.launch {
+            val jpeg = withContext(Dispatchers.IO) { ReceiptPhoto.toJpeg(context, uri) }
+            val scan = jpeg?.let { onScan?.invoke(it) }
+            scanning = false
+            if (scan == null) {
+                scanNote = scanFailed
+                return@launch
+            }
+            val fill = scanPrefill(scan, locale, title)
+            fill.amount?.let { amount = it }
+            fill.date?.let { date = it }
+            fill.title?.let { title = it }
+            scanNote = if (fill.amount != null || fill.date != null) scanDone else scanNothing
+        }
+    }
+    val takeReceiptPhoto = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { ok ->
+        val uri = cameraUri
+        if (ok && uri != null) runScan(uri)
+    }
+    val pickReceiptPhoto = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) runScan(uri)
+    }
     var note by rememberSaveable { mutableStateOf(expense?.note ?: "") }
     var error by remember { mutableStateOf<String?>(null) }
     var pickingDate by remember { mutableStateOf(false) }
@@ -845,6 +955,40 @@ private fun ExpenseSheet(
                 }
                 Spacer(Modifier.heightIn(min = 16.dp))
                 return@Column
+            }
+            if (expense == null && onScan != null) {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    OutlinedButton(
+                        onClick = {
+                            val dir = java.io.File(context.cacheDir, "camera").apply { mkdirs() }
+                            val file = java.io.File(dir, "receipt-${System.currentTimeMillis()}.jpg")
+                            val uri = FileProvider.getUriForFile(context, "${context.packageName}.attachments", file)
+                            cameraUri = uri
+                            try {
+                                takeReceiptPhoto.launch(uri)
+                            } catch (_: ActivityNotFoundException) {
+                                pickReceiptPhoto.launch(arrayOf("image/*"))
+                            }
+                        },
+                        enabled = !scanning && !saving,
+                        modifier = Modifier.heightIn(min = 48.dp),
+                    ) {
+                        Icon(painterResource(R.drawable.ic_receipt_scan), contentDescription = null, modifier = Modifier.size(20.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text(stringResource(if (scanning) R.string.expenses_scan_reading else R.string.expenses_scan))
+                    }
+                    TextButton(
+                        onClick = { pickReceiptPhoto.launch(arrayOf("image/*")) },
+                        enabled = !scanning && !saving,
+                        modifier = Modifier.heightIn(min = 48.dp),
+                    ) { Text(stringResource(R.string.expenses_scan_pick)) }
+                }
+                Text(
+                    scanNote ?: stringResource(R.string.expenses_scan_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (scanNote == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                )
             }
             OutlinedTextField(
                 value = amount,

@@ -24,5 +24,6 @@ l'avance. Sur téléphone, **Plus → Dates importantes** ; sur ordinateur, **Da
 - Un 29 février tombe le 28 les années non bissextiles.
 
 Chacun peut ajouter, modifier ou supprimer les dates du foyer. Elles demandent une connexion
-pour être modifiées. Une date peut concerner un proche (un anniversaire) : elle reste une
+pour être modifiées ; hors ligne, la dernière liste vue reste lisible (« dans N jours » remis à
+jour). Une date peut concerner un proche (un anniversaire) : elle reste une
 donnée du foyer et figure dans l'export de vos données.

@@ -405,6 +405,10 @@ data class ExpenseDto(
     val recurringId: String? = null,
 )
 
+/** Lecture d'une photo de ticket sur le serveur : chaque champ est null si rien de sûr n'a été lu. */
+@Serializable
+data class ReceiptScanDto(val amountCents: Long? = null, val date: String? = null, val merchant: String? = null)
+
 /** Création (avec identifiant : un renvoi ne crée pas de doublon) ou modification. */
 @Serializable
 data class ExpenseBody(
@@ -483,6 +487,37 @@ data class ExpenseSummaryDto(
 
 @Serializable
 data class ExpenseCategoryBudgetDto(val category: String, val budgetCents: Long)
+
+/** Recherche globale (cf. packages/contracts/src/search.ts). */
+@Serializable
+data class SearchResultsDto(
+    val tasks: List<SearchTaskDto> = emptyList(),
+    val notes: List<SearchNoteDto> = emptyList(),
+    val dates: List<SearchDateDto> = emptyList(),
+    val expenses: List<SearchExpenseDto> = emptyList(),
+    val shopping: List<SearchShoppingDto> = emptyList(),
+) {
+    val isEmpty get() = tasks.isEmpty() && notes.isEmpty() && dates.isEmpty() && expenses.isEmpty() && shopping.isEmpty()
+}
+
+@Serializable
+data class SearchTaskDto(val occurrenceId: String, val title: String, val date: String? = null, val done: Boolean = false)
+
+@Serializable
+data class SearchNoteDto(val id: String, val title: String, val snippet: String = "")
+
+@Serializable
+data class SearchDateDto(val id: String, val title: String, val kind: String = "OTHER", val month: Int, val day: Int)
+
+@Serializable
+data class SearchExpenseDto(val id: String, val title: String, val date: String, val amountCents: Long)
+
+@Serializable
+data class SearchShoppingDto(val id: String, val text: String, val done: Boolean = false)
+
+/** Tous les budgets par catégorie du foyer ; une liste vide les enlève. */
+@Serializable
+data class CategoryBudgetsBody(val budgets: List<ExpenseCategoryBudgetDto>)
 
 /** Un mois de l'évolution : dépenses communes, les miennes, par catégorie. */
 @Serializable
