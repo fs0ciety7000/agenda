@@ -48,7 +48,7 @@ test('quick add → aujourd’hui → cocher / annuler → modifier → recherch
   // Vue Tâches : recherche.
   await page.getByRole('link', { name: 'Tâches' }).first().click();
   await expect(page.getByRole('heading', { name: 'Tâches' })).toBeVisible();
-  await page.getByLabel('Rechercher').fill('poubelles');
+  await page.getByLabel('Filtrer les tâches').fill('poubelles');
   await expect(page.getByText('Sortir les poubelles', { exact: true })).toBeVisible();
   await expect(page.getByText('Faire les courses du week-end', { exact: true })).toBeHidden();
 });

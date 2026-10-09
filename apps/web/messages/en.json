@@ -287,7 +287,7 @@
     "title": "Tasks",
     "new": "New task",
     "views": "Views",
-    "search": "Search",
+    "search": "Filter tasks",
     "noDate": "No date",
     "emptyTitle": "No tasks here.",
     "emptyFiltered": "Try widening the filters.",
