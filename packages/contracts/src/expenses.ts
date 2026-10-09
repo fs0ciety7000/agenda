@@ -224,6 +224,20 @@ export const RECEIPT_TYPES = [
   'application/pdf',
 ];
 
+/** Photo de ticket à lire (le format HEIC et les PDF ne se lisent pas : à convertir avant). */
+export const RECEIPT_SCAN_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+/**
+ * Lecture d'une photo de ticket : montant, date et commerçant proposés pour préremplir la
+ * dépense. Chaque champ vaut null si rien de sûr n'a été lu ; la photo n'est pas conservée.
+ */
+export const ReceiptScanDto = z.object({
+  amountCents: z.number().int().positive().nullable(),
+  date: IsoDate.nullable(),
+  merchant: z.string().nullable(),
+});
+export type ReceiptScanDto = z.infer<typeof ReceiptScanDto>;
+
 /** Budget mensuel des dépenses communes : une alerte part à 80 % et à 100 %. null = aucun. */
 export const ExpenseBudgetInput = z.object({ budgetCents: Cents.nullable() });
 export type ExpenseBudgetInput = z.infer<typeof ExpenseBudgetInput>;

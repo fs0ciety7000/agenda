@@ -1,4 +1,5 @@
-Share to Tandem: a link becomes a task, a note or shopping items.
+Read a receipt: amount and date read from the photo.
+• Share to Tandem: a link becomes a task, a note or shopping items.
 • "Add a task" tile in Quick Settings.
 • Category budgets in the app; "Undo" on notes.
 • "More" drawer: Expenses, Notes, Dates…

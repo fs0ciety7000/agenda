@@ -9,6 +9,7 @@ import app.tandem.foyer.data.remote.ExpenseBody
 import app.tandem.foyer.data.remote.ExpenseDto
 import app.tandem.foyer.data.remote.ExpenseStatsDto
 import app.tandem.foyer.data.remote.ExpenseSummaryDto
+import app.tandem.foyer.data.remote.ReceiptScanDto
 import app.tandem.foyer.data.remote.RecurringExpenseBody
 import app.tandem.foyer.data.remote.RecurringExpenseDto
 import app.tandem.foyer.data.remote.SettleBody
@@ -81,6 +82,18 @@ class ExpensesRemote(
             )
             api.uploadReceipt(h, expenseId, part).isSuccessful.takeIf { it }
         } ?: false
+    }
+
+    /**
+     * Lit une photo de ticket (JPEG) sur le serveur ; la photo n'y est pas conservée.
+     * null : pas de connexion, ou lecture indisponible.
+     */
+    suspend fun scanReceipt(jpeg: ByteArray): ReceiptScanDto? {
+        if (jpeg.size > AttachmentFiles.MAX_BYTES) return null
+        return call { h ->
+            val part = MultipartBody.Part.createFormData("file", "ticket.jpg", jpeg.toRequestBody("image/jpeg".toMediaTypeOrNull()))
+            api.scanReceipt(h, part).takeIf { it.isSuccessful }?.body()
+        }
     }
 
     /** Ticket téléchargé dans le cache (partagé ensuite en lecture seule), et son type. */

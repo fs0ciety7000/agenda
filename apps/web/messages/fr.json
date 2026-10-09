@@ -90,6 +90,7 @@
     "PASSWORD_REQUIRED": "Définissez d'abord un mot de passe.",
     "ATTACHMENT_TOO_LARGE": "Fichier trop volumineux (10 Mo maximum).",
     "ATTACHMENTS_QUOTA": "Espace de stockage du foyer plein (200 Mo) : supprimez d'anciennes pièces jointes.",
+    "RECEIPT_SCAN_UNAVAILABLE": "La lecture des tickets est indisponible pour le moment. Saisissez le montant à la main.",
     "ACCOUNT_DISABLED": "Ce compte est désactivé. Contactez l'administrateur.",
     "PASSKEY_FAILED": "Connexion par passkey impossible. Utilisez votre mot de passe, ou ajoutez d'abord une passkey dans les Réglages."
   },
@@ -541,7 +542,7 @@
   },
   "privacyPolicy": {
     "title": "Politique de confidentialité",
-    "updated": "Dernière mise à jour : 27 septembre 2026",
+    "updated": "Dernière mise à jour : 9 octobre 2026",
     "intro": "Tandem est une application privée et non commerciale d'organisation des tâches du foyer, utilisée par ses membres. Cette page explique quelles données elle traite, pourquoi, et comment les supprimer.",
     "who": {
       "title": "Qui gère vos données",
@@ -549,7 +550,7 @@
     },
     "data": {
       "title": "Données traitées",
-      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations, liste de courses, notes partagées (titre, contenu, qui les a écrites), dates importantes (titre, jour, mois et année facultative ; elles peuvent concerner des proches, par exemple un anniversaire).\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, sous-tâches, commentaires, demandes d'échange de tour (avec le mot laissé), absences déclarées, historique des actions (qui a fait quoi, quand).\nDépenses (si vous les utilisez) : montant, date, libellé, catégorie, commentaire, qui a payé et la part de chacun. Une dépense personnelle n'est visible que de vous. Le ticket joint (photo ou PDF) est conservé avec la dépense et supprimé avec elle.\nSessions : appareil (navigateur et système, ou version de l'application Android), date de connexion et dernière activité, affichés dans « Appareils connectés » pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches, de la liste de courses, des notes et des dates importantes sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion.\nAjout par e-mail (si vous l'activez) : l'expéditeur, le sujet et le texte des e-mails que vous transférez à votre adresse personnelle sont enregistrés dans les notes de la tâche créée. Ils sont reçus par Resend, notre prestataire d'e-mails ; leurs pièces jointes sont jointes à la tâche.\nPièces jointes : les fichiers que vous joignez à une tâche (ou joints à un e-mail transféré) sont stockés sur notre serveur avec la tâche, visibles par les membres du foyer (par vous seul pour une tâche personnelle), et supprimés avec elle.\nSignalements (si vous en envoyez) : le type, le titre et le texte de votre message, une capture d'écran si vous en joignez une, votre choix d'être recontacté·e ou non et, seulement si vous cochez la case, des informations techniques affichées avant l'envoi (navigateur ou modèle de téléphone, système, version de l'app, langue, fuseau horaire, taille d'écran, page ouverte). Jamais le contenu de vos tâches. Seuls les administrateurs de l'app les lisent.\nNotifications du navigateur (si vous les activez) : l'adresse d'abonnement fournie par votre navigateur, supprimée quand vous les désactivez ou vous déconnectez."
+      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations, liste de courses, notes partagées (titre, contenu, qui les a écrites), dates importantes (titre, jour, mois et année facultative ; elles peuvent concerner des proches, par exemple un anniversaire).\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, sous-tâches, commentaires, demandes d'échange de tour (avec le mot laissé), absences déclarées, historique des actions (qui a fait quoi, quand).\nDépenses (si vous les utilisez) : montant, date, libellé, catégorie, commentaire, qui a payé et la part de chacun. Une dépense personnelle n'est visible que de vous. Le ticket joint (photo ou PDF) est conservé avec la dépense et supprimé avec elle. Si vous utilisez « Lire un ticket », la photo est lue sur notre serveur (aucun service extérieur) pour proposer le montant, la date et le commerçant, puis effacée aussitôt ; elle n'est gardée que si vous enregistrez la dépense avec ce ticket.\nSessions : appareil (navigateur et système, ou version de l'application Android), date de connexion et dernière activité, affichés dans « Appareils connectés » pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches, de la liste de courses, des notes et des dates importantes sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion.\nAjout par e-mail (si vous l'activez) : l'expéditeur, le sujet et le texte des e-mails que vous transférez à votre adresse personnelle sont enregistrés dans les notes de la tâche créée. Ils sont reçus par Resend, notre prestataire d'e-mails ; leurs pièces jointes sont jointes à la tâche.\nPièces jointes : les fichiers que vous joignez à une tâche (ou joints à un e-mail transféré) sont stockés sur notre serveur avec la tâche, visibles par les membres du foyer (par vous seul pour une tâche personnelle), et supprimés avec elle.\nSignalements (si vous en envoyez) : le type, le titre et le texte de votre message, une capture d'écran si vous en joignez une, votre choix d'être recontacté·e ou non et, seulement si vous cochez la case, des informations techniques affichées avant l'envoi (navigateur ou modèle de téléphone, système, version de l'app, langue, fuseau horaire, taille d'écran, page ouverte). Jamais le contenu de vos tâches. Seuls les administrateurs de l'app les lisent.\nNotifications du navigateur (si vous les activez) : l'adresse d'abonnement fournie par votre navigateur, supprimée quand vous les désactivez ou vous déconnectez."
     },
     "google": {
       "title": "Données Google",
@@ -1339,6 +1340,14 @@
     "receiptOpen": "Voir le ticket",
     "receiptRemove": "Retirer le ticket",
     "receiptAdd": "Joindre le ticket (photo ou PDF)",
+    "scan": "Lire un ticket",
+    "scanHint": "Prenez le ticket en photo : le montant et la date sont remplis pour vous, à vérifier.",
+    "scanReading": "Lecture du ticket…",
+    "scanDone": "Ticket lu : vérifiez le montant et la date avant d'enregistrer.",
+    "scanNothing": "Rien de lisible sur cette photo : saisissez le montant à la main.",
+    "scanOffline": "La lecture d'un ticket demande une connexion.",
+    "scanAttached": "Photo du ticket jointe : {name}",
+    "scanDetach": "Ne pas joindre",
     "monthly": "Chaque mois",
     "recurringTitle": "Charges fixes",
     "recurringLine": "Le {day} de chaque mois · payé par {payer}",

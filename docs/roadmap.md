@@ -71,7 +71,8 @@ Source : [audit du 8 octobre 2026](audits/2026-10-08.md). Légende : effort S / 
 
 Validés par l'utilisateur : mode magasin, échange de tour. Ordre choisi ensuite : tableau
 « cette semaine », notes partagées, dates importantes, budget par catégorie, journal des
-connexions (une PR chacun). Le reste attend son accord.
+connexions (une PR chacun). Puis, le 9 octobre : saisie du ticket par photo (lecture sur le serveur).
+Le reste attend son accord.
 
 Organisation du foyer :
 
@@ -89,7 +90,8 @@ Courses et repas :
 
 Dépenses :
 
-- [ ] **Saisie du ticket par photo** (lecture du montant et de la date) (L)
+- [x] **Saisie du ticket par photo** (lecture du montant et de la date) (L) ⚙️🌐🤖 (#92) : Tesseract sur le serveur, photo non conservée
+  - [ ] Lecture moins bonne sur un ticket froissé ou très long : redresser et recadrer la photo avant lecture (M), à prioriser ensemble
 - [x] **Budget par catégorie** en plus du budget global (M) ⚙️🌐🤖 (#89)
   - [x] Android : régler les budgets par catégorie dans l'app (S) 🤖 (#92)
 - [ ] **Rapprochement mensuel** : « ce mois-ci, chacun a payé… », envoyé le 1er (S)

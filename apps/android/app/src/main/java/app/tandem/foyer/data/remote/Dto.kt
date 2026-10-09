@@ -405,6 +405,10 @@ data class ExpenseDto(
     val recurringId: String? = null,
 )
 
+/** Lecture d'une photo de ticket sur le serveur : chaque champ est null si rien de sûr n'a été lu. */
+@Serializable
+data class ReceiptScanDto(val amountCents: Long? = null, val date: String? = null, val merchant: String? = null)
+
 /** Création (avec identifiant : un renvoi ne crée pas de doublon) ou modification. */
 @Serializable
 data class ExpenseBody(

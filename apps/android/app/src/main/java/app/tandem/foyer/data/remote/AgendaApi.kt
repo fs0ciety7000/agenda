@@ -271,6 +271,10 @@ interface AgendaApi {
     suspend fun stopRecurringExpense(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
 
     @Multipart
+    @POST("v1/households/{h}/expenses/receipt/scan")
+    suspend fun scanReceipt(@Path("h") householdId: String, @Part file: MultipartBody.Part): Response<ReceiptScanDto>
+
+    @Multipart
     @POST("v1/households/{h}/expenses/{id}/receipt")
     suspend fun uploadReceipt(@Path("h") householdId: String, @Path("id") id: String, @Part file: MultipartBody.Part): Response<ExpenseDto>
 

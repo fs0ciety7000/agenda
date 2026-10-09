@@ -18,7 +18,8 @@ RUN pnpm --filter @agenda/api deploy --prod --legacy /out \
  && cd /out && node_modules/.bin/prisma generate
 
 FROM node:22-alpine AS runtime
-RUN apk add --no-cache openssl tini
+# Tesseract : lecture des photos de tickets sur le serveur (français, néerlandais, anglais).
+RUN apk add --no-cache openssl tini tesseract-ocr tesseract-ocr-data-eng tesseract-ocr-data-fra tesseract-ocr-data-nld
 ENV NODE_ENV=production PORT=4000
 WORKDIR /app
 COPY --from=build --chown=node:node /out ./

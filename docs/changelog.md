@@ -15,6 +15,13 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### Lire un ticket (#92)
+
+- ✨ **Lire un ticket** : dans une nouvelle dépense, prenez le ticket en photo ; le montant, la
+  date et le commerçant sont proposés, à vérifier. Sur le site et dans l'app Android.
+- 🔒 La photo est lue sur le serveur de Tandem, sans service extérieur, puis effacée ; elle n'est
+  gardée que jointe à la dépense.
+
 ### Bord à bord et tiroir vérifiés sur émulateur (#92)
 
 - 🐞 App Android : l'écran de connexion ne passe plus sous les barres système ni sous le clavier.

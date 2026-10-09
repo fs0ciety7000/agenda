@@ -17,6 +17,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
+import { Throttle } from '@nestjs/throttler';
 import type { Response } from 'express';
 import { AppException } from '../common/app-exception';
 import {
@@ -31,6 +32,7 @@ import {
   type ExpenseStatsDto,
   type ExpenseSummaryDto,
   ExpenseWeightsInput,
+  type ReceiptScanDto,
   type RecurringExpenseDto,
   RecurringExpenseInput,
   SettleInput,
@@ -41,6 +43,7 @@ import { assertUuid } from '../common/uuid';
 import { ZodPipe } from '../common/zod.pipe';
 import { HouseholdMemberGuard } from '../households/household-member.guard';
 import { ExpensesService } from './expenses.service';
+import { ReceiptScannerService } from './receipt-scanner.service';
 
 interface UploadedMulterFile {
   originalname: string;
@@ -53,7 +56,10 @@ interface UploadedMulterFile {
 @UseGuards(HouseholdMemberGuard)
 @Controller({ path: 'households/:householdId/expenses', version: '1' })
 export class ExpensesController {
-  constructor(private readonly expenses: ExpensesService) {}
+  constructor(
+    private readonly expenses: ExpensesService,
+    private readonly scanner: ReceiptScannerService,
+  ) {}
 
   /** Dépenses et remboursements d'un mois (les dépenses personnelles des autres sont exclues). */
   @Get()
@@ -168,6 +174,39 @@ export class ExpensesController {
     @Param('recurringId') id: string,
   ): Promise<void> {
     return this.expenses.stopRecurring(ctx, assertUuid(id));
+  }
+
+  /**
+   * Lire une photo de ticket : montant, date et commerçant proposés (JPEG, PNG ou WebP,
+   * multipart, champ `file`, 10 Mo au plus). Lue sur le serveur, la photo n'est pas conservée.
+   */
+  @Post('receipt/scan')
+  @HttpCode(200)
+  // La lecture coûte du processeur : 20 par minute suffisent largement à un foyer.
+  @Throttle({ default: { limit: 20, ttl: 60_000 } })
+  @UseInterceptors(
+    FileInterceptor('file', { limits: { fileSize: ATTACHMENT_MAX_BYTES + 1, files: 1 } }),
+  )
+  async scanReceipt(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @UploadedFile() file: UploadedMulterFile | undefined,
+  ): Promise<ReceiptScanDto> {
+    if (!file) {
+      throw new AppException('VALIDATION_FAILED', HttpStatus.BAD_REQUEST, 'Missing file', {
+        fieldErrors: { file: ['Required'] },
+      });
+    }
+    if (file.size > ATTACHMENT_MAX_BYTES) {
+      throw new AppException(
+        'ATTACHMENT_TOO_LARGE',
+        HttpStatus.PAYLOAD_TOO_LARGE,
+        'File too large',
+      );
+    }
+    return this.scanner.scan(
+      { contentType: file.mimetype, data: file.buffer },
+      await this.expenses.timezone(ctx.householdId),
+    );
   }
 
   /** Joindre le ticket d'une dépense (image ou PDF, multipart, champ `file`, 10 Mo au plus). */

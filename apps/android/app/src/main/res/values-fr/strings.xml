@@ -515,6 +515,13 @@
     <string name="expenses_receipt_open">Voir le ticket</string>
     <string name="expenses_receipt_remove">Retirer le ticket</string>
     <string name="expenses_receipt_add">Joindre le ticket (photo ou PDF)</string>
+    <string name="expenses_scan">Lire un ticket</string>
+    <string name="expenses_scan_pick">Choisir une photo</string>
+    <string name="expenses_scan_hint">Prenez le ticket en photo : le montant et la date sont remplis pour vous, à vérifier.</string>
+    <string name="expenses_scan_reading">Lecture du ticket…</string>
+    <string name="expenses_scan_done">Ticket lu : vérifiez le montant et la date avant d\'enregistrer.</string>
+    <string name="expenses_scan_nothing">Rien de lisible sur cette photo : saisissez le montant à la main.</string>
+    <string name="expenses_scan_failed">Lecture du ticket impossible (pas de connexion, ou lecture indisponible). Saisissez le montant à la main.</string>
     <string name="expenses_receipt_chosen">Ticket choisi</string>
     <string name="expenses_meta_custom">Payé par %1$s · parts à la main</string>
     <string name="expenses_split_custom">À la main</string>

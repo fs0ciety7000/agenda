@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -67,10 +68,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -82,6 +86,7 @@ import app.tandem.foyer.R
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.net.Uri
+import app.tandem.foyer.data.remote.ReceiptScanDto
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.Checkbox
@@ -188,6 +193,8 @@ class ExpensesViewModel(private val remote: ExpensesRemote, initialMonth: YearMo
     suspend fun exportCsv(from: String, to: String) = remote.exportCsv(from, to)
 
     suspend fun downloadReceipt(id: String) = remote.downloadReceipt(id)
+
+    suspend fun scanReceipt(jpeg: ByteArray) = remote.scanReceipt(jpeg)
 
     fun settle(from: String, to: String, cents: Long, done: (Boolean) -> Unit) = perform(done) { remote.settle(from, to, cents) }
 
@@ -510,6 +517,7 @@ fun ExpensesScreen(
             },
             onOpenReceipt = openReceipt,
             onDeleteReceipt = { id -> vm.deleteReceipt(id) { ok -> if (ok) editing = null else onMessage(failed) } },
+            onScan = if (current.expense == null) vm::scanReceipt else null,
             onDelete = { id ->
                 vm.delete(id) { ok ->
                     if (ok) editing = null else onMessage(failed)
@@ -844,6 +852,8 @@ private fun ExpenseSheet(
     onOpenReceipt: (String) -> Unit,
     onDeleteReceipt: (String) -> Unit,
     onDelete: (String) -> Unit,
+    /** Lecture d'une photo de ticket (nouvelle dépense seulement) ; null : bouton masqué. */
+    onScan: (suspend (ByteArray) -> ReceiptScanDto?)? = null,
 ) {
     val locale = currentLocale()
     val settlement = expense?.kind == "SETTLEMENT"
@@ -868,6 +878,41 @@ private fun ExpenseSheet(
     var monthly by rememberSaveable { mutableStateOf(false) }
     var receiptUri by remember { mutableStateOf<Uri?>(null) }
     val pickReceipt = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> if (uri != null) receiptUri = uri }
+    // Lecture du ticket : la photo préremplit montant, date et titre, puis est jointe à la dépense.
+    val context = LocalContext.current
+    val scope = androidx.compose.runtime.rememberCoroutineScope()
+    var scanning by remember { mutableStateOf(false) }
+    var scanNote by remember { mutableStateOf<String?>(null) }
+    var cameraUri by remember { mutableStateOf<Uri?>(null) }
+    val scanDone = stringResource(R.string.expenses_scan_done)
+    val scanNothing = stringResource(R.string.expenses_scan_nothing)
+    val scanFailed = stringResource(R.string.expenses_scan_failed)
+    val runScan: (Uri) -> Unit = { uri ->
+        receiptUri = uri
+        scanning = true
+        scanNote = null
+        scope.launch {
+            val jpeg = withContext(Dispatchers.IO) { ReceiptPhoto.toJpeg(context, uri) }
+            val scan = jpeg?.let { onScan?.invoke(it) }
+            scanning = false
+            if (scan == null) {
+                scanNote = scanFailed
+                return@launch
+            }
+            val fill = scanPrefill(scan, locale, title)
+            fill.amount?.let { amount = it }
+            fill.date?.let { date = it }
+            fill.title?.let { title = it }
+            scanNote = if (fill.amount != null || fill.date != null) scanDone else scanNothing
+        }
+    }
+    val takeReceiptPhoto = rememberLauncherForActivityResult(ActivityResultContracts.TakePicture()) { ok ->
+        val uri = cameraUri
+        if (ok && uri != null) runScan(uri)
+    }
+    val pickReceiptPhoto = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) runScan(uri)
+    }
     var note by rememberSaveable { mutableStateOf(expense?.note ?: "") }
     var error by remember { mutableStateOf<String?>(null) }
     var pickingDate by remember { mutableStateOf(false) }
@@ -910,6 +955,40 @@ private fun ExpenseSheet(
                 }
                 Spacer(Modifier.heightIn(min = 16.dp))
                 return@Column
+            }
+            if (expense == null && onScan != null) {
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    OutlinedButton(
+                        onClick = {
+                            val dir = java.io.File(context.cacheDir, "camera").apply { mkdirs() }
+                            val file = java.io.File(dir, "receipt-${System.currentTimeMillis()}.jpg")
+                            val uri = FileProvider.getUriForFile(context, "${context.packageName}.attachments", file)
+                            cameraUri = uri
+                            try {
+                                takeReceiptPhoto.launch(uri)
+                            } catch (_: ActivityNotFoundException) {
+                                pickReceiptPhoto.launch(arrayOf("image/*"))
+                            }
+                        },
+                        enabled = !scanning && !saving,
+                        modifier = Modifier.heightIn(min = 48.dp),
+                    ) {
+                        Icon(painterResource(R.drawable.ic_receipt_scan), contentDescription = null, modifier = Modifier.size(20.dp))
+                        Spacer(Modifier.width(8.dp))
+                        Text(stringResource(if (scanning) R.string.expenses_scan_reading else R.string.expenses_scan))
+                    }
+                    TextButton(
+                        onClick = { pickReceiptPhoto.launch(arrayOf("image/*")) },
+                        enabled = !scanning && !saving,
+                        modifier = Modifier.heightIn(min = 48.dp),
+                    ) { Text(stringResource(R.string.expenses_scan_pick)) }
+                }
+                Text(
+                    scanNote ?: stringResource(R.string.expenses_scan_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = if (scanNote == null) MaterialTheme.colorScheme.onSurfaceVariant else MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+                )
             }
             OutlinedTextField(
                 value = amount,

@@ -44,6 +44,7 @@ export const ErrorCode = {
   PASSKEY_FAILED: 'PASSKEY_FAILED',
   ATTACHMENT_TOO_LARGE: 'ATTACHMENT_TOO_LARGE',
   ATTACHMENTS_QUOTA: 'ATTACHMENTS_QUOTA',
+  RECEIPT_SCAN_UNAVAILABLE: 'RECEIPT_SCAN_UNAVAILABLE',
   INTERNAL: 'INTERNAL',
 } as const;
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

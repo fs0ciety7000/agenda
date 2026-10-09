@@ -503,6 +503,13 @@
     <string name="expenses_receipt_open">Kasticket bekijken</string>
     <string name="expenses_receipt_remove">Kasticket verwijderen</string>
     <string name="expenses_receipt_add">Kasticket toevoegen (foto of pdf)</string>
+    <string name="expenses_scan">Kasticket inlezen</string>
+    <string name="expenses_scan_pick">Foto kiezen</string>
+    <string name="expenses_scan_hint">Maak een foto van het kasticket: bedrag en datum worden voor je ingevuld, controleer ze even.</string>
+    <string name="expenses_scan_reading">Kasticket wordt gelezen…</string>
+    <string name="expenses_scan_done">Kasticket gelezen: controleer bedrag en datum voor je opslaat.</string>
+    <string name="expenses_scan_nothing">Niets leesbaars op deze foto: vul het bedrag zelf in.</string>
+    <string name="expenses_scan_failed">Kasticket inlezen lukte niet (geen verbinding, of inlezen niet beschikbaar). Vul het bedrag zelf in.</string>
     <string name="expenses_receipt_chosen">Kasticket gekozen</string>
     <string name="expenses_meta_custom">Betaald door %1$s · eigen verdeling</string>
     <string name="expenses_split_custom">Zelf verdelen</string>

@@ -740,7 +740,8 @@ export class ExpensesService {
     this.events.publish(ctx.householdId, 'expenses');
   }
 
-  private async timezone(householdId: string): Promise<string> {
+  /** Fuseau du foyer (date du jour pour les dépenses et la lecture des tickets). */
+  async timezone(householdId: string): Promise<string> {
     const h = await this.prisma.household.findUniqueOrThrow({
       where: { id: householdId },
       select: { timezone: true },

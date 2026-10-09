@@ -52,6 +52,8 @@ gratuit de Cloudflare ne couvre que `*.tandem-agenda.app`, pas les niveaux plus 
   `fs0ciety7000/agenda` via la GitHub App Coolify (ou une deploy key).
 - Zone `tandem-agenda.app` gérée par Cloudflare.
 - ≥ 2 Go de RAM libres pendant le build (le build Next.js est le plus gourmand), ~3 Go de disque pour les images.
+- Lecture des tickets : Tesseract (français, néerlandais, anglais) est dans l'image de l'API (~30 Mo) ;
+  rien à configurer. Une lecture prend environ une seconde de processeur, deux au plus à la fois.
 
 ## 3. Cloudflare
 
@@ -426,6 +428,7 @@ Vue complète (sondes internes, page `/status`, alertes, Uptime Kuma, Prometheus
 | « Google Calendar n'est pas configuré » dans Réglages | `GOOGLE_CLIENT_ID`/`SECRET` vides | Les renseigner dans Coolify, redéployer |
 | Synchro arrêtée au bout d'une semaine | App OAuth restée en *Testing* | La publier « In production », puis *Reconnecter* dans Réglages |
 | Tâches « en attente » de synchro qui n'avancent pas | `redis` non *healthy*, ou quota Google | Logs `api` (`Calendar sync mode: queue`, `Sweep …`) ; le balayage reprend toutes les 10 min |
+| « La lecture des tickets est indisponible » | Tesseract absent de l'image (image ancienne ou construite à la main) | Logs `api` : `Tesseract unavailable` ; reconstruire l'image de l'API |
 | Build `web` échoue sur `next/font` | Pas d'accès à `fonts.googleapis.com` pendant le build | Autoriser la sortie réseau du serveur pendant le build |
 
 ## 13. Site de documentation

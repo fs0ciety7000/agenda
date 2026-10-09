@@ -506,6 +506,13 @@
     <string name="expenses_receipt_open">View the receipt</string>
     <string name="expenses_receipt_remove">Remove the receipt</string>
     <string name="expenses_receipt_add">Attach the receipt (photo or PDF)</string>
+    <string name="expenses_scan">Read a receipt</string>
+    <string name="expenses_scan_pick">Choose a photo</string>
+    <string name="expenses_scan_hint">Take a photo of the receipt: the amount and date are filled in for you to check.</string>
+    <string name="expenses_scan_reading">Reading the receipt…</string>
+    <string name="expenses_scan_done">Receipt read: check the amount and date before saving.</string>
+    <string name="expenses_scan_nothing">Nothing readable in this photo: enter the amount yourself.</string>
+    <string name="expenses_scan_failed">Couldn\'t read the receipt (no connection, or reading unavailable). Enter the amount yourself.</string>
     <string name="expenses_receipt_chosen">Receipt chosen</string>
     <string name="expenses_meta_custom">Paid by %1$s · custom split</string>
     <string name="expenses_split_custom">Custom</string>

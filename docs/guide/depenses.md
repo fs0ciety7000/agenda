@@ -33,6 +33,16 @@ Toucher une dépense permet de la modifier ou de la supprimer.
 📎 **Ticket**, et **Voir le ticket** l'ouvre. Il est visible comme la dépense (une dépense perso :
 de vous seul) et supprimé avec elle.
 
+## Lire un ticket
+
+Dans une nouvelle dépense, **Lire un ticket** : prenez le ticket en photo (ou choisissez une photo
+sur Android avec **Choisir une photo**). Tandem propose le **montant**, la **date** et, si
+« Quoi ? » est vide, le nom du **commerçant**. Vérifiez avant d'enregistrer : un ticket froissé
+ou mal éclairé se lit moins bien, et rien n'est rempli quand la lecture n'est pas sûre.
+
+La photo est lue sur le serveur de Tandem, sans service extérieur, puis effacée ; elle est jointe
+à la dépense comme ticket (**Ne pas joindre** pour l'éviter). La lecture demande une connexion.
+
 ## Charges fixes (chaque mois)
 
 Pour le loyer ou un abonnement, cochez **Chaque mois** en créant la dépense : elle est ajoutée

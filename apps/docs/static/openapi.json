@@ -8714,6 +8714,69 @@
         ]
       }
     },
+    "/v1/households/{householdId}/expenses/receipt/scan": {
+      "post": {
+        "description": "Lire une photo de ticket : montant, date et commerçant proposés (JPEG, PNG ou WebP, multipart, champ `file`, 10 Mo au plus). Lue sur le serveur, la photo n'est pas conservée.",
+        "operationId": "ExpensesController_scanReceipt_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ReceiptScanDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Lire une photo de ticket ",
+        "tags": [
+          "expenses"
+        ]
+      }
+    },
     "/v1/households/{householdId}/expenses/{expenseId}/receipt": {
       "post": {
         "operationId": "ExpensesController_addReceipt_v1",
@@ -10501,6 +10564,7 @@
                   "PASSKEY_FAILED",
                   "ATTACHMENT_TOO_LARGE",
                   "ATTACHMENTS_QUOTA",
+                  "RECEIPT_SCAN_UNAVAILABLE",
                   "INTERNAL"
                 ]
               },
@@ -14397,6 +14461,33 @@
         "required": [
           "title",
           "tokens"
+        ],
+        "additionalProperties": false
+      },
+      "ReceiptScanDto": {
+        "type": "object",
+        "properties": {
+          "amountCents": {
+            "nullable": true,
+            "type": "integer",
+            "minimum": 0,
+            "exclusiveMinimum": true,
+            "maximum": 9007199254740991
+          },
+          "date": {
+            "nullable": true,
+            "type": "string",
+            "format": "date"
+          },
+          "merchant": {
+            "nullable": true,
+            "type": "string"
+          }
+        },
+        "required": [
+          "amountCents",
+          "date",
+          "merchant"
         ],
         "additionalProperties": false
       },
