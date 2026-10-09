@@ -669,4 +669,18 @@
     <string name="share_note_added">Notitie “%1$s” toegevoegd</string>
     <string name="share_note_offline">Notities hebben verbinding nodig. Probeer het opnieuw als je online bent.</string>
     <plurals name="share_shopping_added"><item quantity="one">%d artikel toegevoegd aan de boodschappen.</item><item quantity="other">%d artikelen toegevoegd aan de boodschappen.</item></plurals>
+    <string name="search_title">Zoeken</string>
+    <string name="search_label">Zoeken in het huishouden</string>
+    <string name="search_placeholder">Taken, notities, data, uitgaven…</string>
+    <string name="search_hint">Typ minstens 2 letters.</string>
+    <string name="search_offline">Zoeken heeft verbinding nodig.</string>
+    <string name="search_empty">Niets gevonden voor “%1$s”.</string>
+    <string name="search_tasks">Taken</string>
+    <string name="search_notes">Notities</string>
+    <string name="search_dates">Belangrijke data</string>
+    <string name="search_expenses">Uitgaven</string>
+    <string name="search_shopping">Boodschappen</string>
+    <string name="search_done">Gedaan</string>
+    <string name="search_in_cart">In het mandje</string>
+    <string name="search_to_buy">Te kopen</string>
 </resources>

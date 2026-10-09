@@ -26,7 +26,7 @@ partie du titre.
 ## Raccourcis clavier (ordinateur)
 
 Hors d'un champ de saisie : **N** place le curseur dans l'ajout rapide, **/** ouvre la recherche
-des tâches (depuis n'importe quelle page), **T** revient à Aujourd'hui.
+globale (depuis n'importe quelle page), **T** revient à Aujourd'hui.
 
 ## Le formulaire
 

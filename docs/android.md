@@ -40,6 +40,8 @@ métier propre à Android : les règles (récurrence, rotation, quick add) reste
   **Partager** un texte depuis une autre app (`ACTION_SEND`) ouvre `ui/share/ShareSheet.kt` : en
   tâche (ajout rapide), en note (`noteFromShare` : sujet ou première ligne en titre ; en ligne
   seulement) ou aux courses (`splitShoppingItems`, par l'outbox, hors ligne compris).
+  **Recherche globale** (loupe sur Aujourd'hui, `ui/search/SearchScreen.kt`, `SearchRemote`) :
+  `GET /households/:id/search`, en ligne ; une tâche ouvre son occurrence, le reste sa page.
   **Tuile** des réglages rapides `tile/QuickAddTileService` : ouvre l'ajout rapide
   (`ACTION_QUICK_ADD`, déverrouillage d'abord si besoin).
   Google Assistant : « Ok Google, ouvre Tandem » ; la capacité App Actions

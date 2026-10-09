@@ -121,6 +121,8 @@ import app.tandem.foyer.ui.share.ShareSheet
 import app.tandem.foyer.ui.share.SharedText
 import app.tandem.foyer.ui.share.noteFromShare
 import app.tandem.foyer.ui.shopping.splitShoppingItems
+import app.tandem.foyer.ui.search.SearchScreen
+import app.tandem.foyer.ui.search.SearchTarget
 import app.tandem.foyer.ui.settings.DeviceSessions
 import app.tandem.foyer.ui.settings.SettingsScreen
 import app.tandem.foyer.ui.shopping.ShoppingScreen
@@ -551,6 +553,7 @@ private fun MainScaffold(
                 TodayScreen(
                     state, vm::refresh, vm::toggle, { open(it.id) },
                     onThank = vm::thank,
+                    onSearch = { nav.navigate("search") },
                     banner = {
                         updateBanner()
                         SwapBanner(container.swaps, state.household?.members.orEmpty(), state.occurrences, vm::refresh, onMessage)
@@ -721,6 +724,21 @@ private fun MainScaffold(
             composable("dates") {
                 val datesVm: DatesViewModel = viewModel(factory = viewModelFactory { initializer { DatesViewModel(container.dates) } })
                 DatesScreen(datesVm, onBack = { nav.popBackStack() }, onMessage = onMessage)
+            }
+            composable("search") {
+                SearchScreen(container.search, onBack = { nav.popBackStack() }) { target ->
+                    when (target) {
+                        is SearchTarget.Task -> nav.navigate("task/${target.occurrenceId}")
+                        is SearchTarget.Page -> if (target.route == Tab.SHOPPING.route) {
+                            nav.navigate(target.route) {
+                                popUpTo(nav.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                            }
+                        } else {
+                            nav.navigate(target.route)
+                        }
+                    }
+                }
             }
             composable("notes") {
                 val notesVm: NotesViewModel = viewModel(factory = viewModelFactory { initializer { NotesViewModel(container.notes) } })

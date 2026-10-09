@@ -359,6 +359,9 @@ interface AgendaApi {
     @DELETE("v1/reports/{id}")
     suspend fun deleteReport(@Path("id") id: String): Response<Unit>
 
+    @GET("v1/households/{h}/search")
+    suspend fun search(@Path("h") householdId: String, @Query("q") q: String): Response<SearchResultsDto>
+
     @GET("v1/me/sessions")
     suspend fun deviceSessions(): Response<List<DeviceSessionDto>>
 

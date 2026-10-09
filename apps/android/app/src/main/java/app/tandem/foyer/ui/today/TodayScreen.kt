@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedCard
@@ -65,6 +67,8 @@ fun TodayScreen(
     /** Bandeau optionnel en haut (ex. nouvelle version de l'app). */
     banner: @Composable () -> Unit = {},
     onThank: (Occurrence, Boolean) -> Unit = { _, _ -> },
+    /** Recherche globale (loupe en haut à droite) ; null = masquée. */
+    onSearch: (() -> Unit)? = null,
 ) {
     val sections = Agenda.todaySections(state.occurrences, state.today)
     val members = state.members
@@ -83,7 +87,21 @@ fun TodayScreen(
                 ) {
                     // Décoratif : le nom de l'app est lu juste à côté.
                     Image(painterResource(R.drawable.logo), contentDescription = null, modifier = Modifier.size(28.dp))
-                    Text(stringResource(R.string.app_name), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                    Text(
+                        stringResource(R.string.app_name),
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.weight(1f),
+                    )
+                    onSearch?.let {
+                        androidx.compose.material3.IconButton(onClick = it) {
+                            androidx.compose.material3.Icon(
+                                Icons.Filled.Search,
+                                contentDescription = stringResource(R.string.search_title),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                    }
                 }
                 Text(
                     stringResource(R.string.greeting, state.me?.displayName ?: ""),

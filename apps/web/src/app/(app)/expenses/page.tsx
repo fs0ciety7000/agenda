@@ -1,5 +1,6 @@
 'use client';
 
+import { useSearchParams } from 'next/navigation';
 import type {
   ExpenseCategory,
   ExpenseDto,
@@ -73,7 +74,12 @@ export default function ExpensesPage() {
   const toast = useToast();
   const { household, me } = useSession();
   const today = useToday();
-  const [month, setMonth] = useState(() => today.slice(0, 7));
+  // ?month=AAAA-MM (lien depuis la recherche) ; sinon le mois en cours.
+  const params = useSearchParams();
+  const [month, setMonth] = useState(() => {
+    const asked = params.get('month');
+    return asked && /^\d{4}-(0[1-9]|1[0-2])$/.test(asked) ? asked : today.slice(0, 7);
+  });
   const expenses = useExpenses(household.id, month);
   const summary = useExpenseSummary(household.id, month);
   const actions = useExpenseActions(household.id);

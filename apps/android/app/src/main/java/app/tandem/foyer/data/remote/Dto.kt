@@ -484,6 +484,33 @@ data class ExpenseSummaryDto(
 @Serializable
 data class ExpenseCategoryBudgetDto(val category: String, val budgetCents: Long)
 
+/** Recherche globale (cf. packages/contracts/src/search.ts). */
+@Serializable
+data class SearchResultsDto(
+    val tasks: List<SearchTaskDto> = emptyList(),
+    val notes: List<SearchNoteDto> = emptyList(),
+    val dates: List<SearchDateDto> = emptyList(),
+    val expenses: List<SearchExpenseDto> = emptyList(),
+    val shopping: List<SearchShoppingDto> = emptyList(),
+) {
+    val isEmpty get() = tasks.isEmpty() && notes.isEmpty() && dates.isEmpty() && expenses.isEmpty() && shopping.isEmpty()
+}
+
+@Serializable
+data class SearchTaskDto(val occurrenceId: String, val title: String, val date: String? = null, val done: Boolean = false)
+
+@Serializable
+data class SearchNoteDto(val id: String, val title: String, val snippet: String = "")
+
+@Serializable
+data class SearchDateDto(val id: String, val title: String, val kind: String = "OTHER", val month: Int, val day: Int)
+
+@Serializable
+data class SearchExpenseDto(val id: String, val title: String, val date: String, val amountCents: Long)
+
+@Serializable
+data class SearchShoppingDto(val id: String, val text: String, val done: Boolean = false)
+
 /** Tous les budgets par catégorie du foyer ; une liste vide les enlève. */
 @Serializable
 data class CategoryBudgetsBody(val budgets: List<ExpenseCategoryBudgetDto>)

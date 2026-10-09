@@ -1478,5 +1478,24 @@
     "revokeOthersBody": "Dit apparaat blijft aangemeld. Op de andere moet je opnieuw aanmelden.",
     "revokedOthers": "{count, plural, one {# apparaat afgemeld} other {# apparaten afgemeld}}.",
     "cancel": "Annuleren"
+  },
+  "search": {
+    "title": "Zoeken",
+    "close": "Sluiten",
+    "label": "Zoeken in het huishouden",
+    "placeholder": "Taken, notities, data, uitgaven, boodschappen…",
+    "hint": "Typ minstens 2 letters.",
+    "offline": "Zoeken heeft verbinding nodig.",
+    "error": "Zoeken is niet gelukt. Probeer opnieuw.",
+    "empty": "Niets gevonden voor “{q}”.",
+    "tasks": "Taken",
+    "notes": "Notities",
+    "dates": "Belangrijke data",
+    "expenses": "Uitgaven",
+    "shopping": "Boodschappen",
+    "done": "Gedaan",
+    "inCart": "In het mandje",
+    "toBuy": "Te kopen",
+    "open": "Zoeken (/)"
   }
 }

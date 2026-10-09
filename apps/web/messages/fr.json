@@ -1478,5 +1478,24 @@
     "revokeOthersBody": "Cet appareil reste connecté. Sur les autres, il faudra se reconnecter.",
     "revokedOthers": "{count, plural, one {# appareil déconnecté} other {# appareils déconnectés}}.",
     "cancel": "Annuler"
+  },
+  "search": {
+    "title": "Rechercher",
+    "close": "Fermer",
+    "label": "Rechercher dans le foyer",
+    "placeholder": "Tâches, notes, dates, dépenses, courses…",
+    "hint": "Tapez au moins 2 lettres.",
+    "offline": "La recherche demande une connexion.",
+    "error": "La recherche n’a pas abouti. Réessayez.",
+    "empty": "Rien trouvé pour « {q} ».",
+    "tasks": "Tâches",
+    "notes": "Notes",
+    "dates": "Dates importantes",
+    "expenses": "Dépenses",
+    "shopping": "Courses",
+    "done": "Faite",
+    "inCart": "Dans le panier",
+    "toBuy": "À acheter",
+    "open": "Rechercher (/)"
   }
 }

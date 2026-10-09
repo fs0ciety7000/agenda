@@ -15,6 +15,12 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### Recherche globale (#92)
+
+- ✨ **Rechercher partout** (loupe, ou **/** sur ordinateur) : tâches, notes, dates importantes,
+  dépenses et courses en une seule recherche, sur le site et sur Android. Un résultat ouvre
+  directement la tâche ou la page.
+
 ### Partager vers Tandem, tuile « Ajouter une tâche » (#92)
 
 - ✨ **Partager vers Tandem** (Android) : un texte ou un lien partagé depuis une autre app devient,

@@ -130,7 +130,7 @@ Validé par l'utilisateur, dans cet ordre :
 - [x] **Partager vers Tandem** : un lien ou un texte partagé depuis une autre app devient une
   tâche, une note ou un article de courses (S) 🤖 (#92)
 - [x] **Tuile « Ajouter une tâche »** dans les réglages rapides Android (S) 🤖 (#92)
-- [ ] **Recherche globale** : `/` cherche dans les tâches, notes, dates, dépenses et courses (M) ⚙️🌐🤖
+- [x] **Recherche globale** : `/` cherche dans les tâches, notes, dates, dépenses et courses (M) ⚙️🌐🤖 (#92)
 - [ ] **Notes et dates lisibles hors ligne** sur Android (M) 🤖
 - [ ] **Audit UI/UX complet** après le lot 4 (M)
 - [ ] **Tests sur émulateur** : tiroir et bord à bord (S) 🤖

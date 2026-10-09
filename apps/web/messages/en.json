@@ -1478,5 +1478,24 @@
     "revokeOthersBody": "This device stays signed in. The others will need to sign in again.",
     "revokedOthers": "{count, plural, one {# device signed out} other {# devices signed out}}.",
     "cancel": "Cancel"
+  },
+  "search": {
+    "title": "Search",
+    "close": "Close",
+    "label": "Search the household",
+    "placeholder": "Tasks, notes, dates, expenses, shopping…",
+    "hint": "Type at least 2 letters.",
+    "offline": "Search needs a connection.",
+    "error": "Search didn’t go through. Try again.",
+    "empty": "Nothing found for “{q}”.",
+    "tasks": "Tasks",
+    "notes": "Notes",
+    "dates": "Important dates",
+    "expenses": "Expenses",
+    "shopping": "Shopping",
+    "done": "Done",
+    "inCart": "In the cart",
+    "toBuy": "To buy",
+    "open": "Search (/)"
   }
 }

@@ -672,4 +672,18 @@
     <string name="share_note_added">Note “%1$s” added</string>
     <string name="share_note_offline">Notes need a connection. Try again once online.</string>
     <plurals name="share_shopping_added"><item quantity="one">%d item added to the shopping list.</item><item quantity="other">%d items added to the shopping list.</item></plurals>
+    <string name="search_title">Search</string>
+    <string name="search_label">Search the household</string>
+    <string name="search_placeholder">Tasks, notes, dates, expenses…</string>
+    <string name="search_hint">Type at least 2 letters.</string>
+    <string name="search_offline">Search needs a connection.</string>
+    <string name="search_empty">Nothing found for “%1$s”.</string>
+    <string name="search_tasks">Tasks</string>
+    <string name="search_notes">Notes</string>
+    <string name="search_dates">Important dates</string>
+    <string name="search_expenses">Expenses</string>
+    <string name="search_shopping">Shopping</string>
+    <string name="search_done">Done</string>
+    <string name="search_in_cart">In the cart</string>
+    <string name="search_to_buy">To buy</string>
 </resources>

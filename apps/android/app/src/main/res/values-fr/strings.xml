@@ -688,4 +688,18 @@
     <string name="share_note_added">Note « %1$s » ajoutée</string>
     <string name="share_note_offline">Les notes demandent une connexion. Réessayez une fois en ligne.</string>
     <plurals name="share_shopping_added"><item quantity="one">%d article ajouté aux courses.</item><item quantity="many">%d articles ajoutés aux courses.</item><item quantity="other">%d articles ajoutés aux courses.</item></plurals>
+    <string name="search_title">Rechercher</string>
+    <string name="search_label">Rechercher dans le foyer</string>
+    <string name="search_placeholder">Tâches, notes, dates, dépenses…</string>
+    <string name="search_hint">Tapez au moins 2 lettres.</string>
+    <string name="search_offline">La recherche demande une connexion.</string>
+    <string name="search_empty">Rien trouvé pour « %1$s ».</string>
+    <string name="search_tasks">Tâches</string>
+    <string name="search_notes">Notes</string>
+    <string name="search_dates">Dates importantes</string>
+    <string name="search_expenses">Dépenses</string>
+    <string name="search_shopping">Courses</string>
+    <string name="search_done">Faite</string>
+    <string name="search_in_cart">Dans le panier</string>
+    <string name="search_to_buy">À acheter</string>
 </resources>

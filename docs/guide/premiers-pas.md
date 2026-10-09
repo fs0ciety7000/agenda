@@ -57,6 +57,11 @@ Sur téléphone (site et app Android), la barre du bas garde **Aujourd'hui**, **
 Réglages…) sont dans le tiroir **Plus** : touchez **Plus**, ou tirez la barre du bas vers le
 haut.
 
+**Rechercher** (loupe en haut, ou **/** au clavier) cherche partout à la fois : tâches, notes,
+dates importantes, dépenses et courses. Un résultat ouvre la tâche ou la page concernée. Les
+tâches et dépenses personnelles de l'autre n'apparaissent jamais. La recherche demande une
+connexion.
+
 | Écran | Rôle |
 |---|---|
 | **Aujourd'hui** | En retard, du jour, « qui fait quoi » sur 7 jours, les dates importantes à venir, « à faire cette semaine », les 7 prochains jours et la répartition |

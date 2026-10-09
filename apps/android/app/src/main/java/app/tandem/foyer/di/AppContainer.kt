@@ -9,6 +9,7 @@ import app.tandem.foyer.data.ActivityRemote
 import app.tandem.foyer.data.CommentsRemote
 import app.tandem.foyer.data.DatesRemote
 import app.tandem.foyer.data.DevicesRemote
+import app.tandem.foyer.data.SearchRemote
 import app.tandem.foyer.data.NotesRemote
 import app.tandem.foyer.data.DataStoreSettingsStore
 import app.tandem.foyer.data.ReportsRemote
@@ -60,6 +61,7 @@ class AppContainer(context: Context) {
     val notes = NotesRemote(api, database)
     val dates = DatesRemote(api, database)
     val devices = DevicesRemote(api)
+    val search = SearchRemote(api, database)
     val reports = ReportsRemote(app, api, database)
     val reminders = ReminderScheduler(app, repository, settings)
     val recap = RecapScheduler(app, settings)
