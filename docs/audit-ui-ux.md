@@ -109,7 +109,8 @@ Pour chaque liste et chaque formulaire, vérifier :
 - [ ] Mises à jour optimistes : cocher, ajouter ou supprimer réagit en moins de 100 ms ; un
   échec revient en arrière avec un message.
 - [ ] Performance perçue :
-  - Lighthouse mobile ≥ 90 en performance et en accessibilité sur `/login` et `/` ;
+  - Lighthouse mobile ≥ 90 en performance et en accessibilité sur `/login` et `/` (vérifié à
+    chaque PR par `e2e/lighthouse.spec.ts` ; l'accueil est à 85 pour l'instant, voir le plan) ;
   - pas de changement de mise en page visible (CLS < 0,1) ;
   - images dimensionnées.
 - [ ] PWA : icône, nom et couleur de thème corrects ; le mode hors ligne affiche les dernières

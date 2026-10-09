@@ -127,6 +127,9 @@ jobs:
           (cd apps/web && pnpm start > ../../web.log 2>&1 &)
           npx --yes wait-on@8 -t 60000 http-get://localhost:4000/health/ready http-get://localhost:3000/login
       - run: pnpm --filter @agenda/web e2e
+      # Budget de performance : Lighthouse mobile sur /login et / (médiane de trois mesures).
+      - name: Lighthouse (performance et accessibilité)
+        run: LIGHTHOUSE=1 pnpm --filter @agenda/web exec playwright test lighthouse --project=desktop
       - if: failure()
         uses: actions/upload-artifact@v7
         with:

@@ -15,6 +15,13 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### Site plus rapide au démarrage (#93)
+
+- 🛠 La page de connexion charge presque deux fois moins de code au démarrage (153 Ko au lieu de 267 Ko), et
+  l'accueil un tiers de moins (191 Ko au lieu de 314 Ko).
+- ⚙️ Chaque modification est mesurée par Lighthouse (performance et accessibilité) avant d'être
+  acceptée.
+
 ### Lire un ticket (#92)
 
 - ✨ **Lire un ticket** : dans une nouvelle dépense, prenez le ticket en photo ; le montant, la

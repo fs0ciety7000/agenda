@@ -91,7 +91,7 @@ Courses et repas :
 Dépenses :
 
 - [x] **Saisie du ticket par photo** (lecture du montant et de la date) (L) ⚙️🌐🤖 (#92) : Tesseract sur le serveur, photo non conservée
-  - [ ] Lecture moins bonne sur un ticket froissé ou très long : redresser et recadrer la photo avant lecture (M), à prioriser ensemble
+  - [ ] Lecture moins bonne sur un ticket froissé ou très long : redresser et recadrer la photo avant lecture (M) → lot 6
 - [x] **Budget par catégorie** en plus du budget global (M) ⚙️🌐🤖 (#89)
   - [x] Android : régler les budgets par catégorie dans l'app (S) 🤖 (#92)
 - [ ] **Rapprochement mensuel** : « ce mois-ci, chacun a payé… », envoyé le 1er (S)
@@ -107,8 +107,8 @@ Vie à deux :
 Fiabilité et sécurité :
 
 - [x] **Journal des connexions** (appareils, dernière activité, déconnexion à distance) (M) ⚙️🌐🤖 (#89)
-- [ ] **Sauvegarde exportable** du foyer (JSON) et restauration sur une autre instance (M)
-- [ ] **Budget de performance en CI** (Lighthouse ≥ 90 sur `/login` et `/`) (S)
+- [ ] **Sauvegarde exportable** du foyer (JSON) et restauration sur une autre instance (M) → lot 6
+- [x] **Budget de performance en CI** (Lighthouse ≥ 90 sur `/login` et `/`) (S) → lot 6 (#93)
 - [x] **Déconnecter les autres appareils d'un coup** (demande de l'utilisateur) (S) ⚙️🌐🤖 (#90)
 - [x] **Avertissement Google Play (0.3.58)** : `androidx.fragment` 1.1.0, tiré par Firebase Messaging, signalé obsolète ; forcé en 1.8.9 (S) 🤖 (#89)
 - [x] **Avertissements Google Play bord à bord (0.3.58)** : les API obsolètes d'Android 15 (`Window.setStatusBarColor`, `setNavigationBarColor`, `layoutInDisplayCutoutMode`) venaient d'`enableEdgeToEdge()` (`androidx.activity`, classes `EdgeToEdgeApi26/29/35`) ; remplacé par un thème (barres transparentes, mode encoche) et `WindowCompat` avant Android 15 ; plus aucun appel dans la version Play minifiée (S) 🤖 (#91)
@@ -145,6 +145,36 @@ Découvert par l'audit du 9 octobre (validé par l'utilisateur) :
 
 Idées proposées, non retenues pour l'instant : idées cadeaux liées aux dates, échéances de
 contrats, planning du dimanche, lien « baby-sitter », packs de départ.
+
+### Lot 6 — Qualité, notes, invités, courses, Assistant (validé le 9 octobre)
+
+Validé par l'utilisateur, du plus simple au plus gros :
+
+- [x] **Budget de performance en CI** : Lighthouse mobile (médiane de trois mesures) sur
+  `/login` et `/` (S) ⚙️🌐 (#93) : `/login` 88 → 95 (Zod chargé à la demande), `/` 80 → 87
+  (constantes des contrats sans Zod, formulaire de tâche chargé à l'ouverture) ; seuils 90 et 85,
+  accessibilité 95 (mesurée à 100)
+  - [ ] Accueil ≥ 90 : le reste du temps de blocage vient du montage de l'app après le chargement
+    de la session dans le navigateur ; préparer la session côté serveur (M), à prioriser ensemble
+- [ ] **Historique des versions d'une note** : revenir à une version précédente si l'autre l'a
+  écrasée (S) ⚙️🌐🤖
+- [ ] **Meilleure lecture des tickets** : redresser et recadrer la photo avant lecture (M) ⚙️
+- [ ] **Coffre pour les notes sensibles** : contenu masqué partout (liste, recherche,
+  notifications, export) et affiché après empreinte ou code du téléphone, ou mot de passe sur le
+  site ; pas de chiffrement de bout en bout (choix de l'utilisateur) (M) ⚙️🌐🤖
+- [ ] **Liste pour un invité** : lien en lecture seule, sans compte, révocable (baby-sitter,
+  quelqu'un qui garde la maison) (M) ⚙️🌐🤖
+- [ ] **Scanner un code-barres** pour ajouter un article (Android) : nom cherché dans Open Food
+  Facts par le serveur, puis mémorisé pour le foyer (M) ⚙️🤖
+- [ ] **Sauvegarde exportable** du foyer (JSON) et restauration sur une autre instance (M) ⚙️🌐
+- [ ] **« Ok Google, ajoute du lait dans Tandem »** : intégration à l'Assistant Google (M) 🤖
+
+Retiré du lot par l'utilisateur, gardé pour plus tard : **rappel lié à un lieu** (la
+géolocalisation en arrière-plan demande une déclaration à Google Play).
+
+Idées proposées le 9 octobre, non retenues pour l'instant : « Je m'en occupe » en un geste, liste
+d'envies, soirées libres, plusieurs magasins, idées de menus, cagnotte commune, échéances des
+abonnements, import d'un relevé bancaire, montre Wear OS, double authentification TOTP.
 
 ### Propositions de design
 
