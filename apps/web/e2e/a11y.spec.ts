@@ -58,6 +58,8 @@ for (const scheme of ['light', 'dark'] as const) {
     });
 
     test('application', async ({ page }) => {
+      // Un audit axe par page (19 écrans, ~1,5 s chacun) : 30 s ne suffisent plus sur la CI.
+      test.setTimeout(90_000);
       await signUpWithHousehold(page, 'Grace');
       const today = todayBrussels();
       const households = await (await page.request.get('/v1/households')).json();
