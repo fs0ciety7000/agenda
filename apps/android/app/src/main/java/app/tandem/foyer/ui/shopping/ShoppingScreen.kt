@@ -166,7 +166,7 @@ fun ShoppingScreen(
             LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 32.dp)) {
                 if (meals != null) item(key = "meals") { MealsCard(meals, onMealsToShopping, onOpenMeals) }
                 if (items.isEmpty()) {
-                    item { EmptyState(stringResource(R.string.shopping_empty_title), stringResource(R.string.shopping_empty_body)) }
+                    item { EmptyState(stringResource(R.string.shopping_empty_title), stringResource(R.string.shopping_empty_body), illustration = R.drawable.ill_empty_shopping) }
                 } else {
                     item { SectionHeader(stringResource(R.string.shopping_to_buy, toBuy.size)) }
                     if (toBuy.isEmpty()) {
@@ -302,11 +302,21 @@ private fun MealsCard(meals: List<Meal>, onToShopping: (List<Meal>) -> Unit, onO
                 modifier = Modifier.semantics { heading() },
             )
             if (meals.isEmpty()) {
-                Text(
-                    stringResource(R.string.meals_empty),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
+                // Petite illustration (carte dans Courses) : même tracé que la page Menus du site.
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    androidx.compose.foundation.Image(
+                        androidx.compose.ui.res.painterResource(R.drawable.ill_empty_meals),
+                        contentDescription = null,
+                        colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(MaterialTheme.colorScheme.primary),
+                        modifier = Modifier.size(width = 60.dp, height = 48.dp),
+                    )
+                    Text(
+                        stringResource(R.string.meals_empty),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
             }
             meals.forEach { m ->
                 val day = m.date.dayOfWeek.getDisplayName(java.time.format.TextStyle.SHORT, locale)

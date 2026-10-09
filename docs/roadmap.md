@@ -125,8 +125,8 @@ Validé par l'utilisateur, dans cet ordre :
   - [x] Budgets par catégorie réglables dans l'app
   - [x] « Annuler » après la suppression d'une note
   - [x] Icônes punaise, copier et modifier (vecteurs, comme le tiroir)
-- [ ] **États vides illustrés** : illustration au trait, monochrome, style du logo, pour
-  Aujourd'hui, Courses, Menus, Dépenses, Notes, Dates ; site et Android, clair et sombre (M) 🌐🤖
+- [x] **États vides illustrés** : illustration au trait, monochrome, style du logo, pour
+  Aujourd'hui, Courses, Menus, Dépenses, Notes, Dates ; site et Android, clair et sombre (M) 🌐🤖 (#92)
 - [ ] **Partager vers Tandem** : un lien ou un texte partagé depuis une autre app devient une
   tâche, une note ou un article de courses (S) 🤖
 - [ ] **Tuile « Ajouter une tâche »** dans les réglages rapides Android (S) 🤖

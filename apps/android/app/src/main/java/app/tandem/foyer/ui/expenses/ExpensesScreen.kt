@@ -433,7 +433,7 @@ fun ExpensesScreen(
             }
             if (!state.loading && !state.offline && state.items.isEmpty()) {
                 item(key = "empty") {
-                    EmptyState(stringResource(R.string.expenses_empty_title), stringResource(R.string.expenses_empty_body))
+                    EmptyState(stringResource(R.string.expenses_empty_title), stringResource(R.string.expenses_empty_body), illustration = R.drawable.ill_empty_expenses)
                 }
             }
             state.items.groupBy { it.date }.forEach { (date, items) ->

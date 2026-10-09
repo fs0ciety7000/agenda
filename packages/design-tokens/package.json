@@ -4,7 +4,8 @@
   "files": [
     "dist",
     "tokens.json",
-    "scripts"
+    "scripts",
+    "illustrations.json"
   ],
   "private": true,
   "description": "Source unique des tokens de design → variables CSS (web) et Tokens.kt (Android).",
@@ -15,7 +16,11 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
-    "./tokens.css": "./dist/tokens.css"
+    "./tokens.css": "./dist/tokens.css",
+    "./illustrations": {
+      "types": "./dist/illustrations.d.ts",
+      "default": "./dist/illustrations.js"
+    }
   },
   "scripts": {
     "build": "node scripts/build.mjs",

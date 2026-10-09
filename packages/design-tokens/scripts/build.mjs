@@ -50,6 +50,21 @@ writeFileSync(
   `declare const tokens: ${JSON.stringify(tokens, null, 2)};\nexport = tokens;\n`,
 );
 
+// Illustrations des états vides (tracés au trait, viewBox commune) : même source pour le web et Android.
+const illustrations = JSON.parse(readFileSync(join(root, 'illustrations.json'), 'utf8'));
+writeFileSync(
+  join(dist, 'illustrations.js'),
+  `"use strict";\nmodule.exports = ${JSON.stringify(illustrations, null, 2)};\n`,
+);
+writeFileSync(
+  join(dist, 'illustrations.d.ts'),
+  `declare const illustrations: {\n  viewBox: [number, number];\n  strokeWidth: number;\n  background: string;\n  illustrations: Record<${Object.keys(
+    illustrations.illustrations,
+  )
+    .map((k) => `'${k}'`)
+    .join(' | ')}, { paths: string[] }>;\n};\nexport = illustrations;\n`,
+);
+
 if (process.argv.includes('--android')) {
   const hex = (v) => `Color(0xFF${v.slice(1).toUpperCase()})`;
   const camel = (k) => k.replace(/-(\w)/g, (_, c) => c.toUpperCase());
@@ -87,4 +102,38 @@ ${Object.entries(tokens.radius)
   mkdirSync(dirname(out), { recursive: true });
   writeFileSync(out, kt);
   console.warn(`Tokens.kt écrit dans ${out}`);
+
+  // Une illustration = un vecteur ; le fond (disque à 8 %) garde son alpha une fois teinté.
+  const [w, h] = illustrations.viewBox;
+  const drawable = join(root, '../../apps/android/app/src/main/res/drawable');
+  for (const [name, { paths }] of Object.entries(illustrations.illustrations)) {
+    const strokes = paths
+      .map(
+        (d) => `    <path
+        android:pathData="${d}"
+        android:strokeWidth="${illustrations.strokeWidth}"
+        android:strokeColor="#FF000000"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round" />`,
+      )
+      .join('\n');
+    writeFileSync(
+      join(drawable, `ill_empty_${name}.xml`),
+      `<?xml version="1.0" encoding="utf-8"?>
+<!-- Généré par packages/design-tokens (illustrations.json) — ne pas éditer. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="${w}dp"
+    android:height="${h}dp"
+    android:viewportWidth="${w}"
+    android:viewportHeight="${h}">
+    <path
+        android:pathData="${illustrations.background}"
+        android:fillAlpha="0.08"
+        android:fillColor="#FF000000" />
+${strokes}
+</vector>
+`,
+    );
+  }
+  console.warn(`Illustrations écrites dans ${drawable}`);
 }

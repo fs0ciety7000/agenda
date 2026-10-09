@@ -250,7 +250,7 @@ fun SyncBanner(online: Boolean, sync: SyncState) {
 }
 
 @Composable
-fun EmptyState(title: String, body: String? = null) {
+fun EmptyState(title: String, body: String? = null, @androidx.annotation.DrawableRes illustration: Int? = null) {
     Column(
         Modifier.fillMaxWidth().padding(vertical = 28.dp, horizontal = 16.dp).clearAndSetSemantics {
             contentDescription = listOfNotNull(title, body).joinToString(". ")
@@ -258,9 +258,23 @@ fun EmptyState(title: String, body: String? = null) {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(6.dp),
     ) {
-        Text(title, style = MaterialTheme.typography.titleMedium)
+        // Illustration au trait (même tracé que le site, packages/design-tokens/illustrations.json).
+        illustration?.let {
+            androidx.compose.foundation.Image(
+                androidx.compose.ui.res.painterResource(it),
+                contentDescription = null,
+                colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(MaterialTheme.colorScheme.primary),
+                modifier = Modifier.padding(bottom = 6.dp).size(width = 120.dp, height = 96.dp),
+            )
+        }
+        Text(title, style = MaterialTheme.typography.titleMedium, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
         body?.let {
-            Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                it,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+            )
         }
     }
 }

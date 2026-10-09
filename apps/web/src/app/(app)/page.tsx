@@ -128,7 +128,12 @@ export default function TodayPage() {
             <Skeleton className="h-32 w-full" />
           ) : todayItems.length === 0 ? (
             <div className="rounded-lg border border-border bg-surface">
-              <EmptyState icon={Sun} title={t('emptyTitle')} body={t('emptyBody')} />
+              <EmptyState
+                icon={Sun}
+                illustration="today"
+                title={t('emptyTitle')}
+                body={t('emptyBody')}
+              />
             </div>
           ) : (
             <TaskList items={todayItems} onOpen={dialog.openEdit} label={t('sectionToday')} />

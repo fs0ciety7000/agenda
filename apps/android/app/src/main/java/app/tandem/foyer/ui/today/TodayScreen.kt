@@ -113,7 +113,7 @@ fun TodayScreen(
                 )
             }
             if (sections.today.isEmpty()) {
-                item { EmptyState(stringResource(R.string.today_empty_title), stringResource(R.string.today_empty_body)) }
+                item { EmptyState(stringResource(R.string.today_empty_title), stringResource(R.string.today_empty_body), illustration = R.drawable.ill_empty_today) }
             } else {
                 itemsIndexed(sections.today, key = { _, it -> "t-" + it.id }) { i, it -> TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, modifier = Modifier.groupedCard(i, sections.today.size)) }
             }

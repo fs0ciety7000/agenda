@@ -131,6 +131,7 @@ export default function ImportantDatesPage() {
         <div className="rounded-lg border border-border bg-surface">
           <EmptyState
             icon={CalendarDays}
+            illustration="dates"
             title={t('emptyTitle')}
             body={t('emptyBody')}
             action={

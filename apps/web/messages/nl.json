@@ -760,7 +760,9 @@
     "titleRequired": "Geef de maaltijd een naam.",
     "delete": "Verwijderen",
     "toShopping": "Aan de boodschappen toevoegen",
-    "save": "Opslaan"
+    "save": "Opslaan",
+    "emptyTitle": "Nog geen maaltijden deze week.",
+    "emptyBody": "Voeg een maaltijd toe aan een dag: de ingrediënten kunnen zo naar de boodschappen."
   },
   "templates": {
     "hint": "Meerdere taken in één keer aangemaakt, bv. “Zaterdagse poetsbeurt”: stofzuigen, badkamer, lakens…",

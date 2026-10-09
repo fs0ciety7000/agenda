@@ -154,7 +154,12 @@ export default function ShoppingPage() {
           onRetry={() => void list.refetch()}
         />
       ) : items.length === 0 ? (
-        <EmptyState icon={ShoppingCart} title={t('emptyTitle')} body={t('emptyBody')} />
+        <EmptyState
+          icon={ShoppingCart}
+          illustration="shopping"
+          title={t('emptyTitle')}
+          body={t('emptyBody')}
+        />
       ) : (
         <>
           <section aria-labelledby="to-buy" className="flex flex-col gap-2">

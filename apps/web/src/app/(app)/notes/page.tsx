@@ -127,6 +127,7 @@ export default function NotesPage() {
         <div className="rounded-lg border border-border bg-surface">
           <EmptyState
             icon={StickyNote}
+            illustration="notes"
             title={t('emptyTitle')}
             body={t('emptyBody')}
             action={

@@ -335,6 +335,7 @@ export default function ExpensesPage() {
       ) : list.length === 0 ? (
         <EmptyState
           icon={Wallet}
+          illustration="expenses"
           title={t('emptyTitle')}
           body={t('emptyBody')}
           action={

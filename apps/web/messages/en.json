@@ -760,7 +760,9 @@
     "titleRequired": "Give the meal a name.",
     "delete": "Delete",
     "toShopping": "Add to shopping",
-    "save": "Save"
+    "save": "Save",
+    "emptyTitle": "No meals planned this week.",
+    "emptyBody": "Add a meal to a day: its ingredients can go straight to the shopping list."
   },
   "templates": {
     "hint": "Several tasks created at once, e.g. “Saturday cleaning”: vacuum, bathroom, sheets…",

@@ -15,6 +15,11 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### États vides illustrés (#92)
+
+- 🛠 **Écrans vides illustrés** (Aujourd'hui, Courses, Menus, Dépenses, Notes, Dates) : un petit
+  dessin au trait, le même sur le site et sur Android, en clair comme en sombre.
+
 ### Finitions Android (#92)
 
 - ✨ **Budgets par catégorie** réglables dans l'app Android (Dépenses → Budgets par catégorie).

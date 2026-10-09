@@ -184,7 +184,7 @@ fun NotesScreen(
             if (!state.loading && !state.offline && state.items.isEmpty()) {
                 item {
                     Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.fillMaxWidth()) {
-                        EmptyState(stringResource(R.string.notes_empty_title), stringResource(R.string.notes_empty_body))
+                        EmptyState(stringResource(R.string.notes_empty_title), stringResource(R.string.notes_empty_body), illustration = R.drawable.ill_empty_notes)
                         Button(onClick = { draft = Draft(null, "", "", false) }, modifier = Modifier.heightIn(min = 48.dp)) {
                             Text(stringResource(R.string.notes_new))
                         }

@@ -760,7 +760,9 @@
     "titleRequired": "Donnez un nom au repas.",
     "delete": "Supprimer",
     "toShopping": "Ajouter aux courses",
-    "save": "Enregistrer"
+    "save": "Enregistrer",
+    "emptyTitle": "Aucun repas prévu cette semaine.",
+    "emptyBody": "Ajoutez un repas à un jour : ses ingrédients pourront partir dans les courses."
   },
   "templates": {
     "hint": "Plusieurs tâches créées d'un coup, par exemple « Ménage du samedi » : aspirateur, salle de bain, draps…",

@@ -77,7 +77,7 @@ champs de saisie, listes déroulantes et zones de texte (WCAG 1.4.11).
 | **Avatar membre** | initiale sur couleur de membre ; bicolore « à deux » |
 | **TaskRow** | case · titre · méta (responsable, heure, catégorie, récurrence ↻) ; swipe (Android) : cocher / reporter |
 | **Calendar** | `DayView`, `WeekView` (blocs temporels positionnés sur grille de 15 min), `MonthView` (pastilles) ; drag & resize (web, Phase 6) |
-| **EmptyState** | illustration linéaire monochrome + une phrase + une action (« Rien pour aujourd'hui. Profitez-en. ») |
+| **EmptyState** | illustration linéaire monochrome (accent, disque de fond à 8 %) + une phrase + une action (« Rien pour aujourd'hui. Profitez-en. »). Tracés dans `packages/design-tokens/illustrations.json` (viewBox 120×96, trait 1,75), générés pour le web (`Illustration`) et Android (`ill_empty_*`) : Aujourd'hui, Courses, Menus, Dépenses, Notes, Dates |
 | **Skeleton** | chargement : formes des lignes, pas de spinner plein écran |
 | **ErrorState** | phrase humaine + action (« Réessayer ») ; jamais de stack trace ou code brut |
 | **Toast** | succès discret, annulation ; `role="status"` |

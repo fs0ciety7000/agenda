@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.test.assertIsDisplayed
@@ -299,6 +300,41 @@ class ScreensTest {
         compose.onNodeWithText("Notes").performClick()
         assertEquals(listOf("notes"), opened)
     }
+
+    /** Les six illustrations d'états vides (même tracé que le site), en clair et en sombre. */
+    private fun etatsVides(dark: Boolean) {
+        screen(dark) {
+            androidx.compose.foundation.layout.Column(
+                Modifier.verticalScroll(androidx.compose.foundation.rememberScrollState()),
+            ) {
+                listOf(
+                    app.tandem.foyer.R.drawable.ill_empty_today to "Rien pour aujourd'hui.",
+                    app.tandem.foyer.R.drawable.ill_empty_shopping to "La liste est vide.",
+                    app.tandem.foyer.R.drawable.ill_empty_meals to "Aucun repas prévu.",
+                    app.tandem.foyer.R.drawable.ill_empty_expenses to "Aucune dépense ce mois-ci.",
+                    app.tandem.foyer.R.drawable.ill_empty_notes to "Aucune note pour l'instant.",
+                    app.tandem.foyer.R.drawable.ill_empty_dates to "Aucune date pour l'instant.",
+                ).chunked(2).forEach { row ->
+                    androidx.compose.foundation.layout.Row {
+                        row.forEach { (ill, title) ->
+                            androidx.compose.foundation.layout.Box(Modifier.weight(1f)) {
+                                app.tandem.foyer.ui.components.EmptyState(title, illustration = ill)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // Titre lu par TalkBack (l'illustration est décorative).
+        compose.onNodeWithContentDescription("Rien pour aujourd'hui.").assertIsDisplayed()
+        shot(if (dark) "empty-states-dark" else "empty-states")
+    }
+
+    @Test
+    fun etats_vides() = etatsVides(dark = false)
+
+    @Test
+    fun etats_vides_sombre() = etatsVides(dark = true)
 
     @Test
     fun mode_magasin() {
