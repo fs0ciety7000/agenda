@@ -1,6 +1,6 @@
 ---
 title: Liste de courses
-description: Liste partagée en temps réel, rayons, quantités, articles souvent achetés, hors ligne.
+description: Liste partagée en temps réel, rayons, quantités, articles souvent achetés, code-barres, lien pour un invité, hors ligne.
 ---
 
 # Liste de courses
@@ -28,6 +28,38 @@ Pour une liste liée à une tâche précise (« Valise »), utilisez plutôt les
 caractères, rangée par rayon, et garde l'écran allumé. Toucher un article le met dans le panier ;
 le toucher à nouveau l'en ressort. L'autre voit les coches en direct. **Échap**, le geste retour
 ou ✕ pour quitter.
+
+## Ajouter par code-barres
+
+**Scanner un code-barres** (en haut de la liste, sur le site et dans l'app Android). Dans l'app,
+**Scanner en direct** : pointez le code-barres, il est lu tout de suite, sans photo (scanner de
+Google Play services, sur le téléphone). Sinon, ou sur le site : prenez le code-barres en photo,
+de près et bien à plat.
+
+- La photo est lue sur le serveur de Tandem, puis **effacée aussitôt** ; rien n'est envoyé
+  ailleurs. Le scan en direct, lui, se fait sur le téléphone.
+- Le nom du produit est proposé : celui que le foyer lui a déjà donné, sinon celui trouvé dans
+  [Open Food Facts](https://world.openfoodfacts.org), une base de produits ouverte (seul le code
+  lui est envoyé). Corrigez-le si besoin avant **Ajouter à la liste** : le foyer s'en souviendra.
+- Produit inconnu : donnez-lui un nom une fois, il sera reconnu la fois suivante, par vous deux.
+- Photo illisible : reprenez-la de plus près, ou **tapez les chiffres** sous les barres.
+- Il faut une connexion (la photo est lue sur le serveur).
+
+## Lien pour un invité
+
+Pour la baby-sitter ou quelqu'un qui garde la maison : **Partager avec un invité** (en haut de la
+liste, sur le site et dans l'app Android) crée un lien à envoyer par message ou à copier.
+
+- L'invité ouvre la liste **sans compte**, en **lecture seule** : il voit les articles à acheter,
+  rangés par rayon, et ce qui est déjà pris. Il ne peut rien ajouter ni cocher.
+- Il ne voit ni vos tâches, ni vos noms, ni le reste du foyer ; la liste se met à jour toute seule.
+- **Il se coupe tout seul** : après 1 jour, 1 semaine (par défaut) ou 1 mois, au choix à la
+  création ; « Sans limite » reste possible, pensez alors à le couper vous-même. La fenêtre du
+  lien indique quand il se coupera.
+- **Un lien par foyer** : chacun des deux peut le créer, l'envoyer, le remplacer (**Nouveau
+  lien**, l'ancien cesse de fonctionner) ou le **couper** avant l'heure. Toute personne qui a le
+  lien voit la liste tant qu'il fonctionne.
+- Une pastille sur le bouton indique qu'un lien est actif.
 
 ## Menus de la semaine
 

@@ -1,11 +1,9 @@
-Read a receipt: amount and date read from the photo.
+Shopping: live barcode scan; guest link that expires.
+• Download the household backup; sensitive notes protected.
+• Notes: previous versions you can restore.
+• Read a receipt: amount and date read from the photo.
 • Share to Tandem: a link becomes a task, a note or shopping items.
 • "Add a task" tile in Quick Settings.
-• Category budgets in the app; "Undo" on notes.
+• Category budgets; "Undo" on notes.
 • "More" drawer: Expenses, Notes, Dates…
-• Expenses: who owes what, payback in one tap.
-• Shared notes; important dates with reminders.
-• Home: "Who does what" over 7 days.
-• Notes and dates readable offline.
-• Signed-in devices: remote sign-out.
-• Illustrated empty screens.
+• Expenses: who owes what.

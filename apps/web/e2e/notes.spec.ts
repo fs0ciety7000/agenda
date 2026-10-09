@@ -63,6 +63,25 @@ test('notes partagées : créer, épingler, modifier ; conflit avec l’autre ; 
   await expect(page.getByText('Note enregistrée')).toBeVisible();
   await expect(page.getByText('Code : 5678')).toBeVisible();
 
+  // Historique : la version de Nicolas (9999) est gardée ; on la restaure.
+  await page.getByRole('button', { name: 'Modifier « Wi-Fi »' }).click();
+  dialog = page.getByRole('dialog', { name: 'Modifier la note' });
+  const history = dialog.getByRole('button', { name: 'Versions précédentes' });
+  await expect(history).toHaveAttribute('aria-expanded', 'false');
+  await history.click();
+  await expect(history).toHaveAttribute('aria-expanded', 'true');
+  const versions = dialog.getByRole('list', { name: 'Versions précédentes' });
+  await expect(versions.getByText('Code : 9999')).toBeVisible();
+  await versions
+    .getByRole('listitem')
+    .filter({ hasText: 'Code : 9999' })
+    .getByRole('button', { name: 'Restaurer cette version' })
+    .click();
+  await expect(page.getByText(/^Version du .* restaurée\.$/)).toBeVisible();
+  await expect(dialog.getByLabel('Contenu')).toHaveValue('Code : 9999');
+  await dialog.getByRole('button', { name: 'Fermer' }).click();
+  await expect(page.getByText('Code : 9999')).toBeVisible();
+
   // Supprimer, puis annuler.
   await page.getByRole('button', { name: 'Modifier « Idées cadeaux »' }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Supprimer' }).click();
@@ -70,4 +89,46 @@ test('notes partagées : créer, épingler, modifier ; conflit avec l’autre ; 
   await expect(page.getByRole('heading', { name: 'Idées cadeaux' })).toHaveCount(0);
   await page.getByRole('button', { name: 'Annuler' }).click();
   await expect(page.getByRole('heading', { name: 'Idées cadeaux' })).toBeVisible();
+});
+
+test('note sensible : contenu masqué, affiché après le mot de passe', async ({ page }) => {
+  await signUpWithHousehold(page, 'Emma');
+  await page.goto('/notes');
+  await page.getByRole('button', { name: 'Nouvelle note' }).first().click();
+  let dialog = page.getByRole('dialog', { name: 'Nouvelle note' });
+  await dialog.getByLabel('Titre').fill('Digicode');
+  await dialog.getByLabel('Contenu').fill('A-2468');
+  await dialog.getByLabel('Note sensible').check();
+  await dialog.getByRole('button', { name: 'Ajouter' }).click();
+  await expect(dialog).toBeHidden();
+
+  // Masquée dans la liste ; « Afficher » demande le mot de passe.
+  await expect(page.getByText('Contenu protégé')).toBeVisible();
+  await expect(page.getByText('A-2468')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Afficher « Digicode »' }).click();
+  const vault = page.getByRole('dialog', { name: 'Note sensible' });
+  await vault.getByLabel('Mot de passe').fill('pas le bon');
+  await vault.getByRole('button', { name: 'Afficher' }).click();
+  await expect(vault.getByText('Mot de passe actuel incorrect.')).toBeVisible();
+  await vault.getByLabel('Mot de passe').fill('correct horse battery');
+  await vault.getByRole('button', { name: 'Afficher' }).click();
+  await expect(vault).toBeHidden();
+  await expect(page.getByText('A-2468')).toBeVisible();
+  await page.getByRole('button', { name: 'Masquer « Digicode »' }).click();
+  await expect(page.getByText('A-2468')).toHaveCount(0);
+
+  // Coffre ouvert 5 minutes : modifier le contenu ne redemande rien.
+  await page.getByRole('button', { name: 'Modifier « Digicode »' }).click();
+  dialog = page.getByRole('dialog', { name: 'Modifier la note' });
+  await dialog.getByRole('button', { name: 'Afficher pour modifier' }).click();
+  await dialog.getByLabel('Contenu').fill('B-1357');
+  await dialog.getByRole('button', { name: 'Enregistrer' }).click();
+  await expect(dialog).toBeHidden();
+  await expect(page.getByText('B-1357')).toBeVisible();
+
+  // La recherche ne trouve pas le contenu.
+  await page.keyboard.press('/');
+  const search = page.getByRole('dialog', { name: 'Rechercher' });
+  await search.getByRole('searchbox').fill('1357');
+  await expect(search.getByText('Rien trouvé pour « 1357 ».')).toBeVisible();
 });

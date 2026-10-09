@@ -19,7 +19,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useDeferredValue, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { ErrorState, Skeleton } from '@/components/ui/states';
 import { ApiError, errorKey } from '@/lib/api';
 import { cn } from '@/lib/cn';
@@ -78,6 +78,14 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   const unauthenticated = me.error instanceof ApiError && me.error.status === 401;
   const household = households.data?.[0];
+  const session = useMemo(
+    () => (me.data && household ? { me: me.data, household } : null),
+    [me.data, household],
+  );
+  // La page se monte en différé (priorité « transition ») : React la rend par petits morceaux
+  // au lieu d'une seule longue tâche qui fige le fil principal (budget Lighthouse de l'accueil).
+  // Premier rendu : le squelette ; le contenu suit aussitôt.
+  const shown = useDeferredValue(session, null);
   useRealtime(household?.id);
 
   // Raccourcis clavier (hors saisie) : « / » ouvre la recherche globale, « T » revient à
@@ -201,10 +209,8 @@ export function AppShell({ children }: { children: ReactNode }) {
           </button>
         </div>
         <OfflineBanner />
-        {me.data && household ? (
-          <SessionContext.Provider value={{ me: me.data, household }}>
-            {children}
-          </SessionContext.Provider>
+        {shown ? (
+          <SessionContext.Provider value={shown}>{children}</SessionContext.Provider>
         ) : (
           <div aria-busy className="flex flex-col gap-4" aria-label={t('common.loading')}>
             <Skeleton className="h-9 w-56" />

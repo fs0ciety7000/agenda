@@ -79,3 +79,68 @@ export const RealtimeTopic = z.enum([
   'dates',
 ]);
 export type RealtimeTopic = z.infer<typeof RealtimeTopic>;
+
+/**
+ * Lien invité vers la liste de courses (baby-sitter, quelqu'un qui garde la maison) : lecture
+ * seule, sans compte, un seul par foyer, révocable. `url` null = aucun lien actif.
+ */
+export const GuestShoppingLinkDto = z.object({
+  url: z.string().nullable(),
+  createdAt: z.string().nullable(),
+  /** Le lien se coupe tout seul à cette date ; null = sans limite (ou aucun lien). */
+  expiresAt: z.string().nullable(),
+  /** Membre qui a créé le lien (id), si connu. */
+  createdById: z.uuid().nullable(),
+});
+export type GuestShoppingLinkDto = z.infer<typeof GuestShoppingLinkDto>;
+
+/** Durées proposées pour un lien invité (jours) ; null = sans limite. */
+export const GUEST_LINK_DAYS = [1, 7, 30] as const;
+
+/** Créer ou remplacer le lien invité : il se coupe seul après `expiresInDays` (7 par défaut). */
+export const GuestShoppingLinkInput = z.object({
+  expiresInDays: z
+    .union([z.literal(1), z.literal(7), z.literal(30)])
+    .nullable()
+    .default(7),
+});
+export type GuestShoppingLinkInput = z.infer<typeof GuestShoppingLinkInput>;
+
+/** Article vu par l'invité : ni auteur ni dates (rien de plus que la liste elle-même). */
+export const GuestShoppingItemDto = z.object({
+  id: z.uuid(),
+  text: z.string(),
+  quantity: z.string().nullable(),
+  aisle: Aisle,
+  done: z.boolean(),
+});
+export type GuestShoppingItemDto = z.infer<typeof GuestShoppingItemDto>;
+
+/** Liste vue par l'invité (`GET /v1/guest/shopping/:token`). */
+export const GuestShoppingDto = z.object({
+  householdName: z.string(),
+  items: z.array(GuestShoppingItemDto),
+});
+export type GuestShoppingDto = z.infer<typeof GuestShoppingDto>;
+
+/** Photos de code-barres acceptées (lues sur le serveur, jamais conservées). */
+export const BARCODE_SCAN_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+/** Code-barres d'un produit : EAN-8, UPC-A (12), EAN-13 ou GTIN-14, chiffres seulement. */
+export const Barcode = z.string().regex(/^(\d{8}|\d{12,14})$/);
+
+/**
+ * Produit d'un code-barres. `barcode` null : rien lu sur la photo ; `name` null : produit
+ * inconnu (à nommer, le foyer s'en souviendra). `source` : nom retenu par le foyer ou trouvé
+ * dans Open Food Facts.
+ */
+export const BarcodeLookupDto = z.object({
+  barcode: z.string().nullable(),
+  name: z.string().nullable(),
+  source: z.enum(['HOUSEHOLD', 'OPEN_FOOD_FACTS']).nullable(),
+});
+export type BarcodeLookupDto = z.infer<typeof BarcodeLookupDto>;
+
+/** Nom à retenir pour un code-barres (corrigé ou donné par un membre). */
+export const RememberBarcodeInput = z.object({ name: ShoppingText });
+export type RememberBarcodeInput = z.infer<typeof RememberBarcodeInput>;

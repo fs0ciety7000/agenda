@@ -1,6 +1,7 @@
 'use client';
 
-import { ATTACHMENT_MAX_BYTES, type AttachmentDto, type OccurrenceDto } from '@agenda/contracts';
+import type { AttachmentDto, OccurrenceDto } from '@agenda/contracts';
+import { ATTACHMENT_MAX_BYTES } from '@agenda/contracts/constants';
 import { useQueryClient } from '@tanstack/react-query';
 import { FileText, Image as ImageIcon, Paperclip, Trash2 } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';

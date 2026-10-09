@@ -7,6 +7,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useId, useState, type FormEvent } from 'react';
+import { BarcodeButton } from '@/components/app/barcode-dialog';
+import { GuestLinkButton } from '@/components/app/guest-link';
 import { useSession } from '@/components/app/household-context';
 import { StoreMode } from '@/components/app/store-mode';
 import { Button } from '@/components/ui/button';
@@ -32,6 +34,7 @@ export default function ShoppingPage() {
   const t = useTranslations('shopping');
   const te = useTranslations('errors');
   const tm = useTranslations('meals');
+  const tb = useTranslations('barcode');
   const { me, household } = useSession();
   const memberId = household.members.find((m) => m.userId === me.id)?.id ?? '';
   const names = new Map(household.members.map((m) => [m.id, m.displayName]));
@@ -83,12 +86,22 @@ export default function ShoppingPage() {
         </span>
       </div>
 
-      {items.some((i) => !i.done) && (
-        <Button variant="secondary" className="self-start" onClick={() => setStore(true)}>
-          <Store aria-hidden className="size-4" />
-          {t('storeOpen')}
-        </Button>
-      )}
+      <div className="flex flex-wrap gap-2">
+        {items.some((i) => !i.done) && (
+          <Button variant="secondary" onClick={() => setStore(true)}>
+            <Store aria-hidden className="size-4" />
+            {t('storeOpen')}
+          </Button>
+        )}
+        <BarcodeButton
+          householdId={household.id}
+          onAdd={(name) => {
+            actions.add.mutate([name]);
+            toast({ message: tb('added', { name }) });
+          }}
+        />
+        <GuestLinkButton />
+      </div>
       {store && (
         <StoreMode
           items={items}

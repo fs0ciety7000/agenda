@@ -70,6 +70,8 @@ fun SettingsScreen(
     onLanguage: (String) -> Unit = {},
     /** Compte : appareils connectés (liste en ligne). */
     devices: @Composable () -> Unit = {},
+    /** Section « Sauvegarde du foyer » (cf. [BackupSection]). */
+    backup: @Composable () -> Unit = {},
 ) {
     var confirmSignOut by remember { mutableStateOf(false) }
     Column(
@@ -245,6 +247,9 @@ fun SettingsScreen(
         }
         OutlinedCard(Modifier.fillMaxWidth().padding(top = 12.dp)) {
             Column(Modifier.padding(16.dp)) { devices() }
+        }
+        OutlinedCard(Modifier.fillMaxWidth().padding(top = 12.dp)) {
+            Column(Modifier.padding(16.dp)) { backup() }
         }
         Text(
             stringResource(R.string.version, version),

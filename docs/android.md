@@ -255,6 +255,15 @@ une version qui touche la base, les fichiers ou le démarrage de l'app).
 Les noms de tests sont en ASCII : certains environnements ne savent pas écrire les classes
 générées dont le nom contient des accents.
 
+### Code-barres en direct
+
+« Scanner en direct » utilise le scanner de codes-barres de **Google Play services**
+(`play-services-code-scanner`, `src/codeScanner`) : son propre écran de caméra, aucune permission
+caméra pour l'app, lecture sur le téléphone. Sans Google Play services, la photo lue par le
+serveur reste disponible. Pour compiler sans accès au dépôt Maven de Google (bac à sable,
+hors ligne) : `-Ptandem.codeScanner=false` remplace le scanner par une version vide
+(`src/noCodeScanner`), le bouton disparaît.
+
 ## 6. Limites connues
 
 - Les rappels sont locaux : ils couvrent les 48 h suivantes et sont replanifiés au moins toutes

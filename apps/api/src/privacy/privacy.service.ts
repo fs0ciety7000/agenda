@@ -59,6 +59,7 @@ export class PrivacyService {
       expenses,
       swaps,
       notes,
+      noteVersions,
       dates,
     ] = await Promise.all([
       this.prisma.task.findMany({
@@ -179,6 +180,12 @@ export class PrivacyService {
         select: { title: true, body: true, pinned: true, createdAt: true, updatedAt: true },
         orderBy: { createdAt: 'asc' },
       }),
+      // Versions précédentes de notes écrites par la personne (historique des notes).
+      this.prisma.noteRevision.findMany({
+        where: { editedById: { in: memberIds } },
+        select: { title: true, body: true, savedAt: true, note: { select: { title: true } } },
+        orderBy: { savedAt: 'asc' },
+      }),
       // Dates importantes ajoutées par la personne (anniversaires d'autres personnes compris).
       this.prisma.importantDate.findMany({
         where: { createdById: { in: memberIds } },
@@ -215,6 +222,11 @@ export class PrivacyService {
         joinedAt: m.joinedAt,
         leftAt: m.leftAt,
         members: m.household.members,
+        // Lien invité vers les courses créé par ce membre et encore actif (jamais le lien lui-même).
+        guestShoppingLinkCreatedAt:
+          m.household.guestShoppingToken && m.household.guestShoppingCreatedById === m.id
+            ? m.household.guestShoppingCreatedAt
+            : null,
       })),
       tasksCreated: createdTasks.map((t) => ({
         title: t.title,
@@ -266,6 +278,7 @@ export class PrivacyService {
         answeredAt: w.answeredAt,
       })),
       notesCreated: notes,
+      noteVersionsWritten: noteVersions.map(({ note, ...v }) => ({ ...v, noteTitle: note.title })),
       importantDatesCreated: dates,
       reports: reports.map(({ screenshotType, ...r }) => ({
         ...r,

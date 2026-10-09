@@ -8,3 +8,4 @@ export * from './money';
 export * from './week-board';
 export * from './important-dates';
 export * from './receipt';
+export * from './barcode';

@@ -52,7 +52,8 @@ gratuit de Cloudflare ne couvre que `*.tandem-agenda.app`, pas les niveaux plus 
   `fs0ciety7000/agenda` via la GitHub App Coolify (ou une deploy key).
 - Zone `tandem-agenda.app` gérée par Cloudflare.
 - ≥ 2 Go de RAM libres pendant le build (le build Next.js est le plus gourmand), ~3 Go de disque pour les images.
-- Lecture des tickets : Tesseract (français, néerlandais, anglais) est dans l'image de l'API (~30 Mo) ;
+- Lecture des tickets : Tesseract (français, néerlandais, anglais, détection d'orientation) est dans
+  l'image de l'API (~30 Mo), la préparation des photos passe par `sharp` ;
   rien à configurer. Une lecture prend environ une seconde de processeur, deux au plus à la fois.
 
 ## 3. Cloudflare
@@ -140,6 +141,7 @@ manquent. Modèle complet : `.env.prod.example`.
 | `SENTRY_DSN` | facultatif : suivi des erreurs (§10) | DSN Sentry / GlitchTip |
 | `FCM_SERVICE_ACCOUNT` | facultatif : notifications instantanées Android | JSON du compte de service Firebase (docs/android.md §4.1) |
 | `INBOUND_EMAIL_ADDRESS`, `RESEND_WEBHOOK_SECRET`, `RESEND_API_KEY` | facultatif : tâches par e-mail (réception par Resend) | cf. [`email-to-task.md`](email-to-task.md) |
+| `OPEN_FOOD_FACTS_URL` | facultatif : nom des produits lus par code-barres (défaut `https://world.openfoodfacts.org`, seul le code est envoyé) ; `off` pour ne jamais l'interroger | `off` |
 | `ADMIN_EMAILS` | facultatif : accès à la page d'administration | adresses e-mail séparées par des virgules ; reçoivent aussi les alertes de surveillance |
 | `METRICS_TOKEN` | facultatif : `GET /metrics` (Prometheus) | secret d'au moins 16 caractères, cf. `monitoring.md` |
 | `DOCS_URL` | facultatif : adresse du site de documentation (build) | `https://docs.tandem-agenda.app` par défaut, cf. §13 |
@@ -212,6 +214,10 @@ Le service **`backup`** du compose s'en charge, sans configuration dans Coolify 
 
 Logs : Coolify → service `backup` → *Logs*, ligne
 `backup: OK …/agenda-AAAA-MM-JJTHHMM.dump (…) — restauration vérifiée : N comptes, …`.
+
+Ces sauvegardes couvrent **toute l'instance** (tous les comptes). Pour déménager **un foyer**
+vers une autre instance, chaque membre peut télécharger sa *sauvegarde du foyer* (archive .zip,
+Réglages) et la restaurer ailleurs : voir le [guide](guide/compte.md#sauvegarde-du-foyer).
 
 ### 6.1 Copie hors serveur (recommandé) — Cloudflare R2
 

@@ -59,10 +59,11 @@ export class SearchService {
         },
       }),
       this.prisma.note.findMany({
-        where: { householdId, OR: [{ title: like }, { body: like }] },
+        // Note sensible : cherchée par son titre seulement, jamais par son contenu.
+        where: { householdId, OR: [{ title: like }, { secret: false, body: like }] },
         orderBy: [{ pinned: 'desc' }, { updatedAt: 'desc' }],
         take: LIMIT,
-        select: { id: true, title: true, body: true },
+        select: { id: true, title: true, body: true, secret: true },
       }),
       this.prisma.importantDate.findMany({
         where: { householdId, title: like },
@@ -106,7 +107,11 @@ export class SearchService {
           },
         ];
       }),
-      notes: notes.map((n) => ({ id: n.id, title: n.title, snippet: snippet(n.body, q) })),
+      notes: notes.map((n) => ({
+        id: n.id,
+        title: n.title,
+        snippet: n.secret ? '' : snippet(n.body, q),
+      })),
       dates,
       expenses: expenses.map((e) => ({
         id: e.id,

@@ -7348,6 +7348,420 @@
         ]
       }
     },
+    "/v1/households/{householdId}/shopping-guest": {
+      "get": {
+        "operationId": "GuestShoppingSettingsController_get_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuestShoppingLinkDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Lien invité vers la liste de courses (null si aucun)",
+        "tags": [
+          "shopping"
+        ]
+      },
+      "post": {
+        "operationId": "GuestShoppingSettingsController_regenerate_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GuestShoppingLinkInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuestShoppingLinkDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Créer ou remplacer le lien invité (l'ancien cesse de fonctionner) ; il expire seul",
+        "tags": [
+          "shopping"
+        ]
+      },
+      "delete": {
+        "operationId": "GuestShoppingSettingsController_revoke_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Couper le lien invité",
+        "tags": [
+          "shopping"
+        ]
+      }
+    },
+    "/v1/guest/shopping/{token}": {
+      "get": {
+        "operationId": "GuestShoppingController_view_v1",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuestShoppingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Liste de courses en lecture seule, pour l'invité qui a le lien",
+        "tags": [
+          "shopping"
+        ],
+        "security": []
+      }
+    },
+    "/v1/households/{householdId}/shopping-barcodes/scan": {
+      "post": {
+        "description": "Lire le code-barres d'une photo et trouver le produit (JPEG, PNG ou WebP, multipart, champ `file`, 10 Mo au plus). Lue sur le serveur, la photo n'est pas conservée.",
+        "operationId": "BarcodeController_scan_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BarcodeLookupDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Lire le code-barres d'une photo et trouver le produit (JPEG, PNG ou WebP, multipart, champ `file`, 10 Mo au plus)",
+        "tags": [
+          "shopping"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/shopping-barcodes/{code}": {
+      "get": {
+        "operationId": "BarcodeController_lookup_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "code",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BarcodeLookupDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Produit d'un code-barres saisi à la main (mémoire du foyer, puis Open Food Facts)",
+        "tags": [
+          "shopping"
+        ]
+      },
+      "put": {
+        "operationId": "BarcodeController_remember_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "code",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RememberBarcodeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BarcodeLookupDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Retenir le nom d'un produit pour le foyer (il l'emporte sur Open Food Facts)",
+        "tags": [
+          "shopping"
+        ]
+      }
+    },
     "/v1/households/{householdId}/notes": {
       "get": {
         "operationId": "NotesController_list_v1",
@@ -7609,6 +8023,355 @@
         "summary": "Supprimer une note",
         "tags": [
           "notes"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/notes/{noteId}/reveal": {
+      "post": {
+        "operationId": "NotesController_reveal_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "noteId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevealNoteInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RevealedNoteDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Afficher le contenu d'une note sensible (mot de passe ou confirmation sur le site, coffre ouvert 5 minutes ensuite ; vérifié sur l'appareil pour Android)",
+        "tags": [
+          "notes"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/notes/{noteId}/revisions": {
+      "get": {
+        "operationId": "NotesController_revisions_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "noteId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NoteRevisionDto"
+                  }
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Versions précédentes d'une note (20 au plus), de la plus récente à la plus ancienne",
+        "tags": [
+          "notes"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/notes/{noteId}/revisions/{revisionId}/restore": {
+      "post": {
+        "operationId": "NotesController_restore_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "noteId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "revisionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestoreNoteRevisionInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NoteDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Restaurer une version précédente (409 si la note a changé entre-temps)",
+        "tags": [
+          "notes"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/backup": {
+      "post": {
+        "description": "Télécharger la sauvegarde du foyer : archive .zip avec les données et les fichiers joints. Elle contient le texte des notes sensibles : vérification comme pour les afficher (mot de passe ou confirmation sur le site, sur l'appareil pour Android).",
+        "operationId": "BackupExportController_download_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevealNoteInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Télécharger la sauvegarde du foyer ",
+        "tags": [
+          "households"
+        ]
+      }
+    },
+    "/v1/households/restore": {
+      "post": {
+        "description": "Restaurer une sauvegarde : crée un nouveau foyer sur cette instance (multipart, champ `file`, archive .zip de Tandem). Depuis un compte encore sans foyer ; les autres membres reçoivent une invitation à leur adresse.",
+        "operationId": "BackupRestoreController_restore_v1",
+        "parameters": [
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestoreResultDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Restaurer une sauvegarde ",
+        "tags": [
+          "households"
         ]
       }
     },
@@ -10565,6 +11328,9 @@
                   "ATTACHMENT_TOO_LARGE",
                   "ATTACHMENTS_QUOTA",
                   "RECEIPT_SCAN_UNAVAILABLE",
+                  "BARCODE_SCAN_UNAVAILABLE",
+                  "VAULT_LOCKED",
+                  "BACKUP_INVALID",
                   "INTERNAL"
                 ]
               },
@@ -11758,6 +12524,33 @@
           "members",
           "together",
           "unassigned"
+        ],
+        "additionalProperties": false
+      },
+      "BarcodeLookupDto": {
+        "type": "object",
+        "properties": {
+          "barcode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "name": {
+            "nullable": true,
+            "type": "string"
+          },
+          "source": {
+            "nullable": true,
+            "type": "string",
+            "enum": [
+              "HOUSEHOLD",
+              "OPEN_FOOD_FACTS"
+            ]
+          }
+        },
+        "required": [
+          "barcode",
+          "name",
+          "source"
         ],
         "additionalProperties": false
       },
@@ -13263,6 +14056,122 @@
           "email"
         ]
       },
+      "GuestShoppingDto": {
+        "type": "object",
+        "properties": {
+          "householdName": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "aisle": {
+                  "type": "string",
+                  "enum": [
+                    "PRODUCE",
+                    "BAKERY",
+                    "DAIRY",
+                    "MEAT_FISH",
+                    "FROZEN",
+                    "PANTRY",
+                    "DRINKS",
+                    "HOUSEHOLD",
+                    "HYGIENE",
+                    "OTHER"
+                  ]
+                },
+                "done": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "text",
+                "quantity",
+                "aisle",
+                "done"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "householdName",
+          "items"
+        ],
+        "additionalProperties": false
+      },
+      "GuestShoppingLinkDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "nullable": true,
+            "type": "string"
+          },
+          "createdAt": {
+            "nullable": true,
+            "type": "string"
+          },
+          "expiresAt": {
+            "nullable": true,
+            "type": "string"
+          },
+          "createdById": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "url",
+          "createdAt",
+          "expiresAt",
+          "createdById"
+        ],
+        "additionalProperties": false
+      },
+      "GuestShoppingLinkInput": {
+        "type": "object",
+        "properties": {
+          "expiresInDays": {
+            "default": 7,
+            "nullable": true,
+            "anyOf": [
+              {
+                "type": "number",
+                "enum": [
+                  1
+                ]
+              },
+              {
+                "type": "number",
+                "enum": [
+                  7
+                ]
+              },
+              {
+                "type": "number",
+                "enum": [
+                  30
+                ]
+              }
+            ]
+          }
+        }
+      },
       "HouseholdDto": {
         "type": "object",
         "properties": {
@@ -13314,6 +14223,9 @@
                 "absentUntil": {
                   "nullable": true,
                   "type": "string"
+                },
+                "pending": {
+                  "type": "boolean"
                 }
               },
               "required": [
@@ -13773,6 +14685,9 @@
           "pinned": {
             "type": "boolean"
           },
+          "secret": {
+            "type": "boolean"
+          },
           "createdById": {
             "nullable": true,
             "type": "string",
@@ -13800,6 +14715,7 @@
           "title",
           "body",
           "pinned",
+          "secret",
           "createdById",
           "updatedById",
           "createdAt",
@@ -13824,11 +14740,52 @@
           "pinned": {
             "default": false,
             "type": "boolean"
+          },
+          "secret": {
+            "default": false,
+            "type": "boolean"
           }
         },
         "required": [
           "title"
         ]
+      },
+      "NoteRevisionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "version": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "editedById": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid"
+          },
+          "savedAt": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "title",
+          "body",
+          "version",
+          "editedById",
+          "savedAt"
+        ],
+        "additionalProperties": false
       },
       "NotificationListDto": {
         "type": "object",
@@ -15085,6 +16042,19 @@
           "displayName"
         ]
       },
+      "RememberBarcodeInput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
       "RenamePasskeyInput": {
         "type": "object",
         "properties": {
@@ -15251,6 +16221,169 @@
           "token",
           "password"
         ]
+      },
+      "RestoreNoteRevisionInput": {
+        "type": "object",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "version"
+        ]
+      },
+      "RestoreResultDto": {
+        "type": "object",
+        "properties": {
+          "household": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "type": "string"
+              },
+              "timezone": {
+                "type": "string"
+              },
+              "members": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "userId": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "displayName": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "OWNER",
+                        "MEMBER"
+                      ]
+                    },
+                    "color": {
+                      "type": "string",
+                      "enum": [
+                        "sage",
+                        "ocean",
+                        "amber",
+                        "plum",
+                        "clay",
+                        "slate"
+                      ]
+                    },
+                    "absentUntil": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "pending": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "userId",
+                    "displayName",
+                    "role",
+                    "color"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "timezone",
+              "members"
+            ],
+            "additionalProperties": false
+          },
+          "invitations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "memberId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "token": {
+                  "type": "string"
+                },
+                "expiresAt": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "memberId",
+                "displayName",
+                "email",
+                "token",
+                "expiresAt"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "counts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          }
+        },
+        "required": [
+          "household",
+          "invitations",
+          "counts"
+        ],
+        "additionalProperties": false
+      },
+      "RevealNoteInput": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "confirm": {
+            "type": "boolean"
+          }
+        }
+      },
+      "RevealedNoteDto": {
+        "type": "object",
+        "properties": {
+          "body": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "body"
+        ],
+        "additionalProperties": false
       },
       "SearchResultsDto": {
         "type": "object",
@@ -16938,6 +18071,9 @@
             "maxLength": 4000
           },
           "pinned": {
+            "type": "boolean"
+          },
+          "secret": {
             "type": "boolean"
           },
           "version": {

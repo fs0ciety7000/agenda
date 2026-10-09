@@ -30,12 +30,13 @@ function refreshSession(): Promise<boolean> {
   return refreshing;
 }
 
+/** `blob` : réponse binaire (archive, fichier) rendue telle quelle ; les erreurs restent en JSON. */
 export async function api<T>(
   path: string,
-  init: RequestInit & { json?: unknown } = {},
+  init: RequestInit & { json?: unknown; blob?: boolean } = {},
   retry = true,
 ): Promise<T> {
-  const { json, headers, ...rest } = init;
+  const { json, headers, blob, ...rest } = init;
   let res: Response;
   try {
     res = await fetch(path, {
@@ -56,6 +57,7 @@ export async function api<T>(
     if (await refreshSession()) return api<T>(path, init, false);
   }
   if (res.status === 204) return undefined as T;
+  if (blob && res.ok) return (await res.blob()) as T;
 
   const body: unknown = await res.json().catch(() => null);
   if (!res.ok) {

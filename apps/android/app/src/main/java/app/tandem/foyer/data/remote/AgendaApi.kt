@@ -110,6 +110,32 @@ interface AgendaApi {
     @DELETE("v1/households/{h}/shopping/{id}")
     suspend fun deleteShopping(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
 
+    @Multipart
+    @POST("v1/households/{h}/shopping-barcodes/scan")
+    suspend fun scanBarcode(@Path("h") householdId: String, @Part file: MultipartBody.Part): Response<BarcodeLookupDto>
+
+    @GET("v1/households/{h}/shopping-barcodes/{code}")
+    suspend fun lookupBarcode(@Path("h") householdId: String, @Path("code") code: String): Response<BarcodeLookupDto>
+
+    @PUT("v1/households/{h}/shopping-barcodes/{code}")
+    suspend fun rememberBarcode(
+        @Path("h") householdId: String,
+        @Path("code") code: String,
+        @Body body: RememberBarcodeBody,
+    ): Response<BarcodeLookupDto>
+
+    @GET("v1/households/{h}/shopping-guest")
+    suspend fun guestShoppingLink(@Path("h") householdId: String): Response<GuestShoppingLinkDto>
+
+    @POST("v1/households/{h}/shopping-guest")
+    suspend fun createGuestShoppingLink(
+        @Path("h") householdId: String,
+        @Body body: GuestShoppingLinkBody,
+    ): Response<GuestShoppingLinkDto>
+
+    @DELETE("v1/households/{h}/shopping-guest")
+    suspend fun revokeGuestShoppingLink(@Path("h") householdId: String): Response<Unit>
+
     @GET("v1/households/{h}/shopping/suggestions")
     suspend fun shoppingSuggestions(@Path("h") householdId: String): Response<List<ShoppingSuggestionDto>>
 
@@ -239,6 +265,25 @@ interface AgendaApi {
 
     @PATCH("v1/households/{h}/notes/{id}")
     suspend fun updateNote(@Path("h") householdId: String, @Path("id") id: String, @Body body: UpdateNoteBody): Response<NoteDto>
+
+    /** Sauvegarde du foyer (.zip) ; avec un jeton, la vérification se fait sur l'appareil. */
+    @Streaming
+    @POST("v1/households/{h}/backup")
+    suspend fun backup(@Path("h") householdId: String, @Body body: RevealNoteBody): Response<ResponseBody>
+
+    @POST("v1/households/{h}/notes/{id}/reveal")
+    suspend fun revealNote(@Path("h") householdId: String, @Path("id") id: String, @Body body: RevealNoteBody): Response<RevealedNoteDto>
+
+    @GET("v1/households/{h}/notes/{id}/revisions")
+    suspend fun noteRevisions(@Path("h") householdId: String, @Path("id") id: String): Response<List<NoteRevisionDto>>
+
+    @POST("v1/households/{h}/notes/{id}/revisions/{revisionId}/restore")
+    suspend fun restoreNote(
+        @Path("h") householdId: String,
+        @Path("id") id: String,
+        @Path("revisionId") revisionId: String,
+        @Body body: RestoreNoteBody,
+    ): Response<NoteDto>
 
     @DELETE("v1/households/{h}/notes/{id}")
     suspend fun deleteNote(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>

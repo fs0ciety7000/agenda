@@ -91,7 +91,7 @@ Courses et repas :
 Dépenses :
 
 - [x] **Saisie du ticket par photo** (lecture du montant et de la date) (L) ⚙️🌐🤖 (#92) : Tesseract sur le serveur, photo non conservée
-  - [ ] Lecture moins bonne sur un ticket froissé ou très long : redresser et recadrer la photo avant lecture (M), à prioriser ensemble
+  - [x] Lecture moins bonne sur un ticket froissé ou très long : redresser et recadrer la photo avant lecture (M) → lot 6 (#93)
 - [x] **Budget par catégorie** en plus du budget global (M) ⚙️🌐🤖 (#89)
   - [x] Android : régler les budgets par catégorie dans l'app (S) 🤖 (#92)
 - [ ] **Rapprochement mensuel** : « ce mois-ci, chacun a payé… », envoyé le 1er (S)
@@ -107,8 +107,8 @@ Vie à deux :
 Fiabilité et sécurité :
 
 - [x] **Journal des connexions** (appareils, dernière activité, déconnexion à distance) (M) ⚙️🌐🤖 (#89)
-- [ ] **Sauvegarde exportable** du foyer (JSON) et restauration sur une autre instance (M)
-- [ ] **Budget de performance en CI** (Lighthouse ≥ 90 sur `/login` et `/`) (S)
+- [ ] **Sauvegarde exportable** du foyer (JSON) et restauration sur une autre instance (M) → lot 6
+- [x] **Budget de performance en CI** (Lighthouse ≥ 90 sur `/login` et `/`) (S) → lot 6 (#93)
 - [x] **Déconnecter les autres appareils d'un coup** (demande de l'utilisateur) (S) ⚙️🌐🤖 (#90)
 - [x] **Avertissement Google Play (0.3.58)** : `androidx.fragment` 1.1.0, tiré par Firebase Messaging, signalé obsolète ; forcé en 1.8.9 (S) 🤖 (#89)
 - [x] **Avertissements Google Play bord à bord (0.3.58)** : les API obsolètes d'Android 15 (`Window.setStatusBarColor`, `setNavigationBarColor`, `layoutInDisplayCutoutMode`) venaient d'`enableEdgeToEdge()` (`androidx.activity`, classes `EdgeToEdgeApi26/29/35`) ; remplacé par un thème (barres transparentes, mode encoche) et `WindowCompat` avant Android 15 ; plus aucun appel dans la version Play minifiée (S) 🤖 (#91)
@@ -145,6 +145,69 @@ Découvert par l'audit du 9 octobre (validé par l'utilisateur) :
 
 Idées proposées, non retenues pour l'instant : idées cadeaux liées aux dates, échéances de
 contrats, planning du dimanche, lien « baby-sitter », packs de départ.
+
+### Lot 6 — Qualité, notes, invités, courses, Assistant (validé le 9 octobre)
+
+Validé par l'utilisateur, du plus simple au plus gros :
+
+- [x] **Budget de performance en CI** : Lighthouse mobile (médiane de trois mesures) sur
+  `/login` et `/` (S) ⚙️🌐 (#93) : `/login` 88 → 95 (Zod chargé à la demande), `/` 80 → 87
+  (constantes des contrats sans Zod, formulaire de tâche chargé à l'ouverture) ; seuils 90 et 85,
+  accessibilité 95 (mesurée à 100)
+  - Suite validée : accueil ≥ 90 (point 4 des suites, plus bas) ; le reste du temps de blocage
+    vient du montage de l'app après le chargement de la session dans le navigateur
+- [x] **Historique des versions d'une note** : revenir à une version précédente si l'autre l'a
+  écrasée (S) ⚙️🌐🤖 (#93) : 20 versions par note, restauration elle-même versionnée
+- [x] **Meilleure lecture des tickets** : redresser et recadrer la photo avant lecture (M) ⚙️ (#93) :
+  orientation EXIF, quart de tour (détection d'orientation, en second recours), angle jusqu'à 10°,
+  recadrage sur le papier, contraste et taille ; quatre photos difficiles en test
+- [x] **Coffre pour les notes sensibles** (#93) : contenu masqué partout (liste, recherche,
+  historique, copies hors ligne ; l'export RGPD le garde, la loi l'impose) et affiché après empreinte ou code du téléphone, ou mot de passe sur le
+  site ; pas de chiffrement de bout en bout (choix de l'utilisateur) (M) ⚙️🌐🤖
+- [x] **Liste pour un invité** : lien en lecture seule, sans compte, révocable (baby-sitter,
+  quelqu'un qui garde la maison) (M) ⚙️🌐🤖 (#93) : un lien par foyer, l'invité ne voit que les
+  articles (ni membres ni dates), page rechargée toutes les 30 s
+  - Suite validée : lien qui expire tout seul (point 1 ci-dessous)
+- [x] **Scanner un code-barres** pour ajouter un article : nom cherché dans Open Food Facts par
+  le serveur, puis mémorisé pour le foyer (M) ⚙️🌐🤖 (#93) : photo lue par zbar sur le serveur
+  (choix de l'utilisateur : la caméra en direct demandait ML Kit, invérifiable ici), aussi sur le
+  site ; code tapé à la main en secours ; nom corrigé retenu pour le foyer
+  - Suite validée : scan en direct à la caméra (point 3 ci-dessous)
+- [x] **Sauvegarde exportable** du foyer et restauration sur une autre instance (M) ⚙️🌐 (#93) :
+  archive .zip (JSON + fichiers, choix de l'utilisateur), mot de passe demandé (notes sensibles),
+  éléments personnels de l'autre exclus ; restauration = nouveau foyer, identifiants refaits,
+  membres retrouvés par leur adresse (choix de l'utilisateur) ; sur le site seulement
+  - Suite validée : télécharger la sauvegarde depuis l'app Android (point 2 ci-dessous)
+- [ ] **« Ok Google, ajoute du lait dans Tandem »** : intégration à l'Assistant Google (M) 🤖 —
+  gardé pour plus tard par l'utilisateur (invérifiable ici, Assistant remplacé par Gemini)
+
+Suites validées le 9 octobre, dans cet ordre (du plus simple au plus gros) :
+
+1. [x] Lien invité qui expire tout seul (S) ⚙️🌐🤖 (#93) : 1 jour, 1 semaine (défaut), 1 mois ou
+   sans limite ; la page de l'invité ne répond plus après l'échéance
+2. [x] Android : télécharger la sauvegarde du foyer depuis l'app (S) 🤖 (#93) : empreinte ou code
+   du téléphone, enregistrée via le sélecteur de fichiers du système
+3. [x] Code-barres en direct à la caméra (Google Code Scanner, services Play) (S) 🤖 (#93) :
+   compilé et vérifié par la CI seulement (dépôt de Google injoignable ici, version vide en local) ;
+   à essayer sur un téléphone
+4. [x] Accueil ≥ 90 au budget Lighthouse (M) 🌐 (#93) : 87 → 92 (médiane ; CI 88 avant). La
+   mesure a montré que le temps de blocage venait d'un seul long rendu de toute l'app, pas de la
+   session : la page se monte en différé (`useDeferredValue`), rendue par petits morceaux ; seuil
+   relevé à 90. Préparer la session côté serveur n'a donc pas été nécessaire
+
+Découvert pendant le lot 6 :
+
+- [x] Web : les champs des liens iCal (Réglages) et d'invitation (accueil) s'écrasaient sur téléphone (colonne flexible) (S) 🌐 (#93)
+- [ ] Web : un membre qui rejoint le foyer pendant que la page est ouverte apparaît comme « un
+  ancien membre » (notes, historique) jusqu'au rechargement ; rafraîchir la session à son
+  arrivée (S) 🌐
+
+Retiré du lot par l'utilisateur, gardé pour plus tard : **rappel lié à un lieu** (la
+géolocalisation en arrière-plan demande une déclaration à Google Play).
+
+Idées proposées le 9 octobre, non retenues pour l'instant : « Je m'en occupe » en un geste, liste
+d'envies, soirées libres, plusieurs magasins, idées de menus, cagnotte commune, échéances des
+abonnements, import d'un relevé bancaire, montre Wear OS, double authentification TOTP.
 
 ### Propositions de design
 

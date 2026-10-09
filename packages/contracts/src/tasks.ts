@@ -116,8 +116,7 @@ export const AttachmentDto = z.object({
 export type AttachmentDto = z.infer<typeof AttachmentDto>;
 
 /** Limites des pièces jointes (octets). */
-export const ATTACHMENT_MAX_BYTES = 10 * 1024 * 1024;
-export const HOUSEHOLD_ATTACHMENTS_MAX_BYTES = 200 * 1024 * 1024;
+export { ATTACHMENT_MAX_BYTES, HOUSEHOLD_ATTACHMENTS_MAX_BYTES } from './constants';
 
 export const OccurrenceDto = z.object({
   id: z.uuid(),

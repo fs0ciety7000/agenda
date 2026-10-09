@@ -1,9 +1,9 @@
-Lire un ticket : montant et date lus sur la photo.
+Courses : code-barres en direct ; lien invité qui se coupe seul.
+• Sauvegarde du foyer à télécharger ; notes sensibles protégées.
+• Notes : versions précédentes, restaurables.
+• Lire un ticket : montant et date lus sur la photo.
 • Partager vers Tandem : un lien devient tâche, note ou courses.
 • Tuile « Ajouter une tâche » dans les réglages rapides.
-• Budgets par catégorie dans l'app ; « Annuler » sur les notes.
+• Budgets par catégorie ; « Annuler » sur les notes.
 • Tiroir « Plus » : Dépenses, Notes, Dates…
-• Dépenses : qui doit combien, remboursement en un geste.
-• Notes partagées ; dates importantes avec rappel.
-• Notes et dates lisibles hors ligne.
-• Appareils connectés : déconnexion à distance.
+• Dépenses : qui doit combien.

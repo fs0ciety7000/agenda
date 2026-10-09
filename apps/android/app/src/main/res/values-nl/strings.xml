@@ -585,6 +585,26 @@
     <string name="notes_created">Notitie toegevoegd</string>
     <string name="notes_saved">Notitie opgeslagen</string>
     <string name="notes_deleted">“%1$s” verwijderd</string>
+    <string name="notes_field_secret">Gevoelige notitie</string>
+    <string name="notes_secret_hint">Verborgen in de lijst en bij zoeken; zichtbaar na je vingerafdruk of telefooncode.</string>
+    <string name="notes_secret_locked">Beschermde inhoud</string>
+    <string name="notes_reveal">Tonen</string>
+    <string name="notes_reveal_one">„%1$s” tonen</string>
+    <string name="notes_hide">Verbergen</string>
+    <string name="notes_hide_one">„%1$s” verbergen</string>
+    <string name="notes_reveal_to_edit">Tonen om te wijzigen</string>
+    <string name="notes_unlock_title">Gevoelige notitie</string>
+    <string name="notes_unlock_subtitle">Bevestig dat jij het bent om de inhoud te tonen</string>
+    <string name="notes_history">Eerdere versies</string>
+    <string name="notes_history_expanded">uitgevouwen</string>
+    <string name="notes_history_collapsed">ingevouwen</string>
+    <string name="notes_history_loading">Laden…</string>
+    <string name="notes_history_error">Eerdere versies laden lukte niet.</string>
+    <string name="notes_history_empty">Geen eerdere versie: de notitie is nog niet gewijzigd.</string>
+    <string name="notes_history_by">%1$s · %2$s</string>
+    <string name="notes_history_no_text">(geen tekst)</string>
+    <string name="notes_restore">Deze versie terugzetten</string>
+    <string name="notes_restored">Versie van %1$s teruggezet.</string>
     <string name="notes_copied">“%1$s” gekopieerd</string>
     <string name="notes_failed">Opslaan lukt niet. Controleer je verbinding.</string>
     <string name="notes_pin">“%1$s” vastzetten</string>
@@ -690,4 +710,70 @@
     <string name="search_done">Gedaan</string>
     <string name="search_in_cart">In het mandje</string>
     <string name="search_to_buy">Te kopen</string>
+
+    <!-- Lien invité vers les courses -->
+    <string name="guest_link_share">Delen met een gast</string>
+    <string name="guest_link_active">Gastlink actief</string>
+    <string name="guest_link_title">Link voor een gast</string>
+    <string name="guest_link_intro">Voor de babysit of iemand die op het huis past: de link opent de boodschappenlijst, alleen lezen, zonder account. Je taken en namen staan er niet op.</string>
+    <string name="guest_link_create">Link maken</string>
+    <string name="guest_link_send">Versturen</string>
+    <string name="guest_link_copy">Kopiëren</string>
+    <string name="guest_link_copied">Link gekopieerd</string>
+    <string name="guest_link_send_text">De boodschappenlijst van het huishouden %1$s</string>
+    <string name="guest_link_created_by">Gemaakt op %1$s door %2$s</string>
+    <string name="guest_link_created_on">Gemaakt op %1$s</string>
+    <string name="guest_link_private">Iedereen met deze link ziet de lijst. Zet hem uit als de gast hem niet meer nodig heeft.</string>
+    <string name="guest_link_regenerate">Nieuwe link</string>
+    <string name="guest_link_confirm_regenerate">Een nieuwe link maken? De oude werkt dan niet meer.</string>
+    <string name="guest_link_revoke">Link uitzetten</string>
+    <string name="guest_link_confirm_revoke">Link uitzetten? De gast ziet de lijst dan niet meer.</string>
+    <string name="guest_link_loading">Laden…</string>
+    <string name="guest_link_offline">Voor het delen van de lijst is een verbinding nodig.</string>
+    <string name="guest_link_error">De link kon niet worden bijgewerkt. Probeer het opnieuw.</string>
+    <string name="guest_link_duration">De link gaat vanzelf uit na</string>
+    <string name="guest_link_duration_next">Duur van de volgende link (‘Nieuwe link’)</string>
+    <string name="guest_link_day1">1 dag</string>
+    <string name="guest_link_day7">1 week</string>
+    <string name="guest_link_day30">1 maand</string>
+    <string name="guest_link_no_limit">Zonder limiet</string>
+    <string name="guest_link_expires_on">Gaat vanzelf uit op %1$s.</string>
+    <string name="guest_link_no_expiry">Zonder limiet: vergeet hem niet uit te zetten als de gast hem niet meer nodig heeft.</string>
+
+    <!-- Code-barres des courses -->
+    <string name="barcode_open">Barcode scannen</string>
+    <string name="barcode_title">Toevoegen met barcode</string>
+    <string name="barcode_intro">Maak een foto van de barcode, van dichtbij en recht. De foto wordt op onze server gelezen en daarna gewist.</string>
+    <string name="barcode_live">Live scannen</string>
+    <string name="barcode_live_unavailable">Live scannen kan niet op deze telefoon. Maak een foto of typ de cijfers.</string>
+    <string name="barcode_photo">Foto maken</string>
+    <string name="barcode_pick">Foto kiezen</string>
+    <string name="barcode_reading">Lezen…</string>
+    <string name="barcode_code">Of typ de cijfers van de code</string>
+    <string name="barcode_search">Zoeken</string>
+    <string name="barcode_invalid">Deze code is niet geldig: controleer de cijfers.</string>
+    <string name="barcode_not_read">Geen barcode gevonden. Maak de foto van dichterbij en recht, of typ de cijfers.</string>
+    <string name="barcode_code_label">Code %1$s</string>
+    <string name="barcode_name">Naam van het artikel</string>
+    <string name="barcode_from_household">Al bekend in het huishouden.</string>
+    <string name="barcode_from_off">Gevonden in Open Food Facts. Pas de naam aan als het moet: het huishouden onthoudt hem.</string>
+    <string name="barcode_unknown">Onbekend product. Geef het een naam: het huishouden onthoudt hem de volgende keer.</string>
+    <string name="barcode_add">Aan de lijst toevoegen</string>
+    <string name="barcode_again">Andere code</string>
+    <string name="barcode_added">‘%1$s’ toegevoegd aan de lijst</string>
+    <string name="barcode_failed">Barcodes lezen lukt nu even niet. Typ de cijfers of de naam van het artikel.</string>
+    <string name="barcode_offline">Voor het scannen van een barcode is een verbinding nodig.</string>
+
+    <!-- Sauvegarde du foyer -->
+    <string name="backup_title">Back-up van het huishouden</string>
+    <string name="backup_intro">Een .zip-archief van het hele huishouden: taken en herhalingen, boodschappen, maaltijden, uitgaven en kassatickets, notities (ook gevoelige), belangrijke data en bijlagen. Bewaar het op een veilige plek, of zet het terug op een andere Tandem-instantie (via de website).</string>
+    <string name="backup_excluded">Niet inbegrepen: de persoonlijke taken en uitgaven van de ander, de activiteitengeschiedenis, meldingen, geheime links en Google Agenda.</string>
+    <string name="backup_download">Back-up downloaden</string>
+    <string name="backup_preparing">Voorbereiden…</string>
+    <string name="backup_done">Back-up opgeslagen.</string>
+    <string name="backup_failed">De back-up kon niet worden opgeslagen. Probeer het opnieuw.</string>
+    <string name="backup_offline">Voor het downloaden van de back-up is een verbinding nodig.</string>
+    <string name="backup_private">Hou dit bestand voor jezelf: het bevat de gegevens van het huishouden leesbaar, gevoelige notities inbegrepen.</string>
+    <string name="backup_unlock_title">Back-up downloaden</string>
+    <string name="backup_unlock_subtitle">Hij bevat de tekst van gevoelige notities</string>
 </resources>

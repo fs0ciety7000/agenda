@@ -1,33 +1,29 @@
 'use client';
 
-import {
-  LoginInput,
-  RegisterInput,
-  type AuthResponse,
-  type PasskeyOptionsDto,
-} from '@agenda/contracts';
+import type { AuthResponse, PasskeyOptionsDto } from '@agenda/contracts';
 import {
   browserSupportsWebAuthn,
   startAuthentication,
   type PublicKeyCredentialRequestOptionsJSON,
 } from '@simplewebauthn/browser';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { Fingerprint } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import type { z } from 'zod';
+import { useForm, type Resolver } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
 import { api, errorKey } from '@/lib/api';
 import { useProviders } from '@/lib/queries';
+import type { AuthFormValues } from '@/lib/auth-schemas';
 import { clearOfflineData } from '@/lib/offline';
 
-const RegisterForm = RegisterInput.pick({ email: true, password: true, displayName: true });
-type FormValues = { email: string; password: string; displayName?: string };
+type FormValues = AuthFormValues;
+
+/** Zod et les contrats ne se chargent qu'au premier usage du formulaire : la page s'affiche vite. */
+const loadSchemas = () => import('@/lib/auth-schemas');
 
 /** Évite les redirections ouvertes : seules les destinations internes sont suivies. */
 const KNOWN_REDIRECT_ERRORS = [
@@ -80,12 +76,13 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
       : null,
   );
 
-  const schema: z.ZodType<FormValues, FormValues> = mode === 'login' ? LoginInput : RegisterForm;
+  const resolver: Resolver<FormValues> = async (values, context, options) =>
+    (await loadSchemas()).authResolver(mode)(values, context, options);
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
-  } = useForm<FormValues>({ resolver: zodResolver(schema) });
+  } = useForm<FormValues>({ resolver });
 
   const onSubmit = handleSubmit(async (values) => {
     setServerError(null);
@@ -106,7 +103,13 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
 
   const isLogin = mode === 'login';
   return (
-    <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
+    // Premier champ touché : la validation se charge pendant la saisie.
+    <form
+      onSubmit={onSubmit}
+      onFocus={() => void loadSchemas()}
+      noValidate
+      className="flex flex-col gap-5"
+    >
       <div className="flex flex-col gap-1.5">
         <h1 className="text-2xl font-semibold tracking-tight">
           {t(isLogin ? 'auth.loginTitle' : 'auth.registerTitle')}

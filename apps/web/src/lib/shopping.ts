@@ -1,6 +1,12 @@
 'use client';
 
-import type { Aisle, ShoppingItemDto, ShoppingSuggestionDto } from '@agenda/contracts';
+import type {
+  Aisle,
+  BarcodeLookupDto,
+  GuestShoppingLinkDto,
+  ShoppingItemDto,
+  ShoppingSuggestionDto,
+} from '@agenda/contracts';
 import { guessAisle, parseShoppingText } from '@agenda/domain';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from './api';
@@ -27,6 +33,60 @@ export const useShoppingSuggestions = (hid: string) =>
     queryKey: [...shoppingKey(hid), 'suggestions'],
     queryFn: () => api<ShoppingSuggestionDto[]>(`/v1/households/${hid}/shopping/suggestions`),
   });
+
+/** Durée d'un lien invité (jours) ; null = sans limite. */
+export type GuestLinkDays = 1 | 7 | 30 | null;
+
+/** Lien invité (lecture seule) : un par foyer ; rechargé avec la liste (sujet temps réel `shopping`). */
+export function useGuestShoppingLink(hid: string) {
+  const qc = useQueryClient();
+  const key = [...shoppingKey(hid), 'guest'];
+  const base = `/v1/households/${hid}/shopping-guest`;
+  const link = useQuery({ queryKey: key, queryFn: () => api<GuestShoppingLinkDto>(base) });
+  const regenerate = useMutation({
+    mutationFn: (expiresInDays: GuestLinkDays) =>
+      api<GuestShoppingLinkDto>(base, { method: 'POST', json: { expiresInDays } }),
+    onSuccess: (data) => qc.setQueryData(key, data),
+  });
+  const revoke = useMutation({
+    mutationFn: () => api<void>(base, { method: 'DELETE' }),
+    onSuccess: () =>
+      qc.setQueryData<GuestShoppingLinkDto>(key, {
+        url: null,
+        createdAt: null,
+        createdById: null,
+        expiresAt: null,
+      }),
+  });
+  return { link, regenerate, revoke };
+}
+
+/**
+ * Code-barres : photo lue sur le serveur (rien n'est enregistré), ou code tapé à la main ; le nom
+ * vient de la mémoire du foyer, sinon d'Open Food Facts. `remember` retient un nom pour le foyer.
+ */
+export function useBarcodeActions(hid: string) {
+  const base = `/v1/households/${hid}/shopping-barcodes`;
+  return {
+    scan: useMutation({
+      mutationFn: (file: File) => {
+        const body = new FormData();
+        body.append('file', file);
+        return api<BarcodeLookupDto>(`${base}/scan`, { method: 'POST', body });
+      },
+    }),
+    lookup: useMutation({
+      mutationFn: (code: string) => api<BarcodeLookupDto>(`${base}/${encodeURIComponent(code)}`),
+    }),
+    remember: useMutation({
+      mutationFn: ({ code, name }: { code: string; name: string }) =>
+        api<BarcodeLookupDto>(`${base}/${encodeURIComponent(code)}`, {
+          method: 'PUT',
+          json: { name },
+        }),
+    }),
+  };
+}
 
 export const useShopping = (hid: string) =>
   useQuery({

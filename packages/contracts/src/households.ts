@@ -46,6 +46,8 @@ export const HouseholdMemberDto = z.object({
   color: MemberColor,
   /** Mode absence en cours : dernier jour d'absence (inclus), sinon null. */
   absentUntil: z.string().nullish(),
+  /** Foyer restauré : membre qui n'a pas encore rejoint cette instance (invitation envoyée). */
+  pending: z.boolean().optional(),
 });
 export type HouseholdMemberDto = z.infer<typeof HouseholdMemberDto>;
 

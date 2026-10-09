@@ -599,6 +599,26 @@
     <string name="notes_created">Note ajoutée</string>
     <string name="notes_saved">Note enregistrée</string>
     <string name="notes_deleted">« %1$s » supprimée</string>
+    <string name="notes_field_secret">Note sensible</string>
+    <string name="notes_secret_hint">Masquée dans la liste et la recherche ; affichée après l\'empreinte ou le code du téléphone.</string>
+    <string name="notes_secret_locked">Contenu protégé</string>
+    <string name="notes_reveal">Afficher</string>
+    <string name="notes_reveal_one">Afficher « %1$s »</string>
+    <string name="notes_hide">Masquer</string>
+    <string name="notes_hide_one">Masquer « %1$s »</string>
+    <string name="notes_reveal_to_edit">Afficher pour modifier</string>
+    <string name="notes_unlock_title">Note sensible</string>
+    <string name="notes_unlock_subtitle">Confirmez que c\'est vous pour afficher le contenu</string>
+    <string name="notes_history">Versions précédentes</string>
+    <string name="notes_history_expanded">développé</string>
+    <string name="notes_history_collapsed">replié</string>
+    <string name="notes_history_loading">Chargement…</string>
+    <string name="notes_history_error">Impossible de charger les versions précédentes.</string>
+    <string name="notes_history_empty">Aucune version précédente : la note n\'a pas encore été modifiée.</string>
+    <string name="notes_history_by">%1$s · %2$s</string>
+    <string name="notes_history_no_text">(sans texte)</string>
+    <string name="notes_restore">Restaurer cette version</string>
+    <string name="notes_restored">Version du %1$s restaurée.</string>
     <string name="notes_copied">« %1$s » copiée</string>
     <string name="notes_failed">Enregistrement impossible. Vérifiez la connexion.</string>
     <string name="notes_pin">Épingler « %1$s »</string>
@@ -709,4 +729,70 @@
     <string name="search_done">Faite</string>
     <string name="search_in_cart">Dans le panier</string>
     <string name="search_to_buy">À acheter</string>
+
+    <!-- Lien invité vers les courses -->
+    <string name="guest_link_share">Partager avec un invité</string>
+    <string name="guest_link_active">Lien invité actif</string>
+    <string name="guest_link_title">Lien pour un invité</string>
+    <string name="guest_link_intro">Pour la baby-sitter ou quelqu\'un qui garde la maison : le lien ouvre la liste de courses en lecture seule, sans compte. Ni vos tâches ni vos noms n\'y apparaissent.</string>
+    <string name="guest_link_create">Créer le lien</string>
+    <string name="guest_link_send">Envoyer</string>
+    <string name="guest_link_copy">Copier</string>
+    <string name="guest_link_copied">Lien copié</string>
+    <string name="guest_link_send_text">La liste de courses du foyer %1$s</string>
+    <string name="guest_link_created_by">Créé le %1$s par %2$s</string>
+    <string name="guest_link_created_on">Créé le %1$s</string>
+    <string name="guest_link_private">Toute personne qui a ce lien voit la liste. Coupez-le quand l\'invité n\'en a plus besoin.</string>
+    <string name="guest_link_regenerate">Nouveau lien</string>
+    <string name="guest_link_confirm_regenerate">Créer un nouveau lien ? L\'ancien cessera de fonctionner.</string>
+    <string name="guest_link_revoke">Couper le lien</string>
+    <string name="guest_link_confirm_revoke">Couper le lien ? L\'invité ne verra plus la liste.</string>
+    <string name="guest_link_loading">Chargement…</string>
+    <string name="guest_link_offline">Partager la liste demande une connexion.</string>
+    <string name="guest_link_error">Le lien n\'a pas pu être mis à jour. Réessayez.</string>
+    <string name="guest_link_duration">Le lien se coupe tout seul après</string>
+    <string name="guest_link_duration_next">Durée du prochain lien (« Nouveau lien »)</string>
+    <string name="guest_link_day1">1 jour</string>
+    <string name="guest_link_day7">1 semaine</string>
+    <string name="guest_link_day30">1 mois</string>
+    <string name="guest_link_no_limit">Sans limite</string>
+    <string name="guest_link_expires_on">Se coupe tout seul le %1$s.</string>
+    <string name="guest_link_no_expiry">Sans limite : pensez à le couper quand l\'invité n\'en a plus besoin.</string>
+
+    <!-- Code-barres des courses -->
+    <string name="barcode_open">Scanner un code-barres</string>
+    <string name="barcode_title">Ajouter par code-barres</string>
+    <string name="barcode_intro">Prenez le code-barres en photo, de près et bien à plat. La photo est lue sur notre serveur, puis effacée.</string>
+    <string name="barcode_live">Scanner en direct</string>
+    <string name="barcode_live_unavailable">Le scanner en direct n\'est pas disponible sur ce téléphone. Prenez une photo ou tapez les chiffres.</string>
+    <string name="barcode_photo">Prendre une photo</string>
+    <string name="barcode_pick">Choisir une photo</string>
+    <string name="barcode_reading">Lecture…</string>
+    <string name="barcode_code">Ou tapez les chiffres du code</string>
+    <string name="barcode_search">Chercher</string>
+    <string name="barcode_invalid">Ce code n\'est pas valide : vérifiez les chiffres.</string>
+    <string name="barcode_not_read">Aucun code-barres lu. Reprenez la photo de plus près, bien à plat, ou tapez les chiffres.</string>
+    <string name="barcode_code_label">Code %1$s</string>
+    <string name="barcode_name">Nom de l\'article</string>
+    <string name="barcode_from_household">Déjà connu du foyer.</string>
+    <string name="barcode_from_off">Trouvé dans Open Food Facts. Corrigez le nom si besoin : le foyer s\'en souviendra.</string>
+    <string name="barcode_unknown">Produit inconnu. Donnez-lui un nom : le foyer s\'en souviendra la prochaine fois.</string>
+    <string name="barcode_add">Ajouter à la liste</string>
+    <string name="barcode_again">Autre code</string>
+    <string name="barcode_added">« %1$s » ajouté à la liste</string>
+    <string name="barcode_failed">La lecture des codes-barres est indisponible pour le moment. Tapez les chiffres ou le nom de l\'article.</string>
+    <string name="barcode_offline">Scanner un code-barres demande une connexion.</string>
+
+    <!-- Sauvegarde du foyer -->
+    <string name="backup_title">Sauvegarde du foyer</string>
+    <string name="backup_intro">Une archive .zip de tout le foyer : tâches et répétitions, courses, menus, dépenses et tickets, notes (sensibles comprises), dates importantes et pièces jointes. À garder en lieu sûr, ou à restaurer sur une autre instance de Tandem (depuis le site).</string>
+    <string name="backup_excluded">N\'y sont pas : les tâches et dépenses personnelles de l\'autre, l\'historique des actions, les notifications, les liens secrets et Google Agenda.</string>
+    <string name="backup_download">Télécharger la sauvegarde</string>
+    <string name="backup_preparing">Préparation…</string>
+    <string name="backup_done">Sauvegarde enregistrée.</string>
+    <string name="backup_failed">La sauvegarde n\'a pas pu être enregistrée. Réessayez.</string>
+    <string name="backup_offline">Télécharger la sauvegarde demande une connexion.</string>
+    <string name="backup_private">Gardez ce fichier pour vous : il contient les données du foyer en clair, notes sensibles comprises.</string>
+    <string name="backup_unlock_title">Télécharger la sauvegarde</string>
+    <string name="backup_unlock_subtitle">Elle contient le texte des notes sensibles</string>
 </resources>

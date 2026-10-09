@@ -12,7 +12,7 @@ import type {
   SettleInput,
   UpdateExpenseInput,
 } from '@agenda/contracts';
-import { EXPENSE_CURRENCY } from '@agenda/contracts';
+import { EXPENSE_CURRENCY } from '@agenda/contracts/constants';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useFormatter } from 'next-intl';
 import { api } from './api';

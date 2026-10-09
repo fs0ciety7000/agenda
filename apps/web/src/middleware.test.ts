@@ -26,6 +26,8 @@ describe('middleware : accueil des visiteurs', () => {
     // Connecté : l'app, pas de redirection.
     expect(middleware(req('/', true)).headers.get('location')).toBeNull();
     expect(middleware(req('/login')).headers.get('location')).toBeNull();
+    // Lien invité vers les courses : sans compte.
+    expect(middleware(req('/guest/0123abcd')).headers.get('location')).toBeNull();
   });
 
   it('sans site vitrine : « / » sans session va à /login', async () => {

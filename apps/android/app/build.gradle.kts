@@ -5,6 +5,9 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+/** Scanner de codes-barres de Google (cf. src/codeScanner) ; `false` : version vide, hors ligne. */
+val codeScanner = providers.gradleProperty("tandem.codeScanner").map { it != "false" }.getOrElse(true)
+
 android {
     // Google Play : toutes les langues dans l'app installée, pour pouvoir changer de langue
     // dans les Réglages sans téléchargement (les textes pèsent quelques Ko).
@@ -100,6 +103,9 @@ android {
     // Schémas Room exportés, lus par le test de migration (MigrationTestHelper). Robolectric ne voit
     // que les assets de la variante testée : ajoutés à la variante debug seulement (pas à la release).
     sourceSets.getByName("debug").assets.srcDir("$projectDir/schemas")
+    // Code-barres en direct (scanner de Google Play services) : `-Ptandem.codeScanner=false` le
+    // remplace par une version vide, pour compiler sans accès au dépôt Maven de Google.
+    sourceSets.getByName("main").kotlin.srcDir(if (codeScanner) "src/codeScanner/java" else "src/noCodeScanner/java")
     // Tests sur émulateur (MigrationTestHelper lit les schémas dans l'APK de test).
     sourceSets.getByName("androidTest").assets.srcDir("$projectDir/schemas")
 
@@ -159,6 +165,7 @@ dependencies {
     // Remplace fragment 1.1.0 (dépendance de play-services-base), signalée obsolète par Google Play.
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.glance.material3)
+    if (codeScanner) implementation(libs.play.services.code.scanner)
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)

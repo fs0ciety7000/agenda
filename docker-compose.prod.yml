@@ -79,6 +79,8 @@ services:
       INBOUND_EMAIL_ADDRESS: ${INBOUND_EMAIL_ADDRESS:-}
       RESEND_WEBHOOK_SECRET: ${RESEND_WEBHOOK_SECRET:-}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
+      # Codes-barres : nom des produits (Open Food Facts) ; « off » pour ne jamais l'interroger.
+      OPEN_FOOD_FACTS_URL: ${OPEN_FOOD_FACTS_URL:-https://world.openfoodfacts.org}
     depends_on:
       postgres:
         condition: service_healthy

@@ -27,8 +27,9 @@ export class AuthGuard implements CanActivate {
 
     const req = ctx.switchToHttp().getRequest<AppRequest>();
     const header = req.headers.authorization;
-    const token = header?.startsWith('Bearer ')
-      ? header.slice(7)
+    const bearer = header?.startsWith('Bearer ') ?? false;
+    const token = bearer
+      ? header!.slice(7)
       : (req.cookies as Record<string, string> | undefined)?.[ACCESS_COOKIE];
     if (!token) throw unauthenticated();
 
@@ -36,7 +37,11 @@ export class AuthGuard implements CanActivate {
     if (!claims || !(await this.auth.isSessionActive(claims.sessionId, claims.userId)))
       throw unauthenticated();
 
-    req.user = { userId: claims.userId, sessionId: claims.sessionId };
+    req.user = {
+      userId: claims.userId,
+      sessionId: claims.sessionId,
+      via: bearer ? 'bearer' : 'cookie',
+    };
     return true;
   }
 }

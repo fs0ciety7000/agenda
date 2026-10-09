@@ -6,6 +6,6 @@ import { HouseholdsService } from './households.service';
 @Module({
   controllers: [HouseholdsController],
   providers: [HouseholdsService, HouseholdMemberGuard],
-  exports: [HouseholdMemberGuard],
+  exports: [HouseholdMemberGuard, HouseholdsService],
 })
 export class HouseholdsModule {}

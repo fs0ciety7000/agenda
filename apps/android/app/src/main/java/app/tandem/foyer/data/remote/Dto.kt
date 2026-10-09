@@ -305,6 +305,8 @@ data class NoteDto(
     val title: String,
     val body: String = "",
     val pinned: Boolean = false,
+    /** Note sensible : `body` vide, contenu obtenu par `reveal` après l'empreinte ou le code. */
+    val secret: Boolean = false,
     val createdById: String? = null,
     val updatedById: String? = null,
     val createdAt: String,
@@ -313,7 +315,7 @@ data class NoteDto(
 )
 
 @Serializable
-data class NoteBody(val title: String, val body: String, val pinned: Boolean)
+data class NoteBody(val title: String, val body: String, val pinned: Boolean, val secret: Boolean = false)
 
 /** Champs absents = inchangés (`explicitNulls = false`). */
 @Serializable
@@ -321,8 +323,56 @@ data class UpdateNoteBody(
     val title: String? = null,
     val body: String? = null,
     val pinned: Boolean? = null,
+    val secret: Boolean? = null,
     val version: Int,
 )
+
+/** Produit d'un code-barres (cf. BarcodeLookupDto des contrats) : barcode null = rien lu. */
+@Serializable
+data class BarcodeLookupDto(
+    val barcode: String? = null,
+    val name: String? = null,
+    /** HOUSEHOLD ou OPEN_FOOD_FACTS ; null = produit inconnu. */
+    val source: String? = null,
+)
+
+@Serializable
+data class RememberBarcodeBody(val name: String)
+
+/** Lien invité vers la liste de courses (cf. GuestShoppingLinkDto des contrats) ; url null = aucun. */
+@Serializable
+data class GuestShoppingLinkDto(
+    val url: String? = null,
+    val createdAt: String? = null,
+    val createdById: String? = null,
+    /** Le lien se coupe tout seul à cette date ; null = sans limite. */
+    val expiresAt: String? = null,
+)
+
+/** Durée du lien invité en jours (1, 7 ou 30) ; null = sans limite. */
+@Serializable
+data class GuestShoppingLinkBody(val expiresInDays: Int?)
+
+/** Version précédente d'une note (cf. NoteRevisionDto des contrats). */
+@Serializable
+data class NoteRevisionDto(
+    val id: String,
+    val title: String,
+    val body: String = "",
+    val version: Int,
+    val editedById: String? = null,
+    val savedAt: String,
+)
+
+@Serializable
+data class RestoreNoteBody(val version: Int)
+
+/** Vide : l'app vérifie l'empreinte ou le code du téléphone avant de demander le contenu. */
+@Serializable
+data class RevealNoteBody(val confirm: Boolean? = null)
+
+@Serializable
+data class RevealedNoteDto(val body: String)
 
 /** Commentaire sur une tâche (cf. packages/contracts/src/comments.ts). */
 @Serializable

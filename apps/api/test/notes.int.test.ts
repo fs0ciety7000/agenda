@@ -1,7 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { coupleHousehold, createTestApp, registerUser } from './app';
+import { CSRF, coupleHousehold, createTestApp, registerUser } from './app';
 
 describe('Notes partagées', () => {
   let app: INestApplication;
@@ -100,6 +100,158 @@ describe('Notes partagées', () => {
     const exported = await http().get('/v1/me/export').set(h.grace.auth).expect(200);
     expect(exported.body.notesCreated).toEqual([
       expect.objectContaining({ title: 'Code alarme', body: '0000' }),
+    ]);
+  });
+
+  it('historique : chaque modification garde l’ancienne version, restaurable', async () => {
+    const h = await coupleHousehold(app);
+    const url = `${h.base}/notes`;
+    const note = await http()
+      .post(url)
+      .set(h.grace.auth)
+      .send({ title: 'Wi-Fi', body: 'zèbre-42' })
+      .expect(201);
+    const id = note.body.id as string;
+    // Épingler ne crée pas de version ; changer le texte, si.
+    await http()
+      .patch(`${url}/${id}`)
+      .set(h.grace.auth)
+      .send({ pinned: true, version: 1 })
+      .expect(200);
+    await http()
+      .patch(`${url}/${id}`)
+      .set(h.nicolas.auth)
+      .send({ body: 'girafe-7', version: 2 })
+      .expect(200);
+    const revisions = await http().get(`${url}/${id}/revisions`).set(h.grace.auth).expect(200);
+    expect(revisions.body).toEqual([
+      expect.objectContaining({
+        title: 'Wi-Fi',
+        body: 'zèbre-42',
+        version: 2,
+        editedById: h.grace.memberId,
+      }),
+    ]);
+
+    // Restaurer : version périmée refusée, puis restauration ; le texte remplacé est gardé.
+    const revisionId = revisions.body[0].id as string;
+    await http()
+      .post(`${url}/${id}/revisions/${revisionId}/restore`)
+      .set(h.grace.auth)
+      .send({ version: 2 })
+      .expect(409);
+    const restored = await http()
+      .post(`${url}/${id}/revisions/${revisionId}/restore`)
+      .set(h.grace.auth)
+      .send({ version: 3 })
+      .expect(200);
+    expect(restored.body).toMatchObject({ body: 'zèbre-42', version: 4, pinned: true });
+    const after = await http().get(`${url}/${id}/revisions`).set(h.grace.auth).expect(200);
+    expect(after.body.map((r: { body: string }) => r.body)).toEqual(['girafe-7', 'zèbre-42']);
+
+    // Export RGPD : les versions écrites par la personne.
+    const exported = await http().get('/v1/me/export').set(h.nicolas.auth).expect(200);
+    expect(exported.body.noteVersionsWritten).toEqual([
+      expect.objectContaining({ body: 'girafe-7', noteTitle: 'Wi-Fi' }),
+    ]);
+
+    // Vingt versions au plus.
+    for (let v = 4; v < 30; v++) {
+      await http()
+        .patch(`${url}/${id}`)
+        .set(h.grace.auth)
+        .send({ body: `texte ${v}`, version: v })
+        .expect(200);
+    }
+    const capped = await http().get(`${url}/${id}/revisions`).set(h.grace.auth).expect(200);
+    expect(capped.body).toHaveLength(20);
+    expect(capped.body[0].version).toBe(29);
+
+    // Un autre foyer ne voit ni ne restaure rien.
+    const other = await coupleHousehold(app);
+    await http().get(`${other.base}/notes/${id}/revisions`).set(other.grace.auth).expect(404);
+    await http()
+      .post(`${other.base}/notes/${id}/revisions/${revisionId}/restore`)
+      .set(other.grace.auth)
+      .send({ version: 30 })
+      .expect(404);
+    await http().get(`${h.base}/notes/${id}/revisions`).set(other.grace.auth).expect(404);
+  });
+
+  it('note sensible : contenu masqué partout, affiché après vérification', async () => {
+    const h = await coupleHousehold(app);
+    const url = `${h.base}/notes`;
+    const created = await http()
+      .post(url)
+      .set(h.grace.auth)
+      .send({ title: 'Digicode', body: 'A-2468-zèbre', secret: true })
+      .expect(201);
+    expect(created.body).toMatchObject({ secret: true, body: '' });
+    const id = created.body.id as string;
+
+    // Liste, recherche, historique : jamais le contenu.
+    const list = await http().get(url).set(h.nicolas.auth).expect(200);
+    expect(list.body).toEqual([expect.objectContaining({ title: 'Digicode', body: '' })]);
+    const byBody = await http().get(`${h.base}/search?q=2468`).set(h.nicolas.auth).expect(200);
+    expect(byBody.body.notes).toEqual([]);
+    const byTitle = await http().get(`${h.base}/search?q=Digi`).set(h.nicolas.auth).expect(200);
+    expect(byTitle.body.notes).toEqual([{ id, title: 'Digicode', snippet: '' }]);
+    await http()
+      .patch(`${url}/${id}`)
+      .set(h.grace.auth)
+      .send({ body: 'B-1357-girafe', version: 1 })
+      .expect(200);
+    const revisions = await http().get(`${url}/${id}/revisions`).set(h.grace.auth).expect(200);
+    expect(revisions.body).toEqual([expect.objectContaining({ body: '' })]);
+
+    // Android (jeton) : vérifié sur l'appareil.
+    const android = await http()
+      .post(`${url}/${id}/reveal`)
+      .set(h.nicolas.auth)
+      .send({})
+      .expect(200);
+    expect(android.body).toEqual({ body: 'B-1357-girafe' });
+
+    // Site (cookie) : mot de passe, puis coffre ouvert pour la session.
+    const login = await http()
+      .post('/v1/auth/login')
+      .set(CSRF)
+      .send({ email: h.grace.email, password: 'correct horse battery' })
+      .expect(200);
+    const web = {
+      cookie: (login.headers['set-cookie'] as unknown as string[]).join('; '),
+      ...CSRF,
+    };
+    const locked = await http().post(`${url}/${id}/reveal`).set(web).send({}).expect(403);
+    expect(locked.body.error).toMatchObject({
+      code: 'VAULT_LOCKED',
+      details: { method: 'password' },
+    });
+    const wrong = await http()
+      .post(`${url}/${id}/reveal`)
+      .set(web)
+      .send({ password: 'pas le bon' })
+      .expect(403);
+    expect(wrong.body.error.code).toBe('CURRENT_PASSWORD_INVALID');
+    await http()
+      .post(`${url}/${id}/reveal`)
+      .set(web)
+      .send({ password: 'correct horse battery' })
+      .expect(200);
+    const again = await http().post(`${url}/${id}/reveal`).set(web).send({}).expect(200);
+    expect(again.body).toEqual({ body: 'B-1357-girafe' });
+
+    // Un autre foyer : rien. L'export RGPD, lui, rend le contenu à son auteur.
+    const other = await coupleHousehold(app);
+    await http()
+      .post(`${other.base}/notes/${id}/reveal`)
+      .set(other.grace.auth)
+      .send({})
+      .expect(404);
+    await http().post(`${h.base}/notes/${id}/reveal`).set(other.grace.auth).send({}).expect(404);
+    const exported = await http().get('/v1/me/export').set(h.grace.auth).expect(200);
+    expect(exported.body.notesCreated).toEqual([
+      expect.objectContaining({ title: 'Digicode', body: 'B-1357-girafe' }),
     ]);
   });
 });

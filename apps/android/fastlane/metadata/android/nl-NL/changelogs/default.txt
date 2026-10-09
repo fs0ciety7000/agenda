@@ -1,9 +1,8 @@
-Kasticket inlezen: bedrag en datum van de foto gelezen.
+Boodschappen: barcode live scannen; gastlink die vanzelf uitgaat.
+• Back-up van het huishouden downloaden; gevoelige notities beschermd.
+• Notities: eerdere versies terugzetten.
+• Kasticket inlezen: bedrag en datum van de foto gelezen.
 • Delen naar Tandem: een link wordt een taak, notitie of boodschap.
 • Tegel "Taak toevoegen" in snelle instellingen.
-• Budget per categorie in de app; "Ongedaan maken" bij notities.
+• Budget per categorie; "Ongedaan maken" bij notities.
 • Lade "Meer": Uitgaven, Notities, Data…
-• Uitgaven: wie wat schuldig is, terugbetalen met één tik.
-• Gedeelde notities; belangrijke data met herinnering.
-• Notities en data ook offline te lezen.
-• Aangemelde apparaten: op afstand afmelden.

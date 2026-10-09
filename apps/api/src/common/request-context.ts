@@ -4,6 +4,8 @@ import type { Request } from 'express';
 export interface AuthUser {
   userId: string;
   sessionId: string;
+  /** `bearer` : app Android (jeton) ; `cookie` : site. */
+  via?: 'bearer' | 'cookie';
 }
 
 export interface HouseholdContext {

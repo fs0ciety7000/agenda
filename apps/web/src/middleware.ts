@@ -10,6 +10,7 @@ const PUBLIC_PATHS = [
   '/privacy',
   '/about',
   '/status',
+  '/guest',
 ];
 
 /** Site vitrine (docs/deployment.md §15), figé au build ; vide = pas de redirection. */

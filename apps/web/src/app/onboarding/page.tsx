@@ -1,6 +1,6 @@
 'use client';
 
-import { CreateHouseholdInput, type HouseholdDto } from '@agenda/contracts';
+import { CreateHouseholdInput, type HouseholdDto, type RestoreResultDto } from '@agenda/contracts';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
@@ -11,6 +11,7 @@ import { useForm } from 'react-hook-form';
 import type { z } from 'zod';
 import { AndroidAppCard } from '@/components/app/android-app-card';
 import { InviteLink } from '@/components/app/invite-link';
+import { RestoreBackup, RestoredInvitations } from '@/components/app/restore-backup';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Field } from '@/components/ui/field';
@@ -31,6 +32,8 @@ export default function OnboardingPage() {
   const queryClient = useQueryClient();
   const me = useMe();
   const [household, setHousehold] = useState<HouseholdDto | null>(null);
+  const [restored, setRestored] = useState<RestoreResultDto | null>(null);
+  const restoredHeading = useRef<HTMLHeadingElement>(null);
   const [serverError, setServerError] = useState<string | null>(null);
   const {
     register,
@@ -52,6 +55,9 @@ export default function OnboardingPage() {
   useEffect(() => {
     if (household) inviteHeading.current?.focus();
   }, [household]);
+  useEffect(() => {
+    if (restored) restoredHeading.current?.focus();
+  }, [restored]);
 
   const onSubmit = handleSubmit(async (values) => {
     setServerError(null);
@@ -80,38 +86,55 @@ export default function OnboardingPage() {
         <p className="text-[1.0625rem] text-text-muted">{t('onboarding.tagline')}</p>
       </div>
 
-      <Card className="flex flex-col gap-5">
-        <h2 className="text-lg font-semibold">
-          <span className="mr-2 text-text-muted">1.</span>
-          {t('onboarding.stepHousehold')}
-        </h2>
-        {household ? (
-          <p className="text-[0.9375rem]">✓ {household.name}</p>
-        ) : (
-          <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
-            <Field
-              label={t('onboarding.householdName')}
-              placeholder={t('onboarding.householdNamePlaceholder')}
-              error={errors.name && t('errors.required')}
-              {...register('name')}
-            />
-            <Field
-              label={t('onboarding.yourName')}
-              hint={t('onboarding.yourNameHint')}
-              autoComplete="given-name"
-              {...register('memberDisplayName')}
-            />
-            {serverError && (
-              <p role="alert" className="text-sm text-danger">
-                {serverError}
-              </p>
-            )}
-            <Button type="submit" loading={isSubmitting} className="self-start">
-              {t('onboarding.create')}
-            </Button>
-          </form>
-        )}
-      </Card>
+      {restored && (
+        <Card className="flex flex-col gap-4">
+          <h2 ref={restoredHeading} tabIndex={-1} className="text-lg font-semibold outline-none">
+            ✓ {t('backup.restoredTitle', { name: restored.household.name })}
+          </h2>
+          <p className="text-[0.9375rem] text-text-muted">{t('backup.restoredBody')}</p>
+          <RestoredInvitations result={restored} />
+          <Button onClick={() => router.replace('/')} size="lg" className="self-end">
+            {t('onboarding.continue')}
+          </Button>
+        </Card>
+      )}
+
+      {!restored && (
+        <Card className="flex flex-col gap-5">
+          <h2 className="text-lg font-semibold">
+            <span className="mr-2 text-text-muted">1.</span>
+            {t('onboarding.stepHousehold')}
+          </h2>
+          {household ? (
+            <p className="text-[0.9375rem]">✓ {household.name}</p>
+          ) : (
+            <form onSubmit={onSubmit} noValidate className="flex flex-col gap-4">
+              <Field
+                label={t('onboarding.householdName')}
+                placeholder={t('onboarding.householdNamePlaceholder')}
+                error={errors.name && t('errors.required')}
+                {...register('name')}
+              />
+              <Field
+                label={t('onboarding.yourName')}
+                hint={t('onboarding.yourNameHint')}
+                autoComplete="given-name"
+                {...register('memberDisplayName')}
+              />
+              {serverError && (
+                <p role="alert" className="text-sm text-danger">
+                  {serverError}
+                </p>
+              )}
+              <Button type="submit" loading={isSubmitting} className="self-start">
+                {t('onboarding.create')}
+              </Button>
+            </form>
+          )}
+        </Card>
+      )}
+
+      {!household && !restored && <RestoreBackup onRestored={setRestored} />}
 
       {household && (
         <Card className="flex flex-col gap-4">

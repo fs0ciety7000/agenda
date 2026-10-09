@@ -33,6 +33,7 @@ import okhttp3.mockwebserver.RecordedRequest
 import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -49,8 +50,8 @@ class NotesScreenTest {
     private val db = Room.inMemoryDatabaseBuilder(context, AgendaDatabase::class.java).allowMainThreadQueries().build()
     private val g = Fixtures.GRACE
     private val n = Fixtures.NICOLAS
-    private fun note(id: String, title: String, body: String, pinned: Boolean, by: String, version: Int = 1) =
-        """{"id":"$id","title":"$title","body":"$body","pinned":$pinned,"createdById":"$g","updatedById":"$by",
+    private fun note(id: String, title: String, body: String, pinned: Boolean, by: String, version: Int = 1, secret: Boolean = false) =
+        """{"id":"$id","title":"$title","body":"$body","pinned":$pinned,"secret":$secret,"createdById":"$g","updatedById":"$by",
             "createdAt":"2026-10-01T10:00:00.000Z","updatedAt":"2026-10-08T10:00:00.000Z","version":$version}"""
     private val wifi = note("n1", "Wi-Fi", "Réseau : Maison\\nCode : 4F7K-29QM", true, g)
     private val requests = mutableListOf<String>()
@@ -60,8 +61,18 @@ class NotesScreenTest {
             override fun dispatch(request: RecordedRequest): MockResponse {
                 requests += "${request.method} ${request.path}"
                 val json = { b: String -> MockResponse().setHeader("content-type", "application/json").setBody(b) }
-                return when (request.method) {
-                    "GET" -> json("[$wifi,${note("n2", "Idées cadeaux", "Livre de cuisine", false, n)}]")
+                return when {
+                    request.path!!.endsWith("/revisions") -> json(
+                        """[{"id":"r1","title":"Wi-Fi","body":"Code : ancien","version":1,"editedById":"$n",
+                        "savedAt":"2026-10-07T18:30:00.000Z"}]""",
+                    )
+                    request.path!!.endsWith("/reveal") -> json("""{"body":"A-2468"}""")
+                    request.path!!.endsWith("/restore") -> json(note("n1", "Wi-Fi", "Code : ancien", true, g, version = 2))
+                    else -> when (request.method) {
+                    "GET" -> json(
+                        "[$wifi,${note("n2", "Idées cadeaux", "Livre de cuisine", false, n)}," +
+                            "${note("n4", "Digicode", "", false, g, secret = true)}]",
+                    )
                     // L'autre a modifié « Wi-Fi » entre-temps.
                     "PATCH" -> json(
                         """{"error":{"code":"VERSION_CONFLICT","message":"x","details":{"current":
@@ -70,6 +81,7 @@ class NotesScreenTest {
                     "DELETE" -> MockResponse().setResponseCode(204)
                     "POST" -> json(note("n3", "Wi-Fi", "Code : 4F7K-29QM", true, g)).setResponseCode(201)
                     else -> MockResponse().setResponseCode(404)
+                    }
                 }
             }
         }
@@ -82,6 +94,16 @@ class NotesScreenTest {
     }
 
     private val undoable = mutableListOf<Pair<String, () -> Unit>>()
+    private val messages = mutableListOf<String>()
+
+    /** La réponse arrive sur un autre fil : on fait tourner la file principale en l'attendant. */
+    private fun idleUntil(condition: () -> Boolean) {
+        val deadline = System.currentTimeMillis() + 10_000
+        while (!condition() && System.currentTimeMillis() < deadline) {
+            org.robolectric.shadows.ShadowLooper.idleMainLooper()
+            Thread.sleep(20)
+        }
+    }
 
     private fun render(dark: Boolean = false) {
         runBlocking { db.households().insertHousehold(HouseholdEntity(Fixtures.HOUSEHOLD, "Grace & Nico", "Europe/Brussels", g)) }
@@ -94,7 +116,7 @@ class NotesScreenTest {
                         vm,
                         Fixtures.household.members,
                         onBack = {},
-                        onMessage = {},
+                        onMessage = { messages += it },
                         onUndoable = { m, undo -> undoable += m to undo },
                     )
                 }
@@ -157,5 +179,30 @@ class NotesScreenTest {
         }
         assertEquals(1, requests.count { it.startsWith("POST") })
         assertEquals(1, requests.count { it.startsWith("DELETE") })
+    }
+
+    @Test
+    fun historique_puis_restaurer() {
+        render()
+        compose.onNodeWithContentDescription("Modifier « Wi-Fi »").performClick()
+        compose.onNodeWithText("Versions précédentes").performScrollTo().performClick()
+        idleUntil { compose.onAllNodes(androidx.compose.ui.test.hasText("Code : ancien")).fetchSemanticsNodes().isNotEmpty() }
+        compose.onNodeWithText("Nicolas ·", substring = true).assertExists()
+        compose.onNodeWithText("Restaurer cette version").performScrollTo().performClick()
+        idleUntil { messages.isNotEmpty() }
+        assertTrue(messages.single(), messages.single().startsWith("Version du "))
+        assertEquals(1, requests.count { it == "POST /v1/households/${Fixtures.HOUSEHOLD}/notes/n1/revisions/r1/restore" })
+    }
+
+    @Test
+    fun note_sensible_masquee_puis_affichee() {
+        render()
+        compose.onNodeWithText("Contenu protégé").performScrollTo().assertIsDisplayed()
+        compose.onNodeWithContentDescription("Afficher « Digicode »").performScrollTo().performClick()
+        // Téléphone sans verrouillage (Robolectric) : rien à vérifier, le contenu est demandé.
+        idleUntil { compose.onAllNodes(androidx.compose.ui.test.hasText("A-2468")).fetchSemanticsNodes().isNotEmpty() }
+        assertEquals(1, requests.count { it == "POST /v1/households/${Fixtures.HOUSEHOLD}/notes/n4/reveal" })
+        compose.onNodeWithContentDescription("Masquer « Digicode »").performClick()
+        compose.onNodeWithText("Contenu protégé").assertIsDisplayed()
     }
 }

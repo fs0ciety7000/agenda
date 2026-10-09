@@ -5,7 +5,7 @@ import { IsoDate } from './tasks';
  * Dépenses du foyer : qui a payé quoi, la part de chacun, et le solde (qui doit combien à qui).
  * Montants en centimes entiers (pas d'arrondi flottant), en euros.
  */
-export const EXPENSE_CURRENCY = 'EUR';
+export { EXPENSE_CURRENCY } from './constants';
 /** 100 000 € : au-delà, c'est presque sûrement une faute de frappe. */
 export const MAX_EXPENSE_CENTS = 10_000_000;
 

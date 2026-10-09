@@ -3,6 +3,7 @@ import { HttpStatus, Injectable, Logger } from '@nestjs/common';
 import { RECEIPT_SCAN_TYPES, type ReceiptScanDto } from '@agenda/contracts';
 import { readReceipt, todayIn } from '@agenda/domain';
 import { AppException } from '../common/app-exception';
+import { prepareReceipt, rotate } from './receipt-image';
 
 /** Une lecture prend une à quelques secondes de processeur : deux à la fois au plus. */
 const MAX_PARALLEL = 2;
@@ -51,10 +52,55 @@ export class ReceiptScannerService {
     }
   }
 
-  /** Texte reconnu ; `--psm 4` : une colonne de lignes de tailles variables, comme un ticket. */
-  private ocr(data: Buffer): Promise<string> {
+  /**
+   * Texte reconnu. La photo est d'abord préparée (orientation EXIF, recadrage sur le papier,
+   * contraste, taille), puis redressée si Tesseract la voit tournée d'un quart de tour.
+   */
+  private async ocr(data: Buffer): Promise<string> {
+    let png: Buffer;
+    try {
+      png = await prepareReceipt(data);
+    } catch {
+      // Image abîmée (en-tête correct, contenu illisible) : rien de lu, l'utilisateur saisit.
+      return '';
+    }
+    const text = await this.read(png);
+    // Rien de reconnaissable : la photo est peut-être tournée d'un quart de tour. La détection
+    // d'orientation se trompe parfois sur un ticket droit : on ne l'écoute qu'en second recours.
+    if (readReceipt(text, todayIn('UTC')).amountCents !== null) return text;
+    const turn = await this.orientation(png);
+    if (!turn) return text;
+    const turned = await this.read(await rotate(png, turn));
+    return score(turned) > score(text) ? turned : text;
+  }
+
+  /** `--psm 4` : une colonne de lignes de tailles variables, comme un ticket. */
+  private async read(png: Buffer): Promise<string> {
+    const { code, out, err, signal } = await this.tesseract(['-l', LANGS, '--psm', '4'], png);
+    if (code === 0) return out;
+    if (signal === null && /read|image|pix/i.test(err)) return '';
+    this.logger.warn(`Tesseract failed (${signal ?? code}): ${err.slice(0, 200)}`);
+    throw unavailable();
+  }
+
+  /**
+   * Quart de tour à appliquer (0, 90, 180, 270), d'après la détection d'orientation de
+   * Tesseract (`--psm 0`). 0 quand elle n'est pas sûre : trop peu de texte, ou ticket droit.
+   */
+  private async orientation(png: Buffer): Promise<number> {
+    const { code, out } = await this.tesseract(['--psm', '0'], png);
+    if (code !== 0) return 0;
+    const angle = Number(/Rotate:\s*(\d+)/.exec(out)?.[1] ?? 0);
+    const confidence = Number(/Orientation confidence:\s*([\d.]+)/.exec(out)?.[1] ?? 0);
+    return [90, 180, 270].includes(angle) && confidence >= 1 ? angle : 0;
+  }
+
+  private tesseract(
+    args: string[],
+    input: Buffer,
+  ): Promise<{ code: number | null; signal: NodeJS.Signals | null; out: string; err: string }> {
     return new Promise((resolve, reject) => {
-      const child = spawn('tesseract', ['stdin', 'stdout', '-l', LANGS, '--psm', '4'], {
+      const child = spawn('tesseract', ['stdin', 'stdout', ...args], {
         stdio: ['pipe', 'pipe', 'pipe'],
         timeout: TIMEOUT_MS,
         // Un seul fil par lecture : les fils OpenMP se gênent dès que le processeur est partagé
@@ -69,16 +115,12 @@ export class ReceiptScannerService {
         this.logger.error(`Tesseract unavailable: ${e.message}`);
         reject(unavailable());
       });
-      child.on('close', (code, signal) => {
-        if (code === 0) return resolve(Buffer.concat(out).toString('utf8'));
-        // Image abîmée (en-tête correct, contenu illisible) : rien de lu, l'utilisateur saisit.
-        if (signal === null && /read|image|pix/i.test(err)) return resolve('');
-        this.logger.warn(`Tesseract failed (${signal ?? code}): ${err.slice(0, 200)}`);
-        reject(unavailable());
-      });
-      // Une photo abîmée peut fermer l'entrée avant la fin : l'erreur arrive par « close ».
+      child.on('close', (code, signal) =>
+        resolve({ code, signal, out: Buffer.concat(out).toString('utf8'), err }),
+      );
+      // Une entrée fermée trop tôt : l'erreur arrive par « close ».
       child.stdin.on('error', () => undefined);
-      child.stdin.end(data);
+      child.stdin.end(input);
     });
   }
 }
@@ -93,6 +135,12 @@ export function isImage(data: Buffer): boolean {
     data.subarray(0, 4).toString('latin1') === 'RIFF' &&
     data.subarray(8, 12).toString('latin1') === 'WEBP';
   return jpeg || png || webp;
+}
+
+/** Champs trouvés dans un texte : sert à garder la meilleure de deux lectures. */
+function score(text: string): number {
+  const r = readReceipt(text, todayIn('UTC'));
+  return Number(r.amountCents !== null) * 2 + Number(r.date !== null) + Number(r.merchant !== null);
 }
 
 function unavailable(): AppException {

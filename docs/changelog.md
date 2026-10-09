@@ -15,6 +15,69 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### Accueil plus réactif (#93)
+
+- 🛠 **Accueil** : la page ne fige plus le téléphone pendant son affichage (score de
+  performance 87 → 92, vérifié à chaque modification).
+
+### Code-barres en direct sur Android (#93)
+
+- ✨ **Scanner en direct** dans l'app Android : le code-barres est lu à la caméra, sans prendre
+  de photo ; la photo reste possible.
+
+### Sauvegarde du foyer depuis l'app Android (#93)
+
+- ✨ **Télécharger la sauvegarde** depuis l'app Android (Réglages), après l'empreinte ou le
+  code du téléphone ; l'app propose où l'enregistrer.
+
+### Le lien invité se coupe tout seul (#93)
+
+- 🔒 **Lien pour un invité** : il se coupe tout seul après 1 jour, 1 semaine (par défaut) ou
+  1 mois, au choix ; « Sans limite » reste possible.
+
+### Sauvegarde du foyer et restauration (#93)
+
+- ✨ **Télécharger la sauvegarde** du foyer (Réglages, sur le site) : une archive .zip avec les
+  données et les fichiers joints, mot de passe demandé.
+- ✨ **Restaurer une sauvegarde** à l'arrivée sur une autre instance : le foyer est recréé, et
+  l'autre retrouve son historique en suivant son lien d'invitation.
+- 🐞 Le champ du lien d'invitation (accueil) s'écrasait sur téléphone.
+
+### Ajouter un article par son code-barres (#93)
+
+- ✨ **Scanner un code-barres** dans Courses (site et Android) : le code est lu sur la photo, le
+  nom du produit est proposé (mémoire du foyer, sinon Open Food Facts) et retenu pour la suite.
+- 🔒 La photo est lue sur le serveur puis effacée ; Open Food Facts ne reçoit que le code.
+
+### Liste de courses pour un invité (#93)
+
+- ✨ **Partager avec un invité** : un lien vers la liste de courses, en lecture seule et sans
+  compte, pour la baby-sitter ou quelqu'un qui garde la maison. Remplaçable et révocable à tout
+  moment, sur le site et dans l'app Android.
+- 🐞 Le champ du lien d'abonnement iCal (Réglages) s'écrasait sur téléphone.
+
+### Notes sensibles (#93)
+
+- ✨ **Note sensible** : codes et digicodes masqués dans la liste et la recherche, affichés après
+  votre mot de passe (site) ou votre empreinte ou le code du téléphone (Android).
+
+### Lecture des tickets plus fiable (#93)
+
+- 🛠 **Lire un ticket** comprend mieux les photos prises au vol : tournées, penchées, posées sur
+  une table sombre ou peu contrastées sont redressées et recadrées avant la lecture.
+
+### Historique des notes (#93)
+
+- ✨ **Versions précédentes** d'une note : revoir les 20 dernières versions (qui, quand) et en
+  restaurer une si l'autre l'a écrasée. Sur le site et dans l'app Android.
+
+### Site plus rapide au démarrage (#93)
+
+- 🛠 La page de connexion charge presque deux fois moins de code au démarrage (153 Ko au lieu de 267 Ko), et
+  l'accueil un tiers de moins (191 Ko au lieu de 314 Ko).
+- ⚙️ Chaque modification est mesurée par Lighthouse (performance et accessibilité) avant d'être
+  acceptée.
+
 ### Lire un ticket (#92)
 
 - ✨ **Lire un ticket** : dans une nouvelle dépense, prenez le ticket en photo ; le montant, la

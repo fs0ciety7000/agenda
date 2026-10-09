@@ -88,19 +88,21 @@ model AuthIdentity {
 
 /// Une session = un appareil. Le refresh token n'est stocké que haché (SHA-256).
 model Session {
-  id               String    @id @default(uuid()) @db.Uuid
-  userId           String    @db.Uuid
+  id                 String    @id @default(uuid()) @db.Uuid
+  userId             String    @db.Uuid
   /// Tous les refresh tokens issus d'une même connexion partagent la famille.
-  familyId         String    @db.Uuid
-  refreshTokenHash String    @unique @db.Char(64)
-  userAgent        String?   @db.VarChar(255)
-  createdAt        DateTime  @default(now())
-  lastUsedAt       DateTime  @default(now())
-  expiresAt        DateTime
-  revokedAt        DateTime?
+  familyId           String    @db.Uuid
+  refreshTokenHash   String    @unique @db.Char(64)
+  userAgent          String?   @db.VarChar(255)
+  createdAt          DateTime  @default(now())
+  lastUsedAt         DateTime  @default(now())
+  expiresAt          DateTime
+  revokedAt          DateTime?
   /// Renseigné lors d'une rotation : un token déjà remplacé et rejoué = vol probable.
-  replacedAt       DateTime?
-  user             User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  replacedAt         DateTime?
+  /// Coffre des notes sensibles ouvert jusqu'à (après le mot de passe, site).
+  vaultUnlockedUntil DateTime?
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
   @@index([familyId])
@@ -136,14 +138,21 @@ model PasswordResetToken {
 // ───────────────────────────── Foyer ─────────────────────────────
 
 model Household {
-  id                 String    @id @default(uuid()) @db.Uuid
-  name               String    @db.VarChar(80)
-  timezone           String    @default("Europe/Brussels") @db.VarChar(64)
+  id                       String    @id @default(uuid()) @db.Uuid
+  name                     String    @db.VarChar(80)
+  timezone                 String    @default("Europe/Brussels") @db.VarChar(64)
   /// Budget mensuel des dépenses communes, en centimes (null = aucun).
-  expenseBudgetCents Int?
-  createdAt          DateTime  @default(now())
-  updatedAt          DateTime  @updatedAt
-  deletedAt          DateTime?
+  expenseBudgetCents       Int?
+  /// Lien invité vers la liste de courses (lecture seule, sans compte). Secret ; null = aucun.
+  guestShoppingToken       String?   @unique @db.VarChar(40)
+  guestShoppingCreatedAt   DateTime?
+  /// Le lien se coupe tout seul à cette date ; null = sans limite.
+  guestShoppingExpiresAt   DateTime?
+  /// Membre qui l'a créé (anonymisé, jamais supprimé), sans clé étrangère.
+  guestShoppingCreatedById String?   @db.Uuid
+  createdAt                DateTime  @default(now())
+  updatedAt                DateTime  @updatedAt
+  deletedAt                DateTime?
 
   members           HouseholdMember[]
   invitations       HouseholdInvitation[]
@@ -159,6 +168,7 @@ model Household {
   absences          MemberAbsence[]
   comments          TaskComment[]
   products          ShoppingProduct[]
+  barcodes          ShoppingBarcode[]
   meals             Meal[]
   expenses          Expense[]
   recurringExpenses RecurringExpense[]
@@ -225,6 +235,9 @@ model HouseholdMember {
   icalToken     String?       @unique @db.VarChar(40)
   /// Proportion de partage des dépenses communes (poids relatif ; 1 et 1 = moitié-moitié).
   expenseWeight Int           @default(1)
+  /// Foyer restauré depuis une sauvegarde : adresse du membre dont le compte n'existe pas encore
+  /// ici. En acceptant une invitation avec cette adresse, il reprend ce membre et son historique.
+  pendingEmail  String?       @db.Citext
 
   household            Household                @relation(fields: [householdId], references: [id], onDelete: Cascade)
   user                 User?                    @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -501,6 +514,21 @@ model TaskTemplate {
   @@index([householdId])
 }
 
+/// Nom retenu par le foyer pour un code-barres (donné par un membre, ou trouvé dans Open Food Facts).
+model ShoppingBarcode {
+  householdId String   @db.Uuid
+  code        String   @db.VarChar(14)
+  name        String   @db.VarChar(200)
+  /// HOUSEHOLD (nommé ou corrigé par un membre) ou OPEN_FOOD_FACTS.
+  source      String   @db.VarChar(16)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@id([householdId, code])
+}
+
 /// Liste de courses permanente du foyer. `id` peut être choisi par le client (ajout idempotent).
 model ShoppingItem {
   id          String    @id @db.Uuid
@@ -571,6 +599,8 @@ model Note {
   title       String   @db.VarChar(120)
   body        String   @default("") @db.VarChar(4000)
   pinned      Boolean  @default(false)
+  /// Note sensible : contenu masqué dans les listes, la recherche et l'historique.
+  secret      Boolean  @default(false)
   /// Membres (jamais supprimés physiquement : anonymisés), sans clé étrangère.
   createdById String?  @db.Uuid
   updatedById String?  @db.Uuid
@@ -578,9 +608,28 @@ model Note {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  household Household      @relation(fields: [householdId], references: [id], onDelete: Cascade)
+  revisions NoteRevision[]
 
   @@index([householdId, pinned])
+}
+
+/// Version précédente d'une note (titre et texte), gardée à chaque modification ; 20 par note.
+model NoteRevision {
+  id         String   @id @default(uuid()) @db.Uuid
+  noteId     String   @db.Uuid
+  title      String   @db.VarChar(120)
+  body       String   @default("") @db.VarChar(4000)
+  /// Numéro de version de la note quand ce contenu était le sien.
+  version    Int
+  /// Membre qui avait écrit cette version (anonymisé avec lui, sans clé étrangère).
+  editedById String?  @db.Uuid
+  /// Moment où cette version avait été enregistrée (updatedAt de la note à l'époque).
+  savedAt    DateTime
+
+  note Note @relation(fields: [noteId], references: [id], onDelete: Cascade)
+
+  @@index([noteId, version])
 }
 
 enum MealSlot {
