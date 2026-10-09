@@ -1,4 +1,4 @@
-Courses : code-barres en photo ; lien invité en lecture seule.
+Courses : code-barres en photo ; lien invité qui se coupe seul.
 • Notes sensibles : empreinte ou code pour les afficher.
 • Notes : versions précédentes, restaurables.
 • Lire un ticket : montant et date lus sur la photo.

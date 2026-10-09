@@ -6,8 +6,11 @@ import { useState } from 'react';
 import { useSession } from '@/components/app/household-context';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Segmented } from '@/components/ui/segmented';
 import { useToast } from '@/components/ui/toast';
-import { useGuestShoppingLink } from '@/lib/shopping';
+import { type GuestLinkDays, useGuestShoppingLink } from '@/lib/shopping';
+
+type DaysChoice = '1' | '7' | '30' | 'none';
 
 /**
  * Lien invité vers la liste de courses (baby-sitter, quelqu'un qui garde la maison) : lecture
@@ -28,6 +31,31 @@ export function GuestLinkButton() {
   const date = link.data?.createdAt
     ? format.dateTime(new Date(link.data.createdAt), { day: 'numeric', month: 'long' })
     : null;
+  const expires = link.data?.expiresAt
+    ? format.dateTime(new Date(link.data.expiresAt), {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        hour: 'numeric',
+        minute: '2-digit',
+      })
+    : null;
+  // Durée du prochain lien (création ou remplacement) : une semaine par défaut.
+  const [days, setDays] = useState<DaysChoice>('7');
+  const daysValue: GuestLinkDays = days === 'none' ? null : (Number(days) as 1 | 7 | 30);
+  const duration = (
+    <Segmented<DaysChoice>
+      label={t('duration')}
+      value={days}
+      onChange={setDays}
+      options={[
+        { value: '1', label: t('day1') },
+        { value: '7', label: t('day7') },
+        { value: '30', label: t('day30') },
+        { value: 'none', label: t('noLimit') },
+      ]}
+    />
+  );
   const canShare = typeof navigator !== 'undefined' && 'share' in navigator;
 
   return (
@@ -93,7 +121,14 @@ export function GuestLinkButton() {
                 {author ? t('createdBy', { date, name: author }) : t('createdOn', { date })}
               </p>
             )}
+            <p className="text-[0.8125rem] text-text">
+              {expires ? t('expiresOn', { date: expires }) : t('noExpiry')}
+            </p>
             <p className="text-[0.8125rem] text-text-muted">{t('private')}</p>
+            <div className="flex flex-col gap-1.5">
+              <p className="text-[0.8125rem] text-text-muted">{t('durationNext')}</p>
+              {duration}
+            </div>
             <div className="flex flex-wrap gap-2">
               <Button
                 variant="ghost"
@@ -101,7 +136,7 @@ export function GuestLinkButton() {
                 loading={regenerate.isPending}
                 onClick={() =>
                   window.confirm(t('confirmRegenerate')) &&
-                  regenerate.mutate(undefined, { onSuccess: () => setCopied(false), onError })
+                  regenerate.mutate(daysValue, { onSuccess: () => setCopied(false), onError })
                 }
               >
                 {t('regenerate')}
@@ -119,14 +154,20 @@ export function GuestLinkButton() {
             </div>
           </div>
         ) : (
-          <Button
-            className="self-start"
-            loading={regenerate.isPending || link.isPending}
-            onClick={() => regenerate.mutate(undefined, { onError })}
-          >
-            <Link2 aria-hidden className="size-4" />
-            {t('create')}
-          </Button>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <p className="text-sm font-medium">{t('duration')}</p>
+              {duration}
+            </div>
+            <Button
+              className="self-start"
+              loading={regenerate.isPending || link.isPending}
+              onClick={() => regenerate.mutate(daysValue, { onError })}
+            >
+              <Link2 aria-hidden className="size-4" />
+              {t('create')}
+            </Button>
+          </div>
         )}
       </DialogContent>
     </Dialog>

@@ -146,6 +146,8 @@ model Household {
   /// Lien invité vers la liste de courses (lecture seule, sans compte). Secret ; null = aucun.
   guestShoppingToken       String?   @unique @db.VarChar(40)
   guestShoppingCreatedAt   DateTime?
+  /// Le lien se coupe tout seul à cette date ; null = sans limite.
+  guestShoppingExpiresAt   DateTime?
   /// Membre qui l'a créé (anonymisé, jamais supprimé), sans clé étrangère.
   guestShoppingCreatedById String?   @db.Uuid
   createdAt                DateTime  @default(now())

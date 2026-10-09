@@ -154,8 +154,8 @@ Validé par l'utilisateur, du plus simple au plus gros :
   `/login` et `/` (S) ⚙️🌐 (#93) : `/login` 88 → 95 (Zod chargé à la demande), `/` 80 → 87
   (constantes des contrats sans Zod, formulaire de tâche chargé à l'ouverture) ; seuils 90 et 85,
   accessibilité 95 (mesurée à 100)
-  - [ ] Accueil ≥ 90 : le reste du temps de blocage vient du montage de l'app après le chargement
-    de la session dans le navigateur ; préparer la session côté serveur (M), à prioriser ensemble
+  - Suite validée : accueil ≥ 90 (point 4 des suites, plus bas) ; le reste du temps de blocage
+    vient du montage de l'app après le chargement de la session dans le navigateur
 - [x] **Historique des versions d'une note** : revenir à une version précédente si l'autre l'a
   écrasée (S) ⚙️🌐🤖 (#93) : 20 versions par note, restauration elle-même versionnée
 - [x] **Meilleure lecture des tickets** : redresser et recadrer la photo avant lecture (M) ⚙️ (#93) :
@@ -167,20 +167,27 @@ Validé par l'utilisateur, du plus simple au plus gros :
 - [x] **Liste pour un invité** : lien en lecture seule, sans compte, révocable (baby-sitter,
   quelqu'un qui garde la maison) (M) ⚙️🌐🤖 (#93) : un lien par foyer, l'invité ne voit que les
   articles (ni membres ni dates), page rechargée toutes les 30 s
-  - [ ] Lien qui expire tout seul (un jour, une semaine) pour ne pas l'oublier actif (S), à
-    prioriser ensemble
+  - Suite validée : lien qui expire tout seul (point 1 ci-dessous)
 - [x] **Scanner un code-barres** pour ajouter un article : nom cherché dans Open Food Facts par
   le serveur, puis mémorisé pour le foyer (M) ⚙️🌐🤖 (#93) : photo lue par zbar sur le serveur
   (choix de l'utilisateur : la caméra en direct demandait ML Kit, invérifiable ici), aussi sur le
   site ; code tapé à la main en secours ; nom corrigé retenu pour le foyer
-  - [ ] Scan en direct à la caméra (Google Code Scanner, services Play) si la photo ne suffit
-    pas à l'usage (S), à prioriser ensemble
+  - Suite validée : scan en direct à la caméra (point 3 ci-dessous)
 - [x] **Sauvegarde exportable** du foyer et restauration sur une autre instance (M) ⚙️🌐 (#93) :
   archive .zip (JSON + fichiers, choix de l'utilisateur), mot de passe demandé (notes sensibles),
   éléments personnels de l'autre exclus ; restauration = nouveau foyer, identifiants refaits,
   membres retrouvés par leur adresse (choix de l'utilisateur) ; sur le site seulement
-  - [ ] Android : télécharger la sauvegarde depuis l'app (S), à prioriser ensemble
-- [ ] **« Ok Google, ajoute du lait dans Tandem »** : intégration à l'Assistant Google (M) 🤖
+  - Suite validée : télécharger la sauvegarde depuis l'app Android (point 2 ci-dessous)
+- [ ] **« Ok Google, ajoute du lait dans Tandem »** : intégration à l'Assistant Google (M) 🤖 —
+  gardé pour plus tard par l'utilisateur (invérifiable ici, Assistant remplacé par Gemini)
+
+Suites validées le 9 octobre, dans cet ordre (du plus simple au plus gros) :
+
+1. [x] Lien invité qui expire tout seul (S) ⚙️🌐🤖 (#93) : 1 jour, 1 semaine (défaut), 1 mois ou
+   sans limite ; la page de l'invité ne répond plus après l'échéance
+2. [ ] Android : télécharger la sauvegarde du foyer depuis l'app (S) 🤖
+3. [ ] Code-barres en direct à la caméra (Google Code Scanner, services Play) (S) 🤖
+4. [ ] Accueil ≥ 90 au budget Lighthouse : préparer la session côté serveur (M) 🌐
 
 Découvert pendant le lot 6 :
 

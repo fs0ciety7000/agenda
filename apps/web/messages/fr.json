@@ -1549,7 +1549,15 @@
     "revoke": "Couper le lien",
     "confirmRevoke": "Couper le lien ? L'invité ne verra plus la liste.",
     "active": "Lien invité actif",
-    "error": "Le lien n'a pas pu être mis à jour. Réessayez."
+    "error": "Le lien n'a pas pu être mis à jour. Réessayez.",
+    "duration": "Le lien se coupe tout seul après",
+    "durationNext": "Durée du prochain lien (« Nouveau lien »)",
+    "day1": "1 jour",
+    "day7": "1 semaine",
+    "day30": "1 mois",
+    "noLimit": "Sans limite",
+    "expiresOn": "Se coupe tout seul le {date}.",
+    "noExpiry": "Sans limite : pensez à le couper quand l'invité n'en a plus besoin."
   },
   "guest": {
     "title": "Liste de courses",

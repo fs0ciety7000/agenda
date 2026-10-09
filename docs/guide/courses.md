@@ -51,9 +51,12 @@ liste, sur le site et dans l'app Android) crée un lien à envoyer par message o
 - L'invité ouvre la liste **sans compte**, en **lecture seule** : il voit les articles à acheter,
   rangés par rayon, et ce qui est déjà pris. Il ne peut rien ajouter ni cocher.
 - Il ne voit ni vos tâches, ni vos noms, ni le reste du foyer ; la liste se met à jour toute seule.
+- **Il se coupe tout seul** : après 1 jour, 1 semaine (par défaut) ou 1 mois, au choix à la
+  création ; « Sans limite » reste possible, pensez alors à le couper vous-même. La fenêtre du
+  lien indique quand il se coupera.
 - **Un lien par foyer** : chacun des deux peut le créer, l'envoyer, le remplacer (**Nouveau
-  lien**, l'ancien cesse de fonctionner) ou le **couper**. Pensez à le couper quand l'invité
-  n'en a plus besoin : toute personne qui a le lien voit la liste.
+  lien**, l'ancien cesse de fonctionner) ou le **couper** avant l'heure. Toute personne qui a le
+  lien voit la liste tant qu'il fonctionne.
 - Une pastille sur le bouton indique qu'un lien est actif.
 
 ## Menus de la semaine

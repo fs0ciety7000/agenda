@@ -15,6 +15,11 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### Le lien invité se coupe tout seul (#93)
+
+- 🔒 **Lien pour un invité** : il se coupe tout seul après 1 jour, 1 semaine (par défaut) ou
+  1 mois, au choix ; « Sans limite » reste possible.
+
 ### Sauvegarde du foyer et restauration (#93)
 
 - ✨ **Télécharger la sauvegarde** du foyer (Réglages, sur le site) : une archive .zip avec les

@@ -128,7 +128,10 @@ interface AgendaApi {
     suspend fun guestShoppingLink(@Path("h") householdId: String): Response<GuestShoppingLinkDto>
 
     @POST("v1/households/{h}/shopping-guest")
-    suspend fun createGuestShoppingLink(@Path("h") householdId: String): Response<GuestShoppingLinkDto>
+    suspend fun createGuestShoppingLink(
+        @Path("h") householdId: String,
+        @Body body: GuestShoppingLinkBody,
+    ): Response<GuestShoppingLinkDto>
 
     @DELETE("v1/households/{h}/shopping-guest")
     suspend fun revokeGuestShoppingLink(@Path("h") householdId: String): Response<Unit>

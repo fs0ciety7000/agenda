@@ -1,5 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import type { Aisle, GuestShoppingDto, GuestShoppingLinkDto } from '@agenda/contracts';
+import type {
+  Aisle,
+  GuestShoppingDto,
+  GuestShoppingLinkDto,
+  GuestShoppingLinkInput,
+} from '@agenda/contracts';
 import { AISLES, guessAisle } from '@agenda/domain';
 import { randomBytes } from 'node:crypto';
 import { notFound } from '../common/app-exception';
@@ -9,6 +14,14 @@ import { env } from '../config/env';
 import { PrismaService } from '../prisma/prisma.service';
 
 const guestUrl = (token: string) => `${env().WEB_ORIGIN.replace(/\/+$/, '')}/guest/${token}`;
+
+const NO_LINK: GuestShoppingLinkDto = {
+  url: null,
+  createdAt: null,
+  createdById: null,
+  expiresAt: null,
+};
+const expired = (at: Date | null) => at !== null && at <= new Date();
 
 const asAisle = (v: string | null, text: string): Aisle =>
   v && (AISLES as readonly string[]).includes(v) ? (v as Aisle) : guessAisle(text);
@@ -32,24 +45,37 @@ export class GuestShoppingService {
         guestShoppingToken: true,
         guestShoppingCreatedAt: true,
         guestShoppingCreatedById: true,
+        guestShoppingExpiresAt: true,
       },
     });
-    if (!h.guestShoppingToken) return { url: null, createdAt: null, createdById: null };
+    // Expiré : comme coupé (la page de l'invité ne répond plus non plus).
+    if (!h.guestShoppingToken || expired(h.guestShoppingExpiresAt)) return NO_LINK;
     return {
       url: guestUrl(h.guestShoppingToken),
       createdAt: h.guestShoppingCreatedAt?.toISOString() ?? null,
       createdById: h.guestShoppingCreatedById,
+      expiresAt: h.guestShoppingExpiresAt?.toISOString() ?? null,
     };
   }
 
-  /** Crée le lien, ou le remplace (l'ancien cesse de fonctionner aussitôt). */
-  async regenerate(ctx: HouseholdContext): Promise<GuestShoppingLinkDto> {
+  /**
+   * Crée le lien, ou le remplace (l'ancien cesse de fonctionner aussitôt). Il se coupe tout seul
+   * après `expiresInDays` jours (null : sans limite).
+   */
+  async regenerate(
+    ctx: HouseholdContext,
+    input: GuestShoppingLinkInput,
+    now = new Date(),
+  ): Promise<GuestShoppingLinkDto> {
     await this.prisma.household.update({
       where: { id: ctx.householdId },
       data: {
         guestShoppingToken: randomBytes(20).toString('hex'),
-        guestShoppingCreatedAt: new Date(),
+        guestShoppingCreatedAt: now,
         guestShoppingCreatedById: ctx.memberId,
+        guestShoppingExpiresAt: input.expiresInDays
+          ? new Date(now.getTime() + input.expiresInDays * 86_400_000)
+          : null,
       },
     });
     this.events.publish(ctx.householdId, 'shopping');
@@ -68,11 +94,15 @@ export class GuestShoppingService {
     this.events.publish(ctx.householdId, 'shopping');
   }
 
-  /** Liste vue par l'invité ; introuvable si le jeton est inconnu, coupé ou le foyer supprimé. */
+  /** Liste vue par l'invité ; introuvable si le jeton est inconnu, coupé, expiré ou le foyer supprimé. */
   async view(token: string): Promise<GuestShoppingDto> {
     if (!/^[a-f0-9]{40}$/.test(token)) throw notFound();
     const household = await this.prisma.household.findFirst({
-      where: { guestShoppingToken: token, deletedAt: null },
+      where: {
+        guestShoppingToken: token,
+        deletedAt: null,
+        OR: [{ guestShoppingExpiresAt: null }, { guestShoppingExpiresAt: { gt: new Date() } }],
+      },
       select: {
         name: true,
         shoppingItems: {

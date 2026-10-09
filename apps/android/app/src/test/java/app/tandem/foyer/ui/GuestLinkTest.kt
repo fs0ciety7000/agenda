@@ -28,6 +28,7 @@ class GuestLinkTest {
     fun lien_invite_cree_puis_coupe() {
         var server = GuestShoppingLinkDto()
         var revoked = 0
+        val createdWith = mutableListOf<Int?>()
         val messages = mutableListOf<String>()
         compose.setContent {
             AgendaTheme {
@@ -36,9 +37,14 @@ class GuestLinkTest {
                     householdName = "Emma & Tom",
                     members = mapOf(Fixtures.GRACE to Fixtures.grace),
                     load = { server },
-                    create = {
-                        GuestShoppingLinkDto("https://tandem.test/guest/abc", "2026-10-09T10:00:00Z", Fixtures.GRACE)
-                            .also { server = it }
+                    create = { days ->
+                        createdWith += days
+                        GuestShoppingLinkDto(
+                            "https://tandem.test/guest/abc",
+                            "2026-10-09T10:00:00Z",
+                            Fixtures.GRACE,
+                            expiresAt = "2026-10-16T10:00:00Z",
+                        ).also { server = it }
                     },
                     revoke = {
                         revoked++
@@ -53,6 +59,9 @@ class GuestLinkTest {
         compose.onNodeWithText("Créer le lien").performClick()
         compose.onNodeWithText("https://tandem.test/guest/abc").assertIsDisplayed()
         compose.onNodeWithText("Créé le 9 octobre 2026 par Grace").assertIsDisplayed()
+        // Une semaine par défaut ; la date de coupure est affichée.
+        assertEquals(listOf<Int?>(7), createdWith)
+        compose.onNodeWithText("Se coupe tout seul le", substring = true).assertIsDisplayed()
         compose.onNodeWithText("Fermer").performClick()
         compose.onNodeWithContentDescription("Partager avec un invité, Lien invité actif").assertIsDisplayed()
 
@@ -71,7 +80,7 @@ class GuestLinkTest {
         val messages = mutableListOf<String>()
         compose.setContent {
             AgendaTheme {
-                GuestLinkButton(false, "Emma & Tom", emptyMap(), { null }, { null }, { false }, { messages += it })
+                GuestLinkButton(false, "Emma & Tom", emptyMap(), { null }, { _ -> null }, { false }, { messages += it })
             }
         }
         compose.onNodeWithText("Partager avec un invité").performClick()

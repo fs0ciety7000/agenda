@@ -1549,7 +1549,15 @@
     "revoke": "Turn off the link",
     "confirmRevoke": "Turn off the link? The guest will no longer see the list.",
     "active": "Guest link active",
-    "error": "The link could not be updated. Please try again."
+    "error": "The link could not be updated. Please try again.",
+    "duration": "The link turns itself off after",
+    "durationNext": "Length of the next link (“New link”)",
+    "day1": "1 day",
+    "day7": "1 week",
+    "day30": "1 month",
+    "noLimit": "No limit",
+    "expiresOn": "Turns itself off on {date}.",
+    "noExpiry": "No limit: remember to turn it off when the guest no longer needs it."
   },
   "guest": {
     "title": "Shopping list",

@@ -1549,7 +1549,15 @@
     "revoke": "Link uitzetten",
     "confirmRevoke": "Link uitzetten? De gast ziet de lijst dan niet meer.",
     "active": "Gastlink actief",
-    "error": "De link kon niet worden bijgewerkt. Probeer het opnieuw."
+    "error": "De link kon niet worden bijgewerkt. Probeer het opnieuw.",
+    "duration": "De link gaat vanzelf uit na",
+    "durationNext": "Duur van de volgende link (‘Nieuwe link’)",
+    "day1": "1 dag",
+    "day7": "1 week",
+    "day30": "1 maand",
+    "noLimit": "Zonder limiet",
+    "expiresOn": "Gaat vanzelf uit op {date}.",
+    "noExpiry": "Zonder limiet: vergeet hem niet uit te zetten als de gast hem niet meer nodig heeft."
   },
   "guest": {
     "title": "Boodschappenlijst",

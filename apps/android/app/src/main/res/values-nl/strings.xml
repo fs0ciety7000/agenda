@@ -731,6 +731,14 @@
     <string name="guest_link_loading">Laden…</string>
     <string name="guest_link_offline">Voor het delen van de lijst is een verbinding nodig.</string>
     <string name="guest_link_error">De link kon niet worden bijgewerkt. Probeer het opnieuw.</string>
+    <string name="guest_link_duration">De link gaat vanzelf uit na</string>
+    <string name="guest_link_duration_next">Duur van de volgende link (‘Nieuwe link’)</string>
+    <string name="guest_link_day1">1 dag</string>
+    <string name="guest_link_day7">1 week</string>
+    <string name="guest_link_day30">1 maand</string>
+    <string name="guest_link_no_limit">Zonder limiet</string>
+    <string name="guest_link_expires_on">Gaat vanzelf uit op %1$s.</string>
+    <string name="guest_link_no_expiry">Zonder limiet: vergeet hem niet uit te zetten als de gast hem niet meer nodig heeft.</string>
 
     <!-- Code-barres des courses -->
     <string name="barcode_open">Barcode scannen</string>

@@ -1,14 +1,17 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { PrismaService } from '../src/prisma/prisma.service';
 import { coupleHousehold, createTestApp } from './app';
 
 describe('Liste de courses pour un invité', () => {
   let app: INestApplication;
+  let prisma: PrismaService;
   const http = () => request(app.getHttpServer());
 
   beforeAll(async () => {
     app = await createTestApp();
+    prisma = app.get(PrismaService);
   });
   afterAll(() => app.close());
 
@@ -24,7 +27,7 @@ describe('Liste de courses pour un invité', () => {
 
     expect(
       (await http().get(`${h.base}/shopping-guest`).set(h.grace.auth).expect(200)).body,
-    ).toEqual({ url: null, createdAt: null, createdById: null });
+    ).toEqual({ url: null, createdAt: null, createdById: null, expiresAt: null });
     const created = await http().post(`${h.base}/shopping-guest`).set(h.grace.auth).expect(200);
     expect(created.body.url).toMatch(/\/guest\/[a-f0-9]{40}$/);
     expect(created.body.createdById).toBe(h.grace.memberId);
@@ -59,6 +62,38 @@ describe('Liste de courses pour un invité', () => {
     await http().delete(`${h.base}/shopping-guest`).set(h.grace.auth).expect(204);
     await http().get(`/v1/guest/shopping/${token2}`).expect(404);
     await http().get('/v1/guest/shopping/pas-un-jeton').expect(404);
+  });
+
+  it('le lien expire seul : une semaine par défaut, un jour, un mois ou sans limite', async () => {
+    const h = await coupleHousehold(app);
+    const day = 86_400_000;
+    const create = (body: object) =>
+      http().post(`${h.base}/shopping-guest`).set(h.grace.auth).send(body).expect(200);
+    const inDays = (iso: string) => Math.round((new Date(iso).getTime() - Date.now()) / day);
+
+    expect(inDays((await create({})).body.expiresAt)).toBe(7);
+    expect(inDays((await create({ expiresInDays: 1 })).body.expiresAt)).toBe(1);
+    expect(inDays((await create({ expiresInDays: 30 })).body.expiresAt)).toBe(30);
+    await http()
+      .post(`${h.base}/shopping-guest`)
+      .set(h.grace.auth)
+      .send({ expiresInDays: 365 })
+      .expect(400);
+    const forever = await create({ expiresInDays: null });
+    expect(forever.body.expiresAt).toBeNull();
+
+    // Échéance passée : la page de l'invité ne répond plus, et le lien n'apparaît plus actif.
+    const link = await create({ expiresInDays: 1 });
+    const token = (link.body.url as string).split('/').pop()!;
+    await http().get(`/v1/guest/shopping/${token}`).expect(200);
+    await prisma.household.update({
+      where: { id: h.householdId },
+      data: { guestShoppingExpiresAt: new Date(Date.now() - 1000) },
+    });
+    await http().get(`/v1/guest/shopping/${token}`).expect(404);
+    expect(
+      (await http().get(`${h.base}/shopping-guest`).set(h.grace.auth).expect(200)).body.url,
+    ).toBeNull();
   });
 
   it('un autre foyer ne peut ni lire ni créer le lien', async () => {

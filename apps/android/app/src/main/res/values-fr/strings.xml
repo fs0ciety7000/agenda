@@ -750,6 +750,14 @@
     <string name="guest_link_loading">Chargement…</string>
     <string name="guest_link_offline">Partager la liste demande une connexion.</string>
     <string name="guest_link_error">Le lien n\'a pas pu être mis à jour. Réessayez.</string>
+    <string name="guest_link_duration">Le lien se coupe tout seul après</string>
+    <string name="guest_link_duration_next">Durée du prochain lien (« Nouveau lien »)</string>
+    <string name="guest_link_day1">1 jour</string>
+    <string name="guest_link_day7">1 semaine</string>
+    <string name="guest_link_day30">1 mois</string>
+    <string name="guest_link_no_limit">Sans limite</string>
+    <string name="guest_link_expires_on">Se coupe tout seul le %1$s.</string>
+    <string name="guest_link_no_expiry">Sans limite : pensez à le couper quand l\'invité n\'en a plus besoin.</string>
 
     <!-- Code-barres des courses -->
     <string name="barcode_open">Scanner un code-barres</string>

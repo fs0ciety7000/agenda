@@ -1,4 +1,4 @@
-Shopping: add by barcode photo; read-only guest link.
+Shopping: add by barcode photo; guest link that expires.
 • Sensitive notes: fingerprint or code to show them.
 • Notes: previous versions you can restore.
 • Read a receipt: amount and date read from the photo.

@@ -1,7 +1,22 @@
-import { Controller, Delete, Get, Header, HttpCode, Param, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Header,
+  HttpCode,
+  Param,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import type { GuestShoppingDto, GuestShoppingLinkDto } from '@agenda/contracts';
+import {
+  type GuestShoppingDto,
+  type GuestShoppingLinkDto,
+  GuestShoppingLinkInput,
+} from '@agenda/contracts';
+import { ZodPipe } from '../common/zod.pipe';
 import { CurrentHousehold, HouseholdContext, Public } from '../common/request-context';
 import { HouseholdMemberGuard } from '../households/household-member.guard';
 import { GuestShoppingService } from './guest-shopping.service';
@@ -19,11 +34,14 @@ export class GuestShoppingSettingsController {
     return this.guest.link(ctx);
   }
 
-  /** Créer ou remplacer le lien invité (l'ancien cesse de fonctionner). */
+  /** Créer ou remplacer le lien invité (l'ancien cesse de fonctionner) ; il expire seul. */
   @Post()
   @HttpCode(200)
-  regenerate(@CurrentHousehold() ctx: HouseholdContext): Promise<GuestShoppingLinkDto> {
-    return this.guest.regenerate(ctx);
+  regenerate(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Body(new ZodPipe(GuestShoppingLinkInput)) body: GuestShoppingLinkInput,
+  ): Promise<GuestShoppingLinkDto> {
+    return this.guest.regenerate(ctx, body);
   }
 
   /** Couper le lien invité. */

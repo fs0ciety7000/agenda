@@ -87,10 +87,24 @@ export type RealtimeTopic = z.infer<typeof RealtimeTopic>;
 export const GuestShoppingLinkDto = z.object({
   url: z.string().nullable(),
   createdAt: z.string().nullable(),
+  /** Le lien se coupe tout seul à cette date ; null = sans limite (ou aucun lien). */
+  expiresAt: z.string().nullable(),
   /** Membre qui a créé le lien (id), si connu. */
   createdById: z.uuid().nullable(),
 });
 export type GuestShoppingLinkDto = z.infer<typeof GuestShoppingLinkDto>;
+
+/** Durées proposées pour un lien invité (jours) ; null = sans limite. */
+export const GUEST_LINK_DAYS = [1, 7, 30] as const;
+
+/** Créer ou remplacer le lien invité : il se coupe seul après `expiresInDays` (7 par défaut). */
+export const GuestShoppingLinkInput = z.object({
+  expiresInDays: z
+    .union([z.literal(1), z.literal(7), z.literal(30)])
+    .nullable()
+    .default(7),
+});
+export type GuestShoppingLinkInput = z.infer<typeof GuestShoppingLinkInput>;
 
 /** Article vu par l'invité : ni auteur ni dates (rien de plus que la liste elle-même). */
 export const GuestShoppingItemDto = z.object({

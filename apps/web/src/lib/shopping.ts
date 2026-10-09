@@ -34,6 +34,9 @@ export const useShoppingSuggestions = (hid: string) =>
     queryFn: () => api<ShoppingSuggestionDto[]>(`/v1/households/${hid}/shopping/suggestions`),
   });
 
+/** Durée d'un lien invité (jours) ; null = sans limite. */
+export type GuestLinkDays = 1 | 7 | 30 | null;
+
 /** Lien invité (lecture seule) : un par foyer ; rechargé avec la liste (sujet temps réel `shopping`). */
 export function useGuestShoppingLink(hid: string) {
   const qc = useQueryClient();
@@ -41,13 +44,19 @@ export function useGuestShoppingLink(hid: string) {
   const base = `/v1/households/${hid}/shopping-guest`;
   const link = useQuery({ queryKey: key, queryFn: () => api<GuestShoppingLinkDto>(base) });
   const regenerate = useMutation({
-    mutationFn: () => api<GuestShoppingLinkDto>(base, { method: 'POST' }),
+    mutationFn: (expiresInDays: GuestLinkDays) =>
+      api<GuestShoppingLinkDto>(base, { method: 'POST', json: { expiresInDays } }),
     onSuccess: (data) => qc.setQueryData(key, data),
   });
   const revoke = useMutation({
     mutationFn: () => api<void>(base, { method: 'DELETE' }),
     onSuccess: () =>
-      qc.setQueryData<GuestShoppingLinkDto>(key, { url: null, createdAt: null, createdById: null }),
+      qc.setQueryData<GuestShoppingLinkDto>(key, {
+        url: null,
+        createdAt: null,
+        createdById: null,
+        expiresAt: null,
+      }),
   });
   return { link, regenerate, revoke };
 }

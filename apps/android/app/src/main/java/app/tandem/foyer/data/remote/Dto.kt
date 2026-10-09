@@ -345,7 +345,13 @@ data class GuestShoppingLinkDto(
     val url: String? = null,
     val createdAt: String? = null,
     val createdById: String? = null,
+    /** Le lien se coupe tout seul à cette date ; null = sans limite. */
+    val expiresAt: String? = null,
 )
+
+/** Durée du lien invité en jours (1, 7 ou 30) ; null = sans limite. */
+@Serializable
+data class GuestShoppingLinkBody(val expiresInDays: Int?)
 
 /** Version précédente d'une note (cf. NoteRevisionDto des contrats). */
 @Serializable

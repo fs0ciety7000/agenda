@@ -7422,6 +7422,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GuestShoppingLinkInput"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "Succès",
@@ -7452,7 +7462,7 @@
             "cookie": []
           }
         ],
-        "summary": "Créer ou remplacer le lien invité (l'ancien cesse de fonctionner)",
+        "summary": "Créer ou remplacer le lien invité (l'ancien cesse de fonctionner) ; il expire seul",
         "tags": [
           "shopping"
         ]
@@ -14115,6 +14125,10 @@
             "nullable": true,
             "type": "string"
           },
+          "expiresAt": {
+            "nullable": true,
+            "type": "string"
+          },
           "createdById": {
             "nullable": true,
             "type": "string",
@@ -14124,9 +14138,39 @@
         "required": [
           "url",
           "createdAt",
+          "expiresAt",
           "createdById"
         ],
         "additionalProperties": false
+      },
+      "GuestShoppingLinkInput": {
+        "type": "object",
+        "properties": {
+          "expiresInDays": {
+            "default": 7,
+            "nullable": true,
+            "anyOf": [
+              {
+                "type": "number",
+                "enum": [
+                  1
+                ]
+              },
+              {
+                "type": "number",
+                "enum": [
+                  7
+                ]
+              },
+              {
+                "type": "number",
+                "enum": [
+                  30
+                ]
+              }
+            ]
+          }
+        }
       },
       "HouseholdDto": {
         "type": "object",

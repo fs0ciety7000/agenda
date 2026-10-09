@@ -734,6 +734,14 @@
     <string name="guest_link_loading">Loading…</string>
     <string name="guest_link_offline">Sharing the list needs a connection.</string>
     <string name="guest_link_error">The link could not be updated. Please try again.</string>
+    <string name="guest_link_duration">The link turns itself off after</string>
+    <string name="guest_link_duration_next">Length of the next link (“New link”)</string>
+    <string name="guest_link_day1">1 day</string>
+    <string name="guest_link_day7">1 week</string>
+    <string name="guest_link_day30">1 month</string>
+    <string name="guest_link_no_limit">No limit</string>
+    <string name="guest_link_expires_on">Turns itself off on %1$s.</string>
+    <string name="guest_link_no_expiry">No limit: remember to turn it off when the guest no longer needs it.</string>
 
     <!-- Code-barres des courses -->
     <string name="barcode_open">Scan a barcode</string>

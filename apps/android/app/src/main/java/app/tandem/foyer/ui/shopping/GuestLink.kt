@@ -16,11 +16,13 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -29,6 +31,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -38,7 +41,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import app.tandem.foyer.R
@@ -63,7 +68,8 @@ fun GuestLinkButton(
     householdName: String,
     members: Map<String, Member>,
     load: suspend () -> GuestShoppingLinkDto?,
-    create: suspend () -> GuestShoppingLinkDto?,
+    /** Crée ou remplace le lien ; il se coupe seul après ce nombre de jours (null : sans limite). */
+    create: suspend (days: Int?) -> GuestShoppingLinkDto?,
     revoke: suspend () -> Boolean,
     onMessage: (String) -> Unit,
 ) {
@@ -75,6 +81,8 @@ fun GuestLinkButton(
     // Confirmation en cours : « regenerate » ou « revoke ».
     var confirm by rememberSaveable { mutableStateOf<String?>(null) }
     var failed by remember { mutableStateOf(false) }
+    // Durée du prochain lien (création ou « Nouveau lien ») : une semaine par défaut ; 0 = sans limite.
+    var days by rememberSaveable { mutableIntStateOf(7) }
     LaunchedEffect(online, open) {
         if (online) {
             val loaded = load()
@@ -131,10 +139,20 @@ fun GuestLinkButton(
                         Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     Text(
+                        guestLinkExpiry(link!!),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
+                    Text(
                         stringResource(R.string.guest_link_private),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
+                    Text(
+                        stringResource(R.string.guest_link_duration_next),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    DurationChoice(days) { days = it }
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.Center) {
                         TextButton(
                             onClick = {
@@ -151,7 +169,10 @@ fun GuestLinkButton(
                             Text(stringResource(R.string.guest_link_revoke))
                         }
                     }
-                } else if (link == null) {
+                } else if (link != null) {
+                    Text(stringResource(R.string.guest_link_duration), style = MaterialTheme.typography.labelLarge)
+                    DurationChoice(days) { days = it }
+                } else {
                     Text(
                         stringResource(if (failed) R.string.guest_link_error else R.string.guest_link_loading),
                         style = MaterialTheme.typography.bodySmall,
@@ -177,7 +198,7 @@ fun GuestLinkButton(
                 ) { Text(stringResource(R.string.guest_link_send)) }
             } else {
                 Button(
-                    onClick = { act { create()?.also { link = it } != null } },
+                    onClick = { act { create(days.takeIf { it > 0 })?.also { link = it } != null } },
                     enabled = !busy && link != null,
                     modifier = Modifier.heightIn(min = 48.dp),
                 ) { Text(stringResource(R.string.guest_link_create)) }
@@ -207,7 +228,7 @@ fun GuestLinkButton(
                         if (which == "revoke") {
                             act { revoke().also { if (it) link = GuestShoppingLinkDto() } }
                         } else {
-                            act { create()?.also { link = it } != null }
+                            act { create(days.takeIf { it > 0 })?.also { link = it } != null }
                         }
                     },
                     modifier = Modifier.heightIn(min = 48.dp),
@@ -236,4 +257,39 @@ private fun guestLinkCreated(link: GuestShoppingLinkDto, members: Map<String, Me
     } else {
         stringResource(R.string.guest_link_created_on, date)
     }
+}
+
+/** Durées proposées (jours ; 0 = sans limite), un seul choix à la fois. */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun DurationChoice(days: Int, onChange: (Int) -> Unit) {
+    val choices = listOf(
+        1 to R.string.guest_link_day1,
+        7 to R.string.guest_link_day7,
+        30 to R.string.guest_link_day30,
+        0 to R.string.guest_link_no_limit,
+    )
+    FlowRow(
+        Modifier.selectableGroup(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        choices.forEach { (value, label) ->
+            FilterChip(
+                selected = days == value,
+                onClick = { onChange(value) },
+                label = { Text(stringResource(label)) },
+                modifier = Modifier.heightIn(min = 48.dp).semantics { role = Role.RadioButton },
+            )
+        }
+    }
+}
+
+/** « Se coupe tout seul le vendredi 16 octobre à 18:30 », ou le rappel de le couper. */
+@Composable
+private fun guestLinkExpiry(link: GuestShoppingLinkDto): String {
+    val at = link.expiresAt?.let { runCatching { Instant.parse(it) }.getOrNull() }
+        ?: return stringResource(R.string.guest_link_no_expiry)
+    val date = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL, FormatStyle.SHORT).withLocale(currentLocale())
+        .format(at.atZone(ZoneId.systemDefault()))
+    return stringResource(R.string.guest_link_expires_on, date)
 }

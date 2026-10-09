@@ -26,7 +26,13 @@ test('courses : lien invité en lecture seule, ouvert sans compte, puis coupé',
 
   await page.getByRole('button', { name: 'Partager avec un invité' }).click();
   const dialog = page.getByRole('dialog', { name: 'Lien pour un invité' });
+  // Une semaine par défaut : le lien se coupe tout seul.
+  await expect(dialog.getByRole('radio', { name: '1 semaine' })).toHaveAttribute(
+    'aria-checked',
+    'true',
+  );
   await dialog.getByRole('button', { name: 'Créer le lien' }).click();
+  await expect(dialog.getByText(/^Se coupe tout seul le /)).toBeVisible();
   const field = dialog.getByRole('textbox', { name: 'Lien invité' });
   await expect(field).toHaveValue(/\/guest\/[a-f0-9]{40}$/);
   await expect(dialog.getByText(/Créé le .+ par Emma/)).toBeVisible();
@@ -55,12 +61,22 @@ test('courses : lien invité en lecture seule, ouvert sans compte, puis coupé',
     await noViolations(guestPage, `page invité (${colorScheme})`);
   }
 
+  // Sans limite : le dialogue le rappelle (nouveau lien, l'ancien cesse de fonctionner).
+  await page.getByRole('button', { name: /Partager avec un invité/ }).click();
+  await dialog.getByRole('radio', { name: 'Sans limite' }).click();
+  page.once('dialog', (d) => void d.accept());
+  await dialog.getByRole('button', { name: 'Nouveau lien' }).click();
+  await expect(dialog.getByText(/^Sans limite : pensez à le couper/)).toBeVisible();
+  const forever = await field.inputValue();
+  expect(forever).not.toBe(url);
+  await page.keyboard.press('Escape');
+
   // Coupé : l'invité voit que le lien ne marche plus.
   page.once('dialog', (d) => void d.accept());
   await page.getByRole('button', { name: /Partager avec un invité/ }).click();
   await dialog.getByRole('button', { name: 'Couper le lien' }).click();
   await expect(dialog.getByRole('button', { name: 'Créer le lien' })).toBeVisible();
-  await guestPage.reload();
+  await guestPage.goto(new URL(forever).pathname);
   await expect(guestPage.getByText('Ce lien ne fonctionne plus')).toBeVisible();
   await guest.close();
 });
