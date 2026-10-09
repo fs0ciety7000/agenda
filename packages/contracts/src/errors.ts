@@ -47,6 +47,7 @@ export const ErrorCode = {
   RECEIPT_SCAN_UNAVAILABLE: 'RECEIPT_SCAN_UNAVAILABLE',
   BARCODE_SCAN_UNAVAILABLE: 'BARCODE_SCAN_UNAVAILABLE',
   VAULT_LOCKED: 'VAULT_LOCKED',
+  BACKUP_INVALID: 'BACKUP_INVALID',
   INTERNAL: 'INTERNAL',
 } as const;
 export type ErrorCode = (typeof ErrorCode)[keyof typeof ErrorCode];

@@ -94,7 +94,8 @@
     "ACCOUNT_DISABLED": "This account is disabled. Contact the administrator.",
     "PASSKEY_FAILED": "Couldn't sign in with a passkey. Use your password, or add a passkey in Settings first.",
     "VAULT_LOCKED": "Verification needed to show this note.",
-    "BARCODE_SCAN_UNAVAILABLE": "Barcode reading is unavailable right now. Type the digits or the item name."
+    "BARCODE_SCAN_UNAVAILABLE": "Barcode reading is unavailable right now. Type the digits or the item name.",
+    "BACKUP_INVALID": "This file is not a valid Tandem backup."
   },
   "today": {
     "greeting": "Hello {name} 👋",
@@ -178,7 +179,8 @@
     "helpHint": "A bug, an idea, a question? Report it; the documentation answers common questions.",
     "report": "Report a problem",
     "docs": "Documentation",
-    "status": "Service status"
+    "status": "Service status",
+    "backup": "Household backup"
   },
   "common": {
     "loading": "Loading…",
@@ -552,7 +554,7 @@
     },
     "data": {
       "title": "Data processed",
-      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list, shared notes (title, content, who wrote them, whether they are sensitive, and the 20 previous versions of each), important dates (title, day, month and optional year; they may concern relatives, such as a birthday).\nGuest link (if a member creates one): a secret link opens the shopping list only (items, quantities, aisles and the household name), read-only and with no account, until a member turns it off or replaces it. Anyone with the link can see it.\nBarcodes (if you scan them): the barcode photo is read on our server, then deleted right away; the household keeps the code and the product name. For a product it does not know yet, the server sends only the code (nothing about you) to Open Food Facts, an open product database.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, sub-tasks, comments, turn-swap requests (with any note), declared absences, activity history (who did what, when).\nExpenses (if you use them): amount, date, label, category, comment, who paid and each person's share. A personal expense is visible to you only. An attached receipt (photo or PDF) is kept with the expense and deleted with it. If you use “Read a receipt”, the photo is read on our server (no outside service) to suggest the amount, date and shop, then deleted straight away; it is only kept if you save the expense with that receipt.\nSessions: device (browser and system, or Android app version), sign-in date and last activity, shown in “Signed-in devices” so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks, shopping list, notes and important dates on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; their attachments are added to the task.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it.\nReports (if you send any): the type, title and text of your message, a screenshot if you attach one, whether you agree to be contacted and, only if you tick the box, technical information shown before sending (browser or phone model, system, app version, language, time zone, screen size, open page). Never the content of your tasks. Only the app's administrators read them.\nBrowser notifications (if you turn them on): the subscription address provided by your browser, deleted when you turn them off or sign out."
+      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list, shared notes (title, content, who wrote them, whether they are sensitive, and the 20 previous versions of each), important dates (title, day, month and optional year; they may concern relatives, such as a birthday).\nGuest link (if a member creates one): a secret link opens the shopping list only (items, quantities, aisles and the household name), read-only and with no account, until a member turns it off or replaces it. Anyone with the link can see it.\nBarcodes (if you scan them): the barcode photo is read on our server, then deleted right away; the household keeps the code and the product name. For a product it does not know yet, the server sends only the code (nothing about you) to Open Food Facts, an open product database.\nHousehold backup (if you download one): an archive built on request, never kept on our server, with the household data you can see and each member's email address (to find them again if you restore it elsewhere). When restored on another instance, the address of a member who has not signed up yet is kept there until they join the household.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, sub-tasks, comments, turn-swap requests (with any note), declared absences, activity history (who did what, when).\nExpenses (if you use them): amount, date, label, category, comment, who paid and each person's share. A personal expense is visible to you only. An attached receipt (photo or PDF) is kept with the expense and deleted with it. If you use “Read a receipt”, the photo is read on our server (no outside service) to suggest the amount, date and shop, then deleted straight away; it is only kept if you save the expense with that receipt.\nSessions: device (browser and system, or Android app version), sign-in date and last activity, shown in “Signed-in devices” so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks, shopping list, notes and important dates on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; their attachments are added to the task.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it.\nReports (if you send any): the type, title and text of your message, a screenshot if you attach one, whether you agree to be contacted and, only if you tick the box, technical information shown before sending (browser or phone model, system, app version, language, time zone, screen size, open page). Never the content of your tasks. Only the app's administrators read them.\nBrowser notifications (if you turn them on): the subscription address provided by your browser, deleted when you turn them off or sign out."
     },
     "google": {
       "title": "Google data",
@@ -1578,5 +1580,31 @@
     "add": "Add to the list",
     "again": "Another code",
     "added": "“{name}” added to the list"
+  },
+  "backup": {
+    "intro": "A .zip archive of the whole household: tasks and repeats, shopping, meals, expenses and receipts, notes (sensitive ones included), important dates and attachments. Keep it somewhere safe, or restore it on another Tandem instance.",
+    "excluded": "Not included: the other person's personal tasks and expenses, the activity history, notifications, secret links (guest, iCal, email) and Google Calendar.",
+    "download": "Download the backup",
+    "preparing": "Preparing…",
+    "done": "Backup downloaded.",
+    "private": "Keep this file to yourself: it holds the household's data in plain form, sensitive notes included.",
+    "vaultTitle": "Confirm to download",
+    "vaultPassword": "The backup contains the text of sensitive notes. Enter your account password.",
+    "vaultConfirm": "The backup contains the text of sensitive notes. Confirm that it's you.",
+    "password": "Password",
+    "submit": "Download",
+    "restoreTitle": "Do you have a backup?",
+    "restoreIntro": "Recreate your household from a Tandem backup (.zip file): everything in it is brought back.",
+    "restoreChoose": "Choose the backup",
+    "restoring": "Restoring…",
+    "alreadyInHousehold": "This account is already in a household: restore from an account that doesn't have one yet.",
+    "restoredTitle": "{name} is restored",
+    "restoredBody": "The whole household is back here.",
+    "inviteBody": "Send this link to {name}: by following it with the address {email}, {name} gets their whole history back.",
+    "inviteLink": "Link for {name}",
+    "copy": "Copy",
+    "copied": "Copied",
+    "pending": "pending",
+    "linksValid": "These links are valid for 30 days."
   }
 }

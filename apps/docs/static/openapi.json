@@ -8245,6 +8245,126 @@
         ]
       }
     },
+    "/v1/households/{householdId}/backup": {
+      "post": {
+        "description": "Télécharger la sauvegarde du foyer : archive .zip avec les données et les fichiers joints. Elle contient le texte des notes sensibles : vérification comme pour les afficher (mot de passe ou confirmation sur le site, sur l'appareil pour Android).",
+        "operationId": "BackupExportController_download_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevealNoteInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Télécharger la sauvegarde du foyer ",
+        "tags": [
+          "households"
+        ]
+      }
+    },
+    "/v1/households/restore": {
+      "post": {
+        "description": "Restaurer une sauvegarde : crée un nouveau foyer sur cette instance (multipart, champ `file`, archive .zip de Tandem). Depuis un compte encore sans foyer ; les autres membres reçoivent une invitation à leur adresse.",
+        "operationId": "BackupRestoreController_restore_v1",
+        "parameters": [
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestoreResultDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Restaurer une sauvegarde ",
+        "tags": [
+          "households"
+        ]
+      }
+    },
     "/v1/households/{householdId}/search": {
       "get": {
         "description": "Recherche globale : tâches, notes, dates, dépenses et courses du foyer.",
@@ -11200,6 +11320,7 @@
                   "RECEIPT_SCAN_UNAVAILABLE",
                   "BARCODE_SCAN_UNAVAILABLE",
                   "VAULT_LOCKED",
+                  "BACKUP_INVALID",
                   "INTERNAL"
                 ]
               },
@@ -14058,6 +14179,9 @@
                 "absentUntil": {
                   "nullable": true,
                   "type": "string"
+                },
+                "pending": {
+                  "type": "boolean"
                 }
               },
               "required": [
@@ -16066,6 +16190,132 @@
         "required": [
           "version"
         ]
+      },
+      "RestoreResultDto": {
+        "type": "object",
+        "properties": {
+          "household": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "format": "uuid"
+              },
+              "name": {
+                "type": "string"
+              },
+              "timezone": {
+                "type": "string"
+              },
+              "members": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "userId": {
+                      "nullable": true,
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "displayName": {
+                      "type": "string"
+                    },
+                    "role": {
+                      "type": "string",
+                      "enum": [
+                        "OWNER",
+                        "MEMBER"
+                      ]
+                    },
+                    "color": {
+                      "type": "string",
+                      "enum": [
+                        "sage",
+                        "ocean",
+                        "amber",
+                        "plum",
+                        "clay",
+                        "slate"
+                      ]
+                    },
+                    "absentUntil": {
+                      "nullable": true,
+                      "type": "string"
+                    },
+                    "pending": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "id",
+                    "userId",
+                    "displayName",
+                    "role",
+                    "color"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            },
+            "required": [
+              "id",
+              "name",
+              "timezone",
+              "members"
+            ],
+            "additionalProperties": false
+          },
+          "invitations": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "memberId": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "displayName": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "token": {
+                  "type": "string"
+                },
+                "expiresAt": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "memberId",
+                "displayName",
+                "email",
+                "token",
+                "expiresAt"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "counts": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer",
+              "minimum": -9007199254740991,
+              "maximum": 9007199254740991
+            }
+          }
+        },
+        "required": [
+          "household",
+          "invitations",
+          "counts"
+        ],
+        "additionalProperties": false
       },
       "RevealNoteInput": {
         "type": "object",

@@ -40,6 +40,29 @@ description: Mot de passe, Google, sessions, export et suppression de ses donné
 Ce que l'app fait de vos données, combien de temps elle les garde et avec quels prestataires :
 [Confidentialité & RGPD](../rgpd.md).
 
+## Sauvegarde du foyer
+
+**Réglages → Sauvegarde du foyer → Télécharger la sauvegarde** (sur le site) : une archive
+`.zip` de tout le foyer, à garder en lieu sûr ou à restaurer sur une autre instance de Tandem
+(changement de serveur, d'hébergeur).
+
+- **Ce qu'elle contient** : tâches, répétitions et rotations, ce qui a été fait et par qui,
+  sous-tâches, commentaires, pièces jointes, modèles, courses (et la mémoire des produits et
+  codes-barres), menus, notes (sensibles comprises, avec leurs versions), dates importantes,
+  dépenses, tickets, charges fixes, budgets et absences.
+- **Ce qu'elle ne contient pas** : les tâches et dépenses personnelles de l'autre, l'historique
+  des actions, les notifications, les liens secrets (invité, iCal, adresse e-mail des tâches),
+  Google Agenda, les mots de passe et les appareils connectés.
+- Elle contient le texte des notes sensibles : votre **mot de passe** est demandé (ou une
+  confirmation pour un compte Google). Gardez le fichier pour vous.
+
+**Restaurer** : sur l'autre instance, créez un compte puis, à l'accueil, **Vous avez une
+sauvegarde ? → Choisir la sauvegarde**. Le foyer est recréé tel quel ; vous reprenez votre place
+(même adresse e-mail, sinon celle de la personne qui a exporté). L'autre reçoit un **lien
+d'invitation**, valable 30 jours : en le suivant avec son adresse, elle retrouve tout son
+historique. Lien expiré ? **Réglages → Foyer** en propose un nouveau tant qu'elle est « en
+attente ».
+
 ## Apparence et langue
 
 Thème **Système**, **Clair** ou **Sombre** dans les Réglages. L'app est en français, en

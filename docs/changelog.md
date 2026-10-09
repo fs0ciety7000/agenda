@@ -15,6 +15,14 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### Sauvegarde du foyer et restauration (#93)
+
+- ✨ **Télécharger la sauvegarde** du foyer (Réglages, sur le site) : une archive .zip avec les
+  données et les fichiers joints, mot de passe demandé.
+- ✨ **Restaurer une sauvegarde** à l'arrivée sur une autre instance : le foyer est recréé, et
+  l'autre retrouve son historique en suivant son lien d'invitation.
+- 🐞 Le champ du lien d'invitation (accueil) s'écrasait sur téléphone.
+
 ### Ajouter un article par son code-barres (#93)
 
 - ✨ **Scanner un code-barres** dans Courses (site et Android) : le code est lu sur la photo, le

@@ -22,3 +22,4 @@ export * from './notes';
 export * from './important-dates';
 export * from './sessions';
 export * from './search';
+export * from './backup';

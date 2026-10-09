@@ -11,6 +11,7 @@ import { CategoriesSettings } from '@/components/app/categories-settings';
 import { TemplatesSettings } from '@/components/app/templates';
 import { InboundEmailSettings } from '@/components/app/inbound-email';
 import { AbsencesSettings } from '@/components/app/absences';
+import { BackupSettings } from '@/components/app/backup-settings';
 import { IcalFeedSettings } from '@/components/app/ical-feed';
 import { InviteLink } from '@/components/app/invite-link';
 import { LanguageSwitcher } from '@/components/app/language-switcher';
@@ -32,6 +33,7 @@ const THEMES: ThemePreference[] = ['system', 'light', 'dark'];
 
 export default function SettingsPage() {
   const t = useTranslations('settings');
+  const tb = useTranslations('backup');
   const router = useRouter();
   const queryClient = useQueryClient();
   const { household, me } = useSession();
@@ -64,10 +66,16 @@ export default function SettingsPage() {
                 {m.role === 'OWNER' && (
                   <span className="text-[0.8125rem] text-text-muted">· {t('owner')}</span>
                 )}
+                {m.pending && (
+                  <span className="text-[0.8125rem] text-text-muted">· {tb('pending')}</span>
+                )}
               </li>
             ))}
           </ul>
-          {household.members.length < 2 && <InviteLink householdId={household.id} />}
+          {/* Membre restauré pas encore arrivé : un nouveau lien remplace celui qui aurait expiré. */}
+          {(household.members.length < 2 || household.members.some((m) => m.pending)) && (
+            <InviteLink householdId={household.id} />
+          )}
         </Card>
       </section>
 
@@ -166,6 +174,13 @@ export default function SettingsPage() {
           <Suspense>
             <PrivacySettings />
           </Suspense>
+        </Card>
+      </section>
+
+      <section className="flex flex-col gap-3" aria-labelledby="s-backup">
+        <SectionTitle id="s-backup">{t('backup')}</SectionTitle>
+        <Card>
+          <BackupSettings householdId={household.id} />
         </Card>
       </section>
 

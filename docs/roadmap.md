@@ -175,12 +175,16 @@ Validé par l'utilisateur, du plus simple au plus gros :
   site ; code tapé à la main en secours ; nom corrigé retenu pour le foyer
   - [ ] Scan en direct à la caméra (Google Code Scanner, services Play) si la photo ne suffit
     pas à l'usage (S), à prioriser ensemble
-- [ ] **Sauvegarde exportable** du foyer (JSON) et restauration sur une autre instance (M) ⚙️🌐
+- [x] **Sauvegarde exportable** du foyer et restauration sur une autre instance (M) ⚙️🌐 (#93) :
+  archive .zip (JSON + fichiers, choix de l'utilisateur), mot de passe demandé (notes sensibles),
+  éléments personnels de l'autre exclus ; restauration = nouveau foyer, identifiants refaits,
+  membres retrouvés par leur adresse (choix de l'utilisateur) ; sur le site seulement
+  - [ ] Android : télécharger la sauvegarde depuis l'app (S), à prioriser ensemble
 - [ ] **« Ok Google, ajoute du lait dans Tandem »** : intégration à l'Assistant Google (M) 🤖
 
 Découvert pendant le lot 6 :
 
-- [x] Web : le champ du lien iCal (Réglages) s'écrasait sur téléphone (colonne flexible) (S) 🌐 (#93)
+- [x] Web : les champs des liens iCal (Réglages) et d'invitation (accueil) s'écrasaient sur téléphone (colonne flexible) (S) 🌐 (#93)
 - [ ] Web : un membre qui rejoint le foyer pendant que la page est ouverte apparaît comme « un
   ancien membre » (notes, historique) jusqu'au rechargement ; rafraîchir la session à son
   arrivée (S) 🌐

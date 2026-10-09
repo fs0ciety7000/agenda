@@ -9,9 +9,8 @@ import {
   type RevealedNoteDto,
   type RevealNoteInput,
   type UpdateNoteInput,
-  VAULT_UNLOCK_MINUTES,
 } from '@agenda/contracts';
-import { PasswordService } from '../auth/password.service';
+import { VaultService } from '../auth/vault.service';
 import { AppException, notFound } from '../common/app-exception';
 import { DomainEvents } from '../common/domain-events';
 import { AuthUser, HouseholdContext } from '../common/request-context';
@@ -50,7 +49,7 @@ export class NotesService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly events: DomainEvents,
-    private readonly passwords: PasswordService,
+    private readonly vault: VaultService,
   ) {}
 
   /** Épinglées d'abord, puis les plus récemment modifiées. */
@@ -178,27 +177,7 @@ export class NotesService {
     input: RevealNoteInput,
   ): Promise<RevealedNoteDto> {
     const note = await this.find(ctx, id);
-    if (!note.secret || user.via === 'bearer') return { body: note.body };
-    const now = new Date();
-    const session = await this.prisma.session.findUniqueOrThrow({
-      where: { id: user.sessionId },
-      select: { vaultUnlockedUntil: true, user: { select: { passwordHash: true } } },
-    });
-    if (session.vaultUnlockedUntil && session.vaultUnlockedUntil > now) return { body: note.body };
-    const hash = session.user.passwordHash;
-    if (hash ? !input.password : !input.confirm) {
-      // Le site demande alors le mot de passe (ou la confirmation) puis réessaie.
-      throw new AppException('VAULT_LOCKED', HttpStatus.FORBIDDEN, 'Vault is locked', {
-        method: hash ? 'password' : 'confirm',
-      });
-    }
-    if (hash && !(await this.passwords.verify(hash, input.password!))) {
-      throw new AppException('CURRENT_PASSWORD_INVALID', HttpStatus.FORBIDDEN, 'Invalid password');
-    }
-    await this.prisma.session.update({
-      where: { id: user.sessionId },
-      data: { vaultUnlockedUntil: new Date(now.getTime() + VAULT_UNLOCK_MINUTES * 60_000) },
-    });
+    if (note.secret) await this.vault.unlock(user, input);
     return { body: note.body };
   }
 

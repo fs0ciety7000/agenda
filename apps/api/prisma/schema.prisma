@@ -233,6 +233,9 @@ model HouseholdMember {
   icalToken     String?       @unique @db.VarChar(40)
   /// Proportion de partage des dépenses communes (poids relatif ; 1 et 1 = moitié-moitié).
   expenseWeight Int           @default(1)
+  /// Foyer restauré depuis une sauvegarde : adresse du membre dont le compte n'existe pas encore
+  /// ici. En acceptant une invitation avec cette adresse, il reprend ce membre et son historique.
+  pendingEmail  String?       @db.Citext
 
   household            Household                @relation(fields: [householdId], references: [id], onDelete: Cascade)
   user                 User?                    @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -509,7 +512,6 @@ model TaskTemplate {
   @@index([householdId])
 }
 
-/// Liste de courses permanente du foyer. `id` peut être choisi par le client (ajout idempotent).
 /// Nom retenu par le foyer pour un code-barres (donné par un membre, ou trouvé dans Open Food Facts).
 model ShoppingBarcode {
   householdId String   @db.Uuid
@@ -525,6 +527,7 @@ model ShoppingBarcode {
   @@id([householdId, code])
 }
 
+/// Liste de courses permanente du foyer. `id` peut être choisi par le client (ajout idempotent).
 model ShoppingItem {
   id          String    @id @db.Uuid
   householdId String    @db.Uuid

@@ -9,3 +9,6 @@ export const EXPENSE_CURRENCY = 'EUR';
 /** Limites des pièces jointes (octets). */
 export const ATTACHMENT_MAX_BYTES = 10 * 1024 * 1024;
 export const HOUSEHOLD_ATTACHMENTS_MAX_BYTES = 200 * 1024 * 1024;
+
+/** Sauvegarde du foyer (.zip : données en JSON et fichiers joints) : taille de l'archive. */
+export const BACKUP_MAX_BYTES = 400 * 1024 * 1024;

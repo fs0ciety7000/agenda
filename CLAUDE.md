@@ -38,6 +38,8 @@ Fichiers importés, à respecter au même titre que celui-ci :
   seules de vraies images (signature vérifiée) lui sont passées (#92).
 - Codes-barres : photo lue par zbar sur le serveur (effacée aussitôt), nom du foyer d'abord, sinon
   Open Food Facts (le code seul) ; `OPEN_FOOD_FACTS_URL=off` le coupe (#93).
+- Sauvegarde du foyer : .zip (JSON + fichiers), mot de passe comme le coffre, sans le personnel de
+  l'autre ; restaurer recrée un foyer (ids refaits), l'autre reprend son membre par son adresse (#93).
 - Lien invité des courses : un par foyer, secret, lecture seule, sans compte ; l'invité ne voit que
   les articles et le nom du foyer, jamais les membres (#93).
 - Notes sensibles : contenu jamais renvoyé hors de `…/reveal` ; site = mot de passe (coffre ouvert 5 min

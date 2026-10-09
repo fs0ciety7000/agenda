@@ -145,7 +145,24 @@ export class HouseholdsService {
       const color = MemberColor.options.find((c) => !used.has(c)) ?? DEFAULT_COLOR;
       const displayName = input.memberDisplayName ?? user.displayName;
 
-      if (existing) {
+      // Foyer restauré : la personne attendue à cette adresse reprend son membre (et tout son
+      // historique), sans en créer un nouveau.
+      const restored = existing
+        ? null
+        : await tx.householdMember.findFirst({
+            where: {
+              householdId: invitation.householdId,
+              userId: null,
+              leftAt: null,
+              pendingEmail: { equals: user.email, mode: 'insensitive' },
+            },
+          });
+      if (restored) {
+        await tx.householdMember.update({
+          where: { id: restored.id },
+          data: { userId, pendingEmail: null, joinedAt: new Date() },
+        });
+      } else if (existing) {
         await tx.householdMember.update({
           where: { id: existing.id },
           data: { leftAt: null, role: 'MEMBER', displayName, color, joinedAt: new Date() },
@@ -189,6 +206,7 @@ function toDto(h: HouseholdWithMembers): HouseholdDto {
       role: m.role,
       color: MemberColor.catch('slate').parse(m.color),
       absentUntil: absentUntil(m.id),
+      ...(m.pendingEmail && !m.userId ? { pending: true } : {}),
     })),
   };
 }

@@ -28,7 +28,7 @@ export function InviteLink({ householdId }: { householdId: string }) {
             readOnly
             value={url}
             aria-label={t('onboarding.stepInvite')}
-            className="h-11 flex-1 truncate rounded-md border border-border bg-surface-muted px-3 text-sm"
+            className="h-11 w-full min-w-0 truncate rounded-md border border-border-strong bg-surface-muted px-3 text-sm sm:flex-1"
             onFocus={(e) => e.currentTarget.select()}
           />
           <Button

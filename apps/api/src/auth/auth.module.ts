@@ -11,6 +11,7 @@ import { AuthService } from './auth.service';
 import { CsrfGuard } from './csrf.guard';
 import { PasswordService } from './password.service';
 import { TokenService } from './token.service';
+import { VaultService } from './vault.service';
 
 @Module({
   controllers: [AuthController, GoogleSignInController, SessionsController],
@@ -21,9 +22,10 @@ import { TokenService } from './token.service';
     PasskeysService,
     GoogleOidcClient,
     TokenService,
+    VaultService,
     { provide: APP_GUARD, useClass: CsrfGuard },
     { provide: APP_GUARD, useClass: AuthGuard },
   ],
-  exports: [AuthService, PasswordService, PasswordResetService],
+  exports: [AuthService, PasswordService, PasswordResetService, VaultService],
 })
 export class AuthModule {}

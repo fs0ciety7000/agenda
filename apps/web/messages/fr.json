@@ -94,7 +94,8 @@
     "ACCOUNT_DISABLED": "Ce compte est désactivé. Contactez l'administrateur.",
     "PASSKEY_FAILED": "Connexion par passkey impossible. Utilisez votre mot de passe, ou ajoutez d'abord une passkey dans les Réglages.",
     "VAULT_LOCKED": "Vérification nécessaire pour afficher cette note.",
-    "BARCODE_SCAN_UNAVAILABLE": "La lecture des codes-barres est indisponible pour le moment. Tapez les chiffres ou le nom de l'article."
+    "BARCODE_SCAN_UNAVAILABLE": "La lecture des codes-barres est indisponible pour le moment. Tapez les chiffres ou le nom de l'article.",
+    "BACKUP_INVALID": "Ce fichier n'est pas une sauvegarde de Tandem valide."
   },
   "today": {
     "greeting": "Bonjour {name} 👋",
@@ -178,7 +179,8 @@
     "helpHint": "Un bug, une idée, une question ? Signalez-le ; la documentation répond aux questions courantes.",
     "report": "Signaler un problème",
     "docs": "Documentation",
-    "status": "État du service"
+    "status": "État du service",
+    "backup": "Sauvegarde du foyer"
   },
   "common": {
     "loading": "Chargement…",
@@ -552,7 +554,7 @@
     },
     "data": {
       "title": "Données traitées",
-      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations, liste de courses, notes partagées (titre, contenu, qui les a écrites, si elles sont sensibles, et les 20 versions précédentes de chacune), dates importantes (titre, jour, mois et année facultative ; elles peuvent concerner des proches, par exemple un anniversaire).\nLien invité (si un membre le crée) : un lien secret ouvre la liste de courses seule (articles, quantités, rayons et nom du foyer), sans compte et en lecture seule, jusqu'à ce qu'un membre le coupe ou le remplace. Toute personne qui a le lien peut la voir.\nCodes-barres (si vous en scannez) : la photo du code-barres est lue sur notre serveur, puis effacée aussitôt ; le foyer retient le code et le nom du produit. Pour un produit qu'il ne connaît pas encore, le serveur envoie le code seul (rien sur vous) à Open Food Facts, une base de produits ouverte.\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, sous-tâches, commentaires, demandes d'échange de tour (avec le mot laissé), absences déclarées, historique des actions (qui a fait quoi, quand).\nDépenses (si vous les utilisez) : montant, date, libellé, catégorie, commentaire, qui a payé et la part de chacun. Une dépense personnelle n'est visible que de vous. Le ticket joint (photo ou PDF) est conservé avec la dépense et supprimé avec elle. Si vous utilisez « Lire un ticket », la photo est lue sur notre serveur (aucun service extérieur) pour proposer le montant, la date et le commerçant, puis effacée aussitôt ; elle n'est gardée que si vous enregistrez la dépense avec ce ticket.\nSessions : appareil (navigateur et système, ou version de l'application Android), date de connexion et dernière activité, affichés dans « Appareils connectés » pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches, de la liste de courses, des notes et des dates importantes sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion.\nAjout par e-mail (si vous l'activez) : l'expéditeur, le sujet et le texte des e-mails que vous transférez à votre adresse personnelle sont enregistrés dans les notes de la tâche créée. Ils sont reçus par Resend, notre prestataire d'e-mails ; leurs pièces jointes sont jointes à la tâche.\nPièces jointes : les fichiers que vous joignez à une tâche (ou joints à un e-mail transféré) sont stockés sur notre serveur avec la tâche, visibles par les membres du foyer (par vous seul pour une tâche personnelle), et supprimés avec elle.\nSignalements (si vous en envoyez) : le type, le titre et le texte de votre message, une capture d'écran si vous en joignez une, votre choix d'être recontacté·e ou non et, seulement si vous cochez la case, des informations techniques affichées avant l'envoi (navigateur ou modèle de téléphone, système, version de l'app, langue, fuseau horaire, taille d'écran, page ouverte). Jamais le contenu de vos tâches. Seuls les administrateurs de l'app les lisent.\nNotifications du navigateur (si vous les activez) : l'adresse d'abonnement fournie par votre navigateur, supprimée quand vous les désactivez ou vous déconnectez."
+      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations, liste de courses, notes partagées (titre, contenu, qui les a écrites, si elles sont sensibles, et les 20 versions précédentes de chacune), dates importantes (titre, jour, mois et année facultative ; elles peuvent concerner des proches, par exemple un anniversaire).\nLien invité (si un membre le crée) : un lien secret ouvre la liste de courses seule (articles, quantités, rayons et nom du foyer), sans compte et en lecture seule, jusqu'à ce qu'un membre le coupe ou le remplace. Toute personne qui a le lien peut la voir.\nCodes-barres (si vous en scannez) : la photo du code-barres est lue sur notre serveur, puis effacée aussitôt ; le foyer retient le code et le nom du produit. Pour un produit qu'il ne connaît pas encore, le serveur envoie le code seul (rien sur vous) à Open Food Facts, une base de produits ouverte.\nSauvegarde du foyer (si vous en téléchargez une) : une archive fabriquée à la demande, jamais gardée sur notre serveur, avec les données du foyer que vous voyez et l'adresse e-mail de chaque membre (pour le retrouver si vous la restaurez ailleurs). Restaurée sur une autre instance, l'adresse d'un membre pas encore inscrit y est gardée jusqu'à ce qu'il rejoigne le foyer.\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, sous-tâches, commentaires, demandes d'échange de tour (avec le mot laissé), absences déclarées, historique des actions (qui a fait quoi, quand).\nDépenses (si vous les utilisez) : montant, date, libellé, catégorie, commentaire, qui a payé et la part de chacun. Une dépense personnelle n'est visible que de vous. Le ticket joint (photo ou PDF) est conservé avec la dépense et supprimé avec elle. Si vous utilisez « Lire un ticket », la photo est lue sur notre serveur (aucun service extérieur) pour proposer le montant, la date et le commerçant, puis effacée aussitôt ; elle n'est gardée que si vous enregistrez la dépense avec ce ticket.\nSessions : appareil (navigateur et système, ou version de l'application Android), date de connexion et dernière activité, affichés dans « Appareils connectés » pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches, de la liste de courses, des notes et des dates importantes sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion.\nAjout par e-mail (si vous l'activez) : l'expéditeur, le sujet et le texte des e-mails que vous transférez à votre adresse personnelle sont enregistrés dans les notes de la tâche créée. Ils sont reçus par Resend, notre prestataire d'e-mails ; leurs pièces jointes sont jointes à la tâche.\nPièces jointes : les fichiers que vous joignez à une tâche (ou joints à un e-mail transféré) sont stockés sur notre serveur avec la tâche, visibles par les membres du foyer (par vous seul pour une tâche personnelle), et supprimés avec elle.\nSignalements (si vous en envoyez) : le type, le titre et le texte de votre message, une capture d'écran si vous en joignez une, votre choix d'être recontacté·e ou non et, seulement si vous cochez la case, des informations techniques affichées avant l'envoi (navigateur ou modèle de téléphone, système, version de l'app, langue, fuseau horaire, taille d'écran, page ouverte). Jamais le contenu de vos tâches. Seuls les administrateurs de l'app les lisent.\nNotifications du navigateur (si vous les activez) : l'adresse d'abonnement fournie par votre navigateur, supprimée quand vous les désactivez ou vous déconnectez."
     },
     "google": {
       "title": "Données Google",
@@ -1578,5 +1580,31 @@
     "add": "Ajouter à la liste",
     "again": "Autre code",
     "added": "« {name} » ajouté à la liste"
+  },
+  "backup": {
+    "intro": "Une archive .zip de tout le foyer : tâches et répétitions, courses, menus, dépenses et tickets, notes (sensibles comprises), dates importantes et pièces jointes. À garder en lieu sûr, ou à restaurer sur une autre instance de Tandem.",
+    "excluded": "N'y sont pas : les tâches et dépenses personnelles de l'autre, l'historique des actions, les notifications, les liens secrets (invité, iCal, e-mail) et Google Agenda.",
+    "download": "Télécharger la sauvegarde",
+    "preparing": "Préparation…",
+    "done": "Sauvegarde téléchargée.",
+    "private": "Gardez ce fichier pour vous : il contient les données du foyer en clair, notes sensibles comprises.",
+    "vaultTitle": "Confirmer pour télécharger",
+    "vaultPassword": "La sauvegarde contient le texte des notes sensibles. Entrez le mot de passe de votre compte.",
+    "vaultConfirm": "La sauvegarde contient le texte des notes sensibles. Confirmez que c'est bien vous.",
+    "password": "Mot de passe",
+    "submit": "Télécharger",
+    "restoreTitle": "Vous avez une sauvegarde ?",
+    "restoreIntro": "Recréez votre foyer à partir d'une sauvegarde de Tandem (fichier .zip) : tout y est repris.",
+    "restoreChoose": "Choisir la sauvegarde",
+    "restoring": "Restauration…",
+    "alreadyInHousehold": "Ce compte fait déjà partie d'un foyer : restaurez depuis un compte qui n'en a pas encore.",
+    "restoredTitle": "{name} est restauré",
+    "restoredBody": "Tout le foyer est repris ici.",
+    "inviteBody": "Envoyez ce lien à {name} : en le suivant avec l'adresse {email}, {name} retrouve tout son historique.",
+    "inviteLink": "Lien pour {name}",
+    "copy": "Copier",
+    "copied": "Copié",
+    "pending": "en attente",
+    "linksValid": "Ces liens sont valables 30 jours."
   }
 }

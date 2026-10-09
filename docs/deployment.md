@@ -215,6 +215,10 @@ Le service **`backup`** du compose s'en charge, sans configuration dans Coolify 
 Logs : Coolify → service `backup` → *Logs*, ligne
 `backup: OK …/agenda-AAAA-MM-JJTHHMM.dump (…) — restauration vérifiée : N comptes, …`.
 
+Ces sauvegardes couvrent **toute l'instance** (tous les comptes). Pour déménager **un foyer**
+vers une autre instance, chaque membre peut télécharger sa *sauvegarde du foyer* (archive .zip,
+Réglages) et la restaurer ailleurs : voir le [guide](guide/compte.md#sauvegarde-du-foyer).
+
 ### 6.1 Copie hors serveur (recommandé) — Cloudflare R2
 
 Un disque qui lâche ou un serveur perdu emporte aussi les dumps locaux.
