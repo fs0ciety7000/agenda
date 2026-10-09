@@ -40,12 +40,24 @@ describe('Recherche globale', () => {
     await http()
       .post(`${h.base}/expenses`)
       .set(h.grace.auth)
-      .send({ paidById: g, amountCents: 4500, date: today, title: 'Garage vidange', split: 'SHARED' })
+      .send({
+        paidById: g,
+        amountCents: 4500,
+        date: today,
+        title: 'Garage vidange',
+        split: 'SHARED',
+      })
       .expect(201);
     await http()
       .post(`${h.base}/expenses`)
       .set(h.nicolas.auth)
-      .send({ paidById: n, amountCents: 900, date: today, title: 'Garage perso', split: 'PERSONAL' })
+      .send({
+        paidById: n,
+        amountCents: 900,
+        date: today,
+        title: 'Garage perso',
+        split: 'PERSONAL',
+      })
       .expect(201);
     await http()
       .post(`${h.base}/shopping`)
@@ -60,7 +72,9 @@ describe('Recherche globale', () => {
     expect(res.body.notes).toEqual([
       expect.objectContaining({ title: 'Codes', snippet: expect.stringContaining('garage 7788') }),
     ]);
-    expect(res.body.dates).toEqual([expect.objectContaining({ title: 'Révision garage', month: 3 })]);
+    expect(res.body.dates).toEqual([
+      expect.objectContaining({ title: 'Révision garage', month: 3 }),
+    ]);
     expect(res.body.expenses.map((e: { title: string }) => e.title)).toEqual(['Garage vidange']);
     expect(res.body.shopping).toEqual([
       expect.objectContaining({ text: 'Liquide lave-glace (garage)', done: false }),
