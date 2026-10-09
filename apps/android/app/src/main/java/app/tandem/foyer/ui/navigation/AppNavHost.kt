@@ -111,6 +111,7 @@ import app.tandem.foyer.ui.share.noteFromShare
 import app.tandem.foyer.ui.shopping.splitShoppingItems
 import app.tandem.foyer.ui.search.SearchScreen
 import app.tandem.foyer.ui.search.SearchTarget
+import app.tandem.foyer.ui.settings.BackupSection
 import app.tandem.foyer.ui.settings.DeviceSessions
 import app.tandem.foyer.ui.settings.SettingsScreen
 import app.tandem.foyer.ui.shopping.BarcodeButton
@@ -635,6 +636,7 @@ private fun MainScaffold(
                         AppLanguage.set(activity, tag)
                     },
                     devices = { DeviceSessions(container.devices, onMessage) },
+                    backup = { BackupSection(state.online, container.backup::download, onMessage) },
                 )
             }
             composable("report") {

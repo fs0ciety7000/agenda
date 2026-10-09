@@ -780,4 +780,17 @@
     <string name="barcode_added">« %1$s » ajouté à la liste</string>
     <string name="barcode_failed">La lecture des codes-barres est indisponible pour le moment. Tapez les chiffres ou le nom de l\'article.</string>
     <string name="barcode_offline">Scanner un code-barres demande une connexion.</string>
+
+    <!-- Sauvegarde du foyer -->
+    <string name="backup_title">Sauvegarde du foyer</string>
+    <string name="backup_intro">Une archive .zip de tout le foyer : tâches et répétitions, courses, menus, dépenses et tickets, notes (sensibles comprises), dates importantes et pièces jointes. À garder en lieu sûr, ou à restaurer sur une autre instance de Tandem (depuis le site).</string>
+    <string name="backup_excluded">N\'y sont pas : les tâches et dépenses personnelles de l\'autre, l\'historique des actions, les notifications, les liens secrets et Google Agenda.</string>
+    <string name="backup_download">Télécharger la sauvegarde</string>
+    <string name="backup_preparing">Préparation…</string>
+    <string name="backup_done">Sauvegarde enregistrée.</string>
+    <string name="backup_failed">La sauvegarde n\'a pas pu être enregistrée. Réessayez.</string>
+    <string name="backup_offline">Télécharger la sauvegarde demande une connexion.</string>
+    <string name="backup_private">Gardez ce fichier pour vous : il contient les données du foyer en clair, notes sensibles comprises.</string>
+    <string name="backup_unlock_title">Télécharger la sauvegarde</string>
+    <string name="backup_unlock_subtitle">Elle contient le texte des notes sensibles</string>
 </resources>

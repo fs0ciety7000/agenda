@@ -761,4 +761,17 @@
     <string name="barcode_added">‘%1$s’ toegevoegd aan de lijst</string>
     <string name="barcode_failed">Barcodes lezen lukt nu even niet. Typ de cijfers of de naam van het artikel.</string>
     <string name="barcode_offline">Voor het scannen van een barcode is een verbinding nodig.</string>
+
+    <!-- Sauvegarde du foyer -->
+    <string name="backup_title">Back-up van het huishouden</string>
+    <string name="backup_intro">Een .zip-archief van het hele huishouden: taken en herhalingen, boodschappen, maaltijden, uitgaven en kassatickets, notities (ook gevoelige), belangrijke data en bijlagen. Bewaar het op een veilige plek, of zet het terug op een andere Tandem-instantie (via de website).</string>
+    <string name="backup_excluded">Niet inbegrepen: de persoonlijke taken en uitgaven van de ander, de activiteitengeschiedenis, meldingen, geheime links en Google Agenda.</string>
+    <string name="backup_download">Back-up downloaden</string>
+    <string name="backup_preparing">Voorbereiden…</string>
+    <string name="backup_done">Back-up opgeslagen.</string>
+    <string name="backup_failed">De back-up kon niet worden opgeslagen. Probeer het opnieuw.</string>
+    <string name="backup_offline">Voor het downloaden van de back-up is een verbinding nodig.</string>
+    <string name="backup_private">Hou dit bestand voor jezelf: het bevat de gegevens van het huishouden leesbaar, gevoelige notities inbegrepen.</string>
+    <string name="backup_unlock_title">Back-up downloaden</string>
+    <string name="backup_unlock_subtitle">Hij bevat de tekst van gevoelige notities</string>
 </resources>

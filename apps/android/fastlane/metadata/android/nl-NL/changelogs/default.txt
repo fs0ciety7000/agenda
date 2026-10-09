@@ -1,5 +1,5 @@
 Boodschappen: barcode via foto; gastlink die vanzelf uitgaat.
-• Gevoelige notities: vingerafdruk of code om te tonen.
+• Back-up van het huishouden downloaden; gevoelige notities beschermd.
 • Notities: eerdere versies terugzetten.
 • Kasticket inlezen: bedrag en datum van de foto gelezen.
 • Delen naar Tandem: een link wordt een taak, notitie of boodschap.

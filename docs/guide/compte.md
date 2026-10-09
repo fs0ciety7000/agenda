@@ -42,9 +42,10 @@ Ce que l'app fait de vos données, combien de temps elle les garde et avec quels
 
 ## Sauvegarde du foyer
 
-**Réglages → Sauvegarde du foyer → Télécharger la sauvegarde** (sur le site) : une archive
-`.zip` de tout le foyer, à garder en lieu sûr ou à restaurer sur une autre instance de Tandem
-(changement de serveur, d'hébergeur).
+**Réglages → Sauvegarde du foyer → Télécharger la sauvegarde**, sur le site ou dans l'app
+Android (elle propose où l'enregistrer : Fichiers, Drive…) : une archive `.zip` de tout le
+foyer, à garder en lieu sûr ou à restaurer sur une autre instance de Tandem (changement de
+serveur, d'hébergeur).
 
 - **Ce qu'elle contient** : tâches, répétitions et rotations, ce qui a été fait et par qui,
   sous-tâches, commentaires, pièces jointes, modèles, courses (et la mémoire des produits et
@@ -53,8 +54,10 @@ Ce que l'app fait de vos données, combien de temps elle les garde et avec quels
 - **Ce qu'elle ne contient pas** : les tâches et dépenses personnelles de l'autre, l'historique
   des actions, les notifications, les liens secrets (invité, iCal, adresse e-mail des tâches),
   Google Agenda, les mots de passe et les appareils connectés.
-- Elle contient le texte des notes sensibles : votre **mot de passe** est demandé (ou une
-  confirmation pour un compte Google). Gardez le fichier pour vous.
+- Elle contient le texte des notes sensibles : votre **mot de passe** est demandé sur le site
+  (ou une confirmation pour un compte Google), l'**empreinte ou le code du téléphone** dans
+  l'app. Gardez le fichier pour vous.
+- La restauration se fait sur le site.
 
 **Restaurer** : sur l'autre instance, créez un compte puis, à l'accueil, **Vous avez une
 sauvegarde ? → Choisir la sauvegarde**. Le foyer est recréé tel quel ; vous reprenez votre place

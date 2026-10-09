@@ -266,6 +266,11 @@ interface AgendaApi {
     @PATCH("v1/households/{h}/notes/{id}")
     suspend fun updateNote(@Path("h") householdId: String, @Path("id") id: String, @Body body: UpdateNoteBody): Response<NoteDto>
 
+    /** Sauvegarde du foyer (.zip) ; avec un jeton, la vérification se fait sur l'appareil. */
+    @Streaming
+    @POST("v1/households/{h}/backup")
+    suspend fun backup(@Path("h") householdId: String, @Body body: RevealNoteBody): Response<ResponseBody>
+
     @POST("v1/households/{h}/notes/{id}/reveal")
     suspend fun revealNote(@Path("h") householdId: String, @Path("id") id: String, @Body body: RevealNoteBody): Response<RevealedNoteDto>
 

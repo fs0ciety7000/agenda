@@ -1,5 +1,5 @@
 Courses : code-barres en photo ; lien invité qui se coupe seul.
-• Notes sensibles : empreinte ou code pour les afficher.
+• Sauvegarde du foyer à télécharger ; notes sensibles protégées.
 • Notes : versions précédentes, restaurables.
 • Lire un ticket : montant et date lus sur la photo.
 • Partager vers Tandem : un lien devient tâche, note ou courses.

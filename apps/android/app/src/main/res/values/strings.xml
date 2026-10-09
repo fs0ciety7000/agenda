@@ -764,4 +764,17 @@
     <string name="barcode_added">“%1$s” added to the list</string>
     <string name="barcode_failed">Barcode reading is unavailable right now. Type the digits or the item name.</string>
     <string name="barcode_offline">Scanning a barcode needs a connection.</string>
+
+    <!-- Sauvegarde du foyer -->
+    <string name="backup_title">Household backup</string>
+    <string name="backup_intro">A .zip archive of the whole household: tasks and repeats, shopping, meals, expenses and receipts, notes (sensitive ones included), important dates and attachments. Keep it somewhere safe, or restore it on another Tandem instance (from the website).</string>
+    <string name="backup_excluded">Not included: the other person\'s personal tasks and expenses, the activity history, notifications, secret links and Google Calendar.</string>
+    <string name="backup_download">Download the backup</string>
+    <string name="backup_preparing">Preparing…</string>
+    <string name="backup_done">Backup saved.</string>
+    <string name="backup_failed">The backup could not be saved. Please try again.</string>
+    <string name="backup_offline">Downloading the backup needs a connection.</string>
+    <string name="backup_private">Keep this file to yourself: it holds the household\'s data in plain form, sensitive notes included.</string>
+    <string name="backup_unlock_title">Download the backup</string>
+    <string name="backup_unlock_subtitle">It contains the text of sensitive notes</string>
 </resources>

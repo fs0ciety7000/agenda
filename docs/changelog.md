@@ -15,6 +15,11 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### Sauvegarde du foyer depuis l'app Android (#93)
+
+- ✨ **Télécharger la sauvegarde** depuis l'app Android (Réglages), après l'empreinte ou le
+  code du téléphone ; l'app propose où l'enregistrer.
+
 ### Le lien invité se coupe tout seul (#93)
 
 - 🔒 **Lien pour un invité** : il se coupe tout seul après 1 jour, 1 semaine (par défaut) ou

@@ -185,7 +185,8 @@ Suites validées le 9 octobre, dans cet ordre (du plus simple au plus gros) :
 
 1. [x] Lien invité qui expire tout seul (S) ⚙️🌐🤖 (#93) : 1 jour, 1 semaine (défaut), 1 mois ou
    sans limite ; la page de l'invité ne répond plus après l'échéance
-2. [ ] Android : télécharger la sauvegarde du foyer depuis l'app (S) 🤖
+2. [x] Android : télécharger la sauvegarde du foyer depuis l'app (S) 🤖 (#93) : empreinte ou code
+   du téléphone, enregistrée via le sélecteur de fichiers du système
 3. [ ] Code-barres en direct à la caméra (Google Code Scanner, services Play) (S) 🤖
 4. [ ] Accueil ≥ 90 au budget Lighthouse : préparer la session côté serveur (M) 🌐
 
