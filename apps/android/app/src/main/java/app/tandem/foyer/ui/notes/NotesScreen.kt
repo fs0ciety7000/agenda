@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -20,9 +21,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Star
-import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,6 +46,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -136,6 +135,8 @@ fun NotesScreen(
     members: List<Member>,
     onBack: () -> Unit,
     onMessage: (String) -> Unit,
+    /** Message avec « Annuler » (snackbar) ; l'action recrée la note supprimée. */
+    onUndoable: (message: String, undo: () -> Unit) -> Unit = { m, _ -> onMessage(m) },
 ) {
     val state by vm.state.collectAsStateWithLifecycle()
     var draft by remember { mutableStateOf<Draft?>(null) }
@@ -239,8 +240,14 @@ fun NotesScreen(
             onDelete = {
                 d.note?.let { note ->
                     vm.delete(note) { ok ->
-                        if (ok) draft = null
-                        onMessage(if (ok) deletedFmt.format(note.title) else failed)
+                        if (ok) {
+                            draft = null
+                            onUndoable(deletedFmt.format(note.title)) {
+                                vm.create(note.title, note.body, note.pinned) { restored -> if (!restored) onMessage(failed) }
+                            }
+                        } else {
+                            onMessage(failed)
+                        }
                     }
                 }
             },
@@ -274,31 +281,40 @@ private fun NoteCard(
                 )
                 IconToggleButton(checked = n.pinned, onCheckedChange = { onPin() }, enabled = enabled) {
                     Icon(
-                        if (n.pinned) Icons.Filled.Star else Icons.Outlined.Star,
+                        painterResource(if (n.pinned) R.drawable.ic_note_pin_filled else R.drawable.ic_note_pin),
                         contentDescription = stringResource(if (n.pinned) R.string.notes_unpin else R.string.notes_pin, n.title),
                         tint = if (n.pinned) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp),
+                    )
+                }
+                IconButton(onClick = onCopy) {
+                    Icon(
+                        painterResource(R.drawable.ic_note_copy),
+                        contentDescription = copyLabel,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp),
                     )
                 }
                 IconButton(onClick = onEdit, enabled = enabled) {
-                    Icon(Icons.Filled.Edit, contentDescription = stringResource(R.string.notes_edit_one, n.title), tint = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Icon(
+                        painterResource(R.drawable.ic_note_edit),
+                        contentDescription = stringResource(R.string.notes_edit_one, n.title),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.size(20.dp),
+                    )
                 }
             }
             if (n.body.isNotBlank()) {
                 Text(n.body, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.padding(end = 12.dp))
             }
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                // L'épinglage se lit aussi en texte, pas seulement à la couleur de l'étoile.
-                val updated = stringResource(R.string.notes_updated, date, by)
-                Text(
-                    if (n.pinned) stringResource(R.string.notes_pinned_meta, updated) else updated,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.weight(1f),
-                )
-                TextButton(onClick = onCopy, modifier = Modifier.heightIn(min = 48.dp).semantics {
-                    contentDescription = copyLabel
-                }) { Text(stringResource(R.string.notes_copy_short)) }
-            }
+            // L'épinglage se lit aussi en texte, pas seulement à la couleur de la punaise.
+            val updated = stringResource(R.string.notes_updated, date, by)
+            Text(
+                if (n.pinned) stringResource(R.string.notes_pinned_meta, updated) else updated,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(end = 12.dp),
+            )
         }
     }
 }

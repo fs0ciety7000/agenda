@@ -91,14 +91,14 @@ Dépenses :
 
 - [ ] **Saisie du ticket par photo** (lecture du montant et de la date) (L)
 - [x] **Budget par catégorie** en plus du budget global (M) ⚙️🌐🤖 (#89)
-  - [ ] Android : régler les budgets par catégorie dans l'app (le site seulement pour l'instant) (S) 🤖
+  - [x] Android : régler les budgets par catégorie dans l'app (S) 🤖 (#92)
 - [ ] **Rapprochement mensuel** : « ce mois-ci, chacun a payé… », envoyé le 1er (S)
 
 Vie à deux :
 
 - [x] **Notes partagées** (codes Wi-Fi, mesures, idées cadeaux) : petits mémos épinglés (M) ⚙️🌐🤖 (#89)
-  - [ ] Android : « Annuler » après la suppression d'une note (le site l'a déjà) (S) 🤖
-  - [ ] Android : icônes punaise et copier (absentes de `material-icons-core` ; étoile et bouton texte en attendant) (S) 🤖
+  - [x] Android : « Annuler » après la suppression d'une note (S) 🤖 (#92)
+  - [x] Android : icônes punaise et copier (S) 🤖 (#92)
 - [x] **Dates importantes** (anniversaires, entretiens annuels) avec rappel à l'avance (M) ⚙️🌐🤖 (#89)
 - [ ] **Widget Android « Dépenses »** : solde et ajout rapide (M) 🤖
 
@@ -116,6 +116,27 @@ Navigation (demande de l'utilisateur) :
 - [x] **Tiroir « Plus »** : la barre du bas garde quatre onglets ; « Plus » (ou la barre tirée vers le
   haut) ouvre une grille avec toutes les autres pages, Réglages en dernier ; site mobile et Android
   (S) 🌐🤖 (#90)
+
+### Lot 5 — Finitions, accès rapides, recherche, qualité (validé le 9 octobre)
+
+Validé par l'utilisateur, dans cet ordre :
+
+- [x] **Finitions Android** (S) 🤖 (#92)
+  - [x] Budgets par catégorie réglables dans l'app
+  - [x] « Annuler » après la suppression d'une note
+  - [x] Icônes punaise, copier et modifier (vecteurs, comme le tiroir)
+- [ ] **États vides illustrés** : illustration au trait, monochrome, style du logo, pour
+  Aujourd'hui, Courses, Menus, Dépenses, Notes, Dates ; site et Android, clair et sombre (M) 🌐🤖
+- [ ] **Partager vers Tandem** : un lien ou un texte partagé depuis une autre app devient une
+  tâche, une note ou un article de courses (S) 🤖
+- [ ] **Tuile « Ajouter une tâche »** dans les réglages rapides Android (S) 🤖
+- [ ] **Recherche globale** : `/` cherche dans les tâches, notes, dates, dépenses et courses (M) ⚙️🌐🤖
+- [ ] **Notes et dates lisibles hors ligne** sur Android (M) 🤖
+- [ ] **Audit UI/UX complet** après le lot 4 (M)
+- [ ] **Tests sur émulateur** : tiroir et bord à bord (S) 🤖
+
+Idées proposées, non retenues pour l'instant : idées cadeaux liées aux dates, échéances de
+contrats, planning du dimanche, lien « baby-sitter », packs de départ.
 
 ### Propositions de design
 

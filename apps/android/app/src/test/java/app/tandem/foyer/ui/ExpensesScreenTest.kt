@@ -103,9 +103,8 @@ class ExpensesScreenTest {
         compose.onNodeWithText("Nicolas doit", substring = true).assertIsDisplayed()
         compose.onNodeWithText("Budget commun :", substring = true).performScrollTo().assertIsDisplayed()
         compose.onNodeWithText("85 % · reste", substring = true).assertIsDisplayed()
-        // Budget Courses dépassé (85 € sur 80 €) : montant en clair, réglé sur le site.
+        // Budget Courses dépassé (85 € sur 80 €) : montant en clair.
         compose.onNodeWithText("sur 80,00", substring = true).performScrollTo().assertIsDisplayed()
-        compose.onNodeWithText("Les budgets par catégorie se règlent sur le site.").assertIsDisplayed()
         compose.onRoot().captureRoboImage("../../../docs/screenshots/android/expenses.png")
         compose.onNodeWithText("Sur 6 mois").performScrollTo().assertIsDisplayed()
     }

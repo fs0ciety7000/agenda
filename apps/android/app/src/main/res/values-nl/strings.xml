@@ -583,7 +583,6 @@
     <string name="notes_pin">“%1$s” vastzetten</string>
     <string name="notes_unpin">“%1$s” losmaken</string>
     <string name="notes_copy">“%1$s” kopiëren</string>
-    <string name="notes_copy_short">Kopiëren</string>
     <string name="notes_updated">Bewerkt op %1$s door %2$s</string>
     <string name="notes_someone">een voormalig lid</string>
     <string name="notes_offline">Offline: notities hebben een verbinding nodig.</string>
@@ -643,7 +642,6 @@
     <string name="dates_remind_short_same_day">Herinnering op de dag</string>
     <string name="activity_date_tomorrow">%1$s: morgen</string>
     <string name="expenses_category_budget_line">%1$s van %2$s</string>
-    <string name="expenses_category_budgets_web">Het budget per categorie stel je in op de website.</string>
     <string name="activity_budget_category">%1$s · %2$s: %3$d%% bereikt (%4$s van %5$s)</string>
     <string name="devices_title">Aangemelde apparaten</string>
     <string name="devices_hint">Waar je account open staat. Een verloren of gedeeld apparaat? Meld het hier af.</string>
@@ -660,4 +658,8 @@
     <string name="devices_revoke_others_body">Dit apparaat blijft aangemeld. Op de andere moet je opnieuw aanmelden.</string>
     <plurals name="devices_revoke_others_title"><item quantity="one">Het andere apparaat afmelden?</item><item quantity="other">De %d andere apparaten afmelden?</item></plurals>
     <plurals name="devices_revoked_others"><item quantity="one">%d apparaat afgemeld.</item><item quantity="other">%d apparaten afgemeld.</item></plurals>
+    <string name="expenses_category_budgets_edit">Budget per categorie</string>
+    <string name="expenses_category_budgets_title">Budget per categorie</string>
+    <string name="expenses_category_budgets_hint" formatted="false">Per maand, voor gedeelde uitgaven. Het huishouden krijgt een melding bij 80% en 100%. Laat leeg voor geen budget.</string>
+    <string name="expenses_category_budgets_none">Geen budget</string>
 </resources>

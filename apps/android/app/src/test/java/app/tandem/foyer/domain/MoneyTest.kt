@@ -32,4 +32,14 @@ class MoneyTest {
         assertEquals(100, Money.budgetLevel(10_000, 10_000))
         assertEquals(0, Money.budgetLevel(50_000, null))
     }
+
+    @Test
+    fun budgets_par_categorie() {
+        val (budgets, invalid) = Money.categoryBudgets(mapOf("HOUSING" to "650", "GROCERIES" to " 80,5 ", "LEISURE" to ""))
+        // Dans l'ordre des catégories ; champ vide = pas de budget.
+        assertEquals(listOf("GROCERIES" to 8050L, "HOUSING" to 65000L), budgets)
+        assertEquals(emptySet<String>(), invalid)
+        assertEquals(setOf("HOUSING"), Money.categoryBudgets(mapOf("HOUSING" to "abc")).second)
+        assertEquals(setOf("HOUSING"), Money.categoryBudgets(mapOf("HOUSING" to "0")).second)
+    }
 }

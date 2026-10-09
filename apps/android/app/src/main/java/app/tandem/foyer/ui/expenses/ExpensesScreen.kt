@@ -59,6 +59,8 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -95,6 +97,7 @@ import kotlinx.coroutines.withContext
 import app.tandem.foyer.data.remote.ExpenseBody
 import app.tandem.foyer.data.remote.ExpenseDto
 import app.tandem.foyer.data.remote.ExpenseStatsDto
+import app.tandem.foyer.data.remote.ExpenseCategoryBudgetDto
 import app.tandem.foyer.data.remote.ExpenseSummaryDto
 import app.tandem.foyer.domain.Money
 import app.tandem.foyer.domain.model.Member
@@ -178,6 +181,9 @@ class ExpensesViewModel(private val remote: ExpensesRemote) : ViewModel() {
 
     fun setBudget(cents: Long?, done: (Boolean) -> Unit) = perform(done) { remote.setBudget(cents) }
 
+    fun setCategoryBudgets(budgets: List<ExpenseCategoryBudgetDto>, done: (Boolean) -> Unit) =
+        perform(done) { remote.setCategoryBudgets(budgets) }
+
     suspend fun exportCsv(from: String, to: String) = remote.exportCsv(from, to)
 
     suspend fun downloadReceipt(id: String) = remote.downloadReceipt(id)
@@ -223,6 +229,7 @@ fun ExpensesScreen(
     val dayFormat = remember(locale) { DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale) }
     var editing by remember { mutableStateOf<Editing?>(null) }
     var budgetOpen by rememberSaveable { mutableStateOf(false) }
+    var categoryBudgetsOpen by rememberSaveable { mutableStateOf(false) }
     var exportOpen by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(prefillTitle, prefillCategory) {
         if (prefillTitle != null || prefillCategory != null) editing = Editing(null, prefillTitle, prefillCategory)
@@ -369,7 +376,7 @@ fun ExpensesScreen(
                             )
                             AmountLine(stringResource(R.string.expenses_common), money(s.commonCents))
                             BudgetMeter(s.commonCents, s.budgetCents, money, enabled = !state.offline) { budgetOpen = true }
-                            CategoryBudgets(s, money)
+                            CategoryBudgets(s, money, enabled = !state.offline) { categoryBudgetsOpen = true }
                             s.members.forEach { m ->
                                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                                     members.firstOrNull { it.id == m.memberId }?.let { MemberAvatar(it, 28) }
@@ -445,6 +452,14 @@ fun ExpensesScreen(
         }
     }
 
+    if (categoryBudgetsOpen) {
+        CategoryBudgetsDialog(
+            initial = state.summary?.categoryBudgets.orEmpty(),
+            saving = state.saving,
+            onDismiss = { categoryBudgetsOpen = false },
+            onSave = { list -> vm.setCategoryBudgets(list) { ok -> if (ok) categoryBudgetsOpen = false else onMessage(failed) } },
+        )
+    }
     if (budgetOpen) {
         BudgetDialog(
             initial = state.summary?.budgetCents,
@@ -546,10 +561,9 @@ private fun BudgetMeter(spentCents: Long, budgetCents: Long?, money: (Long) -> S
     }
 }
 
-/** Budgets par catégorie : une jauge chacun (dépenses communes du mois) ; réglés sur le site. */
+/** Budgets par catégorie : une jauge chacun (dépenses communes du mois), réglables ici ou sur le site. */
 @Composable
-private fun CategoryBudgets(s: ExpenseSummaryDto, money: (Long) -> String) {
-    if (s.categoryBudgets.isEmpty()) return
+private fun CategoryBudgets(s: ExpenseSummaryDto, money: (Long) -> String, enabled: Boolean, onEdit: () -> Unit) {
     val warning = if (isSystemInDarkTheme()) Tokens.Dark.warning else Tokens.Light.warning
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         s.categoryBudgets.forEach { b ->
@@ -576,12 +590,62 @@ private fun CategoryBudgets(s: ExpenseSummaryDto, money: (Long) -> String) {
                 )
             }
         }
-        Text(
-            stringResource(R.string.expenses_category_budgets_web),
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        TextButton(onClick = onEdit, enabled = enabled, modifier = Modifier.heightIn(min = 48.dp)) {
+            Text(stringResource(R.string.expenses_category_budgets_edit))
+        }
     }
+}
+
+/** Un montant par catégorie ; un champ vide enlève le budget de la catégorie. */
+@Composable
+private fun CategoryBudgetsDialog(
+    initial: List<ExpenseCategoryBudgetDto>,
+    saving: Boolean,
+    onDismiss: () -> Unit,
+    onSave: (List<ExpenseCategoryBudgetDto>) -> Unit,
+) {
+    val locale = currentLocale()
+    val amounts = remember {
+        mutableStateMapOf<String, String>().apply {
+            initial.forEach { put(it.category, Money.editable(it.budgetCents, locale)) }
+        }
+    }
+    val invalid = remember { mutableStateListOf<String>() }
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { Text(stringResource(R.string.expenses_category_budgets_title)) },
+        text = {
+            Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(stringResource(R.string.expenses_category_budgets_hint))
+                Money.CATEGORY_EMOJI.forEach { (category, emoji) ->
+                    val error = category in invalid
+                    OutlinedTextField(
+                        value = amounts[category].orEmpty(),
+                        onValueChange = { amounts[category] = it; invalid.remove(category) },
+                        label = { Text("$emoji ${categoryLabel(category)}") },
+                        placeholder = { Text(stringResource(R.string.expenses_category_budgets_none)) },
+                        isError = error,
+                        supportingText = if (error) ({ Text(stringResource(R.string.expenses_amount_invalid)) }) else null,
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            Button(
+                onClick = {
+                    val (budgets, bad) = Money.categoryBudgets(amounts)
+                    invalid.clear()
+                    invalid += bad
+                    if (bad.isEmpty()) onSave(budgets.map { (category, cents) -> ExpenseCategoryBudgetDto(category, cents) })
+                },
+                enabled = !saving,
+            ) { Text(stringResource(R.string.save)) }
+        },
+        dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },
+    )
 }
 
 /** Dépenses communes des derniers mois : une barre par mois, le budget en repère. */

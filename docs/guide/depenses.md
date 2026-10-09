@@ -80,8 +80,8 @@ budget par catégorie** (sous la jauge du budget), un montant par catégorie, vi
 Une jauge par catégorie apparaît dans **Ce mois-ci** (« 86,40 € sur 400,00 € »), en couleur
 d'alerte et en texte une fois dépassée. Vous êtes prévenus tous les deux à **80 %** et à
 **100 %** de chaque budget, une fois par seuil et par mois (« Courses · octobre : 80 %
-atteint »). Seules les dépenses communes comptent. Sur Android, les jauges s'affichent ; les
-montants se règlent sur le site.
+atteint »). Seules les dépenses communes comptent. Sur Android : **Budgets par catégorie**, sous
+les jauges.
 
 ## Sur 6 mois
 

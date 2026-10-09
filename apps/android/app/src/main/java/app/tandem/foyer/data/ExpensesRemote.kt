@@ -3,6 +3,8 @@ package app.tandem.foyer.data
 import app.tandem.foyer.data.files.AttachmentFiles
 import app.tandem.foyer.data.local.AgendaDatabase
 import app.tandem.foyer.data.remote.AgendaApi
+import app.tandem.foyer.data.remote.CategoryBudgetsBody
+import app.tandem.foyer.data.remote.ExpenseCategoryBudgetDto
 import app.tandem.foyer.data.remote.ExpenseBody
 import app.tandem.foyer.data.remote.ExpenseDto
 import app.tandem.foyer.data.remote.ExpenseStatsDto
@@ -97,6 +99,11 @@ class ExpensesRemote(
     suspend fun setBudget(cents: Long?): Boolean = call { h ->
         val body = buildJsonObject { put("budgetCents", cents?.let { JsonPrimitive(it) } ?: JsonNull) }
         api.setExpenseBudget(h, body).isSuccessful.takeIf { it }
+    } ?: false
+
+    /** Budgets mensuels par catégorie (remplace tous les précédents ; vide = aucun). */
+    suspend fun setCategoryBudgets(budgets: List<ExpenseCategoryBudgetDto>): Boolean = call { h ->
+        api.setCategoryBudgets(h, CategoryBudgetsBody(budgets)).isSuccessful.takeIf { it }
     } ?: false
 
     /** Export CSV téléchargé dans le cache (partagé ensuite vers Drive, Sheets, un e-mail…). */

@@ -683,7 +683,18 @@ private fun MainScaffold(
             }
             composable("notes") {
                 val notesVm: NotesViewModel = viewModel(factory = viewModelFactory { initializer { NotesViewModel(container.notes) } })
-                NotesScreen(notesVm, state.household?.members.orEmpty(), onBack = { nav.popBackStack() }, onMessage = onMessage)
+                NotesScreen(
+                    notesVm,
+                    state.household?.members.orEmpty(),
+                    onBack = { nav.popBackStack() },
+                    onMessage = onMessage,
+                    onUndoable = { message, undo ->
+                        scope.launch {
+                            val result = snackbar.showSnackbar(message, actionLabel = undoLabel, duration = SnackbarDuration.Short)
+                            if (result == SnackbarResult.ActionPerformed) undo()
+                        }
+                    },
+                )
             }
             composable("history") {
                 val historyVm: HistoryViewModel = viewModel(factory = viewModelFactory { initializer { HistoryViewModel(container.activity) } })

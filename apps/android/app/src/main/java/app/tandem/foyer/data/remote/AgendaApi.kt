@@ -307,6 +307,9 @@ interface AgendaApi {
     @PUT("v1/households/{h}/expenses/budget")
     suspend fun setExpenseBudget(@Path("h") householdId: String, @Body body: JsonObject): Response<Unit>
 
+    @PUT("v1/households/{h}/expenses/budget/categories")
+    suspend fun setCategoryBudgets(@Path("h") householdId: String, @Body body: CategoryBudgetsBody): Response<Unit>
+
     /** Export tableur (CSV, dans la langue du compte), de `from` à `to` inclus. */
     @Streaming
     @GET("v1/households/{h}/expenses/export")

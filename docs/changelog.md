@@ -13,6 +13,14 @@ d'elle-même (ou via Google Play).
 **Légende** : ✨ nouveau · 🛠 amélioration · 🐞 correction · 🔒 sécurité et confidentialité ·
 ⚙️ technique
 
+## 9 octobre 2026
+
+### Finitions Android (#92)
+
+- ✨ **Budgets par catégorie** réglables dans l'app Android (Dépenses → Budgets par catégorie).
+- 🛠 Notes sur Android : **Annuler** juste après une suppression, et icônes punaise, copier et
+  modifier comme sur le site.
+
 ## 8 octobre 2026
 
 ### Affichage bord à bord sans API obsolètes (#91)

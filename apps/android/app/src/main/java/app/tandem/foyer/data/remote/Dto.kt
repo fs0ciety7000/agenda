@@ -484,6 +484,10 @@ data class ExpenseSummaryDto(
 @Serializable
 data class ExpenseCategoryBudgetDto(val category: String, val budgetCents: Long)
 
+/** Tous les budgets par catégorie du foyer ; une liste vide les enlève. */
+@Serializable
+data class CategoryBudgetsBody(val budgets: List<ExpenseCategoryBudgetDto>)
+
 /** Un mois de l'évolution : dépenses communes, les miennes, par catégorie. */
 @Serializable
 data class ExpenseMonthStatsDto(
