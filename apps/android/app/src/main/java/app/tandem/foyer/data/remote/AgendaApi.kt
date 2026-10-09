@@ -110,6 +110,15 @@ interface AgendaApi {
     @DELETE("v1/households/{h}/shopping/{id}")
     suspend fun deleteShopping(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
 
+    @GET("v1/households/{h}/shopping-guest")
+    suspend fun guestShoppingLink(@Path("h") householdId: String): Response<GuestShoppingLinkDto>
+
+    @POST("v1/households/{h}/shopping-guest")
+    suspend fun createGuestShoppingLink(@Path("h") householdId: String): Response<GuestShoppingLinkDto>
+
+    @DELETE("v1/households/{h}/shopping-guest")
+    suspend fun revokeGuestShoppingLink(@Path("h") householdId: String): Response<Unit>
+
     @GET("v1/households/{h}/shopping/suggestions")
     suspend fun shoppingSuggestions(@Path("h") householdId: String): Response<List<ShoppingSuggestionDto>>
 

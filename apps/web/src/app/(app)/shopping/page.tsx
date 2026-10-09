@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
 import { useId, useState, type FormEvent } from 'react';
+import { GuestLinkButton } from '@/components/app/guest-link';
 import { useSession } from '@/components/app/household-context';
 import { StoreMode } from '@/components/app/store-mode';
 import { Button } from '@/components/ui/button';
@@ -83,12 +84,15 @@ export default function ShoppingPage() {
         </span>
       </div>
 
-      {items.some((i) => !i.done) && (
-        <Button variant="secondary" className="self-start" onClick={() => setStore(true)}>
-          <Store aria-hidden className="size-4" />
-          {t('storeOpen')}
-        </Button>
-      )}
+      <div className="flex flex-wrap gap-2">
+        {items.some((i) => !i.done) && (
+          <Button variant="secondary" onClick={() => setStore(true)}>
+            <Store aria-hidden className="size-4" />
+            {t('storeOpen')}
+          </Button>
+        )}
+        <GuestLinkButton />
+      </div>
       {store && (
         <StoreMode
           items={items}

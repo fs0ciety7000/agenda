@@ -327,6 +327,14 @@ data class UpdateNoteBody(
     val version: Int,
 )
 
+/** Lien invité vers la liste de courses (cf. GuestShoppingLinkDto des contrats) ; url null = aucun. */
+@Serializable
+data class GuestShoppingLinkDto(
+    val url: String? = null,
+    val createdAt: String? = null,
+    val createdById: String? = null,
+)
+
 /** Version précédente d'une note (cf. NoteRevisionDto des contrats). */
 @Serializable
 data class NoteRevisionDto(

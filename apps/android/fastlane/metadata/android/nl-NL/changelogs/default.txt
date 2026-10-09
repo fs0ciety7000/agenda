@@ -1,9 +1,8 @@
-Gevoelige notities: vingerafdruk of code om te tonen.
+Boodschappen: een link voor een gast, alleen lezen, zonder account.
+• Gevoelige notities: vingerafdruk of code om te tonen.
 • Notities: eerdere versies terugzetten.
 • Kasticket inlezen: bedrag en datum van de foto gelezen.
 • Delen naar Tandem: een link wordt een taak, notitie of boodschap.
 • Tegel "Taak toevoegen" in snelle instellingen.
-• Budget per categorie in de app; "Ongedaan maken" bij notities.
+• Budget per categorie; "Ongedaan maken" bij notities.
 • Lade "Meer": Uitgaven, Notities, Data…
-• Uitgaven: wie wat schuldig is, terugbetalen met één tik.
-• Gedeelde notities; belangrijke data met herinnering.

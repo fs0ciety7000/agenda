@@ -79,3 +79,32 @@ export const RealtimeTopic = z.enum([
   'dates',
 ]);
 export type RealtimeTopic = z.infer<typeof RealtimeTopic>;
+
+/**
+ * Lien invité vers la liste de courses (baby-sitter, quelqu'un qui garde la maison) : lecture
+ * seule, sans compte, un seul par foyer, révocable. `url` null = aucun lien actif.
+ */
+export const GuestShoppingLinkDto = z.object({
+  url: z.string().nullable(),
+  createdAt: z.string().nullable(),
+  /** Membre qui a créé le lien (id), si connu. */
+  createdById: z.uuid().nullable(),
+});
+export type GuestShoppingLinkDto = z.infer<typeof GuestShoppingLinkDto>;
+
+/** Article vu par l'invité : ni auteur ni dates (rien de plus que la liste elle-même). */
+export const GuestShoppingItemDto = z.object({
+  id: z.uuid(),
+  text: z.string(),
+  quantity: z.string().nullable(),
+  aisle: Aisle,
+  done: z.boolean(),
+});
+export type GuestShoppingItemDto = z.infer<typeof GuestShoppingItemDto>;
+
+/** Liste vue par l'invité (`GET /v1/guest/shopping/:token`). */
+export const GuestShoppingDto = z.object({
+  householdName: z.string(),
+  items: z.array(GuestShoppingItemDto),
+});
+export type GuestShoppingDto = z.infer<typeof GuestShoppingDto>;

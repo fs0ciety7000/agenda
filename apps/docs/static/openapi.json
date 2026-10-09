@@ -7348,6 +7348,211 @@
         ]
       }
     },
+    "/v1/households/{householdId}/shopping-guest": {
+      "get": {
+        "operationId": "GuestShoppingSettingsController_get_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuestShoppingLinkDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Lien invité vers la liste de courses (null si aucun)",
+        "tags": [
+          "shopping"
+        ]
+      },
+      "post": {
+        "operationId": "GuestShoppingSettingsController_regenerate_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuestShoppingLinkDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Créer ou remplacer le lien invité (l'ancien cesse de fonctionner)",
+        "tags": [
+          "shopping"
+        ]
+      },
+      "delete": {
+        "operationId": "GuestShoppingSettingsController_revoke_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Couper le lien invité",
+        "tags": [
+          "shopping"
+        ]
+      }
+    },
+    "/v1/guest/shopping/{token}": {
+      "get": {
+        "operationId": "GuestShoppingController_view_v1",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GuestShoppingDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Liste de courses en lecture seule, pour l'invité qui a le lien",
+        "tags": [
+          "shopping"
+        ],
+        "security": []
+      }
+    },
     "/v1/households/{householdId}/notes": {
       "get": {
         "operationId": "NotesController_list_v1",
@@ -13492,6 +13697,88 @@
         "required": [
           "email"
         ]
+      },
+      "GuestShoppingDto": {
+        "type": "object",
+        "properties": {
+          "householdName": {
+            "type": "string"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "text": {
+                  "type": "string"
+                },
+                "quantity": {
+                  "nullable": true,
+                  "type": "string"
+                },
+                "aisle": {
+                  "type": "string",
+                  "enum": [
+                    "PRODUCE",
+                    "BAKERY",
+                    "DAIRY",
+                    "MEAT_FISH",
+                    "FROZEN",
+                    "PANTRY",
+                    "DRINKS",
+                    "HOUSEHOLD",
+                    "HYGIENE",
+                    "OTHER"
+                  ]
+                },
+                "done": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "id",
+                "text",
+                "quantity",
+                "aisle",
+                "done"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "householdName",
+          "items"
+        ],
+        "additionalProperties": false
+      },
+      "GuestShoppingLinkDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "nullable": true,
+            "type": "string"
+          },
+          "createdAt": {
+            "nullable": true,
+            "type": "string"
+          },
+          "createdById": {
+            "nullable": true,
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "url",
+          "createdAt",
+          "createdById"
+        ],
+        "additionalProperties": false
       },
       "HouseholdDto": {
         "type": "object",

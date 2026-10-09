@@ -15,6 +15,13 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### Liste de courses pour un invité (#93)
+
+- ✨ **Partager avec un invité** : un lien vers la liste de courses, en lecture seule et sans
+  compte, pour la baby-sitter ou quelqu'un qui garde la maison. Remplaçable et révocable à tout
+  moment, sur le site et dans l'app Android.
+- 🐞 Le champ du lien d'abonnement iCal (Réglages) s'écrasait sur téléphone.
+
 ### Notes sensibles (#93)
 
 - ✨ **Note sensible** : codes et digicodes masqués dans la liste et la recherche, affichés après

@@ -551,7 +551,7 @@
     },
     "data": {
       "title": "Data processed",
-      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list, shared notes (title, content, who wrote them, whether they are sensitive, and the 20 previous versions of each), important dates (title, day, month and optional year; they may concern relatives, such as a birthday).\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, sub-tasks, comments, turn-swap requests (with any note), declared absences, activity history (who did what, when).\nExpenses (if you use them): amount, date, label, category, comment, who paid and each person's share. A personal expense is visible to you only. An attached receipt (photo or PDF) is kept with the expense and deleted with it. If you use “Read a receipt”, the photo is read on our server (no outside service) to suggest the amount, date and shop, then deleted straight away; it is only kept if you save the expense with that receipt.\nSessions: device (browser and system, or Android app version), sign-in date and last activity, shown in “Signed-in devices” so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks, shopping list, notes and important dates on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; their attachments are added to the task.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it.\nReports (if you send any): the type, title and text of your message, a screenshot if you attach one, whether you agree to be contacted and, only if you tick the box, technical information shown before sending (browser or phone model, system, app version, language, time zone, screen size, open page). Never the content of your tasks. Only the app's administrators read them.\nBrowser notifications (if you turn them on): the subscription address provided by your browser, deleted when you turn them off or sign out."
+      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list, shared notes (title, content, who wrote them, whether they are sensitive, and the 20 previous versions of each), important dates (title, day, month and optional year; they may concern relatives, such as a birthday).\nGuest link (if a member creates one): a secret link opens the shopping list only (items, quantities, aisles and the household name), read-only and with no account, until a member turns it off or replaces it. Anyone with the link can see it.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, sub-tasks, comments, turn-swap requests (with any note), declared absences, activity history (who did what, when).\nExpenses (if you use them): amount, date, label, category, comment, who paid and each person's share. A personal expense is visible to you only. An attached receipt (photo or PDF) is kept with the expense and deleted with it. If you use “Read a receipt”, the photo is read on our server (no outside service) to suggest the amount, date and shop, then deleted straight away; it is only kept if you save the expense with that receipt.\nSessions: device (browser and system, or Android app version), sign-in date and last activity, shown in “Signed-in devices” so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks, shopping list, notes and important dates on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; their attachments are added to the task.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it.\nReports (if you send any): the type, title and text of your message, a screenshot if you attach one, whether you agree to be contacted and, only if you tick the box, technical information shown before sending (browser or phone model, system, app version, language, time zone, screen size, open page). Never the content of your tasks. Only the app's administrators read them.\nBrowser notifications (if you turn them on): the subscription address provided by your browser, deleted when you turn them off or sign out."
     },
     "google": {
       "title": "Google data",
@@ -1527,5 +1527,35 @@
     "inCart": "In the cart",
     "toBuy": "To buy",
     "open": "Search (/)"
+  },
+  "guestLink": {
+    "share": "Share with a guest",
+    "title": "Link for a guest",
+    "intro": "For the babysitter or someone looking after the house: the link opens the shopping list, read-only, with no account. Your tasks and names are not shown.",
+    "create": "Create the link",
+    "address": "Guest link",
+    "copy": "Copy",
+    "copied": "Copied",
+    "send": "Send",
+    "sendText": "The shopping list of the {household} household",
+    "createdBy": "Created on {date} by {name}",
+    "createdOn": "Created on {date}",
+    "private": "Anyone with this link can see the list. Turn it off when the guest no longer needs it.",
+    "regenerate": "New link",
+    "confirmRegenerate": "Create a new link? The old one will stop working.",
+    "revoke": "Turn off the link",
+    "confirmRevoke": "Turn off the link? The guest will no longer see the list.",
+    "active": "Guest link active",
+    "error": "The link could not be updated. Please try again."
+  },
+  "guest": {
+    "title": "Shopping list",
+    "household": "{name} household",
+    "readOnly": "Read-only, updates on its own.",
+    "emptyBody": "Nothing to buy for now.",
+    "goneTitle": "This link no longer works",
+    "goneBody": "It was turned off or replaced. Ask the household for a new link.",
+    "error": "The list could not be loaded.",
+    "by": "Shared with Tandem"
   }
 }

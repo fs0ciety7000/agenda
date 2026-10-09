@@ -729,4 +729,25 @@
     <string name="search_done">Faite</string>
     <string name="search_in_cart">Dans le panier</string>
     <string name="search_to_buy">À acheter</string>
+
+    <!-- Lien invité vers les courses -->
+    <string name="guest_link_share">Partager avec un invité</string>
+    <string name="guest_link_active">Lien invité actif</string>
+    <string name="guest_link_title">Lien pour un invité</string>
+    <string name="guest_link_intro">Pour la baby-sitter ou quelqu\'un qui garde la maison : le lien ouvre la liste de courses en lecture seule, sans compte. Ni vos tâches ni vos noms n\'y apparaissent.</string>
+    <string name="guest_link_create">Créer le lien</string>
+    <string name="guest_link_send">Envoyer</string>
+    <string name="guest_link_copy">Copier</string>
+    <string name="guest_link_copied">Lien copié</string>
+    <string name="guest_link_send_text">La liste de courses du foyer %1$s</string>
+    <string name="guest_link_created_by">Créé le %1$s par %2$s</string>
+    <string name="guest_link_created_on">Créé le %1$s</string>
+    <string name="guest_link_private">Toute personne qui a ce lien voit la liste. Coupez-le quand l\'invité n\'en a plus besoin.</string>
+    <string name="guest_link_regenerate">Nouveau lien</string>
+    <string name="guest_link_confirm_regenerate">Créer un nouveau lien ? L\'ancien cessera de fonctionner.</string>
+    <string name="guest_link_revoke">Couper le lien</string>
+    <string name="guest_link_confirm_revoke">Couper le lien ? L\'invité ne verra plus la liste.</string>
+    <string name="guest_link_loading">Chargement…</string>
+    <string name="guest_link_offline">Partager la liste demande une connexion.</string>
+    <string name="guest_link_error">Le lien n\'a pas pu être mis à jour. Réessayez.</string>
 </resources>

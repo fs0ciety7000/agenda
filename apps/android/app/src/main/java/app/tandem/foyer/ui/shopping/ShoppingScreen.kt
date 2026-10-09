@@ -3,6 +3,8 @@ package app.tandem.foyer.ui.shopping
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -75,7 +77,7 @@ fun splitShoppingItems(text: String): List<String> =
  * Liste de courses permanente du foyer : l'un ajoute, l'autre coche au magasin, en temps réel.
  * Fonctionne hors ligne (affiché tout de suite, envoyé au retour du réseau).
  */
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun ShoppingScreen(
     items: List<ShoppingItem>,
@@ -97,6 +99,8 @@ fun ShoppingScreen(
     meals: List<Meal>? = null,
     onMealsToShopping: (List<Meal>) -> Unit = {},
     onOpenMeals: () -> Unit = {},
+    /** Bouton « Partager avec un invité » (cf. [GuestLinkButton]). */
+    guestLink: @Composable () -> Unit = {},
 ) {
     var text by rememberSaveable { mutableStateOf("") }
     val submit = {
@@ -155,10 +159,13 @@ fun ShoppingScreen(
                     }
                 }
             }
-            if (toBuy.isNotEmpty()) {
-                OutlinedButton(onClick = { storeMode = true }, modifier = Modifier.padding(top = 8.dp).heightIn(min = 48.dp)) {
-                    Text(stringResource(R.string.store_open))
+            FlowRow(Modifier.padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                if (toBuy.isNotEmpty()) {
+                    OutlinedButton(onClick = { storeMode = true }, modifier = Modifier.heightIn(min = 48.dp)) {
+                        Text(stringResource(R.string.store_open))
+                    }
                 }
+                guestLink()
             }
             SyncBanner(online, sync)
         }

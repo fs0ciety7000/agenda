@@ -36,6 +36,8 @@ Fichiers importés, à respecter au même titre que celui-ci :
 - Dépenses : montants en centimes entiers, parts figées à l'enregistrement (#86).
 - Lecture des tickets : Tesseract sur le serveur, aucun service extérieur, photo non conservée ;
   seules de vraies images (signature vérifiée) lui sont passées (#92).
+- Lien invité des courses : un par foyer, secret, lecture seule, sans compte ; l'invité ne voit que
+  les articles et le nom du foyer, jamais les membres (#93).
 - Notes sensibles : contenu jamais renvoyé hors de `…/reveal` ; site = mot de passe (coffre ouvert 5 min
   par session), Android = empreinte ou code vérifiés sur l'appareil ; pas de chiffrement de bout en bout (#93).
 

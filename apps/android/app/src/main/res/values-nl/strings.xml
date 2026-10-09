@@ -710,4 +710,25 @@
     <string name="search_done">Gedaan</string>
     <string name="search_in_cart">In het mandje</string>
     <string name="search_to_buy">Te kopen</string>
+
+    <!-- Lien invité vers les courses -->
+    <string name="guest_link_share">Delen met een gast</string>
+    <string name="guest_link_active">Gastlink actief</string>
+    <string name="guest_link_title">Link voor een gast</string>
+    <string name="guest_link_intro">Voor de babysit of iemand die op het huis past: de link opent de boodschappenlijst, alleen lezen, zonder account. Je taken en namen staan er niet op.</string>
+    <string name="guest_link_create">Link maken</string>
+    <string name="guest_link_send">Versturen</string>
+    <string name="guest_link_copy">Kopiëren</string>
+    <string name="guest_link_copied">Link gekopieerd</string>
+    <string name="guest_link_send_text">De boodschappenlijst van het huishouden %1$s</string>
+    <string name="guest_link_created_by">Gemaakt op %1$s door %2$s</string>
+    <string name="guest_link_created_on">Gemaakt op %1$s</string>
+    <string name="guest_link_private">Iedereen met deze link ziet de lijst. Zet hem uit als de gast hem niet meer nodig heeft.</string>
+    <string name="guest_link_regenerate">Nieuwe link</string>
+    <string name="guest_link_confirm_regenerate">Een nieuwe link maken? De oude werkt dan niet meer.</string>
+    <string name="guest_link_revoke">Link uitzetten</string>
+    <string name="guest_link_confirm_revoke">Link uitzetten? De gast ziet de lijst dan niet meer.</string>
+    <string name="guest_link_loading">Laden…</string>
+    <string name="guest_link_offline">Voor het delen van de lijst is een verbinding nodig.</string>
+    <string name="guest_link_error">De link kon niet worden bijgewerkt. Probeer het opnieuw.</string>
 </resources>

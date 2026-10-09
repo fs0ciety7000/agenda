@@ -113,6 +113,7 @@ import app.tandem.foyer.ui.search.SearchScreen
 import app.tandem.foyer.ui.search.SearchTarget
 import app.tandem.foyer.ui.settings.DeviceSessions
 import app.tandem.foyer.ui.settings.SettingsScreen
+import app.tandem.foyer.ui.shopping.GuestLinkButton
 import app.tandem.foyer.ui.shopping.ShoppingScreen
 import app.tandem.foyer.ui.swaps.SwapAsk
 import app.tandem.foyer.ui.swaps.SwapBanner
@@ -555,6 +556,17 @@ private fun MainScaffold(
                         }
                     },
                     onOpenMeals = { openWeb(context, container.webBaseUrl, "meals") },
+                    guestLink = {
+                        GuestLinkButton(
+                            online = state.online,
+                            householdName = state.household?.name.orEmpty(),
+                            members = state.members,
+                            load = container.guestLink::get,
+                            create = container.guestLink::create,
+                            revoke = container.guestLink::revoke,
+                            onMessage = onMessage,
+                        )
+                    },
                 )
             }
             composable(Tab.CALENDAR.route) {

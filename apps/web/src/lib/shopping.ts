@@ -1,6 +1,11 @@
 'use client';
 
-import type { Aisle, ShoppingItemDto, ShoppingSuggestionDto } from '@agenda/contracts';
+import type {
+  Aisle,
+  GuestShoppingLinkDto,
+  ShoppingItemDto,
+  ShoppingSuggestionDto,
+} from '@agenda/contracts';
 import { guessAisle, parseShoppingText } from '@agenda/domain';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from './api';
@@ -27,6 +32,24 @@ export const useShoppingSuggestions = (hid: string) =>
     queryKey: [...shoppingKey(hid), 'suggestions'],
     queryFn: () => api<ShoppingSuggestionDto[]>(`/v1/households/${hid}/shopping/suggestions`),
   });
+
+/** Lien invité (lecture seule) : un par foyer ; rechargé avec la liste (sujet temps réel `shopping`). */
+export function useGuestShoppingLink(hid: string) {
+  const qc = useQueryClient();
+  const key = [...shoppingKey(hid), 'guest'];
+  const base = `/v1/households/${hid}/shopping-guest`;
+  const link = useQuery({ queryKey: key, queryFn: () => api<GuestShoppingLinkDto>(base) });
+  const regenerate = useMutation({
+    mutationFn: () => api<GuestShoppingLinkDto>(base, { method: 'POST' }),
+    onSuccess: (data) => qc.setQueryData(key, data),
+  });
+  const revoke = useMutation({
+    mutationFn: () => api<void>(base, { method: 'DELETE' }),
+    onSuccess: () =>
+      qc.setQueryData<GuestShoppingLinkDto>(key, { url: null, createdAt: null, createdById: null }),
+  });
+  return { link, regenerate, revoke };
+}
 
 export const useShopping = (hid: string) =>
   useQuery({

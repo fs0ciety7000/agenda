@@ -164,8 +164,11 @@ Validé par l'utilisateur, du plus simple au plus gros :
 - [x] **Coffre pour les notes sensibles** (#93) : contenu masqué partout (liste, recherche,
   historique, copies hors ligne ; l'export RGPD le garde, la loi l'impose) et affiché après empreinte ou code du téléphone, ou mot de passe sur le
   site ; pas de chiffrement de bout en bout (choix de l'utilisateur) (M) ⚙️🌐🤖
-- [ ] **Liste pour un invité** : lien en lecture seule, sans compte, révocable (baby-sitter,
-  quelqu'un qui garde la maison) (M) ⚙️🌐🤖
+- [x] **Liste pour un invité** : lien en lecture seule, sans compte, révocable (baby-sitter,
+  quelqu'un qui garde la maison) (M) ⚙️🌐🤖 (#93) : un lien par foyer, l'invité ne voit que les
+  articles (ni membres ni dates), page rechargée toutes les 30 s
+  - [ ] Lien qui expire tout seul (un jour, une semaine) pour ne pas l'oublier actif (S), à
+    prioriser ensemble
 - [ ] **Scanner un code-barres** pour ajouter un article (Android) : nom cherché dans Open Food
   Facts par le serveur, puis mémorisé pour le foyer (M) ⚙️🤖
 - [ ] **Sauvegarde exportable** du foyer (JSON) et restauration sur une autre instance (M) ⚙️🌐
@@ -173,6 +176,7 @@ Validé par l'utilisateur, du plus simple au plus gros :
 
 Découvert pendant le lot 6 :
 
+- [x] Web : le champ du lien iCal (Réglages) s'écrasait sur téléphone (colonne flexible) (S) 🌐 (#93)
 - [ ] Web : un membre qui rejoint le foyer pendant que la page est ouverte apparaît comme « un
   ancien membre » (notes, historique) jusqu'au rechargement ; rafraîchir la session à son
   arrivée (S) 🌐

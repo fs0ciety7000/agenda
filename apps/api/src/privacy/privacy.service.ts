@@ -222,6 +222,11 @@ export class PrivacyService {
         joinedAt: m.joinedAt,
         leftAt: m.leftAt,
         members: m.household.members,
+        // Lien invité vers les courses créé par ce membre et encore actif (jamais le lien lui-même).
+        guestShoppingLinkCreatedAt:
+          m.household.guestShoppingToken && m.household.guestShoppingCreatedById === m.id
+            ? m.household.guestShoppingCreatedAt
+            : null,
       })),
       tasksCreated: createdTasks.map((t) => ({
         title: t.title,

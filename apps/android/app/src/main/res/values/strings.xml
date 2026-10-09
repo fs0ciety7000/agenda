@@ -713,4 +713,25 @@
     <string name="search_done">Done</string>
     <string name="search_in_cart">In the cart</string>
     <string name="search_to_buy">To buy</string>
+
+    <!-- Lien invité vers les courses -->
+    <string name="guest_link_share">Share with a guest</string>
+    <string name="guest_link_active">Guest link active</string>
+    <string name="guest_link_title">Link for a guest</string>
+    <string name="guest_link_intro">For the babysitter or someone looking after the house: the link opens the shopping list, read-only, with no account. Your tasks and names are not shown.</string>
+    <string name="guest_link_create">Create the link</string>
+    <string name="guest_link_send">Send</string>
+    <string name="guest_link_copy">Copy</string>
+    <string name="guest_link_copied">Link copied</string>
+    <string name="guest_link_send_text">The shopping list of the %1$s household</string>
+    <string name="guest_link_created_by">Created on %1$s by %2$s</string>
+    <string name="guest_link_created_on">Created on %1$s</string>
+    <string name="guest_link_private">Anyone with this link can see the list. Turn it off when the guest no longer needs it.</string>
+    <string name="guest_link_regenerate">New link</string>
+    <string name="guest_link_confirm_regenerate">Create a new link? The old one will stop working.</string>
+    <string name="guest_link_revoke">Turn off the link</string>
+    <string name="guest_link_confirm_revoke">Turn off the link? The guest will no longer see the list.</string>
+    <string name="guest_link_loading">Loading…</string>
+    <string name="guest_link_offline">Sharing the list needs a connection.</string>
+    <string name="guest_link_error">The link could not be updated. Please try again.</string>
 </resources>

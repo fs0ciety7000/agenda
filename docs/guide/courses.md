@@ -1,6 +1,6 @@
 ---
 title: Liste de courses
-description: Liste partagée en temps réel, rayons, quantités, articles souvent achetés, hors ligne.
+description: Liste partagée en temps réel, rayons, quantités, articles souvent achetés, lien pour un invité, hors ligne.
 ---
 
 # Liste de courses
@@ -28,6 +28,19 @@ Pour une liste liée à une tâche précise (« Valise »), utilisez plutôt les
 caractères, rangée par rayon, et garde l'écran allumé. Toucher un article le met dans le panier ;
 le toucher à nouveau l'en ressort. L'autre voit les coches en direct. **Échap**, le geste retour
 ou ✕ pour quitter.
+
+## Lien pour un invité
+
+Pour la baby-sitter ou quelqu'un qui garde la maison : **Partager avec un invité** (en haut de la
+liste, sur le site et dans l'app Android) crée un lien à envoyer par message ou à copier.
+
+- L'invité ouvre la liste **sans compte**, en **lecture seule** : il voit les articles à acheter,
+  rangés par rayon, et ce qui est déjà pris. Il ne peut rien ajouter ni cocher.
+- Il ne voit ni vos tâches, ni vos noms, ni le reste du foyer ; la liste se met à jour toute seule.
+- **Un lien par foyer** : chacun des deux peut le créer, l'envoyer, le remplacer (**Nouveau
+  lien**, l'ancien cesse de fonctionner) ou le **couper**. Pensez à le couper quand l'invité
+  n'en a plus besoin : toute personne qui a le lien voit la liste.
+- Une pastille sur le bouton indique qu'un lien est actif.
 
 ## Menus de la semaine
 
