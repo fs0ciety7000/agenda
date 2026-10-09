@@ -599,6 +599,16 @@
     <string name="notes_created">Note ajoutée</string>
     <string name="notes_saved">Note enregistrée</string>
     <string name="notes_deleted">« %1$s » supprimée</string>
+    <string name="notes_history">Versions précédentes</string>
+    <string name="notes_history_expanded">développé</string>
+    <string name="notes_history_collapsed">replié</string>
+    <string name="notes_history_loading">Chargement…</string>
+    <string name="notes_history_error">Impossible de charger les versions précédentes.</string>
+    <string name="notes_history_empty">Aucune version précédente : la note n\'a pas encore été modifiée.</string>
+    <string name="notes_history_by">%1$s · %2$s</string>
+    <string name="notes_history_no_text">(sans texte)</string>
+    <string name="notes_restore">Restaurer cette version</string>
+    <string name="notes_restored">Version du %1$s restaurée.</string>
     <string name="notes_copied">« %1$s » copiée</string>
     <string name="notes_failed">Enregistrement impossible. Vérifiez la connexion.</string>
     <string name="notes_pin">Épingler « %1$s »</string>

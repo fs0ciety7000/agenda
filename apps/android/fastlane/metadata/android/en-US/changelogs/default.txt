@@ -1,4 +1,5 @@
-Read a receipt: amount and date read from the photo.
+Notes: previous versions you can restore.
+• Read a receipt: amount and date read from the photo.
 • Share to Tandem: a link becomes a task, a note or shopping items.
 • "Add a task" tile in Quick Settings.
 • Category budgets in the app; "Undo" on notes.
@@ -8,4 +9,3 @@ Read a receipt: amount and date read from the photo.
 • Home: "Who does what" over 7 days.
 • Notes and dates readable offline.
 • Signed-in devices: remote sign-out.
-• Illustrated empty screens.

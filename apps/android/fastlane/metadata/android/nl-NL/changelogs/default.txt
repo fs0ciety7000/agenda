@@ -1,4 +1,5 @@
-Kasticket inlezen: bedrag en datum van de foto gelezen.
+Notities: eerdere versies terugzetten.
+• Kasticket inlezen: bedrag en datum van de foto gelezen.
 • Delen naar Tandem: een link wordt een taak, notitie of boodschap.
 • Tegel "Taak toevoegen" in snelle instellingen.
 • Budget per categorie in de app; "Ongedaan maken" bij notities.
@@ -6,4 +7,3 @@ Kasticket inlezen: bedrag en datum van de foto gelezen.
 • Uitgaven: wie wat schuldig is, terugbetalen met één tik.
 • Gedeelde notities; belangrijke data met herinnering.
 • Notities en data ook offline te lezen.
-• Aangemelde apparaten: op afstand afmelden.

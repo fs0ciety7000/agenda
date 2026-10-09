@@ -63,6 +63,25 @@ test('notes partagées : créer, épingler, modifier ; conflit avec l’autre ; 
   await expect(page.getByText('Note enregistrée')).toBeVisible();
   await expect(page.getByText('Code : 5678')).toBeVisible();
 
+  // Historique : la version de Nicolas (9999) est gardée ; on la restaure.
+  await page.getByRole('button', { name: 'Modifier « Wi-Fi »' }).click();
+  dialog = page.getByRole('dialog', { name: 'Modifier la note' });
+  const history = dialog.getByRole('button', { name: 'Versions précédentes' });
+  await expect(history).toHaveAttribute('aria-expanded', 'false');
+  await history.click();
+  await expect(history).toHaveAttribute('aria-expanded', 'true');
+  const versions = dialog.getByRole('list', { name: 'Versions précédentes' });
+  await expect(versions.getByText('Code : 9999')).toBeVisible();
+  await versions
+    .getByRole('listitem')
+    .filter({ hasText: 'Code : 9999' })
+    .getByRole('button', { name: 'Restaurer cette version' })
+    .click();
+  await expect(page.getByText(/^Version du .* restaurée\.$/)).toBeVisible();
+  await expect(dialog.getByLabel('Contenu')).toHaveValue('Code : 9999');
+  await dialog.getByRole('button', { name: 'Fermer' }).click();
+  await expect(page.getByText('Code : 9999')).toBeVisible();
+
   // Supprimer, puis annuler.
   await page.getByRole('button', { name: 'Modifier « Idées cadeaux »' }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Supprimer' }).click();

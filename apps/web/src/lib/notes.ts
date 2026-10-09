@@ -1,4 +1,4 @@
-import type { NoteDto, NoteInput, UpdateNoteInput } from '@agenda/contracts';
+import type { NoteDto, NoteInput, NoteRevisionDto, UpdateNoteInput } from '@agenda/contracts';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from './api';
 
@@ -8,6 +8,14 @@ export const useNotes = (hid: string) =>
   useQuery({
     queryKey: notesKey(hid),
     queryFn: () => api<NoteDto[]>(`/v1/households/${hid}/notes`),
+  });
+
+/** Versions précédentes d'une note, chargées quand on les ouvre. */
+export const useNoteRevisions = (hid: string, noteId: string, enabled: boolean) =>
+  useQuery({
+    queryKey: [...notesKey(hid), noteId, 'revisions'],
+    queryFn: () => api<NoteRevisionDto[]>(`/v1/households/${hid}/notes/${noteId}/revisions`),
+    enabled,
   });
 
 /** Notes : confirmées par le serveur (pas de file hors ligne), liste rechargée ensuite. */
@@ -26,6 +34,22 @@ export function useNoteActions(hid: string) {
     update: useMutation({
       mutationFn: ({ id, ...input }: UpdateNoteInput & { id: string }) =>
         api<NoteDto>(`${base}/${id}`, { method: 'PATCH', json: input }),
+      onSettled: refresh,
+    }),
+    restore: useMutation({
+      mutationFn: ({
+        id,
+        revisionId,
+        version,
+      }: {
+        id: string;
+        revisionId: string;
+        version: number;
+      }) =>
+        api<NoteDto>(`${base}/${id}/revisions/${revisionId}/restore`, {
+          method: 'POST',
+          json: { version },
+        }),
       onSettled: refresh,
     }),
     remove: useMutation({

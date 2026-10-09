@@ -10,7 +10,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { type NoteDto, NoteInput, UpdateNoteInput } from '@agenda/contracts';
+import {
+  type NoteDto,
+  NoteInput,
+  type NoteRevisionDto,
+  RestoreNoteRevisionInput,
+  UpdateNoteInput,
+} from '@agenda/contracts';
 import { CurrentHousehold, HouseholdContext } from '../common/request-context';
 import { assertUuid } from '../common/uuid';
 import { ZodPipe } from '../common/zod.pipe';
@@ -46,6 +52,27 @@ export class NotesController {
     @Body(new ZodPipe(UpdateNoteInput)) body: UpdateNoteInput,
   ): Promise<NoteDto> {
     return this.notes.update(ctx, assertUuid(id), body);
+  }
+
+  /** Versions précédentes d'une note (20 au plus), de la plus récente à la plus ancienne. */
+  @Get(':noteId/revisions')
+  revisions(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Param('noteId') id: string,
+  ): Promise<NoteRevisionDto[]> {
+    return this.notes.revisions(ctx, assertUuid(id));
+  }
+
+  /** Restaurer une version précédente (409 si la note a changé entre-temps). */
+  @Post(':noteId/revisions/:revisionId/restore')
+  @HttpCode(200)
+  restore(
+    @CurrentHousehold() ctx: HouseholdContext,
+    @Param('noteId') id: string,
+    @Param('revisionId') revisionId: string,
+    @Body(new ZodPipe(RestoreNoteRevisionInput)) body: RestoreNoteRevisionInput,
+  ): Promise<NoteDto> {
+    return this.notes.restore(ctx, assertUuid(id), assertUuid(revisionId), body.version);
   }
 
   /** Supprimer une note. */

@@ -69,6 +69,14 @@ import kotlinx.coroutines.launch
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.key
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.semantics.stateDescription
+import androidx.compose.ui.text.style.TextOverflow
+import app.tandem.foyer.data.remote.NoteRevisionDto
+import java.time.format.FormatStyle
 
 data class NotesState(
     val items: List<NoteDto> = emptyList(),
@@ -117,6 +125,18 @@ class NotesViewModel(private val remote: NotesRemote) : ViewModel() {
 
     fun delete(note: NoteDto, done: (Boolean) -> Unit) = save(done) { remote.delete(note.id) }
 
+    suspend fun revisions(noteId: String) = remote.revisions(noteId)
+
+    fun restore(note: NoteDto, revisionId: String, done: (NotesRemote.SaveResult) -> Unit) {
+        _state.update { it.copy(saving = true) }
+        viewModelScope.launch {
+            val result = remote.restore(note, revisionId)
+            _state.update { it.copy(saving = false) }
+            done(result)
+            load()
+        }
+    }
+
     private fun save(done: (Boolean) -> Unit, action: suspend () -> Boolean) {
         _state.update { it.copy(saving = true) }
         viewModelScope.launch {
@@ -150,6 +170,8 @@ fun NotesScreen(
     val saved = stringResource(R.string.notes_saved)
     val copiedFmt = stringResource(R.string.notes_copied)
     val deletedFmt = stringResource(R.string.notes_deleted)
+    val restoredFmt = stringResource(R.string.notes_restored)
+    val locale = currentLocale()
 
     Scaffold(
         topBar = {
@@ -217,7 +239,24 @@ fun NotesScreen(
     draft?.let { d ->
         NoteSheet(
             d,
+            members = members,
             saving = state.saving,
+            loadRevisions = { id -> vm.revisions(id) },
+            onRestore = { revision ->
+                d.note?.let { note ->
+                    vm.restore(note, revision.id) { r ->
+                        when (r) {
+                            is NotesRemote.SaveResult.Saved -> {
+                                draft = Draft(r.note, r.note.title, r.note.body, r.note.pinned)
+                                onMessage(restoredFmt.format(formatSavedAt(revision.savedAt, locale)))
+                            }
+                            is NotesRemote.SaveResult.Conflict ->
+                                draft = Draft(r.current, r.current.title, r.current.body, r.current.pinned, conflict = true)
+                            NotesRemote.SaveResult.Failed -> onMessage(failed)
+                        }
+                    }
+                }
+            },
             onChange = { draft = it },
             onDismiss = { draft = null },
             onSave = {
@@ -327,7 +366,10 @@ private fun NoteCard(
 @Composable
 private fun NoteSheet(
     d: Draft,
+    members: List<Member>,
     saving: Boolean,
+    loadRevisions: suspend (noteId: String) -> List<NoteRevisionDto>?,
+    onRestore: (NoteRevisionDto) -> Unit,
     onChange: (Draft) -> Unit,
     onDismiss: () -> Unit,
     onSave: () -> Unit,
@@ -361,6 +403,9 @@ private fun NoteSheet(
                 minLines = 4,
                 modifier = Modifier.fillMaxWidth(),
             )
+            d.note?.let { note ->
+                key(note.version) { NoteHistory(note, members, saving, loadRevisions, onRestore) }
+            }
             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.heightIn(min = 48.dp)) {
                 Checkbox(checked = d.pinned, onCheckedChange = { onChange(d.copy(pinned = it)) })
                 Text(stringResource(R.string.notes_field_pinned), style = MaterialTheme.typography.bodyLarge)
@@ -374,6 +419,79 @@ private fun NoteSheet(
                 Spacer(Modifier.weight(1f))
                 Button(onClick = onSave, enabled = d.title.isNotBlank() && !saving, modifier = Modifier.heightIn(min = 48.dp)) {
                     Text(stringResource(if (d.note == null) R.string.notes_add else R.string.notes_save))
+                }
+            }
+        }
+    }
+}
+
+/** Date et heure d'une version (« 9 oct. 15:23 »). */
+private fun formatSavedAt(iso: String, locale: java.util.Locale): String =
+    DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.SHORT).withLocale(locale)
+        .format(Instant.parse(iso).atZone(ZoneId.systemDefault()))
+
+/** Versions précédentes (repliées) : revoir et restaurer celle d'avant si l'autre l'a écrasée. */
+@Composable
+private fun NoteHistory(
+    note: NoteDto,
+    members: List<Member>,
+    saving: Boolean,
+    load: suspend (noteId: String) -> List<NoteRevisionDto>?,
+    onRestore: (NoteRevisionDto) -> Unit,
+) {
+    val locale = currentLocale()
+    var expanded by rememberSaveable { mutableStateOf(false) }
+    // null : en cours ; liste vide : rien ; erreur : `failed`.
+    var revisions by remember { mutableStateOf<List<NoteRevisionDto>?>(null) }
+    var failed by remember { mutableStateOf(false) }
+    LaunchedEffect(expanded) {
+        if (expanded && revisions == null) {
+            val loaded = load(note.id)
+            failed = loaded == null
+            revisions = loaded ?: emptyList()
+        }
+    }
+    val expandedState = stringResource(if (expanded) R.string.notes_history_expanded else R.string.notes_history_collapsed)
+    TextButton(
+        onClick = { expanded = !expanded },
+        modifier = Modifier.heightIn(min = 48.dp).semantics { stateDescription = expandedState },
+    ) {
+        Icon(painterResource(R.drawable.ic_note_history), contentDescription = null, modifier = Modifier.size(20.dp))
+        Spacer(Modifier.width(8.dp))
+        Text(stringResource(R.string.notes_history))
+    }
+    if (!expanded) return
+    val list = revisions
+    when {
+        list == null -> Text(stringResource(R.string.notes_history_loading), style = MaterialTheme.typography.bodyMedium)
+        failed -> Text(stringResource(R.string.notes_history_error), style = MaterialTheme.typography.bodyMedium)
+        list.isEmpty() -> Text(
+            stringResource(R.string.notes_history_empty),
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        else -> list.forEach { r ->
+            OutlinedCard(Modifier.fillMaxWidth()) {
+                Column(Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    Text(
+                        stringResource(
+                            R.string.notes_history_by,
+                            members.firstOrNull { it.id == r.editedById }?.displayName ?: stringResource(R.string.notes_someone),
+                            formatSavedAt(r.savedAt, locale),
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    if (r.title != note.title) Text(r.title, style = MaterialTheme.typography.titleSmall)
+                    Text(
+                        r.body.ifBlank { stringResource(R.string.notes_history_no_text) },
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 3,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    OutlinedButton(onClick = { onRestore(r) }, enabled = !saving, modifier = Modifier.heightIn(min = 48.dp)) {
+                        Text(stringResource(R.string.notes_restore))
+                    }
                 }
             }
         }

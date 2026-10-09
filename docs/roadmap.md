@@ -156,8 +156,8 @@ Validé par l'utilisateur, du plus simple au plus gros :
   accessibilité 95 (mesurée à 100)
   - [ ] Accueil ≥ 90 : le reste du temps de blocage vient du montage de l'app après le chargement
     de la session dans le navigateur ; préparer la session côté serveur (M), à prioriser ensemble
-- [ ] **Historique des versions d'une note** : revenir à une version précédente si l'autre l'a
-  écrasée (S) ⚙️🌐🤖
+- [x] **Historique des versions d'une note** : revenir à une version précédente si l'autre l'a
+  écrasée (S) ⚙️🌐🤖 (#93) : 20 versions par note, restauration elle-même versionnée
 - [ ] **Meilleure lecture des tickets** : redresser et recadrer la photo avant lecture (M) ⚙️
 - [ ] **Coffre pour les notes sensibles** : contenu masqué partout (liste, recherche,
   notifications, export) et affiché après empreinte ou code du téléphone, ou mot de passe sur le
@@ -168,6 +168,12 @@ Validé par l'utilisateur, du plus simple au plus gros :
   Facts par le serveur, puis mémorisé pour le foyer (M) ⚙️🤖
 - [ ] **Sauvegarde exportable** du foyer (JSON) et restauration sur une autre instance (M) ⚙️🌐
 - [ ] **« Ok Google, ajoute du lait dans Tandem »** : intégration à l'Assistant Google (M) 🤖
+
+Découvert pendant le lot 6 :
+
+- [ ] Web : un membre qui rejoint le foyer pendant que la page est ouverte apparaît comme « un
+  ancien membre » (notes, historique) jusqu'au rechargement ; rafraîchir la session à son
+  arrivée (S) 🌐
 
 Retiré du lot par l'utilisateur, gardé pour plus tard : **rappel lié à un lieu** (la
 géolocalisation en arrière-plan demande une déclaration à Google Play).

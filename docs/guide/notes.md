@@ -19,6 +19,9 @@ approche : tout ce qu'on se redemande trouve sa place dans **Notes**. Sur télé
 - **Modifiée par l'autre en même temps** : l'enregistrement s'arrête, la dernière version
   s'affiche avec un message ; vérifiez, puis enregistrez à nouveau. Rien n'est écrasé sans le
   savoir.
+- **Versions précédentes** : dans une note ouverte, ce bouton montre les 20 dernières versions
+  (qui l'avait écrite, et quand). **Restaurer cette version** la remet en place ; la version
+  remplacée rejoint à son tour l'historique, rien n'est perdu. Épingler ne crée pas de version.
 - Les notes se mettent à jour **en direct** chez l'autre. Elles demandent une connexion pour
   être modifiées ; hors ligne, le site et l'app Android affichent la dernière version vue, en
   lecture.

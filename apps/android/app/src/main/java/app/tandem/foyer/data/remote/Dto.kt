@@ -324,6 +324,20 @@ data class UpdateNoteBody(
     val version: Int,
 )
 
+/** Version précédente d'une note (cf. NoteRevisionDto des contrats). */
+@Serializable
+data class NoteRevisionDto(
+    val id: String,
+    val title: String,
+    val body: String = "",
+    val version: Int,
+    val editedById: String? = null,
+    val savedAt: String,
+)
+
+@Serializable
+data class RestoreNoteBody(val version: Int)
+
 /** Commentaire sur une tâche (cf. packages/contracts/src/comments.ts). */
 @Serializable
 data class CommentDto(val id: String, val authorId: String? = null, val body: String, val createdAt: String)

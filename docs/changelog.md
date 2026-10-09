@@ -15,6 +15,11 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### Historique des notes (#93)
+
+- ✨ **Versions précédentes** d'une note : revoir les 20 dernières versions (qui, quand) et en
+  restaurer une si l'autre l'a écrasée. Sur le site et dans l'app Android.
+
 ### Site plus rapide au démarrage (#93)
 
 - 🛠 La page de connexion charge presque deux fois moins de code au démarrage (153 Ko au lieu de 267 Ko), et

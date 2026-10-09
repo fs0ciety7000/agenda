@@ -32,3 +32,25 @@ export const NoteDto = z.object({
   version: z.number().int(),
 });
 export type NoteDto = z.infer<typeof NoteDto>;
+
+/** Versions gardées par note : au-delà, les plus anciennes sont effacées. */
+export const MAX_NOTE_REVISIONS = 20;
+
+/**
+ * Version précédente d'une note, gardée à chaque modification du titre ou du texte : on peut la
+ * revoir et la restaurer si l'autre l'a écrasée. `editedById` : qui avait écrit cette version.
+ */
+export const NoteRevisionDto = z.object({
+  id: z.uuid(),
+  title: z.string(),
+  body: z.string(),
+  version: z.number().int(),
+  editedById: z.uuid().nullable(),
+  /** Moment où cette version avait été enregistrée. */
+  savedAt: z.string(),
+});
+export type NoteRevisionDto = z.infer<typeof NoteRevisionDto>;
+
+/** Restaurer une version : `version` est celle de la note affichée (409 si elle a changé). */
+export const RestoreNoteRevisionInput = z.object({ version: z.number().int().min(1) });
+export type RestoreNoteRevisionInput = z.infer<typeof RestoreNoteRevisionInput>;

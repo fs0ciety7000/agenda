@@ -1,7 +1,7 @@
 'use client';
 
 import type { NoteDto } from '@agenda/contracts';
-import { Copy, Pencil, Pin, Plus, StickyNote } from 'lucide-react';
+import { ChevronDown, Copy, History, Pencil, Pin, Plus, StickyNote } from 'lucide-react';
 import { useFormatter, useTranslations } from 'next-intl';
 import { type FormEvent, useState } from 'react';
 import { useSession } from '@/components/app/household-context';
@@ -13,7 +13,7 @@ import { useToast } from '@/components/ui/toast';
 import { ApiError, errorKey } from '@/lib/api';
 import { cn } from '@/lib/cn';
 import { useOnline } from '@/lib/offline';
-import { useNoteActions, useNotes } from '@/lib/notes';
+import { useNoteActions, useNoteRevisions, useNotes } from '@/lib/notes';
 
 type Editing = { note: NoteDto | null; title: string; body: string; pinned: boolean };
 
@@ -184,6 +184,22 @@ export default function NotesPage() {
                   className="min-h-32 rounded-md border border-border-strong bg-surface px-3 py-2.5 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
                 />
               </div>
+              {editing.note && (
+                <NoteHistory
+                  key={editing.note.version}
+                  note={editing.note}
+                  online={online}
+                  onRestored={(restored) => {
+                    setConflict(false);
+                    setEditing({ note: restored, ...restored });
+                  }}
+                  onConflict={(current) => {
+                    setConflict(true);
+                    setEditing({ note: current, ...current });
+                  }}
+                  onError={fail}
+                />
+              )}
               <label className="flex min-h-11 cursor-pointer items-center gap-3 text-[0.9375rem]">
                 <input
                   type="checkbox"
@@ -287,5 +303,116 @@ function NoteCard({
         })}
       </p>
     </li>
+  );
+}
+
+/** Versions précédentes d'une note (repliées) : revoir et restaurer celle d'avant. */
+function NoteHistory({
+  note,
+  online,
+  onRestored,
+  onConflict,
+  onError,
+}: {
+  note: NoteDto;
+  online: boolean;
+  onRestored: (note: NoteDto) => void;
+  onConflict: (current: NoteDto) => void;
+  onError: (e: unknown) => void;
+}) {
+  const t = useTranslations('notes');
+  const format = useFormatter();
+  const toast = useToast();
+  const { household } = useSession();
+  const [open, setOpen] = useState(false);
+  const revisions = useNoteRevisions(household.id, note.id, open);
+  const actions = useNoteActions(household.id);
+  const when = (iso: string) =>
+    format.dateTime(new Date(iso), {
+      day: 'numeric',
+      month: 'short',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  const restore = (revisionId: string, savedAt: string) =>
+    actions.restore.mutate(
+      { id: note.id, revisionId, version: note.version },
+      {
+        onSuccess: (restored) => {
+          toast({ message: t('restored', { date: when(savedAt) }) });
+          onRestored(restored);
+        },
+        onError: (err) => {
+          const current = (err instanceof ApiError &&
+            err.code === 'VERSION_CONFLICT' &&
+            (err.details as { current?: NoteDto } | undefined)?.current) as NoteDto | undefined;
+          if (current) onConflict(current);
+          else onError(err);
+        },
+      },
+    );
+  return (
+    <div className="flex flex-col gap-2">
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-controls="note-history"
+        onClick={() => setOpen(!open)}
+        className="-mx-2 inline-flex min-h-11 items-center gap-2 self-start rounded-md px-2 text-[0.9375rem] text-text-muted hover:bg-surface-muted hover:text-text"
+      >
+        <History aria-hidden className="size-4" />
+        {t('history')}
+        <ChevronDown
+          aria-hidden
+          className={cn('size-4 transition-transform', open && 'rotate-180')}
+        />
+      </button>
+      {open && (
+        <div id="note-history">
+          {revisions.isPending ? (
+            <Skeleton className="h-16" />
+          ) : revisions.isError ? (
+            <p className="text-sm text-text-muted">{t('historyError')}</p>
+          ) : revisions.data.length === 0 ? (
+            <p className="text-sm text-text-muted">{t('historyEmpty')}</p>
+          ) : (
+            <ul className="flex max-h-72 flex-col gap-2 overflow-y-auto" aria-label={t('history')}>
+              {revisions.data.map((r) => (
+                <li
+                  key={r.id}
+                  className="flex flex-col gap-1.5 rounded-md border border-border bg-surface-muted p-3"
+                >
+                  <p className="text-[0.8125rem] text-text-muted">
+                    {t('historyBy', {
+                      date: when(r.savedAt),
+                      name:
+                        household.members.find((m) => m.id === r.editedById)?.displayName ??
+                        t('someone'),
+                    })}
+                  </p>
+                  {r.title !== note.title && <p className="break-words font-medium">{r.title}</p>}
+                  <p className="line-clamp-3 whitespace-pre-wrap break-words text-[0.9375rem]">
+                    {r.body || t('historyNoText')}
+                  </p>
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    size="sm"
+                    className="self-start"
+                    disabled={!online}
+                    loading={
+                      actions.restore.isPending && actions.restore.variables?.revisionId === r.id
+                    }
+                    onClick={() => restore(r.id, r.savedAt)}
+                  >
+                    {t('restore')}
+                  </Button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+    </div>
   );
 }

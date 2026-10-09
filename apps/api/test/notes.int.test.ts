@@ -102,4 +102,79 @@ describe('Notes partagées', () => {
       expect.objectContaining({ title: 'Code alarme', body: '0000' }),
     ]);
   });
+
+  it('historique : chaque modification garde l’ancienne version, restaurable', async () => {
+    const h = await coupleHousehold(app);
+    const url = `${h.base}/notes`;
+    const note = await http()
+      .post(url)
+      .set(h.grace.auth)
+      .send({ title: 'Wi-Fi', body: 'zèbre-42' })
+      .expect(201);
+    const id = note.body.id as string;
+    // Épingler ne crée pas de version ; changer le texte, si.
+    await http()
+      .patch(`${url}/${id}`)
+      .set(h.grace.auth)
+      .send({ pinned: true, version: 1 })
+      .expect(200);
+    await http()
+      .patch(`${url}/${id}`)
+      .set(h.nicolas.auth)
+      .send({ body: 'girafe-7', version: 2 })
+      .expect(200);
+    const revisions = await http().get(`${url}/${id}/revisions`).set(h.grace.auth).expect(200);
+    expect(revisions.body).toEqual([
+      expect.objectContaining({
+        title: 'Wi-Fi',
+        body: 'zèbre-42',
+        version: 2,
+        editedById: h.grace.memberId,
+      }),
+    ]);
+
+    // Restaurer : version périmée refusée, puis restauration ; le texte remplacé est gardé.
+    const revisionId = revisions.body[0].id as string;
+    await http()
+      .post(`${url}/${id}/revisions/${revisionId}/restore`)
+      .set(h.grace.auth)
+      .send({ version: 2 })
+      .expect(409);
+    const restored = await http()
+      .post(`${url}/${id}/revisions/${revisionId}/restore`)
+      .set(h.grace.auth)
+      .send({ version: 3 })
+      .expect(200);
+    expect(restored.body).toMatchObject({ body: 'zèbre-42', version: 4, pinned: true });
+    const after = await http().get(`${url}/${id}/revisions`).set(h.grace.auth).expect(200);
+    expect(after.body.map((r: { body: string }) => r.body)).toEqual(['girafe-7', 'zèbre-42']);
+
+    // Export RGPD : les versions écrites par la personne.
+    const exported = await http().get('/v1/me/export').set(h.nicolas.auth).expect(200);
+    expect(exported.body.noteVersionsWritten).toEqual([
+      expect.objectContaining({ body: 'girafe-7', noteTitle: 'Wi-Fi' }),
+    ]);
+
+    // Vingt versions au plus.
+    for (let v = 4; v < 30; v++) {
+      await http()
+        .patch(`${url}/${id}`)
+        .set(h.grace.auth)
+        .send({ body: `texte ${v}`, version: v })
+        .expect(200);
+    }
+    const capped = await http().get(`${url}/${id}/revisions`).set(h.grace.auth).expect(200);
+    expect(capped.body).toHaveLength(20);
+    expect(capped.body[0].version).toBe(29);
+
+    // Un autre foyer ne voit ni ne restaure rien.
+    const other = await coupleHousehold(app);
+    await http().get(`${other.base}/notes/${id}/revisions`).set(other.grace.auth).expect(404);
+    await http()
+      .post(`${other.base}/notes/${id}/revisions/${revisionId}/restore`)
+      .set(other.grace.auth)
+      .send({ version: 30 })
+      .expect(404);
+    await http().get(`${h.base}/notes/${id}/revisions`).set(other.grace.auth).expect(404);
+  });
 });

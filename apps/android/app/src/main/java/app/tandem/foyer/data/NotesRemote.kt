@@ -5,6 +5,8 @@ import app.tandem.foyer.data.local.CachedDocumentEntity
 import app.tandem.foyer.data.remote.AgendaApi
 import app.tandem.foyer.data.remote.NoteBody
 import app.tandem.foyer.data.remote.NoteDto
+import app.tandem.foyer.data.remote.NoteRevisionDto
+import app.tandem.foyer.data.remote.RestoreNoteBody
 import app.tandem.foyer.data.remote.UpdateNoteBody
 import app.tandem.foyer.data.remote.json
 import kotlinx.coroutines.Dispatchers
@@ -62,6 +64,21 @@ class NotesRemote(private val api: AgendaApi, private val db: AgendaDatabase) {
     suspend fun update(note: NoteDto, title: String? = null, body: String? = null, pinned: Boolean? = null): SaveResult =
         call { h ->
             val res = api.updateNote(h, note.id, UpdateNoteBody(title?.trim(), body?.trim(), pinned, note.version))
+            when {
+                res.isSuccessful -> res.body()?.let { SaveResult.Saved(it) }
+                res.code() == 409 -> res.errorBody()?.string()?.let(::conflictOf)?.let { SaveResult.Conflict(it) }
+                else -> null
+            }
+        } ?: SaveResult.Failed
+
+    /** Versions précédentes d'une note (la plus récente d'abord) ; null hors ligne. */
+    suspend fun revisions(noteId: String): List<NoteRevisionDto>? =
+        call { h -> api.noteRevisions(h, noteId).takeIf { it.isSuccessful }?.body() }
+
+    /** Restaure une version : comme une modification (409 si la note a changé entre-temps). */
+    suspend fun restore(note: NoteDto, revisionId: String): SaveResult =
+        call { h ->
+            val res = api.restoreNote(h, note.id, revisionId, RestoreNoteBody(note.version))
             when {
                 res.isSuccessful -> res.body()?.let { SaveResult.Saved(it) }
                 res.code() == 409 -> res.errorBody()?.string()?.let(::conflictOf)?.let { SaveResult.Conflict(it) }

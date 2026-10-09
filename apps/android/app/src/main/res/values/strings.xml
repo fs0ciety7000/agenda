@@ -588,6 +588,16 @@
     <string name="notes_created">Note added</string>
     <string name="notes_saved">Note saved</string>
     <string name="notes_deleted">“%1$s” deleted</string>
+    <string name="notes_history">Previous versions</string>
+    <string name="notes_history_expanded">expanded</string>
+    <string name="notes_history_collapsed">collapsed</string>
+    <string name="notes_history_loading">Loading…</string>
+    <string name="notes_history_error">Couldn\'t load previous versions.</string>
+    <string name="notes_history_empty">No previous version: the note hasn\'t been changed yet.</string>
+    <string name="notes_history_by">%1$s · %2$s</string>
+    <string name="notes_history_no_text">(no text)</string>
+    <string name="notes_restore">Restore this version</string>
+    <string name="notes_restored">Version from %1$s restored.</string>
     <string name="notes_copied">“%1$s” copied</string>
     <string name="notes_failed">Couldn’t save. Check your connection.</string>
     <string name="notes_pin">Pin “%1$s”</string>

@@ -1,6 +1,13 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
-import type { Note } from '@prisma/client';
-import { MAX_NOTES, type NoteDto, type NoteInput, type UpdateNoteInput } from '@agenda/contracts';
+import type { Note, NoteRevision } from '@prisma/client';
+import {
+  MAX_NOTE_REVISIONS,
+  MAX_NOTES,
+  type NoteDto,
+  type NoteInput,
+  type NoteRevisionDto,
+  type UpdateNoteInput,
+} from '@agenda/contracts';
 import { AppException, notFound } from '../common/app-exception';
 import { DomainEvents } from '../common/domain-events';
 import { HouseholdContext } from '../common/request-context';
@@ -16,6 +23,15 @@ const toDto = (n: Note): NoteDto => ({
   createdAt: n.createdAt.toISOString(),
   updatedAt: n.updatedAt.toISOString(),
   version: n.version,
+});
+
+const toRevisionDto = (r: NoteRevision): NoteRevisionDto => ({
+  id: r.id,
+  title: r.title,
+  body: r.body,
+  version: r.version,
+  editedById: r.editedById,
+  savedAt: r.savedAt.toISOString(),
 });
 
 /**
@@ -64,20 +80,88 @@ export class NotesService {
 
   async update(ctx: HouseholdContext, id: string, input: UpdateNoteInput): Promise<NoteDto> {
     const { version, ...patch } = input;
-    // Mise à jour conditionnelle : la version doit être celle que l'appelant a lue.
-    const { count } = await this.prisma.note.updateMany({
-      where: { id, householdId: ctx.householdId, version },
-      data: { ...patch, updatedById: ctx.memberId, version: { increment: 1 } },
+    const updated = await this.prisma.$transaction(async (tx) => {
+      const before = await tx.note.findFirst({ where: { id, householdId: ctx.householdId } });
+      if (!before) throw notFound();
+      // Mise à jour conditionnelle : la version doit être celle que l'appelant a lue. Une
+      // modification simultanée attend le verrou de la ligne, puis ne trouve plus sa version.
+      const { count } = await tx.note.updateMany({
+        where: { id, householdId: ctx.householdId, version },
+        data: { ...patch, updatedById: ctx.memberId, version: { increment: 1 } },
+      });
+      if (!count) return null;
+      // Titre ou texte changés : l'ancien contenu rejoint l'historique (pas pour une épingle).
+      const changed =
+        (patch.title !== undefined && patch.title !== before.title) ||
+        (patch.body !== undefined && patch.body !== before.body);
+      if (changed) {
+        await tx.noteRevision.create({
+          data: {
+            noteId: id,
+            title: before.title,
+            body: before.body,
+            version: before.version,
+            editedById: before.updatedById,
+            savedAt: before.updatedAt,
+          },
+        });
+        const old = await tx.noteRevision.findMany({
+          where: { noteId: id },
+          orderBy: { version: 'desc' },
+          skip: MAX_NOTE_REVISIONS,
+          select: { id: true },
+        });
+        if (old.length) {
+          await tx.noteRevision.deleteMany({ where: { id: { in: old.map((r) => r.id) } } });
+        }
+      }
+      return tx.note.findUniqueOrThrow({ where: { id } });
     });
-    const note = await this.prisma.note.findFirst({ where: { id, householdId: ctx.householdId } });
-    if (!note) throw notFound();
-    if (!count) {
+    if (!updated) {
+      const current = await this.prisma.note.findFirst({
+        where: { id, householdId: ctx.householdId },
+      });
+      if (!current) throw notFound();
       throw new AppException('VERSION_CONFLICT', HttpStatus.CONFLICT, 'Note was modified', {
-        current: toDto(note),
+        current: toDto(current),
       });
     }
     this.events.publish(ctx.householdId, 'notes');
-    return toDto(note);
+    return toDto(updated);
+  }
+
+  /** Versions précédentes d'une note, de la plus récente à la plus ancienne. */
+  async revisions(ctx: HouseholdContext, id: string): Promise<NoteRevisionDto[]> {
+    await this.find(ctx, id);
+    const revisions = await this.prisma.noteRevision.findMany({
+      where: { noteId: id },
+      orderBy: { version: 'desc' },
+    });
+    return revisions.map(toRevisionDto);
+  }
+
+  /**
+   * Restaure une version : c'est une modification comme une autre (même contrôle de version), le
+   * contenu remplacé rejoint donc l'historique et rien n'est perdu.
+   */
+  async restore(
+    ctx: HouseholdContext,
+    id: string,
+    revisionId: string,
+    version: number,
+  ): Promise<NoteDto> {
+    await this.find(ctx, id);
+    const revision = await this.prisma.noteRevision.findFirst({
+      where: { id: revisionId, noteId: id },
+    });
+    if (!revision) throw notFound();
+    return this.update(ctx, id, { title: revision.title, body: revision.body, version });
+  }
+
+  private async find(ctx: HouseholdContext, id: string): Promise<Note> {
+    const note = await this.prisma.note.findFirst({ where: { id, householdId: ctx.householdId } });
+    if (!note) throw notFound();
+    return note;
   }
 
   async remove(ctx: HouseholdContext, id: string): Promise<void> {

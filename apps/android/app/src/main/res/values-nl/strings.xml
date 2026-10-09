@@ -585,6 +585,16 @@
     <string name="notes_created">Notitie toegevoegd</string>
     <string name="notes_saved">Notitie opgeslagen</string>
     <string name="notes_deleted">“%1$s” verwijderd</string>
+    <string name="notes_history">Eerdere versies</string>
+    <string name="notes_history_expanded">uitgevouwen</string>
+    <string name="notes_history_collapsed">ingevouwen</string>
+    <string name="notes_history_loading">Laden…</string>
+    <string name="notes_history_error">Eerdere versies laden lukte niet.</string>
+    <string name="notes_history_empty">Geen eerdere versie: de notitie is nog niet gewijzigd.</string>
+    <string name="notes_history_by">%1$s · %2$s</string>
+    <string name="notes_history_no_text">(geen tekst)</string>
+    <string name="notes_restore">Deze versie terugzetten</string>
+    <string name="notes_restored">Versie van %1$s teruggezet.</string>
     <string name="notes_copied">“%1$s” gekopieerd</string>
     <string name="notes_failed">Opslaan lukt niet. Controleer je verbinding.</string>
     <string name="notes_pin">“%1$s” vastzetten</string>

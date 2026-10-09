@@ -240,6 +240,17 @@ interface AgendaApi {
     @PATCH("v1/households/{h}/notes/{id}")
     suspend fun updateNote(@Path("h") householdId: String, @Path("id") id: String, @Body body: UpdateNoteBody): Response<NoteDto>
 
+    @GET("v1/households/{h}/notes/{id}/revisions")
+    suspend fun noteRevisions(@Path("h") householdId: String, @Path("id") id: String): Response<List<NoteRevisionDto>>
+
+    @POST("v1/households/{h}/notes/{id}/revisions/{revisionId}/restore")
+    suspend fun restoreNote(
+        @Path("h") householdId: String,
+        @Path("id") id: String,
+        @Path("revisionId") revisionId: String,
+        @Body body: RestoreNoteBody,
+    ): Response<NoteDto>
+
     @DELETE("v1/households/{h}/notes/{id}")
     suspend fun deleteNote(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
 
