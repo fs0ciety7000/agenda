@@ -41,15 +41,15 @@
 
 ## 4. Tester
 
-| Zone touchée                  | Commandes                                                                                                              |
-| ----------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| Partout                       | `pnpm exec prettier --check .` et `pnpm exec turbo run lint typecheck` (tous les paquets, comme la CI)                 |
-| `packages/*`                  | `pnpm --filter <paquet> lint && pnpm --filter <paquet> test`, puis `pnpm build` (les applications importent le build)  |
-| API                           | `cd apps/api && pnpm lint && pnpm exec tsc --noEmit && pnpm exec vitest run` (après `npx prisma migrate deploy`)       |
-| Route API ajoutée ou modifiée | `pnpm --filter @agenda/api build && pnpm --filter @agenda/api openapi` (la CI compare `apps/docs/static/openapi.json`) |
-| Web                           | `cd apps/web && pnpm lint && pnpm exec tsc --noEmit && pnpm test`, puis les E2E (`CLAUDE.md`)                          |
-| Site vitrine                  | `cd apps/site && pnpm lint && pnpm exec tsc --noEmit && pnpm build`                                                    |
-| Android                       | `cd apps/android && ./gradlew --offline -q lintDebug testDebugUnitTest`                                                |
+| Zone touchée                  | Commandes                                                                                                               |
+| ----------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| Partout                       | `pnpm exec prettier --check .` et `pnpm exec turbo run lint typecheck` (tous les paquets, comme la CI)                  |
+| `packages/*`                  | `pnpm --filter <paquet> lint && pnpm --filter <paquet> test`, puis `pnpm build` (les applications importent le build)   |
+| API                           | `cd apps/api && pnpm lint && pnpm exec tsc --noEmit && pnpm exec vitest run` (après `npx prisma migrate deploy`)        |
+| Route API ajoutée ou modifiée | `pnpm --filter @agenda/api build && pnpm --filter @agenda/api openapi` (la CI compare `apps/docs/static/openapi.json`)  |
+| Web                           | `cd apps/web && pnpm lint && pnpm exec tsc --noEmit && pnpm test`, puis les E2E (`CLAUDE.md`)                           |
+| Site vitrine                  | `cd apps/site && pnpm lint && pnpm exec tsc --noEmit && pnpm build`                                                     |
+| Android                       | `cd apps/android && ./gradlew --offline -q -Ptandem.codeScanner=false lintDebug testDebugUnitTest` (vraie version : CI) |
 
 - Chaque fonction ajoute ses tests :
   - un test d'intégration API (`apps/api/test/*.int.test.ts`), droits d'accès compris ;

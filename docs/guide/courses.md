@@ -31,11 +31,13 @@ ou ✕ pour quitter.
 
 ## Ajouter par code-barres
 
-**Scanner un code-barres** (en haut de la liste, sur le site et dans l'app Android) : prenez le
-code-barres du produit en photo, de près et bien à plat.
+**Scanner un code-barres** (en haut de la liste, sur le site et dans l'app Android). Dans l'app,
+**Scanner en direct** : pointez le code-barres, il est lu tout de suite, sans photo (scanner de
+Google Play services, sur le téléphone). Sinon, ou sur le site : prenez le code-barres en photo,
+de près et bien à plat.
 
 - La photo est lue sur le serveur de Tandem, puis **effacée aussitôt** ; rien n'est envoyé
-  ailleurs.
+  ailleurs. Le scan en direct, lui, se fait sur le téléphone.
 - Le nom du produit est proposé : celui que le foyer lui a déjà donné, sinon celui trouvé dans
   [Open Food Facts](https://world.openfoodfacts.org), une base de produits ouverte (seul le code
   lui est envoyé). Corrigez-le si besoin avant **Ajouter à la liste** : le foyer s'en souviendra.

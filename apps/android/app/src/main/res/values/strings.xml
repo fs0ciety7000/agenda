@@ -747,6 +747,8 @@
     <string name="barcode_open">Scan a barcode</string>
     <string name="barcode_title">Add by barcode</string>
     <string name="barcode_intro">Take a close, flat photo of the barcode. The photo is read on our server, then deleted.</string>
+    <string name="barcode_live">Scan live</string>
+    <string name="barcode_live_unavailable">Live scanning is not available on this phone. Take a photo or type the digits.</string>
     <string name="barcode_photo">Take a photo</string>
     <string name="barcode_pick">Choose a photo</string>
     <string name="barcode_reading">Reading…</string>

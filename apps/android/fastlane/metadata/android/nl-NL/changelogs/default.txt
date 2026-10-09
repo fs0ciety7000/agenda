@@ -1,4 +1,4 @@
-Boodschappen: barcode via foto; gastlink die vanzelf uitgaat.
+Boodschappen: barcode live scannen; gastlink die vanzelf uitgaat.
 • Back-up van het huishouden downloaden; gevoelige notities beschermd.
 • Notities: eerdere versies terugzetten.
 • Kasticket inlezen: bedrag en datum van de foto gelezen.

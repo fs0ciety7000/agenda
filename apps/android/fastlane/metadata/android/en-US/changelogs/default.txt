@@ -1,4 +1,4 @@
-Shopping: add by barcode photo; guest link that expires.
+Shopping: live barcode scan; guest link that expires.
 • Download the household backup; sensitive notes protected.
 • Notes: previous versions you can restore.
 • Read a receipt: amount and date read from the photo.

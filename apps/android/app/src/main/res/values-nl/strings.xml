@@ -744,6 +744,8 @@
     <string name="barcode_open">Barcode scannen</string>
     <string name="barcode_title">Toevoegen met barcode</string>
     <string name="barcode_intro">Maak een foto van de barcode, van dichtbij en recht. De foto wordt op onze server gelezen en daarna gewist.</string>
+    <string name="barcode_live">Live scannen</string>
+    <string name="barcode_live_unavailable">Live scannen kan niet op deze telefoon. Maak een foto of typ de cijfers.</string>
     <string name="barcode_photo">Foto maken</string>
     <string name="barcode_pick">Foto kiezen</string>
     <string name="barcode_reading">Lezen…</string>

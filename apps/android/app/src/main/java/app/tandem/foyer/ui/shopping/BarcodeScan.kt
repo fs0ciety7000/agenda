@@ -53,7 +53,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 /** Ce qui s'affiche sous les boutons de photo quand rien n'a été trouvé. */
-enum class BarcodeNote { NOT_READ, FAILED }
+enum class BarcodeNote { NOT_READ, FAILED, LIVE_UNAVAILABLE }
 
 /**
  * Étapes d'un ajout par code-barres, sans interface (testée seule) : chiffres vérifiés avant
@@ -176,7 +176,25 @@ fun BarcodeButton(
                 if (found == null) {
                     Text(stringResource(R.string.barcode_intro), style = MaterialTheme.typography.bodyMedium)
                     FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Button(
+                        if (LIVE_SCAN_SUPPORTED) {
+                            // Scanner en direct (Google Play services) : le plus rapide, la photo reste en secours.
+                            Button(
+                                onClick = {
+                                    flow.note = null
+                                    startLiveScan(
+                                        context,
+                                        onCode = { code ->
+                                            flow.code = code
+                                            scope.launch { flow.search() }
+                                        },
+                                        onFailed = { flow.note = BarcodeNote.LIVE_UNAVAILABLE },
+                                    )
+                                },
+                                enabled = !busy,
+                                modifier = Modifier.heightIn(min = 48.dp),
+                            ) { Text(stringResource(R.string.barcode_live)) }
+                        }
+                        OutlinedButton(
                             onClick = {
                                 val dir = java.io.File(context.cacheDir, "camera").apply { mkdirs() }
                                 val file = java.io.File(dir, "barcode-${System.currentTimeMillis()}.jpg")
@@ -199,7 +217,13 @@ fun BarcodeButton(
                     }
                     flow.note?.let {
                         Text(
-                            stringResource(if (it == BarcodeNote.NOT_READ) R.string.barcode_not_read else R.string.barcode_failed),
+                            stringResource(
+                                when (it) {
+                                    BarcodeNote.NOT_READ -> R.string.barcode_not_read
+                                    BarcodeNote.LIVE_UNAVAILABLE -> R.string.barcode_live_unavailable
+                                    BarcodeNote.FAILED -> R.string.barcode_failed
+                                },
+                            ),
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
                         )

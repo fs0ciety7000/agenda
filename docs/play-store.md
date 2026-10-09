@@ -89,6 +89,13 @@ Aucune donnée n'est **partagée** : Firebase et l'hébergeur sont des prestatai
 publication dans Google Calendar est un transfert demandé par l'utilisateur. Ces deux cas sont
 exclus de la notion de partage.
 
+**Scanner de codes-barres** (`play-services-code-scanner`, ML Kit de Google Play services) :
+l'image reste sur le téléphone et rien n'est transmis à Tandem, mais Google indique que ML Kit
+peut envoyer à Google des données de diagnostic (performances, utilisation de l'API). Avant
+d'envoyer la version, relire la page « Données collectées » de ML Kit dans la documentation de
+Google et reporter ses réponses dans le formulaire (en général : diagnostics, collectés, non
+partagés).
+
 | Type de données | Collectée | Finalité | Facultative |
 |---|---|---|---|
 | Informations personnelles → **Nom** (prénom) | Oui | Fonctionnement de l'app, gestion du compte | Non |

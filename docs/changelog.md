@@ -15,6 +15,11 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### Code-barres en direct sur Android (#93)
+
+- ✨ **Scanner en direct** dans l'app Android : le code-barres est lu à la caméra, sans prendre
+  de photo ; la photo reste possible.
+
 ### Sauvegarde du foyer depuis l'app Android (#93)
 
 - ✨ **Télécharger la sauvegarde** depuis l'app Android (Réglages), après l'empreinte ou le

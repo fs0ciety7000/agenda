@@ -763,6 +763,8 @@
     <string name="barcode_open">Scanner un code-barres</string>
     <string name="barcode_title">Ajouter par code-barres</string>
     <string name="barcode_intro">Prenez le code-barres en photo, de près et bien à plat. La photo est lue sur notre serveur, puis effacée.</string>
+    <string name="barcode_live">Scanner en direct</string>
+    <string name="barcode_live_unavailable">Le scanner en direct n\'est pas disponible sur ce téléphone. Prenez une photo ou tapez les chiffres.</string>
     <string name="barcode_photo">Prendre une photo</string>
     <string name="barcode_pick">Choisir une photo</string>
     <string name="barcode_reading">Lecture…</string>

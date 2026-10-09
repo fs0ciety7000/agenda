@@ -1,4 +1,4 @@
-Courses : code-barres en photo ; lien invité qui se coupe seul.
+Courses : code-barres en direct ; lien invité qui se coupe seul.
 • Sauvegarde du foyer à télécharger ; notes sensibles protégées.
 • Notes : versions précédentes, restaurables.
 • Lire un ticket : montant et date lus sur la photo.

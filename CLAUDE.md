@@ -36,6 +36,8 @@ Fichiers importés, à respecter au même titre que celui-ci :
 - Dépenses : montants en centimes entiers, parts figées à l'enregistrement (#86).
 - Lecture des tickets : Tesseract sur le serveur, aucun service extérieur, photo non conservée ;
   seules de vraies images (signature vérifiée) lui sont passées (#92).
+- Codes-barres en direct : scanner de Google Play services (`src/codeScanner`), remplacé par une version
+  vide avec `-Ptandem.codeScanner=false` ; la photo lue par le serveur reste en secours (#93).
 - Codes-barres : photo lue par zbar sur le serveur (effacée aussitôt), nom du foyer d'abord, sinon
   Open Food Facts (le code seul) ; `OPEN_FOOD_FACTS_URL=off` le coupe (#93).
 - Sauvegarde du foyer : .zip (JSON + fichiers), mot de passe comme le coffre, sans le personnel de
@@ -95,4 +97,5 @@ Fichiers importés, à respecter au même titre que celui-ci :
   2. API : `cd apps/api && (set -a; . ./.env; set +a; NODE_ENV=production AUTH_RATE_LIMIT=100 GLOBAL_RATE_LIMIT=100000 COOKIE_SECURE=false WEB_ORIGIN=http://localhost:3000 node dist/main.js &)`.
   3. Web : `cd apps/web && API_URL=http://localhost:4000 pnpm start &`.
   4. `pnpm exec playwright test` (projets desktop et mobile).
-- Android hors ligne : `./gradlew --offline -q lintDebug testDebugUnitTest`.
+- Android hors ligne : `./gradlew --offline -q -Ptandem.codeScanner=false lintDebug testDebugUnitTest`
+  (le scanner de codes-barres de Google n'est pas téléchargeable ici : version vide, la CI compile la vraie).

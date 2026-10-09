@@ -21,7 +21,7 @@ sauter d'étape.
    - **Site vitrine** : `cd apps/site && pnpm build`, servir `out/` (par exemple
      `npx serve out`), puis capturer `/`, `/en/` et `/nl/` à 360, 768 et 1440 px, en clair et
      en sombre (`page.emulateMedia`).
-   - **Android** : `./gradlew --offline testDebugUnitTest -Pscreenshots` dans `apps/android`.
+   - **Android** : `./gradlew --offline -Ptandem.codeScanner=false testDebugUnitTest -Pscreenshots` dans `apps/android`.
      Ces captures sont Roborazzi ; pour la police à 200 %, ajouter un test de capture avec
      `fontScale = 2f` s'il n'existe pas.
 3. **Regarder chaque capture**, sans s'en tenir aux tests automatiques. Passer les sections 1
