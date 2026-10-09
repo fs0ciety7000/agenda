@@ -234,7 +234,7 @@ cd apps/android
 - `LiveApiTest` : connexion, synchro, créations hors ligne rejouées, série « les suivantes »,
   conflit, suppression — contre la vraie API.
 
-**Sur émulateur** (`app/src/androidTest`, workflow `android-emulator.yml`, API 34) : ce que
+**Sur émulateur** (`app/src/androidTest`, workflow `android-emulator.yml`, API 34 et 35) : ce que
 Robolectric simule seulement. Une dizaine de minutes de runner, donc **à la demande** : onglet
 *Actions → Android (émulateur) → Run workflow*, ou étiquette `emulateur` sur la PR (à poser avant
 une version qui touche la base, les fichiers ou le démarrage de l'app).
@@ -243,6 +243,12 @@ une version qui touche la base, les fichiers ou le démarrage de l'app).
   SQLite de l'appareil, puis ouverture par Room ; actions hors ligne conservées.
 - `LaunchTest` : premier lancement réel (Room, WorkManager, DataStore chiffré par le Keystore),
   écran de connexion, erreur réseau affichée sans plantage quand le serveur est injoignable.
+- `EdgeToEdgeTest` : bord à bord réel (activé par l'app en API 34, imposé par Android en 35) :
+  l'écran occupe tout l'écran, mais le logo et le bouton de connexion restent hors des barres
+  système.
+- `NavDrawerDeviceTest` : la barre du bas et le tiroir « Plus » : toucher « Plus » ou tirer la
+  barre vers le haut l'ouvre (tirer vers le bas, non), la touche retour le referme, et ni les
+  onglets ni les tuiles ne passent sous la barre de gestes.
 - `AttachmentProviderTest` : le FileProvider des pièces jointes et photos partage bien les
   fichiers du cache.
 

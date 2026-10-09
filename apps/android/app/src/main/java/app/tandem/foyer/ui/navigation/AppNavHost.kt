@@ -24,28 +24,18 @@ import android.os.Build
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.browser.customtabs.CustomTabsIntent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.DateRange
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarDefaults
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -59,9 +49,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -130,7 +118,6 @@ import app.tandem.foyer.ui.swaps.SwapAsk
 import app.tandem.foyer.ui.swaps.SwapBanner
 import app.tandem.foyer.data.remote.RealtimeClient
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.compose.material.icons.filled.ShoppingCart
 import app.tandem.foyer.ui.taskform.TaskFormScreen
 import app.tandem.foyer.ui.taskform.TaskFormViewModel
 import app.tandem.foyer.ui.tasks.TasksScreen
@@ -180,14 +167,6 @@ fun AppNavHost(
 
 fun openWeb(context: Context, base: String, path: String) {
     CustomTabsIntent.Builder().setShowTitle(true).build().launchUrl(context, Uri.parse(base + path))
-}
-
-private enum class Tab(val route: String, val label: Int) {
-    TODAY("today", R.string.nav_today),
-    TASKS("tasks", R.string.nav_tasks),
-    SHOPPING("shopping", R.string.nav_shopping),
-    CALENDAR("calendar", R.string.nav_calendar),
-    SETTINGS("settings", R.string.nav_more),
 }
 
 @Composable
@@ -483,61 +462,17 @@ private fun MainScaffold(
         snackbarHost = { SnackbarHost(snackbar) },
         bottomBar = {
             if (onTab) {
-                // Tirer la barre vers le haut ouvre le tiroir « Plus » (toucher « Plus » aussi).
-                val dragThreshold = with(LocalDensity.current) { 40.dp.toPx() }
-                Column(
-                    Modifier
-                        .background(NavigationBarDefaults.containerColor)
-                        .pointerInput(Unit) {
-                            var pulled = 0f
-                            detectVerticalDragGestures(
-                                onDragStart = { pulled = 0f },
-                                onVerticalDrag = { _, dy ->
-                                    pulled -= dy
-                                    if (pulled > dragThreshold) {
-                                        pulled = Float.NEGATIVE_INFINITY
-                                        showDrawer = true
-                                    }
-                                },
-                            )
-                        },
-                ) {
-                    Box(
-                        Modifier.padding(top = 6.dp).align(Alignment.CenterHorizontally).size(width = 36.dp, height = 4.dp)
-                            .background(MaterialTheme.colorScheme.outlineVariant, RoundedCornerShape(2.dp)),
-                    )
-                    NavigationBar {
-                        tabs.forEach { tab ->
-                            NavigationBarItem(
-                                selected = route == tab.route,
-                                onClick = {
-                                    if (tab == Tab.SETTINGS) {
-                                        showDrawer = true
-                                        return@NavigationBarItem
-                                    }
-                                    nav.navigate(tab.route) {
-                                        popUpTo(nav.graph.findStartDestination().id) { saveState = true }
-                                        launchSingleTop = true
-                                        restoreState = true
-                                    }
-                                },
-                                icon = {
-                                    Icon(
-                                        when (tab) {
-                                            Tab.TODAY -> Icons.Filled.Home
-                                            Tab.TASKS -> Icons.AutoMirrored.Filled.List
-                                            Tab.SHOPPING -> Icons.Filled.ShoppingCart
-                                            Tab.CALENDAR -> Icons.Filled.DateRange
-                                            Tab.SETTINGS -> Icons.Filled.Menu
-                                        },
-                                        contentDescription = null,
-                                    )
-                                },
-                                label = { Text(stringResource(tab.label)) },
-                            )
+                BottomBar(
+                    current = route,
+                    onTab = { tab ->
+                        nav.navigate(tab.route) {
+                            popUpTo(nav.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
                         }
-                    }
-                }
+                    },
+                    onMore = { showDrawer = true },
+                )
             }
         },
         floatingActionButton = {

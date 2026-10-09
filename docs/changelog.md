@@ -15,6 +15,12 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### Bord à bord et tiroir vérifiés sur émulateur (#92)
+
+- 🐞 App Android : l'écran de connexion ne passe plus sous les barres système ni sous le clavier.
+- ⚙️ Tests sur émulateur (Android 14 et 15) du tiroir « Plus » (toucher, geste, retour) et du
+  bord à bord.
+
 ### Audit du 9 octobre (#92)
 
 - 🐞 Site vitrine : l'en-tête ne se tasse plus entre 768 et 1279 px (menu repliable).

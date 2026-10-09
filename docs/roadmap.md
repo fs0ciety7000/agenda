@@ -133,7 +133,7 @@ Validé par l'utilisateur, dans cet ordre :
 - [x] **Recherche globale** : `/` cherche dans les tâches, notes, dates, dépenses et courses (M) ⚙️🌐🤖 (#92)
 - [x] **Notes et dates lisibles hors ligne** sur Android (M) 🤖 (#92)
 - [x] **Audit UI/UX complet** après le lot 4 (M) (#92) : [rapport du 9 octobre](audits/2026-10-09.md), 3 bloquants corrigés
-- [ ] **Tests sur émulateur** : tiroir et bord à bord (S) 🤖
+- [x] **Tests sur émulateur** : tiroir et bord à bord, API 34 et 35 (S) 🤖 (#92)
 
 Découvert par l'audit du 9 octobre (à prioriser ensemble) :
 

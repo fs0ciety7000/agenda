@@ -17,12 +17,17 @@ permissions:
 
 jobs:
   instrumented:
-    name: Tests instrumentés (API 34)
+    name: Tests instrumentés (API ${{ matrix.api-level }})
     if: github.event_name == 'workflow_dispatch' || contains(github.event.pull_request.labels.*.name, 'emulateur')
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        # 34 : bord à bord activé par l'app ; 35 : imposé par Android (barres transparentes).
+        api-level: [34, 35]
     steps:
-      # L'image Android 34 et la partition de données de l'émulateur demandent plusieurs Go :
+      # L'image Android et la partition de données de l'émulateur demandent plusieurs Go :
       # on retire des outils préinstallés inutiles ici (.NET, Haskell, CodeQL).
       - name: Libérer de l'espace disque
         run: |
@@ -45,7 +50,7 @@ jobs:
         run: ./gradlew assembleDebug assembleDebugAndroidTest --console=plain
       - uses: reactivecircus/android-emulator-runner@v2
         with:
-          api-level: 34
+          api-level: ${{ matrix.api-level }}
           target: google_apis
           arch: x86_64
           disable-animations: true
@@ -57,7 +62,7 @@ jobs:
       - if: failure()
         uses: actions/upload-artifact@v7
         with:
-          name: android-emulator-reports
+          name: android-emulator-reports-api${{ matrix.api-level }}
           path: |
             apps/android/app/build/reports/androidTests
             apps/android/app/build/outputs/androidTest-results

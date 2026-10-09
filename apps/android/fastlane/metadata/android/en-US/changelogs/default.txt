@@ -5,6 +5,6 @@ Share to Tandem: a link becomes a task, a note or shopping items.
 • Expenses: who owes what, payback in one tap.
 • Shared notes; important dates with reminders.
 • Home: "Who does what" over 7 days.
-• Store mode; task swap.
+• Notes and dates readable offline.
 • Signed-in devices: remote sign-out.
 • Illustrated empty screens.
