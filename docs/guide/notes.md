@@ -20,7 +20,8 @@ approche : tout ce qu'on se redemande trouve sa place dans **Notes**. Sur télé
   s'affiche avec un message ; vérifiez, puis enregistrez à nouveau. Rien n'est écrasé sans le
   savoir.
 - Les notes se mettent à jour **en direct** chez l'autre. Elles demandent une connexion pour
-  être modifiées (hors ligne, le site les affiche en lecture).
+  être modifiées ; hors ligne, le site et l'app Android affichent la dernière version vue, en
+  lecture.
 
 Les notes sont des données du foyer : elles restent après la suppression d'un compte (l'auteur
 devient « ancien membre ») et figurent dans l'export de vos données (**Réglages → Données &

@@ -92,6 +92,10 @@ class DatesViewModel(private val remote: DatesRemote) : ViewModel() {
 
     fun load() {
         viewModelScope.launch {
+            // Hors ligne : la dernière liste lue s'affiche tout de suite, en lecture.
+            if (_state.value.items.isEmpty()) {
+                remote.cached()?.let { c -> _state.update { it.copy(items = c, loading = false) } }
+            }
             val items = remote.list()
             _state.update { it.copy(items = items ?: it.items, loading = false, offline = items == null) }
         }
@@ -401,7 +405,7 @@ private fun CheckRow(label: String, checked: Boolean, onChange: (Boolean) -> Uni
 @Composable
 fun UpcomingDates(remote: DatesRemote, refreshKey: Any?, onOpen: () -> Unit) {
     var items by remember { mutableStateOf<List<ImportantDateDto>>(emptyList()) }
-    LaunchedEffect(refreshKey) { remote.list()?.let { items = it } }
+    LaunchedEffect(refreshKey) { (remote.list() ?: remote.cached())?.let { items = it } }
     LaunchedEffect(Unit) { remote.updates.collect { remote.list()?.let { items = it } } }
     val soon = items.filter { (it.daysLeft ?: Int.MAX_VALUE) <= 14 }.take(3)
     if (soon.isEmpty()) return

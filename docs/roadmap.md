@@ -131,7 +131,7 @@ Validé par l'utilisateur, dans cet ordre :
   tâche, une note ou un article de courses (S) 🤖 (#92)
 - [x] **Tuile « Ajouter une tâche »** dans les réglages rapides Android (S) 🤖 (#92)
 - [x] **Recherche globale** : `/` cherche dans les tâches, notes, dates, dépenses et courses (M) ⚙️🌐🤖 (#92)
-- [ ] **Notes et dates lisibles hors ligne** sur Android (M) 🤖
+- [x] **Notes et dates lisibles hors ligne** sur Android (M) 🤖 (#92)
 - [ ] **Audit UI/UX complet** après le lot 4 (M)
 - [ ] **Tests sur émulateur** : tiroir et bord à bord (S) 🤖
 

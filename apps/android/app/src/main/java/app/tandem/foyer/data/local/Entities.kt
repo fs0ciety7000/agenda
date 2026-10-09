@@ -126,3 +126,14 @@ data class ShoppingItemEntity(
     /** Rayon (PRODUCE, DAIRY…) ; null = pas encore rangé (ajout hors ligne). */
     val aisle: String? = null,
 )
+
+/**
+ * Dernière réponse lue d'un écran en ligne seulement (notes, dates importantes) : affichée hors
+ * ligne, en lecture. Clé « notes:<foyer> », « dates:<foyer> » ; effacée à la déconnexion.
+ */
+@Entity(tableName = "cached_documents")
+data class CachedDocumentEntity(
+    @PrimaryKey val key: String,
+    val json: String,
+    val updatedAt: String,
+)

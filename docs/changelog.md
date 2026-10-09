@@ -15,6 +15,12 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### Notes et dates hors ligne sur Android (#92)
+
+- 🛠 App Android : les **notes** et les **dates importantes** restent lisibles sans réseau (la
+  dernière version vue) ; les modifications demandent toujours une connexion.
+- 🔒 Cette copie est effacée à la déconnexion, comme le reste des données du téléphone.
+
 ### Recherche globale (#92)
 
 - ✨ **Rechercher partout** (loupe, ou **/** sur ordinateur) : tâches, notes, dates importantes,

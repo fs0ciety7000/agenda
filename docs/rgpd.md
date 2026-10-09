@@ -37,7 +37,7 @@ Cloudflare). Contact : l'adresse affichée sur la page `/privacy` (variable
 | **Sécurité et exploitation** | journaux techniques (route, statut, durée, adresse IP pour la limitation des tentatives), erreurs techniques, métriques agrégées par minute (sans utilisateur) | disponibilité, sécurité, correction des erreurs | intérêt légitime | métriques 8 jours ; sondes 7 jours ; journaux selon l'hébergeur |
 | **Sauvegardes** | copie chiffrée en transit de la base | restaurer en cas de panne | intérêt légitime | 14 jours sur le serveur, 30 jours hors serveur |
 
-L'app Android garde une **copie locale** des données du foyer pour fonctionner hors ligne ; le
+L'app Android garde une **copie locale** des données du foyer (tâches, courses, notes, dates importantes) pour fonctionner hors ligne ; le
 site en garde une dans le navigateur (stockage local et cache du service worker). Les deux sont
 effacées à la déconnexion.
 

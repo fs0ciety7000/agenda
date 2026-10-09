@@ -89,6 +89,10 @@ class NotesViewModel(private val remote: NotesRemote) : ViewModel() {
 
     fun load() {
         viewModelScope.launch {
+            // Hors ligne : la dernière liste lue s'affiche tout de suite, en lecture.
+            if (_state.value.items.isEmpty()) {
+                remote.cached()?.let { c -> _state.update { it.copy(items = c, loading = false) } }
+            }
             val items = remote.list()
             _state.update {
                 it.copy(items = items ?: it.items, loading = false, offline = items == null)

@@ -132,3 +132,12 @@ interface ShoppingDao {
         items.forEach { upsert(it) }
     }
 }
+
+@Dao
+interface CachedDocumentDao {
+    @Query("SELECT json FROM cached_documents WHERE `key` = :key")
+    suspend fun get(key: String): String?
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun put(document: CachedDocumentEntity)
+}
