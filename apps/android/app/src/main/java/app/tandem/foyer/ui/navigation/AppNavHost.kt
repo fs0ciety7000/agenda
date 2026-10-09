@@ -638,13 +638,17 @@ private fun MainScaffold(
                 )
             }
             composable(
-                "expenses?title={title}&category={category}",
+                "expenses?title={title}&category={category}&month={month}",
                 arguments = listOf(
                     navArgument("title") { type = NavType.StringType; nullable = true },
                     navArgument("category") { type = NavType.StringType; nullable = true },
+                    // Mois à ouvrir (AAAA-MM), par exemple depuis la recherche.
+                    navArgument("month") { type = NavType.StringType; nullable = true },
                 ),
             ) { entry ->
-                val expensesVm: ExpensesViewModel = viewModel(factory = viewModelFactory { initializer { ExpensesViewModel(container.expenses) } })
+                val month = entry.arguments?.getString("month")
+                    ?.let { runCatching { java.time.YearMonth.parse(it) }.getOrNull() } ?: java.time.YearMonth.now()
+                val expensesVm: ExpensesViewModel = viewModel(factory = viewModelFactory { initializer { ExpensesViewModel(container.expenses, month) } })
                 val members = state.household?.members.orEmpty()
                 ExpensesScreen(
                     expensesVm,

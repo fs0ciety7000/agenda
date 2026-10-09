@@ -28,6 +28,7 @@ import okhttp3.mockwebserver.MockResponse
 import okhttp3.mockwebserver.MockWebServer
 import okhttp3.mockwebserver.RecordedRequest
 import org.junit.After
+import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -46,11 +47,13 @@ class ExpensesScreenTest {
     private val month = YearMonth.now().toString()
     private val g = Fixtures.GRACE
     private val n = Fixtures.NICOLAS
+    private val paths = java.util.concurrent.CopyOnWriteArrayList<String>()
 
     private val server = MockWebServer().apply {
         dispatcher = object : Dispatcher() {
             override fun dispatch(request: RecordedRequest): MockResponse {
                 val path = request.path.orEmpty()
+                paths += path
                 val body = when {
                     "/expenses/summary" in path -> """{"month":"$month","commonCents":8500,"mineCents":1200,
                         "members":[{"memberId":"$g","weight":1,"balanceCents":4250,"paidCents":8500,"shareCents":4250},
@@ -114,5 +117,15 @@ class ExpensesScreenTest {
         render(dark = true)
         compose.onNodeWithText("Nicolas doit", substring = true).assertIsDisplayed()
         compose.onRoot().captureRoboImage("../../../docs/screenshots/android/expenses-dark.png")
+    }
+
+    @Test
+    fun ouvert_sur_un_autre_mois() {
+        // Depuis la recherche : le mois de la dépense, pas le mois en cours.
+        val remote = ExpensesRemote(ApiClient.create(server.url("/").toString(), FakeTokenStore()), db, context.cacheDir)
+        runBlocking { db.households().insertHousehold(HouseholdEntity(Fixtures.HOUSEHOLD, "Grace & Nico", "Europe/Brussels", g)) }
+        val vm = ExpensesViewModel(remote, YearMonth.of(2025, 3))
+        assertEquals(YearMonth.of(2025, 3), vm.state.value.month)
+        compose.waitUntil(5_000) { paths.any { "month=2025-03" in it } }
     }
 }

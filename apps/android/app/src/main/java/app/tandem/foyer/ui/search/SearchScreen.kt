@@ -58,6 +58,9 @@ sealed interface SearchTarget {
     data class Page(val route: String) : SearchTarget
 }
 
+/** Écran Dépenses ouvert sur le mois de la dépense (`date` au format AAAA-MM-JJ). */
+fun expenseRoute(date: String) = "expenses?month=" + date.take(7)
+
 /** Recherche globale : tâches, notes, dates, dépenses et courses du foyer (en ligne). */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -144,7 +147,7 @@ fun SearchScreen(remote: SearchRemote, onBack: () -> Unit, onOpen: (SearchTarget
                             R.drawable.ic_drawer_wallet,
                             e.title,
                             "${LocalDate.parse(e.date).format(dayFormat)} · ${Money.format(e.amountCents, locale)}",
-                        ) { onOpen(SearchTarget.Page("expenses")) }
+                        ) { onOpen(SearchTarget.Page(expenseRoute(e.date))) }
                     }
                     group(R.string.search_shopping, r.shopping, { it.id }) { s ->
                         Result(R.drawable.ic_share_cart, s.text, if (s.done) inCart else toBuy) { onOpen(SearchTarget.Page("shopping")) }

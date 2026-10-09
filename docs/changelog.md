@@ -27,6 +27,9 @@ d'elle-même (ou via Google Play).
 - 🛠 Page Tâches : le filtre s'appelle « Filtrer les tâches », distinct de la recherche globale.
 - 🛠 Au clavier, fermer une fenêtre (recherche…) rend le focus au bouton qui l'avait ouverte.
 - 🛠 Menus : plus de bouton grisé « Tout est déjà dans les courses » quand la semaine est vide.
+- 🛠 App Android : une icône par type de date importante, comme sur le site.
+- 🐞 App Android : une dépense trouvée par la recherche ouvre son mois, plus le mois en cours.
+- 🛠 Recherche ouverte avec « / » : à la fermeture, le focus revient au bouton « Rechercher ».
 
 ### Notes et dates hors ligne sur Android (#92)
 

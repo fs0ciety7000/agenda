@@ -48,4 +48,11 @@ test('recherche globale : tâches, notes et courses ; un résultat ouvre la bonn
   await expect(dialog.getByRole('searchbox')).toBeFocused();
   await page.keyboard.press('Escape');
   await expect(open).toBeFocused();
+
+  // Ouverte avec « / » alors que rien n'avait le focus : il revient au bouton « Rechercher ».
+  await page.evaluate(() => (document.activeElement as HTMLElement | null)?.blur());
+  await page.keyboard.press('/');
+  await expect(dialog.getByRole('searchbox')).toBeFocused();
+  await page.keyboard.press('Escape');
+  await expect(open).toBeFocused();
 });

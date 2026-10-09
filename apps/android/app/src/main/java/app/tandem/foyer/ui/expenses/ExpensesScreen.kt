@@ -128,8 +128,9 @@ data class ExpensesState(
     val saving: Boolean = false,
 )
 
-class ExpensesViewModel(private val remote: ExpensesRemote) : ViewModel() {
-    private val _state = MutableStateFlow(ExpensesState())
+/** `initialMonth` : mois affiché à l'ouverture (ex. celui d'une dépense trouvée par la recherche). */
+class ExpensesViewModel(private val remote: ExpensesRemote, initialMonth: YearMonth = YearMonth.now()) : ViewModel() {
+    private val _state = MutableStateFlow(ExpensesState(month = initialMonth))
     val state: StateFlow<ExpensesState> = _state
 
     init {

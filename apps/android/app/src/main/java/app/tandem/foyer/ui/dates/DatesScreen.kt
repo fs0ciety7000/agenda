@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -49,6 +50,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -129,6 +131,24 @@ private data class Draft(
     val repeatsYearly: Boolean,
     val remindDaysBefore: Int,
 )
+
+/** Icône du type de date, comme sur le site (décorative : le type est écrit à côté). */
+@Composable
+internal fun DateKindIcon(kind: String) {
+    Icon(
+        painterResource(
+            when (kind) {
+                "BIRTHDAY" -> R.drawable.ic_drawer_cake
+                "ANNIVERSARY" -> R.drawable.ic_date_anniversary
+                "MAINTENANCE" -> R.drawable.ic_date_maintenance
+                else -> R.drawable.ic_date_other
+            },
+        ),
+        contentDescription = null,
+        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        modifier = Modifier.size(20.dp),
+    )
+}
 
 @Composable
 private fun kindLabel(kind: String) = stringResource(
@@ -243,7 +263,8 @@ fun DatesScreen(vm: DatesViewModel, onBack: () -> Unit, onMessage: (String) -> U
                     enabled = !state.offline,
                     modifier = Modifier.fillMaxWidth(),
                 ) {
-                    Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Row(Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        DateKindIcon(d.kind)
                         Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                             Text(d.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Medium)
                             Text(
@@ -413,7 +434,8 @@ fun UpcomingDates(remote: DatesRemote, refreshKey: Any?, onOpen: () -> Unit) {
     OutlinedCard(onClick = onOpen, modifier = Modifier.fillMaxWidth()) {
         Column(Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             soon.forEach { d ->
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    DateKindIcon(d.kind)
                     Text(d.title, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
                     Text(
                         whenText(d.daysLeft ?: 0),

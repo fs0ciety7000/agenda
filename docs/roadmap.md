@@ -135,11 +135,11 @@ Validé par l'utilisateur, dans cet ordre :
 - [x] **Audit UI/UX complet** après le lot 4 (M) (#92) : [rapport du 9 octobre](audits/2026-10-09.md), 3 bloquants corrigés
 - [x] **Tests sur émulateur** : tiroir et bord à bord, API 34 et 35 (S) 🤖 (#92)
 
-Découvert par l'audit du 9 octobre (à prioriser ensemble) :
+Découvert par l'audit du 9 octobre (validé par l'utilisateur) :
 
-- [ ] Android : icône par type de date importante, comme le site (S) 🤖
-- [ ] Android : un résultat de recherche « Dépense » ouvre le mois de la dépense (S) 🤖
-- [ ] Web : recherche ouverte avec « / » sans focus → rendre le focus au bouton « Rechercher » (S) 🌐
+- [x] Android : icône par type de date importante, comme le site (S) 🤖 (#92)
+- [x] Android : un résultat de recherche « Dépense » ouvre le mois de la dépense (S) 🤖 (#92)
+- [x] Web : recherche ouverte avec « / » sans focus → rendre le focus au bouton « Rechercher » (S) 🌐 (#92)
 
 Idées proposées, non retenues pour l'instant : idées cadeaux liées aux dates, échéances de
 contrats, planning du dimanche, lien « baby-sitter », packs de départ.

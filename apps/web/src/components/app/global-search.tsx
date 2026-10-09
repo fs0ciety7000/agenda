@@ -61,6 +61,12 @@ export function GlobalSearch({
           e.preventDefault();
           input.current?.focus();
         }}
+        // Ouverte avec « / » sans élément focalisé : le focus revient au bouton « Rechercher » visible.
+        fallbackFocus={() =>
+          Array.from(document.querySelectorAll<HTMLElement>('[data-search-trigger]')).find(
+            (el) => el.offsetParent !== null,
+          ) ?? null
+        }
       >
         <input
           ref={input}

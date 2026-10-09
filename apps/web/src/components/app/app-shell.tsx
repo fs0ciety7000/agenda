@@ -146,6 +146,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <button
           type="button"
           onClick={() => setSearch(true)}
+          data-search-trigger
           aria-keyshortcuts="/"
           className="mb-2 flex h-11 items-center justify-center gap-3 rounded-md border border-border px-3 text-[0.9375rem] text-text-muted transition-colors hover:bg-surface-muted hover:text-text xl:justify-start"
         >
@@ -192,6 +193,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           <button
             type="button"
             onClick={() => setSearch(true)}
+            data-search-trigger
             aria-label={t('search.title')}
             className="-mr-2 inline-flex size-11 items-center justify-center rounded-md text-text-muted hover:bg-surface-muted hover:text-text"
           >

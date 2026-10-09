@@ -19,6 +19,7 @@ export function DialogContent({
   closeLabel,
   className,
   onOpenAutoFocus,
+  fallbackFocus,
   children,
 }: {
   title: string;
@@ -27,6 +28,8 @@ export function DialogContent({
   className?: string;
   /** Focus initial personnalisé (le focus revient quand même à l'élément d'origine). */
   onOpenAutoFocus?: (event: Event) => void;
+  /** Élément à focaliser à la fermeture quand rien ne l'était à l'ouverture (raccourci clavier). */
+  fallbackFocus?: () => HTMLElement | null;
   children: React.ReactNode;
 }) {
   // Sans Dialog.Trigger (ouverture par état, raccourci), Radix ne sait pas où rendre le focus :
@@ -41,8 +44,12 @@ export function DialogContent({
           onOpenAutoFocus?.(e);
         }}
         onCloseAutoFocus={(e) => {
-          const el = returnTo.current;
-          if (el && el !== document.body && document.contains(el)) {
+          const active = returnTo.current;
+          const el =
+            active && active !== document.body && document.contains(active)
+              ? active
+              : (fallbackFocus?.() ?? null);
+          if (el) {
             e.preventDefault();
             el.focus();
           }
