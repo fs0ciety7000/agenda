@@ -734,4 +734,26 @@
     <string name="guest_link_loading">Loading…</string>
     <string name="guest_link_offline">Sharing the list needs a connection.</string>
     <string name="guest_link_error">The link could not be updated. Please try again.</string>
+
+    <!-- Code-barres des courses -->
+    <string name="barcode_open">Scan a barcode</string>
+    <string name="barcode_title">Add by barcode</string>
+    <string name="barcode_intro">Take a close, flat photo of the barcode. The photo is read on our server, then deleted.</string>
+    <string name="barcode_photo">Take a photo</string>
+    <string name="barcode_pick">Choose a photo</string>
+    <string name="barcode_reading">Reading…</string>
+    <string name="barcode_code">Or type the barcode digits</string>
+    <string name="barcode_search">Look up</string>
+    <string name="barcode_invalid">This code is not valid: check the digits.</string>
+    <string name="barcode_not_read">No barcode found. Take the photo closer and flat, or type the digits.</string>
+    <string name="barcode_code_label">Code %1$s</string>
+    <string name="barcode_name">Item name</string>
+    <string name="barcode_from_household">Already known to the household.</string>
+    <string name="barcode_from_off">Found in Open Food Facts. Fix the name if needed: the household will remember it.</string>
+    <string name="barcode_unknown">Unknown product. Give it a name: the household will remember it next time.</string>
+    <string name="barcode_add">Add to the list</string>
+    <string name="barcode_again">Another code</string>
+    <string name="barcode_added">“%1$s” added to the list</string>
+    <string name="barcode_failed">Barcode reading is unavailable right now. Type the digits or the item name.</string>
+    <string name="barcode_offline">Scanning a barcode needs a connection.</string>
 </resources>

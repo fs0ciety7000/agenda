@@ -15,6 +15,12 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### Ajouter un article par son code-barres (#93)
+
+- ✨ **Scanner un code-barres** dans Courses (site et Android) : le code est lu sur la photo, le
+  nom du produit est proposé (mémoire du foyer, sinon Open Food Facts) et retenu pour la suite.
+- 🔒 La photo est lue sur le serveur puis effacée ; Open Food Facts ne reçoit que le code.
+
 ### Liste de courses pour un invité (#93)
 
 - ✨ **Partager avec un invité** : un lien vers la liste de courses, en lecture seule et sans

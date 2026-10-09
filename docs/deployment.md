@@ -141,6 +141,7 @@ manquent. Modèle complet : `.env.prod.example`.
 | `SENTRY_DSN` | facultatif : suivi des erreurs (§10) | DSN Sentry / GlitchTip |
 | `FCM_SERVICE_ACCOUNT` | facultatif : notifications instantanées Android | JSON du compte de service Firebase (docs/android.md §4.1) |
 | `INBOUND_EMAIL_ADDRESS`, `RESEND_WEBHOOK_SECRET`, `RESEND_API_KEY` | facultatif : tâches par e-mail (réception par Resend) | cf. [`email-to-task.md`](email-to-task.md) |
+| `OPEN_FOOD_FACTS_URL` | facultatif : nom des produits lus par code-barres (défaut `https://world.openfoodfacts.org`, seul le code est envoyé) ; `off` pour ne jamais l'interroger | `off` |
 | `ADMIN_EMAILS` | facultatif : accès à la page d'administration | adresses e-mail séparées par des virgules ; reçoivent aussi les alertes de surveillance |
 | `METRICS_TOKEN` | facultatif : `GET /metrics` (Prometheus) | secret d'au moins 16 caractères, cf. `monitoring.md` |
 | `DOCS_URL` | facultatif : adresse du site de documentation (build) | `https://docs.tandem-agenda.app` par défaut, cf. §13 |

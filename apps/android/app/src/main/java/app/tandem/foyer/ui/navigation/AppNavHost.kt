@@ -113,6 +113,7 @@ import app.tandem.foyer.ui.search.SearchScreen
 import app.tandem.foyer.ui.search.SearchTarget
 import app.tandem.foyer.ui.settings.DeviceSessions
 import app.tandem.foyer.ui.settings.SettingsScreen
+import app.tandem.foyer.ui.shopping.BarcodeButton
 import app.tandem.foyer.ui.shopping.GuestLinkButton
 import app.tandem.foyer.ui.shopping.ShoppingScreen
 import app.tandem.foyer.ui.swaps.SwapAsk
@@ -556,6 +557,16 @@ private fun MainScaffold(
                         }
                     },
                     onOpenMeals = { openWeb(context, container.webBaseUrl, "meals") },
+                    barcode = {
+                        BarcodeButton(
+                            online = state.online,
+                            scan = container.barcodes::scan,
+                            lookup = container.barcodes::lookup,
+                            rememberName = container.barcodes::remember,
+                            onAdd = { name -> scope.launch { container.repository.addShopping(listOf(name)) } },
+                            onMessage = onMessage,
+                        )
+                    },
                     guestLink = {
                         GuestLinkButton(
                             online = state.online,

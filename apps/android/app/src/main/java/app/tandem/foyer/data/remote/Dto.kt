@@ -327,6 +327,18 @@ data class UpdateNoteBody(
     val version: Int,
 )
 
+/** Produit d'un code-barres (cf. BarcodeLookupDto des contrats) : barcode null = rien lu. */
+@Serializable
+data class BarcodeLookupDto(
+    val barcode: String? = null,
+    val name: String? = null,
+    /** HOUSEHOLD ou OPEN_FOOD_FACTS ; null = produit inconnu. */
+    val source: String? = null,
+)
+
+@Serializable
+data class RememberBarcodeBody(val name: String)
+
 /** Lien invité vers la liste de courses (cf. GuestShoppingLinkDto des contrats) ; url null = aucun. */
 @Serializable
 data class GuestShoppingLinkDto(

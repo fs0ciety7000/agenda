@@ -93,7 +93,8 @@
     "RECEIPT_SCAN_UNAVAILABLE": "Kastickets inlezen lukt nu even niet. Vul het bedrag zelf in.",
     "ACCOUNT_DISABLED": "Dit account is uitgeschakeld. Neem contact op met de beheerder.",
     "PASSKEY_FAILED": "Aanmelden met een toegangssleutel lukte niet. Gebruik je wachtwoord, of voeg eerst een toegangssleutel toe in Instellingen.",
-    "VAULT_LOCKED": "Verificatie nodig om deze notitie te tonen."
+    "VAULT_LOCKED": "Verificatie nodig om deze notitie te tonen.",
+    "BARCODE_SCAN_UNAVAILABLE": "Barcodes lezen lukt nu even niet. Typ de cijfers of de naam van het artikel."
   },
   "today": {
     "greeting": "Hallo {name} 👋",
@@ -551,7 +552,7 @@
     },
     "data": {
       "title": "Verwerkte gegevens",
-      "body": "Account: voornaam, e-mailadres, wachtwoord (alleen als Argon2-hash, nooit leesbaar), taal.\nHuishouden: naam van het huishouden, leden, categorieën, uitnodigingen, boodschappenlijst, gedeelde notities (titel, inhoud, wie ze schreef, of ze gevoelig zijn, en de 20 vorige versies van elke notitie), belangrijke data (titel, dag, maand en optioneel jaar; ze kunnen over naasten gaan, bijvoorbeeld een verjaardag).\nGastlink (als een lid er een maakt): een geheime link opent alleen de boodschappenlijst (artikelen, hoeveelheden, afdelingen en de naam van het huishouden), alleen lezen en zonder account, tot een lid hem uitzet of vervangt. Iedereen met de link kan hem zien.\nTaken: titels, notities, datums, tijden, duur, verantwoordelijken, herhalingen, status, subtaken, reacties, ruilverzoeken (met het berichtje), opgegeven afwezigheden, activiteitengeschiedenis (wie wat deed, en wanneer).\nUitgaven (als je ze gebruikt): bedrag, datum, omschrijving, categorie, opmerking, wie betaalde en ieders aandeel. Een persoonlijke uitgave zie alleen jij. Een toegevoegd kasticket (foto of pdf) wordt bij de uitgave bewaard en samen met haar verwijderd. Gebruik je „Kasticket inlezen”, dan wordt de foto op onze server gelezen (geen externe dienst) om bedrag, datum en winkel voor te stellen, en meteen weer gewist; hij wordt alleen bewaard als je de uitgave met dat kasticket opslaat.\nSessies: apparaat (browser en systeem, of versie van de Android-app), aanmelddatum en laatste activiteit, zichtbaar bij „Aangemelde apparaten” zodat je op afstand kunt afmelden. Android-app: de meldingsidentificatie van de telefoon (als directe meldingen aan staan), verwijderd bij het afmelden.\nDe Android-app bewaart een kopie van je taken, boodschappenlijst, notities en belangrijke data op de telefoon om offline te werken; die wordt gewist bij het afmelden.\nToevoegen per e-mail (als je het inschakelt): de afzender, het onderwerp en de tekst van e-mails die je naar je persoonlijke adres doorstuurt, worden opgeslagen in de notities van de aangemaakte taak. Ze worden ontvangen door Resend, onze e-mailprovider; hun bijlagen worden aan de taak toegevoegd.\nBijlagen: bestanden die je aan een taak toevoegt (of die bij een doorgestuurde e-mail zaten) worden met de taak op onze server bewaard, zijn zichtbaar voor de leden van het huishouden (alleen voor jou bij een persoonlijke taak) en worden samen met de taak verwijderd.\nMeldingen van problemen (als je er stuurt): het type, de titel en de tekst van je bericht, een schermafbeelding als je die toevoegt, of je gecontacteerd mag worden en, alleen als je het vakje aanvinkt, technische informatie die vóór het verzenden wordt getoond (browser of telefoonmodel, systeem, appversie, taal, tijdzone, schermgrootte, geopende pagina). Nooit de inhoud van je taken. Alleen de beheerders van de app lezen ze.\nBrowsermeldingen (als je ze inschakelt): het abonnementsadres dat je browser geeft, verwijderd wanneer je ze uitschakelt of afmeldt."
+      "body": "Account: voornaam, e-mailadres, wachtwoord (alleen als Argon2-hash, nooit leesbaar), taal.\nHuishouden: naam van het huishouden, leden, categorieën, uitnodigingen, boodschappenlijst, gedeelde notities (titel, inhoud, wie ze schreef, of ze gevoelig zijn, en de 20 vorige versies van elke notitie), belangrijke data (titel, dag, maand en optioneel jaar; ze kunnen over naasten gaan, bijvoorbeeld een verjaardag).\nGastlink (als een lid er een maakt): een geheime link opent alleen de boodschappenlijst (artikelen, hoeveelheden, afdelingen en de naam van het huishouden), alleen lezen en zonder account, tot een lid hem uitzet of vervangt. Iedereen met de link kan hem zien.\nBarcodes (als je ze scant): de foto van de barcode wordt op onze server gelezen en meteen gewist; het huishouden onthoudt de code en de productnaam. Voor een product dat het nog niet kent, stuurt de server alleen de code (niets over jou) naar Open Food Facts, een open productdatabank.\nTaken: titels, notities, datums, tijden, duur, verantwoordelijken, herhalingen, status, subtaken, reacties, ruilverzoeken (met het berichtje), opgegeven afwezigheden, activiteitengeschiedenis (wie wat deed, en wanneer).\nUitgaven (als je ze gebruikt): bedrag, datum, omschrijving, categorie, opmerking, wie betaalde en ieders aandeel. Een persoonlijke uitgave zie alleen jij. Een toegevoegd kasticket (foto of pdf) wordt bij de uitgave bewaard en samen met haar verwijderd. Gebruik je „Kasticket inlezen”, dan wordt de foto op onze server gelezen (geen externe dienst) om bedrag, datum en winkel voor te stellen, en meteen weer gewist; hij wordt alleen bewaard als je de uitgave met dat kasticket opslaat.\nSessies: apparaat (browser en systeem, of versie van de Android-app), aanmelddatum en laatste activiteit, zichtbaar bij „Aangemelde apparaten” zodat je op afstand kunt afmelden. Android-app: de meldingsidentificatie van de telefoon (als directe meldingen aan staan), verwijderd bij het afmelden.\nDe Android-app bewaart een kopie van je taken, boodschappenlijst, notities en belangrijke data op de telefoon om offline te werken; die wordt gewist bij het afmelden.\nToevoegen per e-mail (als je het inschakelt): de afzender, het onderwerp en de tekst van e-mails die je naar je persoonlijke adres doorstuurt, worden opgeslagen in de notities van de aangemaakte taak. Ze worden ontvangen door Resend, onze e-mailprovider; hun bijlagen worden aan de taak toegevoegd.\nBijlagen: bestanden die je aan een taak toevoegt (of die bij een doorgestuurde e-mail zaten) worden met de taak op onze server bewaard, zijn zichtbaar voor de leden van het huishouden (alleen voor jou bij een persoonlijke taak) en worden samen met de taak verwijderd.\nMeldingen van problemen (als je er stuurt): het type, de titel en de tekst van je bericht, een schermafbeelding als je die toevoegt, of je gecontacteerd mag worden en, alleen als je het vakje aanvinkt, technische informatie die vóór het verzenden wordt getoond (browser of telefoonmodel, systeem, appversie, taal, tijdzone, schermgrootte, geopende pagina). Nooit de inhoud van je taken. Alleen de beheerders van de app lezen ze.\nBrowsermeldingen (als je ze inschakelt): het abonnementsadres dat je browser geeft, verwijderd wanneer je ze uitschakelt of afmeldt."
     },
     "google": {
       "title": "Google-gegevens",
@@ -563,7 +564,7 @@
     },
     "processors": {
       "title": "Dienstverleners",
-      "body": "Cloudflare (levering en bescherming van de site), Google (als je aanmelden met Google of Google Agenda gebruikt), de e-mailprovider die is ingesteld voor “wachtwoord vergeten” (bv. Brevo), externe opslag voor back-ups als die is ingesteld (bv. Cloudflare R2), Google Firebase Cloud Messaging voor directe meldingen in de Android-app als die aan staan (ontvangt alleen de meldingsidentificatie van de telefoon en een signaal “er is iets nieuws”, nooit de inhoud van taken of namen), de pushdiensten van browsers (Google, Mozilla, Apple) als je meldingen van de site inschakelt (berichten gaan er versleuteld doorheen, onleesbaar voor hen) en, als die is ingeschakeld, een dienst voor foutopvolging (Sentry) die alleen technische informatie ontvangt (type fout, pagina), zonder inhoud van taken of identiteit."
+      "body": "Cloudflare (levering en bescherming van de site), Google (als je aanmelden met Google of Google Agenda gebruikt), de e-mailprovider die is ingesteld voor “wachtwoord vergeten” (bv. Brevo), externe opslag voor back-ups als die is ingesteld (bv. Cloudflare R2), Google Firebase Cloud Messaging voor directe meldingen in de Android-app als die aan staan (ontvangt alleen de meldingsidentificatie van de telefoon en een signaal “er is iets nieuws”, nooit de inhoud van taken of namen), de pushdiensten van browsers (Google, Mozilla, Apple) als je meldingen van de site inschakelt (berichten gaan er versleuteld doorheen, onleesbaar voor hen), Open Food Facts voor de naam van producten gelezen via barcode (het krijgt alleen de code, nooit je identiteit of de foto) en, als die is ingeschakeld, een dienst voor foutopvolging (Sentry) die alleen technische informatie ontvangt (type fout, pagina), zonder inhoud van taken of identiteit."
     },
     "retention": {
       "title": "Bewaartermijn",
@@ -1557,5 +1558,25 @@
     "goneBody": "Hij is uitgezet of vervangen. Vraag het huishouden om een nieuwe link.",
     "error": "De lijst kon niet worden geladen.",
     "by": "Gedeeld met Tandem"
+  },
+  "barcode": {
+    "open": "Barcode scannen",
+    "title": "Toevoegen met barcode",
+    "intro": "Maak een foto van de barcode, van dichtbij en recht. De foto wordt op onze server gelezen en daarna gewist.",
+    "photo": "Foto maken",
+    "reading": "Lezen…",
+    "code": "Of typ de cijfers van de code",
+    "codeHint": "De cijfers onder de streepjes, bijvoorbeeld 5400000000003.",
+    "search": "Zoeken",
+    "invalidCode": "Deze code is niet geldig: controleer de cijfers.",
+    "notRead": "Geen barcode gevonden. Maak de foto van dichterbij en recht, of typ de cijfers.",
+    "codeLabel": "Code {code}",
+    "name": "Naam van het artikel",
+    "fromHousehold": "Al bekend in het huishouden.",
+    "fromOff": "Gevonden in Open Food Facts. Pas de naam aan als het moet: het huishouden onthoudt hem.",
+    "unknown": "Onbekend product. Geef het een naam: het huishouden onthoudt hem de volgende keer.",
+    "add": "Aan de lijst toevoegen",
+    "again": "Andere code",
+    "added": "‘{name}’ toegevoegd aan de lijst"
   }
 }

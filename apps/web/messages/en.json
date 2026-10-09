@@ -93,7 +93,8 @@
     "RECEIPT_SCAN_UNAVAILABLE": "Receipt reading is unavailable right now. Enter the amount yourself.",
     "ACCOUNT_DISABLED": "This account is disabled. Contact the administrator.",
     "PASSKEY_FAILED": "Couldn't sign in with a passkey. Use your password, or add a passkey in Settings first.",
-    "VAULT_LOCKED": "Verification needed to show this note."
+    "VAULT_LOCKED": "Verification needed to show this note.",
+    "BARCODE_SCAN_UNAVAILABLE": "Barcode reading is unavailable right now. Type the digits or the item name."
   },
   "today": {
     "greeting": "Hello {name} 👋",
@@ -551,7 +552,7 @@
     },
     "data": {
       "title": "Data processed",
-      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list, shared notes (title, content, who wrote them, whether they are sensitive, and the 20 previous versions of each), important dates (title, day, month and optional year; they may concern relatives, such as a birthday).\nGuest link (if a member creates one): a secret link opens the shopping list only (items, quantities, aisles and the household name), read-only and with no account, until a member turns it off or replaces it. Anyone with the link can see it.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, sub-tasks, comments, turn-swap requests (with any note), declared absences, activity history (who did what, when).\nExpenses (if you use them): amount, date, label, category, comment, who paid and each person's share. A personal expense is visible to you only. An attached receipt (photo or PDF) is kept with the expense and deleted with it. If you use “Read a receipt”, the photo is read on our server (no outside service) to suggest the amount, date and shop, then deleted straight away; it is only kept if you save the expense with that receipt.\nSessions: device (browser and system, or Android app version), sign-in date and last activity, shown in “Signed-in devices” so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks, shopping list, notes and important dates on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; their attachments are added to the task.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it.\nReports (if you send any): the type, title and text of your message, a screenshot if you attach one, whether you agree to be contacted and, only if you tick the box, technical information shown before sending (browser or phone model, system, app version, language, time zone, screen size, open page). Never the content of your tasks. Only the app's administrators read them.\nBrowser notifications (if you turn them on): the subscription address provided by your browser, deleted when you turn them off or sign out."
+      "body": "Account: first name, email address, password (only as an Argon2 hash, never in clear text), language.\nHousehold: household name, members, categories, invitations, shopping list, shared notes (title, content, who wrote them, whether they are sensitive, and the 20 previous versions of each), important dates (title, day, month and optional year; they may concern relatives, such as a birthday).\nGuest link (if a member creates one): a secret link opens the shopping list only (items, quantities, aisles and the household name), read-only and with no account, until a member turns it off or replaces it. Anyone with the link can see it.\nBarcodes (if you scan them): the barcode photo is read on our server, then deleted right away; the household keeps the code and the product name. For a product it does not know yet, the server sends only the code (nothing about you) to Open Food Facts, an open product database.\nTasks: titles, notes, dates, times, durations, assignees, recurrences, status, sub-tasks, comments, turn-swap requests (with any note), declared absences, activity history (who did what, when).\nExpenses (if you use them): amount, date, label, category, comment, who paid and each person's share. A personal expense is visible to you only. An attached receipt (photo or PDF) is kept with the expense and deleted with it. If you use “Read a receipt”, the photo is read on our server (no outside service) to suggest the amount, date and shop, then deleted straight away; it is only kept if you save the expense with that receipt.\nSessions: device (browser and system, or Android app version), sign-in date and last activity, shown in “Signed-in devices” so you can sign out remotely. Android app: the phone's notification identifier (if instant notifications are enabled), deleted when you sign out.\nThe Android app keeps a copy of your tasks, shopping list, notes and important dates on the phone to work offline; it is erased when you sign out.\nAdd by e-mail (if you turn it on): the sender, subject and text of e-mails you forward to your personal address are saved in the notes of the task created. They are received by Resend, our e-mail provider; their attachments are added to the task.\nAttachments: files you attach to a task (or attached to a forwarded e-mail) are stored on our server with the task, visible to household members (only to you for a personal task), and deleted with it.\nReports (if you send any): the type, title and text of your message, a screenshot if you attach one, whether you agree to be contacted and, only if you tick the box, technical information shown before sending (browser or phone model, system, app version, language, time zone, screen size, open page). Never the content of your tasks. Only the app's administrators read them.\nBrowser notifications (if you turn them on): the subscription address provided by your browser, deleted when you turn them off or sign out."
     },
     "google": {
       "title": "Google data",
@@ -563,7 +564,7 @@
     },
     "processors": {
       "title": "Service providers",
-      "body": "Cloudflare (site delivery and protection), Google (if you use Google sign-in or Google Calendar), the email provider configured for “forgot password” (e.g. Brevo), off-site backup storage if configured (e.g. Cloudflare R2), Google Firebase Cloud Messaging for instant notifications in the Android app if enabled (it only receives the phone's notification identifier and a “something new” signal, never task content or names), browsers' push services (Google, Mozilla, Apple) if you turn on site notifications (messages pass through them encrypted, unreadable to them), and, if enabled, an error-tracking service (Sentry) that only receives technical information (error type, page), without task content or identity."
+      "body": "Cloudflare (site delivery and protection), Google (if you use Google sign-in or Google Calendar), the email provider configured for “forgot password” (e.g. Brevo), off-site backup storage if configured (e.g. Cloudflare R2), Google Firebase Cloud Messaging for instant notifications in the Android app if enabled (it only receives the phone's notification identifier and a “something new” signal, never task content or names), browsers' push services (Google, Mozilla, Apple) if you turn on site notifications (messages pass through them encrypted, unreadable to them), Open Food Facts for the name of products read by barcode (it only receives the code, never your identity or the photo), and, if enabled, an error-tracking service (Sentry) that only receives technical information (error type, page), without task content or identity."
     },
     "retention": {
       "title": "Retention",
@@ -1557,5 +1558,25 @@
     "goneBody": "It was turned off or replaced. Ask the household for a new link.",
     "error": "The list could not be loaded.",
     "by": "Shared with Tandem"
+  },
+  "barcode": {
+    "open": "Scan a barcode",
+    "title": "Add by barcode",
+    "intro": "Take a close, flat photo of the barcode. The photo is read on our server, then deleted.",
+    "photo": "Take a photo",
+    "reading": "Reading…",
+    "code": "Or type the barcode digits",
+    "codeHint": "The digits under the bars, for example 5400000000003.",
+    "search": "Look up",
+    "invalidCode": "This code is not valid: check the digits.",
+    "notRead": "No barcode found. Take the photo closer and flat, or type the digits.",
+    "codeLabel": "Code {code}",
+    "name": "Item name",
+    "fromHousehold": "Already known to the household.",
+    "fromOff": "Found in Open Food Facts. Fix the name if needed: the household will remember it.",
+    "unknown": "Unknown product. Give it a name: the household will remember it next time.",
+    "add": "Add to the list",
+    "again": "Another code",
+    "added": "“{name}” added to the list"
   }
 }

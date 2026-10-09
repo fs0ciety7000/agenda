@@ -750,4 +750,26 @@
     <string name="guest_link_loading">Chargement…</string>
     <string name="guest_link_offline">Partager la liste demande une connexion.</string>
     <string name="guest_link_error">Le lien n\'a pas pu être mis à jour. Réessayez.</string>
+
+    <!-- Code-barres des courses -->
+    <string name="barcode_open">Scanner un code-barres</string>
+    <string name="barcode_title">Ajouter par code-barres</string>
+    <string name="barcode_intro">Prenez le code-barres en photo, de près et bien à plat. La photo est lue sur notre serveur, puis effacée.</string>
+    <string name="barcode_photo">Prendre une photo</string>
+    <string name="barcode_pick">Choisir une photo</string>
+    <string name="barcode_reading">Lecture…</string>
+    <string name="barcode_code">Ou tapez les chiffres du code</string>
+    <string name="barcode_search">Chercher</string>
+    <string name="barcode_invalid">Ce code n\'est pas valide : vérifiez les chiffres.</string>
+    <string name="barcode_not_read">Aucun code-barres lu. Reprenez la photo de plus près, bien à plat, ou tapez les chiffres.</string>
+    <string name="barcode_code_label">Code %1$s</string>
+    <string name="barcode_name">Nom de l\'article</string>
+    <string name="barcode_from_household">Déjà connu du foyer.</string>
+    <string name="barcode_from_off">Trouvé dans Open Food Facts. Corrigez le nom si besoin : le foyer s\'en souviendra.</string>
+    <string name="barcode_unknown">Produit inconnu. Donnez-lui un nom : le foyer s\'en souviendra la prochaine fois.</string>
+    <string name="barcode_add">Ajouter à la liste</string>
+    <string name="barcode_again">Autre code</string>
+    <string name="barcode_added">« %1$s » ajouté à la liste</string>
+    <string name="barcode_failed">La lecture des codes-barres est indisponible pour le moment. Tapez les chiffres ou le nom de l\'article.</string>
+    <string name="barcode_offline">Scanner un code-barres demande une connexion.</string>
 </resources>

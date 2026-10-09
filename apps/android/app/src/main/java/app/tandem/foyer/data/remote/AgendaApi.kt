@@ -110,6 +110,20 @@ interface AgendaApi {
     @DELETE("v1/households/{h}/shopping/{id}")
     suspend fun deleteShopping(@Path("h") householdId: String, @Path("id") id: String): Response<Unit>
 
+    @Multipart
+    @POST("v1/households/{h}/shopping-barcodes/scan")
+    suspend fun scanBarcode(@Path("h") householdId: String, @Part file: MultipartBody.Part): Response<BarcodeLookupDto>
+
+    @GET("v1/households/{h}/shopping-barcodes/{code}")
+    suspend fun lookupBarcode(@Path("h") householdId: String, @Path("code") code: String): Response<BarcodeLookupDto>
+
+    @PUT("v1/households/{h}/shopping-barcodes/{code}")
+    suspend fun rememberBarcode(
+        @Path("h") householdId: String,
+        @Path("code") code: String,
+        @Body body: RememberBarcodeBody,
+    ): Response<BarcodeLookupDto>
+
     @GET("v1/households/{h}/shopping-guest")
     suspend fun guestShoppingLink(@Path("h") householdId: String): Response<GuestShoppingLinkDto>
 

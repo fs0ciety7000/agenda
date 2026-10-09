@@ -1,4 +1,4 @@
-Shopping: a read-only link for a guest, no account needed.
+Shopping: add by barcode photo; read-only guest link.
 • Sensitive notes: fingerprint or code to show them.
 • Notes: previous versions you can restore.
 • Read a receipt: amount and date read from the photo.

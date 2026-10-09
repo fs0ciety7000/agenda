@@ -12,6 +12,7 @@ import app.tandem.foyer.data.DevicesRemote
 import app.tandem.foyer.data.SearchRemote
 import app.tandem.foyer.data.NotesRemote
 import app.tandem.foyer.data.GuestLinkRemote
+import app.tandem.foyer.data.BarcodeRemote
 import app.tandem.foyer.data.DataStoreSettingsStore
 import app.tandem.foyer.data.ReportsRemote
 import app.tandem.foyer.data.SettingsStore
@@ -61,6 +62,7 @@ class AppContainer(context: Context) {
     val comments = CommentsRemote(api, database)
     val notes = NotesRemote(api, database)
     val guestLink = GuestLinkRemote(api, database)
+    val barcodes = BarcodeRemote(api, database)
     val dates = DatesRemote(api, database)
     val devices = DevicesRemote(api)
     val search = SearchRemote(api, database)

@@ -108,3 +108,25 @@ export const GuestShoppingDto = z.object({
   items: z.array(GuestShoppingItemDto),
 });
 export type GuestShoppingDto = z.infer<typeof GuestShoppingDto>;
+
+/** Photos de code-barres acceptées (lues sur le serveur, jamais conservées). */
+export const BARCODE_SCAN_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
+
+/** Code-barres d'un produit : EAN-8, UPC-A (12), EAN-13 ou GTIN-14, chiffres seulement. */
+export const Barcode = z.string().regex(/^(\d{8}|\d{12,14})$/);
+
+/**
+ * Produit d'un code-barres. `barcode` null : rien lu sur la photo ; `name` null : produit
+ * inconnu (à nommer, le foyer s'en souviendra). `source` : nom retenu par le foyer ou trouvé
+ * dans Open Food Facts.
+ */
+export const BarcodeLookupDto = z.object({
+  barcode: z.string().nullable(),
+  name: z.string().nullable(),
+  source: z.enum(['HOUSEHOLD', 'OPEN_FOOD_FACTS']).nullable(),
+});
+export type BarcodeLookupDto = z.infer<typeof BarcodeLookupDto>;
+
+/** Nom à retenir pour un code-barres (corrigé ou donné par un membre). */
+export const RememberBarcodeInput = z.object({ name: ShoppingText });
+export type RememberBarcodeInput = z.infer<typeof RememberBarcodeInput>;

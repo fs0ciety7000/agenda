@@ -1,6 +1,6 @@
 ---
 title: Liste de courses
-description: Liste partagée en temps réel, rayons, quantités, articles souvent achetés, lien pour un invité, hors ligne.
+description: Liste partagée en temps réel, rayons, quantités, articles souvent achetés, code-barres, lien pour un invité, hors ligne.
 ---
 
 # Liste de courses
@@ -28,6 +28,20 @@ Pour une liste liée à une tâche précise (« Valise »), utilisez plutôt les
 caractères, rangée par rayon, et garde l'écran allumé. Toucher un article le met dans le panier ;
 le toucher à nouveau l'en ressort. L'autre voit les coches en direct. **Échap**, le geste retour
 ou ✕ pour quitter.
+
+## Ajouter par code-barres
+
+**Scanner un code-barres** (en haut de la liste, sur le site et dans l'app Android) : prenez le
+code-barres du produit en photo, de près et bien à plat.
+
+- La photo est lue sur le serveur de Tandem, puis **effacée aussitôt** ; rien n'est envoyé
+  ailleurs.
+- Le nom du produit est proposé : celui que le foyer lui a déjà donné, sinon celui trouvé dans
+  [Open Food Facts](https://world.openfoodfacts.org), une base de produits ouverte (seul le code
+  lui est envoyé). Corrigez-le si besoin avant **Ajouter à la liste** : le foyer s'en souviendra.
+- Produit inconnu : donnez-lui un nom une fois, il sera reconnu la fois suivante, par vous deux.
+- Photo illisible : reprenez-la de plus près, ou **tapez les chiffres** sous les barres.
+- Il faut une connexion (la photo est lue sur le serveur).
 
 ## Lien pour un invité
 

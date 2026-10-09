@@ -731,4 +731,26 @@
     <string name="guest_link_loading">Laden…</string>
     <string name="guest_link_offline">Voor het delen van de lijst is een verbinding nodig.</string>
     <string name="guest_link_error">De link kon niet worden bijgewerkt. Probeer het opnieuw.</string>
+
+    <!-- Code-barres des courses -->
+    <string name="barcode_open">Barcode scannen</string>
+    <string name="barcode_title">Toevoegen met barcode</string>
+    <string name="barcode_intro">Maak een foto van de barcode, van dichtbij en recht. De foto wordt op onze server gelezen en daarna gewist.</string>
+    <string name="barcode_photo">Foto maken</string>
+    <string name="barcode_pick">Foto kiezen</string>
+    <string name="barcode_reading">Lezen…</string>
+    <string name="barcode_code">Of typ de cijfers van de code</string>
+    <string name="barcode_search">Zoeken</string>
+    <string name="barcode_invalid">Deze code is niet geldig: controleer de cijfers.</string>
+    <string name="barcode_not_read">Geen barcode gevonden. Maak de foto van dichterbij en recht, of typ de cijfers.</string>
+    <string name="barcode_code_label">Code %1$s</string>
+    <string name="barcode_name">Naam van het artikel</string>
+    <string name="barcode_from_household">Al bekend in het huishouden.</string>
+    <string name="barcode_from_off">Gevonden in Open Food Facts. Pas de naam aan als het moet: het huishouden onthoudt hem.</string>
+    <string name="barcode_unknown">Onbekend product. Geef het een naam: het huishouden onthoudt hem de volgende keer.</string>
+    <string name="barcode_add">Aan de lijst toevoegen</string>
+    <string name="barcode_again">Andere code</string>
+    <string name="barcode_added">‘%1$s’ toegevoegd aan de lijst</string>
+    <string name="barcode_failed">Barcodes lezen lukt nu even niet. Typ de cijfers of de naam van het artikel.</string>
+    <string name="barcode_offline">Voor het scannen van een barcode is een verbinding nodig.</string>
 </resources>

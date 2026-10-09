@@ -7553,6 +7553,205 @@
         "security": []
       }
     },
+    "/v1/households/{householdId}/shopping-barcodes/scan": {
+      "post": {
+        "description": "Lire le code-barres d'une photo et trouver le produit (JPEG, PNG ou WebP, multipart, champ `file`, 10 Mo au plus). Lue sur le serveur, la photo n'est pas conservée.",
+        "operationId": "BarcodeController_scan_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BarcodeLookupDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Lire le code-barres d'une photo et trouver le produit (JPEG, PNG ou WebP, multipart, champ `file`, 10 Mo au plus)",
+        "tags": [
+          "shopping"
+        ]
+      }
+    },
+    "/v1/households/{householdId}/shopping-barcodes/{code}": {
+      "get": {
+        "operationId": "BarcodeController_lookup_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "code",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BarcodeLookupDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Produit d'un code-barres saisi à la main (mémoire du foyer, puis Open Food Facts)",
+        "tags": [
+          "shopping"
+        ]
+      },
+      "put": {
+        "operationId": "BarcodeController_remember_v1",
+        "parameters": [
+          {
+            "name": "householdId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "code",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RememberBarcodeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BarcodeLookupDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Retenir le nom d'un produit pour le foyer (il l'emporte sur Open Food Facts)",
+        "tags": [
+          "shopping"
+        ]
+      }
+    },
     "/v1/households/{householdId}/notes": {
       "get": {
         "operationId": "NotesController_list_v1",
@@ -10999,6 +11198,7 @@
                   "ATTACHMENT_TOO_LARGE",
                   "ATTACHMENTS_QUOTA",
                   "RECEIPT_SCAN_UNAVAILABLE",
+                  "BARCODE_SCAN_UNAVAILABLE",
                   "VAULT_LOCKED",
                   "INTERNAL"
                 ]
@@ -12193,6 +12393,33 @@
           "members",
           "together",
           "unassigned"
+        ],
+        "additionalProperties": false
+      },
+      "BarcodeLookupDto": {
+        "type": "object",
+        "properties": {
+          "barcode": {
+            "nullable": true,
+            "type": "string"
+          },
+          "name": {
+            "nullable": true,
+            "type": "string"
+          },
+          "source": {
+            "nullable": true,
+            "type": "string",
+            "enum": [
+              "HOUSEHOLD",
+              "OPEN_FOOD_FACTS"
+            ]
+          }
+        },
+        "required": [
+          "barcode",
+          "name",
+          "source"
         ],
         "additionalProperties": false
       },
@@ -15645,6 +15872,19 @@
           "email",
           "password",
           "displayName"
+        ]
+      },
+      "RememberBarcodeInput": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "name"
         ]
       },
       "RenamePasskeyInput": {

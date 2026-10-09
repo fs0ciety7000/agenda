@@ -166,6 +166,7 @@ model Household {
   absences          MemberAbsence[]
   comments          TaskComment[]
   products          ShoppingProduct[]
+  barcodes          ShoppingBarcode[]
   meals             Meal[]
   expenses          Expense[]
   recurringExpenses RecurringExpense[]
@@ -509,6 +510,21 @@ model TaskTemplate {
 }
 
 /// Liste de courses permanente du foyer. `id` peut être choisi par le client (ajout idempotent).
+/// Nom retenu par le foyer pour un code-barres (donné par un membre, ou trouvé dans Open Food Facts).
+model ShoppingBarcode {
+  householdId String   @db.Uuid
+  code        String   @db.VarChar(14)
+  name        String   @db.VarChar(200)
+  /// HOUSEHOLD (nommé ou corrigé par un membre) ou OPEN_FOOD_FACTS.
+  source      String   @db.VarChar(16)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  household Household @relation(fields: [householdId], references: [id], onDelete: Cascade)
+
+  @@id([householdId, code])
+}
+
 model ShoppingItem {
   id          String    @id @db.Uuid
   householdId String    @db.Uuid

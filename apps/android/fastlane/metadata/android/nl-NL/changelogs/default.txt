@@ -1,4 +1,4 @@
-Boodschappen: een link voor een gast, alleen lezen, zonder account.
+Boodschappen: barcode via foto; gastlink, alleen lezen.
 • Gevoelige notities: vingerafdruk of code om te tonen.
 • Notities: eerdere versies terugzetten.
 • Kasticket inlezen: bedrag en datum van de foto gelezen.

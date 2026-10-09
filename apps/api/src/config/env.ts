@@ -146,6 +146,14 @@ const EnvSchema = z.object({
   ),
   RESEND_WEBHOOK_SECRET: z.preprocess((v) => (v === '' ? undefined : v), z.string().optional()),
   RESEND_API_KEY: z.preprocess((v) => (v === '' ? undefined : v), z.string().optional()),
+  // Codes-barres : nom des produits inconnus du foyer cherché dans Open Food Facts (le code seul
+  // est envoyé). « off » : jamais interrogé, le foyer nomme lui-même ses produits.
+  OPEN_FOOD_FACTS_URL: z
+    .string()
+    .trim()
+    .default('https://world.openfoodfacts.org')
+    .transform((v) => v.replace(/\/+$/, ''))
+    .refine((v) => v === 'off' || /^https?:\/\//.test(v), 'URL or "off"'),
   /** Inscriptions ouvertes. À passer à false une fois les membres du foyer inscrits. */
   /** Surveillance : jeton exigé par GET /metrics (Prometheus). Sans jeton : /metrics désactivé. */
   METRICS_TOKEN: z.preprocess((v) => (v === '' ? undefined : v), z.string().min(16).optional()),

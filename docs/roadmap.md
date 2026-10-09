@@ -169,8 +169,12 @@ Validé par l'utilisateur, du plus simple au plus gros :
   articles (ni membres ni dates), page rechargée toutes les 30 s
   - [ ] Lien qui expire tout seul (un jour, une semaine) pour ne pas l'oublier actif (S), à
     prioriser ensemble
-- [ ] **Scanner un code-barres** pour ajouter un article (Android) : nom cherché dans Open Food
-  Facts par le serveur, puis mémorisé pour le foyer (M) ⚙️🤖
+- [x] **Scanner un code-barres** pour ajouter un article : nom cherché dans Open Food Facts par
+  le serveur, puis mémorisé pour le foyer (M) ⚙️🌐🤖 (#93) : photo lue par zbar sur le serveur
+  (choix de l'utilisateur : la caméra en direct demandait ML Kit, invérifiable ici), aussi sur le
+  site ; code tapé à la main en secours ; nom corrigé retenu pour le foyer
+  - [ ] Scan en direct à la caméra (Google Code Scanner, services Play) si la photo ne suffit
+    pas à l'usage (S), à prioriser ensemble
 - [ ] **Sauvegarde exportable** du foyer (JSON) et restauration sur une autre instance (M) ⚙️🌐
 - [ ] **« Ok Google, ajoute du lait dans Tandem »** : intégration à l'Assistant Google (M) 🤖
 

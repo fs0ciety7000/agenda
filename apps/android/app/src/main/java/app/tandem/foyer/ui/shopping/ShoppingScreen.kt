@@ -101,6 +101,8 @@ fun ShoppingScreen(
     onOpenMeals: () -> Unit = {},
     /** Bouton « Partager avec un invité » (cf. [GuestLinkButton]). */
     guestLink: @Composable () -> Unit = {},
+    /** Bouton « Scanner un code-barres » (cf. [BarcodeButton]). */
+    barcode: @Composable () -> Unit = {},
 ) {
     var text by rememberSaveable { mutableStateOf("") }
     val submit = {
@@ -165,6 +167,7 @@ fun ShoppingScreen(
                         Text(stringResource(R.string.store_open))
                     }
                 }
+                barcode()
                 guestLink()
             }
             SyncBanner(online, sync)
