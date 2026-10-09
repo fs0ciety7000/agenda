@@ -681,4 +681,11 @@
     <string name="expenses_category_budgets_title">Budgets par catégorie</string>
     <string name="expenses_category_budgets_hint" formatted="false">Par mois, pour les dépenses communes. Une notification prévient le foyer à 80 % puis à 100 %. Laissez vide pour ne pas fixer de budget.</string>
     <string name="expenses_category_budgets_none">Pas de budget</string>
+    <string name="share_title">Ajouter à Tandem</string>
+    <string name="share_task">En tâche</string>
+    <string name="share_note">En note</string>
+    <string name="share_shopping">Aux courses</string>
+    <string name="share_note_added">Note « %1$s » ajoutée</string>
+    <string name="share_note_offline">Les notes demandent une connexion. Réessayez une fois en ligne.</string>
+    <plurals name="share_shopping_added"><item quantity="one">%d article ajouté aux courses.</item><item quantity="many">%d articles ajoutés aux courses.</item><item quantity="other">%d articles ajoutés aux courses.</item></plurals>
 </resources>

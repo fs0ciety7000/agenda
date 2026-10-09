@@ -127,9 +127,9 @@ Validé par l'utilisateur, dans cet ordre :
   - [x] Icônes punaise, copier et modifier (vecteurs, comme le tiroir)
 - [x] **États vides illustrés** : illustration au trait, monochrome, style du logo, pour
   Aujourd'hui, Courses, Menus, Dépenses, Notes, Dates ; site et Android, clair et sombre (M) 🌐🤖 (#92)
-- [ ] **Partager vers Tandem** : un lien ou un texte partagé depuis une autre app devient une
-  tâche, une note ou un article de courses (S) 🤖
-- [ ] **Tuile « Ajouter une tâche »** dans les réglages rapides Android (S) 🤖
+- [x] **Partager vers Tandem** : un lien ou un texte partagé depuis une autre app devient une
+  tâche, une note ou un article de courses (S) 🤖 (#92)
+- [x] **Tuile « Ajouter une tâche »** dans les réglages rapides Android (S) 🤖 (#92)
 - [ ] **Recherche globale** : `/` cherche dans les tâches, notes, dates, dépenses et courses (M) ⚙️🌐🤖
 - [ ] **Notes et dates lisibles hors ligne** sur Android (M) 🤖
 - [ ] **Audit UI/UX complet** après le lot 4 (M)

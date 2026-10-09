@@ -1,8 +1,10 @@
-New "More" drawer (tap or pull up the bar): Expenses, Notes, Dates…
-• Expenses: who paid what, who owes how much, payback in one tap.
-• Custom split, fixed expenses, receipt photo, category budgets, export.
+Share to Tandem: a link becomes a task, a note or shopping items.
+• "Add a task" tile in Quick Settings.
+• Category budgets in the app; "Undo" on notes.
+• "More" drawer: Expenses, Notes, Dates…
+• Expenses: who owes what, payback in one tap.
 • Shared notes; important dates with reminders.
 • Home: "Who does what" over 7 days.
-• Store mode; ask the other to take a task.
-• Settings: signed-in devices, remote sign-out.
-• New look: round checkboxes, cards.
+• Store mode; task swap.
+• Signed-in devices: remote sign-out.
+• Illustrated empty screens.

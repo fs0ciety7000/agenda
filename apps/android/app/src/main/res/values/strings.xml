@@ -665,4 +665,11 @@
     <string name="expenses_category_budgets_title">Budgets by category</string>
     <string name="expenses_category_budgets_hint" formatted="false">Per month, for shared expenses. The household gets a notification at 80% then 100%. Leave a field empty for no budget.</string>
     <string name="expenses_category_budgets_none">No budget</string>
+    <string name="share_title">Add to Tandem</string>
+    <string name="share_task">As a task</string>
+    <string name="share_note">As a note</string>
+    <string name="share_shopping">To the shopping list</string>
+    <string name="share_note_added">Note “%1$s” added</string>
+    <string name="share_note_offline">Notes need a connection. Try again once online.</string>
+    <plurals name="share_shopping_added"><item quantity="one">%d item added to the shopping list.</item><item quantity="other">%d items added to the shopping list.</item></plurals>
 </resources>

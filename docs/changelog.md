@@ -15,6 +15,13 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### Partager vers Tandem, tuile « Ajouter une tâche » (#92)
+
+- ✨ **Partager vers Tandem** (Android) : un texte ou un lien partagé depuis une autre app devient,
+  au choix, une tâche, une note ou des articles de courses.
+- ✨ **Tuile « Ajouter une tâche »** dans les réglages rapides d'Android : l'ajout rapide d'un
+  geste, depuis n'importe où.
+
 ### États vides illustrés (#92)
 
 - 🛠 **Écrans vides illustrés** (Aujourd'hui, Courses, Menus, Dépenses, Notes, Dates) : un petit

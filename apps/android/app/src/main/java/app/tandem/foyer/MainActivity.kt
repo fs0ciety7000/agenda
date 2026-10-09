@@ -12,6 +12,7 @@ import androidx.core.view.WindowCompat
 import app.tandem.foyer.data.AppLanguage
 import app.tandem.foyer.notifications.ReminderScheduler
 import app.tandem.foyer.ui.navigation.AppNavHost
+import app.tandem.foyer.ui.share.SharedText
 import app.tandem.foyer.ui.theme.AgendaTheme
 
 class MainActivity : ComponentActivity() {
@@ -27,6 +28,9 @@ class MainActivity : ComponentActivity() {
     /** Texte à placer dans l'ajout rapide (partage depuis une autre app, Assistant). */
     private val quickAddText = mutableStateOf<String?>(null)
 
+    /** Texte partagé depuis une autre app : tâche, note ou courses (choix dans l'app). */
+    private val shared = mutableStateOf<SharedText?>(null)
+
     /** Raccourci « Dicter une tâche » : incrémenté à chaque demande. */
     private val voiceRequest = mutableIntStateOf(0)
 
@@ -34,9 +38,14 @@ class MainActivity : ComponentActivity() {
     private val tabRequest = mutableStateOf<Pair<String, Int>?>(null)
 
     private fun handle(intent: Intent) {
-        if (intent.action == ACTION_QUICK_ADD || intent.action == Intent.ACTION_SEND) {
+        if (intent.action == ACTION_QUICK_ADD) {
             quickAddText.value = intent.getStringExtra(Intent.EXTRA_TEXT)?.trim()?.take(500)?.takeIf { it.isNotEmpty() }
             quickAddRequest.intValue++
+        }
+        if (intent.action == Intent.ACTION_SEND) {
+            intent.getStringExtra(Intent.EXTRA_TEXT)?.trim()?.take(4000)?.takeIf { it.isNotEmpty() }?.let { text ->
+                shared.value = SharedText(text, intent.getStringExtra(Intent.EXTRA_SUBJECT), (shared.value?.id ?: 0) + 1)
+            }
         }
         if (intent.action == ACTION_VOICE) voiceRequest.intValue++
         if (intent.action == ACTION_OPEN_TAB) {
@@ -66,6 +75,7 @@ class MainActivity : ComponentActivity() {
                     quickAddRequest = quickAddRequest.intValue,
                     quickAddText = quickAddText.value,
                     voiceRequest = voiceRequest.intValue,
+                    shared = shared.value,
                     tabRequest = tabRequest.value,
                     googleCallback = googleCallback.value,
                     onGoogleCallbackHandled = { googleCallback.value = null },

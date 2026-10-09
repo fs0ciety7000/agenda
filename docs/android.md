@@ -37,7 +37,11 @@ métier propre à Android : les règles (récurrence, rotation, quick add) reste
 - **Raccourcis** (appui long sur l'icône) : Nouvelle tâche, Dicter, Courses, Aujourd'hui.
 - **Dictée** : raccourci « Dicter » ou micro dans l'ajout rapide ; la reconnaissance vocale du
   téléphone remplit l'ajout rapide (« Sortir les poubelles demain 19 h Grace »), à valider.
-  **Partager** un texte depuis une autre app vers Tandem l'ouvre aussi dans l'ajout rapide.
+  **Partager** un texte depuis une autre app (`ACTION_SEND`) ouvre `ui/share/ShareSheet.kt` : en
+  tâche (ajout rapide), en note (`noteFromShare` : sujet ou première ligne en titre ; en ligne
+  seulement) ou aux courses (`splitShoppingItems`, par l'outbox, hors ligne compris).
+  **Tuile** des réglages rapides `tile/QuickAddTileService` : ouvre l'ajout rapide
+  (`ACTION_QUICK_ADD`, déverrouillage d'abord si besoin).
   Google Assistant : « Ok Google, ouvre Tandem » ; la capacité App Actions
   `CREATE_THING` (« crée … dans Tandem ») est déclarée et ne fonctionne qu'avec l'app
   publiée sur le Play Store.

@@ -62,6 +62,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -116,6 +117,10 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import app.tandem.foyer.ui.quickadd.QuickAddSheet
+import app.tandem.foyer.ui.share.ShareSheet
+import app.tandem.foyer.ui.share.SharedText
+import app.tandem.foyer.ui.share.noteFromShare
+import app.tandem.foyer.ui.shopping.splitShoppingItems
 import app.tandem.foyer.ui.settings.DeviceSessions
 import app.tandem.foyer.ui.settings.SettingsScreen
 import app.tandem.foyer.ui.shopping.ShoppingScreen
@@ -140,6 +145,7 @@ fun AppNavHost(
     quickAddRequest: Int = 0,
     quickAddText: String? = null,
     voiceRequest: Int = 0,
+    shared: SharedText? = null,
     tabRequest: Pair<String, Int>? = null,
     googleCallback: Uri? = null,
     onGoogleCallbackHandled: () -> Unit = {},
@@ -165,7 +171,7 @@ fun AppNavHost(
                     onGoogle = { scope.launch { openWeb(context, vm.googleUrl(container.webBaseUrl), "") } },
                 )
             }
-            true -> MainScaffold(container, openOccurrenceId, quickAddRequest, tabRequest, quickAddText, voiceRequest)
+            true -> MainScaffold(container, openOccurrenceId, quickAddRequest, tabRequest, quickAddText, voiceRequest, shared)
         }
     }
 }
@@ -190,6 +196,7 @@ private fun MainScaffold(
     tabRequest: Pair<String, Int>? = null,
     quickAddText: String? = null,
     voiceRequest: Int = 0,
+    shared: SharedText? = null,
 ) {
     val context = LocalContext.current
     val vm: AgendaViewModel = viewModel(
@@ -405,6 +412,40 @@ private fun MainScaffold(
                 }
             }
         }
+    }
+
+    // Partage depuis une autre app : on demande ce que le texte doit devenir.
+    var pendingShare by remember { mutableStateOf<SharedText?>(null) }
+    LaunchedEffect(shared?.id) { if (shared != null) pendingShare = shared }
+    val noteAddedFmt = stringResource(R.string.share_note_added)
+    val noteOffline = stringResource(R.string.share_note_offline)
+    pendingShare?.let { s ->
+        val items = remember(s) { splitShoppingItems(s.text) }
+        val shoppingAdded = pluralStringResource(R.plurals.share_shopping_added, items.size, items.size)
+        ShareSheet(
+            text = s.text,
+            onTask = {
+                pendingShare = null
+                vm.onQuickAddText(s.text.take(500))
+                showQuickAdd = true
+            },
+            onNote = {
+                pendingShare = null
+                val (title, body) = noteFromShare(s.text, s.subject)
+                scope.launch {
+                    val ok = container.notes.create(title, body, pinned = false)
+                    snackbar.showSnackbar(if (ok) noteAddedFmt.format(title) else noteOffline)
+                }
+            },
+            onShopping = {
+                pendingShare = null
+                scope.launch {
+                    container.repository.addShopping(items)
+                    snackbar.showSnackbar(shoppingAdded)
+                }
+            },
+            onDismiss = { pendingShare = null },
+        )
     }
 
     val tabs = Tab.entries

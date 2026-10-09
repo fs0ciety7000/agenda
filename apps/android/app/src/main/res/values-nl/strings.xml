@@ -662,4 +662,11 @@
     <string name="expenses_category_budgets_title">Budget per categorie</string>
     <string name="expenses_category_budgets_hint" formatted="false">Per maand, voor gedeelde uitgaven. Het huishouden krijgt een melding bij 80% en 100%. Laat leeg voor geen budget.</string>
     <string name="expenses_category_budgets_none">Geen budget</string>
+    <string name="share_title">Toevoegen aan Tandem</string>
+    <string name="share_task">Als taak</string>
+    <string name="share_note">Als notitie</string>
+    <string name="share_shopping">Naar de boodschappen</string>
+    <string name="share_note_added">Notitie “%1$s” toegevoegd</string>
+    <string name="share_note_offline">Notities hebben verbinding nodig. Probeer het opnieuw als je online bent.</string>
+    <plurals name="share_shopping_added"><item quantity="one">%d artikel toegevoegd aan de boodschappen.</item><item quantity="other">%d artikelen toegevoegd aan de boodschappen.</item></plurals>
 </resources>
