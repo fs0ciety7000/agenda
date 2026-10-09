@@ -15,6 +15,11 @@ d'elle-même (ou via Google Play).
 
 ## 9 octobre 2026
 
+### Lecture des tickets plus fiable (#93)
+
+- 🛠 **Lire un ticket** comprend mieux les photos prises au vol : tournées, penchées, posées sur
+  une table sombre ou peu contrastées sont redressées et recadrées avant la lecture.
+
 ### Historique des notes (#93)
 
 - ✨ **Versions précédentes** d'une note : revoir les 20 dernières versions (qui, quand) et en

@@ -38,7 +38,8 @@ de vous seul) et supprimé avec elle.
 Dans une nouvelle dépense, **Lire un ticket** : prenez le ticket en photo (ou choisissez une photo
 sur Android avec **Choisir une photo**). Tandem propose le **montant**, la **date** et, si
 « Quoi ? » est vide, le nom du **commerçant**. Vérifiez avant d'enregistrer : un ticket froissé
-ou mal éclairé se lit moins bien, et rien n'est rempli quand la lecture n'est pas sûre.
+ou mal éclairé se lit moins bien, et rien n'est rempli quand la lecture n'est pas sûre. Une
+photo tournée, un ticket penché ou posé sur une table sont redressés et recadrés avant la lecture.
 
 La photo est lue sur le serveur de Tandem, sans service extérieur, puis effacée ; elle est jointe
 à la dépense comme ticket (**Ne pas joindre** pour l'éviter). La lecture demande une connexion.

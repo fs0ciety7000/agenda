@@ -52,7 +52,8 @@ gratuit de Cloudflare ne couvre que `*.tandem-agenda.app`, pas les niveaux plus 
   `fs0ciety7000/agenda` via la GitHub App Coolify (ou une deploy key).
 - Zone `tandem-agenda.app` gérée par Cloudflare.
 - ≥ 2 Go de RAM libres pendant le build (le build Next.js est le plus gourmand), ~3 Go de disque pour les images.
-- Lecture des tickets : Tesseract (français, néerlandais, anglais) est dans l'image de l'API (~30 Mo) ;
+- Lecture des tickets : Tesseract (français, néerlandais, anglais, détection d'orientation) est dans
+  l'image de l'API (~30 Mo), la préparation des photos passe par `sharp` ;
   rien à configurer. Une lecture prend environ une seconde de processeur, deux au plus à la fois.
 
 ## 3. Cloudflare

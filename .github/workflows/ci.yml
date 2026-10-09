@@ -63,7 +63,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
       # Lecture des tickets (tests d'intégration de l'API) : même moteur que l'image de production.
       - name: Installer Tesseract
-        run: sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-fra tesseract-ocr-nld
+        run: sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-fra tesseract-ocr-nld tesseract-ocr-osd
       - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm typecheck
@@ -117,7 +117,7 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - name: Installer Tesseract (lecture des tickets)
-        run: sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-fra tesseract-ocr-nld
+        run: sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-fra tesseract-ocr-nld tesseract-ocr-osd
       - run: pnpm build
       - run: pnpm --filter @agenda/api db:deploy
       - run: pnpm --filter @agenda/web exec playwright install --with-deps chromium
@@ -172,7 +172,7 @@ jobs:
         run: |
           langs=$(docker compose -f docker-compose.prod.yml run --rm --no-deps --entrypoint tesseract api --list-langs 2>&1)
           echo "$langs"
-          for l in eng fra nld; do echo "$langs" | grep -qx "$l"; done
+          for l in eng fra nld osd; do echo "$langs" | grep -qx "$l"; done
       - name: Vérifier l'image de documentation
         run: |
           docker run -d --name docs-smoke -p 8080:80 agenda-docs

@@ -40,6 +40,35 @@ describe('Lecture d’une photo de ticket', () => {
     expect(list.body).toEqual([]);
   });
 
+  it(
+    'photos difficiles : tournée, penchée sur une table, terne, orientée par l’EXIF',
+    { timeout: 60_000 },
+    async () => {
+      const h = await coupleHousehold(app);
+      const twoYearsAgo = `${Number(todayIn('Europe/Brussels').slice(0, 4)) - 2}${todayIn('Europe/Brussels').slice(4)}`;
+      for (const [file, type] of [
+        ['receipt-rot90.png', 'image/png'],
+        ['receipt-table-skew.jpg', 'image/jpeg'],
+        ['receipt-small-dull.jpg', 'image/jpeg'],
+        ['receipt-exif-rot.jpg', 'image/jpeg'],
+      ] as const) {
+        const res = await http()
+          .post(`${h.base}/expenses/receipt/scan`)
+          .set(h.grace.auth)
+          .attach('file', readFileSync(join(__dirname, 'fixtures', file)), {
+            filename: file,
+            contentType: type,
+          })
+          .expect(200);
+        expect(res.body, file).toEqual({
+          amountCents: 2573,
+          date: '2026-10-05' >= twoYearsAgo ? '2026-10-05' : null,
+          merchant: 'Epicerie Des Tilleuls',
+        });
+      }
+    },
+  );
+
   it('refuse un autre foyer, un format non lisible et l’absence de fichier', async () => {
     const h = await coupleHousehold(app);
     const other = await coupleHousehold(app);

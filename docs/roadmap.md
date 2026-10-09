@@ -91,7 +91,7 @@ Courses et repas :
 Dépenses :
 
 - [x] **Saisie du ticket par photo** (lecture du montant et de la date) (L) ⚙️🌐🤖 (#92) : Tesseract sur le serveur, photo non conservée
-  - [ ] Lecture moins bonne sur un ticket froissé ou très long : redresser et recadrer la photo avant lecture (M) → lot 6
+  - [x] Lecture moins bonne sur un ticket froissé ou très long : redresser et recadrer la photo avant lecture (M) → lot 6 (#93)
 - [x] **Budget par catégorie** en plus du budget global (M) ⚙️🌐🤖 (#89)
   - [x] Android : régler les budgets par catégorie dans l'app (S) 🤖 (#92)
 - [ ] **Rapprochement mensuel** : « ce mois-ci, chacun a payé… », envoyé le 1er (S)
@@ -158,7 +158,9 @@ Validé par l'utilisateur, du plus simple au plus gros :
     de la session dans le navigateur ; préparer la session côté serveur (M), à prioriser ensemble
 - [x] **Historique des versions d'une note** : revenir à une version précédente si l'autre l'a
   écrasée (S) ⚙️🌐🤖 (#93) : 20 versions par note, restauration elle-même versionnée
-- [ ] **Meilleure lecture des tickets** : redresser et recadrer la photo avant lecture (M) ⚙️
+- [x] **Meilleure lecture des tickets** : redresser et recadrer la photo avant lecture (M) ⚙️ (#93) :
+  orientation EXIF, quart de tour (détection d'orientation, en second recours), angle jusqu'à 10°,
+  recadrage sur le papier, contraste et taille ; quatre photos difficiles en test
 - [ ] **Coffre pour les notes sensibles** : contenu masqué partout (liste, recherche,
   notifications, export) et affiché après empreinte ou code du téléphone, ou mot de passe sur le
   site ; pas de chiffrement de bout en bout (choix de l'utilisateur) (M) ⚙️🌐🤖
