@@ -202,6 +202,13 @@ Découvert pendant le lot 6 :
   ancien membre » (notes, historique) jusqu'au rechargement ; rafraîchir la session à son
   arrivée (S) 🌐
 
+Demandé le 10 octobre :
+
+- [x] Site vitrine : crédit de l'éditeur en pied de page, « OCC Interactive — Une division de
+  Cardor Media », avec les liens (remplace « OCC MONS Studios ») (S) 🪧
+- [ ] Site vitrine : logos animés (SVG) d'OCC Interactive et de Cardor Media à côté du crédit,
+  en attente des fichiers (S) 🪧
+
 Retiré du lot par l'utilisateur, gardé pour plus tard : **rappel lié à un lieu** (la
 géolocalisation en arrière-plan demande une déclaration à Google Play).
 

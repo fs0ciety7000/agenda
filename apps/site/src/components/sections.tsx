@@ -477,9 +477,26 @@ export function Footer({ t }: { t: Content }) {
           </div>
         ))}
       </div>
-      <p className="border-t border-border px-5 py-6 text-center text-sm text-text-muted">
-        © {new Date().getFullYear()} Tandem · {t.footer.rights}
-      </p>
+      <div className="flex flex-col items-center gap-1 border-t border-border px-5 py-6 text-center text-sm text-text-muted">
+        <p>
+          © {new Date().getFullYear()} Tandem · {t.footer.rights}
+        </p>
+        <p>
+          <a
+            href="https://interactive.cardormedia.com/"
+            className="underline underline-offset-4 hover:text-text"
+          >
+            OCC Interactive
+          </a>{' '}
+          — {t.footer.division}{' '}
+          <a
+            href="https://cardormedia.com/marque"
+            className="underline underline-offset-4 hover:text-text"
+          >
+            Cardor Media
+          </a>
+        </p>
+      </div>
     </footer>
   );
 }
