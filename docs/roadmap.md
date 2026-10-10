@@ -202,6 +202,14 @@ Découvert pendant le lot 6 :
   ancien membre » (notes, historique) jusqu'au rechargement ; rafraîchir la session à son
   arrivée (S) 🌐
 
+Demandé le 10 octobre :
+
+- [x] Site vitrine : crédit de l'éditeur en pied de page, « OCC Interactive — Une division de
+  Cardor Media », avec les liens (remplace « OCC MONS Studios ») (S) 🪧 (#94)
+- [x] Site vitrine : logos d'OCC Interactive (dragon) et de Cardor Media (roue) à côté du crédit,
+  repris de `mons-corp` : monochromes au repos, couleurs et mouvement au survol (glitch, tour de
+  roue), rien avec « réduire les animations » (S) 🪧 (#94)
+
 Retiré du lot par l'utilisateur, gardé pour plus tard : **rappel lié à un lieu** (la
 géolocalisation en arrière-plan demande une déclaration à Google Play).
 

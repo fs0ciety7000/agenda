@@ -99,6 +99,8 @@ export interface Content {
       contact: string;
     };
     rights: string;
+    /** Crédit de l'éditeur : « OCC Interactive — Une division de Cardor Media ». */
+    division: string;
   };
 }
 
@@ -325,6 +327,7 @@ const fr: Content = {
       contact: 'Contact',
     },
     rights: 'Application personnelle, gratuite et sans publicité.',
+    division: 'Une division de',
   },
 };
 
@@ -551,6 +554,7 @@ const en: Content = {
       contact: 'Contact',
     },
     rights: 'A personal app, free and ad-free.',
+    division: 'A division of',
   },
 };
 
@@ -777,6 +781,7 @@ const nl: Content = {
       contact: 'Contact',
     },
     rights: 'Een persoonlijke app, gratis en zonder advertenties.',
+    division: 'Een divisie van',
   },
 };
 
