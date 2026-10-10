@@ -12,7 +12,15 @@ export type FeatureIcon =
   'sun' | 'sparkles' | 'repeat' | 'cart' | 'bell' | 'offline' | 'calendar' | 'widget';
 
 export interface Content {
-  meta: { title: string; description: string };
+  meta: {
+    /** Titre de l'onglet et des résultats de recherche (mots-clés d'abord, ~60 caractères). */
+    title: string;
+    description: string;
+    /** Titre des aperçus de partage (Open Graph, X) : le slogan. */
+    ogTitle: string;
+    /** Texte alternatif de l'image de partage (public/img/og/<langue>.png). */
+    ogAlt: string;
+  };
   nav: {
     features: string;
     how: string;
@@ -104,7 +112,10 @@ export interface Content {
 
 const fr: Content = {
   meta: {
-    title: 'Tandem · L’équilibre parfait pour votre foyer',
+    title: 'Tandem · Partager les tâches ménagères à tour de rôle',
+    ogTitle: 'Tandem · L’équilibre parfait pour votre foyer',
+    ogAlt:
+      'Illustration de Tandem : un couple souriant sur un vélo tandem. « L’équilibre parfait pour votre foyer » : tâches partagées chacun son tour, liste de courses en temps réel, rappels. Gratuit, sans publicité, web et Android.',
     description:
       'Tandem répartit les tâches de la maison entre vous : tours de rôle, liste de courses partagée, rappels, hors ligne. Gratuit, sans publicité, sur le web et Android.',
   },
@@ -330,7 +341,10 @@ const fr: Content = {
 
 const en: Content = {
   meta: {
-    title: 'Tandem · The perfect balance for your household',
+    title: 'Tandem · Share household chores, taking turns',
+    ogTitle: 'Tandem · The perfect balance for your household',
+    ogAlt:
+      'Tandem illustration: a smiling couple riding a tandem bike. “The perfect balance for your household”: shared chores taking turns, a real-time shopping list, reminders. Free, ad-free, web and Android.',
     description:
       'Tandem shares household chores between you: turn-taking, a shared shopping list, reminders, offline. Free, ad-free, on the web and Android.',
   },
@@ -556,7 +570,10 @@ const en: Content = {
 
 const nl: Content = {
   meta: {
-    title: 'Tandem · Het perfecte evenwicht voor je huishouden',
+    title: 'Tandem · Huishoudelijke klusjes om de beurt verdelen',
+    ogTitle: 'Tandem · Het perfecte evenwicht voor je huishouden',
+    ogAlt:
+      'Illustratie van Tandem: een lachend koppel op een tandemfiets. “Het perfecte evenwicht voor je huishouden”: gedeelde klusjes om de beurt, een live boodschappenlijst, herinneringen. Gratis, zonder advertenties, web en Android.',
     description:
       'Tandem verdeelt de klusjes in huis tussen jullie: om de beurt, een gedeelde boodschappenlijst, herinneringen, offline. Gratis, zonder advertenties, op het web en Android.',
   },

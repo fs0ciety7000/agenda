@@ -20,7 +20,7 @@ import {
   WifiOff,
   type LucideIcon,
 } from 'lucide-react';
-import { AnimatePresence, motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
+import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { APK_URL, APP_URL, CONTACT_EMAIL, DOCS_URL, PLAY_URL } from '@/lib/config';
 import type { Content, FeatureIcon, Locale } from '@/lib/content';
@@ -339,19 +339,19 @@ export function Faq({ t }: { t: Content }) {
                   </span>
                 </button>
               </h3>
-              <AnimatePresence initial={false}>
-                {expanded ? (
-                  <motion.div
-                    id={`faq-${i}`}
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.35, ease: EASE }}
-                  >
-                    <p className="px-6 pb-6 leading-relaxed text-text-muted">{item.a}</p>
-                  </motion.div>
-                ) : null}
-              </AnimatePresence>
+              {/* Réponse toujours présente dans le HTML (repliée, inerte) : lisible par les moteurs
+                  de recherche et cohérente avec les données structurées FAQPage. */}
+              <motion.div
+                id={`faq-${i}`}
+                initial={false}
+                animate={expanded ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }}
+                transition={{ duration: 0.35, ease: EASE }}
+                className="overflow-hidden"
+                aria-hidden={!expanded}
+                inert={!expanded}
+              >
+                <p className="px-6 pb-6 leading-relaxed text-text-muted">{item.a}</p>
+              </motion.div>
             </Reveal>
           );
         })}

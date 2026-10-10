@@ -651,3 +651,11 @@ cette redirection dans Cloudflare : elle s'appliquerait aussi aux personnes conn
 Autre sous-domaine (ex. `www`) : changer le domaine dans Coolify **et** `SITE_URL`, puis
 redéployer. En local : `pnpm --filter @agenda/site dev` (port 3100).
 
+**Référencement** : titres, descriptions et textes alternatifs dans `apps/site/src/lib/content.ts`
+(`meta`), balises dans `src/lib/metadata.ts`, données structurées dans `src/lib/structured-data.ts`,
+plan du site et `robots.txt` générés au build. Images de partage (1200 × 630, une par langue) :
+`node apps/site/scripts/og-images.mjs` avec Playwright accessible (voir l'en-tête du script). L'app
+sert son propre `robots.txt` (`apps/web/src/app/robots.ts`) ; ses pages restent `noindex`. La
+redirection 302 de l'accueil de l'app est voulue (elle dépend de la session) : ne pas la passer
+en 301/308, qui serait mise en cache par les navigateurs des personnes connectées.
+
