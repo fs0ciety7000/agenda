@@ -58,6 +58,85 @@
   }
 }
 
+/* Crédit de l'éditeur (pied de page) : emblèmes monochromes au repos, couleurs de la marque au
+   survol ou au focus, comme le site de Cardor Media (docs/brand/emblem-motion.md de mons-corp). */
+@layer components {
+  .brand-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    transition: color var(--gn-motion-base) var(--ease-out);
+  }
+  .brand-link:is(:hover, :focus-visible) {
+    color: var(--color-text);
+  }
+  .brand-wheel {
+    --logo-t1: currentColor;
+    --logo-t2: transparent;
+    --logo-t3: currentColor;
+    transform-origin: 50% 50%;
+  }
+  .brand-link:is(:hover, :focus-visible) .brand-wheel {
+    --logo-t1: initial;
+    --logo-t2: initial;
+    --logo-t3: initial;
+  }
+  .brand-color {
+    opacity: 0;
+    transition: opacity 600ms var(--ease-out);
+  }
+  .brand-mono {
+    transition: opacity 600ms var(--ease-out);
+  }
+  .brand-link:is(:hover, :focus-visible) .brand-color {
+    opacity: 1;
+  }
+  .brand-link:is(:hover, :focus-visible) .brand-mono {
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .brand-link:is(:hover, :focus-visible) .brand-wheel {
+      animation: brand-wheel 1.6s var(--ease-out);
+    }
+    .brand-link:is(:hover, :focus-visible) .brand-glitch {
+      animation: brand-glitch 0.9s steps(1, end);
+    }
+  }
+}
+
+/* La roue fait un tour complet. */
+@keyframes brand-wheel {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Le dragon « glitche » : sauts au pixel par paliers, fantôme magenta, puis il se recale. */
+@keyframes brand-glitch {
+  0% {
+    transform: skewX(-10deg) translate(1px, -1px);
+  }
+  12% {
+    transform: skewX(-6deg) translate(-2px, 1px);
+    filter: drop-shadow(3px 0 #ff2bd6);
+  }
+  24% {
+    transform: skewX(-10deg) translate(2px, 0);
+    filter: drop-shadow(-2px 0 #ff2bd6);
+  }
+  36% {
+    transform: skewX(-4deg) translate(-1px, 1px);
+    filter: none;
+  }
+  48% {
+    transform: skewX(-8deg) translate(1px, -1px);
+  }
+  60%,
+  100% {
+    transform: none;
+  }
+}
+
 @utility text-balance {
   text-wrap: balance;
 }

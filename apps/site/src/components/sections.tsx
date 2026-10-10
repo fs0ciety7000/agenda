@@ -25,6 +25,7 @@ import { useEffect, useRef, useState } from 'react';
 import { APK_URL, APP_URL, CONTACT_EMAIL, DOCS_URL, PLAY_URL } from '@/lib/config';
 import type { Content, FeatureIcon, Locale } from '@/lib/content';
 import { OtherLangs } from './nav';
+import { PublisherCredit } from './publisher-credit';
 import { EASE, PhoneFrame, Reveal, SectionHeading } from './ui';
 
 const ICONS: Record<FeatureIcon, LucideIcon> = {
@@ -481,21 +482,7 @@ export function Footer({ t }: { t: Content }) {
         <p>
           © {new Date().getFullYear()} Tandem · {t.footer.rights}
         </p>
-        <p>
-          <a
-            href="https://interactive.cardormedia.com/"
-            className="underline underline-offset-4 hover:text-text"
-          >
-            OCC Interactive
-          </a>{' '}
-          — {t.footer.division}{' '}
-          <a
-            href="https://cardormedia.com/marque"
-            className="underline underline-offset-4 hover:text-text"
-          >
-            Cardor Media
-          </a>
-        </p>
+        <PublisherCredit t={t} />
       </div>
     </footer>
   );
