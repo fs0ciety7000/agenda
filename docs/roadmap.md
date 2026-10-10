@@ -205,7 +205,7 @@ Découvert pendant le lot 6 :
 Demandé le 10 octobre :
 
 - [x] Site vitrine : crédit de l'éditeur en pied de page, « OCC Interactive — Une division de
-  Cardor Media », avec les liens (remplace « OCC MONS Studios ») (S) 🪧
+  Cardor Media », avec les liens (remplace « OCC MONS Studios ») (S) 🪧 (#94)
 - [ ] Site vitrine : logos animés (SVG) d'OCC Interactive et de Cardor Media à côté du crédit,
   en attente des fichiers (S) 🪧
 
