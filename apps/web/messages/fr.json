@@ -546,7 +546,7 @@
   },
   "privacyPolicy": {
     "title": "Politique de confidentialité",
-    "updated": "Dernière mise à jour : 9 octobre 2026",
+    "updated": "Dernière mise à jour : 10 octobre 2026",
     "intro": "Tandem est une application privée et non commerciale d'organisation des tâches du foyer, utilisée par ses membres. Cette page explique quelles données elle traite, pourquoi, et comment les supprimer.",
     "who": {
       "title": "Qui gère vos données",
@@ -566,7 +566,7 @@
     },
     "processors": {
       "title": "Prestataires",
-      "body": "Cloudflare (acheminement et protection du site), Google (si vous utilisez la connexion Google ou Google Calendar), le fournisseur d'e-mails configuré pour « mot de passe oublié » (par exemple Brevo), le stockage de sauvegarde hors serveur s'il est configuré (par exemple Cloudflare R2), Google Firebase Cloud Messaging pour les notifications instantanées de l'application Android s'il est activé (il ne reçoit que l'identifiant de notification du téléphone et un signal « du nouveau », jamais le contenu d'une tâche ni un nom), les services de notification des navigateurs (Google, Mozilla, Apple) si vous activez les notifications du site (le message y transite chiffré, illisible pour eux), Open Food Facts pour le nom des produits lus par code-barres (il ne reçoit que le code, jamais votre identité ni la photo), et, s'il est activé, un service de suivi des erreurs (Sentry) qui ne reçoit que des informations techniques (type d'erreur, page), sans contenu de tâche ni identité."
+      "body": "Cloudflare (acheminement et protection du site), Google (si vous utilisez la connexion Google ou Google Calendar), le serveur d'e-mails qui envoie « mot de passe oublié » et les autres messages (auto-hébergé par l'administrateur, ou un fournisseur SMTP comme Brevo), le stockage de sauvegarde hors serveur s'il est configuré (par exemple Cloudflare R2), Google Firebase Cloud Messaging pour les notifications instantanées de l'application Android s'il est activé (il ne reçoit que l'identifiant de notification du téléphone et un signal « du nouveau », jamais le contenu d'une tâche ni un nom), les services de notification des navigateurs (Google, Mozilla, Apple) si vous activez les notifications du site (le message y transite chiffré, illisible pour eux), Open Food Facts pour le nom des produits lus par code-barres (il ne reçoit que le code, jamais votre identité ni la photo), et, s'il est activé, un service de suivi des erreurs (Sentry) qui ne reçoit que des informations techniques (type d'erreur, page), sans contenu de tâche ni identité."
     },
     "retention": {
       "title": "Durées de conservation",

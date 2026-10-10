@@ -13,6 +13,14 @@ d'elle-même (ou via Google Play).
 **Légende** : ✨ nouveau · 🛠 amélioration · 🐞 correction · 🔒 sécurité et confidentialité ·
 ⚙️ technique
 
+## 10 octobre 2026
+
+### Nouvelle adresse de contact
+
+- 🛠 **Contact** : `support@tandem-agenda.app`, affichée dans la politique de confidentialité, le
+  pied des e-mails et le site vitrine.
+- ⚙️ Les e-mails partent désormais de notre propre serveur d'e-mails.
+
 ## 9 octobre 2026
 
 ### Accueil plus réactif (#93)

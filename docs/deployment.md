@@ -269,57 +269,47 @@ serveur. APK de recette publié par la CI, ou APK signé avec votre clé : voir
 L'API envoie ses emails en **SMTP standard** : n'importe quel fournisseur convient, sans changer
 le code. Sans `SMTP_HOST`, rien n'est envoyé (le lien « Mot de passe oublié » est alors masqué).
 
-| Fournisseur | Offre gratuite | + | − |
-|---|---|---|---|
-| **Resend** (utilisé) | 3 000/mois (100/jour) | Très simple, bonne délivrabilité, même compte que la **tâche par e-mail** (réception) | Société américaine |
-| Brevo | 300 emails/jour, sans carte bancaire | Société française, données dans l'UE | Interface un peu chargée |
-| Mailjet | 200/jour | Européen | Quota plus faible |
-| Gmail + mot de passe d'application | 500/jour | Rien à créer | Lie l'app à un compte personnel, délivrabilité moyenne |
+Le port décide du chiffrement : `465` = TLS dès la connexion, tout autre port (`587`) = STARTTLS
+**obligatoire** (la connexion est refusée si le serveur ne le propose pas).
 
-Pour un foyer (quelques emails par an), l'offre gratuite de Resend suffit largement.
+| Serveur | + | − |
+|---|---|---|
+| **Stalwart auto-hébergé** (utilisé : `mail.fs0ciety.org`) | Aucun prestataire, données chez l'administrateur | Délivrabilité à surveiller (SPF, DKIM, DMARC) |
+| Resend | 3 000/mois gratuits, très simple | Société américaine ; ne sert plus qu'à la **réception** des tâches par e-mail |
+| Brevo | 300 emails/jour, société française | Interface un peu chargée |
+| Mailjet | 200/jour, européen | Quota plus faible |
 
-### 8.1 Resend, pas à pas
+### 8.1 Stalwart (serveur de l'administrateur)
 
-1. Créer un compte sur resend.com (celui de la tâche par e-mail s'il existe déjà).
-2. **Domains → Add Domain** : `tandem-agenda.app`, région **Ireland (eu-west-1)** (données dans
-   l'UE).
-3. Resend affiche les enregistrements DNS à créer. Deux façons de faire :
-   - bouton **Auto configure** (connexion à Cloudflare) : Resend crée lui-même les enregistrements ;
-   - ou à la main dans **Cloudflare → DNS**, en **DNS only** (nuage gris : les enregistrements de
-     messagerie ne se proxifient pas), en recopiant exactement nom et valeur :
-     - `TXT` `resend._domainkey` : la clé DKIM ;
-     - `MX` `send` : le serveur de retour (`feedback-smtp.eu-west-1.amazonses.com`, priorité 10) ;
-     - `TXT` `send` : le SPF (`v=spf1 include:amazonses.com ~all`).
-
-   Ces enregistrements portent sur le sous-domaine `send` : ils ne gênent ni un autre SPF à la
-   racine, ni le sous-domaine `tasks` de la réception.
-4. Recommandé : `TXT` `_dmarc` = `v=DMARC1; p=none;` (améliore la délivrabilité ; durcir plus
-   tard en `p=quarantine`).
-5. **Verify DNS Records**, attendre l'état **Verified** (quelques minutes).
-6. **API Keys → Create API Key** : nom « Tandem SMTP », permission **Sending access**, domaine
-   `tandem-agenda.app`. Renseigner dans Coolify :
+1. Dans Stalwart, le compte d'envoi (`nicolas@fs0ciety.org`) doit pouvoir écrire **au nom de**
+   `no-reply@tandem-agenda.app` : ajouter cette adresse au compte (alias), sinon Stalwart refuse
+   l'expéditeur (« must match sender »). Le domaine `tandem-agenda.app` doit avoir ses
+   enregistrements SPF, DKIM et DMARC pointant vers ce serveur.
+2. Renseigner dans Coolify :
 
 | Variable | Valeur |
 |---|---|
-| `SMTP_HOST` | `smtp.resend.com` |
-| `SMTP_PORT` | `587` |
-| `SMTP_USER` | `resend` |
-| `SMTP_PASSWORD` | la clé API (`re_…`) — secret, jamais dans le dépôt |
+| `SMTP_HOST` | `mail.fs0ciety.org` |
+| `SMTP_PORT` | `587` (STARTTLS) ou `465` (TLS) |
+| `SMTP_USER` | `nicolas@fs0ciety.org` |
+| `SMTP_PASSWORD` | mot de passe du compte — secret, jamais dans le dépôt |
 | `EMAIL_FROM` | `Tandem <no-reply@tandem-agenda.app>` |
+| `PRIVACY_CONTACT_EMAIL` | `support@tandem-agenda.app` (c'est aussi la valeur par défaut) |
 
 Les e-mails reprennent le logo (chargé depuis `WEB_ORIGIN/icons/icon-192.png`) et un pied avec
-les liens Confidentialité, Aide (`DOCS_URL`), Signaler un problème et Réglages ; l'adresse
-`PRIVACY_CONTACT_EMAIL`, si elle est renseignée, y apparaît aussi.
+les liens Confidentialité, Aide (`DOCS_URL`), Signaler un problème et Réglages, ainsi que
+l'adresse `PRIVACY_CONTACT_EMAIL` (`support@tandem-agenda.app` par défaut).
 
-7. Redéployer, puis tester « Mot de passe oublié » avec votre adresse. **Emails** (tableau de bord
-   Resend) montre chaque envoi et, en cas d'échec, la raison.
+3. Redéployer, puis : page d'administration → test SMTP, et « Mot de passe oublié » avec votre
+   adresse. En cas d'échec, la raison est dans les journaux de l'API.
 
-Cette clé d'envoi est distincte de `RESEND_API_KEY` (tâche par e-mail, qui lit les messages
-reçus) : une clé par usage, révocable séparément.
+L'envoi ne passe jamais par l'API Resend : `RESEND_API_KEY` et `RESEND_WEBHOOK_SECRET` servent
+seulement à la **réception** des tâches par e-mail ([email-to-task.md](email-to-task.md)), qui
+reste chez Resend tant que le MX de `tasks.tandem-agenda.app` y pointe.
 
-**Brevo** (alternative) : *Domains → Add a domain*, enregistrements DKIM/DMARC dans Cloudflare,
-expéditeur `no-reply@tandem-agenda.app`, puis `SMTP_HOST=smtp-relay.brevo.com`, `SMTP_PORT=587`,
-`SMTP_USER` = identifiant `…@smtp-brevo.com`, `SMTP_PASSWORD` = clé SMTP Brevo.
+**Autre fournisseur** (Resend, Brevo…) : mêmes variables avec ses valeurs, par exemple Resend
+`SMTP_HOST=smtp.resend.com`, `SMTP_USER=resend`, `SMTP_PASSWORD` = clé API *Sending access* ;
+Brevo `SMTP_HOST=smtp-relay.brevo.com`, `SMTP_USER` = identifiant `…@smtp-brevo.com`.
 
 ## 9. Google Calendar et connexion Google
 
@@ -333,7 +323,7 @@ compte Google du foyer :
    `openid`, `email`, `profile`, `…/auth/calendar.calendarlist.readonly` et
    `…/auth/calendar.events` — rien de plus (pas `…/auth/calendar`).
    **Branding** : *Application privacy policy link* = `https://tandem-agenda.app/privacy`
-   (renseigner `PRIVACY_CONTACT_EMAIL` dans Coolify pour y afficher une adresse de contact).
+   (adresse de contact : `PRIVACY_CONTACT_EMAIL`, `support@tandem-agenda.app` par défaut).
 3. **Audience → Publish app** : passer en **« In production »**. Indispensable : en *Testing*,
    Google invalide les autorisations au bout de 7 jours et la synchro s'arrêterait chaque semaine
    (risque R1). Sans vérification Google, l'écran de consentement affiche « Google n'a pas validé
@@ -499,7 +489,7 @@ toutes **hors dépôt** (consoles), dans cet ordre. Compter une soirée, surtout
    |---|---|
    | `WEB_ORIGIN` | `https://tandem-agenda.app` (sans barre finale) |
    | `EMAIL_FROM` | `Tandem <no-reply@tandem-agenda.app>` (après 14.4) |
-   | `PRIVACY_CONTACT_EMAIL` | une adresse `@tandem-agenda.app` si vous en créez une |
+   | `PRIVACY_CONTACT_EMAIL` | `support@tandem-agenda.app` (défaut) |
    | `INBOUND_EMAIL_ADDRESS` | `{token}@tasks.tandem-agenda.app` (après 14.5) |
    | `WEB_PUSH_SUBJECT` | vide (= `WEB_ORIGIN`) ou `mailto:…@tandem-agenda.app` |
    | `DOCS_URL` | vide (défaut `https://docs.tandem-agenda.app`) |
@@ -517,6 +507,8 @@ toutes **hors dépôt** (consoles), dans cet ordre. Compter une soirée, surtout
 - `UPTIME_URL` : `https://tandem-agenda.app/healthz` (ou supprimer, idem).
 
 ### 14.4 E-mails sortants (Resend, §8.1)
+
+> Historique : l'envoi passe désormais par Stalwart (§8.1) ; Resend ne sert plus qu'à la réception.
 
 1. Resend → **Domains → Add Domain** : `tandem-agenda.app` (région Ireland), puis **Auto configure**
    ou recopier dans Cloudflare, nuage gris : `TXT resend._domainkey` (DKIM), `MX send` et
@@ -646,7 +638,7 @@ La vidéo de présentation (`public/video`) est fabriquée depuis `assets/motion
    |---|---|---|
    | `SITE_URL` | adresse publique du site (liens canoniques, Open Graph, plan du site) ; active aussi la redirection de l'accueil de l'app (ci-dessous) | site : `https://decouvrir.tandem-agenda.app` ; app : aucune redirection |
    | `PLAY_URL` | lien « Télécharger pour Android » vers la fiche Google Play, une fois publique | APK de l'app (`/v1/app/android/tandem.apk`) |
-   | `PRIVACY_CONTACT_EMAIL` | lien « Contact » du pied de page | absent |
+   | `PRIVACY_CONTACT_EMAIL` | lien « Contact » du pied de page | `support@tandem-agenda.app` |
 
    `WEB_ORIGIN` et `DOCS_URL` (déjà définies) servent aux liens vers l'app et la documentation.
 

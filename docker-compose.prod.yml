@@ -16,7 +16,7 @@ services:
     restart: unless-stopped
     environment:
       # Adresse affichée sur /privacy (politique de confidentialité).
-      PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-}
+      PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-support@tandem-agenda.app}
       SITE_URL: ${SITE_URL:-https://decouvrir.tandem-agenda.app}
     expose:
       - '3000'
@@ -60,7 +60,7 @@ services:
       EMAIL_FROM: ${EMAIL_FROM:-Tandem <no-reply@tandem-agenda.app>}
       # Pied des e-mails : lien d'aide et adresse de contact (celle de la page de confidentialité).
       DOCS_URL: ${DOCS_URL:-https://docs.tandem-agenda.app}
-      PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-}
+      PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-support@tandem-agenda.app}
       SENTRY_DSN: ${SENTRY_DSN:-}
       # Notifications instantanées Android (compte de service Firebase, JSON ou base64) — docs/android.md.
       FCM_SERVICE_ACCOUNT: ${FCM_SERVICE_ACCOUNT:-}
@@ -111,7 +111,7 @@ services:
         APP_URL: ${WEB_ORIGIN:-https://tandem-agenda.app}
         DOCS_URL: ${DOCS_URL:-https://docs.tandem-agenda.app}
         PLAY_URL: ${PLAY_URL:-}
-        CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-}
+        CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-support@tandem-agenda.app}
     restart: unless-stopped
     expose:
       - '80'

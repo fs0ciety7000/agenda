@@ -74,7 +74,8 @@ const EnvSchema = z.object({
   GLOBAL_RATE_LIMIT: z.coerce.number().int().min(1).default(600),
   /** Requêtes/minute/IP sur login, inscription, refresh. */
   AUTH_RATE_LIMIT: z.coerce.number().int().min(1).default(10),
-  // ── Emails (SMTP générique : Brevo, Resend, Mailjet…). Sans SMTP_HOST : aucun envoi (journalisé). ──
+  // ── Emails (SMTP générique : Stalwart, Brevo, Resend…). Sans SMTP_HOST : aucun envoi (journalisé). ──
+  // Port 465 = TLS implicite ; tout autre port = STARTTLS obligatoire (cf. MailService).
   SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.coerce.number().int().default(587),
   SMTP_USER: z.string().optional(),

@@ -546,7 +546,7 @@
   },
   "privacyPolicy": {
     "title": "Privacybeleid",
-    "updated": "Laatst bijgewerkt: 9 oktober 2026",
+    "updated": "Laatst bijgewerkt: 10 oktober 2026",
     "intro": "Tandem is een private, niet-commerciële app die de leden van een huishouden gebruiken om hun taken te organiseren. Deze pagina legt uit welke gegevens de app verwerkt, waarom, en hoe je ze kunt verwijderen.",
     "who": {
       "title": "Wie je gegevens beheert",
@@ -566,7 +566,7 @@
     },
     "processors": {
       "title": "Dienstverleners",
-      "body": "Cloudflare (levering en bescherming van de site), Google (als je aanmelden met Google of Google Agenda gebruikt), de e-mailprovider die is ingesteld voor “wachtwoord vergeten” (bv. Brevo), externe opslag voor back-ups als die is ingesteld (bv. Cloudflare R2), Google Firebase Cloud Messaging voor directe meldingen in de Android-app als die aan staan (ontvangt alleen de meldingsidentificatie van de telefoon en een signaal “er is iets nieuws”, nooit de inhoud van taken of namen), de pushdiensten van browsers (Google, Mozilla, Apple) als je meldingen van de site inschakelt (berichten gaan er versleuteld doorheen, onleesbaar voor hen), Open Food Facts voor de naam van producten gelezen via barcode (het krijgt alleen de code, nooit je identiteit of de foto) en, als die is ingeschakeld, een dienst voor foutopvolging (Sentry) die alleen technische informatie ontvangt (type fout, pagina), zonder inhoud van taken of identiteit."
+      "body": "Cloudflare (levering en bescherming van de site), Google (als je aanmelden met Google of Google Agenda gebruikt), de e-mailserver die “wachtwoord vergeten” en andere berichten verstuurt (zelf gehost door de beheerder, of een SMTP-provider zoals Brevo), externe opslag voor back-ups als die is ingesteld (bv. Cloudflare R2), Google Firebase Cloud Messaging voor directe meldingen in de Android-app als die aan staan (ontvangt alleen de meldingsidentificatie van de telefoon en een signaal “er is iets nieuws”, nooit de inhoud van taken of namen), de pushdiensten van browsers (Google, Mozilla, Apple) als je meldingen van de site inschakelt (berichten gaan er versleuteld doorheen, onleesbaar voor hen), Open Food Facts voor de naam van producten gelezen via barcode (het krijgt alleen de code, nooit je identiteit of de foto) en, als die is ingeschakeld, een dienst voor foutopvolging (Sentry) die alleen technische informatie ontvangt (type fout, pagina), zonder inhoud van taken of identiteit."
     },
     "retention": {
       "title": "Bewaartermijn",

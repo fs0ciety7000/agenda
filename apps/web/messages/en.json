@@ -546,7 +546,7 @@
   },
   "privacyPolicy": {
     "title": "Privacy policy",
-    "updated": "Last updated: 9 October 2026",
+    "updated": "Last updated: 10 October 2026",
     "intro": "Tandem is a private, non-commercial app used by the members of a household to organise their tasks. This page explains what data it processes, why, and how to delete it.",
     "who": {
       "title": "Who manages your data",
@@ -566,7 +566,7 @@
     },
     "processors": {
       "title": "Service providers",
-      "body": "Cloudflare (site delivery and protection), Google (if you use Google sign-in or Google Calendar), the email provider configured for “forgot password” (e.g. Brevo), off-site backup storage if configured (e.g. Cloudflare R2), Google Firebase Cloud Messaging for instant notifications in the Android app if enabled (it only receives the phone's notification identifier and a “something new” signal, never task content or names), browsers' push services (Google, Mozilla, Apple) if you turn on site notifications (messages pass through them encrypted, unreadable to them), Open Food Facts for the name of products read by barcode (it only receives the code, never your identity or the photo), and, if enabled, an error-tracking service (Sentry) that only receives technical information (error type, page), without task content or identity."
+      "body": "Cloudflare (site delivery and protection), Google (if you use Google sign-in or Google Calendar), the email server that sends “forgot password” and other messages (self-hosted by the administrator, or an SMTP provider such as Brevo), off-site backup storage if configured (e.g. Cloudflare R2), Google Firebase Cloud Messaging for instant notifications in the Android app if enabled (it only receives the phone's notification identifier and a “something new” signal, never task content or names), browsers' push services (Google, Mozilla, Apple) if you turn on site notifications (messages pass through them encrypted, unreadable to them), Open Food Facts for the name of products read by barcode (it only receives the code, never your identity or the photo), and, if enabled, an error-tracking service (Sentry) that only receives technical information (error type, page), without task content or identity."
     },
     "retention": {
       "title": "Retention",
