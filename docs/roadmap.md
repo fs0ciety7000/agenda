@@ -217,6 +217,9 @@ Demandé le 11 octobre :
 - [x] Android : connexion par passkey (Credential Manager) et Réglages → Passkeys (voir, ajouter,
   supprimer) ; `assetlinks.json` servi par le site, empreintes des certificats dans
   `ANDROID_CERT_SHA256` (M) 🤖⚙️ (#95)
+- [x] Android : empreinte du certificat de l'APK direct affichée par la CI (résumé du job « APK à
+  installer » et notes de la release), plus besoin de `keytool` pour `ANDROID_CERT_SHA256` (S) ⚙️
+  (#96)
 
 Demandé le 10 octobre :
 

@@ -273,7 +273,9 @@ inversement. Android ne l'accepte que si le site déclare l'app :
 
 1. Relever les empreintes SHA-256 des certificats qui signent l'app : Play Console → *Intégrité de
    l'app* → *Signature de l'app* (clé de signature de Google Play), et
-   `keytool -list -v -keystore <keystore>` pour la clé des APK directs (mise à jour automatique).
+   pour la clé des APK directs (mise à jour automatique), la CI la lit dans l'APK signé : résumé du
+   job *Android — APK à installer* et notes de la release `android-latest` (« Empreinte du
+   certificat »). Sans la CI : `keytool -list -v -keystore <keystore>`.
 2. Les mettre dans `ANDROID_CERT_SHA256` côté API (Coolify), séparées par des virgules, puis
    redéployer. Ce ne sont pas des secrets.
 3. Vérifier `https://tandem-agenda.app/.well-known/assetlinks.json` : l'app `app.tandem.foyer` et
