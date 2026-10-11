@@ -30,20 +30,20 @@ class TwoFactorLoginTest {
 
     @Test
     fun `mot de passe puis code - session enregistree seulement a la fin`() = runBlocking {
-        server.enqueue(json("""{"twoFactorRequired":true,"challengeId":"6f1c0a52-8d2e-4b8f-9a51-0c7e1d1b2a3c"}"""))
+        server.enqueue(json("""{"twoFactorRequired":true,"challengeId":"00000000-0000-4000-8000-000000000001"}"""))
         val first = repo.login("Emma@Example.be ", "correct horse battery")
-        assertEquals(AuthResult.TwoFactorRequired("6f1c0a52-8d2e-4b8f-9a51-0c7e1d1b2a3c"), first)
+        assertEquals(AuthResult.TwoFactorRequired("00000000-0000-4000-8000-000000000001"), first)
         assertNull(tokens.refreshToken())
 
         server.enqueue(json("""{"error":{"code":"TWO_FACTOR_INVALID","message":"Invalid two-factor code"}}""", 401))
         assertEquals(
             AuthResult.Failure(AuthError.TWO_FACTOR_INVALID),
-            repo.completeTwoFactor("6f1c0a52-8d2e-4b8f-9a51-0c7e1d1b2a3c", "000000"),
+            repo.completeTwoFactor("00000000-0000-4000-8000-000000000001", "000000"),
         )
         server.enqueue(
             json("""{"user":{"id":"u1","email":"emma@example.be","displayName":"Emma","locale":"fr"},"accessToken":"at","refreshToken":"rt","accessTokenExpiresIn":900}"""),
         )
-        val done = repo.completeTwoFactor("6f1c0a52-8d2e-4b8f-9a51-0c7e1d1b2a3c", " 123456 ")
+        val done = repo.completeTwoFactor("00000000-0000-4000-8000-000000000001", " 123456 ")
         assertTrue(done is AuthResult.Success)
         assertEquals("rt", tokens.refreshToken())
 
@@ -51,6 +51,6 @@ class TwoFactorLoginTest {
         server.takeRequest()
         val sent = server.takeRequest()
         assertEquals("/v1/auth/2fa/verify", sent.path)
-        assertEquals("""{"challengeId":"6f1c0a52-8d2e-4b8f-9a51-0c7e1d1b2a3c","code":"123456"}""", sent.body.readUtf8())
+        assertEquals("""{"challengeId":"00000000-0000-4000-8000-000000000001","code":"123456"}""", sent.body.readUtf8())
     }
 }

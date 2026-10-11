@@ -1620,12 +1620,12 @@
     "linksValid": "Deze links zijn 30 dagen geldig.",
     "encrypt": "Versleutelen met een wachtzin",
     "encryptHint": "Een .tandem-bestand dat zonder wachtzin onleesbaar is. De wachtzin wordt nergens bewaard: kwijt is kwijt, dan kan de back-up niet meer worden teruggezet.",
-    "passphrase": "Wachtzin",
-    "passphraseHint": "Minstens {min} tekens; bijvoorbeeld een paar woorden die je makkelijk onthoudt.",
-    "passphraseAgain": "Typ de wachtzin opnieuw",
-    "passphraseMismatch": "De twee wachtzinnen zijn niet gelijk.",
+    "phraseLabel": "Wachtzin",
+    "phraseHint": "Minstens {min} tekens; bijvoorbeeld een paar woorden die je makkelijk onthoudt.",
+    "phraseAgain": "Typ de wachtzin opnieuw",
+    "phraseMismatch": "De twee wachtzinnen zijn niet gelijk.",
     "privateEncrypted": "Noteer de wachtzin apart: zonder kan niemand dit bestand openen, jij ook niet.",
-    "restorePassphrase": "Deze back-up is versleuteld: voer de wachtzin in die je bij het downloaden koos.",
+    "restorePhrase": "Deze back-up is versleuteld: voer de wachtzin in die je bij het downloaden koos.",
     "restoreUnlock": "Ontsleutelen en terugzetten"
   },
   "twoFactor": {

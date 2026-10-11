@@ -78,10 +78,10 @@ export function RestoreBackup({ onRestored }: { onRestored: (r: RestoreResultDto
           }}
         >
           <Field
-            label={t('passphrase')}
+            label={t('phraseLabel')}
             type="password"
             autoComplete="off"
-            hint={t('restorePassphrase')}
+            hint={t('restorePhrase')}
             autoFocus
             value={passphrase}
             onChange={(e) => setPassphrase(e.target.value)}

@@ -812,12 +812,12 @@
     <!-- Sauvegarde chiffrée -->
     <string name="backup_encrypt">Versleutelen met een wachtzin</string>
     <string name="backup_encrypt_hint">Een .tandem-bestand dat zonder wachtzin onleesbaar is. De wachtzin wordt nergens bewaard: kwijt is kwijt, dan kan de back-up niet meer worden teruggezet.</string>
-    <string name="backup_passphrase">Wachtzin</string>
-    <plurals name="backup_passphrase_hint">
+    <string name="backup_phrase_label">Wachtzin</string>
+    <plurals name="backup_phrase_hint">
         <item quantity="one">Minstens %1$d teken; bijvoorbeeld een paar makkelijke woorden</item>
         <item quantity="other">Minstens %1$d tekens; bijvoorbeeld een paar makkelijke woorden</item>
     </plurals>
-    <string name="backup_passphrase_again">Typ de wachtzin opnieuw</string>
-    <string name="backup_passphrase_mismatch">De twee wachtzinnen zijn niet gelijk.</string>
+    <string name="backup_phrase_again">Typ de wachtzin opnieuw</string>
+    <string name="backup_phrase_mismatch">De twee wachtzinnen zijn niet gelijk.</string>
     <string name="backup_private_encrypted">Noteer de wachtzin apart: zonder kan niemand dit bestand openen, jij ook niet.</string>
 </resources>

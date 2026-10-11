@@ -33,7 +33,7 @@ class PasskeyLoginTest {
         MockResponse().setResponseCode(code).setHeader("content-type", "application/json").setBody(body)
 
     private val options =
-        """{"challengeId":"6f1c0a52-8d2e-4b8f-9a51-0c7e1d1b2a3c","options":{"challenge":"abc","rpId":"tandem-agenda.app","allowCredentials":[]}}"""
+        """{"challengeId":"00000000-0000-4000-8000-000000000001","options":{"challenge":"abc","rpId":"tandem-agenda.app","allowCredentials":[]}}"""
 
     @Test
     fun `options passees au telephone, reponse renvoyee, session enregistree`() = runBlocking {
@@ -58,7 +58,7 @@ class PasskeyLoginTest {
         // Jetons dans le corps de la réponse (client mobile).
         assertEquals("mobile", login.getHeader("X-Client"))
         val body = Json.parseToJsonElement(login.body.readUtf8()).jsonObject
-        assertEquals("6f1c0a52-8d2e-4b8f-9a51-0c7e1d1b2a3c", body["challengeId"]!!.jsonPrimitive.content)
+        assertEquals("00000000-0000-4000-8000-000000000001", body["challengeId"]!!.jsonPrimitive.content)
         assertEquals("cred", body["response"]!!.jsonObject["id"]!!.jsonPrimitive.content)
         assertEquals("rt", tokens.refreshToken())
     }

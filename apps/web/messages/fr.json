@@ -1620,12 +1620,12 @@
     "linksValid": "Ces liens sont valables 30 jours.",
     "encrypt": "Chiffrer avec une phrase de passe",
     "encryptHint": "Fichier .tandem illisible sans elle. Elle n'est gardée nulle part : perdue, la sauvegarde ne peut plus être restaurée.",
-    "passphrase": "Phrase de passe",
-    "passphraseHint": "{min} caractères au moins ; quelques mots faciles à retenir, par exemple.",
-    "passphraseAgain": "Retapez la phrase de passe",
-    "passphraseMismatch": "Les deux phrases ne sont pas identiques.",
+    "phraseLabel": "Phrase de passe",
+    "phraseHint": "{min} caractères au moins ; quelques mots faciles à retenir, par exemple.",
+    "phraseAgain": "Retapez la phrase de passe",
+    "phraseMismatch": "Les deux phrases ne sont pas identiques.",
     "privateEncrypted": "Notez la phrase de passe à part : sans elle, personne ne peut ouvrir ce fichier, pas même vous.",
-    "restorePassphrase": "Cette sauvegarde est chiffrée : entrez la phrase de passe choisie au téléchargement.",
+    "restorePhrase": "Cette sauvegarde est chiffrée : entrez la phrase de passe choisie au téléchargement.",
     "restoreUnlock": "Déchiffrer et restaurer"
   },
   "twoFactor": {

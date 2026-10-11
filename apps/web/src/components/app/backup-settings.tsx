@@ -77,20 +77,20 @@ export function BackupSettings({ householdId }: { householdId: string }) {
       {encrypt && (
         <div className="flex flex-col gap-3">
           <Field
-            label={t('passphrase')}
+            label={t('phraseLabel')}
             type="password"
             autoComplete="new-password"
-            hint={t('passphraseHint', { min: BACKUP_PASSPHRASE_MIN })}
+            hint={t('phraseHint', { min: BACKUP_PASSPHRASE_MIN })}
             value={passphrase}
             onChange={(e) => setPassphrase(e.target.value)}
           />
           <Field
-            label={t('passphraseAgain')}
+            label={t('phraseAgain')}
             type="password"
             autoComplete="new-password"
             value={again}
             onChange={(e) => setAgain(e.target.value)}
-            error={mismatch ? t('passphraseMismatch') : undefined}
+            error={mismatch ? t('phraseMismatch') : undefined}
           />
         </div>
       )}

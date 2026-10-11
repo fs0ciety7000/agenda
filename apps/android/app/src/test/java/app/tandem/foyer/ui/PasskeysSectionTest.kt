@@ -58,7 +58,7 @@ class PasskeysSectionTest {
                     path == "/v1/auth/providers" ->
                         """{"google":false,"registration":true,"passwordReset":true,"androidPasskeys":$serverKnowsApp}"""
                     path == "/v1/me/passkeys/options" ->
-                        """{"challengeId":"6f1c0a52-8d2e-4b8f-9a51-0c7e1d1b2a3c","options":{"challenge":"xyz","rp":{"id":"tandem-agenda.app","name":"Tandem"}}}"""
+                        """{"challengeId":"00000000-0000-4000-8000-000000000001","options":{"challenge":"xyz","rp":{"id":"tandem-agenda.app","name":"Tandem"}}}"""
                     path == "/v1/me/passkeys" && request.method == "POST" ->
                         """{"id":"k2","name":"Robolectric","createdAt":"2026-10-11T10:00:00Z","lastUsedAt":null,"synced":true}"""
                     else -> list
@@ -111,7 +111,7 @@ class PasskeysSectionTest {
         assertEquals("xyz", Json.parseToJsonElement(options!!).jsonObject["challenge"]!!.jsonPrimitive.content)
         val saved = requests.last { it.method == "POST" && it.path == "/v1/me/passkeys" }
         val body = Json.parseToJsonElement(saved.body.readUtf8()).jsonObject
-        assertEquals("6f1c0a52-8d2e-4b8f-9a51-0c7e1d1b2a3c", body["challengeId"]!!.jsonPrimitive.content)
+        assertEquals("00000000-0000-4000-8000-000000000001", body["challengeId"]!!.jsonPrimitive.content)
         assertEquals("k2", body["response"]!!.jsonObject["id"]!!.jsonPrimitive.content)
         // Nommée d'après le téléphone.
         assertTrue(body.containsKey("name"))

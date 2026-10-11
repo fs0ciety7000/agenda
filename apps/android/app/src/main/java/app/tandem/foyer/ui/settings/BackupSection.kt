@@ -123,9 +123,9 @@ fun BackupSection(
             OutlinedTextField(
                 value = passphrase,
                 onValueChange = { passphrase = it },
-                label = { Text(stringResource(R.string.backup_passphrase)) },
+                label = { Text(stringResource(R.string.backup_phrase_label)) },
                 supportingText = {
-                    Text(pluralStringResource(R.plurals.backup_passphrase_hint, BACKUP_PASSPHRASE_MIN, BACKUP_PASSPHRASE_MIN))
+                    Text(pluralStringResource(R.plurals.backup_phrase_hint, BACKUP_PASSPHRASE_MIN, BACKUP_PASSPHRASE_MIN))
                 },
                 singleLine = true,
                 visualTransformation = PasswordVisualTransformation(),
@@ -136,10 +136,10 @@ fun BackupSection(
             OutlinedTextField(
                 value = again,
                 onValueChange = { again = it },
-                label = { Text(stringResource(R.string.backup_passphrase_again)) },
+                label = { Text(stringResource(R.string.backup_phrase_again)) },
                 isError = mismatch,
                 supportingText = if (mismatch) {
-                    { Text(stringResource(R.string.backup_passphrase_mismatch)) }
+                    { Text(stringResource(R.string.backup_phrase_mismatch)) }
                 } else {
                     null
                 },

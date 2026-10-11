@@ -815,12 +815,12 @@
     <!-- Sauvegarde chiffrée -->
     <string name="backup_encrypt">Encrypt with a passphrase</string>
     <string name="backup_encrypt_hint">A .tandem file that can\'t be read without it. It isn\'t stored anywhere: if you lose it, the backup can\'t be restored.</string>
-    <string name="backup_passphrase">Passphrase</string>
-    <plurals name="backup_passphrase_hint">
+    <string name="backup_phrase_label">Passphrase</string>
+    <plurals name="backup_phrase_hint">
         <item quantity="one">At least %1$d character; a few easy words, for example</item>
         <item quantity="other">At least %1$d characters; a few easy words, for example</item>
     </plurals>
-    <string name="backup_passphrase_again">Type the passphrase again</string>
-    <string name="backup_passphrase_mismatch">The two passphrases don\'t match.</string>
+    <string name="backup_phrase_again">Type the passphrase again</string>
+    <string name="backup_phrase_mismatch">The two passphrases don\'t match.</string>
     <string name="backup_private_encrypted">Write the passphrase down separately: without it, nobody can open this file, not even you.</string>
 </resources>

@@ -1620,12 +1620,12 @@
     "linksValid": "These links are valid for 30 days.",
     "encrypt": "Encrypt with a passphrase",
     "encryptHint": "A .tandem file that can’t be read without it. It isn’t stored anywhere: if you lose it, the backup can no longer be restored.",
-    "passphrase": "Passphrase",
-    "passphraseHint": "At least {min} characters; a few words that are easy to remember, for example.",
-    "passphraseAgain": "Type the passphrase again",
-    "passphraseMismatch": "The two passphrases don’t match.",
+    "phraseLabel": "Passphrase",
+    "phraseHint": "At least {min} characters; a few words that are easy to remember, for example.",
+    "phraseAgain": "Type the passphrase again",
+    "phraseMismatch": "The two passphrases don’t match.",
     "privateEncrypted": "Write the passphrase down separately: without it, nobody can open this file, not even you.",
-    "restorePassphrase": "This backup is encrypted: enter the passphrase chosen when it was downloaded.",
+    "restorePhrase": "This backup is encrypted: enter the passphrase chosen when it was downloaded.",
     "restoreUnlock": "Decrypt and restore"
   },
   "twoFactor": {
