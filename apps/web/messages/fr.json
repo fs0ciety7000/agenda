@@ -548,6 +548,12 @@
     "retry": "Réessayer",
     "report": "Signaler ce problème"
   },
+  "notFoundPage": {
+    "code": "Erreur 404",
+    "title": "Cette page est introuvable",
+    "body": "L'adresse a peut-être changé, ou la page n'existe plus. Vos tâches et vos listes sont toujours là.",
+    "home": "Retour à l'accueil"
+  },
   "privacyPolicy": {
     "title": "Politique de confidentialité",
     "updated": "Dernière mise à jour : 11 octobre 2026",

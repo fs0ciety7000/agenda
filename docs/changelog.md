@@ -37,12 +37,19 @@ d'elle-même (ou via Google Play).
   images et envoient les e-mails, ainsi que du serveur web : plus aucune faille connue dans le code
   en production, et la vérification bloque désormais chaque modification.
 
-### Passkeys dans l'app Android
+### Passkeys dans l'app Android (#95)
 
 - ✨ **Se connecter avec une passkey** dans l'app Android : empreinte, visage ou code du
   téléphone, sans mot de passe (Android 9 et plus).
 - ✨ **Réglages → Compte → Passkeys** dans l'app : voir, ajouter ou supprimer vos passkeys. Celles
   du site (gestionnaire de mots de passe Google) marchent aussi dans l'app.
+
+### Page introuvable
+
+- 🛠 **Adresse inconnue** : une page claire, dans votre langue, avec un bouton « Retour à
+  l'accueil », au lieu de la page anglaise par défaut.
+- 🛠 **Site vitrine** : même chose sur decouvrir.tandem-agenda.app, en français, en anglais ou
+  en néerlandais selon la langue de votre navigateur, avec un lien vers l'accueil.
 
 ## 10 octobre 2026
 

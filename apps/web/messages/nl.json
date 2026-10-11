@@ -548,6 +548,12 @@
     "retry": "Opnieuw proberen",
     "report": "Dit probleem melden"
   },
+  "notFoundPage": {
+    "code": "Fout 404",
+    "title": "Deze pagina is niet gevonden",
+    "body": "Het adres is misschien gewijzigd, of de pagina bestaat niet meer. Je taken en lijsten staan er nog.",
+    "home": "Terug naar de startpagina"
+  },
   "privacyPolicy": {
     "title": "Privacybeleid",
     "updated": "Laatst bijgewerkt: 11 oktober 2026",

@@ -8,6 +8,8 @@ const config: NextConfig = {
   trailingSlash: true,
   images: { unoptimized: true },
   transpilePackages: ['@agenda/design-tokens'],
+  // Plusieurs layouts racines (un par langue) : la page 404 a son propre <html> (global-not-found.tsx).
+  experimental: { globalNotFound: true },
 };
 
 export default config;
