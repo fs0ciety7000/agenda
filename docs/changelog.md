@@ -13,6 +13,13 @@ d'elle-même (ou via Google Play).
 **Légende** : ✨ nouveau · 🛠 amélioration · 🐞 correction · 🔒 sécurité et confidentialité ·
 ⚙️ technique
 
+## 11 octobre 2026
+
+### Page introuvable
+
+- 🛠 **Adresse inconnue** : une page claire, dans votre langue, avec un bouton « Retour à
+  l'accueil », au lieu de la page anglaise par défaut.
+
 ## 10 octobre 2026
 
 ### Nouvelle adresse de contact

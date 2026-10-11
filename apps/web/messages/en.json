@@ -544,6 +544,12 @@
     "retry": "Try again",
     "report": "Report this problem"
   },
+  "notFoundPage": {
+    "code": "Error 404",
+    "title": "This page can't be found",
+    "body": "The address may have changed, or the page no longer exists. Your tasks and lists are still there.",
+    "home": "Back to home"
+  },
   "privacyPolicy": {
     "title": "Privacy policy",
     "updated": "Last updated: 10 October 2026",
