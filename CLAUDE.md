@@ -50,6 +50,8 @@ Fichiers importés, à respecter au même titre que celui-ci :
   (`ANDROID_CERT_SHA256`, empreintes Play et APK) ; version vide avec `-Ptandem.passkeys=false` (#95).
 - Double authentification : TOTP (secret chiffré) + 10 codes de secours hachés, après le mot de passe
   seulement (passkeys et Google exemptés) ; activée sur le site, code demandé aussi par Android (#95).
+- Alerte de connexion : e-mail si l'appareil (app ou navigateur + système, sans version) n'a jamais
+  ouvert de session sur le compte ; jamais à la première connexion ni au rafraîchissement (#95).
 - Notes sensibles : contenu jamais renvoyé hors de `…/reveal` ; site = mot de passe (coffre ouvert 5 min
   par session), Android = empreinte ou code vérifiés sur l'appareil ; pas de chiffrement de bout en bout (#93).
 

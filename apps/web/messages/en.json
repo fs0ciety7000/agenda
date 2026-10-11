@@ -566,7 +566,7 @@
     },
     "use": {
       "title": "Why",
-      "body": "To show and share household tasks, send reminders, sync the shared calendar if you enable it, let you reset your password by email, and diagnose technical errors. Legal basis: providing the service you use and, for Google Calendar, your consent (which you can withdraw at any time)."
+      "body": "To show and share household tasks, send reminders, sync the shared calendar if you enable it, let you reset your password by email, warn you by email of a sign-in from a new device, and diagnose technical errors. Legal basis: providing the service you use and, for Google Calendar, your consent (which you can withdraw at any time)."
     },
     "processors": {
       "title": "Service providers",

@@ -17,7 +17,8 @@ import { env } from '../config/env';
 import { PrismaService } from '../prisma/prisma.service';
 import { PasswordService } from './password.service';
 import { TokenService } from './token.service';
-import { mailLocale } from '../mail/templates';
+import { MailService } from '../mail/mail.service';
+import { mailLocale, newDeviceEmail } from '../mail/templates';
 
 export interface IssuedTokens {
   user: MeResponse;
@@ -40,6 +41,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly passwords: PasswordService,
     private readonly tokens: TokenService,
+    private readonly mail: MailService,
   ) {}
 
   async register(input: RegisterInput, userAgent?: string): Promise<IssuedTokens> {
@@ -260,9 +262,54 @@ export class AuthService {
     await this.prisma.authIdentity.deleteMany({ where: { userId, provider: 'GOOGLE' } });
   }
 
-  /** Nouvelle session pour un utilisateur déjà authentifié (Google Sign-In). */
-  startSession(user: User, userAgent?: string): Promise<IssuedTokens> {
-    return this.issue(user, randomUUID(), userAgent);
+  /**
+   * Nouvelle session pour un utilisateur authentifié (mot de passe, double authentification,
+   * passkey, Google). Depuis un appareil jamais vu sur ce compte, un e-mail le prévient.
+   */
+  async startSession(user: User, userAgent?: string): Promise<IssuedTokens> {
+    const known = await this.knownDevice(user.id, userAgent);
+    const issued = await this.issue(user, randomUUID(), userAgent);
+    // Sans attendre l'envoi : la connexion n'est jamais retardée ni bloquée par l'e-mail.
+    if (!known) void this.alertNewDevice(user, userAgent);
+    return issued;
+  }
+
+  /**
+   * Même appareil (application, navigateur et système) déjà connecté à ce compte ? Un compte sans
+   * aucune session (première connexion) n'est pas alerté.
+   */
+  private async knownDevice(userId: string, userAgent?: string): Promise<boolean> {
+    const previous = await this.prisma.session.findMany({
+      where: { userId },
+      select: { userAgent: true },
+      orderBy: { createdAt: 'desc' },
+      take: 200,
+    });
+    if (previous.length === 0) return true;
+    const key = deviceKey(userAgent);
+    return previous.some((s) => deviceKey(s.userAgent) === key);
+  }
+
+  private async alertNewDevice(user: User, userAgent?: string): Promise<void> {
+    try {
+      const membership = await this.prisma.householdMember.findFirst({
+        where: { userId: user.id, leftAt: null },
+        select: { household: { select: { timezone: true } } },
+      });
+      const device = parseUserAgent(userAgent);
+      const email = newDeviceEmail(mailLocale(user.locale), {
+        name: user.displayName,
+        kind: device.kind,
+        browser: device.browser,
+        os: device.os,
+        at: new Date(),
+        timeZone: membership?.household.timezone ?? 'Europe/Brussels',
+        url: `${env().WEB_ORIGIN}/settings#s-account`,
+      });
+      await this.mail.send({ to: user.email, ...email });
+    } catch (e) {
+      this.logger.warn(`New device alert not sent: ${(e as Error).message}`);
+    }
   }
 
   async me(userId: string): Promise<MeResponse> {
@@ -323,6 +370,13 @@ function toMe(user: User, googleLinked = false): MeResponse {
     isAdmin: isAdminEmail(user.email),
     twoFactorEnabled: user.totpEnabledAt !== null,
   };
+}
+
+/** Appareil reconnu par l'application, le navigateur et le système (sans version ni empreinte). */
+function deviceKey(userAgent: string | null | undefined): string {
+  const d = parseUserAgent(userAgent);
+  // Une mise à jour du système (Android 14 → 15) ne fait pas un nouvel appareil.
+  return [d.kind, d.browser, d.os?.replace(/\s[\d.]+$/, '')].join('|');
 }
 
 /** Administrateur de l'instance (variable ADMIN_EMAILS). */

@@ -45,6 +45,7 @@ test('double authentification : activée dans les Réglages, puis connexion avec
   await scan.getByRole('button', { name: 'Valider' }).click();
 
   const codesDialog = page.getByRole('dialog', { name: 'Vos codes de secours' });
+  await expect(codesDialog.getByRole('listitem')).toHaveCount(10);
   const codes = (await codesDialog.getByRole('listitem').allInnerTexts()).map((c) => c.trim());
   expect(codes).toHaveLength(10);
   await codesDialog.getByRole('button', { name: "C'est noté" }).click();

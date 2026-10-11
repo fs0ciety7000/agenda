@@ -15,6 +15,11 @@ d'elle-même (ou via Google Play).
 
 ## 11 octobre 2026
 
+### Alerte de connexion (#95)
+
+- 🔒 ✨ **E-mail « Nouvelle connexion à votre compte »** quand il s'ouvre depuis un appareil jamais
+  vu, avec un lien vers les appareils connectés pour déconnecter les autres.
+
 ### Sauvegarde chiffrée (#95)
 
 - 🔒 ✨ **Sauvegarde chiffrée** en option : une phrase de passe au téléchargement (site et app)

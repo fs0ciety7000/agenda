@@ -566,7 +566,7 @@
     },
     "use": {
       "title": "Pourquoi",
-      "body": "Afficher et partager les tâches du foyer, envoyer les rappels, synchroniser le calendrier partagé si vous l'activez, vous permettre de réinitialiser votre mot de passe par e-mail, et diagnostiquer les erreurs techniques. Base légale : l'exécution du service que vous utilisez et, pour Google Calendar, votre consentement (révocable à tout moment)."
+      "body": "Afficher et partager les tâches du foyer, envoyer les rappels, synchroniser le calendrier partagé si vous l'activez, vous permettre de réinitialiser votre mot de passe par e-mail, vous prévenir par e-mail d'une connexion depuis un nouvel appareil, et diagnostiquer les erreurs techniques. Base légale : l'exécution du service que vous utilisez et, pour Google Calendar, votre consentement (révocable à tout moment)."
     },
     "processors": {
       "title": "Prestataires",

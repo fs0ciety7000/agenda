@@ -211,8 +211,8 @@ Demandé le 11 octobre :
   secours) ; gestion sur le site, code demandé aussi par l'app Android (M) 🌐🤖⚙️ (#95)
 - [x] Sécurité : sauvegarde du foyer chiffrée par une phrase de passe, en option (fichier
   `.tandem`, AES-256-GCM, clé tirée par scrypt) ; site et Android (S) 🌐🤖⚙️ (#95)
-- [ ] Sécurité : e-mail « Nouvel appareil connecté », avec un lien pour déconnecter les autres
-  appareils (S) ⚙️
+- [x] Sécurité : e-mail « Nouvel appareil connecté » (navigateur ou app et système jamais vus sur
+  le compte), avec un lien vers les appareils connectés (S) ⚙️ (#95)
 
 - [x] Android : connexion par passkey (Credential Manager) et Réglages → Passkeys (voir, ajouter,
   supprimer) ; `assetlinks.json` servi par le site, empreintes des certificats dans

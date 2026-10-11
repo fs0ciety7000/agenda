@@ -26,6 +26,11 @@ description: Mot de passe, Google, sessions, export et suppression de ses donné
   connexion, et **Réglages → Compte → Passkeys** pour voir, ajouter ou supprimer les vôtres. Une
   passkey créée sur le site avec le gestionnaire de mots de passe Google marche aussi dans l'app,
   et inversement.
+- **Alerte de connexion** : quand votre compte s'ouvre depuis un appareil qu'il n'a jamais vu
+  (autre navigateur, autre système, ou l'app Android), un e-mail vous le dit, avec l'appareil et
+  l'heure. Ce n'est pas vous ? Le bouton de l'e-mail mène aux **Appareils connectés** : déconnectez
+  les autres, puis changez votre mot de passe. Rien à faire si c'était vous ; pas d'e-mail à la
+  toute première connexion ni pour un appareil déjà connu.
 - **Double authentification** (**Réglages → Compte**, sur le site) : après le mot de passe, un
   code à 6 chiffres de votre application d'authentification (Google Authenticator, Aegis,
   1Password…). **Activer** demande votre mot de passe, affiche un QR code à scanner, puis le premier

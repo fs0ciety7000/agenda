@@ -58,7 +58,7 @@ cours pendant quelques minutes).
 |---|---|---|---|
 | **Hébergeur du serveur** (VPS de l'administrateur, Coolify) | héberge l'app et la base | toutes (chiffrées en transit) | toujours |
 | **Cloudflare** | DNS, HTTPS, protection | trafic (chiffré de bout en bout jusqu'à Cloudflare) | toujours |
-| **Serveur d'e-mails** (SMTP : Stalwart auto-hébergé par l'administrateur ; ou Resend, Brevo…) | mot de passe oublié, accusés, alertes admin | adresse e-mail, contenu du message | à l'envoi |
+| **Serveur d'e-mails** (SMTP : Stalwart auto-hébergé par l'administrateur ; ou Resend, Brevo…) | mot de passe oublié, accusés, alertes admin, alerte « nouvel appareil » (déduite des sessions existantes : navigateur et système, rien de plus) | adresse e-mail, contenu du message | à l'envoi |
 | **Resend** (réception) | tâches par e-mail | e-mails transférés à l'adresse personnelle | si activé |
 | **Google** | connexion Google, Google Agenda | identifiant et e-mail ; événements des tâches publiées | si utilisé |
 | **Firebase Cloud Messaging** | notifications instantanées Android | jeton de l'appareil et un signal « du nouveau » — **jamais** le contenu d'une tâche | si configuré |
