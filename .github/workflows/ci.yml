@@ -102,6 +102,8 @@ jobs:
     env:
       DATABASE_URL: postgresql://agenda:agenda@localhost:5432/agenda?schema=public
       JWT_SECRET: ci-secret-ci-secret-ci-secret-ci-secret-1234
+      # Clé factice : double authentification et jetons chiffrés disponibles, comme en production.
+      TOKEN_ENCRYPTION_KEY: AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=
       NODE_ENV: production
       AUTH_RATE_LIMIT: '100'
       # Tous les navigateurs de test partagent l'IP locale : la limite de production (600/min)
