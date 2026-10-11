@@ -19,6 +19,8 @@ d'elle-même (ou via Google Play).
 
 - 🛠 **Adresse inconnue** : une page claire, dans votre langue, avec un bouton « Retour à
   l'accueil », au lieu de la page anglaise par défaut.
+- 🛠 **Site vitrine** : même chose sur decouvrir.tandem-agenda.app, en français, en anglais ou
+  en néerlandais selon la langue de votre navigateur, avec un lien vers l'accueil.
 
 ## 10 octobre 2026
 
