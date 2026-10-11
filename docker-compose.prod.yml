@@ -81,6 +81,8 @@ services:
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       # Codes-barres : nom des produits (Open Food Facts) ; « off » pour ne jamais l'interroger.
       OPEN_FOOD_FACTS_URL: ${OPEN_FOOD_FACTS_URL:-https://world.openfoodfacts.org}
+      # Passkeys dans l'app Android : empreintes SHA-256 des certificats de l'app (docs/android.md).
+      ANDROID_CERT_SHA256: ${ANDROID_CERT_SHA256:-}
     depends_on:
       postgres:
         condition: service_healthy

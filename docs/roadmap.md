@@ -202,6 +202,12 @@ Découvert pendant le lot 6 :
   ancien membre » (notes, historique) jusqu'au rechargement ; rafraîchir la session à son
   arrivée (S) 🌐
 
+Demandé le 11 octobre :
+
+- [x] Android : connexion par passkey (Credential Manager) et Réglages → Passkeys (voir, ajouter,
+  supprimer) ; `assetlinks.json` servi par le site, empreintes des certificats dans
+  `ANDROID_CERT_SHA256` (M) 🤖⚙️ (#95)
+
 Demandé le 10 octobre :
 
 - [x] Site vitrine : crédit de l'éditeur en pied de page, « OCC Interactive — Une division de

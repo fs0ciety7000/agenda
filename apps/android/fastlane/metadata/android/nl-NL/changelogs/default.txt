@@ -1,8 +1,7 @@
-Boodschappen: barcode live scannen; gastlink die vanzelf uitgaat.
-• Back-up van het huishouden downloaden; gevoelige notities beschermd.
-• Notities: eerdere versies terugzetten.
+Aanmelden met een toegangssleutel: vingerafdruk, gezicht of pincode.
+• Toegangssleutels toevoegen of verwijderen in Instellingen.
+• Boodschappen: barcode live scannen; gastlink die vanzelf uitgaat.
+• Back-up van het huishouden; gevoelige notities beschermd, versies terugzetten.
 • Kasticket inlezen: bedrag en datum van de foto gelezen.
 • Delen naar Tandem: een link wordt een taak, notitie of boodschap.
-• Tegel "Taak toevoegen" in snelle instellingen.
-• Budget per categorie; "Ongedaan maken" bij notities.
-• Lade "Meer": Uitgaven, Notities, Data…
+• Tegel "Taak toevoegen"; budget per categorie.

@@ -150,6 +150,7 @@ manquent. Modèle complet : `.env.prod.example`.
 | `WEB_PUSH_SUBJECT` | facultatif | contact pour les services de push (`mailto:…` ou `https://…`) ; défaut : `WEB_ORIGIN` |
 | `WEBAUTHN_RP_ID` | facultatif : domaine des passkeys (à laisser vide en général) | défaut : le domaine de `WEB_ORIGIN` (`tandem-agenda.app`). Doit être ce domaine ou un domaine parent ; sinon il est ignoré (erreur dans les journaux). Ne pas changer après la création de passkeys : elles y sont liées |
 | `WEBAUTHN_ORIGINS` | facultatif : origines acceptées pour les passkeys (à laisser vide en général) | défaut : `WEB_ORIGIN` ; plusieurs, séparées par des virgules, avec `https://` (migration de domaine) |
+| `ANDROID_CERT_SHA256` | facultatif : passkeys dans l'app Android | empreintes SHA-256 des certificats qui signent l'app, séparées par des virgules (`AB:CD:…`) : celle de Google Play (Play Console → *Intégrité de l'app* → *Signature de l'app*) et celle de la clé des APK directs. Pas un secret : publiées dans `/.well-known/assetlinks.json`. Vide = bouton passkey masqué dans l'app (cf. [`android.md`](android.md)) |
 
 **Clés VAPID (notifications du site).** À générer une seule fois : Coolify → service `api` →
 *Terminal* → `node -e "console.log(require('web-push').generateVAPIDKeys())"`, puis copier

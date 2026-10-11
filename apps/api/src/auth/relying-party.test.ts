@@ -15,7 +15,10 @@ beforeEach(() => {
   process.env.JWT_SECRET ||= 'unit-secret-unit-secret-unit-secret-1234';
   process.env.WEB_ORIGIN = 'https://tandem-agenda.app';
 });
-afterEach(() => set());
+afterEach(() => {
+  delete process.env.ANDROID_CERT_SHA256;
+  set();
+});
 
 describe('passkeys : domaine et origines', () => {
   it('par défaut : WEB_ORIGIN', () => {
@@ -41,6 +44,18 @@ describe('passkeys : domaine et origines', () => {
     expect(relyingParty()).toEqual({
       id: 'tandem-agenda.app',
       origins: ['https://tandem-agenda.app'],
+    });
+  });
+
+  it('app Android déclarée : son origine s’ajoute, le domaine ne change pas', () => {
+    process.env.ANDROID_CERT_SHA256 = `${'0f'.repeat(32)}`;
+    set();
+    expect(relyingParty()).toEqual({
+      id: 'tandem-agenda.app',
+      origins: [
+        'https://tandem-agenda.app',
+        `android:apk-key-hash:${Buffer.alloc(32, 0x0f).toString('base64url')}`,
+      ],
     });
   });
 });

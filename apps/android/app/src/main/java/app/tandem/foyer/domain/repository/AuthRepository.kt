@@ -7,6 +7,23 @@ import kotlinx.coroutines.flow.Flow
 enum class AuthError {
     INVALID_CREDENTIALS, RATE_LIMITED, NETWORK, UNKNOWN,
     GOOGLE_FAILED, GOOGLE_EMAIL_EXISTS, REGISTRATION_CLOSED, ACCOUNT_DISABLED,
+    /** Passkey refusée par le serveur ou par le téléphone. */
+    PASSKEY_FAILED,
+    /** Aucune passkey Tandem sur le téléphone. */
+    NO_PASSKEY,
+    /** Fenêtre de passkey fermée par l'utilisateur : rien à afficher. */
+    PASSKEY_CANCELLED,
+}
+
+/** Résultat d'une demande au gestionnaire de passkeys du téléphone. */
+sealed interface PasskeyOutcome {
+    /** Réponse WebAuthn (JSON) à renvoyer au serveur. */
+    data class Done(val responseJson: String) : PasskeyOutcome
+    data object Cancelled : PasskeyOutcome
+    data object NoPasskey : PasskeyOutcome
+    /** Création : le téléphone a déjà une passkey de ce compte. */
+    data object AlreadyExists : PasskeyOutcome
+    data object Failed : PasskeyOutcome
 }
 
 sealed interface AuthResult {
@@ -28,6 +45,16 @@ interface AuthRepository {
     suspend fun completeGoogleSignIn(code: String?, error: String?): AuthResult
     suspend fun currentUser(): User?
     suspend fun logout()
+
+    /** Passkeys dans l'app proposées par le serveur ? (false hors ligne). */
+    suspend fun passkeysAvailable(): Boolean = false
+
+    /**
+     * Connexion par passkey : demande un défi au serveur, le passe à [sign] (gestionnaire de
+     * passkeys du téléphone), puis échange la réponse contre une session.
+     */
+    suspend fun loginWithPasskey(sign: suspend (optionsJson: String) -> PasskeyOutcome): AuthResult =
+        AuthResult.Failure(AuthError.PASSKEY_FAILED)
 
     /** Langue du compte (« fr » ou « en ») : e-mails et site. Sans effet hors ligne. */
     suspend fun setLanguage(locale: String) {}

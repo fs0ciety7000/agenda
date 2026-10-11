@@ -13,6 +13,15 @@ d'elle-même (ou via Google Play).
 **Légende** : ✨ nouveau · 🛠 amélioration · 🐞 correction · 🔒 sécurité et confidentialité ·
 ⚙️ technique
 
+## 11 octobre 2026
+
+### Passkeys dans l'app Android
+
+- ✨ **Se connecter avec une passkey** dans l'app Android : empreinte, visage ou code du
+  téléphone, sans mot de passe (Android 9 et plus).
+- ✨ **Réglages → Compte → Passkeys** dans l'app : voir, ajouter ou supprimer vos passkeys. Celles
+  du site (gestionnaire de mots de passe Google) marchent aussi dans l'app.
+
 ## 10 octobre 2026
 
 ### Nouvelle adresse de contact

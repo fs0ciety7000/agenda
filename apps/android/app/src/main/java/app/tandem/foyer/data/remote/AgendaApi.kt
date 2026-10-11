@@ -40,6 +40,24 @@ interface AgendaApi {
     @GET("v1/auth/providers")
     suspend fun providers(): Response<ProvidersDto>
 
+    @POST("v1/auth/passkeys/options")
+    suspend fun passkeyLoginOptions(@Body body: JsonObject = JsonObject(emptyMap())): Response<PasskeyOptionsDto>
+
+    @POST("v1/auth/passkeys/login")
+    suspend fun passkeyLogin(@Body body: PasskeyResponseBody): Response<AuthResponseDto>
+
+    @GET("v1/me/passkeys")
+    suspend fun passkeys(): Response<List<PasskeyDto>>
+
+    @POST("v1/me/passkeys/options")
+    suspend fun passkeyRegisterOptions(@Body body: JsonObject = JsonObject(emptyMap())): Response<PasskeyOptionsDto>
+
+    @POST("v1/me/passkeys")
+    suspend fun addPasskey(@Body body: PasskeyResponseBody): Response<PasskeyDto>
+
+    @DELETE("v1/me/passkeys/{id}")
+    suspend fun deletePasskey(@Path("id") id: String): Response<Unit>
+
     @POST("v1/auth/google/mobile/exchange")
     suspend fun googleMobileExchange(@Body body: MobileExchangeRequest): Response<AuthResponseDto>
 

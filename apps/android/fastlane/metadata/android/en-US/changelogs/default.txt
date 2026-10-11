@@ -1,9 +1,8 @@
-Shopping: live barcode scan; guest link that expires.
-• Download the household backup; sensitive notes protected.
-• Notes: previous versions you can restore.
+Sign in with a passkey: your phone's fingerprint, face or PIN.
+• Add or delete passkeys in Settings.
+• Shopping: live barcode scan; guest link that expires.
+• Household backup; sensitive notes protected, versions you can restore.
 • Read a receipt: amount and date read from the photo.
 • Share to Tandem: a link becomes a task, a note or shopping items.
-• "Add a task" tile in Quick Settings.
-• Category budgets; "Undo" on notes.
+• "Add a task" tile; category budgets.
 • "More" drawer: Expenses, Notes, Dates…
-• Expenses: who owes what.

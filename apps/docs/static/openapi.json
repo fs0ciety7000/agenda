@@ -1130,7 +1130,7 @@
             }
           }
         },
-        "summary": "Méthodes de connexion disponibles (Google configuré ou non)",
+        "summary": "Méthodes de connexion disponibles (Google, passkeys dans l'app Android)",
         "tags": [
           "auth"
         ],
@@ -6511,6 +6511,33 @@
           }
         },
         "summary": "Dernière version de l'app Android",
+        "tags": [
+          "app"
+        ],
+        "security": []
+      }
+    },
+    "/v1/app/android/assetlinks.json": {
+      "get": {
+        "description": "Liens d'association de l'app Android (Digital Asset Links), servis par le site à `/.well-known/assetlinks.json` : Android n'accepte une passkey du domaine dans l'app que si ce fichier nomme l'app et l'empreinte de son certificat.",
+        "operationId": "AndroidReleaseController_assetLinks_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Succès"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Liens d'association de l'app Android (Digital Asset Links), servis par le site à `/.well-known/assetlinks.json` ",
         "tags": [
           "app"
         ],
@@ -12274,12 +12301,16 @@
           },
           "passwordReset": {
             "type": "boolean"
+          },
+          "androidPasskeys": {
+            "type": "boolean"
           }
         },
         "required": [
           "google",
           "registration",
-          "passwordReset"
+          "passwordReset",
+          "androidPasskeys"
         ],
         "additionalProperties": false
       },

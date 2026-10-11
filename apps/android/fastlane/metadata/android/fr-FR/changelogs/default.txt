@@ -1,9 +1,8 @@
-Courses : code-barres en direct ; lien invité qui se coupe seul.
-• Sauvegarde du foyer à télécharger ; notes sensibles protégées.
-• Notes : versions précédentes, restaurables.
+Connexion par passkey : empreinte, visage ou code du téléphone.
+• Passkeys à ajouter ou supprimer dans les Réglages.
+• Courses : code-barres en direct ; lien invité qui se coupe seul.
+• Sauvegarde du foyer ; notes sensibles protégées, versions restaurables.
 • Lire un ticket : montant et date lus sur la photo.
 • Partager vers Tandem : un lien devient tâche, note ou courses.
-• Tuile « Ajouter une tâche » dans les réglages rapides.
-• Budgets par catégorie ; « Annuler » sur les notes.
+• Tuile « Ajouter une tâche » ; budgets par catégorie.
 • Tiroir « Plus » : Dépenses, Notes, Dates…
-• Dépenses : qui doit combien.

@@ -22,8 +22,10 @@ description: Mot de passe, Google, sessions, export et suppression de ses donné
   **Se connecter avec une passkey** sur la page de connexion. La passkey reste sur votre appareil
   (empreinte, visage ou code) ou dans votre trousseau (iCloud, Google) ; l'app ne garde qu'une
   clé publique, inutilisable par quelqu'un d'autre. Une passkey par appareil, supprimable à tout
-  moment. Sur l'app Android, la connexion reste par mot de passe ou Google pour l'instant ; les
-  passkeys fonctionnent sur le site, y compris dans Chrome sur Android.
+  moment. Sur l'app Android (Android 9 et plus) : **Se connecter avec une passkey** sur l'écran de
+  connexion, et **Réglages → Compte → Passkeys** pour voir, ajouter ou supprimer les vôtres. Une
+  passkey créée sur le site avec le gestionnaire de mots de passe Google marche aussi dans l'app,
+  et inversement.
 - **Lier / délier Google** dans **Réglages → Données & confidentialité** (définissez d'abord un
   mot de passe pour pouvoir délier Google).
 

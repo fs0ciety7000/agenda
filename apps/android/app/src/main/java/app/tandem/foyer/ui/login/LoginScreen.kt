@@ -4,6 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +17,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -45,6 +48,8 @@ fun LoginScreen(
     onSignedIn: () -> Unit,
     onOpenWeb: (path: String) -> Unit = {},
     onGoogle: () -> Unit = {},
+    /** Connexion par passkey (null : pas de Credential Manager sur ce téléphone). */
+    onPasskey: (() -> Unit)? = null,
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     LaunchedEffect(state.signedIn) { if (state.signedIn) onSignedIn() }
@@ -103,13 +108,27 @@ fun LoginScreen(
                     Text(stringResource(R.string.sign_in))
                 }
             }
-            if (state.googleAvailable) {
+            val passkey = onPasskey.takeIf { state.passkeysAvailable }
+            if (state.googleAvailable || passkey != null) {
                 Text(
                     stringResource(R.string.or),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                 )
+            }
+            if (passkey != null) {
+                OutlinedButton(
+                    onClick = passkey,
+                    enabled = !state.isSubmitting,
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+                ) {
+                    Icon(painterResource(R.drawable.ic_passkey), contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.sign_in_with_passkey))
+                }
+            }
+            if (state.googleAvailable) {
                 OutlinedButton(
                     onClick = onGoogle,
                     enabled = !state.isSubmitting,
@@ -138,4 +157,6 @@ private fun AuthError.messageRes(): Int = when (this) {
     AuthError.GOOGLE_EMAIL_EXISTS -> R.string.error_google_email_exists
     AuthError.REGISTRATION_CLOSED -> R.string.error_registration_closed
     AuthError.ACCOUNT_DISABLED -> R.string.error_account_disabled
+    AuthError.PASSKEY_FAILED, AuthError.PASSKEY_CANCELLED -> R.string.error_passkey_failed
+    AuthError.NO_PASSKEY -> R.string.error_no_passkey
 }

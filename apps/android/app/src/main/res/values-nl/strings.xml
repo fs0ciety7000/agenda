@@ -776,4 +776,24 @@
     <string name="backup_private">Hou dit bestand voor jezelf: het bevat de gegevens van het huishouden leesbaar, gevoelige notities inbegrepen.</string>
     <string name="backup_unlock_title">Back-up downloaden</string>
     <string name="backup_unlock_subtitle">Hij bevat de tekst van gevoelige notities</string>
+    <!-- Passkeys (connexion et Réglages) -->
+    <string name="sign_in_with_passkey">Aanmelden met een toegangssleutel</string>
+    <string name="error_passkey_failed">Aanmelden met een toegangssleutel is niet gelukt. Probeer het opnieuw of gebruik je wachtwoord.</string>
+    <string name="error_no_passkey">Geen toegangssleutel voor Tandem op deze telefoon. Meld je op een andere manier aan en voeg er daarna een toe in Instellingen.</string>
+    <string name="passkeys_title">Toegangssleutels</string>
+    <string name="passkeys_intro">Meld je aan zonder wachtwoord, met de vingerafdruk, het gezicht of de pincode van je telefoon. Veiliger dan een wachtwoord: niets te onthouden, niets te stelen.</string>
+    <string name="passkeys_loading">Laden…</string>
+    <string name="passkeys_none">Nog geen toegangssleutel.</string>
+    <string name="passkeys_add">Een toegangssleutel toevoegen</string>
+    <string name="passkeys_added">Toegangssleutel toegevoegd: je kunt je er nu mee aanmelden.</string>
+    <string name="passkeys_already_here">Dit account heeft al een toegangssleutel op deze telefoon.</string>
+    <string name="passkeys_error">De toegangssleutel kon niet worden toegevoegd. Probeer het opnieuw.</string>
+    <string name="passkeys_offline">Voor toegangssleutels is een verbinding nodig.</string>
+    <string name="passkeys_add_on_site">Een toegangssleutel toevoegen doe je via Instellingen op de website.</string>
+    <string name="passkeys_created">Toegevoegd op %1$s</string>
+    <string name="passkeys_last_used">Gebruikt op %1$s</string>
+    <string name="passkeys_synced">gesynchroniseerd</string>
+    <string name="passkeys_remove">“%1$s” verwijderen</string>
+    <string name="passkeys_confirm_remove">Deze toegangssleutel verwijderen? Je kunt je er dan niet meer mee aanmelden.</string>
+    <string name="passkeys_removed">Toegangssleutel verwijderd.</string>
 </resources>

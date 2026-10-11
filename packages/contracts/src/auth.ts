@@ -72,6 +72,8 @@ export const AuthProvidersDto = z.object({
   google: z.boolean(),
   registration: z.boolean(),
   passwordReset: z.boolean(),
+  /** Passkeys dans l'app Android (certificats de l'app déclarés sur le serveur). */
+  androidPasskeys: z.boolean(),
 });
 export type AuthProvidersDto = z.infer<typeof AuthProvidersDto>;
 

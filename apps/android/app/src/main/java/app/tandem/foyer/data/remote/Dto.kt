@@ -50,7 +50,31 @@ data class ClientErrorRequest(
 data class MobileExchangeRequest(val code: String, val codeVerifier: String)
 
 @Serializable
-data class ProvidersDto(val google: Boolean = false, val registration: Boolean = true, val passwordReset: Boolean = false)
+data class ProvidersDto(
+    val google: Boolean = false,
+    val registration: Boolean = true,
+    val passwordReset: Boolean = false,
+    /** Passkeys dans l'app (certificats de l'app déclarés sur le serveur). */
+    val androidPasskeys: Boolean = false,
+)
+
+/** Défi WebAuthn : options à passer au Credential Manager, identifiant à renvoyer. */
+@Serializable
+data class PasskeyOptionsDto(val challengeId: String, val options: JsonObject)
+
+/** Réponse du Credential Manager renvoyée au serveur (connexion ou création). */
+@Serializable
+data class PasskeyResponseBody(val challengeId: String, val response: JsonObject, val name: String? = null)
+
+@Serializable
+data class PasskeyDto(
+    val id: String,
+    val name: String,
+    val createdAt: String,
+    val lastUsedAt: String? = null,
+    /** Synchronisée entre appareils (gestionnaire de mots de passe Google, trousseau iCloud…). */
+    val synced: Boolean = false,
+)
 
 @Serializable
 data class UpdateMeRequest(val locale: String)

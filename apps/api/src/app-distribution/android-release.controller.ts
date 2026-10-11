@@ -4,6 +4,7 @@ import type { Response } from 'express';
 import { Readable } from 'node:stream';
 import type { ReadableStream } from 'node:stream/web';
 import { Public } from '../common/request-context';
+import { ANDROID_PACKAGE, androidFingerprints } from '../auth/passkeys.service';
 import { env } from '../config/env';
 import { AndroidReleaseService } from './android-release.service';
 
@@ -32,6 +33,28 @@ export class AndroidReleaseController {
       // Version dans l'adresse : un cache intermédiaire ne peut pas resservir un ancien APK.
       apkUrl: `${env().WEB_ORIGIN}/v1/app/android/tandem.apk?v=${release.versionCode}`,
     };
+  }
+
+  /**
+   * Liens d'association de l'app Android (Digital Asset Links), servis par le site à
+   * `/.well-known/assetlinks.json` : Android n'accepte une passkey du domaine dans l'app que si
+   * ce fichier nomme l'app et l'empreinte de son certificat.
+   */
+  @Get('assetlinks.json')
+  assetLinks(@Res({ passthrough: true }) res: Response) {
+    res.setHeader('cache-control', 'public, max-age=3600');
+    const fingerprints = androidFingerprints();
+    if (!fingerprints.length) return [];
+    return [
+      {
+        relation: ['delegate_permission/common.get_login_creds'],
+        target: {
+          namespace: 'android_app',
+          package_name: ANDROID_PACKAGE,
+          sha256_cert_fingerprints: fingerprints,
+        },
+      },
+    ];
   }
 
   /** Télécharger l'APK Android. */

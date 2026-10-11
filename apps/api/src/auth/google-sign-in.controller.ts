@@ -67,13 +67,14 @@ export class GoogleSignInController {
     private readonly mail: MailService,
   ) {}
 
-  /** Méthodes de connexion disponibles (Google configuré ou non). */
+  /** Méthodes de connexion disponibles (Google, passkeys dans l'app Android). */
   @Get('providers')
   providers(): AuthProvidersDto {
     return {
       google: this.google.configured,
       registration: env().REGISTRATION_ENABLED,
       passwordReset: this.mail.enabled,
+      androidPasskeys: env().ANDROID_CERT_SHA256.length > 0,
     };
   }
 
