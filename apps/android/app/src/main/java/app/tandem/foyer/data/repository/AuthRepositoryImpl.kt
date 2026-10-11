@@ -7,6 +7,9 @@ import app.tandem.foyer.data.remote.ApiErrorDto
 import app.tandem.foyer.data.remote.LoginRequest
 import app.tandem.foyer.data.remote.MeDto
 import app.tandem.foyer.data.remote.MobileExchangeRequest
+import app.tandem.foyer.data.remote.PasskeyResponseBody
+import app.tandem.foyer.data.remote.ProvidersDto
+import app.tandem.foyer.data.remote.TwoFactorLoginBody
 import app.tandem.foyer.data.remote.RefreshRequest
 import app.tandem.foyer.data.remote.UpdateMeRequest
 import app.tandem.foyer.data.remote.json
@@ -14,7 +17,10 @@ import app.tandem.foyer.domain.model.User
 import app.tandem.foyer.domain.repository.AuthError
 import app.tandem.foyer.domain.repository.AuthRepository
 import app.tandem.foyer.domain.repository.AuthResult
+import app.tandem.foyer.domain.repository.PasskeyOutcome
 import kotlinx.coroutines.flow.Flow
+import kotlinx.serialization.SerializationException
+import kotlinx.serialization.json.JsonObject
 import java.io.IOException
 
 class AuthRepositoryImpl(
@@ -30,7 +36,9 @@ class AuthRepositoryImpl(
         val response = api.login(LoginRequest(email.trim().lowercase(), password))
         val body = response.body()
         when {
-            response.isSuccessful && body?.accessToken != null && body.refreshToken != null -> {
+            response.isSuccessful && body?.twoFactorRequired == true && body.challengeId != null ->
+                AuthResult.TwoFactorRequired(body.challengeId)
+            response.isSuccessful && body?.user != null && body.accessToken != null && body.refreshToken != null -> {
                 tokens.save(body.accessToken, body.refreshToken)
                 AuthResult.Success(body.user.toDomain())
             }
@@ -40,10 +48,67 @@ class AuthRepositoryImpl(
         AuthResult.Failure(AuthError.NETWORK)
     }
 
-    override suspend fun googleAvailable(): Boolean = try {
-        pkce != null && api.providers().body()?.google == true
+    override suspend fun completeTwoFactor(challengeId: String, code: String): AuthResult = try {
+        val response = api.verifyTwoFactor(TwoFactorLoginBody(challengeId, code.trim()))
+        val body = response.body()
+        if (response.isSuccessful && body?.accessToken != null && body.refreshToken != null) {
+            tokens.save(body.accessToken, body.refreshToken)
+            AuthResult.Success(body.user.toDomain())
+        } else {
+            AuthResult.Failure(
+                when (response.code()) {
+                    429 -> AuthError.RATE_LIMITED
+                    // Code au mauvais format (refusé avant vérification) : même message.
+                    400, 401 -> AuthError.TWO_FACTOR_INVALID
+                    else -> mapError(response.code(), response.errorBody()?.string())
+                },
+            )
+        }
     } catch (_: IOException) {
-        false
+        AuthResult.Failure(AuthError.NETWORK)
+    }
+
+    /** Méthodes de connexion du serveur, gardées après la première réponse (Google, passkeys). */
+    private var providers: ProvidersDto? = null
+
+    private suspend fun providers(): ProvidersDto? = providers ?: try {
+        api.providers().body()?.also { providers = it }
+    } catch (_: IOException) {
+        null
+    }
+
+    override suspend fun googleAvailable(): Boolean = pkce != null && providers()?.google == true
+
+    override suspend fun passkeysAvailable(): Boolean = providers()?.androidPasskeys == true
+
+    override suspend fun loginWithPasskey(sign: suspend (optionsJson: String) -> PasskeyOutcome): AuthResult = try {
+        val options = api.passkeyLoginOptions()
+        val challenge = options.body()
+        if (!options.isSuccessful || challenge == null) {
+            AuthResult.Failure(if (options.code() == 429) AuthError.RATE_LIMITED else AuthError.PASSKEY_FAILED)
+        } else {
+            when (val outcome = sign(challenge.options.toString())) {
+                is PasskeyOutcome.Done -> {
+                    val response = api.passkeyLogin(
+                        PasskeyResponseBody(challenge.challengeId, json.decodeFromString<JsonObject>(outcome.responseJson)),
+                    )
+                    val body = response.body()
+                    if (response.isSuccessful && body?.accessToken != null && body.refreshToken != null) {
+                        tokens.save(body.accessToken, body.refreshToken)
+                        AuthResult.Success(body.user.toDomain())
+                    } else {
+                        AuthResult.Failure(if (response.code() == 429) AuthError.RATE_LIMITED else AuthError.PASSKEY_FAILED)
+                    }
+                }
+                PasskeyOutcome.Cancelled -> AuthResult.Failure(AuthError.PASSKEY_CANCELLED)
+                PasskeyOutcome.NoPasskey -> AuthResult.Failure(AuthError.NO_PASSKEY)
+                PasskeyOutcome.AlreadyExists, PasskeyOutcome.Failed -> AuthResult.Failure(AuthError.PASSKEY_FAILED)
+            }
+        }
+    } catch (_: IOException) {
+        AuthResult.Failure(AuthError.NETWORK)
+    } catch (_: SerializationException) {
+        AuthResult.Failure(AuthError.PASSKEY_FAILED)
     }
 
     override suspend fun googleSignInUrl(webBaseUrl: String): String {

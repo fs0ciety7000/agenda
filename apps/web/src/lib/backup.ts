@@ -1,6 +1,6 @@
 'use client';
 
-import type { RestoreResultDto, RevealNoteInput } from '@agenda/contracts';
+import type { BackupDownloadInput, RestoreResultDto } from '@agenda/contracts';
 import { useMutation } from '@tanstack/react-query';
 import { api } from './api';
 
@@ -16,9 +16,9 @@ export function saveFile(blob: Blob, filename: string) {
   setTimeout(() => URL.revokeObjectURL(url), 10_000);
 }
 
-/** Nom du fichier de sauvegarde, daté du jour. */
-export const backupFilename = (day = new Date().toISOString().slice(0, 10)) =>
-  `tandem-foyer-${day}.zip`;
+/** Nom du fichier de sauvegarde, daté du jour : `.tandem` si elle est chiffrée. */
+export const backupFilename = (day = new Date().toISOString().slice(0, 10), encrypted = false) =>
+  `tandem-foyer-${day}.${encrypted ? 'tandem' : 'zip'}`;
 
 /**
  * Sauvegarde du foyer (.zip) : téléchargée après vérification (mot de passe ou confirmation,
@@ -27,14 +27,15 @@ export const backupFilename = (day = new Date().toISOString().slice(0, 10)) =>
 export function useBackup(hid?: string) {
   return {
     download: useMutation({
-      mutationFn: (input: RevealNoteInput) =>
+      mutationFn: (input: BackupDownloadInput) =>
         api<Blob>(`/v1/households/${hid}/backup`, { method: 'POST', json: input, blob: true }),
-      onSuccess: (blob) => saveFile(blob, backupFilename()),
+      onSuccess: (blob, input) => saveFile(blob, backupFilename(undefined, !!input.passphrase)),
     }),
     restore: useMutation({
-      mutationFn: (file: File) => {
+      mutationFn: ({ file, passphrase }: { file: File; passphrase?: string }) => {
         const body = new FormData();
         body.append('file', file);
+        if (passphrase) body.append('passphrase', passphrase);
         return api<RestoreResultDto>('/v1/households/restore', { method: 'POST', body });
       },
     }),

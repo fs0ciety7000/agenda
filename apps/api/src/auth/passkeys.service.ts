@@ -42,13 +42,35 @@ const coversHost = (rpId: string, host: string) => host === rpId || host.endsWit
 
 let warned = false;
 
+/** Identifiant de l'app Android (toutes ses variantes). */
+export const ANDROID_PACKAGE = 'app.tandem.foyer';
+
+/** « AB:CD:… » (forme lue par la Play Console et keytool), à partir de l'empreinte brute. */
+export const androidFingerprints = () =>
+  env().ANDROID_CERT_SHA256.map((hex) => hex.match(/../g)!.join(':'));
+
 /**
- * Domaine des clés et origines acceptées (site, et ancien domaine pendant une migration).
+ * Origine envoyée par Android pour une passkey créée ou utilisée dans l'app (Credential Manager) :
+ * `android:apk-key-hash:` suivi de l'empreinte du certificat de signature en base64url.
+ */
+const androidOrigins = () =>
+  env().ANDROID_CERT_SHA256.map(
+    (hex) => `android:apk-key-hash:${Buffer.from(hex, 'hex').toString('base64url')}`,
+  );
+
+/**
+ * Domaine des clés et origines acceptées : site (et ancien domaine pendant une migration), puis
+ * app Android si ses certificats sont déclarés (ANDROID_CERT_SHA256).
  * Une configuration incohérente (faute de frappe, domaine étranger au site) ferait échouer toute
  * création de passkey dans le navigateur : elle est ignorée au profit de WEB_ORIGIN, avec un
  * avertissement dans les journaux.
  */
 export function relyingParty() {
+  const web = webRelyingParty();
+  return { id: web.id, origins: [...web.origins, ...androidOrigins()] };
+}
+
+function webRelyingParty() {
   const webOrigin = env().WEB_ORIGIN;
   const fallback = { id: new URL(webOrigin).hostname, origins: [webOrigin] };
   const origins = env().WEBAUTHN_ORIGINS.length

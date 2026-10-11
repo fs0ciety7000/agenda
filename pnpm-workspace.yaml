@@ -16,3 +16,17 @@ onlyBuiltDependencies:
 # Télémétrie de @scarf/scarf (via Swagger UI) : jamais exécutée.
 ignoredBuiltDependencies:
   - '@scarf/scarf'
+  # Surveillance de fichiers de next-intl (extraction des messages, non utilisée) : binaires
+  # précompilés, pas de compilation à l'installation.
+  - '@parcel/watcher'
+# Dépendances indirectes vulnérables (pnpm audit --prod) : versions corrigées imposées, dans
+# la même version majeure, en attendant que les paquets qui les tirent les mettent à jour.
+overrides:
+  deepmerge-ts: ^8.0.0
+  file-type: ^21.3.2
+  js-yaml: ^4.3.2
+  lodash: ^4.18.0
+  path-to-regexp@^8: ^8.4.0
+  postcss: ^8.5.23
+  sharp: 0.35.5
+  source-map-js: ^1.2.2

@@ -24,6 +24,23 @@ const EnvSchema = z.object({
         .map((o) => o.trim().replace(/\/+$/, ''))
         .filter(Boolean),
     ),
+  // App Android (passkeys, docs/android.md) : empreintes SHA-256 des certificats qui signent l'app
+  // (Google Play et APK direct), séparées par des virgules, avec ou sans « : ». Publiées dans
+  // /.well-known/assetlinks.json ; vide = pas de passkey dans l'app.
+  ANDROID_CERT_SHA256: z
+    .string()
+    .trim()
+    .optional()
+    .transform((v) =>
+      (v ?? '')
+        .split(',')
+        .map((f) => f.trim().replace(/:/g, '').toUpperCase())
+        .filter(Boolean),
+    )
+    .refine((list) => list.every((f) => /^[0-9A-F]{64}$/.test(f)), {
+      message:
+        'ANDROID_CERT_SHA256: SHA-256 certificate fingerprints (64 hex characters each), comma-separated',
+    }),
   DATABASE_URL: z.string().min(1),
   JWT_SECRET: z.string().min(32, 'JWT_SECRET must be at least 32 characters'),
   // Vérifiée au démarrage : une clé invalide ne doit pas attendre la première connexion Google.

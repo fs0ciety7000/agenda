@@ -95,7 +95,11 @@
     "PASSKEY_FAILED": "Aanmelden met een toegangssleutel lukte niet. Gebruik je wachtwoord, of voeg eerst een toegangssleutel toe in Instellingen.",
     "VAULT_LOCKED": "Verificatie nodig om deze notitie te tonen.",
     "BARCODE_SCAN_UNAVAILABLE": "Barcodes lezen lukt nu even niet. Typ de cijfers of de naam van het artikel.",
-    "BACKUP_INVALID": "Dit bestand is geen geldige Tandem-back-up."
+    "BACKUP_INVALID": "Dit bestand is geen geldige Tandem-back-up.",
+    "TWO_FACTOR_INVALID": "Onjuiste of verlopen code. Probeer het opnieuw met de code die nu wordt getoond, of met een herstelcode.",
+    "TWO_FACTOR_UNAVAILABLE": "Tweestapsverificatie is niet beschikbaar op deze server.",
+    "BACKUP_PASSPHRASE_REQUIRED": "Deze back-up is versleuteld: voer de wachtzin in.",
+    "BACKUP_PASSPHRASE_INVALID": "Onjuiste wachtzin, of beschadigd bestand."
   },
   "today": {
     "greeting": "Hallo {name} 👋",
@@ -552,7 +556,7 @@
   },
   "privacyPolicy": {
     "title": "Privacybeleid",
-    "updated": "Laatst bijgewerkt: 10 oktober 2026",
+    "updated": "Laatst bijgewerkt: 11 oktober 2026",
     "intro": "Tandem is een private, niet-commerciële app die de leden van een huishouden gebruiken om hun taken te organiseren. Deze pagina legt uit welke gegevens de app verwerkt, waarom, en hoe je ze kunt verwijderen.",
     "who": {
       "title": "Wie je gegevens beheert",
@@ -560,7 +564,7 @@
     },
     "data": {
       "title": "Verwerkte gegevens",
-      "body": "Account: voornaam, e-mailadres, wachtwoord (alleen als Argon2-hash, nooit leesbaar), taal.\nHuishouden: naam van het huishouden, leden, categorieën, uitnodigingen, boodschappenlijst, gedeelde notities (titel, inhoud, wie ze schreef, of ze gevoelig zijn, en de 20 vorige versies van elke notitie), belangrijke data (titel, dag, maand en optioneel jaar; ze kunnen over naasten gaan, bijvoorbeeld een verjaardag).\nGastlink (als een lid er een maakt): een geheime link opent alleen de boodschappenlijst (artikelen, hoeveelheden, afdelingen en de naam van het huishouden), alleen lezen en zonder account, tot een lid hem uitzet of vervangt. Iedereen met de link kan hem zien.\nBarcodes (als je ze scant): de foto van de barcode wordt op onze server gelezen en meteen gewist; het huishouden onthoudt de code en de productnaam. Voor een product dat het nog niet kent, stuurt de server alleen de code (niets over jou) naar Open Food Facts, een open productdatabank.\nBack-up van het huishouden (als je er een downloadt): een archief dat op aanvraag wordt gemaakt, nooit op onze server bewaard, met de gegevens van het huishouden die jij ziet en het e-mailadres van elk lid (om hen terug te vinden als je het elders terugzet). Teruggezet op een andere instantie wordt het adres van een lid dat zich nog niet heeft aangemeld daar bewaard tot die het huishouden vervoegt.\nTaken: titels, notities, datums, tijden, duur, verantwoordelijken, herhalingen, status, subtaken, reacties, ruilverzoeken (met het berichtje), opgegeven afwezigheden, activiteitengeschiedenis (wie wat deed, en wanneer).\nUitgaven (als je ze gebruikt): bedrag, datum, omschrijving, categorie, opmerking, wie betaalde en ieders aandeel. Een persoonlijke uitgave zie alleen jij. Een toegevoegd kasticket (foto of pdf) wordt bij de uitgave bewaard en samen met haar verwijderd. Gebruik je „Kasticket inlezen”, dan wordt de foto op onze server gelezen (geen externe dienst) om bedrag, datum en winkel voor te stellen, en meteen weer gewist; hij wordt alleen bewaard als je de uitgave met dat kasticket opslaat.\nSessies: apparaat (browser en systeem, of versie van de Android-app), aanmelddatum en laatste activiteit, zichtbaar bij „Aangemelde apparaten” zodat je op afstand kunt afmelden. Android-app: de meldingsidentificatie van de telefoon (als directe meldingen aan staan), verwijderd bij het afmelden.\nDe Android-app bewaart een kopie van je taken, boodschappenlijst, notities en belangrijke data op de telefoon om offline te werken; die wordt gewist bij het afmelden.\nToevoegen per e-mail (als je het inschakelt): de afzender, het onderwerp en de tekst van e-mails die je naar je persoonlijke adres doorstuurt, worden opgeslagen in de notities van de aangemaakte taak. Ze worden ontvangen door Resend, onze e-mailprovider; hun bijlagen worden aan de taak toegevoegd.\nBijlagen: bestanden die je aan een taak toevoegt (of die bij een doorgestuurde e-mail zaten) worden met de taak op onze server bewaard, zijn zichtbaar voor de leden van het huishouden (alleen voor jou bij een persoonlijke taak) en worden samen met de taak verwijderd.\nMeldingen van problemen (als je er stuurt): het type, de titel en de tekst van je bericht, een schermafbeelding als je die toevoegt, of je gecontacteerd mag worden en, alleen als je het vakje aanvinkt, technische informatie die vóór het verzenden wordt getoond (browser of telefoonmodel, systeem, appversie, taal, tijdzone, schermgrootte, geopende pagina). Nooit de inhoud van je taken. Alleen de beheerders van de app lezen ze.\nBrowsermeldingen (als je ze inschakelt): het abonnementsadres dat je browser geeft, verwijderd wanneer je ze uitschakelt of afmeldt."
+      "body": "Account: voornaam, e-mailadres, wachtwoord (alleen als Argon2-hash, nooit leesbaar), taal. Tweestapsverificatie (als je die inschakelt): een versleuteld geheim dat je deelt met je authenticator-app, en je herstelcodes alleen als hash.\nHuishouden: naam van het huishouden, leden, categorieën, uitnodigingen, boodschappenlijst, gedeelde notities (titel, inhoud, wie ze schreef, of ze gevoelig zijn, en de 20 vorige versies van elke notitie), belangrijke data (titel, dag, maand en optioneel jaar; ze kunnen over naasten gaan, bijvoorbeeld een verjaardag).\nGastlink (als een lid er een maakt): een geheime link opent alleen de boodschappenlijst (artikelen, hoeveelheden, afdelingen en de naam van het huishouden), alleen lezen en zonder account, tot een lid hem uitzet of vervangt. Iedereen met de link kan hem zien.\nBarcodes (als je ze scant): de foto van de barcode wordt op onze server gelezen en meteen gewist; het huishouden onthoudt de code en de productnaam. Voor een product dat het nog niet kent, stuurt de server alleen de code (niets over jou) naar Open Food Facts, een open productdatabank.\nBack-up van het huishouden (als je er een downloadt): een archief dat op aanvraag wordt gemaakt, nooit op onze server bewaard, met de gegevens van het huishouden die jij ziet en het e-mailadres van elk lid (om hen terug te vinden als je het elders terugzet). Teruggezet op een andere instantie wordt het adres van een lid dat zich nog niet heeft aangemeld daar bewaard tot die het huishouden vervoegt.\nTaken: titels, notities, datums, tijden, duur, verantwoordelijken, herhalingen, status, subtaken, reacties, ruilverzoeken (met het berichtje), opgegeven afwezigheden, activiteitengeschiedenis (wie wat deed, en wanneer).\nUitgaven (als je ze gebruikt): bedrag, datum, omschrijving, categorie, opmerking, wie betaalde en ieders aandeel. Een persoonlijke uitgave zie alleen jij. Een toegevoegd kasticket (foto of pdf) wordt bij de uitgave bewaard en samen met haar verwijderd. Gebruik je „Kasticket inlezen”, dan wordt de foto op onze server gelezen (geen externe dienst) om bedrag, datum en winkel voor te stellen, en meteen weer gewist; hij wordt alleen bewaard als je de uitgave met dat kasticket opslaat.\nSessies: apparaat (browser en systeem, of versie van de Android-app), aanmelddatum en laatste activiteit, zichtbaar bij „Aangemelde apparaten” zodat je op afstand kunt afmelden. Android-app: de meldingsidentificatie van de telefoon (als directe meldingen aan staan), verwijderd bij het afmelden.\nDe Android-app bewaart een kopie van je taken, boodschappenlijst, notities en belangrijke data op de telefoon om offline te werken; die wordt gewist bij het afmelden.\nToevoegen per e-mail (als je het inschakelt): de afzender, het onderwerp en de tekst van e-mails die je naar je persoonlijke adres doorstuurt, worden opgeslagen in de notities van de aangemaakte taak. Ze worden ontvangen door Resend, onze e-mailprovider; hun bijlagen worden aan de taak toegevoegd.\nBijlagen: bestanden die je aan een taak toevoegt (of die bij een doorgestuurde e-mail zaten) worden met de taak op onze server bewaard, zijn zichtbaar voor de leden van het huishouden (alleen voor jou bij een persoonlijke taak) en worden samen met de taak verwijderd.\nMeldingen van problemen (als je er stuurt): het type, de titel en de tekst van je bericht, een schermafbeelding als je die toevoegt, of je gecontacteerd mag worden en, alleen als je het vakje aanvinkt, technische informatie die vóór het verzenden wordt getoond (browser of telefoonmodel, systeem, appversie, taal, tijdzone, schermgrootte, geopende pagina). Nooit de inhoud van je taken. Alleen de beheerders van de app lezen ze.\nBrowsermeldingen (als je ze inschakelt): het abonnementsadres dat je browser geeft, verwijderd wanneer je ze uitschakelt of afmeldt."
     },
     "google": {
       "title": "Google-gegevens",
@@ -568,7 +572,7 @@
     },
     "use": {
       "title": "Waarom",
-      "body": "Om de taken van het huishouden te tonen en te delen, herinneringen te sturen, de gedeelde agenda te synchroniseren als je dat inschakelt, je wachtwoord per e-mail te laten herstellen en technische fouten op te sporen. Rechtsgrond: het leveren van de dienst die je gebruikt en, voor Google Agenda, je toestemming (die je op elk moment kunt intrekken)."
+      "body": "Om de taken van het huishouden te tonen en te delen, herinneringen te sturen, de gedeelde agenda te synchroniseren als je dat inschakelt, je wachtwoord per e-mail te laten herstellen, je per e-mail te waarschuwen bij een aanmelding vanaf een nieuw apparaat en technische fouten op te sporen. Rechtsgrond: het leveren van de dienst die je gebruikt en, voor Google Agenda, je toestemming (die je op elk moment kunt intrekken)."
     },
     "processors": {
       "title": "Dienstverleners",
@@ -580,7 +584,7 @@
     },
     "security": {
       "title": "Beveiliging",
-      "body": "Versleutelde verbindingen (HTTPS), gehashte wachtwoorden, versleutelde Google-tokens, strikte scheiding tussen huishoudens, persoonlijke taken die alleen jij ziet, beperking van aanmeldpogingen, dagelijkse gecontroleerde back-ups."
+      "body": "Versleutelde verbindingen (HTTPS), gehashte wachtwoorden, tweestapsverificatie (optioneel), versleutelde Google-tokens, strikte scheiding tussen huishoudens, persoonlijke taken die alleen jij ziet, beperking van aanmeldpogingen, dagelijkse gecontroleerde back-ups."
     },
     "rights": {
       "title": "Je rechten",
@@ -1608,7 +1612,7 @@
     "password": "Wachtwoord",
     "submit": "Downloaden",
     "restoreTitle": "Heb je een back-up?",
-    "restoreIntro": "Maak je huishouden opnieuw aan vanuit een Tandem-back-up (.zip-bestand): alles wordt teruggezet.",
+    "restoreIntro": "Maak je huishouden opnieuw aan vanuit een Tandem-back-up (.zip-bestand, of .tandem als hij versleuteld is): alles wordt teruggezet.",
     "restoreChoose": "Back-up kiezen",
     "restoring": "Terugzetten…",
     "alreadyInHousehold": "Dit account hoort al bij een huishouden: zet terug vanaf een account dat er nog geen heeft.",
@@ -1619,6 +1623,54 @@
     "copy": "Kopiëren",
     "copied": "Gekopieerd",
     "pending": "in afwachting",
-    "linksValid": "Deze links zijn 30 dagen geldig."
+    "linksValid": "Deze links zijn 30 dagen geldig.",
+    "encrypt": "Versleutelen met een wachtzin",
+    "encryptHint": "Een .tandem-bestand dat zonder wachtzin onleesbaar is. De wachtzin wordt nergens bewaard: kwijt is kwijt, dan kan de back-up niet meer worden teruggezet.",
+    "phraseLabel": "Wachtzin",
+    "phraseHint": "Minstens {min} tekens; bijvoorbeeld een paar woorden die je makkelijk onthoudt.",
+    "phraseAgain": "Typ de wachtzin opnieuw",
+    "phraseMismatch": "De twee wachtzinnen zijn niet gelijk.",
+    "privateEncrypted": "Noteer de wachtzin apart: zonder kan niemand dit bestand openen, jij ook niet.",
+    "restorePhrase": "Deze back-up is versleuteld: voer de wachtzin in die je bij het downloaden koos.",
+    "restoreUnlock": "Ontsleutelen en terugzetten"
+  },
+  "twoFactor": {
+    "title": "Tweestapsverificatie",
+    "intro": "Na je wachtwoord een code van 6 cijfers uit je authenticator-app (Google Authenticator, Aegis, 1Password…). Zelfs met je wachtwoord komt niemand binnen zonder je telefoon. Toegangssleutels en Google vragen er niet om: die zijn al beveiligd.",
+    "enable": "Inschakelen",
+    "enabled": "Ingeschakeld.",
+    "enabledOn": "Ingeschakeld sinds {date}.",
+    "codesLeft": "{count, plural, =0 {Geen herstelcodes meer: maak nieuwe aan.} one {Nog # herstelcode.} other {Nog # herstelcodes.}}",
+    "newCodes": "Nieuwe herstelcodes",
+    "disable": "Uitschakelen",
+    "verifyTitle": "Verificatie",
+    "verifyPassword": "Voer het wachtwoord van je account in om verder te gaan.",
+    "verifyConfirm": "Bevestig dat jij het bent om verder te gaan.",
+    "password": "Wachtwoord",
+    "continue": "Doorgaan",
+    "scanTitle": "Tandem toevoegen aan je app",
+    "scanIntro": "Scan deze QR-code met je authenticator-app (of open hem vanaf deze telefoon) en voer daarna de code van 6 cijfers in die hij toont.",
+    "qrAlt": "QR-code om te scannen met je authenticator-app",
+    "openApp": "Openen in de authenticator-app",
+    "secretLabel": "Of typ deze sleutel:",
+    "code": "Code",
+    "codeHint": "Code van 6 cijfers uit de app, of een herstelcode.",
+    "verify": "Bevestigen",
+    "codesTitle": "Je herstelcodes",
+    "codesIntro": "Zonder je telefoon vervangt elk van deze codes één keer de code uit de app. Bewaar ze op een veilige plek: ze worden niet meer getoond.",
+    "copy": "Kopiëren",
+    "copied": "Gekopieerd",
+    "download": "Downloaden",
+    "fileName": "tandem-herstelcodes.txt",
+    "done": "Genoteerd",
+    "disableTitle": "Tweestapsverificatie uitschakelen",
+    "disableIntro": "Voer een code uit de app in (of een herstelcode). Daarna volstaat je wachtwoord om je aan te melden.",
+    "newCodesTitle": "Nieuwe herstelcodes",
+    "newCodesIntro": "Voer een code uit de app in (of een herstelcode): je krijgt 10 nieuwe codes en de oude werken niet meer.",
+    "enabledToast": "Tweestapsverificatie is ingeschakeld.",
+    "disabledToast": "Tweestapsverificatie is uitgeschakeld.",
+    "loginTitle": "Verificatiecode",
+    "loginIntro": "Voer de code van 6 cijfers uit je authenticator-app in, of een herstelcode.",
+    "restart": "Opnieuw beginnen met aanmelden"
   }
 }

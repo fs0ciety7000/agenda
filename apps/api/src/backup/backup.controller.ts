@@ -12,7 +12,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags } from '@nestjs/swagger';
 import { Throttle } from '@nestjs/throttler';
-import { BACKUP_MAX_BYTES, RevealNoteInput, type RestoreResultDto } from '@agenda/contracts';
+import { BACKUP_MAX_BYTES, BackupDownloadInput, type RestoreResultDto } from '@agenda/contracts';
 import type { Response } from 'express';
 import { diskStorage } from 'multer';
 import { randomUUID } from 'node:crypto';
@@ -30,6 +30,7 @@ import { ZodPipe } from '../common/zod.pipe';
 import { env } from '../config/env';
 import { HouseholdMemberGuard } from '../households/household-member.guard';
 import { BackupExportService } from './backup-export.service';
+import { BackupPassphraseError, decryptFile, encrypting, isEncrypted } from './backup-crypto';
 import { BackupRestoreService } from './backup-restore.service';
 
 /** Sauvegarde du foyer (archive .zip), à garder ou à restaurer sur une autre instance. */
@@ -45,7 +46,8 @@ export class BackupExportController {
   /**
    * Télécharger la sauvegarde du foyer : archive .zip avec les données et les fichiers joints.
    * Elle contient le texte des notes sensibles : vérification comme pour les afficher (mot de
-   * passe ou confirmation sur le site, sur l'appareil pour Android).
+   * passe ou confirmation sur le site, sur l'appareil pour Android). Avec `passphrase`, l'archive
+   * est chiffrée (fichier `.tandem`).
    */
   @Post()
   @HttpCode(200)
@@ -54,15 +56,32 @@ export class BackupExportController {
   async download(
     @CurrentHousehold() ctx: HouseholdContext,
     @CurrentUser() user: AuthUser,
-    @Body(new ZodPipe(RevealNoteInput)) body: RevealNoteInput,
+    @Body(new ZodPipe(BackupDownloadInput)) body: BackupDownloadInput,
     @Res() res: Response,
   ): Promise<void> {
     await this.vault.unlock(user, body);
     const day = new Date().toISOString().slice(0, 10);
-    res.setHeader('Content-Type', 'application/zip');
-    res.setHeader('Content-Disposition', `attachment; filename="tandem-foyer-${day}.zip"`);
     res.setHeader('Cache-Control', 'no-store');
-    await this.exporter.write(ctx, res);
+    if (!body.passphrase) {
+      res.setHeader('Content-Type', 'application/zip');
+      res.setHeader('Content-Disposition', `attachment; filename="tandem-foyer-${day}.zip"`);
+      await this.exporter.write(ctx, res);
+      return;
+    }
+    const { header, cipher } = await encrypting(body.passphrase);
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Disposition', `attachment; filename="tandem-foyer-${day}.tandem"`);
+    res.write(header);
+    cipher.on('data', (chunk: Buffer) => res.write(chunk));
+    const done = new Promise<void>((resolve, reject) => {
+      cipher.on('end', () => {
+        res.end(cipher.getAuthTag());
+        resolve();
+      });
+      cipher.on('error', reject);
+    });
+    await this.exporter.write(ctx, cipher);
+    await done;
   }
 }
 
@@ -73,8 +92,8 @@ export class BackupRestoreController {
 
   /**
    * Restaurer une sauvegarde : crée un nouveau foyer sur cette instance (multipart, champ `file`,
-   * archive .zip de Tandem). Depuis un compte encore sans foyer ; les autres membres reçoivent
-   * une invitation à leur adresse.
+   * archive .zip de Tandem, ou `.tandem` chiffrée avec le champ `passphrase`). Depuis un compte
+   * encore sans foyer ; les autres membres reçoivent une invitation à leur adresse.
    */
   @Post()
   @HttpCode(201)
@@ -93,16 +112,39 @@ export class BackupRestoreController {
   async restore(
     @CurrentUser() user: AuthUser,
     @UploadedFile() file: { path: string; size: number } | undefined,
+    @Body('passphrase') passphrase: unknown,
   ): Promise<RestoreResultDto> {
     if (!file) {
       throw new AppException('VALIDATION_FAILED', HttpStatus.BAD_REQUEST, 'Missing file', {
         fieldErrors: { file: ['Required'] },
       });
     }
+    const plain = `${file.path}.zip`;
     try {
-      return await this.restorer.restore(user.userId, file.path);
+      if (!(await isEncrypted(file.path))) {
+        return await this.restorer.restore(user.userId, file.path);
+      }
+      if (typeof passphrase !== 'string' || !passphrase || passphrase.length > 200) {
+        throw new AppException(
+          'BACKUP_PASSPHRASE_REQUIRED',
+          HttpStatus.BAD_REQUEST,
+          'This backup is encrypted: passphrase required',
+        );
+      }
+      try {
+        await decryptFile(file.path, plain, passphrase);
+      } catch (e) {
+        if (!(e instanceof BackupPassphraseError)) throw e;
+        throw new AppException(
+          'BACKUP_PASSPHRASE_INVALID',
+          HttpStatus.BAD_REQUEST,
+          'Wrong passphrase or damaged file',
+        );
+      }
+      return await this.restorer.restore(user.userId, plain);
     } finally {
       await rm(file.path, { force: true });
+      await rm(plain, { force: true });
     }
   }
 }

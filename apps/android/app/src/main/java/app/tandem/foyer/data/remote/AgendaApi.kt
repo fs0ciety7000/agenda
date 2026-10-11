@@ -20,7 +20,13 @@ import okhttp3.ResponseBody
 /** Même API REST que le web : aucune logique métier propre à Android. */
 interface AgendaApi {
     @POST("v1/auth/login")
-    suspend fun login(@Body body: LoginRequest): Response<AuthResponseDto>
+    suspend fun login(@Body body: LoginRequest): Response<LoginResponseDto>
+
+    @POST("v1/auth/2fa/verify")
+    suspend fun verifyTwoFactor(@Body body: TwoFactorLoginBody): Response<AuthResponseDto>
+
+    @GET("v1/me/2fa")
+    suspend fun twoFactorStatus(): Response<TwoFactorStatusDto>
 
     @POST("v1/auth/refresh")
     fun refreshBlocking(@Body body: RefreshRequest): retrofit2.Call<AuthResponseDto>
@@ -39,6 +45,24 @@ interface AgendaApi {
 
     @GET("v1/auth/providers")
     suspend fun providers(): Response<ProvidersDto>
+
+    @POST("v1/auth/passkeys/options")
+    suspend fun passkeyLoginOptions(@Body body: JsonObject = JsonObject(emptyMap())): Response<PasskeyOptionsDto>
+
+    @POST("v1/auth/passkeys/login")
+    suspend fun passkeyLogin(@Body body: PasskeyResponseBody): Response<AuthResponseDto>
+
+    @GET("v1/me/passkeys")
+    suspend fun passkeys(): Response<List<PasskeyDto>>
+
+    @POST("v1/me/passkeys/options")
+    suspend fun passkeyRegisterOptions(@Body body: JsonObject = JsonObject(emptyMap())): Response<PasskeyOptionsDto>
+
+    @POST("v1/me/passkeys")
+    suspend fun addPasskey(@Body body: PasskeyResponseBody): Response<PasskeyDto>
+
+    @DELETE("v1/me/passkeys/{id}")
+    suspend fun deletePasskey(@Path("id") id: String): Response<Unit>
 
     @POST("v1/auth/google/mobile/exchange")
     suspend fun googleMobileExchange(@Body body: MobileExchangeRequest): Response<AuthResponseDto>
@@ -269,7 +293,7 @@ interface AgendaApi {
     /** Sauvegarde du foyer (.zip) ; avec un jeton, la vérification se fait sur l'appareil. */
     @Streaming
     @POST("v1/households/{h}/backup")
-    suspend fun backup(@Path("h") householdId: String, @Body body: RevealNoteBody): Response<ResponseBody>
+    suspend fun backup(@Path("h") householdId: String, @Body body: BackupBody): Response<ResponseBody>
 
     @POST("v1/households/{h}/notes/{id}/reveal")
     suspend fun revealNote(@Path("h") householdId: String, @Path("id") id: String, @Body body: RevealNoteBody): Response<RevealedNoteDto>

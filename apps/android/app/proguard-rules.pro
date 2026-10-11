@@ -7,3 +7,7 @@
 # Retrofit : conserver les interfaces d'API et les signatures génériques.
 -keepattributes Signature, Exceptions
 -keep,allowobfuscation interface app.tandem.foyer.data.remote.** { *; }
+
+# Credential Manager (passkeys) : le fournisseur Google Play services est chargé par réflexion.
+-if class androidx.credentials.CredentialManager
+-keep class androidx.credentials.playservices.** { *; }

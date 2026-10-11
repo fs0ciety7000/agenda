@@ -15,6 +15,35 @@ d'elle-même (ou via Google Play).
 
 ## 11 octobre 2026
 
+### Alerte de connexion (#95)
+
+- 🔒 ✨ **E-mail « Nouvelle connexion à votre compte »** quand il s'ouvre depuis un appareil jamais
+  vu, avec un lien vers les appareils connectés pour déconnecter les autres.
+
+### Sauvegarde chiffrée (#95)
+
+- 🔒 ✨ **Sauvegarde chiffrée** en option : une phrase de passe au téléchargement (site et app)
+  rend le fichier illisible sans elle ; elle est demandée à la restauration.
+
+### Double authentification (#95)
+
+- 🔒 ✨ **Double authentification** : un code à 6 chiffres de votre application d'authentification
+  après le mot de passe, et 10 codes de secours. À activer dans **Réglages → Compte** sur le site ;
+  l'app Android demande le code à la connexion.
+
+### Sécurité des dépendances (#95)
+
+- 🔒 Mise à jour des bibliothèques qui reçoivent les fichiers (photos, sauvegardes), préparent les
+  images et envoient les e-mails, ainsi que du serveur web : plus aucune faille connue dans le code
+  en production, et la vérification bloque désormais chaque modification.
+
+### Passkeys dans l'app Android (#95)
+
+- ✨ **Se connecter avec une passkey** dans l'app Android : empreinte, visage ou code du
+  téléphone, sans mot de passe (Android 9 et plus).
+- ✨ **Réglages → Compte → Passkeys** dans l'app : voir, ajouter ou supprimer vos passkeys. Celles
+  du site (gestionnaire de mots de passe Google) marchent aussi dans l'app.
+
 ### Page introuvable
 
 - 🛠 **Adresse inconnue** : une page claire, dans votre langue, avec un bouton « Retour à

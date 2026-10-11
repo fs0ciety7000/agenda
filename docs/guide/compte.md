@@ -22,8 +22,23 @@ description: Mot de passe, Google, sessions, export et suppression de ses donné
   **Se connecter avec une passkey** sur la page de connexion. La passkey reste sur votre appareil
   (empreinte, visage ou code) ou dans votre trousseau (iCloud, Google) ; l'app ne garde qu'une
   clé publique, inutilisable par quelqu'un d'autre. Une passkey par appareil, supprimable à tout
-  moment. Sur l'app Android, la connexion reste par mot de passe ou Google pour l'instant ; les
-  passkeys fonctionnent sur le site, y compris dans Chrome sur Android.
+  moment. Sur l'app Android (Android 9 et plus) : **Se connecter avec une passkey** sur l'écran de
+  connexion, et **Réglages → Compte → Passkeys** pour voir, ajouter ou supprimer les vôtres. Une
+  passkey créée sur le site avec le gestionnaire de mots de passe Google marche aussi dans l'app,
+  et inversement.
+- **Alerte de connexion** : quand votre compte s'ouvre depuis un appareil qu'il n'a jamais vu
+  (autre navigateur, autre système, ou l'app Android), un e-mail vous le dit, avec l'appareil et
+  l'heure. Ce n'est pas vous ? Le bouton de l'e-mail mène aux **Appareils connectés** : déconnectez
+  les autres, puis changez votre mot de passe. Rien à faire si c'était vous ; pas d'e-mail à la
+  toute première connexion ni pour un appareil déjà connu.
+- **Double authentification** (**Réglages → Compte**, sur le site) : après le mot de passe, un
+  code à 6 chiffres de votre application d'authentification (Google Authenticator, Aegis,
+  1Password…). **Activer** demande votre mot de passe, affiche un QR code à scanner, puis le premier
+  code. Vous recevez alors **10 codes de secours**, montrés une seule fois : chacun remplace une fois
+  le code de l'application (téléphone perdu ou changé). Gardez-les en lieu sûr ; **Nouveaux codes de
+  secours** les remplace tous. **Désactiver** demande un code. L'app Android demande le code à la
+  connexion ; son activation se fait sur le site. Les passkeys et « Continuer avec Google » n'en
+  demandent pas : elles sont déjà protégées (empreinte ou code du téléphone, compte Google).
 - **Lier / délier Google** dans **Réglages → Données & confidentialité** (définissez d'abord un
   mot de passe pour pouvoir délier Google).
 
@@ -57,7 +72,11 @@ serveur, d'hébergeur).
 - Elle contient le texte des notes sensibles : votre **mot de passe** est demandé sur le site
   (ou une confirmation pour un compte Google), l'**empreinte ou le code du téléphone** dans
   l'app. Gardez le fichier pour vous.
-- La restauration se fait sur le site.
+- **Chiffrer avec une phrase de passe** (case à cocher, site et app) : le fichier devient un
+  `.tandem` illisible sans elle (AES-256). Choisissez quelques mots faciles à retenir (10
+  caractères au moins), tapés deux fois, et notez-les à part : la phrase n'est gardée nulle part,
+  et sans elle personne ne peut restaurer la sauvegarde, pas même vous.
+- La restauration se fait sur le site ; pour un `.tandem`, la phrase de passe est demandée.
 
 **Restaurer** : sur l'autre instance, créez un compte puis, à l'accueil, **Vous avez une
 sauvegarde ? → Choisir la sauvegarde**. Le foyer est recréé tel quel ; vous reprenez votre place

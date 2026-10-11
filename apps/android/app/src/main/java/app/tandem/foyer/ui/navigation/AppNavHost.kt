@@ -34,6 +34,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -112,6 +113,8 @@ import app.tandem.foyer.ui.shopping.splitShoppingItems
 import app.tandem.foyer.ui.search.SearchScreen
 import app.tandem.foyer.ui.search.SearchTarget
 import app.tandem.foyer.ui.settings.BackupSection
+import app.tandem.foyer.ui.settings.PasskeysSection
+import app.tandem.foyer.ui.settings.TwoFactorRow
 import app.tandem.foyer.ui.settings.DeviceSessions
 import app.tandem.foyer.ui.settings.SettingsScreen
 import app.tandem.foyer.ui.shopping.BarcodeButton
@@ -161,6 +164,9 @@ fun AppNavHost(
                     onSignedIn = {},
                     onOpenWeb = { path -> openWeb(context, container.webBaseUrl, path) },
                     onGoogle = { scope.launch { openWeb(context, vm.googleUrl(container.webBaseUrl), "") } },
+                    onPasskey = container.passkeyAuthenticator?.let { passkeys ->
+                        { vm.signInWithPasskey { options -> passkeys.authenticate(context, options) } }
+                    },
                 )
             }
             true -> MainScaffold(container, openOccurrenceId, quickAddRequest, tabRequest, quickAddText, voiceRequest, shared)
@@ -636,6 +642,25 @@ private fun MainScaffold(
                         AppLanguage.set(activity, tag)
                     },
                     devices = { DeviceSessions(container.devices, onMessage) },
+                    passkeys = {
+                        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+                            PasskeysSection(
+                                online = state.online,
+                                list = container.passkeys::list,
+                                available = container.passkeys::available,
+                                add = container.passkeys::add,
+                                remove = container.passkeys::remove,
+                                create = container.passkeyAuthenticator?.let { it::register },
+                                onMessage = onMessage,
+                            )
+                            HorizontalDivider()
+                            TwoFactorRow(
+                                online = state.online,
+                                status = container.passkeys::twoFactor,
+                                onManage = { openWeb(context, container.webBaseUrl, "settings#s-account") },
+                            )
+                        }
+                    },
                     backup = { BackupSection(state.online, container.backup::download, onMessage) },
                 )
             }
