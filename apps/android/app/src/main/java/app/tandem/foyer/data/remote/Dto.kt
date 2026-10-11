@@ -411,6 +411,10 @@ data class RestoreNoteBody(val version: Int)
 @Serializable
 data class RevealNoteBody(val confirm: Boolean? = null)
 
+/** Sauvegarde : phrase de passe facultative, qui chiffre l'archive (fichier .tandem). */
+@Serializable
+data class BackupBody(val passphrase: String? = null)
+
 @Serializable
 data class RevealedNoteDto(val body: String)
 

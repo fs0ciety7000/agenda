@@ -15,6 +15,11 @@ d'elle-même (ou via Google Play).
 
 ## 11 octobre 2026
 
+### Sauvegarde chiffrée (#95)
+
+- 🔒 ✨ **Sauvegarde chiffrée** en option : une phrase de passe au téléchargement (site et app)
+  rend le fichier illisible sans elle ; elle est demandée à la restauration.
+
 ### Double authentification (#95)
 
 - 🔒 ✨ **Double authentification** : un code à 6 chiffres de votre application d'authentification

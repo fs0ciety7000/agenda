@@ -8627,7 +8627,7 @@
     },
     "/v1/households/{householdId}/backup": {
       "post": {
-        "description": "Télécharger la sauvegarde du foyer : archive .zip avec les données et les fichiers joints. Elle contient le texte des notes sensibles : vérification comme pour les afficher (mot de passe ou confirmation sur le site, sur l'appareil pour Android).",
+        "description": "Télécharger la sauvegarde du foyer : archive .zip avec les données et les fichiers joints. Elle contient le texte des notes sensibles : vérification comme pour les afficher (mot de passe ou confirmation sur le site, sur l'appareil pour Android). Avec `passphrase`, l'archive est chiffrée (fichier `.tandem`).",
         "operationId": "BackupExportController_download_v1",
         "parameters": [
           {
@@ -8657,7 +8657,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/RevealNoteInput"
+                "$ref": "#/components/schemas/BackupDownloadInput"
               }
             }
           }
@@ -8693,7 +8693,7 @@
     },
     "/v1/households/restore": {
       "post": {
-        "description": "Restaurer une sauvegarde : crée un nouveau foyer sur cette instance (multipart, champ `file`, archive .zip de Tandem). Depuis un compte encore sans foyer ; les autres membres reçoivent une invitation à leur adresse.",
+        "description": "Restaurer une sauvegarde : crée un nouveau foyer sur cette instance (multipart, champ `file`, archive .zip de Tandem, ou `.tandem` chiffrée avec le champ `passphrase`). Depuis un compte encore sans foyer ; les autres membres reçoivent une invitation à leur adresse.",
         "operationId": "BackupRestoreController_restore_v1",
         "parameters": [
           {
@@ -11701,6 +11701,8 @@
                   "BARCODE_SCAN_UNAVAILABLE",
                   "VAULT_LOCKED",
                   "BACKUP_INVALID",
+                  "BACKUP_PASSPHRASE_REQUIRED",
+                  "BACKUP_PASSPHRASE_INVALID",
                   "TWO_FACTOR_INVALID",
                   "TWO_FACTOR_UNAVAILABLE",
                   "INTERNAL"
@@ -12757,6 +12759,23 @@
           "color"
         ],
         "additionalProperties": false
+      },
+      "BackupDownloadInput": {
+        "type": "object",
+        "properties": {
+          "password": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "confirm": {
+            "type": "boolean"
+          },
+          "passphrase": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 200
+          }
+        }
       },
       "BackupRunDto": {
         "type": "object",

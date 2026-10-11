@@ -7,6 +7,7 @@ import { useTranslations } from 'next-intl';
 import { useId, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { Field } from '@/components/ui/field';
 import { ApiError, errorKey } from '@/lib/api';
 import { useBackup } from '@/lib/backup';
 import { queryKeys } from '@/lib/queries';
@@ -22,11 +23,30 @@ export function RestoreBackup({ onRestored }: { onRestored: (r: RestoreResultDto
   const { restore } = useBackup();
   const input = useRef<HTMLInputElement>(null);
   const inputId = useId();
+  // Sauvegarde chiffrée (.tandem) : la phrase de passe est demandée, puis on renvoie le fichier.
+  const [locked, setLocked] = useState<File | null>(null);
+  const [passphrase, setPassphrase] = useState('');
+  const code = restore.error instanceof ApiError ? restore.error.code : null;
   const error = restore.error
-    ? restore.error instanceof ApiError && restore.error.code === 'ALREADY_MEMBER'
+    ? code === 'ALREADY_MEMBER'
       ? t('alreadyInHousehold')
-      : te(errorKey(restore.error) as 'generic')
+      : code === 'BACKUP_PASSPHRASE_REQUIRED'
+        ? null
+        : te(errorKey(restore.error) as 'generic')
     : null;
+  const send = (file: File, phrase?: string) =>
+    restore.mutate(
+      { file, passphrase: phrase },
+      {
+        onSuccess: (r) => {
+          qc.setQueryData<HouseholdDto[]>(queryKeys.households, [r.household]);
+          onRestored(r);
+        },
+        onError: (e) => {
+          if (e instanceof ApiError && e.code === 'BACKUP_PASSPHRASE_REQUIRED') setLocked(file);
+        },
+      },
+    );
 
   return (
     <Card className="flex flex-col gap-3">
@@ -36,7 +56,7 @@ export function RestoreBackup({ onRestored }: { onRestored: (r: RestoreResultDto
         ref={input}
         id={inputId}
         type="file"
-        accept=".zip,application/zip"
+        accept=".zip,.tandem,application/zip,application/octet-stream"
         aria-label={t('restoreChoose')}
         className="sr-only"
         tabIndex={-1}
@@ -44,14 +64,38 @@ export function RestoreBackup({ onRestored }: { onRestored: (r: RestoreResultDto
           const file = e.target.files?.[0];
           e.target.value = '';
           if (!file) return;
-          restore.mutate(file, {
-            onSuccess: (r) => {
-              qc.setQueryData<HouseholdDto[]>(queryKeys.households, [r.household]);
-              onRestored(r);
-            },
-          });
+          setLocked(null);
+          setPassphrase('');
+          send(file);
         }}
       />
+      {locked && (
+        <form
+          className="flex flex-col gap-3"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (passphrase) send(locked, passphrase);
+          }}
+        >
+          <Field
+            label={t('passphrase')}
+            type="password"
+            autoComplete="off"
+            hint={t('restorePassphrase')}
+            autoFocus
+            value={passphrase}
+            onChange={(e) => setPassphrase(e.target.value)}
+          />
+          <Button
+            type="submit"
+            className="self-start"
+            loading={restore.isPending}
+            disabled={!passphrase}
+          >
+            {t('restoreUnlock')}
+          </Button>
+        </form>
+      )}
       <Button
         variant="secondary"
         className="self-start"

@@ -12,3 +12,5 @@ export const HOUSEHOLD_ATTACHMENTS_MAX_BYTES = 200 * 1024 * 1024;
 
 /** Sauvegarde du foyer (.zip : données en JSON et fichiers joints) : taille de l'archive. */
 export const BACKUP_MAX_BYTES = 400 * 1024 * 1024;
+/** Longueur minimale de la phrase de passe d'une sauvegarde chiffrée. */
+export const BACKUP_PASSPHRASE_MIN = 10;

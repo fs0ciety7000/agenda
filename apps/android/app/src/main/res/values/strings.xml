@@ -810,6 +810,17 @@
     <string name="two_factor_settings_title">Two-step verification</string>
     <string name="two_factor_settings_intro">A code from your authenticator app after your password.</string>
     <string name="two_factor_settings_on">On: the app asks for a code after your password.</string>
-    <string name="two_factor_settings_off">Off. Turn it on on the website: QR code to scan and backup codes to keep.</string>
+    <string name="two_factor_settings_off">Off. You can turn it on from the website: QR code to scan and backup codes to keep.</string>
     <string name="two_factor_settings_manage">Manage on the website</string>
+    <!-- Sauvegarde chiffrée -->
+    <string name="backup_encrypt">Encrypt with a passphrase</string>
+    <string name="backup_encrypt_hint">A .tandem file that can\'t be read without it. It isn\'t stored anywhere: if you lose it, the backup can\'t be restored.</string>
+    <string name="backup_passphrase">Passphrase</string>
+    <plurals name="backup_passphrase_hint">
+        <item quantity="one">At least %1$d character; a few easy words, for example</item>
+        <item quantity="other">At least %1$d characters; a few easy words, for example</item>
+    </plurals>
+    <string name="backup_passphrase_again">Type the passphrase again</string>
+    <string name="backup_passphrase_mismatch">The two passphrases don\'t match.</string>
+    <string name="backup_private_encrypted">Write the passphrase down separately: without it, nobody can open this file, not even you.</string>
 </resources>

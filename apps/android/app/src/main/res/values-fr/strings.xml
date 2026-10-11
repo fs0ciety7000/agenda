@@ -828,4 +828,15 @@
     <string name="two_factor_settings_on">Activée : l\'app demande un code après le mot de passe.</string>
     <string name="two_factor_settings_off">Désactivée. Elle s\'active sur le site : QR code à scanner et codes de secours à garder.</string>
     <string name="two_factor_settings_manage">Gérer sur le site</string>
+    <!-- Sauvegarde chiffrée -->
+    <string name="backup_encrypt">Chiffrer avec une phrase de passe</string>
+    <string name="backup_encrypt_hint">Fichier .tandem illisible sans elle. Elle n\'est gardée nulle part : perdue, la sauvegarde ne peut plus être restaurée.</string>
+    <string name="backup_passphrase">Phrase de passe</string>
+    <plurals name="backup_passphrase_hint">
+        <item quantity="one">%1$d caractère au moins ; quelques mots faciles, par exemple</item>
+        <item quantity="other">%1$d caractères au moins ; quelques mots faciles, par exemple</item>
+    </plurals>
+    <string name="backup_passphrase_again">Retapez la phrase de passe</string>
+    <string name="backup_passphrase_mismatch">Les deux phrases ne sont pas identiques.</string>
+    <string name="backup_private_encrypted">Notez la phrase de passe à part : sans elle, personne ne peut ouvrir ce fichier, pas même vous.</string>
 </resources>

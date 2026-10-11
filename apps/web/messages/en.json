@@ -97,7 +97,9 @@
     "BARCODE_SCAN_UNAVAILABLE": "Barcode reading is unavailable right now. Type the digits or the item name.",
     "BACKUP_INVALID": "This file is not a valid Tandem backup.",
     "TWO_FACTOR_INVALID": "Wrong or expired code. Try again with the code shown now, or a backup code.",
-    "TWO_FACTOR_UNAVAILABLE": "Two-step verification isn’t available on this server."
+    "TWO_FACTOR_UNAVAILABLE": "Two-step verification isn’t available on this server.",
+    "BACKUP_PASSPHRASE_REQUIRED": "This backup is encrypted: enter its passphrase.",
+    "BACKUP_PASSPHRASE_INVALID": "Wrong passphrase, or damaged file."
   },
   "today": {
     "greeting": "Hello {name} 👋",
@@ -1604,7 +1606,7 @@
     "password": "Password",
     "submit": "Download",
     "restoreTitle": "Do you have a backup?",
-    "restoreIntro": "Recreate your household from a Tandem backup (.zip file): everything in it is brought back.",
+    "restoreIntro": "Recreate your household from a Tandem backup (.zip file, or .tandem if it is encrypted): everything in it is brought back.",
     "restoreChoose": "Choose the backup",
     "restoring": "Restoring…",
     "alreadyInHousehold": "This account is already in a household: restore from an account that doesn't have one yet.",
@@ -1615,7 +1617,16 @@
     "copy": "Copy",
     "copied": "Copied",
     "pending": "pending",
-    "linksValid": "These links are valid for 30 days."
+    "linksValid": "These links are valid for 30 days.",
+    "encrypt": "Encrypt with a passphrase",
+    "encryptHint": "A .tandem file that can’t be read without it. It isn’t stored anywhere: if you lose it, the backup can no longer be restored.",
+    "passphrase": "Passphrase",
+    "passphraseHint": "At least {min} characters; a few words that are easy to remember, for example.",
+    "passphraseAgain": "Type the passphrase again",
+    "passphraseMismatch": "The two passphrases don’t match.",
+    "privateEncrypted": "Write the passphrase down separately: without it, nobody can open this file, not even you.",
+    "restorePassphrase": "This backup is encrypted: enter the passphrase chosen when it was downloaded.",
+    "restoreUnlock": "Decrypt and restore"
   },
   "twoFactor": {
     "title": "Two-step verification",

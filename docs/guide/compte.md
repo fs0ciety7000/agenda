@@ -67,7 +67,11 @@ serveur, d'hébergeur).
 - Elle contient le texte des notes sensibles : votre **mot de passe** est demandé sur le site
   (ou une confirmation pour un compte Google), l'**empreinte ou le code du téléphone** dans
   l'app. Gardez le fichier pour vous.
-- La restauration se fait sur le site.
+- **Chiffrer avec une phrase de passe** (case à cocher, site et app) : le fichier devient un
+  `.tandem` illisible sans elle (AES-256). Choisissez quelques mots faciles à retenir (10
+  caractères au moins), tapés deux fois, et notez-les à part : la phrase n'est gardée nulle part,
+  et sans elle personne ne peut restaurer la sauvegarde, pas même vous.
+- La restauration se fait sur le site ; pour un `.tandem`, la phrase de passe est demandée.
 
 **Restaurer** : sur l'autre instance, créez un compte puis, à l'accueil, **Vous avez une
 sauvegarde ? → Choisir la sauvegarde**. Le foyer est recréé tel quel ; vous reprenez votre place

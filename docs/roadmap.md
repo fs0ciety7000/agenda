@@ -209,7 +209,8 @@ Demandé le 11 octobre :
   bloquant en CI (S) ⚙️ (#95)
 - [x] Sécurité : double authentification (code d'une application d'authentification + codes de
   secours) ; gestion sur le site, code demandé aussi par l'app Android (M) 🌐🤖⚙️ (#95)
-- [ ] Sécurité : sauvegarde du foyer chiffrée par une phrase de passe, en option (S) 🌐🤖⚙️
+- [x] Sécurité : sauvegarde du foyer chiffrée par une phrase de passe, en option (fichier
+  `.tandem`, AES-256-GCM, clé tirée par scrypt) ; site et Android (S) 🌐🤖⚙️ (#95)
 - [ ] Sécurité : e-mail « Nouvel appareil connecté », avec un lien pour déconnecter les autres
   appareils (S) ⚙️
 

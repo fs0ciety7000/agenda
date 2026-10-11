@@ -97,7 +97,9 @@
     "BARCODE_SCAN_UNAVAILABLE": "Barcodes lezen lukt nu even niet. Typ de cijfers of de naam van het artikel.",
     "BACKUP_INVALID": "Dit bestand is geen geldige Tandem-back-up.",
     "TWO_FACTOR_INVALID": "Onjuiste of verlopen code. Probeer het opnieuw met de code die nu wordt getoond, of met een herstelcode.",
-    "TWO_FACTOR_UNAVAILABLE": "Tweestapsverificatie is niet beschikbaar op deze server."
+    "TWO_FACTOR_UNAVAILABLE": "Tweestapsverificatie is niet beschikbaar op deze server.",
+    "BACKUP_PASSPHRASE_REQUIRED": "Deze back-up is versleuteld: voer de wachtzin in.",
+    "BACKUP_PASSPHRASE_INVALID": "Onjuiste wachtzin, of beschadigd bestand."
   },
   "today": {
     "greeting": "Hallo {name} 👋",
@@ -1604,7 +1606,7 @@
     "password": "Wachtwoord",
     "submit": "Downloaden",
     "restoreTitle": "Heb je een back-up?",
-    "restoreIntro": "Maak je huishouden opnieuw aan vanuit een Tandem-back-up (.zip-bestand): alles wordt teruggezet.",
+    "restoreIntro": "Maak je huishouden opnieuw aan vanuit een Tandem-back-up (.zip-bestand, of .tandem als hij versleuteld is): alles wordt teruggezet.",
     "restoreChoose": "Back-up kiezen",
     "restoring": "Terugzetten…",
     "alreadyInHousehold": "Dit account hoort al bij een huishouden: zet terug vanaf een account dat er nog geen heeft.",
@@ -1615,7 +1617,16 @@
     "copy": "Kopiëren",
     "copied": "Gekopieerd",
     "pending": "in afwachting",
-    "linksValid": "Deze links zijn 30 dagen geldig."
+    "linksValid": "Deze links zijn 30 dagen geldig.",
+    "encrypt": "Versleutelen met een wachtzin",
+    "encryptHint": "Een .tandem-bestand dat zonder wachtzin onleesbaar is. De wachtzin wordt nergens bewaard: kwijt is kwijt, dan kan de back-up niet meer worden teruggezet.",
+    "passphrase": "Wachtzin",
+    "passphraseHint": "Minstens {min} tekens; bijvoorbeeld een paar woorden die je makkelijk onthoudt.",
+    "passphraseAgain": "Typ de wachtzin opnieuw",
+    "passphraseMismatch": "De twee wachtzinnen zijn niet gelijk.",
+    "privateEncrypted": "Noteer de wachtzin apart: zonder kan niemand dit bestand openen, jij ook niet.",
+    "restorePassphrase": "Deze back-up is versleuteld: voer de wachtzin in die je bij het downloaden koos.",
+    "restoreUnlock": "Ontsleutelen en terugzetten"
   },
   "twoFactor": {
     "title": "Tweestapsverificatie",

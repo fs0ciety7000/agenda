@@ -2,7 +2,9 @@ package app.tandem.foyer.ui
 
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextInput
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -52,24 +54,43 @@ class BackupTest {
         db.households().insertHousehold(HouseholdEntity(Fixtures.HOUSEHOLD, "Emma & Tom", "Europe/Brussels", Fixtures.GRACE))
         server.enqueue(MockResponse().setHeader("content-type", "application/zip").setBody(Buffer().write(zip)))
         val out = ByteArrayOutputStream()
-        assertTrue(remote.download { out })
+        assertTrue(remote.download(null) { out })
         assertArrayEquals(zip, out.toByteArray())
         val req = server.takeRequest()
         assertEquals("POST /v1/households/${Fixtures.HOUSEHOLD}/backup", "${req.method} ${req.path}")
+        assertEquals("{}", req.body.readUtf8())
+
+        // Chiffrée : la phrase de passe part avec la demande.
+        server.enqueue(MockResponse().setBody(Buffer().write(zip)))
+        assertTrue(remote.download("quatre mots faciles") { ByteArrayOutputStream() })
+        assertEquals("""{"passphrase":"quatre mots faciles"}""", server.takeRequest().body.readUtf8())
 
         // Refusé par le serveur : le fichier n'est même pas ouvert.
         server.enqueue(MockResponse().setResponseCode(403).setBody("""{"error":{"code":"FORBIDDEN"}}"""))
         var opened = false
-        assertFalse(remote.download { opened = true; ByteArrayOutputStream() })
+        assertFalse(remote.download(null) { opened = true; ByteArrayOutputStream() })
         assertFalse(opened)
     }
 
     @Test
     fun nom_du_fichier_et_hors_ligne() {
         assertEquals("tandem-foyer-2026-10-09.zip", backupFilename(LocalDate.of(2026, 10, 9)))
+        assertEquals("tandem-foyer-2026-10-09.tandem", backupFilename(LocalDate.of(2026, 10, 9), encrypted = true))
         val messages = mutableListOf<String>()
-        compose.setContent { AgendaTheme { BackupSection(false, { false }, { messages += it }) } }
+        compose.setContent { AgendaTheme { BackupSection(false, { _, _ -> false }, { messages += it }) } }
         compose.onNodeWithText("Télécharger la sauvegarde").performClick()
         assertEquals(listOf("Télécharger la sauvegarde demande une connexion."), messages)
+    }
+
+    @Test
+    fun phrase_de_passe_trop_courte_ou_differente_bloque_le_telechargement() {
+        compose.setContent { AgendaTheme { BackupSection(true, { _, _ -> true }, {}) } }
+        compose.onNodeWithText("Chiffrer avec une phrase de passe").performClick()
+        compose.onNodeWithText("Phrase de passe").performTextInput("court")
+        compose.onNodeWithText("Télécharger la sauvegarde").assertIsNotEnabled()
+        compose.onNodeWithText("Phrase de passe").performTextInput(" mais assez long")
+        compose.onNodeWithText("Retapez la phrase de passe").performTextInput("autre chose")
+        compose.onNodeWithText("Les deux phrases ne sont pas identiques.").assertExists()
+        compose.onNodeWithText("Télécharger la sauvegarde").assertIsNotEnabled()
     }
 }

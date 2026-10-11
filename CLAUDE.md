@@ -42,6 +42,8 @@ Fichiers importés, à respecter au même titre que celui-ci :
   Open Food Facts (le code seul) ; `OPEN_FOOD_FACTS_URL=off` le coupe (#93).
 - Sauvegarde du foyer : .zip (JSON + fichiers), mot de passe comme le coffre, sans le personnel de
   l'autre ; restaurer recrée un foyer (ids refaits), l'autre reprend son membre par son adresse (#93).
+- Sauvegarde chiffrée (option) : fichier `.tandem` = en-tête + .zip en AES-256-GCM, clé scrypt
+  (N = 2^17) tirée d'une phrase de passe jamais gardée ; la restauration la demande (#95).
 - Lien invité des courses : un par foyer, secret, lecture seule, sans compte, coupé seul après 7 jours
   par défaut (1, 30 ou sans limite au choix) ; l'invité ne voit que les articles et le nom du foyer (#93).
 - Passkeys Android : Credential Manager sur le domaine du site, app déclarée par `assetlinks.json`

@@ -2,6 +2,7 @@
 
 import { Download } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { BACKUP_PASSPHRASE_MIN } from '@agenda/contracts/constants';
 import { useState, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
@@ -23,10 +24,17 @@ export function BackupSettings({ householdId }: { householdId: string }) {
   const [method, setMethod] = useState<'password' | 'confirm' | null>(null);
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  // Chiffrement facultatif : phrase de passe tapée deux fois, gardée nulle part.
+  const [encrypt, setEncrypt] = useState(false);
+  const [passphrase, setPassphrase] = useState('');
+  const [again, setAgain] = useState('');
+  const tooShort = encrypt && passphrase.length < BACKUP_PASSPHRASE_MIN;
+  const mismatch = encrypt && again.length > 0 && again !== passphrase;
+  const blocked = encrypt && (tooShort || again !== passphrase);
 
   const run = (input: { password?: string; confirm?: boolean }) => {
     setError(null);
-    download.mutate(input, {
+    download.mutate(encrypt ? { ...input, passphrase } : input, {
       onSuccess: () => {
         setMethod(null);
         setPassword('');
@@ -54,16 +62,51 @@ export function BackupSettings({ householdId }: { householdId: string }) {
     <div className="flex flex-col gap-3">
       <p className="text-[0.9375rem] text-text-muted">{t('intro')}</p>
       <p className="text-[0.8125rem] text-text-muted">{t('excluded')}</p>
+      <label className="flex min-h-11 cursor-pointer items-center gap-3 text-[0.9375rem]">
+        <input
+          type="checkbox"
+          checked={encrypt}
+          onChange={(e) => setEncrypt(e.target.checked)}
+          className="size-5 accent-(--color-accent)"
+        />
+        <span>
+          {t('encrypt')}
+          <span className="block text-[0.8125rem] text-text-muted">{t('encryptHint')}</span>
+        </span>
+      </label>
+      {encrypt && (
+        <div className="flex flex-col gap-3">
+          <Field
+            label={t('passphrase')}
+            type="password"
+            autoComplete="new-password"
+            hint={t('passphraseHint', { min: BACKUP_PASSPHRASE_MIN })}
+            value={passphrase}
+            onChange={(e) => setPassphrase(e.target.value)}
+          />
+          <Field
+            label={t('passphraseAgain')}
+            type="password"
+            autoComplete="new-password"
+            value={again}
+            onChange={(e) => setAgain(e.target.value)}
+            error={mismatch ? t('passphraseMismatch') : undefined}
+          />
+        </div>
+      )}
       <Button
         variant="secondary"
         className="self-start"
         loading={download.isPending && !method}
+        disabled={blocked}
         onClick={() => run({})}
       >
         <Download aria-hidden className="size-4" />
         {download.isPending && !method ? t('preparing') : t('download')}
       </Button>
-      <p className="text-[0.8125rem] text-text-muted">{t('private')}</p>
+      <p className="text-[0.8125rem] text-text-muted">
+        {t(encrypt ? 'privateEncrypted' : 'private')}
+      </p>
 
       <Dialog
         open={method !== null}
