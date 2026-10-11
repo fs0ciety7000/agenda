@@ -28,6 +28,7 @@ cd apps/docs && npm ci && npm start        # http://localhost:3000, rechargement
 
 ```bash
 pnpm format:check && pnpm lint && pnpm typecheck && pnpm test
+pnpm audit --prod --audit-level high       # aucune faille grave en production (bloquant en CI)
 pnpm --filter @agenda/web e2e              # parcours web (API et web démarrés)
 cd apps/android && ./gradlew lintDebug testDebugUnitTest assembleDebug
 ```
@@ -41,6 +42,9 @@ cd apps/android && ./gradlew lintDebug testDebugUnitTest assembleDebug
 - **Commentaire `/** … */` sur chaque méthode de contrôleur** : sa première phrase devient le
   résumé de la route dans la référence de l'API.
 - **Migrations Prisma** générées (`prisma migrate diff`), jamais écrites à la main.
+- **Failles des dépendances** : `pnpm audit --prod --audit-level high` bloque la CI. On corrige
+  par une mise à jour du paquet ; pour une dépendance indirecte, par une entrée `overrides` de
+  `pnpm-workspace.yaml` (même version majeure), retirée quand le paquet parent suit.
 - **Pas de secret dans le dépôt** : ni clé, ni jeton, ni fichier de compte de service, ni
   adresse personnelle.
 

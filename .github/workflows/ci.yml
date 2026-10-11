@@ -64,6 +64,10 @@ jobs:
       # Tickets et codes-barres (tests d'intégration de l'API) : mêmes moteurs que l'image de production.
       - name: Installer Tesseract et zbar
         run: sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-fra tesseract-ocr-nld tesseract-ocr-osd zbar-tools
+      # Aucune faille grave (high ou critical) dans les dépendances de production : la CI échoue
+      # dès qu'une alerte paraît, même sans changement de code (docs/contribuer.md).
+      - name: Dépendances de production sans faille grave
+        run: pnpm audit --prod --audit-level high
       - run: pnpm format:check
       - run: pnpm lint
       - run: pnpm typecheck

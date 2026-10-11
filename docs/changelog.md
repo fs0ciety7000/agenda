@@ -15,6 +15,12 @@ d'elle-même (ou via Google Play).
 
 ## 11 octobre 2026
 
+### Sécurité des dépendances (#95)
+
+- 🔒 Mise à jour des bibliothèques qui reçoivent les fichiers (photos, sauvegardes), préparent les
+  images et envoient les e-mails, ainsi que du serveur web : plus aucune faille connue dans le code
+  en production, et la vérification bloque désormais chaque modification.
+
 ### Passkeys dans l'app Android
 
 - ✨ **Se connecter avec une passkey** dans l'app Android : empreinte, visage ou code du

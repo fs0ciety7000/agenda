@@ -204,6 +204,15 @@ Découvert pendant le lot 6 :
 
 Demandé le 11 octobre :
 
+- [x] Sécurité : dépendances vulnérables mises à jour (multer, sharp, nodemailer 10, NestJS, Next,
+  next-intl ; dépendances indirectes par `overrides`) ; `pnpm audit --prod --audit-level high`
+  bloquant en CI (S) ⚙️ (#95)
+- [ ] Sécurité : double authentification (code d'une application d'authentification + codes de
+  secours) (M) 🌐🤖⚙️
+- [ ] Sécurité : sauvegarde du foyer chiffrée par une phrase de passe, en option (S) 🌐🤖⚙️
+- [ ] Sécurité : e-mail « Nouvel appareil connecté », avec un lien pour déconnecter les autres
+  appareils (S) ⚙️
+
 - [x] Android : connexion par passkey (Credential Manager) et Réglages → Passkeys (voir, ajouter,
   supprimer) ; `assetlinks.json` servi par le site, empreintes des certificats dans
   `ANDROID_CERT_SHA256` (M) 🤖⚙️ (#95)
