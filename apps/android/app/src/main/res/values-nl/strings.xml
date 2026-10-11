@@ -796,4 +796,17 @@
     <string name="passkeys_remove">“%1$s” verwijderen</string>
     <string name="passkeys_confirm_remove">Deze toegangssleutel verwijderen? Je kunt je er dan niet meer mee aanmelden.</string>
     <string name="passkeys_removed">Toegangssleutel verwijderd.</string>
+    <!-- Double authentification -->
+    <string name="two_factor_title">Verificatiecode</string>
+    <string name="two_factor_intro">Voer de code van 6 cijfers uit je authenticator-app in, of een herstelcode.</string>
+    <string name="two_factor_code">Code</string>
+    <string name="two_factor_code_hint">6 cijfers, of een herstelcode zoals abcd-efgh</string>
+    <string name="two_factor_verify">Bevestigen</string>
+    <string name="two_factor_restart">Opnieuw beginnen met aanmelden</string>
+    <string name="error_two_factor_invalid">Onjuiste of verlopen code. Probeer het opnieuw met de code die nu wordt getoond, of met een herstelcode.</string>
+    <string name="two_factor_settings_title">Tweestapsverificatie</string>
+    <string name="two_factor_settings_intro">Een code uit je authenticator-app na je wachtwoord.</string>
+    <string name="two_factor_settings_on">Ingeschakeld: de app vraagt een code na je wachtwoord.</string>
+    <string name="two_factor_settings_off">Uitgeschakeld. Je schakelt hem in op de website: QR-code scannen en herstelcodes bewaren.</string>
+    <string name="two_factor_settings_manage">Beheren op de website</string>
 </resources>

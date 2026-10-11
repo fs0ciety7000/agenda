@@ -46,6 +46,8 @@ Fichiers importés, à respecter au même titre que celui-ci :
   par défaut (1, 30 ou sans limite au choix) ; l'invité ne voit que les articles et le nom du foyer (#93).
 - Passkeys Android : Credential Manager sur le domaine du site, app déclarée par `assetlinks.json`
   (`ANDROID_CERT_SHA256`, empreintes Play et APK) ; version vide avec `-Ptandem.passkeys=false` (#95).
+- Double authentification : TOTP (secret chiffré) + 10 codes de secours hachés, après le mot de passe
+  seulement (passkeys et Google exemptés) ; activée sur le site, code demandé aussi par Android (#95).
 - Notes sensibles : contenu jamais renvoyé hors de `…/reveal` ; site = mot de passe (coffre ouvert 5 min
   par session), Android = empreinte ou code vérifiés sur l'appareil ; pas de chiffrement de bout en bout (#93).
 

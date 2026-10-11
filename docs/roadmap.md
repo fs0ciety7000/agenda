@@ -207,8 +207,8 @@ Demandé le 11 octobre :
 - [x] Sécurité : dépendances vulnérables mises à jour (multer, sharp, nodemailer 10, NestJS, Next,
   next-intl ; dépendances indirectes par `overrides`) ; `pnpm audit --prod --audit-level high`
   bloquant en CI (S) ⚙️ (#95)
-- [ ] Sécurité : double authentification (code d'une application d'authentification + codes de
-  secours) (M) 🌐🤖⚙️
+- [x] Sécurité : double authentification (code d'une application d'authentification + codes de
+  secours) ; gestion sur le site, code demandé aussi par l'app Android (M) 🌐🤖⚙️ (#95)
 - [ ] Sécurité : sauvegarde du foyer chiffrée par une phrase de passe, en option (S) 🌐🤖⚙️
 - [ ] Sécurité : e-mail « Nouvel appareil connecté », avec un lien pour déconnecter les autres
   appareils (S) ⚙️

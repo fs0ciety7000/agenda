@@ -6,6 +6,22 @@ import kotlinx.serialization.json.JsonObject
 @Serializable
 data class LoginRequest(val email: String, val password: String)
 
+/** Connexion : session ouverte, ou défi de double authentification (`twoFactorRequired`). */
+@Serializable
+data class LoginResponseDto(
+    val user: MeDto? = null,
+    val accessToken: String? = null,
+    val refreshToken: String? = null,
+    val twoFactorRequired: Boolean = false,
+    val challengeId: String? = null,
+)
+
+@Serializable
+data class TwoFactorLoginBody(val challengeId: String, val code: String)
+
+@Serializable
+data class TwoFactorStatusDto(val enabled: Boolean = false, val available: Boolean = false)
+
 @Serializable
 data class RefreshRequest(val refreshToken: String)
 

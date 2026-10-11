@@ -13,6 +13,8 @@ enum class AuthError {
     NO_PASSKEY,
     /** Fenêtre de passkey fermée par l'utilisateur : rien à afficher. */
     PASSKEY_CANCELLED,
+    /** Code de double authentification faux ou expiré. */
+    TWO_FACTOR_INVALID,
 }
 
 /** Résultat d'une demande au gestionnaire de passkeys du téléphone. */
@@ -29,6 +31,8 @@ sealed interface PasskeyOutcome {
 sealed interface AuthResult {
     data class Success(val user: User) : AuthResult
     data class Failure(val error: AuthError) : AuthResult
+    /** Mot de passe accepté : code de double authentification attendu pour ce défi. */
+    data class TwoFactorRequired(val challengeId: String) : AuthResult
 }
 
 interface AuthRepository {
@@ -55,6 +59,10 @@ interface AuthRepository {
      */
     suspend fun loginWithPasskey(sign: suspend (optionsJson: String) -> PasskeyOutcome): AuthResult =
         AuthResult.Failure(AuthError.PASSKEY_FAILED)
+
+    /** Termine une connexion par mot de passe avec le code de l'application ou un code de secours. */
+    suspend fun completeTwoFactor(challengeId: String, code: String): AuthResult =
+        AuthResult.Failure(AuthError.TWO_FACTOR_INVALID)
 
     /** Langue du compte (« fr » ou « en ») : e-mails et site. Sans effet hors ligne. */
     suspend fun setLanguage(locale: String) {}

@@ -160,6 +160,7 @@
     },
     "/v1/auth/login": {
       "post": {
+        "description": "Se connecter (e-mail et mot de passe). Avec la double authentification, la réponse est un défi (`twoFactorRequired`) à compléter par `POST /auth/2fa/verify`.",
         "operationId": "AuthController_login_v1",
         "parameters": [
           {
@@ -191,7 +192,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/AuthResponse"
+                  "$ref": "#/components/schemas/LoginResponse"
                 }
               }
             }
@@ -212,6 +213,348 @@
           "auth"
         ],
         "security": []
+      }
+    },
+    "/v1/auth/2fa/verify": {
+      "post": {
+        "operationId": "AuthController_verifyTwoFactor_v1",
+        "parameters": [
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TwoFactorLoginInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AuthResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Terminer la connexion avec le code de double authentification (ou un code de secours)",
+        "tags": [
+          "auth"
+        ],
+        "security": []
+      }
+    },
+    "/v1/me/2fa": {
+      "get": {
+        "operationId": "AuthController_twoFactorStatus_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwoFactorStatusDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "État de ma double authentification",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/me/2fa/setup": {
+      "post": {
+        "description": "Préparer la double authentification : secret à enregistrer dans l'application.",
+        "operationId": "AuthController_setupTwoFactor_v1",
+        "parameters": [
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RevealNoteInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwoFactorSetupDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Préparer la double authentification ",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/me/2fa/enable": {
+      "post": {
+        "operationId": "AuthController_enableTwoFactor_v1",
+        "parameters": [
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TwoFactorEnableInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwoFactorRecoveryCodesDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Activer la double authentification (premier code) ; renvoie les codes de secours",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/me/2fa/disable": {
+      "post": {
+        "operationId": "AuthController_disableTwoFactor_v1",
+        "parameters": [
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TwoFactorCodeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Aucun contenu"
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Désactiver la double authentification (code exigé)",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/v1/me/2fa/recovery-codes": {
+      "post": {
+        "operationId": "AuthController_regenerateRecoveryCodes_v1",
+        "parameters": [
+          {
+            "name": "x-requested-with",
+            "in": "header",
+            "description": "Protection CSRF : valeur fixe.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "tandem"
+              ]
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TwoFactorCodeInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Succès",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TwoFactorRecoveryCodesDto"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "Erreur (code stable dans `error.code`)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          },
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "Nouveaux codes de secours (code exigé) ; les anciens ne marchent plus",
+        "tags": [
+          "auth"
+        ]
       }
     },
     "/v1/auth/refresh": {
@@ -11358,6 +11701,8 @@
                   "BARCODE_SCAN_UNAVAILABLE",
                   "VAULT_LOCKED",
                   "BACKUP_INVALID",
+                  "TWO_FACTOR_INVALID",
+                  "TWO_FACTOR_UNAVAILABLE",
                   "INTERNAL"
                 ]
               },
@@ -12346,6 +12691,9 @@
               },
               "isAdmin": {
                 "type": "boolean"
+              },
+              "twoFactorEnabled": {
+                "type": "boolean"
               }
             },
             "required": [
@@ -12354,7 +12702,8 @@
               "displayName",
               "locale",
               "hasPassword",
-              "googleLinked"
+              "googleLinked",
+              "twoFactorEnabled"
             ],
             "additionalProperties": false
           },
@@ -14488,6 +14837,96 @@
           "password"
         ]
       },
+      "LoginResponse": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "user": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "email": {
+                    "type": "string"
+                  },
+                  "displayName": {
+                    "type": "string"
+                  },
+                  "locale": {
+                    "type": "string",
+                    "enum": [
+                      "fr",
+                      "en",
+                      "nl"
+                    ]
+                  },
+                  "hasPassword": {
+                    "type": "boolean"
+                  },
+                  "googleLinked": {
+                    "type": "boolean"
+                  },
+                  "isAdmin": {
+                    "type": "boolean"
+                  },
+                  "twoFactorEnabled": {
+                    "type": "boolean"
+                  }
+                },
+                "required": [
+                  "id",
+                  "email",
+                  "displayName",
+                  "locale",
+                  "hasPassword",
+                  "googleLinked",
+                  "twoFactorEnabled"
+                ],
+                "additionalProperties": false
+              },
+              "accessToken": {
+                "type": "string"
+              },
+              "refreshToken": {
+                "type": "string"
+              },
+              "accessTokenExpiresIn": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            },
+            "required": [
+              "user",
+              "accessTokenExpiresIn"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "twoFactorRequired": {
+                "type": "boolean",
+                "enum": [
+                  true
+                ]
+              },
+              "challengeId": {
+                "type": "string",
+                "format": "uuid"
+              }
+            },
+            "required": [
+              "twoFactorRequired",
+              "challengeId"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
       "MarkReadInput": {
         "type": "object",
         "properties": {
@@ -14530,6 +14969,9 @@
           },
           "isAdmin": {
             "type": "boolean"
+          },
+          "twoFactorEnabled": {
+            "type": "boolean"
           }
         },
         "required": [
@@ -14538,7 +14980,8 @@
           "displayName",
           "locale",
           "hasPassword",
-          "googleLinked"
+          "googleLinked",
+          "twoFactorEnabled"
         ],
         "additionalProperties": false
       },
@@ -17926,6 +18369,102 @@
           "deletedAt",
           "deletedById",
           "purgeAt"
+        ],
+        "additionalProperties": false
+      },
+      "TwoFactorCodeInput": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      },
+      "TwoFactorEnableInput": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      },
+      "TwoFactorLoginInput": {
+        "type": "object",
+        "properties": {
+          "challengeId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "code": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "challengeId",
+          "code"
+        ]
+      },
+      "TwoFactorRecoveryCodesDto": {
+        "type": "object",
+        "properties": {
+          "codes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "codes"
+        ],
+        "additionalProperties": false
+      },
+      "TwoFactorSetupDto": {
+        "type": "object",
+        "properties": {
+          "secret": {
+            "type": "string"
+          },
+          "otpauthUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "secret",
+          "otpauthUrl"
+        ],
+        "additionalProperties": false
+      },
+      "TwoFactorStatusDto": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean"
+          },
+          "enabledAt": {
+            "nullable": true,
+            "type": "string"
+          },
+          "recoveryCodesLeft": {
+            "type": "integer",
+            "minimum": -9007199254740991,
+            "maximum": 9007199254740991
+          },
+          "available": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "enabled",
+          "enabledAt",
+          "recoveryCodesLeft",
+          "available"
         ],
         "additionalProperties": false
       },

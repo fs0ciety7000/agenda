@@ -26,6 +26,14 @@ description: Mot de passe, Google, sessions, export et suppression de ses donné
   connexion, et **Réglages → Compte → Passkeys** pour voir, ajouter ou supprimer les vôtres. Une
   passkey créée sur le site avec le gestionnaire de mots de passe Google marche aussi dans l'app,
   et inversement.
+- **Double authentification** (**Réglages → Compte**, sur le site) : après le mot de passe, un
+  code à 6 chiffres de votre application d'authentification (Google Authenticator, Aegis,
+  1Password…). **Activer** demande votre mot de passe, affiche un QR code à scanner, puis le premier
+  code. Vous recevez alors **10 codes de secours**, montrés une seule fois : chacun remplace une fois
+  le code de l'application (téléphone perdu ou changé). Gardez-les en lieu sûr ; **Nouveaux codes de
+  secours** les remplace tous. **Désactiver** demande un code. L'app Android demande le code à la
+  connexion ; son activation se fait sur le site. Les passkeys et « Continuer avec Google » n'en
+  demandent pas : elles sont déjà protégées (empreinte ou code du téléphone, compte Google).
 - **Lier / délier Google** dans **Réglages → Données & confidentialité** (définissez d'abord un
   mot de passe pour pouvoir délier Google).
 

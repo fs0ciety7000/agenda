@@ -9,6 +9,7 @@ import app.tandem.foyer.data.remote.MeDto
 import app.tandem.foyer.data.remote.MobileExchangeRequest
 import app.tandem.foyer.data.remote.PasskeyResponseBody
 import app.tandem.foyer.data.remote.ProvidersDto
+import app.tandem.foyer.data.remote.TwoFactorLoginBody
 import app.tandem.foyer.data.remote.RefreshRequest
 import app.tandem.foyer.data.remote.UpdateMeRequest
 import app.tandem.foyer.data.remote.json
@@ -35,11 +36,33 @@ class AuthRepositoryImpl(
         val response = api.login(LoginRequest(email.trim().lowercase(), password))
         val body = response.body()
         when {
-            response.isSuccessful && body?.accessToken != null && body.refreshToken != null -> {
+            response.isSuccessful && body?.twoFactorRequired == true && body.challengeId != null ->
+                AuthResult.TwoFactorRequired(body.challengeId)
+            response.isSuccessful && body?.user != null && body.accessToken != null && body.refreshToken != null -> {
                 tokens.save(body.accessToken, body.refreshToken)
                 AuthResult.Success(body.user.toDomain())
             }
             else -> AuthResult.Failure(mapError(response.code(), response.errorBody()?.string()))
+        }
+    } catch (_: IOException) {
+        AuthResult.Failure(AuthError.NETWORK)
+    }
+
+    override suspend fun completeTwoFactor(challengeId: String, code: String): AuthResult = try {
+        val response = api.verifyTwoFactor(TwoFactorLoginBody(challengeId, code.trim()))
+        val body = response.body()
+        if (response.isSuccessful && body?.accessToken != null && body.refreshToken != null) {
+            tokens.save(body.accessToken, body.refreshToken)
+            AuthResult.Success(body.user.toDomain())
+        } else {
+            AuthResult.Failure(
+                when (response.code()) {
+                    429 -> AuthError.RATE_LIMITED
+                    // Code au mauvais format (refusé avant vérification) : même message.
+                    400, 401 -> AuthError.TWO_FACTOR_INVALID
+                    else -> mapError(response.code(), response.errorBody()?.string())
+                },
+            )
         }
     } catch (_: IOException) {
         AuthResult.Failure(AuthError.NETWORK)

@@ -67,6 +67,14 @@ export class AuthService {
   }
 
   async login(input: LoginInput, userAgent?: string): Promise<IssuedTokens> {
+    return this.issue(await this.checkPassword(input), randomUUID(), userAgent);
+  }
+
+  /**
+   * E-mail et mot de passe corrects : le compte (sans session). La connexion continue par une
+   * session, ou par le code de double authentification si elle est activée.
+   */
+  async checkPassword(input: LoginInput): Promise<User> {
     const user = await this.prisma.user.findUnique({ where: { email: input.email } });
     if (!user || user.deletedAt || !user.passwordHash) {
       await this.passwords.burn(input.password);
@@ -75,7 +83,10 @@ export class AuthService {
     if (!(await this.passwords.verify(user.passwordHash, input.password))) {
       throw new AppException('INVALID_CREDENTIALS', HttpStatus.UNAUTHORIZED, 'Invalid credentials');
     }
-    return this.issue(user, randomUUID(), userAgent);
+    if (user.disabledAt) {
+      throw new AppException('ACCOUNT_DISABLED', HttpStatus.FORBIDDEN, 'Account disabled');
+    }
+    return user;
   }
 
   /**
@@ -310,6 +321,7 @@ function toMe(user: User, googleLinked = false): MeResponse {
     hasPassword: user.passwordHash !== null,
     googleLinked,
     isAdmin: isAdminEmail(user.email),
+    twoFactorEnabled: user.totpEnabledAt !== null,
   };
 }
 

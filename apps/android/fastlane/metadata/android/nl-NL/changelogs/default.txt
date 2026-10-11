@@ -1,5 +1,5 @@
-Aanmelden met een toegangssleutel: vingerafdruk, gezicht of pincode.
-• Toegangssleutels toevoegen of verwijderen in Instellingen.
+Aanmelden met een toegangssleutel; beheer ze in Instellingen.
+• Tweestapsverificatie: code gevraagd na je wachtwoord.
 • Boodschappen: barcode live scannen; gastlink die vanzelf uitgaat.
 • Back-up van het huishouden; gevoelige notities beschermd, versies terugzetten.
 • Kasticket inlezen: bedrag en datum van de foto gelezen.

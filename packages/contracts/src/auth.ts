@@ -36,6 +36,8 @@ export const MeResponse = z.object({
   googleLinked: z.boolean(),
   /** Accès à l'administration (ADMIN_EMAILS). */
   isAdmin: z.boolean().optional(),
+  /** Double authentification activée (code demandé après le mot de passe). */
+  twoFactorEnabled: z.boolean(),
 });
 export type MeResponse = z.infer<typeof MeResponse>;
 
@@ -51,6 +53,62 @@ export const AuthResponse = z.object({
   accessTokenExpiresIn: z.number().int(),
 });
 export type AuthResponse = z.infer<typeof AuthResponse>;
+
+/**
+ * Double authentification : après un mot de passe correct, la connexion attend un code (6 chiffres
+ * de l'application d'authentification, ou un code de secours) lié à ce défi, valable 5 minutes.
+ */
+export const TwoFactorChallengeDto = z.object({
+  twoFactorRequired: z.literal(true),
+  challengeId: z.uuid(),
+});
+export type TwoFactorChallengeDto = z.infer<typeof TwoFactorChallengeDto>;
+
+/** Réponse de `POST /auth/login` : session ouverte, ou code de double authentification attendu. */
+export const LoginResponse = z.union([AuthResponse, TwoFactorChallengeDto]);
+export type LoginResponse = z.infer<typeof LoginResponse>;
+
+/** Code à 6 chiffres, ou code de secours (« abcd-efgh »). Espaces ignorés. */
+export const TwoFactorCode = z
+  .string()
+  .transform((v) => v.replace(/\s+/g, '').toLowerCase())
+  .pipe(z.string().regex(/^(\d{6}|[a-z2-7]{4}-?[a-z2-7]{4})$/));
+
+export const TwoFactorLoginInput = z.object({ challengeId: z.uuid(), code: TwoFactorCode });
+export type TwoFactorLoginInput = z.infer<typeof TwoFactorLoginInput>;
+
+/** Désactiver ou renouveler les codes de secours : un code valide est exigé. */
+export const TwoFactorCodeInput = z.object({ code: TwoFactorCode });
+export type TwoFactorCodeInput = z.infer<typeof TwoFactorCodeInput>;
+
+/** Activation : le premier code de l'application prouve qu'elle a bien enregistré le secret. */
+export const TwoFactorEnableInput = z.object({
+  code: z
+    .string()
+    .transform((v) => v.replace(/\s+/g, ''))
+    .pipe(z.string().regex(/^\d{6}$/)),
+});
+export type TwoFactorEnableInput = z.infer<typeof TwoFactorEnableInput>;
+
+export const TwoFactorStatusDto = z.object({
+  enabled: z.boolean(),
+  enabledAt: z.string().nullable(),
+  recoveryCodesLeft: z.number().int(),
+  /** Faux si le serveur n'a pas de clé de chiffrement (TOKEN_ENCRYPTION_KEY). */
+  available: z.boolean(),
+});
+export type TwoFactorStatusDto = z.infer<typeof TwoFactorStatusDto>;
+
+/** Secret à enregistrer dans l'application (QR code de `otpauthUrl`, ou saisie de `secret`). */
+export const TwoFactorSetupDto = z.object({ secret: z.string(), otpauthUrl: z.string() });
+export type TwoFactorSetupDto = z.infer<typeof TwoFactorSetupDto>;
+
+/** Codes de secours, montrés une seule fois (un seul usage chacun). */
+export const TwoFactorRecoveryCodesDto = z.object({ codes: z.array(z.string()) });
+export type TwoFactorRecoveryCodesDto = z.infer<typeof TwoFactorRecoveryCodesDto>;
+
+/** Nombre de codes de secours générés. */
+export const TWO_FACTOR_RECOVERY_CODES = 10;
 
 export const ForgotPasswordInput = z.object({ email: Email });
 export type ForgotPasswordInput = z.infer<typeof ForgotPasswordInput>;

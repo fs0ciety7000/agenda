@@ -20,7 +20,13 @@ import okhttp3.ResponseBody
 /** Même API REST que le web : aucune logique métier propre à Android. */
 interface AgendaApi {
     @POST("v1/auth/login")
-    suspend fun login(@Body body: LoginRequest): Response<AuthResponseDto>
+    suspend fun login(@Body body: LoginRequest): Response<LoginResponseDto>
+
+    @POST("v1/auth/2fa/verify")
+    suspend fun verifyTwoFactor(@Body body: TwoFactorLoginBody): Response<AuthResponseDto>
+
+    @GET("v1/me/2fa")
+    suspend fun twoFactorStatus(): Response<TwoFactorStatusDto>
 
     @POST("v1/auth/refresh")
     fun refreshBlocking(@Body body: RefreshRequest): retrofit2.Call<AuthResponseDto>

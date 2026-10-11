@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.LiveRegionMode
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -60,6 +61,10 @@ fun LoginScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
+        if (state.twoFactorChallenge != null) {
+            TwoFactorForm(state, viewModel)
+            return@Column
+        }
         Column(Modifier.widthIn(max = 420.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             Image(
                 painter = painterResource(R.drawable.logo),
@@ -159,4 +164,59 @@ private fun AuthError.messageRes(): Int = when (this) {
     AuthError.ACCOUNT_DISABLED -> R.string.error_account_disabled
     AuthError.PASSKEY_FAILED, AuthError.PASSKEY_CANCELLED -> R.string.error_passkey_failed
     AuthError.NO_PASSKEY -> R.string.error_no_passkey
+    AuthError.TWO_FACTOR_INVALID -> R.string.error_two_factor_invalid
+}
+
+/** Deuxième étape de la connexion : code de l'application d'authentification ou code de secours. */
+@Composable
+private fun TwoFactorForm(state: LoginUiState, viewModel: LoginViewModel) {
+    Column(Modifier.widthIn(max = 420.dp).fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Text(
+            stringResource(R.string.two_factor_title),
+            style = MaterialTheme.typography.headlineMedium,
+            fontWeight = FontWeight.SemiBold,
+            modifier = Modifier.semantics { heading() },
+        )
+        Text(
+            stringResource(R.string.two_factor_intro),
+            style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        OutlinedTextField(
+            value = state.twoFactorCode,
+            onValueChange = viewModel::onTwoFactorCodeChange,
+            label = { Text(stringResource(R.string.two_factor_code)) },
+            supportingText = { Text(stringResource(R.string.two_factor_code_hint)) },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Ascii,
+                autoCorrectEnabled = false,
+                imeAction = ImeAction.Done,
+            ),
+            keyboardActions = KeyboardActions(onDone = { viewModel.submitTwoFactor() }),
+            modifier = Modifier.fillMaxWidth(),
+        )
+        state.error?.let { error ->
+            Text(
+                text = stringResource(error.messageRes()),
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.semantics { liveRegion = LiveRegionMode.Polite },
+            )
+        }
+        Button(
+            onClick = viewModel::submitTwoFactor,
+            enabled = state.canSubmitCode,
+            modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp),
+        ) {
+            if (state.isSubmitting) {
+                CircularProgressIndicator(Modifier.size(18.dp), strokeWidth = 2.dp)
+            } else {
+                Text(stringResource(R.string.two_factor_verify))
+            }
+        }
+        TextButton(
+            onClick = viewModel::restartSignIn,
+            modifier = Modifier.align(Alignment.CenterHorizontally).heightIn(min = 48.dp),
+        ) { Text(stringResource(R.string.two_factor_restart)) }
+    }
 }

@@ -799,4 +799,17 @@
     <string name="passkeys_remove">Delete “%1$s”</string>
     <string name="passkeys_confirm_remove">Delete this passkey? It will no longer let you sign in.</string>
     <string name="passkeys_removed">Passkey deleted.</string>
+    <!-- Double authentification -->
+    <string name="two_factor_title">Verification code</string>
+    <string name="two_factor_intro">Enter the 6-digit code from your authenticator app, or a backup code.</string>
+    <string name="two_factor_code">Code</string>
+    <string name="two_factor_code_hint">6 digits, or a backup code like abcd-efgh</string>
+    <string name="two_factor_verify">Confirm</string>
+    <string name="two_factor_restart">Start signing in again</string>
+    <string name="error_two_factor_invalid">Wrong or expired code. Try again with the code shown now, or a backup code.</string>
+    <string name="two_factor_settings_title">Two-step verification</string>
+    <string name="two_factor_settings_intro">A code from your authenticator app after your password.</string>
+    <string name="two_factor_settings_on">On: the app asks for a code after your password.</string>
+    <string name="two_factor_settings_off">Off. Turn it on on the website: QR code to scan and backup codes to keep.</string>
+    <string name="two_factor_settings_manage">Manage on the website</string>
 </resources>

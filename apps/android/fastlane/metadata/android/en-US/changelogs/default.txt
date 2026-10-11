@@ -1,5 +1,5 @@
-Sign in with a passkey: your phone's fingerprint, face or PIN.
-• Add or delete passkeys in Settings.
+Sign in with a passkey; manage passkeys in Settings.
+• Two-step verification: code asked after your password.
 • Shopping: live barcode scan; guest link that expires.
 • Household backup; sensitive notes protected, versions you can restore.
 • Read a receipt: amount and date read from the photo.

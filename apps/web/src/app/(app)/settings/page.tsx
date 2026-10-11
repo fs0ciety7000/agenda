@@ -12,6 +12,7 @@ import { TemplatesSettings } from '@/components/app/templates';
 import { InboundEmailSettings } from '@/components/app/inbound-email';
 import { AbsencesSettings } from '@/components/app/absences';
 import { BackupSettings } from '@/components/app/backup-settings';
+import { TwoFactorSettings } from '@/components/app/two-factor-settings';
 import { IcalFeedSettings } from '@/components/app/ical-feed';
 import { InviteLink } from '@/components/app/invite-link';
 import { LanguageSwitcher } from '@/components/app/language-switcher';
@@ -209,6 +210,7 @@ export default function SettingsPage() {
         <Card className="flex flex-col gap-4">
           <PasswordSettings />
           <PasskeySettings />
+          <TwoFactorSettings />
         </Card>
         <Card className="flex flex-col gap-4">
           <DeviceSessions />

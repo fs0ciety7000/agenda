@@ -1,5 +1,5 @@
-Connexion par passkey : empreinte, visage ou code du téléphone.
-• Passkeys à ajouter ou supprimer dans les Réglages.
+Connexion par passkey ; passkeys gérées dans les Réglages.
+• Double authentification : code demandé après le mot de passe.
 • Courses : code-barres en direct ; lien invité qui se coupe seul.
 • Sauvegarde du foyer ; notes sensibles protégées, versions restaurables.
 • Lire un ticket : montant et date lus sur la photo.

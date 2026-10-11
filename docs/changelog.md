@@ -15,6 +15,12 @@ d'elle-même (ou via Google Play).
 
 ## 11 octobre 2026
 
+### Double authentification (#95)
+
+- 🔒 ✨ **Double authentification** : un code à 6 chiffres de votre application d'authentification
+  après le mot de passe, et 10 codes de secours. À activer dans **Réglages → Compte** sur le site ;
+  l'app Android demande le code à la connexion.
+
 ### Sécurité des dépendances (#95)
 
 - 🔒 Mise à jour des bibliothèques qui reçoivent les fichiers (photos, sauvegardes), préparent les

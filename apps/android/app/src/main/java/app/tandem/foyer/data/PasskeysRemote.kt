@@ -4,6 +4,7 @@ import android.os.Build
 import app.tandem.foyer.data.remote.AgendaApi
 import app.tandem.foyer.data.remote.PasskeyDto
 import app.tandem.foyer.data.remote.PasskeyResponseBody
+import app.tandem.foyer.data.remote.TwoFactorStatusDto
 import app.tandem.foyer.data.remote.json
 import app.tandem.foyer.domain.repository.PasskeyOutcome
 import kotlinx.coroutines.Dispatchers
@@ -49,6 +50,9 @@ class PasskeysRemote(private val api: AgendaApi) {
             PasskeyOutcome.NoPasskey, PasskeyOutcome.Failed -> PasskeyAdd.FAILED
         }
     }
+
+    /** Double authentification du compte (gérée sur le site) ; null hors ligne. */
+    suspend fun twoFactor(): TwoFactorStatusDto? = call { api.twoFactorStatus().body() }
 
     suspend fun remove(id: String): Boolean = call { api.deletePasskey(id).isSuccessful.takeIf { it } } ?: false
 

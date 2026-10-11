@@ -815,4 +815,17 @@
     <string name="passkeys_remove">Supprimer « %1$s »</string>
     <string name="passkeys_confirm_remove">Supprimer cette passkey ? Elle ne permettra plus de se connecter.</string>
     <string name="passkeys_removed">Passkey supprimée.</string>
+    <!-- Double authentification -->
+    <string name="two_factor_title">Code de vérification</string>
+    <string name="two_factor_intro">Entrez le code à 6 chiffres de votre application d\'authentification, ou un code de secours.</string>
+    <string name="two_factor_code">Code</string>
+    <string name="two_factor_code_hint">6 chiffres, ou un code de secours comme abcd-efgh</string>
+    <string name="two_factor_verify">Valider</string>
+    <string name="two_factor_restart">Recommencer la connexion</string>
+    <string name="error_two_factor_invalid">Code incorrect ou expiré. Réessayez avec le code affiché maintenant, ou un code de secours.</string>
+    <string name="two_factor_settings_title">Double authentification</string>
+    <string name="two_factor_settings_intro">Un code de votre application d\'authentification après le mot de passe.</string>
+    <string name="two_factor_settings_on">Activée : l\'app demande un code après le mot de passe.</string>
+    <string name="two_factor_settings_off">Désactivée. Elle s\'active sur le site : QR code à scanner et codes de secours à garder.</string>
+    <string name="two_factor_settings_manage">Gérer sur le site</string>
 </resources>
