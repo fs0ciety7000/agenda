@@ -121,7 +121,7 @@ const fr: Content = {
     ogAlt:
       'Illustration de Tandem : un couple souriant sur un vélo tandem. « L’équilibre parfait pour votre foyer » : tâches partagées chacun son tour, liste de courses en temps réel, rappels. Gratuit, sans publicité, web et Android.',
     description:
-      'Tandem répartit les tâches de la maison entre vous : tours de rôle, liste de courses partagée, rappels, hors ligne. Gratuit, sans publicité, sur le web et Android.',
+      'Tandem répartit les tâches de la maison entre vous : tours de rôle, courses partagées, rappels, hors ligne. Gratuit, sans publicité, sur le web et Android.',
   },
   nav: {
     features: 'Fonctionnalités',
@@ -595,7 +595,7 @@ const nl: Content = {
     ogAlt:
       'Illustratie van Tandem: een lachend koppel op een tandemfiets. “Het perfecte evenwicht voor je huishouden”: gedeelde klusjes om de beurt, een live boodschappenlijst, herinneringen. Gratis, zonder advertenties, web en Android.',
     description:
-      'Tandem verdeelt de klusjes in huis tussen jullie: om de beurt, een gedeelde boodschappenlijst, herinneringen, offline. Gratis, zonder advertenties, op het web en Android.',
+      'Tandem verdeelt de klusjes in huis: om de beurt, een gedeelde boodschappenlijst, herinneringen, offline. Gratis, zonder advertenties, op het web en Android.',
   },
   nav: {
     features: 'Functies',

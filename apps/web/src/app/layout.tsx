@@ -13,6 +13,8 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'sw
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('app');
   return {
+    // Base des URL relatives (canonical des pages publiques).
+    metadataBase: new URL('https://tandem-agenda.app'),
     title: 'Tandem',
     description: t('tagline'),
     applicationName: 'Tandem',
