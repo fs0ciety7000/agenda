@@ -15,6 +15,12 @@ d'elle-même (ou via Google Play).
 
 ## 12 octobre 2026
 
+### Référencement : descriptions et adresses canoniques (#99)
+
+- ⚙️ Descriptions du site plus courtes en français et en néerlandais, affichées en entier par les
+  moteurs de recherche ; adresse canonique sur les pages publiques de l'app (confidentialité,
+  état du service, présentation).
+
 ### Site vitrine : référencement et aperçus de partage (#97)
 
 - 🛠 **Aperçus de partage** : nouvelle image 1200 × 630 dans chaque langue (néerlandais compris),
