@@ -7,7 +7,11 @@ export const dynamic = 'force-dynamic';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('privacyPolicy');
-  return { title: `${t('title')} · Tandem`, robots: { index: true, follow: false } };
+  return {
+    title: `${t('title')} · Tandem`,
+    robots: { index: true, follow: false },
+    alternates: { canonical: '/privacy' },
+  };
 }
 
 const SECTIONS = [

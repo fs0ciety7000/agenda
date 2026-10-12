@@ -4,7 +4,12 @@ import { StatusView } from './status-view';
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations('status');
-  return { title: t('metaTitle'), description: t('intro'), robots: { index: true, follow: true } };
+  return {
+    title: t('metaTitle'),
+    description: t('intro'),
+    robots: { index: true, follow: true },
+    alternates: { canonical: '/status' },
+  };
 }
 
 /** Page publique d'état du service (sans connexion). */
