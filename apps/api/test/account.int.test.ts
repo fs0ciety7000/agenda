@@ -185,7 +185,12 @@ describe('Compte : mot de passe oublié, Google Sign-In, RGPD (intégration)', (
 
     it('fournisseurs disponibles', async () => {
       const res = await http().get('/v1/auth/providers').expect(200);
-      expect(res.body).toEqual({ google: true, registration: true, passwordReset: true });
+      expect(res.body).toEqual({
+        google: true,
+        registration: true,
+        passwordReset: true,
+        androidPasskeys: false,
+      });
     });
 
     it('première connexion : compte créé, session ouverte, redirection vers `next` ; puis reconnexion', async () => {

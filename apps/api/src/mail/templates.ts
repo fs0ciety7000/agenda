@@ -172,6 +172,80 @@ export function passwordResetEmail(locale: Locale, name: string, url: string) {
   };
 }
 
+const DEVICE_WORDS = {
+  fr: { app: "l'app Android", unknown: 'un appareil inconnu', on: 'sur' },
+  en: { app: 'the Android app', unknown: 'an unknown device', on: 'on' },
+  nl: { app: 'de Android-app', unknown: 'een onbekend apparaat', on: 'op' },
+};
+const LOCALE_TAG: Record<Locale, string> = { fr: 'fr-BE', en: 'en-GB', nl: 'nl-BE' };
+
+/**
+ * Connexion depuis un appareil jamais vu sur le compte : quoi, quand, et que faire si ce n'est
+ * pas vous (déconnecter les autres appareils, changer le mot de passe).
+ */
+export function newDeviceEmail(
+  locale: Locale,
+  p: {
+    name: string;
+    kind: string;
+    browser: string | null;
+    os: string | null;
+    at: Date;
+    timeZone: string;
+    url: string;
+  },
+) {
+  const w = DEVICE_WORDS[locale];
+  const device =
+    p.kind === 'ANDROID_APP'
+      ? `${w.app}${p.os ? ` (${p.os})` : ''}`
+      : p.browser
+        ? `${p.browser}${p.os ? ` ${w.on} ${p.os}` : ''}`
+        : (p.os ?? w.unknown);
+  const when = new Intl.DateTimeFormat(LOCALE_TAG[locale], {
+    dateStyle: 'long',
+    timeStyle: 'short',
+    timeZone: p.timeZone,
+  }).format(p.at);
+  const t = {
+    fr: {
+      subject: 'Nouvelle connexion à votre compte Tandem',
+      title: `Bonjour ${p.name},`,
+      body: [
+        `Votre compte Tandem vient d'être ouvert depuis ${device}, le ${when}.`,
+        "C'est vous ? Rien à faire.",
+        "Ce n'est pas vous ? Ouvrez les Réglages, déconnectez les autres appareils, puis changez votre mot de passe (et activez la double authentification).",
+      ],
+      cta: 'Voir les appareils connectés',
+    },
+    en: {
+      subject: 'New sign-in to your Tandem account',
+      title: `Hello ${p.name},`,
+      body: [
+        `Your Tandem account was just opened from ${device}, on ${when}.`,
+        'Was it you? Nothing to do.',
+        'Wasn’t it you? Open Settings, sign out the other devices, then change your password (and turn on two-step verification).',
+      ],
+      cta: 'See signed-in devices',
+    },
+    nl: {
+      subject: 'Nieuwe aanmelding op je Tandem-account',
+      title: `Hallo ${p.name},`,
+      body: [
+        `Je Tandem-account is net geopend vanaf ${device}, op ${when}.`,
+        'Was jij dat? Dan hoef je niets te doen.',
+        'Was jij het niet? Open Instellingen, meld de andere apparaten af en wijzig daarna je wachtwoord (en schakel tweestapsverificatie in).',
+      ],
+      cta: 'Aangemelde apparaten bekijken',
+    },
+  }[locale];
+  return {
+    subject: t.subject,
+    text: textBody(locale, [t.title, ...t.body], { label: t.cta, url: p.url }),
+    html: layout(locale, t.title, t.body, { label: t.cta, url: p.url }),
+  };
+}
+
 /** Compte créé par un administrateur : choisir son mot de passe (lien valable 7 jours). */
 export function welcomeEmail(locale: Locale, name: string, url: string) {
   const t = {

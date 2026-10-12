@@ -1,6 +1,6 @@
 'use client';
 
-import type { AuthResponse, PasskeyOptionsDto } from '@agenda/contracts';
+import type { AuthResponse, LoginResponse, PasskeyOptionsDto } from '@agenda/contracts';
 import {
   browserSupportsWebAuthn,
   startAuthentication,
@@ -11,7 +11,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useLocale, useTranslations } from 'next-intl';
 import { Fingerprint } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { useForm, type Resolver } from 'react-hook-form';
 import { Button } from '@/components/ui/button';
 import { Field } from '@/components/ui/field';
@@ -83,23 +83,43 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver });
+  // Double authentification : mot de passe accepté, code attendu pour ce défi.
+  const [challengeId, setChallengeId] = useState<string | null>(null);
+
+  const signedIn = async () => {
+    queryClient.clear();
+    await clearOfflineData();
+    router.replace(safeNext(params.get('next')));
+    router.refresh();
+  };
 
   const onSubmit = handleSubmit(async (values) => {
     setServerError(null);
     try {
-      await api<AuthResponse>(`/v1/auth/${mode}`, {
+      const res = await api<LoginResponse>(`/v1/auth/${mode}`, {
         method: 'POST',
         // Nouveau compte : e-mails dans la langue affichée.
         json: mode === 'register' ? { ...values, locale } : values,
       });
-      queryClient.clear();
-      await clearOfflineData();
-      router.replace(safeNext(params.get('next')));
-      router.refresh();
+      if ('twoFactorRequired' in res) {
+        setChallengeId(res.challengeId);
+        return;
+      }
+      await signedIn();
     } catch (e) {
       setServerError(t(`errors.${errorKey(e)}` as 'errors.generic'));
     }
   });
+
+  if (challengeId) {
+    return (
+      <TwoFactorStep
+        challengeId={challengeId}
+        onSignedIn={signedIn}
+        onRestart={() => setChallengeId(null)}
+      />
+    );
+  }
 
   const isLogin = mode === 'login';
   return (
@@ -255,5 +275,67 @@ function PasskeyLoginButton({ next }: { next: string }) {
         </p>
       )}
     </>
+  );
+}
+
+/** Deuxième étape de la connexion : code de l'application d'authentification ou code de secours. */
+function TwoFactorStep({
+  challengeId,
+  onSignedIn,
+  onRestart,
+}: {
+  challengeId: string;
+  onSignedIn: () => Promise<void>;
+  onRestart: () => void;
+}) {
+  const t = useTranslations();
+  const [code, setCode] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
+    if (!code.trim()) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await api<AuthResponse>('/v1/auth/2fa/verify', {
+        method: 'POST',
+        json: { challengeId, code },
+      });
+      await onSignedIn();
+    } catch (err) {
+      setError(t(`errors.${errorKey(err)}` as 'errors.generic'));
+      setBusy(false);
+    }
+  };
+
+  return (
+    <form onSubmit={submit} noValidate className="flex flex-col gap-5">
+      <div className="flex flex-col gap-1.5">
+        <h1 className="text-2xl font-semibold tracking-tight">{t('twoFactor.loginTitle')}</h1>
+        <p className="text-[0.9375rem] text-text-muted">{t('twoFactor.loginIntro')}</p>
+      </div>
+      <Field
+        label={t('twoFactor.code')}
+        hint={t('twoFactor.codeHint')}
+        autoComplete="one-time-code"
+        autoFocus
+        spellCheck={false}
+        value={code}
+        onChange={(e) => setCode(e.target.value)}
+        error={error ?? undefined}
+      />
+      <Button type="submit" size="lg" loading={busy} disabled={!code.trim()}>
+        {t('twoFactor.verify')}
+      </Button>
+      <button
+        type="button"
+        onClick={onRestart}
+        className="-mt-2 self-center text-sm text-text-muted underline-offset-4 hover:text-text hover:underline"
+      >
+        {t('twoFactor.restart')}
+      </button>
+    </form>
   );
 }

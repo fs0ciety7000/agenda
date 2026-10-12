@@ -795,4 +795,48 @@
     <string name="backup_private">Gardez ce fichier pour vous : il contient les données du foyer en clair, notes sensibles comprises.</string>
     <string name="backup_unlock_title">Télécharger la sauvegarde</string>
     <string name="backup_unlock_subtitle">Elle contient le texte des notes sensibles</string>
+    <!-- Passkeys (connexion et Réglages) -->
+    <string name="sign_in_with_passkey">Se connecter avec une passkey</string>
+    <string name="error_passkey_failed">La connexion par passkey n\'a pas abouti. Réessayez ou utilisez votre mot de passe.</string>
+    <string name="error_no_passkey">Aucune passkey Tandem sur ce téléphone. Connectez-vous autrement, puis ajoutez-en une dans les Réglages.</string>
+    <string name="passkeys_title">Passkeys</string>
+    <string name="passkeys_intro">Connectez-vous sans mot de passe, avec l\'empreinte, le visage ou le code de votre téléphone. Plus sûr qu\'un mot de passe : rien à retenir, rien à voler.</string>
+    <string name="passkeys_loading">Chargement…</string>
+    <string name="passkeys_none">Aucune passkey pour l\'instant.</string>
+    <string name="passkeys_add">Ajouter une passkey</string>
+    <string name="passkeys_added">Passkey ajoutée : vous pourrez vous connecter avec.</string>
+    <string name="passkeys_already_here">Une passkey existe déjà pour ce compte sur ce téléphone.</string>
+    <string name="passkeys_error">Impossible d\'ajouter la passkey. Réessayez.</string>
+    <string name="passkeys_offline">Les passkeys demandent une connexion.</string>
+    <string name="passkeys_add_on_site">Pour ajouter une passkey, passez par les Réglages du site.</string>
+    <string name="passkeys_created">Ajoutée le %1$s</string>
+    <string name="passkeys_last_used">Utilisée le %1$s</string>
+    <string name="passkeys_synced">synchronisée</string>
+    <string name="passkeys_remove">Supprimer « %1$s »</string>
+    <string name="passkeys_confirm_remove">Supprimer cette passkey ? Elle ne permettra plus de se connecter.</string>
+    <string name="passkeys_removed">Passkey supprimée.</string>
+    <!-- Double authentification -->
+    <string name="two_factor_title">Code de vérification</string>
+    <string name="two_factor_intro">Entrez le code à 6 chiffres de votre application d\'authentification, ou un code de secours.</string>
+    <string name="two_factor_code">Code</string>
+    <string name="two_factor_code_hint">6 chiffres, ou un code de secours comme abcd-efgh</string>
+    <string name="two_factor_verify">Valider</string>
+    <string name="two_factor_restart">Recommencer la connexion</string>
+    <string name="error_two_factor_invalid">Code incorrect ou expiré. Réessayez avec le code affiché maintenant, ou un code de secours.</string>
+    <string name="two_factor_settings_title">Double authentification</string>
+    <string name="two_factor_settings_intro">Un code de votre application d\'authentification après le mot de passe.</string>
+    <string name="two_factor_settings_on">Activée : l\'app demande un code après le mot de passe.</string>
+    <string name="two_factor_settings_off">Désactivée. Elle s\'active sur le site : QR code à scanner et codes de secours à garder.</string>
+    <string name="two_factor_settings_manage">Gérer sur le site</string>
+    <!-- Sauvegarde chiffrée -->
+    <string name="backup_encrypt">Chiffrer avec une phrase de passe</string>
+    <string name="backup_encrypt_hint">Fichier .tandem illisible sans elle. Elle n\'est gardée nulle part : perdue, la sauvegarde ne peut plus être restaurée.</string>
+    <string name="backup_phrase_label">Phrase de passe</string>
+    <plurals name="backup_phrase_hint">
+        <item quantity="one">%1$d caractère au moins ; quelques mots faciles, par exemple</item>
+        <item quantity="other">%1$d caractères au moins ; quelques mots faciles, par exemple</item>
+    </plurals>
+    <string name="backup_phrase_again">Retapez la phrase de passe</string>
+    <string name="backup_phrase_mismatch">Les deux phrases ne sont pas identiques.</string>
+    <string name="backup_private_encrypted">Notez la phrase de passe à part : sans elle, personne ne peut ouvrir ce fichier, pas même vous.</string>
 </resources>

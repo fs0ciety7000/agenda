@@ -264,6 +264,28 @@ serveur reste disponible. Pour compiler sans accès au dépôt Maven de Google (
 hors ligne) : `-Ptandem.codeScanner=false` remplace le scanner par une version vide
 (`src/noCodeScanner`), le bouton disparaît.
 
+### Passkeys
+
+Connexion par passkey et **Réglages → Compte → Passkeys** passent par le **Credential Manager**
+d'Android (`androidx.credentials`, `src/passkeys`), à partir d'Android 9. Le domaine des clés est
+celui du site (`tandem-agenda.app`) : une passkey créée sur le site marche dans l'app, et
+inversement. Android ne l'accepte que si le site déclare l'app :
+
+1. Relever les empreintes SHA-256 des certificats qui signent l'app : Play Console → *Intégrité de
+   l'app* → *Signature de l'app* (clé de signature de Google Play), et
+   pour la clé des APK directs (mise à jour automatique), la CI la lit dans l'APK signé : résumé du
+   job *Android — APK à installer* et notes de la release `android-latest` (« Empreinte du
+   certificat »). Sans la CI : `keytool -list -v -keystore <keystore>`.
+2. Les mettre dans `ANDROID_CERT_SHA256` côté API (Coolify), séparées par des virgules, puis
+   redéployer. Ce ne sont pas des secrets.
+3. Vérifier `https://tandem-agenda.app/.well-known/assetlinks.json` : l'app `app.tandem.foyer` et
+   ses empreintes y figurent. Le serveur accepte alors l'origine `android:apk-key-hash:…` de ces
+   certificats, et l'app affiche le bouton.
+
+Sans empreinte déclarée, le bouton reste masqué et les Réglages renvoient au site pour l'ajout.
+Hors ligne (bac à sable) : `-Ptandem.passkeys=false` remplace le Credential Manager par une
+version vide (`src/noPasskeys`), comme pour le scanner.
+
 ## 6. Limites connues
 
 - Les rappels sont locaux : ils couvrent les 48 h suivantes et sont replanifiés au moins toutes
@@ -282,3 +304,5 @@ hors ligne) : `-Ptandem.codeScanner=false` remplace le scanner par une version v
 4. Modifier une tâche récurrente « celle-ci et les suivantes » ; vérifier sur le site et dans
    Google Calendar.
 5. Tâche dans 20 min avec rappel à 15 min : la notification arrive, « Fait » la coche.
+6. Passkeys : Réglages → Compte → Passkeys → « Ajouter une passkey » ; se déconnecter, puis
+   « Se connecter avec une passkey » ; la passkey apparaît aussi sur le site.

@@ -4,6 +4,7 @@ import app.tandem.foyer.domain.model.User
 import app.tandem.foyer.domain.repository.AuthError
 import app.tandem.foyer.domain.repository.AuthRepository
 import app.tandem.foyer.domain.repository.AuthResult
+import app.tandem.foyer.domain.repository.PasskeyOutcome
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,6 +42,19 @@ class LoginViewModelTest {
             googleCalls += code to error
             return googleResult
         }
+        var codes = mutableListOf<Pair<String, String>>()
+        override suspend fun completeTwoFactor(challengeId: String, code: String): AuthResult {
+            codes += challengeId to code
+            return if (code == "123456") AuthResult.Success(User("1", "emma@example.be", "Emma"))
+            else AuthResult.Failure(AuthError.TWO_FACTOR_INVALID)
+        }
+        override suspend fun passkeysAvailable() = true
+        override suspend fun loginWithPasskey(sign: suspend (optionsJson: String) -> PasskeyOutcome): AuthResult =
+            when (sign("{\"challenge\":\"abc\"}")) {
+                is PasskeyOutcome.Done -> AuthResult.Success(User("1", "emma@example.be", "Emma"))
+                PasskeyOutcome.Cancelled -> AuthResult.Failure(AuthError.PASSKEY_CANCELLED)
+                else -> AuthResult.Failure(AuthError.NO_PASSKEY)
+            }
     }
 
     @Before fun setUp() = Dispatchers.setMain(dispatcher)
@@ -99,5 +113,56 @@ class LoginViewModelTest {
         advanceUntilIdle()
         assertTrue(vm.state.value.signedIn)
         assertEquals(listOf<Pair<String?, String?>>(null to "GOOGLE_EMAIL_EXISTS", "code" to null), repo.googleCalls)
+    }
+
+    @Test
+    fun `passkey - connexion, fenetre fermee sans message, aucune passkey`() = runTest(dispatcher) {
+        val vm = LoginViewModel(FakeAuthRepository(AuthResult.Failure(AuthError.UNKNOWN)))
+        advanceUntilIdle()
+        assertTrue(vm.state.value.passkeysAvailable)
+
+        vm.signInWithPasskey { PasskeyOutcome.Cancelled }
+        advanceUntilIdle()
+        assertNull(vm.state.value.error)
+        assertFalse(vm.state.value.signedIn)
+
+        vm.signInWithPasskey { PasskeyOutcome.NoPasskey }
+        advanceUntilIdle()
+        assertEquals(AuthError.NO_PASSKEY, vm.state.value.error)
+
+        var options: String? = null
+        vm.signInWithPasskey { options = it; PasskeyOutcome.Done("{}") }
+        advanceUntilIdle()
+        assertEquals("{\"challenge\":\"abc\"}", options)
+        assertTrue(vm.state.value.signedIn)
+        assertFalse(vm.state.value.isSubmitting)
+    }
+
+    @Test
+    fun `double authentification - code demande apres le mot de passe`() = runTest(dispatcher) {
+        val repo = FakeAuthRepository(AuthResult.TwoFactorRequired("ch1"))
+        val vm = LoginViewModel(repo)
+        vm.onEmailChange("emma@example.be")
+        vm.onPasswordChange("correct horse battery")
+        vm.submit()
+        advanceUntilIdle()
+        assertEquals("ch1", vm.state.value.twoFactorChallenge)
+        assertFalse(vm.state.value.signedIn)
+        assertFalse(vm.state.value.canSubmitCode)
+
+        vm.onTwoFactorCodeChange("000000")
+        vm.submitTwoFactor()
+        advanceUntilIdle()
+        assertEquals(AuthError.TWO_FACTOR_INVALID, vm.state.value.error)
+
+        vm.onTwoFactorCodeChange("123456")
+        assertNull(vm.state.value.error)
+        vm.submitTwoFactor()
+        advanceUntilIdle()
+        assertTrue(vm.state.value.signedIn)
+        assertEquals(listOf("ch1" to "000000", "ch1" to "123456"), repo.codes)
+
+        vm.restartSignIn()
+        assertNull(vm.state.value.twoFactorChallenge)
     }
 }

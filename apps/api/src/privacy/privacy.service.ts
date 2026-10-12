@@ -211,6 +211,8 @@ export class PrivacyService {
         locale: user.locale,
         createdAt: user.createdAt,
         hasPassword: user.passwordHash !== null,
+        // Double authentification : la date d'activation seulement (ni secret ni codes de secours).
+        twoFactorEnabledAt: user.totpEnabledAt,
         linkedProviders: user.identities,
       },
       sessions: user.sessions,

@@ -29,6 +29,11 @@ const config: NextConfig = {
       { source: '/v1/:path*', destination: `${API_URL}/v1/:path*` },
       // Sonde publique de disponibilité (web + API + base) pour la surveillance externe.
       { source: '/healthz', destination: `${API_URL}/health/ready` },
+      // Association de l'app Android (passkeys dans l'app), fichier lu par Android et Google.
+      {
+        source: '/.well-known/assetlinks.json',
+        destination: `${API_URL}/v1/app/android/assetlinks.json`,
+      },
     ];
   },
   async headers() {

@@ -107,7 +107,11 @@ export interface Content {
       contact: string;
     };
     rights: string;
+    /** Crédit de l'éditeur : « OCC Interactive — Une division de Cardor Media ». */
+    division: string;
   };
+  /** Page « introuvable » (out/404.html, servie par nginx pour toute adresse inconnue). */
+  notFound: { code: string; title: string; text: string; home: string; docs: string };
 }
 
 const fr: Content = {
@@ -336,6 +340,14 @@ const fr: Content = {
       contact: 'Contact',
     },
     rights: 'Application personnelle, gratuite et sans publicité.',
+    division: 'Une division de',
+  },
+  notFound: {
+    code: 'Erreur 404',
+    title: 'Cette page est introuvable',
+    text: 'L’adresse est peut-être mal saisie, ou la page a changé de place. Tout le reste est là où vous l’avez laissé.',
+    home: 'Retour à l’accueil',
+    docs: 'Guide d’utilisation',
   },
 };
 
@@ -565,6 +577,14 @@ const en: Content = {
       contact: 'Contact',
     },
     rights: 'A personal app, free and ad-free.',
+    division: 'A division of',
+  },
+  notFound: {
+    code: 'Error 404',
+    title: 'This page can’t be found',
+    text: 'The address may be mistyped, or the page has moved. Everything else is right where you left it.',
+    home: 'Back to home',
+    docs: 'User guide',
   },
 };
 
@@ -794,6 +814,14 @@ const nl: Content = {
       contact: 'Contact',
     },
     rights: 'Een persoonlijke app, gratis en zonder advertenties.',
+    division: 'Een divisie van',
+  },
+  notFound: {
+    code: 'Fout 404',
+    title: 'Deze pagina bestaat niet',
+    text: 'Misschien is het adres verkeerd getypt, of is de pagina verhuisd. Al de rest staat nog waar je het liet.',
+    home: 'Terug naar de startpagina',
+    docs: 'Handleiding',
   },
 };
 

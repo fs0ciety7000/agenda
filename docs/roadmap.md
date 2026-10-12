@@ -202,6 +202,33 @@ Découvert pendant le lot 6 :
   ancien membre » (notes, historique) jusqu'au rechargement ; rafraîchir la session à son
   arrivée (S) 🌐
 
+Demandé le 11 octobre :
+
+- [x] Sécurité : dépendances vulnérables mises à jour (multer, sharp, nodemailer 10, NestJS, Next,
+  next-intl ; dépendances indirectes par `overrides`) ; `pnpm audit --prod --audit-level high`
+  bloquant en CI (S) ⚙️ (#95)
+- [x] Sécurité : double authentification (code d'une application d'authentification + codes de
+  secours) ; gestion sur le site, code demandé aussi par l'app Android (M) 🌐🤖⚙️ (#95)
+- [x] Sécurité : sauvegarde du foyer chiffrée par une phrase de passe, en option (fichier
+  `.tandem`, AES-256-GCM, clé tirée par scrypt) ; site et Android (S) 🌐🤖⚙️ (#95)
+- [x] Sécurité : e-mail « Nouvel appareil connecté » (navigateur ou app et système jamais vus sur
+  le compte), avec un lien vers les appareils connectés (S) ⚙️ (#95)
+
+- [x] Android : connexion par passkey (Credential Manager) et Réglages → Passkeys (voir, ajouter,
+  supprimer) ; `assetlinks.json` servi par le site, empreintes des certificats dans
+  `ANDROID_CERT_SHA256` (M) 🤖⚙️ (#95)
+- [x] Android : empreinte du certificat de l'APK direct affichée par la CI (résumé du job « APK à
+  installer » et notes de la release), plus besoin de `keytool` pour `ANDROID_CERT_SHA256` (S) ⚙️
+  (#96)
+
+Demandé le 10 octobre :
+
+- [x] Site vitrine : crédit de l'éditeur en pied de page, « OCC Interactive — Une division de
+  Cardor Media », avec les liens (remplace « OCC MONS Studios ») (S) 🪧 (#94)
+- [x] Site vitrine : logos d'OCC Interactive (dragon) et de Cardor Media (roue) à côté du crédit,
+  repris de `mons-corp` : monochromes au repos, couleurs et mouvement au survol (glitch, tour de
+  roue), rien avec « réduire les animations » (S) 🪧 (#94)
+
 Retiré du lot par l'utilisateur, gardé pour plus tard : **rappel lié à un lieu** (la
 géolocalisation en arrière-plan demande une déclaration à Google Play).
 

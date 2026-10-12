@@ -7,6 +7,8 @@ plugins {
 
 /** Scanner de codes-barres de Google (cf. src/codeScanner) ; `false` : version vide, hors ligne. */
 val codeScanner = providers.gradleProperty("tandem.codeScanner").map { it != "false" }.getOrElse(true)
+/** Passkeys par le Credential Manager (cf. src/passkeys) ; `false` : version vide, hors ligne. */
+val passkeys = providers.gradleProperty("tandem.passkeys").map { it != "false" }.getOrElse(true)
 
 android {
     // Google Play : toutes les langues dans l'app installée, pour pouvoir changer de langue
@@ -106,6 +108,9 @@ android {
     // Code-barres en direct (scanner de Google Play services) : `-Ptandem.codeScanner=false` le
     // remplace par une version vide, pour compiler sans accès au dépôt Maven de Google.
     sourceSets.getByName("main").kotlin.srcDir(if (codeScanner) "src/codeScanner/java" else "src/noCodeScanner/java")
+    // Passkeys dans l'app (Credential Manager) : `-Ptandem.passkeys=false` le remplace par une
+    // version vide (bouton masqué), pour la même raison.
+    sourceSets.getByName("main").kotlin.srcDir(if (passkeys) "src/passkeys/java" else "src/noPasskeys/java")
     // Tests sur émulateur (MigrationTestHelper lit les schémas dans l'APK de test).
     sourceSets.getByName("androidTest").assets.srcDir("$projectDir/schemas")
 
@@ -166,6 +171,10 @@ dependencies {
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.glance.material3)
     if (codeScanner) implementation(libs.play.services.code.scanner)
+    if (passkeys) {
+        implementation(libs.androidx.credentials)
+        implementation(libs.androidx.credentials.play.services)
+    }
 
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)

@@ -11,6 +11,7 @@ import { AuthService } from './auth.service';
 import { CsrfGuard } from './csrf.guard';
 import { PasswordService } from './password.service';
 import { TokenService } from './token.service';
+import { TwoFactorService } from './two-factor.service';
 import { VaultService } from './vault.service';
 
 @Module({
@@ -23,6 +24,7 @@ import { VaultService } from './vault.service';
     GoogleOidcClient,
     TokenService,
     VaultService,
+    TwoFactorService,
     { provide: APP_GUARD, useClass: CsrfGuard },
     { provide: APP_GUARD, useClass: AuthGuard },
   ],

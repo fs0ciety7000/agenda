@@ -16,16 +16,23 @@ datasource db {
 // ───────────────────────────── Identité ─────────────────────────────
 
 model User {
-  id           String    @id @default(uuid()) @db.Uuid
-  email        String    @unique @db.Citext
-  passwordHash String?
-  displayName  String    @db.VarChar(60)
-  locale       String    @default("fr") @db.VarChar(5)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  deletedAt    DateTime?
+  id                String    @id @default(uuid()) @db.Uuid
+  email             String    @unique @db.Citext
+  passwordHash      String?
+  displayName       String    @db.VarChar(60)
+  locale            String    @default("fr") @db.VarChar(5)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
   /// Compte désactivé par un administrateur : plus aucune connexion possible.
-  disabledAt   DateTime?
+  disabledAt        DateTime?
+  /// Double authentification (TOTP, RFC 6238) : secret chiffré par TOKEN_ENCRYPTION_KEY, actif
+  /// depuis `totpEnabledAt`. `totpPendingSecret` : secret proposé, en attente du premier code.
+  totpSecret        String?
+  totpPendingSecret String?
+  totpEnabledAt     DateTime?
+  /// Dernier pas de 30 s accepté : un code déjà utilisé ne peut pas être rejoué.
+  totpLastStep      Int?
 
   sessions             Session[]
   identities           AuthIdentity[]
@@ -37,6 +44,35 @@ model User {
   webPushSubscriptions WebPushSubscription[]
   reports              Report[]
   passkeys             Passkey[]
+  recoveryCodes        TwoFactorRecoveryCode[]
+  twoFactorChallenges  TwoFactorChallenge[]
+}
+
+/// Code de secours de la double authentification (SHA-256), utilisable une fois.
+model TwoFactorRecoveryCode {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  codeHash  String    @db.VarChar(64)
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, codeHash])
+}
+
+/// Connexion en attente du code de double authentification (mot de passe déjà vérifié).
+model TwoFactorChallenge {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  /// Essais de code : défi supprimé au cinquième échec.
+  attempts  Int      @default(0)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
 }
 
 /// Passkey (WebAuthn) : clé publique d'un appareil ou d'un gestionnaire de mots de passe.

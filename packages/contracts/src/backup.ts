@@ -1,11 +1,22 @@
 import { z } from 'zod';
-import { BACKUP_MAX_BYTES } from './constants';
+import { BACKUP_MAX_BYTES, BACKUP_PASSPHRASE_MIN } from './constants';
 import { HouseholdDto } from './households';
+import { RevealNoteInput } from './notes';
 
-export { BACKUP_MAX_BYTES };
+export { BACKUP_MAX_BYTES, BACKUP_PASSPHRASE_MIN };
 
 /** Version du format de l'archive (`tandem-backup.json`) ; une restauration refuse les autres. */
 export const BACKUP_FORMAT_VERSION = 1;
+
+/**
+ * Télécharger la sauvegarde : vérification comme pour les notes sensibles, et phrase de passe
+ * facultative qui chiffre l'archive (AES-256-GCM, clé tirée par scrypt). Sans elle, impossible
+ * de la restaurer : elle n'est gardée nulle part.
+ */
+export const BackupDownloadInput = RevealNoteInput.extend({
+  passphrase: z.string().min(BACKUP_PASSPHRASE_MIN).max(200).optional(),
+});
+export type BackupDownloadInput = z.infer<typeof BackupDownloadInput>;
 
 /**
  * Invitation créée pour un membre de la sauvegarde dont le compte n'existe pas sur cette

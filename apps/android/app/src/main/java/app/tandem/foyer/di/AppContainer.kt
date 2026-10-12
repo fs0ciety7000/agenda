@@ -14,6 +14,8 @@ import app.tandem.foyer.data.NotesRemote
 import app.tandem.foyer.data.GuestLinkRemote
 import app.tandem.foyer.data.BarcodeRemote
 import app.tandem.foyer.data.BackupRemote
+import app.tandem.foyer.data.PasskeysRemote
+import app.tandem.foyer.data.auth.platformPasskeys
 import app.tandem.foyer.data.DataStoreSettingsStore
 import app.tandem.foyer.data.ReportsRemote
 import app.tandem.foyer.data.SettingsStore
@@ -67,6 +69,10 @@ class AppContainer(context: Context) {
     val backup = BackupRemote(api, database)
     val dates = DatesRemote(api, database)
     val devices = DevicesRemote(api)
+    val passkeys = PasskeysRemote(api)
+
+    /** Passkeys du téléphone (null : Android 8 ou version sans Credential Manager). */
+    val passkeyAuthenticator = platformPasskeys()
     val search = SearchRemote(api, database)
     val reports = ReportsRemote(app, api, database)
     val reminders = ReminderScheduler(app, repository, settings)

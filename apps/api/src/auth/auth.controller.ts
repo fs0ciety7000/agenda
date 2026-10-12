@@ -19,6 +19,7 @@ import {
   ChangePasswordInput,
   ForgotPasswordInput,
   LoginInput,
+  type LoginResponse,
   type MeResponse,
   type PasskeyDto,
   PasskeyLoginInput,
@@ -28,6 +29,13 @@ import {
   RefreshInput,
   RegisterInput,
   ResetPasswordInput,
+  RevealNoteInput,
+  TwoFactorCodeInput,
+  TwoFactorEnableInput,
+  TwoFactorLoginInput,
+  type TwoFactorRecoveryCodesDto,
+  type TwoFactorSetupDto,
+  type TwoFactorStatusDto,
   UpdateMeInput,
 } from '@agenda/contracts';
 import type { Request, Response } from 'express';
@@ -39,6 +47,7 @@ import { AuthService, IssuedTokens } from './auth.service';
 import { clearAuthCookies, REFRESH_COOKIE, setAuthCookies } from './cookies';
 import { PasskeysService } from './passkeys.service';
 import { PasswordResetService } from './password-reset.service';
+import { TwoFactorService } from './two-factor.service';
 
 /** `X-Client: mobile` → tokens dans le corps ; sinon cookies httpOnly (web). */
 const isMobile = (client?: string) => client === 'mobile';
@@ -51,6 +60,7 @@ export class AuthController {
     private readonly auth: AuthService,
     private readonly passwordReset: PasswordResetService,
     private readonly passkeys: PasskeysService,
+    private readonly twoFactor: TwoFactorService,
   ) {}
 
   /** Créer un compte. */
@@ -66,7 +76,10 @@ export class AuthController {
     return this.respond(await this.auth.register(body, req.headers['user-agent']), client, res);
   }
 
-  /** Se connecter (e-mail et mot de passe). */
+  /**
+   * Se connecter (e-mail et mot de passe). Avec la double authentification, la réponse est un
+   * défi (`twoFactorRequired`) à compléter par `POST /auth/2fa/verify`.
+   */
   @Public()
   @Throttle(AUTH_THROTTLE)
   @Post('auth/login')
@@ -76,8 +89,81 @@ export class AuthController {
     @Headers('x-client') client: string | undefined,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
+  ): Promise<LoginResponse> {
+    const user = await this.auth.checkPassword(body);
+    if (user.totpEnabledAt) {
+      return { twoFactorRequired: true, challengeId: await this.twoFactor.challenge(user.id) };
+    }
+    return this.respond(await this.auth.startSession(user, req.headers['user-agent']), client, res);
+  }
+
+  /** Terminer la connexion avec le code de double authentification (ou un code de secours). */
+  @Public()
+  @Throttle(AUTH_THROTTLE)
+  @Post('auth/2fa/verify')
+  @HttpCode(200)
+  async verifyTwoFactor(
+    @Body(new ZodPipe(TwoFactorLoginInput)) body: TwoFactorLoginInput,
+    @Headers('x-client') client: string | undefined,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
   ): Promise<AuthResponse> {
-    return this.respond(await this.auth.login(body, req.headers['user-agent']), client, res);
+    const issued = await this.twoFactor.completeLogin(
+      body.challengeId,
+      body.code,
+      req.headers['user-agent'],
+    );
+    return this.respond(issued, client, res);
+  }
+
+  /** État de ma double authentification. */
+  @Get('me/2fa')
+  twoFactorStatus(@CurrentUser() user: AuthUser): Promise<TwoFactorStatusDto> {
+    return this.twoFactor.status(user.userId);
+  }
+
+  /** Préparer la double authentification : secret à enregistrer dans l'application. */
+  @Throttle(AUTH_THROTTLE)
+  @Post('me/2fa/setup')
+  @HttpCode(200)
+  setupTwoFactor(
+    @CurrentUser() user: AuthUser,
+    @Body(new ZodPipe(RevealNoteInput)) body: RevealNoteInput,
+  ): Promise<TwoFactorSetupDto> {
+    return this.twoFactor.setup(user, body);
+  }
+
+  /** Activer la double authentification (premier code) ; renvoie les codes de secours. */
+  @Throttle(AUTH_THROTTLE)
+  @Post('me/2fa/enable')
+  @HttpCode(200)
+  enableTwoFactor(
+    @CurrentUser() user: AuthUser,
+    @Body(new ZodPipe(TwoFactorEnableInput)) body: TwoFactorEnableInput,
+  ): Promise<TwoFactorRecoveryCodesDto> {
+    return this.twoFactor.enable(user.userId, body.code);
+  }
+
+  /** Désactiver la double authentification (code exigé). */
+  @Throttle(AUTH_THROTTLE)
+  @Post('me/2fa/disable')
+  @HttpCode(204)
+  disableTwoFactor(
+    @CurrentUser() user: AuthUser,
+    @Body(new ZodPipe(TwoFactorCodeInput)) body: TwoFactorCodeInput,
+  ): Promise<void> {
+    return this.twoFactor.disable(user.userId, body.code);
+  }
+
+  /** Nouveaux codes de secours (code exigé) ; les anciens ne marchent plus. */
+  @Throttle(AUTH_THROTTLE)
+  @Post('me/2fa/recovery-codes')
+  @HttpCode(200)
+  regenerateRecoveryCodes(
+    @CurrentUser() user: AuthUser,
+    @Body(new ZodPipe(TwoFactorCodeInput)) body: TwoFactorCodeInput,
+  ): Promise<TwoFactorRecoveryCodesDto> {
+    return this.twoFactor.regenerate(user.userId, body.code);
   }
 
   /** Renouveler les jetons (cookie de rafraîchissement ou `refreshToken` dans le corps). */

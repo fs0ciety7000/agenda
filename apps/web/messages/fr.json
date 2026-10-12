@@ -95,7 +95,11 @@
     "PASSKEY_FAILED": "Connexion par passkey impossible. Utilisez votre mot de passe, ou ajoutez d'abord une passkey dans les Réglages.",
     "VAULT_LOCKED": "Vérification nécessaire pour afficher cette note.",
     "BARCODE_SCAN_UNAVAILABLE": "La lecture des codes-barres est indisponible pour le moment. Tapez les chiffres ou le nom de l'article.",
-    "BACKUP_INVALID": "Ce fichier n'est pas une sauvegarde de Tandem valide."
+    "BACKUP_INVALID": "Ce fichier n'est pas une sauvegarde de Tandem valide.",
+    "TWO_FACTOR_INVALID": "Code incorrect ou expiré. Réessayez avec le code affiché maintenant, ou un code de secours.",
+    "TWO_FACTOR_UNAVAILABLE": "La double authentification n'est pas disponible sur ce serveur.",
+    "BACKUP_PASSPHRASE_REQUIRED": "Cette sauvegarde est chiffrée : entrez sa phrase de passe.",
+    "BACKUP_PASSPHRASE_INVALID": "Phrase de passe incorrecte, ou fichier abîmé."
   },
   "today": {
     "greeting": "Bonjour {name} 👋",
@@ -544,9 +548,15 @@
     "retry": "Réessayer",
     "report": "Signaler ce problème"
   },
+  "notFoundPage": {
+    "code": "Erreur 404",
+    "title": "Cette page est introuvable",
+    "body": "L'adresse a peut-être changé, ou la page n'existe plus. Vos tâches et vos listes sont toujours là.",
+    "home": "Retour à l'accueil"
+  },
   "privacyPolicy": {
     "title": "Politique de confidentialité",
-    "updated": "Dernière mise à jour : 10 octobre 2026",
+    "updated": "Dernière mise à jour : 11 octobre 2026",
     "intro": "Tandem est une application privée et non commerciale d'organisation des tâches du foyer, utilisée par ses membres. Cette page explique quelles données elle traite, pourquoi, et comment les supprimer.",
     "who": {
       "title": "Qui gère vos données",
@@ -554,7 +564,7 @@
     },
     "data": {
       "title": "Données traitées",
-      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue.\nFoyer : nom du foyer, membres, catégories, invitations, liste de courses, notes partagées (titre, contenu, qui les a écrites, si elles sont sensibles, et les 20 versions précédentes de chacune), dates importantes (titre, jour, mois et année facultative ; elles peuvent concerner des proches, par exemple un anniversaire).\nLien invité (si un membre le crée) : un lien secret ouvre la liste de courses seule (articles, quantités, rayons et nom du foyer), sans compte et en lecture seule, jusqu'à ce qu'un membre le coupe ou le remplace. Toute personne qui a le lien peut la voir.\nCodes-barres (si vous en scannez) : la photo du code-barres est lue sur notre serveur, puis effacée aussitôt ; le foyer retient le code et le nom du produit. Pour un produit qu'il ne connaît pas encore, le serveur envoie le code seul (rien sur vous) à Open Food Facts, une base de produits ouverte.\nSauvegarde du foyer (si vous en téléchargez une) : une archive fabriquée à la demande, jamais gardée sur notre serveur, avec les données du foyer que vous voyez et l'adresse e-mail de chaque membre (pour le retrouver si vous la restaurez ailleurs). Restaurée sur une autre instance, l'adresse d'un membre pas encore inscrit y est gardée jusqu'à ce qu'il rejoigne le foyer.\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, sous-tâches, commentaires, demandes d'échange de tour (avec le mot laissé), absences déclarées, historique des actions (qui a fait quoi, quand).\nDépenses (si vous les utilisez) : montant, date, libellé, catégorie, commentaire, qui a payé et la part de chacun. Une dépense personnelle n'est visible que de vous. Le ticket joint (photo ou PDF) est conservé avec la dépense et supprimé avec elle. Si vous utilisez « Lire un ticket », la photo est lue sur notre serveur (aucun service extérieur) pour proposer le montant, la date et le commerçant, puis effacée aussitôt ; elle n'est gardée que si vous enregistrez la dépense avec ce ticket.\nSessions : appareil (navigateur et système, ou version de l'application Android), date de connexion et dernière activité, affichés dans « Appareils connectés » pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches, de la liste de courses, des notes et des dates importantes sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion.\nAjout par e-mail (si vous l'activez) : l'expéditeur, le sujet et le texte des e-mails que vous transférez à votre adresse personnelle sont enregistrés dans les notes de la tâche créée. Ils sont reçus par Resend, notre prestataire d'e-mails ; leurs pièces jointes sont jointes à la tâche.\nPièces jointes : les fichiers que vous joignez à une tâche (ou joints à un e-mail transféré) sont stockés sur notre serveur avec la tâche, visibles par les membres du foyer (par vous seul pour une tâche personnelle), et supprimés avec elle.\nSignalements (si vous en envoyez) : le type, le titre et le texte de votre message, une capture d'écran si vous en joignez une, votre choix d'être recontacté·e ou non et, seulement si vous cochez la case, des informations techniques affichées avant l'envoi (navigateur ou modèle de téléphone, système, version de l'app, langue, fuseau horaire, taille d'écran, page ouverte). Jamais le contenu de vos tâches. Seuls les administrateurs de l'app les lisent.\nNotifications du navigateur (si vous les activez) : l'adresse d'abonnement fournie par votre navigateur, supprimée quand vous les désactivez ou vous déconnectez."
+      "body": "Compte : prénom, adresse e-mail, mot de passe (uniquement sous forme de hachage Argon2, jamais en clair), langue. Double authentification (si vous l'activez) : un secret chiffré, partagé avec votre application d'authentification, et vos codes de secours sous forme de hachage.\nFoyer : nom du foyer, membres, catégories, invitations, liste de courses, notes partagées (titre, contenu, qui les a écrites, si elles sont sensibles, et les 20 versions précédentes de chacune), dates importantes (titre, jour, mois et année facultative ; elles peuvent concerner des proches, par exemple un anniversaire).\nLien invité (si un membre le crée) : un lien secret ouvre la liste de courses seule (articles, quantités, rayons et nom du foyer), sans compte et en lecture seule, jusqu'à ce qu'un membre le coupe ou le remplace. Toute personne qui a le lien peut la voir.\nCodes-barres (si vous en scannez) : la photo du code-barres est lue sur notre serveur, puis effacée aussitôt ; le foyer retient le code et le nom du produit. Pour un produit qu'il ne connaît pas encore, le serveur envoie le code seul (rien sur vous) à Open Food Facts, une base de produits ouverte.\nSauvegarde du foyer (si vous en téléchargez une) : une archive fabriquée à la demande, jamais gardée sur notre serveur, avec les données du foyer que vous voyez et l'adresse e-mail de chaque membre (pour le retrouver si vous la restaurez ailleurs). Restaurée sur une autre instance, l'adresse d'un membre pas encore inscrit y est gardée jusqu'à ce qu'il rejoigne le foyer.\nTâches : titres, notes, dates, heures, durées, responsables, récurrences, statut, sous-tâches, commentaires, demandes d'échange de tour (avec le mot laissé), absences déclarées, historique des actions (qui a fait quoi, quand).\nDépenses (si vous les utilisez) : montant, date, libellé, catégorie, commentaire, qui a payé et la part de chacun. Une dépense personnelle n'est visible que de vous. Le ticket joint (photo ou PDF) est conservé avec la dépense et supprimé avec elle. Si vous utilisez « Lire un ticket », la photo est lue sur notre serveur (aucun service extérieur) pour proposer le montant, la date et le commerçant, puis effacée aussitôt ; elle n'est gardée que si vous enregistrez la dépense avec ce ticket.\nSessions : appareil (navigateur et système, ou version de l'application Android), date de connexion et dernière activité, affichés dans « Appareils connectés » pour pouvoir vous déconnecter à distance. Application Android : identifiant de notification du téléphone (si les notifications instantanées sont activées), supprimé à la déconnexion.\nL'application Android conserve une copie de vos tâches, de la liste de courses, des notes et des dates importantes sur le téléphone pour fonctionner hors ligne ; elle est effacée à la déconnexion.\nAjout par e-mail (si vous l'activez) : l'expéditeur, le sujet et le texte des e-mails que vous transférez à votre adresse personnelle sont enregistrés dans les notes de la tâche créée. Ils sont reçus par Resend, notre prestataire d'e-mails ; leurs pièces jointes sont jointes à la tâche.\nPièces jointes : les fichiers que vous joignez à une tâche (ou joints à un e-mail transféré) sont stockés sur notre serveur avec la tâche, visibles par les membres du foyer (par vous seul pour une tâche personnelle), et supprimés avec elle.\nSignalements (si vous en envoyez) : le type, le titre et le texte de votre message, une capture d'écran si vous en joignez une, votre choix d'être recontacté·e ou non et, seulement si vous cochez la case, des informations techniques affichées avant l'envoi (navigateur ou modèle de téléphone, système, version de l'app, langue, fuseau horaire, taille d'écran, page ouverte). Jamais le contenu de vos tâches. Seuls les administrateurs de l'app les lisent.\nNotifications du navigateur (si vous les activez) : l'adresse d'abonnement fournie par votre navigateur, supprimée quand vous les désactivez ou vous déconnectez."
     },
     "google": {
       "title": "Données Google",
@@ -562,7 +572,7 @@
     },
     "use": {
       "title": "Pourquoi",
-      "body": "Afficher et partager les tâches du foyer, envoyer les rappels, synchroniser le calendrier partagé si vous l'activez, vous permettre de réinitialiser votre mot de passe par e-mail, et diagnostiquer les erreurs techniques. Base légale : l'exécution du service que vous utilisez et, pour Google Calendar, votre consentement (révocable à tout moment)."
+      "body": "Afficher et partager les tâches du foyer, envoyer les rappels, synchroniser le calendrier partagé si vous l'activez, vous permettre de réinitialiser votre mot de passe par e-mail, vous prévenir par e-mail d'une connexion depuis un nouvel appareil, et diagnostiquer les erreurs techniques. Base légale : l'exécution du service que vous utilisez et, pour Google Calendar, votre consentement (révocable à tout moment)."
     },
     "processors": {
       "title": "Prestataires",
@@ -574,7 +584,7 @@
     },
     "security": {
       "title": "Sécurité",
-      "body": "Connexions chiffrées (HTTPS), mots de passe hachés, jetons Google chiffrés, cloisonnement strict entre foyers, tâches personnelles visibles par vous seul, limitation des tentatives de connexion, sauvegardes quotidiennes vérifiées."
+      "body": "Connexions chiffrées (HTTPS), mots de passe hachés, double authentification (facultative), jetons Google chiffrés, cloisonnement strict entre foyers, tâches personnelles visibles par vous seul, limitation des tentatives de connexion, sauvegardes quotidiennes vérifiées."
     },
     "rights": {
       "title": "Vos droits",
@@ -1602,7 +1612,7 @@
     "password": "Mot de passe",
     "submit": "Télécharger",
     "restoreTitle": "Vous avez une sauvegarde ?",
-    "restoreIntro": "Recréez votre foyer à partir d'une sauvegarde de Tandem (fichier .zip) : tout y est repris.",
+    "restoreIntro": "Recréez votre foyer à partir d'une sauvegarde de Tandem (fichier .zip, ou .tandem s'il est chiffré) : tout y est repris.",
     "restoreChoose": "Choisir la sauvegarde",
     "restoring": "Restauration…",
     "alreadyInHousehold": "Ce compte fait déjà partie d'un foyer : restaurez depuis un compte qui n'en a pas encore.",
@@ -1613,6 +1623,54 @@
     "copy": "Copier",
     "copied": "Copié",
     "pending": "en attente",
-    "linksValid": "Ces liens sont valables 30 jours."
+    "linksValid": "Ces liens sont valables 30 jours.",
+    "encrypt": "Chiffrer avec une phrase de passe",
+    "encryptHint": "Fichier .tandem illisible sans elle. Elle n'est gardée nulle part : perdue, la sauvegarde ne peut plus être restaurée.",
+    "phraseLabel": "Phrase de passe",
+    "phraseHint": "{min} caractères au moins ; quelques mots faciles à retenir, par exemple.",
+    "phraseAgain": "Retapez la phrase de passe",
+    "phraseMismatch": "Les deux phrases ne sont pas identiques.",
+    "privateEncrypted": "Notez la phrase de passe à part : sans elle, personne ne peut ouvrir ce fichier, pas même vous.",
+    "restorePhrase": "Cette sauvegarde est chiffrée : entrez la phrase de passe choisie au téléchargement.",
+    "restoreUnlock": "Déchiffrer et restaurer"
+  },
+  "twoFactor": {
+    "title": "Double authentification",
+    "intro": "Après le mot de passe, un code à 6 chiffres de votre application d'authentification (Google Authenticator, Aegis, 1Password…). Même avec votre mot de passe, personne ne peut entrer sans votre téléphone. Les passkeys et Google n'en demandent pas : elles sont déjà protégées.",
+    "enable": "Activer",
+    "enabled": "Activée.",
+    "enabledOn": "Activée le {date}.",
+    "codesLeft": "{count, plural, =0 {Plus aucun code de secours : créez-en de nouveaux.} one {# code de secours restant.} other {# codes de secours restants.}}",
+    "newCodes": "Nouveaux codes de secours",
+    "disable": "Désactiver",
+    "verifyTitle": "Vérification",
+    "verifyPassword": "Entrez le mot de passe de votre compte pour continuer.",
+    "verifyConfirm": "Confirmez que c’est bien vous pour continuer.",
+    "password": "Mot de passe",
+    "continue": "Continuer",
+    "scanTitle": "Ajouter Tandem à votre application",
+    "scanIntro": "Scannez ce QR code avec votre application d'authentification (ou ouvrez-la depuis ce téléphone), puis entrez le code à 6 chiffres qu'elle affiche.",
+    "qrAlt": "QR code à scanner avec l'application d'authentification",
+    "openApp": "Ouvrir dans l'application d'authentification",
+    "secretLabel": "Ou tapez cette clé :",
+    "code": "Code",
+    "codeHint": "Code à 6 chiffres de l'application, ou un code de secours.",
+    "verify": "Valider",
+    "codesTitle": "Vos codes de secours",
+    "codesIntro": "Sans votre téléphone, chacun de ces codes remplace une fois le code de l'application. Gardez-les en lieu sûr : ils ne seront plus affichés.",
+    "copy": "Copier",
+    "copied": "Copiés",
+    "download": "Télécharger",
+    "fileName": "tandem-codes-de-secours.txt",
+    "done": "C'est noté",
+    "disableTitle": "Désactiver la double authentification",
+    "disableIntro": "Entrez un code de l'application (ou un code de secours). Ensuite, le mot de passe seul suffira pour vous connecter.",
+    "newCodesTitle": "Nouveaux codes de secours",
+    "newCodesIntro": "Entrez un code de l'application (ou un code de secours) : vous recevrez 10 nouveaux codes, et les anciens ne marcheront plus.",
+    "enabledToast": "Double authentification activée.",
+    "disabledToast": "Double authentification désactivée.",
+    "loginTitle": "Code de vérification",
+    "loginIntro": "Entrez le code à 6 chiffres de votre application d'authentification, ou un code de secours.",
+    "restart": "Recommencer la connexion"
   }
 }

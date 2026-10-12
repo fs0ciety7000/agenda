@@ -70,6 +70,8 @@ fun SettingsScreen(
     onLanguage: (String) -> Unit = {},
     /** Compte : appareils connectés (liste en ligne). */
     devices: @Composable () -> Unit = {},
+    /** Compte : passkeys (cf. [PasskeysSection]). */
+    passkeys: @Composable () -> Unit = {},
     /** Section « Sauvegarde du foyer » (cf. [BackupSection]). */
     backup: @Composable () -> Unit = {},
 ) {
@@ -247,6 +249,9 @@ fun SettingsScreen(
         }
         OutlinedCard(Modifier.fillMaxWidth().padding(top = 12.dp)) {
             Column(Modifier.padding(16.dp)) { devices() }
+        }
+        OutlinedCard(Modifier.fillMaxWidth().padding(top = 12.dp)) {
+            Column(Modifier.padding(16.dp)) { passkeys() }
         }
         OutlinedCard(Modifier.fillMaxWidth().padding(top = 12.dp)) {
             Column(Modifier.padding(16.dp)) { backup() }

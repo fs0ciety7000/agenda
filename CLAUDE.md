@@ -42,8 +42,16 @@ Fichiers importés, à respecter au même titre que celui-ci :
   Open Food Facts (le code seul) ; `OPEN_FOOD_FACTS_URL=off` le coupe (#93).
 - Sauvegarde du foyer : .zip (JSON + fichiers), mot de passe comme le coffre, sans le personnel de
   l'autre ; restaurer recrée un foyer (ids refaits), l'autre reprend son membre par son adresse (#93).
+- Sauvegarde chiffrée (option) : fichier `.tandem` = en-tête + .zip en AES-256-GCM, clé scrypt
+  (N = 2^17) tirée d'une phrase de passe jamais gardée ; la restauration la demande (#95).
 - Lien invité des courses : un par foyer, secret, lecture seule, sans compte, coupé seul après 7 jours
   par défaut (1, 30 ou sans limite au choix) ; l'invité ne voit que les articles et le nom du foyer (#93).
+- Passkeys Android : Credential Manager sur le domaine du site, app déclarée par `assetlinks.json`
+  (`ANDROID_CERT_SHA256`, empreintes Play et APK) ; version vide avec `-Ptandem.passkeys=false` (#95).
+- Double authentification : TOTP (secret chiffré) + 10 codes de secours hachés, après le mot de passe
+  seulement (passkeys et Google exemptés) ; activée sur le site, code demandé aussi par Android (#95).
+- Alerte de connexion : e-mail si l'appareil (app ou navigateur + système, sans version) n'a jamais
+  ouvert de session sur le compte ; jamais à la première connexion ni au rafraîchissement (#95).
 - Notes sensibles : contenu jamais renvoyé hors de `…/reveal` ; site = mot de passe (coffre ouvert 5 min
   par session), Android = empreinte ou code vérifiés sur l'appareil ; pas de chiffrement de bout en bout (#93).
 
@@ -97,5 +105,5 @@ Fichiers importés, à respecter au même titre que celui-ci :
   2. API : `cd apps/api && (set -a; . ./.env; set +a; NODE_ENV=production AUTH_RATE_LIMIT=100 GLOBAL_RATE_LIMIT=100000 COOKIE_SECURE=false WEB_ORIGIN=http://localhost:3000 node dist/main.js &)`.
   3. Web : `cd apps/web && API_URL=http://localhost:4000 pnpm start &`.
   4. `pnpm exec playwright test` (projets desktop et mobile).
-- Android hors ligne : `./gradlew --offline -q -Ptandem.codeScanner=false lintDebug testDebugUnitTest`
-  (le scanner de codes-barres de Google n'est pas téléchargeable ici : version vide, la CI compile la vraie).
+- Android hors ligne : `./gradlew --offline -q -Ptandem.codeScanner=false -Ptandem.passkeys=false lintDebug testDebugUnitTest`
+  (le scanner de codes-barres et le Credential Manager de Google ne sont pas téléchargeables ici : versions vides, la CI compile les vraies).

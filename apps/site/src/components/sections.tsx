@@ -25,6 +25,7 @@ import { useEffect, useRef, useState } from 'react';
 import { APK_URL, APP_URL, CONTACT_EMAIL, DOCS_URL, PLAY_URL } from '@/lib/config';
 import type { Content, FeatureIcon, Locale } from '@/lib/content';
 import { OtherLangs } from './nav';
+import { PublisherCredit } from './publisher-credit';
 import { EASE, PhoneFrame, Reveal, SectionHeading } from './ui';
 
 const ICONS: Record<FeatureIcon, LucideIcon> = {
@@ -477,9 +478,12 @@ export function Footer({ t }: { t: Content }) {
           </div>
         ))}
       </div>
-      <p className="border-t border-border px-5 py-6 text-center text-sm text-text-muted">
-        © {new Date().getFullYear()} Tandem · {t.footer.rights}
-      </p>
+      <div className="flex flex-col items-center gap-1 border-t border-border px-5 py-6 text-center text-sm text-text-muted">
+        <p>
+          © {new Date().getFullYear()} Tandem · {t.footer.rights}
+        </p>
+        <PublisherCredit t={t} />
+      </div>
     </footer>
   );
 }
