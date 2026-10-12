@@ -220,6 +220,12 @@ Demandé le 11 octobre :
 - [x] Android : empreinte du certificat de l'APK direct affichée par la CI (résumé du job « APK à
   installer » et notes de la release), plus besoin de `keytool` pour `ANDROID_CERT_SHA256` (S) ⚙️
   (#96)
+- [x] Doc : délai (jusqu'à une heure) avant qu'Android accepte une empreinte ajoutée, et contrôle
+  par l'API Digital Asset Links (S) 🤖 (#101)
+- [ ] Android : message d'erreur des passkeys qui distingue le refus du téléphone (lien site ↔ app
+  pas encore vérifié, aucun gestionnaire de passkeys) de celui du serveur (S) 🤖
+- [ ] Android : liste des moyens de connexion (Google, passkeys) redemandée au serveur à chaque
+  ouverture de l'écran de connexion, au lieu d'être gardée jusqu'à *Forcer l'arrêt* (S) 🤖
 
 Demandé le 10 octobre :
 
