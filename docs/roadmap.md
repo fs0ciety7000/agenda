@@ -229,7 +229,8 @@ Demandé le 10 octobre :
   repris de `mons-corp` : monochromes au repos, couleurs et mouvement au survol (glitch, tour de
   roue), rien avec « réduire les animations » (S) 🪧 (#94)
 - [x] Référencement (audit SEO du 12 octobre) : données structurées et aperçus de partage du site
-  (#97) ; descriptions FR/NL sous 160 caractères, canonical de `/privacy`, `/status`, `/about` (#99)
+  (#97) ; descriptions FR/NL sous 160 caractères, canonical de `/privacy`, `/status`, `/about` (#99) ;
+  clé IndexNow du site vitrine pour déclarer ses URL à Bing (PR « IndexNow »)
 
 Retiré du lot par l'utilisateur, gardé pour plus tard : **rappel lié à un lieu** (la
 géolocalisation en arrière-plan demande une déclaration à Google Play).
