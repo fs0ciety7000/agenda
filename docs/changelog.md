@@ -13,6 +13,18 @@ d'elle-même (ou via Google Play).
 **Légende** : ✨ nouveau · 🛠 amélioration · 🐞 correction · 🔒 sécurité et confidentialité ·
 ⚙️ technique
 
+## 12 octobre 2026
+
+### Site vitrine : référencement et aperçus de partage (#97)
+
+- 🛠 **Aperçus de partage** : nouvelle image 1200 × 630 dans chaque langue (néerlandais compris),
+  avec un texte alternatif descriptif.
+- 🛠 **Questions fréquentes** : les réponses sont dans la page même repliées (moteurs de recherche,
+  lecteurs d'écran).
+- ⚙️ Titres de page plus explicites, données structurées (app web, app Android, FAQ), `x-default`
+  dans les langues et le plan du site, `robots.txt` pour l'app. Éditeur déclaré : CM Interactive
+  (CARDOR Media).
+
 ## 11 octobre 2026
 
 ### Alerte de connexion (#95)
