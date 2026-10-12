@@ -1,16 +1,17 @@
-import { APK_URL, APP_URL, CONTACT_EMAIL, PLAY_URL, SITE_URL } from './config';
+import { APK_URL, APP_URL, PLAY_URL, SITE_URL } from './config';
 import { content, type Locale } from './content';
 import { localePath, ogImage } from './metadata';
 
 /**
- * Données structurées schema.org (JSON-LD) de l'accueil d'une langue : site, éditeur, app web,
+ * Données structurées schema.org (JSON-LD) de l'accueil d'une langue : site, éditeur (CM Interactive), app web,
  * app Android et FAQ (les mêmes questions que la section visible « Questions fréquentes »).
  * Rien d'inventé : pas de note ni d'avis tant qu'il n'y en a pas de vérifiables.
  */
 export function structuredData(locale: Locale) {
   const t = content[locale];
   const url = `${SITE_URL}${localePath(locale)}`;
-  const org = `${SITE_URL}/#organization`;
+  // Éditeur : CM Interactive, studio de CARDOR Media (mêmes @id que sur les autres sites du studio).
+  const org = 'https://interactive.cardormedia.com/#organization';
   const free = { '@type': 'Offer', price: '0', priceCurrency: 'EUR' };
   const app = {
     name: 'Tandem',
@@ -31,10 +32,14 @@ export function structuredData(locale: Locale) {
       {
         '@type': 'Organization',
         '@id': org,
-        name: 'Tandem',
-        url: `${SITE_URL}/`,
-        logo: `${SITE_URL}/img/icon-512.png`,
-        ...(CONTACT_EMAIL ? { email: CONTACT_EMAIL } : {}),
+        name: 'CM Interactive',
+        url: 'https://interactive.cardormedia.com/',
+        parentOrganization: {
+          '@type': 'Organization',
+          '@id': 'https://cardormedia.com/#organization',
+          name: 'CARDOR Media',
+          url: 'https://cardormedia.com/',
+        },
       },
       {
         '@type': 'WebSite',
