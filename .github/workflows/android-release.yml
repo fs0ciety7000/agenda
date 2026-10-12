@@ -100,6 +100,24 @@ jobs:
             -Ptandem.keystore="$RUNNER_TEMP/agenda.jks" -Ptandem.keyAlias=agenda \
             -Ptandem.keystorePassword="$KEYSTORE_PASSWORD" -Ptandem.keyPassword="$KEYSTORE_PASSWORD"
           rm -f "$RUNNER_TEMP/agenda.jks"
+      # Empreinte du certificat qui signe l'APK direct, lue dans l'APK lui-même : c'est la valeur
+      # d'ANDROID_CERT_SHA256 (passkeys, docs/android.md). Publique : rien à cacher.
+      - name: Empreinte du certificat (ANDROID_CERT_SHA256)
+        run: |
+          apksigner=$(ls "$ANDROID_HOME"/build-tools/*/apksigner | sort -V | tail -1)
+          digest=$("$apksigner" verify --print-certs app/build/outputs/apk/release/app-release.apk \
+            | sed -n 's/^.*[Ss]igner.* certificate SHA-256 digest: //p' | head -1)
+          [[ "$digest" =~ ^[0-9a-f]{64}$ ]] || { echo "::error::Empreinte SHA-256 introuvable dans l'APK"; exit 1; }
+          fingerprint=$(echo "$digest" | tr a-f A-F | sed 's/../&:/g; s/:$//')
+          echo "CERT_SHA256=$fingerprint" >> "$GITHUB_ENV"
+          echo "::notice title=Empreinte du certificat (APK direct)::$fingerprint"
+          {
+            echo "### Empreinte du certificat (APK direct)"
+            echo
+            echo "\`$fingerprint\`"
+            echo
+            echo "À mettre dans \`ANDROID_CERT_SHA256\` (Coolify), avec celle de Google Play, séparées par une virgule."
+          } >> "$GITHUB_STEP_SUMMARY"
       - name: Publier (remplace la version précédente)
         env:
           GH_TOKEN: ${{ github.token }}
@@ -124,6 +142,8 @@ jobs:
           <nl-NL>
           $(cat fastlane/metadata/android/nl-NL/changelogs/default.txt)
           </nl-NL>
+
+          **Empreinte du certificat** (APK direct, pour \`ANDROID_CERT_SHA256\`) : \`$CERT_SHA256\`
 
           Version $VERSION_NAME · commit ${GITHUB_SHA::7}
           NOTES
