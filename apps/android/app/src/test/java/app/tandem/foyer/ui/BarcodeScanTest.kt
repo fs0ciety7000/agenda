@@ -62,6 +62,41 @@ class BarcodeScanTest {
     }
 
     @Test
+    fun open_food_facts_muet_puis_trouve_au_nouvel_essai() = runBlocking {
+        var answers = 0
+        val flow = BarcodeFlow(
+            lookup = { code ->
+                answers++
+                if (answers == 1) {
+                    BarcodeLookupDto(code, null, null, unavailable = true)
+                } else {
+                    BarcodeLookupDto(code, "Lait demi-écrémé", "OPEN_FOOD_FACTS")
+                }
+            },
+            rememberName = { _, _ -> true },
+        )
+        flow.code = "2001234567893"
+        flow.search()
+        assertTrue(flow.result!!.unavailable)
+        assertEquals("", flow.name)
+        flow.retry()
+        assertEquals(2, answers)
+        assertEquals(false, flow.result!!.unavailable)
+        assertEquals("Lait demi-écrémé", flow.name)
+
+        // Toujours muet : le nom déjà tapé n'est pas effacé.
+        val silent = BarcodeFlow(
+            lookup = { code -> BarcodeLookupDto(code, null, null, unavailable = true) },
+            rememberName = { _, _ -> true },
+        )
+        silent.code = "2001234567893"
+        silent.search()
+        silent.name = "Lait"
+        silent.retry()
+        assertEquals("Lait", silent.name)
+    }
+
+    @Test
     fun rien_lu_ou_serveur_muet() {
         val flow = BarcodeFlow(lookup = { null }, rememberName = { _, _ -> true })
         flow.show(BarcodeLookupDto())

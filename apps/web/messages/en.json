@@ -1595,8 +1595,10 @@
     "fromHousehold": "Already known to the household.",
     "fromOff": "Found in Open Food Facts. Fix the name if needed: the household will remember it.",
     "unknown": "Unknown product. Give it a name: the household will remember it next time.",
+    "unavailable": "Couldn't look up the product right now. Try again, or give it a name: the household will remember it.",
     "add": "Add to the list",
     "again": "Another code",
+    "retry": "Try again",
     "added": "“{name}” added to the list"
   },
   "backup": {

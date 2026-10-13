@@ -374,6 +374,8 @@ data class BarcodeLookupDto(
     val name: String? = null,
     /** HOUSEHOLD ou OPEN_FOOD_FACTS ; null = produit inconnu. */
     val source: String? = null,
+    /** Open Food Facts n'a pas répondu : produit peut-être connu, proposer de réessayer. */
+    val unavailable: Boolean = false,
 )
 
 @Serializable

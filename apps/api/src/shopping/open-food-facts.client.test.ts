@@ -40,16 +40,32 @@ describe('Open Food Facts', () => {
     expect(await client.productName('2001234567893', 'fr')).toBe('Ferme');
   });
 
-  it('inconnu : null ; panne : undefined (rien de retenu)', async () => {
+  it('inconnu : null, sans second essai ; panne : un second essai, puis undefined', async () => {
     const client = new OpenFoodFactsClient();
-    vi.stubGlobal('fetch', reply(404, { status: 0 }));
+    const notFound = reply(404, { status: 0 });
+    vi.stubGlobal('fetch', notFound);
     expect(await client.productName('2001234567893', 'fr')).toBeNull();
+    expect(notFound).toHaveBeenCalledTimes(1);
     vi.stubGlobal('fetch', reply(200, { status: 0 }));
     expect(await client.productName('2001234567893', 'fr')).toBeNull();
-    vi.stubGlobal('fetch', reply(503, {}));
+
+    const down = reply(503, {});
+    vi.stubGlobal('fetch', down);
     expect(await client.productName('2001234567893', 'fr')).toBeUndefined();
+    expect(down).toHaveBeenCalledTimes(2);
     vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('timeout')));
     expect(await client.productName('2001234567893', 'fr')).toBeUndefined();
+
+    // Lent la première fois, trouvé au second essai.
+    const flaky = vi
+      .fn()
+      .mockRejectedValueOnce(new Error('The operation was aborted due to timeout'))
+      .mockResolvedValueOnce(
+        new Response(JSON.stringify({ status: 1, product: { product_name: 'Lait' } })),
+      );
+    vi.stubGlobal('fetch', flaky);
+    expect(await client.productName('2001234567893', 'fr')).toBe('Lait');
+    expect(flaky).toHaveBeenCalledTimes(2);
   });
 
   it('« off » : jamais interrogé', async () => {
@@ -57,7 +73,8 @@ describe('Open Food Facts', () => {
     resetEnvCache();
     const fetch = vi.fn();
     vi.stubGlobal('fetch', fetch);
-    expect(await new OpenFoodFactsClient().productName('2001234567893', 'fr')).toBeUndefined();
+    // Recherche coupée exprès : produit à nommer, pas une panne.
+    expect(await new OpenFoodFactsClient().productName('2001234567893', 'fr')).toBeNull();
     expect(fetch).not.toHaveBeenCalled();
   });
 });

@@ -761,6 +761,8 @@
     <string name="barcode_from_household">Already known to the household.</string>
     <string name="barcode_from_off">Found in Open Food Facts. Fix the name if needed: the household will remember it.</string>
     <string name="barcode_unknown">Unknown product. Give it a name: the household will remember it next time.</string>
+    <string name="barcode_unavailable">Couldn\'t look up the product right now. Try again, or give it a name: the household will remember it.</string>
+    <string name="barcode_retry">Try again</string>
     <string name="barcode_add">Add to the list</string>
     <string name="barcode_again">Another code</string>
     <string name="barcode_added">“%1$s” added to the list</string>

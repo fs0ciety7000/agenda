@@ -138,6 +138,8 @@ export const BarcodeLookupDto = z.object({
   barcode: z.string().nullable(),
   name: z.string().nullable(),
   source: z.enum(['HOUSEHOLD', 'OPEN_FOOD_FACTS']).nullable(),
+  /** Open Food Facts n'a pas répondu (délai, erreur) : produit peut-être connu, réessayer. */
+  unavailable: z.boolean(),
 });
 export type BarcodeLookupDto = z.infer<typeof BarcodeLookupDto>;
 

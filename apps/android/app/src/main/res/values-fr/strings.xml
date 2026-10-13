@@ -777,6 +777,8 @@
     <string name="barcode_from_household">Déjà connu du foyer.</string>
     <string name="barcode_from_off">Trouvé dans Open Food Facts. Corrigez le nom si besoin : le foyer s\'en souviendra.</string>
     <string name="barcode_unknown">Produit inconnu. Donnez-lui un nom : le foyer s\'en souviendra la prochaine fois.</string>
+    <string name="barcode_unavailable">Recherche du produit impossible pour l\'instant. Réessayez, ou donnez-lui un nom : le foyer s\'en souviendra.</string>
+    <string name="barcode_retry">Réessayer</string>
     <string name="barcode_add">Ajouter à la liste</string>
     <string name="barcode_again">Autre code</string>
     <string name="barcode_added">« %1$s » ajouté à la liste</string>

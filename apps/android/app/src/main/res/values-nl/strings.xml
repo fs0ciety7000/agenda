@@ -758,6 +758,8 @@
     <string name="barcode_from_household">Al bekend in het huishouden.</string>
     <string name="barcode_from_off">Gevonden in Open Food Facts. Pas de naam aan als het moet: het huishouden onthoudt hem.</string>
     <string name="barcode_unknown">Onbekend product. Geef het een naam: het huishouden onthoudt hem de volgende keer.</string>
+    <string name="barcode_unavailable">Het product opzoeken lukt nu niet. Probeer het opnieuw, of geef het een naam: het huishouden onthoudt hem.</string>
+    <string name="barcode_retry">Opnieuw proberen</string>
     <string name="barcode_add">Aan de lijst toevoegen</string>
     <string name="barcode_again">Andere code</string>
     <string name="barcode_added">‘%1$s’ toegevoegd aan de lijst</string>

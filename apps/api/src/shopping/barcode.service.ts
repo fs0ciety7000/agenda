@@ -16,7 +16,7 @@ const TIMEOUT_MS = 15_000;
 /** Codes produits seulement (pas de QR code : son contenu serait du texte quelconque). */
 const SYMBOLS = ['ean13', 'ean8', 'upca', 'upce'];
 
-const empty: BarcodeLookupDto = { barcode: null, name: null, source: null };
+const empty: BarcodeLookupDto = { barcode: null, name: null, source: null, unavailable: false };
 
 /**
  * Code-barres d'un produit, pour l'ajouter aux courses. La photo est lue sur le serveur par zbar
@@ -83,20 +83,22 @@ export class BarcodeService {
         barcode: code,
         name: known.name,
         source: known.source as 'HOUSEHOLD' | 'OPEN_FOOD_FACTS',
+        unavailable: false,
       };
     const member = await this.prisma.householdMember.findUnique({
       where: { id: ctx.memberId },
       select: { user: { select: { locale: true } } },
     });
     const name = await this.off.productName(code, member?.user?.locale ?? 'fr');
-    if (!name) return { barcode: code, name: null, source: null };
+    // undefined : Open Food Facts n'a pas répondu, rien de retenu (un autre essai peut le trouver).
+    if (!name) return { barcode: code, name: null, source: null, unavailable: name === undefined };
     // Gardé pour le foyer : la prochaine fois, aucune requête.
     await this.prisma.shoppingBarcode.upsert({
       where: { householdId_code: { householdId: ctx.householdId, code } },
       create: { householdId: ctx.householdId, code, name, source: 'OPEN_FOOD_FACTS' },
       update: {},
     });
-    return { barcode: code, name, source: 'OPEN_FOOD_FACTS' };
+    return { barcode: code, name, source: 'OPEN_FOOD_FACTS', unavailable: false };
   }
 
   /** Nom donné ou corrigé par un membre : il l'emporte sur Open Food Facts. */
@@ -117,7 +119,7 @@ export class BarcodeService {
       create: { householdId: ctx.householdId, code, name, source: 'HOUSEHOLD' },
       update: { name, source: 'HOUSEHOLD' },
     });
-    return { barcode: code, name, source: 'HOUSEHOLD' };
+    return { barcode: code, name, source: 'HOUSEHOLD', unavailable: false };
   }
 
   /** Codes lus par zbar (un par ligne) ; vide si aucun. */

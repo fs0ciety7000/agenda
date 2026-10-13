@@ -12944,12 +12944,16 @@
               "HOUSEHOLD",
               "OPEN_FOOD_FACTS"
             ]
+          },
+          "unavailable": {
+            "type": "boolean"
           }
         },
         "required": [
           "barcode",
           "name",
-          "source"
+          "source",
+          "unavailable"
         ],
         "additionalProperties": false
       },

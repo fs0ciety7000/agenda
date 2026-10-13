@@ -281,6 +281,12 @@ inversement. Android ne l'accepte que si le site déclare l'app :
 3. Vérifier `https://tandem-agenda.app/.well-known/assetlinks.json` : l'app `app.tandem.foyer` et
    ses empreintes y figurent. Le serveur accepte alors l'origine `android:apk-key-hash:…` de ces
    certificats, et l'app affiche le bouton.
+4. Attendre : Android garde sa vérification du lien site ↔ app en cache jusqu'à une heure
+   (`maxAge` de Google). Juste après un ajout ou un changement d'empreinte, la connexion peut
+   échouer (« La connexion par passkey n'a pas abouti ») sans rien dans les journaux de l'API.
+   Contrôle : `https://digitalassetlinks.googleapis.com/v1/assetlinks:check?source.web.site=https://tandem-agenda.app&relation=delegate_permission/common.get_login_creds&target.android_app.package_name=app.tandem.foyer&target.android_app.certificate.sha256_fingerprint=<empreinte>`
+   doit répondre `"linked": true`. L'app garde aussi la liste des moyens de connexion jusqu'à sa
+   fermeture : *Forcer l'arrêt* fait apparaître le bouton sans attendre.
 
 Sans empreinte déclarée, le bouton reste masqué et les Réglages renvoient au site pour l'ajout.
 Hors ligne (bac à sable) : `-Ptandem.passkeys=false` remplace le Credential Manager par une

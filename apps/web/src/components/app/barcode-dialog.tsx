@@ -151,7 +151,9 @@ export function BarcodeButton({
                   ? 'fromHousehold'
                   : result.source === 'OPEN_FOOD_FACTS'
                     ? 'fromOff'
-                    : 'unknown',
+                    : result.unavailable
+                      ? 'unavailable'
+                      : 'unknown',
               )}
               value={name}
               maxLength={200}
@@ -163,6 +165,17 @@ export function BarcodeButton({
               <Button type="submit" disabled={!name.trim()}>
                 {t('add')}
               </Button>
+              {result.unavailable && (
+                // Open Food Facts n'a pas répondu : le même code, une nouvelle fois.
+                <Button
+                  type="button"
+                  variant="secondary"
+                  loading={actions.lookup.isPending}
+                  onClick={() => actions.lookup.mutate(result.barcode!, { onSuccess: show })}
+                >
+                  {t('retry')}
+                </Button>
+              )}
               <Button type="button" variant="ghost" onClick={reset}>
                 {t('again')}
               </Button>
