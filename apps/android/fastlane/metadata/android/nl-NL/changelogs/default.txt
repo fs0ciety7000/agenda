@@ -1,7 +1,7 @@
 Aanmelden met een toegangssleutel; beheer ze in Instellingen.
 • Tweestapsverificatie: code gevraagd na je wachtwoord.
-• Boodschappen: barcode live scannen; gastlink die vanzelf uitgaat.
-• Back-up van het huishouden, te versleutelen; gevoelige notities beschermd, versies terugzetten.
+• Boodschappen: barcode live scannen, "Opnieuw proberen" als opzoeken mislukt; gastlink die vanzelf uitgaat.
+• Back-up van het huishouden, te versleutelen; gevoelige notities beschermd.
 • Kasticket inlezen: bedrag en datum van de foto gelezen.
 • Delen naar Tandem: een link wordt een taak, notitie of boodschap.
 • Tegel "Taak toevoegen"; budget per categorie.

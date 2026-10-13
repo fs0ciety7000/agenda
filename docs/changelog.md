@@ -13,6 +13,14 @@ d'elle-même (ou via Google Play).
 **Légende** : ✨ nouveau · 🛠 amélioration · 🐞 correction · 🔒 sécurité et confidentialité ·
 ⚙️ technique
 
+## 13 octobre 2026
+
+### Code-barres : panne d'Open Food Facts signalée (#101)
+
+- 🐞 Quand Open Food Facts ne répond pas, le scan ne dit plus « Produit inconnu » : un message
+  l'explique et propose **Réessayer**, sur le site et sur Android. Le serveur attend aussi plus
+  longtemps et fait un second essai avant d'abandonner.
+
 ## 12 octobre 2026
 
 ### Référencement : descriptions et adresses canoniques (#99)

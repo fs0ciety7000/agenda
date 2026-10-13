@@ -103,6 +103,17 @@ class BarcodeFlow(
         show(lookup(digits))
     }
 
+    /** Open Food Facts n'a pas répondu : même code, nouvel essai ; le nom déjà tapé est gardé. */
+    suspend fun retry() {
+        val current = result?.barcode ?: return
+        busy = true
+        val r = lookup(current)
+        busy = false
+        if (r?.barcode == null) return
+        result = r
+        if (r.name != null) name = r.name
+    }
+
     /** Nom à ajouter ; un nom donné ou corrigé est d'abord retenu pour le foyer. */
     suspend fun confirm(): String? {
         val code = result?.barcode ?: return null
@@ -259,9 +270,10 @@ fun BarcodeButton(
                         supportingText = {
                             Text(
                                 stringResource(
-                                    when (flow.result?.source) {
-                                        "HOUSEHOLD" -> R.string.barcode_from_household
-                                        "OPEN_FOOD_FACTS" -> R.string.barcode_from_off
+                                    when {
+                                        flow.result?.source == "HOUSEHOLD" -> R.string.barcode_from_household
+                                        flow.result?.source == "OPEN_FOOD_FACTS" -> R.string.barcode_from_off
+                                        flow.result?.unavailable == true -> R.string.barcode_unavailable
                                         else -> R.string.barcode_unknown
                                     },
                                 ),
@@ -271,6 +283,13 @@ fun BarcodeButton(
                         keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
                         modifier = Modifier.fillMaxWidth(),
                     )
+                    if (flow.result?.unavailable == true) {
+                        TextButton(
+                            onClick = { scope.launch { flow.retry() } },
+                            enabled = !flow.busy,
+                            modifier = Modifier.heightIn(min = 48.dp),
+                        ) { Text(stringResource(R.string.barcode_retry)) }
+                    }
                 }
             }
         },

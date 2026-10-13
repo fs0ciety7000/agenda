@@ -224,6 +224,9 @@ Demandé le 11 octobre :
   par l'API Digital Asset Links (S) 🤖 (#101)
 - [ ] Android : message d'erreur des passkeys qui distingue le refus du téléphone (lien site ↔ app
   pas encore vérifié, aucun gestionnaire de passkeys) de celui du serveur (S) 🤖
+- [x] Code-barres : « Produit inconnu » affiché aussi quand Open Food Facts ne répondait pas ;
+  message distinct avec « Réessayer » (site, Android), délai de 8 s et second essai côté
+  serveur (S) 🌐🤖⚙️ (#101)
 - [ ] Android : liste des moyens de connexion (Google, passkeys) redemandée au serveur à chaque
   ouverture de l'écran de connexion, au lieu d'être gardée jusqu'à *Forcer l'arrêt* (S) 🤖
 

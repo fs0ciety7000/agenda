@@ -1595,8 +1595,10 @@
     "fromHousehold": "Déjà connu du foyer.",
     "fromOff": "Trouvé dans Open Food Facts. Corrigez le nom si besoin : le foyer s'en souviendra.",
     "unknown": "Produit inconnu. Donnez-lui un nom : le foyer s'en souviendra la prochaine fois.",
+    "unavailable": "Recherche du produit impossible pour l'instant. Réessayez, ou donnez-lui un nom : le foyer s'en souviendra.",
     "add": "Ajouter à la liste",
     "again": "Autre code",
+    "retry": "Réessayer",
     "added": "« {name} » ajouté à la liste"
   },
   "backup": {

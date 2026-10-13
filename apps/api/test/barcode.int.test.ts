@@ -47,6 +47,7 @@ describe('Code-barres pour les courses', () => {
       barcode: CODE,
       name: 'Lait demi-écrémé',
       source: 'OPEN_FOOD_FACTS',
+      unavailable: false,
     });
     // Deuxième fois (l'autre membre) : mémoire du foyer, pas de nouvelle requête.
     const again = await http()
@@ -65,13 +66,14 @@ describe('Code-barres pour les courses', () => {
       .expect(200);
     expect(
       (await http().get(`${h.base}/shopping-barcodes/${CODE}`).set(h.grace.auth).expect(200)).body,
-    ).toEqual({ barcode: CODE, name: 'Lait de la ferme', source: 'HOUSEHOLD' });
+    ).toEqual({ barcode: CODE, name: 'Lait de la ferme', source: 'HOUSEHOLD', unavailable: false });
 
     // Pas de code-barres sur la photo, ou pas une image : rien, sans erreur.
     expect((await scan(RECEIPT, 'ticket.png', 'image/png').expect(200)).body).toEqual({
       barcode: null,
       name: null,
       source: null,
+      unavailable: false,
     });
     expect(
       (await scan(Buffer.from('/etc/passwd\n'), 'x.png', 'image/png').expect(200)).body.barcode,
@@ -81,11 +83,15 @@ describe('Code-barres pour les courses', () => {
 
   it('produit inconnu ou service muet : code rendu sans nom, rien de retenu', async () => {
     const h = await coupleHousehold(app);
-    off.answer = undefined; // Open Food Facts n'a pas répondu
+    off.answer = undefined; // Open Food Facts n'a pas répondu : dit, pour proposer de réessayer
     const res = await http().get(`${h.base}/shopping-barcodes/${CODE}`).set(h.grace.auth);
-    expect(res.body).toEqual({ barcode: CODE, name: null, source: null });
+    expect(res.body).toEqual({ barcode: CODE, name: null, source: null, unavailable: true });
     off.answer = null; // inconnu
-    await http().get(`${h.base}/shopping-barcodes/${CODE}`).set(h.grace.auth).expect(200);
+    const unknown = await http()
+      .get(`${h.base}/shopping-barcodes/${CODE}`)
+      .set(h.grace.auth)
+      .expect(200);
+    expect(unknown.body).toEqual({ barcode: CODE, name: null, source: null, unavailable: false });
     expect(off.calls).toEqual([CODE, CODE]);
     // Code mal saisi (clé de contrôle fausse) : refusé avant toute requête.
     await http().get(`${h.base}/shopping-barcodes/2001234567890`).set(h.grace.auth).expect(422);

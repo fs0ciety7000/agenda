@@ -1595,8 +1595,10 @@
     "fromHousehold": "Al bekend in het huishouden.",
     "fromOff": "Gevonden in Open Food Facts. Pas de naam aan als het moet: het huishouden onthoudt hem.",
     "unknown": "Onbekend product. Geef het een naam: het huishouden onthoudt hem de volgende keer.",
+    "unavailable": "Het product opzoeken lukt nu niet. Probeer het opnieuw, of geef het een naam: het huishouden onthoudt hem.",
     "add": "Aan de lijst toevoegen",
     "again": "Andere code",
+    "retry": "Opnieuw proberen",
     "added": "‘{name}’ toegevoegd aan de lijst"
   },
   "backup": {
