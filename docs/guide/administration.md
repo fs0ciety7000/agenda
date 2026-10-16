@@ -10,7 +10,7 @@ la variable serveur `ADMIN_EMAILS` (voir [Déploiement](../deployment.md)).
 
 | Onglet | Contenu |
 |---|---|
-| **Vue d'ensemble** | chiffres clés (comptes, foyers, tâches), fonctions configurées (e-mail, Google, notifications, sauvegardes hors serveur…) |
+| **Vue d'ensemble** | chiffres clés (comptes, foyers, tâches, taille de la base, **dernière sauvegarde réussie**), fonctions configurées (e-mail, Google, notifications…) et **état d'Open Food Facts** : coupé (`OPEN_FOOD_FACTS_URL=off`), dernière réponse, ou dernière panne avec sa cause (délai, `HTTP 403`…) |
 | **Comptes** | rechercher ; **créer un compte** (un lien pour choisir le mot de passe est envoyé ou copié) ; **désactiver** / réactiver ; **déconnecter partout** ; envoyer un **lien de mot de passe** ; **supprimer** |
 | **Signalements** | bugs, idées et questions envoyés depuis le site et l'app : texte, capture, informations techniques (si jointes) ; changer l'**état** (envoyé, en cours, résolu, fermé), **répondre** (réponse visible dans l'app, et envoyée par e-mail si l'utilisateur l'a accepté), supprimer. Chaque nouveau signalement est notifié aux administrateurs par e-mail et notification du navigateur |
 | **Foyers** | foyers, membres, nombre de tâches et de tâches à faire |
@@ -24,5 +24,7 @@ Bonnes pratiques :
   les comptes depuis l'administration ;
 - un compte **désactivé** ne peut plus se connecter et ses sessions sont coupées, sans rien
   supprimer (préférable à la suppression en cas de doute) ;
+- tous les codes-barres sortent « Produit inconnu » : regarder la ligne Open Food Facts de la
+  vue d'ensemble (coupé ou en panne) avant de chercher ailleurs ;
 - l'administration n'ouvre **aucun accès au contenu des tâches** des foyers : seulement des
   chiffres.

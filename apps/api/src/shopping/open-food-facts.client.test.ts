@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { resetEnvCache } from '../config/env';
-import { OpenFoodFactsClient } from './open-food-facts.client';
+import { OpenFoodFactsClient, openFoodFactsHealth } from './open-food-facts.client';
 
 const reply = (status: number, body: unknown) =>
   vi.fn().mockResolvedValue(new Response(JSON.stringify(body), { status }));
@@ -66,6 +66,13 @@ describe('Open Food Facts', () => {
     vi.stubGlobal('fetch', flaky);
     expect(await client.productName('2001234567893', 'fr')).toBe('Lait');
     expect(flaky).toHaveBeenCalledTimes(2);
+    // Vu de l'administration : la panne (et sa cause) puis la réponse qui a suivi.
+    const health = openFoodFactsHealth();
+    expect(health.enabled).toBe(true);
+    expect(health.lastError).toBe('The operation was aborted due to timeout');
+    expect(Date.parse(health.lastSuccessAt!)).toBeGreaterThanOrEqual(
+      Date.parse(health.lastFailureAt!),
+    );
   });
 
   it('« off » : jamais interrogé', async () => {
@@ -76,5 +83,6 @@ describe('Open Food Facts', () => {
     // Recherche coupée exprès : produit à nommer, pas une panne.
     expect(await new OpenFoodFactsClient().productName('2001234567893', 'fr')).toBeNull();
     expect(fetch).not.toHaveBeenCalled();
+    expect(openFoodFactsHealth().enabled).toBe(false);
   });
 });

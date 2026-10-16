@@ -1001,7 +1001,9 @@
       "comments": "Commentaires",
       "attachments": "Pièces jointes",
       "database": "Base de données",
-      "openReports": "Signalements à traiter"
+      "openReports": "Signalements à traiter",
+      "lastBackup": "Dernière sauvegarde",
+      "noBackup": "Aucune"
     },
     "integrations": "Fonctions configurées",
     "enabled": "activé",
@@ -1016,6 +1018,12 @@
     },
     "registrationOpen": "Inscriptions ouvertes",
     "registrationClosed": "Inscriptions fermées (comptes créés ici)",
+    "off": {
+      "disabled": "Open Food Facts coupé (OPEN_FOOD_FACTS_URL=off) : chaque code-barres sort « Produit inconnu ».",
+      "never": "Open Food Facts : pas encore interrogé depuis le démarrage de l'API.",
+      "ok": "Open Food Facts : dernière réponse {when}.",
+      "failing": "Open Food Facts injoignable ({when}) : {error}"
+    },
     "calendarStatus": "Google Calendar : {synced} synchronisés, {pending} en attente, {errors} en erreur",
     "uptime": "API démarrée depuis {hours} h",
     "backups": "Sauvegardes",

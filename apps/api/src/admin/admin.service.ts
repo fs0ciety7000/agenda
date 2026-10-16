@@ -18,6 +18,7 @@ import { PushService } from '../notifications/push.service';
 import { WebPushService } from '../notifications/web-push.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { PrivacyService } from '../privacy/privacy.service';
+import { openFoodFactsHealth } from '../shopping/open-food-facts.client';
 
 const DAY = 86_400_000;
 
@@ -103,6 +104,7 @@ export class AdminService {
         { key: 'errorTracking', enabled: Boolean(e.SENTRY_DSN) },
       ],
       registrationEnabled: e.REGISTRATION_ENABLED,
+      openFoodFacts: openFoodFactsHealth(),
       backups,
       serverTime: new Date().toISOString(),
       uptimeSeconds: Math.round(process.uptime()),

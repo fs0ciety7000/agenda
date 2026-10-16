@@ -1001,7 +1001,9 @@
       "comments": "Reacties",
       "attachments": "Bijlagen",
       "database": "Database",
-      "openReports": "Te behandelen meldingen"
+      "openReports": "Te behandelen meldingen",
+      "lastBackup": "Laatste back-up",
+      "noBackup": "Geen"
     },
     "integrations": "Ingestelde functies",
     "enabled": "ingeschakeld",
@@ -1016,6 +1018,12 @@
     },
     "registrationOpen": "Registratie open",
     "registrationClosed": "Registratie gesloten (accounts worden hier aangemaakt)",
+    "off": {
+      "disabled": "Open Food Facts uitgeschakeld (OPEN_FOOD_FACTS_URL=off): elke barcode geeft \"Onbekend product\".",
+      "never": "Open Food Facts: nog niet gevraagd sinds de API startte.",
+      "ok": "Open Food Facts: laatste antwoord {when}.",
+      "failing": "Open Food Facts onbereikbaar ({when}): {error}"
+    },
     "calendarStatus": "Google Agenda: {synced} gesynchroniseerd, {pending} in wachtrij, {errors} mislukt",
     "uptime": "API actief sinds {hours} u",
     "backups": "Back-ups",
