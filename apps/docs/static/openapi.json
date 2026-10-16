@@ -12289,6 +12289,33 @@
           "registrationEnabled": {
             "type": "boolean"
           },
+          "openFoodFacts": {
+            "type": "object",
+            "properties": {
+              "enabled": {
+                "type": "boolean"
+              },
+              "lastSuccessAt": {
+                "nullable": true,
+                "type": "string"
+              },
+              "lastFailureAt": {
+                "nullable": true,
+                "type": "string"
+              },
+              "lastError": {
+                "nullable": true,
+                "type": "string"
+              }
+            },
+            "required": [
+              "enabled",
+              "lastSuccessAt",
+              "lastFailureAt",
+              "lastError"
+            ],
+            "additionalProperties": false
+          },
           "backups": {
             "type": "array",
             "items": {
@@ -12367,6 +12394,7 @@
           "calendar",
           "integrations",
           "registrationEnabled",
+          "openFoodFacts",
           "backups",
           "serverTime",
           "uptimeSeconds"

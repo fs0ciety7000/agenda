@@ -1001,7 +1001,9 @@
       "comments": "Comments",
       "attachments": "Attachments",
       "database": "Database",
-      "openReports": "Reports to handle"
+      "openReports": "Reports to handle",
+      "lastBackup": "Last backup",
+      "noBackup": "None"
     },
     "integrations": "Configured features",
     "enabled": "enabled",
@@ -1016,6 +1018,12 @@
     },
     "registrationOpen": "Sign-ups open",
     "registrationClosed": "Sign-ups closed (accounts created here)",
+    "off": {
+      "disabled": "Open Food Facts turned off (OPEN_FOOD_FACTS_URL=off): every barcode shows \"Unknown product\".",
+      "never": "Open Food Facts: not asked yet since the API started.",
+      "ok": "Open Food Facts: last answer {when}.",
+      "failing": "Open Food Facts unreachable ({when}): {error}"
+    },
     "calendarStatus": "Google Calendar: {synced} synced, {pending} pending, {errors} failing",
     "uptime": "API up for {hours} h",
     "backups": "Backups",

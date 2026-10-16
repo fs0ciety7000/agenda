@@ -13,6 +13,15 @@ d'elle-même (ou via Google Play).
 **Légende** : ✨ nouveau · 🛠 amélioration · 🐞 correction · 🔒 sécurité et confidentialité ·
 ⚙️ technique
 
+## 16 octobre 2026
+
+### Administration : état d'Open Food Facts et dernière sauvegarde (#102)
+
+- 🛠 La vue d'ensemble de l'administration dit si la recherche des codes-barres (Open Food Facts)
+  est coupée, répond, ou est en panne (avec la cause), et montre la dernière sauvegarde réussie.
+- 🐞 Doc de déploiement : `off` n'est plus présenté comme valeur de `OPEN_FOOD_FACTS_URL` (il
+  coupe la recherche ; ne pas définir la variable en production).
+
 ## 13 octobre 2026
 
 ### Code-barres : panne d'Open Food Facts signalée (#101)

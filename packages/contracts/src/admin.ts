@@ -38,6 +38,16 @@ export const AdminOverviewDto = z.object({
   /** Fonctions configurées sur le serveur. */
   integrations: z.array(z.object({ key: z.string(), enabled: z.boolean() })),
   registrationEnabled: z.boolean(),
+  /**
+   * Noms des codes-barres : `enabled` faux si OPEN_FOOD_FACTS_URL vaut « off » ; dernière réponse
+   * et dernière panne depuis le démarrage de l'API (null : pas encore interrogé).
+   */
+  openFoodFacts: z.object({
+    enabled: z.boolean(),
+    lastSuccessAt: z.string().nullable(),
+    lastFailureAt: z.string().nullable(),
+    lastError: z.string().nullable(),
+  }),
   backups: z.array(BackupRunDto),
   serverTime: z.string(),
   uptimeSeconds: z.number().int(),

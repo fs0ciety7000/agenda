@@ -227,6 +227,9 @@ Demandé le 11 octobre :
 - [x] Code-barres : « Produit inconnu » affiché aussi quand Open Food Facts ne répondait pas ;
   message distinct avec « Réessayer » (site, Android), délai de 8 s et second essai côté
   serveur (S) 🌐🤖⚙️ (#101)
+- [x] Admin : état d'Open Food Facts (coupé, dernière réponse, dernière panne et sa cause) et
+  dernière sauvegarde réussie dans la vue d'ensemble ; doc de déploiement corrigée (`off`
+  n'est pas une valeur à recopier) (S) 🌐⚙️ (#102)
 - [ ] Android : liste des moyens de connexion (Google, passkeys) redemandée au serveur à chaque
   ouverture de l'écran de connexion, au lieu d'être gardée jusqu'à *Forcer l'arrêt* (S) 🤖
 

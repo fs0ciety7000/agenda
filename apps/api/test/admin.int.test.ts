@@ -36,6 +36,12 @@ describe('Administration (intégration)', () => {
     expect(overview.body.counts.users).toBeGreaterThanOrEqual(2);
     expect(overview.body.storage.databaseBytes).toBeGreaterThan(0);
     expect(overview.body.integrations.map((i: { key: string }) => i.key)).toContain('webPush');
+    expect(overview.body.openFoodFacts).toEqual({
+      enabled: expect.any(Boolean),
+      lastSuccessAt: expect.toBeOneOf([null, expect.any(String)]),
+      lastFailureAt: expect.toBeOneOf([null, expect.any(String)]),
+      lastError: expect.toBeOneOf([null, expect.any(String)]),
+    });
 
     const users = (await http().get('/v1/admin/users').set(h.nicolas.auth).expect(200)).body as {
       id: string;

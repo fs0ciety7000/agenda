@@ -6,6 +6,23 @@ const TIMEOUT_MS = 8_000;
 /** Un second essai après une panne (délai, réseau, 5xx, 429), jamais après « inconnu ». */
 const ATTEMPTS = 2;
 
+/** État du service depuis le démarrage, montré dans l'administration. */
+const health = {
+  lastSuccessAt: null as Date | null,
+  lastFailureAt: null as Date | null,
+  lastError: null as string | null,
+};
+
+/** Dernière réponse (produit trouvé ou inconnu) et dernière panne d'Open Food Facts. */
+export function openFoodFactsHealth() {
+  return {
+    enabled: env().OPEN_FOOD_FACTS_URL !== 'off',
+    lastSuccessAt: health.lastSuccessAt?.toISOString() ?? null,
+    lastFailureAt: health.lastFailureAt?.toISOString() ?? null,
+    lastError: health.lastError,
+  };
+}
+
 /**
  * Nom d'un produit dans Open Food Facts (base ouverte et collaborative). Seul le code-barres est
  * envoyé, par le serveur : ni le foyer ni l'utilisateur ne sont connus du service.
@@ -26,8 +43,12 @@ export class OpenFoodFactsClient {
     const url = `${base}/api/v2/product/${code}.json?fields=${fields}`;
     for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
       try {
-        return await this.fetchName(url, lang);
+        const name = await this.fetchName(url, lang);
+        health.lastSuccessAt = new Date();
+        return name;
       } catch (e) {
+        health.lastFailureAt = new Date();
+        health.lastError = (e as Error).message.slice(0, 200);
         this.logger.warn(
           `Open Food Facts unavailable (attempt ${attempt}/${ATTEMPTS}): ${(e as Error).message}`,
         );

@@ -2,6 +2,7 @@
 
 import type { AdminUserDto, BackupRunDto } from '@agenda/contracts';
 import {
+  AlertTriangle,
   CheckCircle2,
   CircleSlash,
   DatabaseBackup,
@@ -66,9 +67,19 @@ function Overview() {
   const overview = useAdminOverview();
   const bytes = useBytes();
   const format = useFormatter();
+  const now = useNow({ updateInterval: 60_000 });
   if (!overview.data) return <Skeleton className="h-40 w-full" />;
-  const { counts, storage, calendar, integrations, registrationEnabled, uptimeSeconds } =
-    overview.data;
+  const {
+    counts,
+    storage,
+    calendar,
+    integrations,
+    registrationEnabled,
+    openFoodFacts,
+    backups,
+    uptimeSeconds,
+  } = overview.data;
+  const lastBackup = backups.find((b) => b.status === 'OK');
   const tiles: [string, number | string][] = [
     [t('counts.users'), counts.users],
     [t('counts.households'), counts.households],
@@ -80,7 +91,31 @@ function Overview() {
     [t('counts.comments'), counts.comments],
     [t('counts.attachments'), `${counts.attachments} · ${bytes(storage.attachmentsBytes)}`],
     [t('counts.database'), bytes(storage.databaseBytes)],
+    [
+      t('counts.lastBackup'),
+      lastBackup
+        ? format.relativeTime(
+            new Date(lastBackup.finishedAt ?? lastBackup.startedAt ?? lastBackup.createdAt),
+            now,
+          )
+        : t('counts.noBackup'),
+    ],
   ];
+  // Codes-barres : coupé, jamais interrogé, en panne (dernier signe = une erreur) ou joignable.
+  const offFailing =
+    openFoodFacts.lastFailureAt !== null &&
+    (openFoodFacts.lastSuccessAt === null ||
+      openFoodFacts.lastFailureAt > openFoodFacts.lastSuccessAt);
+  const offLine = !openFoodFacts.enabled
+    ? t('off.disabled')
+    : offFailing
+      ? t('off.failing', {
+          when: format.relativeTime(new Date(openFoodFacts.lastFailureAt!), now),
+          error: openFoodFacts.lastError ?? '',
+        })
+      : openFoodFacts.lastSuccessAt
+        ? t('off.ok', { when: format.relativeTime(new Date(openFoodFacts.lastSuccessAt), now) })
+        : t('off.never');
   const calendarErrors = (calendar.ERROR ?? 0) + (calendar.BLOCKED ?? 0);
   return (
     <section aria-labelledby="a-overview" className="flex flex-col gap-3">
@@ -115,6 +150,19 @@ function Overview() {
             {t(registrationEnabled ? 'registrationOpen' : 'registrationClosed')}
           </li>
         </ul>
+        <p
+          className={cn(
+            'flex items-start gap-2 text-[0.9375rem]',
+            (!openFoodFacts.enabled || offFailing) && 'text-warning',
+          )}
+        >
+          {!openFoodFacts.enabled || offFailing ? (
+            <AlertTriangle aria-hidden className="mt-0.5 size-4 shrink-0" />
+          ) : (
+            <CheckCircle2 aria-hidden className="mt-0.5 size-4 shrink-0 text-success" />
+          )}
+          <span>{offLine}</span>
+        </p>
         <p className="text-[0.8125rem] text-text-muted">
           {t('calendarStatus', {
             synced: calendar.SYNCED ?? 0,
