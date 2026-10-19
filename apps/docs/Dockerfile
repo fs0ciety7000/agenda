@@ -14,7 +14,7 @@ ARG APP_URL=https://tandem-agenda.app
 ENV DOCS_URL=$DOCS_URL APP_URL=$APP_URL
 RUN npm run build
 
-FROM nginx:1.29-alpine AS runtime
+FROM nginx:1.31-alpine AS runtime
 COPY apps/docs/nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /repo/apps/docs/build /usr/share/nginx/html
 EXPOSE 80
