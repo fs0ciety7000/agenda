@@ -1,6 +1,6 @@
-Aanmelden met een toegangssleutel; beheer ze in Instellingen.
+Aanmelden met een toegangssleutel, zichtbaar zonder de app te herstarten.
 • Tweestapsverificatie: code gevraagd na je wachtwoord.
-• Boodschappen: barcode live scannen, "Opnieuw proberen" als opzoeken mislukt; gastlink die vanzelf uitgaat.
+• Boodschappen: barcode live scannen, ook verzorging en huishouden; "Opnieuw proberen" als opzoeken mislukt.
 • Back-up van het huishouden, te versleutelen; gevoelige notities beschermd.
 • Kasticket inlezen: bedrag en datum van de foto gelezen.
 • Delen naar Tandem: een link wordt een taak, notitie of boodschap.

@@ -40,7 +40,9 @@ de près et bien à plat.
   ailleurs. Le scan en direct, lui, se fait sur le téléphone.
 - Le nom du produit est proposé : celui que le foyer lui a déjà donné, sinon celui trouvé dans
   [Open Food Facts](https://world.openfoodfacts.org), une base de produits ouverte (seul le code
-  lui est envoyé). Corrigez-le si besoin avant **Ajouter à la liste** : le foyer s'en souviendra.
+  lui est envoyé). Elle ne connaît que l'alimentaire : pour l'hygiène et l'entretien, Tandem
+  cherche ensuite dans ses bases sœurs Open Beauty Facts et Open Products Facts. Corrigez le nom
+  si besoin avant **Ajouter à la liste** : le foyer s'en souviendra.
 - Produit inconnu : donnez-lui un nom une fois, il sera reconnu la fois suivante, par vous deux.
 - Open Food Facts ne répond pas (service lent ou en panne) : Tandem le dit et propose
   **Réessayer** ; vous pouvez aussi nommer l'article tout de suite.

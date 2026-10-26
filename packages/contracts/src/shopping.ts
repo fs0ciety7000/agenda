@@ -77,6 +77,8 @@ export const RealtimeTopic = z.enum([
   'expenses',
   'notes',
   'dates',
+  /** Membres du foyer (arrivée d'un membre) : la liste des noms est à recharger. */
+  'members',
 ]);
 export type RealtimeTopic = z.infer<typeof RealtimeTopic>;
 

@@ -49,6 +49,9 @@ const keysFor = (hid: string, topic: RealtimeTopic): (readonly unknown[])[] => {
       return [['households', hid, 'notes']];
     case 'dates':
       return [['households', hid, 'dates']];
+    case 'members':
+      // Liste des foyers seule (noms, couleurs) : pas tout ce qui est rangé sous 'households'.
+      return [];
     case 'tasks':
       return [
         ['households', hid, 'occurrences'],
@@ -86,6 +89,8 @@ export function useRealtime(hid: string | undefined) {
       source.addEventListener('change', (e) => {
         const { topic } = JSON.parse((e as MessageEvent<string>).data) as { topic: RealtimeTopic };
         for (const queryKey of keysFor(hid, topic)) void qc.invalidateQueries({ queryKey });
+        if (topic === 'members')
+          void qc.invalidateQueries({ queryKey: ['households'], exact: true });
       });
       source.onerror = () => {
         lost = true;

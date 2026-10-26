@@ -39,7 +39,8 @@ Fichiers importés, à respecter au même titre que celui-ci :
 - Codes-barres en direct : scanner de Google Play services (`src/codeScanner`), remplacé par une version
   vide avec `-Ptandem.codeScanner=false` ; la photo lue par le serveur reste en secours (#93).
 - Codes-barres : photo lue par zbar sur le serveur (effacée aussitôt), nom du foyer d'abord, sinon
-  Open Food Facts (le code seul) ; `OPEN_FOOD_FACTS_URL=off` le coupe (#93).
+  Open Food Facts (le code seul), puis ses bases sœurs Open Beauty Facts et Open Products Facts
+  (#110) ; `OPEN_FOOD_FACTS_URL=off` le coupe (#93).
 - Sauvegarde du foyer : .zip (JSON + fichiers), mot de passe comme le coffre, sans le personnel de
   l'autre ; restaurer recrée un foyer (ids refaits), l'autre reprend son membre par son adresse (#93).
 - Sauvegarde chiffrée (option) : fichier `.tandem` = en-tête + .zip en AES-256-GCM, clé scrypt

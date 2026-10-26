@@ -69,7 +69,10 @@ class PasskeyLoginTest {
         assertEquals(AuthResult.Failure(AuthError.PASSKEY_CANCELLED), repo.loginWithPasskey { PasskeyOutcome.Cancelled })
         server.enqueue(json(options))
         assertEquals(AuthResult.Failure(AuthError.NO_PASSKEY), repo.loginWithPasskey { PasskeyOutcome.NoPasskey })
-        assertEquals(2, server.requestCount)
+        // Refus du téléphone (Credential Manager) : distinct d'un refus du serveur.
+        server.enqueue(json(options))
+        assertEquals(AuthResult.Failure(AuthError.PASSKEY_DEVICE), repo.loginWithPasskey { PasskeyOutcome.Failed })
+        assertEquals(3, server.requestCount)
         assertNull(tokens.refreshToken())
     }
 
@@ -89,5 +92,20 @@ class PasskeyLoginTest {
         // Réponse gardée : pas de second appel pour Google.
         assertEquals(false, repo.googleAvailable())
         assertEquals(1, server.requestCount)
+    }
+
+    @Test
+    fun `liste redemandee a chaque ouverture, l'ancienne gardee hors ligne`() = runBlocking {
+        server.enqueue(json("""{"google":false,"registration":true,"passwordReset":true,"androidPasskeys":false}"""))
+        assertEquals(false, repo.passkeysAvailable())
+        // Empreinte ajoutée sur le serveur : visible à la prochaine ouverture, sans relancer l'app.
+        server.enqueue(json("""{"google":false,"registration":true,"passwordReset":true,"androidPasskeys":true}"""))
+        repo.refreshProviders()
+        assertTrue(repo.passkeysAvailable())
+        // Serveur muet : la dernière réponse reste valable.
+        server.enqueue(MockResponse().setResponseCode(503))
+        repo.refreshProviders()
+        assertTrue(repo.passkeysAvailable())
+        assertEquals(3, server.requestCount)
     }
 }

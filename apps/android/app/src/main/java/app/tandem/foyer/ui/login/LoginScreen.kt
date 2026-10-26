@@ -163,6 +163,7 @@ private fun AuthError.messageRes(): Int = when (this) {
     AuthError.REGISTRATION_CLOSED -> R.string.error_registration_closed
     AuthError.ACCOUNT_DISABLED -> R.string.error_account_disabled
     AuthError.PASSKEY_FAILED, AuthError.PASSKEY_CANCELLED -> R.string.error_passkey_failed
+    AuthError.PASSKEY_DEVICE -> R.string.error_passkey_device
     AuthError.NO_PASSKEY -> R.string.error_no_passkey
     AuthError.TWO_FACTOR_INVALID -> R.string.error_two_factor_invalid
 }

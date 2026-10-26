@@ -1,6 +1,6 @@
-Connexion par passkey, gérée dans les Réglages.
+Connexion par passkey, visible sans relancer l'app ; message clair si le téléphone la refuse.
 • Double authentification : code demandé après le mot de passe.
-• Courses : code-barres en direct, « Réessayer » si la recherche échoue ; lien invité qui expire.
+• Courses : code-barres en direct, hygiène et entretien compris, « Réessayer » si la recherche échoue.
 • Sauvegarde du foyer chiffrable ; notes sensibles protégées.
 • Ticket lu sur la photo : montant et date.
 • Partager vers Tandem : un lien devient tâche, note ou courses.

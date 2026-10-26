@@ -6,6 +6,24 @@ const TIMEOUT_MS = 8_000;
 /** Un second essai après une panne (délai, réseau, 5xx, 429), jamais après « inconnu ». */
 const ATTEMPTS = 2;
 
+/**
+ * Bases sœurs d'Open Food Facts (même association, même API) pour les produits non alimentaires :
+ * hygiène et beauté, puis tout le reste. Seulement pour les adresses officielles ; un miroir ou un
+ * faux serveur de test n'en a pas.
+ */
+export function siblingBases(base: string): string[] {
+  let host: string;
+  try {
+    host = new URL(base).host;
+  } catch {
+    return [];
+  }
+  if (!host.endsWith('openfoodfacts.org')) return [];
+  return ['openbeautyfacts', 'openproductsfacts'].map((name) =>
+    base.replace('openfoodfacts', name),
+  );
+}
+
 /** État du service depuis le démarrage, montré dans l'administration. */
 const health = {
   lastSuccessAt: null as Date | null,
@@ -33,24 +51,42 @@ export class OpenFoodFactsClient {
 
   /**
    * Nom du produit ; null s'il est inconnu (ou la recherche coupée par « off ») ; undefined si
-   * le service n'a pas répondu, même après un second essai.
+   * le service n'a pas répondu, même après un second essai. Inconnu d'Open Food Facts (qui ne
+   * connaît que l'alimentaire) : ses bases sœurs sont interrogées, hygiène puis autres produits.
    */
   async productName(code: string, locale: string): Promise<string | null | undefined> {
     const base = env().OPEN_FOOD_FACTS_URL;
     if (base === 'off') return null;
     const lang = locale.slice(0, 2);
+    const food = await this.lookup(base, code, lang, ATTEMPTS);
+    if (food !== null) return food;
+    for (const sibling of siblingBases(base)) {
+      // Un seul essai : un « inconnu » d'Open Food Facts ne doit pas faire attendre longtemps.
+      const name = await this.lookup(sibling, code, lang, 1);
+      // Base sœur muette : sans réponse, le produit reste « inconnu » (Open Food Facts a répondu).
+      if (name) return name;
+    }
+    return null;
+  }
+
+  private async lookup(
+    base: string,
+    code: string,
+    lang: string,
+    attempts: number,
+  ): Promise<string | null | undefined> {
     const fields = `product_name_${lang},product_name,brands`;
     const url = `${base}/api/v2/product/${code}.json?fields=${fields}`;
-    for (let attempt = 1; attempt <= ATTEMPTS; attempt++) {
+    for (let attempt = 1; attempt <= attempts; attempt++) {
       try {
         const name = await this.fetchName(url, lang);
         health.lastSuccessAt = new Date();
         return name;
       } catch (e) {
         health.lastFailureAt = new Date();
-        health.lastError = (e as Error).message.slice(0, 200);
+        health.lastError = `${new URL(base).host}: ${(e as Error).message}`.slice(0, 200);
         this.logger.warn(
-          `Open Food Facts unavailable (attempt ${attempt}/${ATTEMPTS}): ${(e as Error).message}`,
+          `${new URL(base).host} unavailable (attempt ${attempt}/${attempts}): ${(e as Error).message}`,
         );
       }
     }

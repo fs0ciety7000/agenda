@@ -39,8 +39,9 @@ Source : [audit du 8 octobre 2026](audits/2026-10-08.md). Légende : effort S / 
 - [x] Astuce tactile sur mobile, astuce clavier sur desktop 🌐
 - [x] Android : glisser une tâche d'un jour à l'autre dans la vue mois — déjà en place
       (appui long), vérifié 🤖
-- [ ] Mois sur téléphone : glisser-déposer d'un jour à l'autre (aujourd'hui : ouvrir la tâche et
-      changer la date) 🌐 — ajouté au lot 3
+- [x] Mois sur téléphone : glisser-déposer d'un jour à l'autre (aujourd'hui : ouvrir la tâche et
+      changer la date) 🌐 — ajouté au lot 3 ; appui long sur l'icône de déplacement puis
+      glisser sur un jour (#110)
 
 ### Lot 2 — Cohérence web / Android ✅ (#88)
 
@@ -198,9 +199,9 @@ Suites validées le 9 octobre, dans cet ordre (du plus simple au plus gros) :
 Découvert pendant le lot 6 :
 
 - [x] Web : les champs des liens iCal (Réglages) et d'invitation (accueil) s'écrasaient sur téléphone (colonne flexible) (S) 🌐 (#93)
-- [ ] Web : un membre qui rejoint le foyer pendant que la page est ouverte apparaît comme « un
+- [x] Web : un membre qui rejoint le foyer pendant que la page est ouverte apparaît comme « un
   ancien membre » (notes, historique) jusqu'au rechargement ; rafraîchir la session à son
-  arrivée (S) 🌐
+  arrivée (S) 🌐 — signal temps réel « members » à l'arrivée d'un membre (site et Android) (#110)
 
 Demandé le 11 octobre :
 
@@ -222,16 +223,18 @@ Demandé le 11 octobre :
   (#96)
 - [x] Doc : délai (jusqu'à une heure) avant qu'Android accepte une empreinte ajoutée, et contrôle
   par l'API Digital Asset Links (S) 🤖 (#101)
-- [ ] Android : message d'erreur des passkeys qui distingue le refus du téléphone (lien site ↔ app
-  pas encore vérifié, aucun gestionnaire de passkeys) de celui du serveur (S) 🤖
+- [x] Android : message d'erreur des passkeys qui distingue le refus du téléphone (lien site ↔ app
+  pas encore vérifié, aucun gestionnaire de passkeys) de celui du serveur (S) 🤖 (#110)
 - [x] Code-barres : « Produit inconnu » affiché aussi quand Open Food Facts ne répondait pas ;
   message distinct avec « Réessayer » (site, Android), délai de 8 s et second essai côté
   serveur (S) 🌐🤖⚙️ (#101)
 - [x] Admin : état d'Open Food Facts (coupé, dernière réponse, dernière panne et sa cause) et
   dernière sauvegarde réussie dans la vue d'ensemble ; doc de déploiement corrigée (`off`
   n'est pas une valeur à recopier) (S) 🌐⚙️ (#102)
-- [ ] Android : liste des moyens de connexion (Google, passkeys) redemandée au serveur à chaque
-  ouverture de l'écran de connexion, au lieu d'être gardée jusqu'à *Forcer l'arrêt* (S) 🤖
+- [x] Android : liste des moyens de connexion (Google, passkeys) redemandée au serveur à chaque
+  ouverture de l'écran de connexion, au lieu d'être gardée jusqu'à *Forcer l'arrêt* (S) 🤖 (#110)
+- [x] Codes-barres hors alimentaire : Open Beauty Facts puis Open Products Facts quand Open Food
+  Facts ne connaît pas le produit (le code seul, un essai chacun) (S) ⚙️ (#110)
 
 Demandé le 10 octobre :
 

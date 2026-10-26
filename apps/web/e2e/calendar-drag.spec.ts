@@ -168,7 +168,8 @@ test('calendrier mois sur téléphone : points par jour et liste du jour touché
   await page.getByRole('button', { name: 'Ajouter ce jour-là' }).click();
   const dialog = page.getByRole('dialog', { name: 'Nouvelle tâche' });
   await expect(dialog.getByLabel('Date', { exact: true })).toHaveValue(other);
-  await expect(page.getByText(/^Astuce/)).toHaveCount(0);
+  // Pas d'astuce de durée (bord inférieur) en vue mois : seulement celle du déplacement.
+  await expect(page.getByText(/bord inférieur/)).toHaveCount(0);
   await dialog.getByRole('button', { name: 'Fermer' }).click();
 
   // Déplacer sans glisser : « Déplacer », puis toucher le jour voulu.
@@ -180,4 +181,49 @@ test('calendrier mois sur téléphone : points par jour et liste du jour touché
   await expect(page.getByText('« Payer le loyer » déplacée', { exact: false })).toBeVisible();
   await expect.poll(async () => (await rent.get()).date).toBe(other);
   await expect(page.getByRole('button', { name: /^Payer le loyer/ })).toBeVisible();
+});
+
+test('calendrier mois sur téléphone : appui long sur « Déplacer », puis glisser sur un jour', async ({
+  page,
+}, info) => {
+  test.skip(info.project.name !== 'mobile', 'Gestes tactiles');
+  await signUpWithHousehold(page, 'Grace');
+  const today = todayBrussels();
+  const d = new Date(`${today}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + (d.getUTCDate() > 1 ? -1 : 1)); // même mois
+  const other = d.toISOString().slice(0, 10);
+  const task = await createTask(page, { title: 'Sortir le compost', date: today });
+  await page.goto(`/calendar?view=month&date=${today}`);
+  await expect(page.getByText(/glissez la tâche jusqu'au jour voulu/)).toBeVisible();
+
+  const handle = page.getByRole('button', {
+    name: 'Déplacer « Sortir le compost » à un autre jour',
+  });
+  const from = (await handle.boundingBox())!;
+  // Case du jour visé (le même numéro peut aussi exister dans le mois voisin affiché).
+  const cell = page.locator(`button[data-date="${other}"]`);
+  const to = (await cell.boundingBox())!;
+  const x0 = from.x + from.width / 2;
+  const y0 = from.y + from.height / 2;
+  const x1 = to.x + to.width / 2;
+  const y1 = to.y + to.height / 2;
+
+  const cdp = await page.context().newCDPSession(page);
+  await cdp.send('Input.dispatchTouchEvent', {
+    type: 'touchStart',
+    touchPoints: [{ x: x0, y: y0 }],
+  });
+  await page.waitForTimeout(600); // appui long
+  for (let i = 1; i <= 12; i++) {
+    await cdp.send('Input.dispatchTouchEvent', {
+      type: 'touchMove',
+      touchPoints: [{ x: x0 + ((x1 - x0) * i) / 12, y: y0 + ((y1 - y0) * i) / 12 }],
+    });
+  }
+  await expect(
+    page.getByRole('status').filter({ hasText: 'Lâchez « Sortir le compost »' }),
+  ).toBeVisible();
+  await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+  await expect(page.getByText('« Sortir le compost » déplacée', { exact: false })).toBeVisible();
+  await expect.poll(async () => (await task.get()).date).toBe(other);
 });
