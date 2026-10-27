@@ -15,6 +15,12 @@ d'elle-même (ou via Google Play).
 
 ## 27 octobre 2026
 
+### Avis Google Play dans l'app (#114)
+
+- ✨ **Android (Google Play)** : après deux semaines d'utilisation, Tandem peut vous proposer de
+  le noter sans quitter l'app, sur Aujourd'hui, jamais pendant une action et au plus tous les
+  quatre mois.
+
 ### Premier lancement guidé, questions fréquentes, limites anti-abus (#113)
 
 - ✨ **Accueil** : nouvelle étape « Votre première tâche ». Touchez une idée (sortir les

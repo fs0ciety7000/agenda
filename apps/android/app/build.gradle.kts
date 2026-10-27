@@ -111,6 +111,11 @@ android {
     // Passkeys dans l'app (Credential Manager) : `-Ptandem.passkeys=false` le remplace par une
     // version vide (bouton masqué), pour la même raison.
     sourceSets.getByName("main").kotlin.srcDir(if (passkeys) "src/passkeys/java" else "src/noPasskeys/java")
+    // Avis Google Play dans l'app (In-App Review) : version Google Play seulement ; debug et APK
+    // direct ont une version vide (pas de bibliothèque Play à télécharger pour compiler).
+    sourceSets.getByName("play").kotlin.srcDir("src/review/java")
+    sourceSets.getByName("debug").kotlin.srcDir("src/noReview/java")
+    sourceSets.getByName("release").kotlin.srcDir("src/noReview/java")
     // Tests sur émulateur (MigrationTestHelper lit les schémas dans l'APK de test).
     sourceSets.getByName("androidTest").assets.srcDir("$projectDir/schemas")
 
@@ -171,6 +176,7 @@ dependencies {
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.glance.material3)
     if (codeScanner) implementation(libs.play.services.code.scanner)
+    "playImplementation"(libs.play.review)
     if (passkeys) {
         implementation(libs.androidx.credentials)
         implementation(libs.androidx.credentials.play.services)

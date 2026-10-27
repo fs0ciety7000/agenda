@@ -30,6 +30,7 @@ firebaseBom = "34.19.0"
 codeScanner = "16.1.0"
 # Passkeys dans l'app (Credential Manager ; cf. src/passkeys).
 credentials = "1.5.0"
+playReview = "2.0.2"
 
 [libraries]
 androidx-core-ktx = { module = "androidx.core:core-ktx", version.ref = "coreKtx" }
@@ -64,6 +65,7 @@ androidx-browser = { module = "androidx.browser:browser", version.ref = "browser
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-messaging = { module = "com.google.firebase:firebase-messaging" }
 play-services-code-scanner = { module = "com.google.android.gms:play-services-code-scanner", version.ref = "codeScanner" }
+play-review = { module = "com.google.android.play:review", version.ref = "playReview" }
 androidx-credentials = { module = "androidx.credentials:credentials", version.ref = "credentials" }
 androidx-credentials-play-services = { module = "androidx.credentials:credentials-play-services-auth", version.ref = "credentials" }
 androidx-glance-appwidget = { module = "androidx.glance:glance-appwidget", version.ref = "glance" }

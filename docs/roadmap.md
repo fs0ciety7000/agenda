@@ -251,8 +251,9 @@ Validé le 26 octobre (sortie publique sur Google Play), dans cet ordre :
 - [x] Questions fréquentes dans l'app (`/help`, publique) : inviter, tâche invisible, passkeys,
   codes-barres, hors ligne, notifications, corbeille, données ; liée depuis la connexion, les
   Réglages et « Signaler un problème » (site, Android) (S) 🌐🤖 (#113)
-- [ ] Android : demande d'avis Google Play (In-App Review) après environ deux semaines
-  d'utilisation, jamais pendant une action (S) 🤖
+- [x] Android : demande d'avis Google Play (In-App Review) après deux semaines et 5 jours
+  d'utilisation, sur Aujourd'hui sans rien d'ouvert, au plus tous les quatre mois ; version
+  Google Play seulement (S) 🤖 (#114)
 - [ ] Audit UI/UX complet (site, app web, Android) avant la sortie publique (M)
 - [ ] **Bilan du mois** des dépenses, envoyé le 1er, neutre (voir « Rapprochement mensuel », lot
   4) (S) ⚙️🌐🤖

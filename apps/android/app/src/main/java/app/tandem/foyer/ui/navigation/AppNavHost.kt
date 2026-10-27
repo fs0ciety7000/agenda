@@ -10,6 +10,7 @@ import kotlinx.coroutines.withContext
 import kotlinx.coroutines.Dispatchers
 import app.tandem.foyer.data.files.AttachmentFiles
 import android.provider.OpenableColumns
+import app.tandem.foyer.domain.StoreRating
 import app.tandem.foyer.domain.model.Attachment
 import androidx.core.content.FileProvider
 import java.util.Locale
@@ -62,6 +63,8 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import app.tandem.foyer.ui.absences.AbsencesScreen
+import app.tandem.foyer.ui.rating.STORE_REVIEW_SUPPORTED
+import app.tandem.foyer.ui.rating.requestStoreReview
 import app.tandem.foyer.ui.report.ReportScreen
 import app.tandem.foyer.ui.report.ReportViewModel
 import app.tandem.foyer.ui.comments.CommentsSection
@@ -128,6 +131,7 @@ import app.tandem.foyer.ui.taskform.TaskFormScreen
 import app.tandem.foyer.ui.taskform.TaskFormViewModel
 import app.tandem.foyer.ui.tasks.TasksScreen
 import app.tandem.foyer.ui.today.TodayScreen
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -442,6 +446,20 @@ private fun MainScaffold(
     val tabs = Tab.entries
     val onTab = route in tabs.map { it.route }
     var showDrawer by rememberSaveable { mutableStateOf(false) }
+    // Avis Google Play : sur Aujourd'hui, rien d'ouvert, après quelques secondes sans geste
+    // (l'effet repart à chaque changement d'écran ou de feuille) ; jamais pendant une action.
+    LaunchedEffect(route, showQuickAdd, showDrawer, pendingShare, state.household?.id) {
+        if (!STORE_REVIEW_SUPPORTED || route != Tab.TODAY.route || state.household == null) return@LaunchedEffect
+        if (showQuickAdd || showDrawer || pendingShare != null) return@LaunchedEffect
+        val today = LocalDate.now().toEpochDay()
+        val rating = StoreRating.recordOpen(container.settings.storeRating(), today)
+        container.settings.setStoreRating(rating)
+        if (!StoreRating.shouldAsk(rating, today)) return@LaunchedEffect
+        delay(4_000)
+        val activity = context.findActivity() ?: return@LaunchedEffect
+        container.settings.setStoreRating(rating.copy(askedDay = today))
+        requestStoreReview(activity)
+    }
     if (showDrawer) {
         NavDrawer(
             destinations = drawerDestinations(withAbsences = (state.household?.members?.size ?: 0) > 1),
