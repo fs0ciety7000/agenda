@@ -292,6 +292,21 @@ Sans empreinte déclarée, le bouton reste masqué et les Réglages renvoient au
 Hors ligne (bac à sable) : `-Ptandem.passkeys=false` remplace le Credential Manager par une
 version vide (`src/noPasskeys`), comme pour le scanner.
 
+### Avis Google Play
+
+La version Google Play (`bundlePlay`) demande une note avec la fenêtre d'avis de Google Play
+(**In-App Review**, `com.google.android.play:review`, `src/review`), sans quitter l'app. Elle
+s'ouvre au plus une fois tous les quatre mois, dans ces conditions :
+
+- au moins 14 jours après la première ouverture, et 5 jours d'utilisation différents ;
+- sur Aujourd'hui, sans feuille ni tiroir ouvert, après 4 secondes sans changement d'écran :
+  jamais pendant une action.
+
+Google décide en plus s'il l'affiche (quota) : rien ne garantit qu'elle apparaisse. Les compteurs
+restent sur le téléphone (DataStore), rien n'est envoyé. Debug et APK direct ont une version vide
+(`src/noReview`) : pas de bibliothèque Play à télécharger pour les compiler. Pour tester la
+fenêtre : piste de test interne, ou *partage d'app interne* de la Play Console.
+
 ## 6. Limites connues
 
 - Les rappels sont locaux : ils couvrent les 48 h suivantes et sont replanifiés au moins toutes

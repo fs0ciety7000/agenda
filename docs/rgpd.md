@@ -44,6 +44,9 @@ Cloudflare). Contact : l'adresse affichée sur la page `/privacy` (variable
 L'app Android garde une **copie locale** des données du foyer (tâches, courses, notes, dates importantes) pour fonctionner hors ligne ; le
 site en garde une dans le navigateur (stockage local et cache du service worker). Les deux sont
 effacées à la déconnexion.
+La version Google Play compte aussi, **sur le téléphone seulement**, les jours d'utilisation et
+la date de la dernière demande d'avis, pour ne proposer de noter l'app qu'après deux semaines ;
+rien n'est envoyé à Tandem, et la note se donne directement à Google Play.
 
 ## Ce qui n'est jamais collecté
 
