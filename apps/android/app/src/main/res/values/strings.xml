@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name" translatable="false">Tandem</string>
-    <string name="report_faq_url" translatable="false">https://docs.tandem-agenda.app/guide/faq</string>
 
     <string name="login_title">Welcome back</string>
     <string name="login_subtitle">Sign in to pick up where you left off.</string>

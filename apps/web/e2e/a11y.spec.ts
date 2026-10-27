@@ -33,6 +33,7 @@ for (const scheme of ['light', 'dark'] as const) {
         '/forgot-password',
         '/privacy',
         '/about',
+        '/help',
         '/status',
       ]) {
         await page.goto(path);

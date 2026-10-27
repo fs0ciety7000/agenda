@@ -91,6 +91,11 @@ const EnvSchema = z.object({
   GLOBAL_RATE_LIMIT: z.coerce.number().int().min(1).default(600),
   /** Requêtes/minute/IP sur login, inscription, refresh. */
   AUTH_RATE_LIMIT: z.coerce.number().int().min(1).default(10),
+  /**
+   * Comptes créés par heure et par IP (en plus de AUTH_RATE_LIMIT par minute) : freine la
+   * création de comptes en masse une fois les inscriptions ouvertes au public.
+   */
+  REGISTER_HOURLY_LIMIT: z.coerce.number().int().min(1).default(20),
   // ── Emails (SMTP générique : Stalwart, Brevo, Resend…). Sans SMTP_HOST : aucun envoi (journalisé). ──
   // Port 465 = TLS implicite ; tout autre port = STARTTLS obligatoire (cf. MailService).
   SMTP_HOST: z.string().optional(),

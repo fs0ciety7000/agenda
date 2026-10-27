@@ -105,7 +105,7 @@ Fichiers importés, à respecter au même titre que celui-ci :
 - Pas de chaînes de `sleep` : attendre une condition, par exemple une boucle `curl` bornée.
 - E2E web :
   1. `pnpm build`.
-  2. API : `cd apps/api && (set -a; . ./.env; set +a; NODE_ENV=production AUTH_RATE_LIMIT=100 GLOBAL_RATE_LIMIT=100000 COOKIE_SECURE=false WEB_ORIGIN=http://localhost:3000 node dist/main.js &)`.
+  2. API : `cd apps/api && (set -a; . ./.env; set +a; NODE_ENV=production AUTH_RATE_LIMIT=100 REGISTER_HOURLY_LIMIT=100000 GLOBAL_RATE_LIMIT=100000 COOKIE_SECURE=false WEB_ORIGIN=http://localhost:3000 node dist/main.js &)`.
   3. Web : `cd apps/web && API_URL=http://localhost:4000 pnpm start &`.
   4. `pnpm exec playwright test` (projets desktop et mobile).
 - Android hors ligne : `./gradlew --offline -q -Ptandem.codeScanner=false -Ptandem.passkeys=false lintDebug testDebugUnitTest`

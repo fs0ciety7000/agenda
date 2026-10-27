@@ -3,6 +3,7 @@
 import { CreateHouseholdInput, type HouseholdDto, type RestoreResultDto } from '@agenda/contracts';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
+import { Check, Plus } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -23,8 +24,9 @@ const Form = CreateHouseholdInput.pick({ name: true, memberDisplayName: true });
 type FormValues = z.input<typeof Form>;
 
 /**
- * Onboarding : 1. créer le foyer 2. inviter l'autre personne 3. (si activé sur le serveur)
- * connecter le calendrier partagé ; puis l'app Android si elle est publiée.
+ * Onboarding : 1. créer le foyer 2. inviter l'autre personne 3. une première tâche répétée, en
+ * un toucher 4. (si activé sur le serveur) connecter le calendrier partagé ; puis l'app Android
+ * si elle est publiée.
  */
 export default function OnboardingPage() {
   const t = useTranslations();
@@ -146,6 +148,7 @@ export default function OnboardingPage() {
         </Card>
       )}
 
+      {household && <FirstTaskStep householdId={household.id} />}
       {household && <CalendarStep householdId={household.id} />}
       {household && <AndroidAppCard />}
 
@@ -166,13 +169,106 @@ function CalendarStep({ householdId }: { householdId: string }) {
   return (
     <Card className="flex flex-col gap-3">
       <h2 className="text-lg font-semibold">
-        <span className="mr-2 text-text-muted">3.</span>
+        <span className="mr-2 text-text-muted">4.</span>
         {t('stepCalendar')}
       </h2>
       <p className="text-[0.9375rem] text-text-muted">{t('calendarBody')}</p>
       <Button asChild variant="secondary" className="self-start">
         <a href={connectUrl('/settings')}>{t('connectCalendar')}</a>
       </Button>
+    </Card>
+  );
+}
+
+/** Idées de tâches répétées, à ajouter d'un toucher (à partir d'aujourd'hui, même jour de semaine). */
+const IDEAS = [
+  { key: 'trash', weeks: 1 },
+  { key: 'groceries', weeks: 1 },
+  { key: 'plants', weeks: 1 },
+  { key: 'sheets', weeks: 2 },
+] as const;
+const WEEKDAYS = ['SU', 'MO', 'TU', 'WE', 'TH', 'FR', 'SA'] as const;
+
+function FirstTaskStep({ householdId }: { householdId: string }) {
+  const t = useTranslations('onboarding');
+  const te = useTranslations('errors');
+  const [added, setAdded] = useState<(typeof IDEAS)[number]['key'][]>([]);
+  const [busy, setBusy] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const add = async (idea: (typeof IDEAS)[number]) => {
+    const now = new Date();
+    const date = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(
+      now.getDate(),
+    ).padStart(2, '0')}`;
+    setBusy(idea.key);
+    setError(null);
+    try {
+      await api('/v1/households/' + householdId + '/tasks', {
+        method: 'POST',
+        json: {
+          title: t(`ideas.${idea.key}`),
+          date,
+          recurrence: {
+            rule: { freq: 'WEEKLY', interval: idea.weeks, byWeekday: [WEEKDAYS[now.getDay()]] },
+          },
+        },
+      });
+      setAdded((a) => [...a, idea.key]);
+    } catch (e) {
+      setError(te(errorKey(e) as 'generic'));
+    } finally {
+      setBusy(null);
+    }
+  };
+  return (
+    <Card className="flex flex-col gap-3">
+      <h2 className="text-lg font-semibold">
+        <span className="mr-2 text-text-muted">3.</span>
+        {t('stepFirstTask')}
+      </h2>
+      <p className="text-[0.9375rem] text-text-muted">{t('firstTaskBody')}</p>
+      <ul className="flex flex-col gap-2">
+        {IDEAS.map((idea) => {
+          const title = t(`ideas.${idea.key}`);
+          const every = t('every', { weeks: idea.weeks });
+          const label = (
+            <span className="flex flex-col">
+              <span>{title}</span>
+              <span className="text-[0.8125rem] font-normal text-text-muted">{every}</span>
+            </span>
+          );
+          return (
+            <li key={idea.key}>
+              {added.includes(idea.key) ? (
+                <p className="flex min-h-11 items-center gap-2 px-4 py-2 text-[0.9375rem] font-medium">
+                  <Check aria-hidden className="size-4 shrink-0 text-success" />
+                  {label}
+                </p>
+              ) : (
+                <Button
+                  variant="secondary"
+                  className="w-full justify-start whitespace-normal text-left"
+                  loading={busy === idea.key}
+                  disabled={busy !== null && busy !== idea.key}
+                  aria-label={t('addIdea', { title, every })}
+                  onClick={() => void add(idea)}
+                >
+                  {busy !== idea.key && <Plus aria-hidden className="size-4 shrink-0" />}
+                  {label}
+                </Button>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+      <p role="status" className="text-[0.9375rem]">
+        {added.length > 0 && t('added', { title: t(`ideas.${added.at(-1)!}`) })}
+      </p>
+      {error && (
+        <p role="alert" className="text-sm text-danger">
+          {error}
+        </p>
+      )}
     </Card>
   );
 }

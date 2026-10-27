@@ -15,6 +15,16 @@ d'elle-même (ou via Google Play).
 
 ## 27 octobre 2026
 
+### Premier lancement guidé, questions fréquentes, limites anti-abus (#113)
+
+- ✨ **Accueil** : nouvelle étape « Votre première tâche ». Touchez une idée (sortir les
+  poubelles, faire les courses, arroser les plantes, changer les draps) pour l'ajouter comme tâche
+  répétée.
+- ✨ **Questions fréquentes** dans l'app (page *Aide*, accessible sans compte) : depuis la page
+  de connexion, les Réglages et « Signaler un problème », sur le site comme sur Android.
+- 🔒 **Inscriptions** limitées à 20 comptes par heure depuis une même connexion, et **3 e-mails
+  de réinitialisation** du mot de passe par compte et par heure.
+
 ### Sécurité : dépendances (#111)
 
 - 🔒 Next.js 15.5.28 (faille critique d'exécution de code via l'optimisation d'images SVG, et

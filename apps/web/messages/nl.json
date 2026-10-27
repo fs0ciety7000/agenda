@@ -5,7 +5,8 @@
     "privacy": "Privacybeleid",
     "about": "Over",
     "tagline": "De perfecte balans voor je huishouden.",
-    "language": "Taal"
+    "language": "Taal",
+    "help": "Hulp"
   },
   "nav": {
     "today": "Vandaag",
@@ -144,7 +145,18 @@
     "stepCalendar": "Google Agenda koppelen",
     "calendarBody": "Optioneel: je geplande taken verschijnen in jullie gedeelde agenda (bijvoorbeeld “Samen G & N”). Je kunt dit ook later doen in Instellingen.",
     "connectCalendar": "Google Agenda koppelen",
-    "yourNameHint": "Zo ziet de ander je in de taken."
+    "yourNameHint": "Zo ziet de ander je in de taken.",
+    "stepFirstTask": "Je eerste taak",
+    "firstTaskBody": "Een taak die vaak terugkomt? Tik op een idee om het toe te voegen; daarna kies je wie het doet, om beurten als je wilt.",
+    "ideas": {
+      "trash": "Het afval buitenzetten",
+      "sheets": "De lakens verschonen",
+      "plants": "De planten water geven",
+      "groceries": "Boodschappen doen"
+    },
+    "every": "{weeks, plural, one {elke week} other {om de # weken}}",
+    "added": "“{title}” toegevoegd.",
+    "addIdea": "“{title}” toevoegen, {every}"
   },
   "invite": {
     "title": "Lid worden van een huishouden",
@@ -181,6 +193,7 @@
     "adminHint": "Accounts, huishoudens, back-ups, verzendtests.",
     "help": "Hulp",
     "helpHint": "Een bug, een idee, een vraag? Meld het; de documentatie beantwoordt veelgestelde vragen.",
+    "faq": "Veelgestelde vragen",
     "report": "Een probleem melden",
     "docs": "Documentatie",
     "status": "Status van de dienst",
@@ -1684,5 +1697,51 @@
     "loginTitle": "Verificatiecode",
     "loginIntro": "Voer de code van 6 cijfers uit je authenticator-app in, of een herstelcode.",
     "restart": "Opnieuw beginnen met aanmelden"
+  },
+  "help": {
+    "title": "Veelgestelde vragen",
+    "intro": "Korte antwoorden op de vragen die het vaakst terugkomen.",
+    "items": {
+      "invite": {
+        "q": "Hoe nodig ik de ander uit?",
+        "a": "Meteen nadat je het huishouden hebt aangemaakt, of in Instellingen → Huishouden: kopieer de uitnodigingslink en stuur hem door. Hij is 7 dagen geldig en werkt één keer; is hij verlopen, dan verschijnt op dezelfde plek een nieuwe link."
+      },
+      "notSeen": {
+        "q": "De ander ziet de taak niet die ik net heb toegevoegd.",
+        "a": "Controleer of ze niet persoonlijk is (hangslot): een persoonlijke taak zie alleen jij. Anders verschijnt ze binnen enkele seconden bij de ander."
+      },
+      "passkey": {
+        "q": "Hoe meld ik me aan met een toegangssleutel?",
+        "a": "Voeg er een toe in Instellingen → Account → Toegangssleutels, op de site of in de app, en kies dan \"Aanmelden met een toegangssleutel\". Je gebruikt je vingerafdruk, gezicht of code van je toestel: niets om te onthouden."
+      },
+      "passkeyRefused": {
+        "q": "Mijn telefoon weigert de toegangssleutel.",
+        "a": "Controleer of een beheerder voor toegangssleutels (Google, Samsung Pass…) aan staat in de instellingen van je telefoon en probeer opnieuw. Je wachtwoord en aanmelden met Google werken nog altijd."
+      },
+      "barcode": {
+        "q": "De barcode geeft \"Onbekend product\".",
+        "a": "Het product staat nog niet in de open databanken Open Food Facts, Open Beauty Facts of Open Products Facts. Geef het één keer een naam: het huishouden herkent het daarna, voor jullie allebei."
+      },
+      "offline": {
+        "q": "Werkt de app zonder verbinding?",
+        "a": "Grotendeels wel: taken en boodschappen kun je offline bekijken, afvinken en toevoegen, en ze worden verstuurd zodra je weer online bent. Uitgaven, kastickets en barcodes hebben een verbinding nodig."
+      },
+      "notifications": {
+        "q": "Meldingen komen niet aan.",
+        "a": "Op de site: Instellingen → Meldingen → Inschakelen in deze browser, en sta ze toe als de browser ze blokkeert. Op Android: sta de meldingen van Tandem toe en haal de app uit de batterijoptimalisatie."
+      },
+      "deleted": {
+        "q": "Ik heb per ongeluk een taak verwijderd.",
+        "a": "Tik meteen op \"Ongedaan maken\", of vind ze 30 dagen lang terug in Instellingen → Activiteit en prullenbak → Prullenbak."
+      },
+      "data": {
+        "q": "Waar staan mijn gegevens en hoe verwijder ik ze?",
+        "a": "In Instellingen → Account kun je je gegevens exporteren of je account verwijderen. De details staan in het privacybeleid."
+      }
+    },
+    "more": "Geen antwoord gevonden?",
+    "report": "Een probleem melden",
+    "guide": "Volledige handleiding",
+    "status": "Status van de dienst"
   }
 }

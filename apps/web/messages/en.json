@@ -5,7 +5,8 @@
     "privacy": "Privacy policy",
     "about": "About",
     "tagline": "The perfect balance for your household.",
-    "language": "Language"
+    "language": "Language",
+    "help": "Help"
   },
   "nav": {
     "today": "Today",
@@ -144,7 +145,18 @@
     "stepCalendar": "Connect Google Calendar",
     "calendarBody": "Optional: your scheduled tasks will appear in your shared calendar (for example “Commun G & N”). You can also do this later in Settings.",
     "connectCalendar": "Connect Google Calendar",
-    "yourNameHint": "This is how the other person will see you in tasks."
+    "yourNameHint": "This is how the other person will see you in tasks.",
+    "stepFirstTask": "Your first task",
+    "firstTaskBody": "A task that comes back often? Tap an idea to add it; you'll choose who does it later, taking turns if you like.",
+    "ideas": {
+      "trash": "Take out the bins",
+      "sheets": "Change the sheets",
+      "plants": "Water the plants",
+      "groceries": "Do the shopping"
+    },
+    "every": "{weeks, plural, one {every week} other {every # weeks}}",
+    "added": "“{title}” added.",
+    "addIdea": "Add “{title}”, {every}"
   },
   "invite": {
     "title": "Join a household",
@@ -181,6 +193,7 @@
     "adminHint": "Accounts, households, backups, delivery tests.",
     "help": "Help",
     "helpHint": "A bug, an idea, a question? Report it; the documentation answers common questions.",
+    "faq": "Frequently asked questions",
     "report": "Report a problem",
     "docs": "Documentation",
     "status": "Service status",
@@ -1684,5 +1697,51 @@
     "loginTitle": "Verification code",
     "loginIntro": "Enter the 6-digit code from your authenticator app, or a backup code.",
     "restart": "Start signing in again"
+  },
+  "help": {
+    "title": "Frequently asked questions",
+    "intro": "Short answers to the most common questions.",
+    "items": {
+      "invite": {
+        "q": "How do I invite the other person?",
+        "a": "Right after creating the household, or in Settings → Household: copy the invitation link and send it. It is valid for 7 days and works once; if it has expired, a new link appears in the same place."
+      },
+      "notSeen": {
+        "q": "The other person can't see the task I just added.",
+        "a": "Check that it isn't personal (padlock): a personal task is only visible to you. Otherwise it shows up for them within a few seconds."
+      },
+      "passkey": {
+        "q": "How do I sign in with a passkey?",
+        "a": "Add one in Settings → Account → Passkeys, on the website or in the app, then choose \"Sign in with a passkey\". It uses your device's fingerprint, face or PIN: nothing to remember."
+      },
+      "passkeyRefused": {
+        "q": "My phone refuses the passkey.",
+        "a": "Check that a passkey manager (Google, Samsung Pass…) is turned on in your phone's settings, then try again. Your password and Google sign-in still work."
+      },
+      "barcode": {
+        "q": "The barcode says \"Unknown product\".",
+        "a": "The product isn't in the open databases Open Food Facts, Open Beauty Facts or Open Products Facts yet. Give it a name once: the household will recognise it next time, for both of you."
+      },
+      "offline": {
+        "q": "Does the app work without a connection?",
+        "a": "Mostly, yes: tasks and shopping can be viewed, checked off and added offline, and are sent when you're back online. Expenses, receipts and barcodes need a connection."
+      },
+      "notifications": {
+        "q": "Notifications don't arrive.",
+        "a": "On the website: Settings → Notifications → Enable on this browser, then allow them if the browser blocks them. On Android: allow Tandem's notifications and remove it from battery optimisation."
+      },
+      "deleted": {
+        "q": "I deleted a task by mistake.",
+        "a": "Tap \"Undo\" right away, or find it in Settings → Activity and trash → Trash for 30 days."
+      },
+      "data": {
+        "q": "Where is my data and how do I delete it?",
+        "a": "In Settings → Account you can export your data or delete your account. The details are in the privacy policy."
+      }
+    },
+    "more": "No answer here?",
+    "report": "Report a problem",
+    "guide": "Full guide",
+    "status": "Service status"
   }
 }

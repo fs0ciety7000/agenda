@@ -133,6 +133,7 @@ manquent. Modèle complet : `.env.prod.example`.
 | `CLIENT_IP_HEADER` | `cf-connecting-ip` | défaut |
 | `REGISTRATION_ENABLED` | `true`, puis **`false`** après vos deux inscriptions | cf. §5 |
 | `AUTH_RATE_LIMIT` | `10` | défaut (connexion, inscription, refresh) |
+| `REGISTER_HOURLY_LIMIT` | `20` | défaut : comptes créés par heure et par adresse IP (inscriptions ouvertes au public) |
 | `GLOBAL_RATE_LIMIT` | `600` | défaut (toute l'API, par IP) |
 | `POSTGRES_USER` / `POSTGRES_DB` | `agenda` | défaut |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | active Google Calendar et « Continuer avec Google » | cf. §9 |

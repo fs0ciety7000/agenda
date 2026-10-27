@@ -24,7 +24,7 @@ import { collectDiagnostics, useMyReports, useReportMutations } from '@/lib/repo
 
 const KINDS: ReportKind[] = ['BUG', 'IDEA', 'QUESTION', 'OTHER'];
 
-export function ReportView({ docsUrl }: { docsUrl: string }) {
+export function ReportView() {
   const t = useTranslations('report');
   const params = useSearchParams();
   const initialKind = (KINDS as string[]).includes(params.get('kind') ?? '')
@@ -37,13 +37,13 @@ export function ReportView({ docsUrl }: { docsUrl: string }) {
         <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
         <p className="mt-1 text-[0.9375rem] text-text-muted">{t('intro')}</p>
         <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[0.9375rem]">
-          <a
-            href={`${docsUrl}/guide/faq`}
+          <Link
+            href="/help"
             className="inline-flex items-center gap-1.5 text-accent underline-offset-4 hover:underline"
           >
             <BookOpen aria-hidden className="size-4" />
             {t('faq')}
-          </a>
+          </Link>
           <Link href="/status" className="text-accent underline-offset-4 hover:underline">
             {t('status')}
           </Link>

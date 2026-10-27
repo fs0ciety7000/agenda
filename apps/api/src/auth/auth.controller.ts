@@ -65,7 +65,10 @@ export class AuthController {
 
   /** Créer un compte. */
   @Public()
-  @Throttle(AUTH_THROTTLE)
+  @Throttle({
+    ...AUTH_THROTTLE,
+    hourly: { limit: () => env().REGISTER_HOURLY_LIMIT, ttl: 3_600_000 },
+  })
   @Post('auth/register')
   async register(
     @Body(new ZodPipe(RegisterInput)) body: RegisterInput,
