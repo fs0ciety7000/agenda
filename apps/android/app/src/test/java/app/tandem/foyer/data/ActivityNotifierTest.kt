@@ -78,6 +78,29 @@ class ActivityNotifierTest {
     }
 
     @Test
+    fun `bilan du mois affiche avec le total, le nombre et ce que chacun a paye`() = runBlocking {
+        org.robolectric.Shadows.shadowOf(context as android.app.Application)
+            .grantPermissions(android.Manifest.permission.POST_NOTIFICATIONS)
+        context.getSharedPreferences("activity", android.content.Context.MODE_PRIVATE).edit()
+            .putString("since", "2026-10-01T06:00:00Z").commit()
+        val notifier = ActivityNotifier(context, ApiClient.create(server.url("/").toString(), FakeTokenStore()))
+        server.enqueue(
+            MockResponse().setHeader("content-type", "application/json").setBody(
+                """{"unread":1,"items":[
+                {"id":"m1","type":"EXPENSE_MONTHLY","createdAt":"2026-10-01T06:30:00.000Z","push":true,"month":"2026-09","amountCents":31240,"budgetCents":80000,"count":3,"paid":[{"name":"Emma","amountCents":20000},{"name":"Tom","amountCents":11240}]}
+                ]}""",
+            ),
+        )
+        assertEquals(listOf("m1"), notifier.poll("h1").map { it.id })
+        val manager = context.getSystemService(android.app.NotificationManager::class.java)
+        val text = org.robolectric.Shadows.shadowOf(manager).allNotifications.single()
+            .extras.getCharSequence(androidx.core.app.NotificationCompat.EXTRA_TEXT).toString()
+        assertTrue(text, text.startsWith("Monthly summary · September: "))
+        assertTrue(text, text.contains("(3 expenses, budget "))
+        assertTrue(text, text.contains("Paid: Emma ") && text.indexOf("Emma") < text.indexOf("Tom"))
+    }
+
+    @Test
     fun `echange de tour demande puis reponse`() = runBlocking {
         org.robolectric.Shadows.shadowOf(context as android.app.Application)
             .grantPermissions(android.Manifest.permission.POST_NOTIFICATIONS)

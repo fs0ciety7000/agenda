@@ -95,7 +95,8 @@ Dépenses :
   - [x] Lecture moins bonne sur un ticket froissé ou très long : redresser et recadrer la photo avant lecture (M) → lot 6 (#93)
 - [x] **Budget par catégorie** en plus du budget global (M) ⚙️🌐🤖 (#89)
   - [x] Android : régler les budgets par catégorie dans l'app (S) 🤖 (#92)
-- [ ] **Rapprochement mensuel** : « ce mois-ci, chacun a payé… », envoyé le 1er (S)
+- [x] **Rapprochement mensuel** : « ce mois-ci, chacun a payé… », envoyé le 1er (S) → bilan du
+  mois (#116)
 
 Vie à deux :
 
@@ -270,8 +271,9 @@ Validé le 26 octobre (sortie publique sur Google Play), dans cet ordre :
     artefact `android-captures`) (S) ⚙️ (#115)
   - [ ] A6 — Android : relire les nouvelles captures, puis TalkBack et police 200 % sur un vrai
     téléphone avant la sortie (M) 🤖
-- [ ] **Bilan du mois** des dépenses, envoyé le 1er, neutre (voir « Rapprochement mensuel », lot
-  4) (S) ⚙️🌐🤖
+- [x] **Bilan du mois** des dépenses, envoyé le 1er à 8 h (rattrapé jusqu'au 3) : dépenses
+  communes, nombre, budget, ce que chacun a payé par prénom ; notification `EXPENSE_MONTHLY`
+  (cloche, téléphone, navigateur), désactivable (S) ⚙️🌐🤖 (#116)
 - Écartés pour l'instant : routines, recettes enregistrées.
 
 Demandé le 10 octobre :

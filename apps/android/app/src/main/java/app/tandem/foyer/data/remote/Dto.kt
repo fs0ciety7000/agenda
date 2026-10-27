@@ -38,7 +38,10 @@ data class NotificationDto(
     val byName: String? = null,
     /** TASK_SWAP_ANSWER : ACCEPTED ou DECLINED. */
     val code: String? = null,
-    /** EXPENSE_BUDGET : mois (« 2026-10 »), seuil atteint (80 ou 100), dépensé et budget. */
+    /**
+     * EXPENSE_BUDGET : mois (« 2026-10 »), seuil atteint (80 ou 100), dépensé et budget.
+     * EXPENSE_MONTHLY : mois du bilan, dépenses communes et budget commun (null sans budget).
+     */
     val month: String? = null,
     val level: Int? = null,
     val amountCents: Long? = null,
@@ -48,7 +51,13 @@ data class NotificationDto(
     /** IMPORTANT_DATE : jours restants (0 = aujourd'hui), avec le titre et la date de l'occurrence. */
     val daysLeft: Int? = null,
     val date: String? = null,
+    /** EXPENSE_MONTHLY : nombre de dépenses communes du mois, et ce que chacun a payé (par prénom). */
+    val count: Int? = null,
+    val paid: List<PaidDto>? = null,
 )
+
+@Serializable
+data class PaidDto(val name: String, val amountCents: Long)
 
 @Serializable
 data class NotificationListDto(val unread: Int, val items: List<NotificationDto>)

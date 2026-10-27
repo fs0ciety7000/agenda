@@ -54,7 +54,7 @@ class ActivityNotifier(
         }
         val toShow = items.filter {
             it.push && it.readAt == null &&
-                (it.type == "CALENDAR_SYNC_FAILED" || it.type == "EXPENSE_BUDGET" || it.title != null)
+                (it.type in UNTITLED || it.title != null)
         }
         toShow.forEach(::show)
         items.maxOfOrNull { it.createdAt }?.let { prefs.edit().putString(KEY_SINCE, it).apply() }
@@ -83,6 +83,7 @@ class ActivityNotifier(
                 n.title ?: "",
             )
             "EXPENSE_BUDGET" -> budgetText(n)
+            "EXPENSE_MONTHLY" -> monthlyText(n)
             "IMPORTANT_DATE" -> when (val d = n.daysLeft ?: 0) {
                 0 -> context.getString(R.string.activity_date_today, n.title ?: "")
                 1 -> context.getString(R.string.activity_date_tomorrow, n.title ?: "")
@@ -110,12 +111,34 @@ class ActivityNotifier(
         )
     }
 
+    private fun monthName(n: NotificationDto, locale: java.util.Locale): String = runCatching {
+        YearMonth.parse(n.month).month.getDisplayName(TextStyle.FULL_STANDALONE, locale)
+    }.getOrDefault(n.month.orEmpty())
+
+    /**
+     * « Bilan du mois · septembre : 312,40 € de dépenses communes (3 dépenses). Payé : Emma 200,00 €,
+     * Tom 112,40 €. », comme sur le site (prénoms dans l'ordre de l'API : alphabétique).
+     */
+    private fun monthlyText(n: NotificationDto): String {
+        val locale = context.resources.configuration.locales[0]
+        val count = n.count ?: 0
+        val paid = n.paid.orEmpty().joinToString(", ") { "${it.name} ${Money.format(it.amountCents, locale)}" }
+        val amount = Money.format(n.amountCents ?: 0, locale)
+        val budget = n.budgetCents
+        return if (budget != null) {
+            context.resources.getQuantityString(
+                R.plurals.activity_monthly_budget, count, monthName(n, locale), amount, count, paid,
+                Money.format(budget, locale),
+            )
+        } else {
+            context.resources.getQuantityString(R.plurals.activity_monthly, count, monthName(n, locale), amount, count, paid)
+        }
+    }
+
     /** « Budget commun · octobre : 80 % atteint (640,00 € sur 800,00 €) », comme sur le site. */
     private fun budgetText(n: NotificationDto): String {
         val locale = context.resources.configuration.locales[0]
-        val month = runCatching {
-            YearMonth.parse(n.month).month.getDisplayName(TextStyle.FULL_STANDALONE, locale)
-        }.getOrDefault(n.month.orEmpty())
+        val month = monthName(n, locale)
         n.category?.let { cat ->
             return context.getString(
                 R.string.activity_budget_category,
@@ -136,6 +159,8 @@ class ActivityNotifier(
     }
 
     private companion object {
+        /** Notifications sans titre de tâche ou de date, toujours affichées. */
+        val UNTITLED = setOf("CALENDAR_SYNC_FAILED", "EXPENSE_BUDGET", "EXPENSE_MONTHLY")
         const val CHANNEL = "activity"
         const val KEY_SINCE = "since"
     }

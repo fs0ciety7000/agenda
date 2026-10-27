@@ -825,4 +825,12 @@
     <string name="backup_phrase_again">Typ de wachtzin opnieuw</string>
     <string name="backup_phrase_mismatch">De twee wachtzinnen zijn niet gelijk.</string>
     <string name="backup_private_encrypted">Noteer de wachtzin apart: zonder kan niemand dit bestand openen, jij ook niet.</string>
+    <plurals name="activity_monthly">
+        <item quantity="one">Maandoverzicht · %1$s: %2$s aan gedeelde uitgaven (%3$d uitgave). Betaald: %4$s.</item>
+        <item quantity="other">Maandoverzicht · %1$s: %2$s aan gedeelde uitgaven (%3$d uitgaven). Betaald: %4$s.</item>
+    </plurals>
+    <plurals name="activity_monthly_budget">
+        <item quantity="one">Maandoverzicht · %1$s: %2$s aan gedeelde uitgaven (%3$d uitgave, budget %5$s). Betaald: %4$s.</item>
+        <item quantity="other">Maandoverzicht · %1$s: %2$s aan gedeelde uitgaven (%3$d uitgaven, budget %5$s). Betaald: %4$s.</item>
+    </plurals>
 </resources>

@@ -1,4 +1,10 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpStatus,
+  Injectable,
+  Logger,
+  type OnModuleDestroy,
+  type OnModuleInit,
+} from '@nestjs/common';
 import { Prisma, type Expense, type ExpenseShare, type RecurringExpense } from '@prisma/client';
 import {
   ATTACHMENT_MAX_BYTES,
@@ -18,7 +24,7 @@ import {
   type SettleInput,
   type UpdateExpenseInput,
 } from '@agenda/contracts';
-import { daysInMonth, settleTransfers, splitCents, todayIn } from '@agenda/domain';
+import { daysInMonth, settleTransfers, splitCents, todayIn, wallClock } from '@agenda/domain';
 import { mailLocale } from '../mail/templates';
 import { NotificationsService } from '../notifications/notifications.service';
 import { safeFilename } from '../tasks/attachments.service';
@@ -27,6 +33,7 @@ import { AppException, notFound } from '../common/app-exception';
 import { fromDbDate, toDbDate } from '../common/dates';
 import { DomainEvents } from '../common/domain-events';
 import type { HouseholdContext } from '../common/request-context';
+import { env } from '../config/env';
 import { PrismaService } from '../prisma/prisma.service';
 
 type ExpenseWithShares = Expense & {
@@ -74,6 +81,11 @@ const toRecurringDto = (r: RecurringExpense): RecurringExpenseDto => ({
   dayOfMonth: r.dayOfMonth,
   startDate: fromDbDate(r.startDate)!,
 });
+
+/** Bilan du mois : passe horaire, du 1er au 3 du mois (rattrapage d'une panne), dès 8 h. */
+const SUMMARY_EVERY_MS = 60 * 60 * 1000;
+const SUMMARY_FROM_MINUTE = 8 * 60;
+const SUMMARY_LAST_DAY = 3;
 
 /** « 2026-10 » + n mois. */
 function addMonths(month: string, n: number): string {
@@ -132,12 +144,88 @@ const visibleTo = (memberId: string): Prisma.ExpenseWhereInput => ({
  * « dépense » payée par le débiteur dont toute la part revient au créancier.
  */
 @Injectable()
-export class ExpensesService {
+export class ExpensesService implements OnModuleInit, OnModuleDestroy {
+  private readonly logger = new Logger(ExpensesService.name);
+  private timers: NodeJS.Timeout[] = [];
+
   constructor(
     private readonly prisma: PrismaService,
     private readonly events: DomainEvents,
     private readonly notifications: NotificationsService,
   ) {}
+
+  onModuleInit(): void {
+    if (env().NODE_ENV === 'test') return;
+    const run = () =>
+      void this.sendMonthlySummaries().catch((e: unknown) =>
+        this.logger.warn(`Monthly expense summaries failed: ${(e as Error).message}`),
+      );
+    this.timers.push(setTimeout(run, 90_000).unref(), setInterval(run, SUMMARY_EVERY_MS).unref());
+  }
+
+  onModuleDestroy(): void {
+    this.timers.forEach((t) => clearTimeout(t));
+  }
+
+  /**
+   * Bilan du mois écoulé, envoyé le 1er à tout le foyer (une seule fois, même avec plusieurs
+   * instances : `expenseSummaryMonth` est réservé avant l'envoi). Rien sans dépense commune.
+   * Les tests l'appellent avec une heure donnée.
+   */
+  async sendMonthlySummaries(now: Date = new Date()): Promise<number> {
+    const households = await this.prisma.household.findMany({
+      select: { id: true, timezone: true, expenseSummaryMonth: true },
+    });
+    let sent = 0;
+    for (const h of households) {
+      const clock = wallClock(now, h.timezone);
+      if (Number(clock.date.slice(8, 10)) > SUMMARY_LAST_DAY) continue;
+      if (clock.minute < SUMMARY_FROM_MINUTE) continue;
+      const month = addMonths(clock.date.slice(0, 7), -1);
+      if (h.expenseSummaryMonth && h.expenseSummaryMonth >= month) continue;
+      const { count } = await this.prisma.household.updateMany({
+        where: {
+          id: h.id,
+          OR: [{ expenseSummaryMonth: null }, { expenseSummaryMonth: { lt: month } }],
+        },
+        data: { expenseSummaryMonth: month },
+      });
+      if (!count) continue;
+      await this.materialize(h.id);
+      const [rows, members, household] = await Promise.all([
+        this.prisma.expense.findMany({
+          where: {
+            householdId: h.id,
+            kind: 'EXPENSE',
+            split: { in: ['SHARED', 'CUSTOM'] },
+            date: monthRange(month),
+          },
+          select: { paidById: true, amountCents: true },
+        }),
+        this.allMembers(h.id),
+        this.prisma.household.findUniqueOrThrow({
+          where: { id: h.id },
+          select: { expenseBudgetCents: true },
+        }),
+      ]);
+      if (!rows.length) continue;
+      const paid = new Map<string, number>();
+      for (const r of rows) paid.set(r.paidById, (paid.get(r.paidById) ?? 0) + r.amountCents);
+      // Membres actifs (même à 0 €) et anciens membres qui ont payé ce mois-là, par prénom.
+      const shown = members
+        .filter((m) => m.leftAt === null || paid.has(m.id))
+        .sort((a, b) => a.displayName.localeCompare(b.displayName));
+      await this.notifications.notifyMonthly(h.id, {
+        month,
+        amountCents: rows.reduce((a, r) => a + r.amountCents, 0),
+        count: rows.length,
+        budgetCents: household.expenseBudgetCents,
+        paid: shown.map((m) => ({ memberId: m.id, amountCents: paid.get(m.id) ?? 0 })),
+      });
+      sent++;
+    }
+    return sent;
+  }
 
   async list(ctx: HouseholdContext, month: string): Promise<ExpenseDto[]> {
     await this.materialize(ctx.householdId);
@@ -761,7 +849,7 @@ export class ExpensesService {
     return this.prisma.householdMember.findMany({
       where: { householdId },
       orderBy: { joinedAt: 'asc' },
-      select: { id: true, expenseWeight: true, leftAt: true },
+      select: { id: true, expenseWeight: true, leftAt: true, displayName: true },
     });
   }
 

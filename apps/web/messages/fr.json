@@ -637,7 +637,9 @@
     "swapDeleted": "Échange de tour pour une tâche supprimée depuis",
     "importantDate": "{title} : {days, plural, =0 {c’est aujourd’hui} =1 {demain} other {dans # jours}}",
     "importantDateDeleted": "Rappel d’une date supprimée depuis",
-    "budgetCategory": "{category} · {month} : {level} % atteint ({amount} sur {budget})"
+    "budgetCategory": "{category} · {month} : {level} % atteint ({amount} sur {budget})",
+    "monthly": "Bilan du mois · {month} : {amount} de dépenses communes ({count, plural, one {# dépense} other {# dépenses}}). Payé : {paid}.",
+    "monthlyBudget": "Bilan du mois · {month} : {amount} de dépenses communes ({count, plural, one {# dépense} other {# dépenses}}, budget {budget}). Payé : {paid}."
   },
   "notificationSettings": {
     "title": "Préférences de notification",
@@ -652,7 +654,8 @@
       "EXPENSE_BUDGET": "Le budget commun du mois atteint 80 % ou 100 %",
       "TASK_SWAP_REQUEST": "Quelqu’un me propose de prendre sa tâche",
       "TASK_SWAP_ANSWER": "Réponse à ma demande d’échange",
-      "IMPORTANT_DATE": "Date importante qui approche"
+      "IMPORTANT_DATE": "Date importante qui approche",
+      "EXPENSE_MONTHLY": "Bilan des dépenses du mois écoulé, le 1er"
     },
     "status": {
       "title": "Notifications instantanées sur le téléphone : pas encore actives",

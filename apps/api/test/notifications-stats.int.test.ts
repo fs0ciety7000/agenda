@@ -108,6 +108,7 @@ describe('Notifications et statistiques (intégration)', () => {
         { type: 'TASK_SWAP_REQUEST', inApp: true, push: true },
         { type: 'TASK_SWAP_ANSWER', inApp: true, push: true },
         { type: 'IMPORTANT_DATE', inApp: true, push: true },
+        { type: 'EXPENSE_MONTHLY', inApp: true, push: true },
       ]);
       await http()
         .put(`${h.base}/notification-preferences`)
