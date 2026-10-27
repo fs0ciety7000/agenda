@@ -233,6 +233,8 @@ Demandé le 11 octobre :
   n'est pas une valeur à recopier) (S) 🌐⚙️ (#102)
 - [x] Android : liste des moyens de connexion (Google, passkeys) redemandée au serveur à chaque
   ouverture de l'écran de connexion, au lieu d'être gardée jusqu'à *Forcer l'arrêt* (S) 🤖 (#110)
+- [x] Sécurité : Next.js 15.5.28 (faille critique), zod, multer, body-parser et nodemailer à
+  jour ; `overrides` pour multer et body-parser (dépendances de NestJS) (S) 🌐⚙️ (#111)
 - [x] Codes-barres hors alimentaire : Open Beauty Facts puis Open Products Facts quand Open Food
   Facts ne connaît pas le produit (le code seul, un essai chacun) (S) ⚙️ (#110)
 

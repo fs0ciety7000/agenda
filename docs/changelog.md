@@ -13,6 +13,13 @@ d'elle-même (ou via Google Play).
 **Légende** : ✨ nouveau · 🛠 amélioration · 🐞 correction · 🔒 sécurité et confidentialité ·
 ⚙️ technique
 
+## 27 octobre 2026
+
+### Sécurité : dépendances (#111)
+
+- 🔒 Next.js 15.5.28 (faille critique d'exécution de code via l'optimisation d'images SVG, et
+  déni de service), zod 4.6.7, multer 2.5.0, body-parser 2.4.0 et nodemailer 10.2.1.
+
 ## 26 octobre 2026
 
 ### Codes-barres hors alimentaire, passkeys et calendrier au doigt (#110)
