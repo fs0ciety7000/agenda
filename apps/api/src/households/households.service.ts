@@ -9,6 +9,7 @@ import {
   MemberColor,
 } from '@agenda/contracts';
 import { todayIn } from '@agenda/domain';
+import { DomainEvents } from '../common/domain-events';
 import { AppException, notFound } from '../common/app-exception';
 import { fromDbDate } from '../common/dates';
 import { randomToken, sha256Hex } from '../common/crypto';
@@ -35,7 +36,10 @@ type HouseholdWithMembers = Prisma.HouseholdGetPayload<{
 
 @Injectable()
 export class HouseholdsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly events: DomainEvents,
+  ) {}
 
   async create(userId: string, input: CreateHouseholdInput): Promise<HouseholdDto> {
     const user = await this.prisma.user.findUniqueOrThrow({ where: { id: userId } });
@@ -108,7 +112,7 @@ export class HouseholdsService {
     const invalid = () =>
       new AppException('INVITATION_INVALID', HttpStatus.BAD_REQUEST, 'Invalid invitation');
 
-    return this.prisma.$transaction(async (tx) => {
+    const joined = await this.prisma.$transaction(async (tx) => {
       const invitation = await tx.householdInvitation.findUnique({
         where: { tokenHash: sha256Hex(input.token) },
         include: { household: { include: householdInclude() } },
@@ -179,6 +183,9 @@ export class HouseholdsService {
       });
       return toDto(household);
     });
+    // Écrans déjà ouverts chez l'autre membre : son nom s'affiche sans recharger la page.
+    this.events.publish(joined.id, 'members');
+    return joined;
   }
 }
 

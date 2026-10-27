@@ -800,6 +800,7 @@
     <!-- Passkeys (connexion et Réglages) -->
     <string name="sign_in_with_passkey">Se connecter avec une passkey</string>
     <string name="error_passkey_failed">La connexion par passkey n\'a pas abouti. Réessayez ou utilisez votre mot de passe.</string>
+    <string name="error_passkey_device">Le téléphone n\'a pas pu utiliser la passkey. Vérifiez qu\'un gestionnaire de passkeys (Google, Samsung Pass…) est activé dans les paramètres du téléphone, ou réessayez plus tard. Vous pouvez aussi utiliser votre mot de passe.</string>
     <string name="error_no_passkey">Aucune passkey Tandem sur ce téléphone. Connectez-vous autrement, puis ajoutez-en une dans les Réglages.</string>
     <string name="passkeys_title">Passkeys</string>
     <string name="passkeys_intro">Connectez-vous sans mot de passe, avec l\'empreinte, le visage ou le code de votre téléphone. Plus sûr qu\'un mot de passe : rien à retenir, rien à voler.</string>

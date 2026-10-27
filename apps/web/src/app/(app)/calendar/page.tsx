@@ -685,8 +685,13 @@ function MonthDots({
   dayName: (weekday: number, style?: 'long' | 'short' | 'narrow') => string;
 }) {
   const t = useTranslations('calendar');
-  // Déplacer au doigt sans glisser : « Déplacer », puis toucher le jour voulu.
+  // Déplacer au doigt sans glisser : « Déplacer », puis toucher le jour voulu. Ou appui long sur
+  // ce même bouton et glisser la tâche jusqu'à un jour de la grille.
   const [moving, setMoving] = useState<OccurrenceDto | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const drag = useCalendarDrag({ containerRef: gridRef, pxPerHour: 0, onDrop: onMove });
+  const dragged = drag.preview ? items.find((o) => o.id === drag.preview!.id) : undefined;
+  const target = drag.preview?.placement.date;
   const pick = (d: string) => {
     if (moving) {
       if (d !== moving.date) onMove(moving, { ...placementOf(moving), date: d });
@@ -719,7 +724,7 @@ function MonthDots({
             </div>
           ))}
         </div>
-        <div className="grid grid-cols-7 gap-y-1">
+        <div ref={gridRef} className="grid grid-cols-7 gap-y-1">
           {days.map((d) => {
             const count = items.filter((o) => o.date === d).length;
             const outside = d.slice(0, 7) !== month;
@@ -727,10 +732,14 @@ function MonthDots({
               <button
                 key={d}
                 type="button"
+                data-date={d}
                 onClick={() => pick(d)}
                 aria-pressed={d === selected}
                 aria-label={t('dayWithCount', { date: longDate(d), count })}
-                className="flex min-h-12 flex-col items-center justify-start gap-1 rounded-md pt-1"
+                className={cn(
+                  'flex min-h-12 flex-col items-center justify-start gap-1 rounded-md pt-1',
+                  dragged && d === target && 'bg-surface-muted ring-2 ring-accent',
+                )}
               >
                 <span
                   className={cn(
@@ -762,7 +771,15 @@ function MonthDots({
           })}
         </div>
       </div>
-      {moving && (
+      {dragged && (
+        <div
+          role="status"
+          className="rounded-lg border border-accent bg-surface px-4 py-3 text-[0.9375rem]"
+        >
+          {t('dragTo', { title: dragged.title })}
+        </div>
+      )}
+      {moving && !dragged && (
         <div
           role="status"
           className="flex flex-wrap items-center justify-between gap-2 rounded-lg border border-accent bg-surface px-4 py-3 text-[0.9375rem]"
@@ -785,10 +802,14 @@ function MonthDots({
             trailing={(o) => (
               <button
                 type="button"
-                onClick={() => setMoving(o)}
+                onClick={() => !drag.consumeClick() && setMoving(o)}
+                onPointerDown={(e) => drag.start(e, o, 'move')}
                 aria-label={t('moveTo', { title: o.title })}
                 aria-pressed={moving?.id === o.id}
-                className="-my-2 -mr-2 flex size-11 shrink-0 items-center justify-center rounded-full text-text-muted hover:bg-surface-muted hover:text-text"
+                className={cn(
+                  '-my-2 -mr-2 flex size-11 shrink-0 items-center justify-center rounded-full text-text-muted hover:bg-surface-muted hover:text-text',
+                  dragged?.id === o.id && 'bg-surface-muted text-accent',
+                )}
               >
                 <CalendarArrowUp aria-hidden className="size-5" />
               </button>
@@ -801,6 +822,7 @@ function MonthDots({
           <Plus aria-hidden className="size-4" />
           {t('addOnDay')}
         </Button>
+        {dayItems.length > 0 && <p className="text-xs text-text-muted">{t('dragHintMonth')}</p>}
       </section>
     </div>
   );

@@ -68,13 +68,20 @@ class AuthRepositoryImpl(
         AuthResult.Failure(AuthError.NETWORK)
     }
 
-    /** Méthodes de connexion du serveur, gardées après la première réponse (Google, passkeys). */
+    /** Méthodes de connexion du serveur (Google, passkeys) : dernière réponse reçue. */
     private var providers: ProvidersDto? = null
 
-    private suspend fun providers(): ProvidersDto? = providers ?: try {
-        api.providers().body()?.also { providers = it }
+    private suspend fun providers(): ProvidersDto? = providers ?: fetchProviders()
+
+    /** Nouvelle réponse si le serveur répond ; sinon (hors ligne, erreur) l'ancienne est gardée. */
+    private suspend fun fetchProviders(): ProvidersDto? = try {
+        api.providers().body()?.also { providers = it } ?: providers
     } catch (_: IOException) {
-        null
+        providers
+    }
+
+    override suspend fun refreshProviders() {
+        fetchProviders()
     }
 
     override suspend fun googleAvailable(): Boolean = pkce != null && providers()?.google == true
@@ -102,7 +109,7 @@ class AuthRepositoryImpl(
                 }
                 PasskeyOutcome.Cancelled -> AuthResult.Failure(AuthError.PASSKEY_CANCELLED)
                 PasskeyOutcome.NoPasskey -> AuthResult.Failure(AuthError.NO_PASSKEY)
-                PasskeyOutcome.AlreadyExists, PasskeyOutcome.Failed -> AuthResult.Failure(AuthError.PASSKEY_FAILED)
+                PasskeyOutcome.AlreadyExists, PasskeyOutcome.Failed -> AuthResult.Failure(AuthError.PASSKEY_DEVICE)
             }
         }
     } catch (_: IOException) {

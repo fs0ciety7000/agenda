@@ -35,6 +35,7 @@ class LoginViewModel(private val auth: AuthRepository) : ViewModel() {
 
     init {
         viewModelScope.launch {
+            auth.refreshProviders()
             val google = auth.googleAvailable()
             val passkeys = auth.passkeysAvailable()
             _state.update { it.copy(googleAvailable = google, passkeysAvailable = passkeys) }

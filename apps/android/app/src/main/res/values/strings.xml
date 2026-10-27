@@ -784,6 +784,7 @@
     <!-- Passkeys (connexion et Réglages) -->
     <string name="sign_in_with_passkey">Sign in with a passkey</string>
     <string name="error_passkey_failed">Signing in with a passkey didn\'t work. Try again or use your password.</string>
+    <string name="error_passkey_device">This phone couldn\'t use the passkey. Check that a passkey manager (Google, Samsung Pass…) is turned on in your phone\'s settings, or try again later. You can also use your password.</string>
     <string name="error_no_passkey">No Tandem passkey on this phone. Sign in another way, then add one in Settings.</string>
     <string name="passkeys_title">Passkeys</string>
     <string name="passkeys_intro">Sign in without a password, using your phone\'s fingerprint, face or PIN. Safer than a password: nothing to remember, nothing to steal.</string>

@@ -13,6 +13,19 @@ d'elle-même (ou via Google Play).
 **Légende** : ✨ nouveau · 🛠 amélioration · 🐞 correction · 🔒 sécurité et confidentialité ·
 ⚙️ technique
 
+## 26 octobre 2026
+
+### Codes-barres hors alimentaire, passkeys et calendrier au doigt (#110)
+
+- ✨ **Codes-barres** : hygiène et entretien aussi. Si Open Food Facts ne connaît pas le
+  produit, Tandem cherche dans ses bases sœurs Open Beauty Facts et Open Products Facts.
+- ✨ **Calendrier, vue mois sur téléphone** : appui long sur l'icône de déplacement d'une tâche,
+  puis glisser jusqu'au jour voulu (le simple toucher marche toujours).
+- 🛠 App Android : la connexion par passkey apparaît dès que le serveur la propose, sans devoir
+  fermer l'app ; un refus du téléphone a son propre message (gestionnaire de passkeys).
+- 🐞 Site : le prénom d'un membre qui vient de rejoindre le foyer s'affiche tout de suite chez
+  l'autre (plus « Ancien membre » jusqu'au rechargement).
+
 ## 16 octobre 2026
 
 ### Administration : état d'Open Food Facts et dernière sauvegarde (#102)

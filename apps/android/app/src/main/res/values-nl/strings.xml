@@ -781,6 +781,7 @@
     <!-- Passkeys (connexion et Réglages) -->
     <string name="sign_in_with_passkey">Aanmelden met een toegangssleutel</string>
     <string name="error_passkey_failed">Aanmelden met een toegangssleutel is niet gelukt. Probeer het opnieuw of gebruik je wachtwoord.</string>
+    <string name="error_passkey_device">Je telefoon kon de toegangssleutel niet gebruiken. Controleer of een beheerder voor toegangssleutels (Google, Samsung Pass…) aan staat in de instellingen van je telefoon, of probeer het later opnieuw. Je kunt ook je wachtwoord gebruiken.</string>
     <string name="error_no_passkey">Geen toegangssleutel voor Tandem op deze telefoon. Meld je op een andere manier aan en voeg er daarna een toe in Instellingen.</string>
     <string name="passkeys_title">Toegangssleutels</string>
     <string name="passkeys_intro">Meld je aan zonder wachtwoord, met de vingerafdruk, het gezicht of de pincode van je telefoon. Veiliger dan een wachtwoord: niets te onthouden, niets te stelen.</string>

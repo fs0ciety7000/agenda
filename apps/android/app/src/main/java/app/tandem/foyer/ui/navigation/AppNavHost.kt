@@ -280,7 +280,8 @@ private fun MainScaffold(
                             launch { container.repository.refresh() }
                         }
                         "shopping" -> launch { container.repository.refreshShopping() }
-                        "tasks" -> launch { container.repository.refresh() }
+                        // Arrivée d'un membre : le foyer (noms, couleurs) est rechargé avec le reste.
+                        "tasks", "members" -> launch { container.repository.refresh() }
                         "notifications" -> launch { container.activityNotifier.poll(hid) }
                         "comments" -> container.comments.changed()
                         "notes" -> container.notes.changed()

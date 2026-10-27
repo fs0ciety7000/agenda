@@ -1,6 +1,7 @@
 import { INestApplication } from '@nestjs/common';
 import request from 'supertest';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import { DomainEvents } from '../src/common/domain-events';
 import { createTestApp, registerUser } from './app';
 
 describe('Foyers & isolation multi-tenant (intégration)', () => {
@@ -57,6 +58,17 @@ describe('Foyers & isolation multi-tenant (intégration)', () => {
     ]);
     expect(res.body.members[0].role).toBe('OWNER');
     expect(res.body.members[0].color).not.toBe(res.body.members[1].color);
+  });
+
+  it('arrivée d’un membre : signal temps réel « members » pour les écrans déjà ouverts', async () => {
+    const seen: [string, string][] = [];
+    const off = app.get(DomainEvents).onRealtime((hid, topic) => seen.push([hid, topic]));
+    try {
+      const { householdId } = await coupleHousehold();
+      expect(seen).toContainEqual([householdId, 'members']);
+    } finally {
+      off();
+    }
   });
 
   it("une invitation n'est utilisable qu'une fois", async () => {

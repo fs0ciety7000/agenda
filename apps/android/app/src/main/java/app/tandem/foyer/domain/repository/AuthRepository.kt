@@ -7,8 +7,13 @@ import kotlinx.coroutines.flow.Flow
 enum class AuthError {
     INVALID_CREDENTIALS, RATE_LIMITED, NETWORK, UNKNOWN,
     GOOGLE_FAILED, GOOGLE_EMAIL_EXISTS, REGISTRATION_CLOSED, ACCOUNT_DISABLED,
-    /** Passkey refusée par le serveur ou par le téléphone. */
+    /** Passkey refusée par le serveur (vérification, défi expiré) ou serveur injoignable. */
     PASSKEY_FAILED,
+    /**
+     * Passkey refusée par le téléphone (Credential Manager) : lien app ↔ site pas encore validé
+     * par Android, aucun gestionnaire de passkeys activé… Le serveur n'a rien reçu.
+     */
+    PASSKEY_DEVICE,
     /** Aucune passkey Tandem sur le téléphone. */
     NO_PASSKEY,
     /** Fenêtre de passkey fermée par l'utilisateur : rien à afficher. */
@@ -49,6 +54,13 @@ interface AuthRepository {
     suspend fun completeGoogleSignIn(code: String?, error: String?): AuthResult
     suspend fun currentUser(): User?
     suspend fun logout()
+
+    /**
+     * Redemande au serveur ses méthodes de connexion (Google, passkeys) : appelé à chaque
+     * ouverture de l'écran de connexion, une empreinte ajoutée côté serveur se voit sans relancer
+     * l'app. Hors ligne, la dernière réponse reste valable.
+     */
+    suspend fun refreshProviders() {}
 
     /** Passkeys dans l'app proposées par le serveur ? (false hors ligne). */
     suspend fun passkeysAvailable(): Boolean = false
