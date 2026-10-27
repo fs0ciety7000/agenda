@@ -245,12 +245,12 @@ Demandé le 11 octobre :
 Validé le 26 octobre (sortie publique sur Google Play), dans cet ordre :
 
 - [x] Premier lancement guidé : étape « Votre première tâche » à l'accueil, quatre idées de tâches
-  répétées à ajouter d'un toucher ; Android ouvre ce même accueil (S) 🌐 (#112)
+  répétées à ajouter d'un toucher ; Android ouvre ce même accueil (S) 🌐 (#113)
 - [x] Inscriptions ouvertes au public : 20 comptes par heure et par adresse IP au plus
-  (`REGISTER_HOURLY_LIMIT`), 3 e-mails de réinitialisation par compte et par heure (S) ⚙️ (#112)
+  (`REGISTER_HOURLY_LIMIT`), 3 e-mails de réinitialisation par compte et par heure (S) ⚙️ (#113)
 - [x] Questions fréquentes dans l'app (`/help`, publique) : inviter, tâche invisible, passkeys,
   codes-barres, hors ligne, notifications, corbeille, données ; liée depuis la connexion, les
-  Réglages et « Signaler un problème » (site, Android) (S) 🌐🤖 (#112)
+  Réglages et « Signaler un problème » (site, Android) (S) 🌐🤖 (#113)
 - [ ] Android : demande d'avis Google Play (In-App Review) après environ deux semaines
   d'utilisation, jamais pendant une action (S) 🤖
 - [ ] Audit UI/UX complet (site, app web, Android) avant la sortie publique (M)

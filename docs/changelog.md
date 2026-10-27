@@ -15,7 +15,7 @@ d'elle-même (ou via Google Play).
 
 ## 27 octobre 2026
 
-### Premier lancement guidé, questions fréquentes, limites anti-abus (#112)
+### Premier lancement guidé, questions fréquentes, limites anti-abus (#113)
 
 - ✨ **Accueil** : nouvelle étape « Votre première tâche ». Touchez une idée (sortir les
   poubelles, faire les courses, arroser les plantes, changer les draps) pour l'ajouter comme tâche
