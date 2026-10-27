@@ -637,7 +637,9 @@
     "swapDeleted": "Beurt ruilen voor een taak die intussen verwijderd is",
     "importantDate": "{title}: {days, plural, =0 {vandaag} =1 {morgen} other {over # dagen}}",
     "importantDateDeleted": "Herinnering voor een intussen verwijderde datum",
-    "budgetCategory": "{category} · {month}: {level}% bereikt ({amount} van {budget})"
+    "budgetCategory": "{category} · {month}: {level}% bereikt ({amount} van {budget})",
+    "monthly": "Maandoverzicht · {month}: {amount} aan gedeelde uitgaven ({count, plural, one {# uitgave} other {# uitgaven}}). Betaald: {paid}.",
+    "monthlyBudget": "Maandoverzicht · {month}: {amount} aan gedeelde uitgaven ({count, plural, one {# uitgave} other {# uitgaven}}, budget {budget}). Betaald: {paid}."
   },
   "notificationSettings": {
     "title": "Meldingsvoorkeuren",
@@ -652,7 +654,8 @@
       "EXPENSE_BUDGET": "Het gezamenlijke budget van de maand bereikt 80% of 100%",
       "TASK_SWAP_REQUEST": "Iemand vraagt of ik een taak wil overnemen",
       "TASK_SWAP_ANSWER": "Antwoord op mijn ruilverzoek",
-      "IMPORTANT_DATE": "Een belangrijke datum komt eraan"
+      "IMPORTANT_DATE": "Een belangrijke datum komt eraan",
+      "EXPENSE_MONTHLY": "Overzicht van de uitgaven van vorige maand, op de 1e"
     },
     "status": {
       "title": "Directe meldingen op de telefoon: nog niet actief",

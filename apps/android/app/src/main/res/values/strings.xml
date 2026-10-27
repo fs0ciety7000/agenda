@@ -827,4 +827,12 @@
     <string name="backup_phrase_again">Type the passphrase again</string>
     <string name="backup_phrase_mismatch">The two passphrases don\'t match.</string>
     <string name="backup_private_encrypted">Write the passphrase down separately: without it, nobody can open this file, not even you.</string>
+    <plurals name="activity_monthly">
+        <item quantity="one">Monthly summary · %1$s: %2$s of shared expenses (%3$d expense). Paid: %4$s.</item>
+        <item quantity="other">Monthly summary · %1$s: %2$s of shared expenses (%3$d expenses). Paid: %4$s.</item>
+    </plurals>
+    <plurals name="activity_monthly_budget">
+        <item quantity="one">Monthly summary · %1$s: %2$s of shared expenses (%3$d expense, budget %5$s). Paid: %4$s.</item>
+        <item quantity="other">Monthly summary · %1$s: %2$s of shared expenses (%3$d expenses, budget %5$s). Paid: %4$s.</item>
+    </plurals>
 </resources>

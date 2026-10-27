@@ -25,6 +25,7 @@ export const NOTIFICATION_KINDS: NotificationKind[] = [
   'TASK_SWAP_REQUEST',
   'TASK_SWAP_ANSWER',
   'IMPORTANT_DATE',
+  'EXPENSE_MONTHLY',
 ];
 const DEFAULT_PREF = { inApp: true, push: true };
 
@@ -39,6 +40,7 @@ const TASK_NOTIFICATIONS: string[] = [
 ];
 const isTaskNotification = (type: string): type is TaskNotification =>
   TASK_NOTIFICATIONS.includes(type);
+const isExpense = (type: string) => type === 'EXPENSE_BUDGET' || type === 'EXPENSE_MONTHLY';
 
 interface AssignedPayload {
   occurrenceId: string;
@@ -61,6 +63,18 @@ export interface ImportantDatePayload {
   dateId: string;
   date: string;
   daysLeft: number;
+}
+
+/**
+ * Bilan des dépenses d'un mois écoulé : dépenses communes, budget commun s'il y en a un, et ce
+ * que chaque membre a payé pour le foyer (identifiants : les prénoms sont relus à l'affichage).
+ */
+export interface MonthlyPayload {
+  month: string;
+  amountCents: number;
+  count: number;
+  budgetCents: number | null;
+  paid: { memberId: string; amountCents: number }[];
 }
 
 /**
@@ -283,6 +297,45 @@ export class NotificationsService {
     }
   }
 
+  /** Bilan du mois écoulé, le 1er : à tout le foyer, sans classement (cf. design system §1.5). */
+  async notifyMonthly(householdId: string, payload: MonthlyPayload): Promise<void> {
+    const members = await this.prisma.householdMember.findMany({
+      where: { householdId, leftAt: null, userId: { not: null } },
+      select: { id: true, preferences: { where: { type: 'EXPENSE_MONTHLY' } } },
+    });
+    const targets = members
+      .map((m) => ({ id: m.id, pref: m.preferences[0] ?? DEFAULT_PREF }))
+      .filter(({ pref }) => pref.inApp || pref.push);
+    if (!targets.length) return;
+    await this.prisma.notification.createMany({
+      data: targets.map(({ id, pref }) => ({
+        memberId: id,
+        type: 'EXPENSE_MONTHLY' as const,
+        payload: { ...payload, push: pref.push } as unknown as Prisma.InputJsonValue,
+      })),
+    });
+    this.events.publish(householdId, 'notifications');
+    const pushIds = targets.filter(({ pref }) => pref.push).map(({ id }) => id);
+    void this.push.wakeMembers(householdId, pushIds);
+    if (this.webPush.enabled && pushIds.length) {
+      const names = new Map(
+        (
+          await this.prisma.householdMember.findMany({
+            where: { householdId },
+            select: { id: true, displayName: true },
+          })
+        ).map((m) => [m.id, m.displayName]),
+      );
+      const paid = payload.paid.map((p) => ({
+        name: names.get(p.memberId) ?? '?',
+        amountCents: p.amountCents,
+      }));
+      void this.webPush.sendToMembers(householdId, pushIds, (locale) =>
+        monthlyPushText(locale, payload, paid),
+      );
+    }
+  }
+
   async list(ctx: HouseholdContext, query: NotificationQuery): Promise<NotificationListDto> {
     const prefs = await this.preferencesMap(ctx);
     const visibleTypes = NOTIFICATION_KINDS.filter((k) => prefs[k].inApp || prefs[k].push);
@@ -369,15 +422,24 @@ export class NotificationsService {
             ? (nameById.get(payload.byMemberId) ?? null)
             : null,
         code: typeof payload.code === 'string' ? payload.code : null,
-        month: r.type === 'EXPENSE_BUDGET' ? String(payload.month) : null,
+        month: isExpense(r.type) ? String(payload.month) : null,
         level: r.type === 'EXPENSE_BUDGET' ? Number(payload.level) : null,
-        amountCents: r.type === 'EXPENSE_BUDGET' ? Number(payload.amountCents) : null,
-        budgetCents: r.type === 'EXPENSE_BUDGET' ? Number(payload.budgetCents) : null,
+        amountCents: isExpense(r.type) ? Number(payload.amountCents) : null,
+        budgetCents:
+          isExpense(r.type) && payload.budgetCents != null ? Number(payload.budgetCents) : null,
         category:
           r.type === 'EXPENSE_BUDGET' && typeof payload.category === 'string'
             ? payload.category
             : null,
         daysLeft: r.type === 'IMPORTANT_DATE' ? Number(payload.daysLeft) : null,
+        count: r.type === 'EXPENSE_MONTHLY' ? Number(payload.count) : null,
+        paid:
+          r.type === 'EXPENSE_MONTHLY'
+            ? (payload.paid as MonthlyPayload['paid']).map((p) => ({
+                name: nameById.get(p.memberId) ?? '?',
+                amountCents: p.amountCents,
+              }))
+            : null,
       };
     });
     return { unread, items };
@@ -541,4 +603,30 @@ export function importantDatePushText(
         : `${title}: ${n === 1 ? 'morgen' : `over ${n} dagen`} (${when})`,
   }[locale];
   return { title: 'Tandem', body, url: '/dates', tag: `date-${p.dateId}-${p.date}` };
+}
+
+/**
+ * « Bilan du mois · septembre : 312,40 € de dépenses communes (budget 800,00 €). Payé : Emma
+ * 200,00 €, Tom 112,40 €. » (comme dans la cloche). Factuel, par prénom : pas de classement.
+ */
+export function monthlyPushText(
+  locale: Locale,
+  p: MonthlyPayload,
+  paid: { name: string; amountCents: number }[],
+): WebPushMessage {
+  const tag = INTL_LOCALE[locale];
+  const money = (cents: number) =>
+    new Intl.NumberFormat(tag, { style: 'currency', currency: 'EUR' }).format(cents / 100);
+  const month = new Intl.DateTimeFormat(tag, { month: 'long', timeZone: 'UTC' }).format(
+    new Date(`${p.month}-15T12:00:00Z`),
+  );
+  const total = money(p.amountCents);
+  const budget = p.budgetCents != null ? money(p.budgetCents) : null;
+  const who = paid.map((x) => `${x.name} ${money(x.amountCents)}`).join(', ');
+  const body = {
+    fr: `Bilan du mois · ${month} : ${total} de dépenses communes${budget ? ` (budget ${budget})` : ''}. Payé : ${who}.`,
+    en: `Monthly summary · ${month}: ${total} of shared expenses${budget ? ` (budget ${budget})` : ''}. Paid: ${who}.`,
+    nl: `Maandoverzicht · ${month}: ${total} aan gedeelde uitgaven${budget ? ` (budget ${budget})` : ''}. Betaald: ${who}.`,
+  }[locale];
+  return { title: 'Tandem', body, url: `/expenses?month=${p.month}`, tag: `monthly-${p.month}` };
 }

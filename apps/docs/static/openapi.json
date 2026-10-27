@@ -15339,7 +15339,8 @@
                     "EXPENSE_BUDGET",
                     "TASK_SWAP_REQUEST",
                     "TASK_SWAP_ANSWER",
-                    "IMPORTANT_DATE"
+                    "IMPORTANT_DATE",
+                    "EXPENSE_MONTHLY"
                   ]
                 },
                 "createdAt": {
@@ -15407,6 +15408,34 @@
                   "type": "integer",
                   "minimum": -9007199254740991,
                   "maximum": 9007199254740991
+                },
+                "count": {
+                  "nullable": true,
+                  "type": "integer",
+                  "minimum": -9007199254740991,
+                  "maximum": 9007199254740991
+                },
+                "paid": {
+                  "nullable": true,
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "amountCents": {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      }
+                    },
+                    "required": [
+                      "name",
+                      "amountCents"
+                    ],
+                    "additionalProperties": false
+                  }
                 }
               },
               "required": [
@@ -15426,7 +15455,9 @@
                 "amountCents",
                 "budgetCents",
                 "category",
-                "daysLeft"
+                "daysLeft",
+                "count",
+                "paid"
               ],
               "additionalProperties": false
             }
@@ -15451,7 +15482,8 @@
               "EXPENSE_BUDGET",
               "TASK_SWAP_REQUEST",
               "TASK_SWAP_ANSWER",
-              "IMPORTANT_DATE"
+              "IMPORTANT_DATE",
+              "EXPENSE_MONTHLY"
             ]
           },
           "inApp": {
@@ -19157,7 +19189,8 @@
                     "EXPENSE_BUDGET",
                     "TASK_SWAP_REQUEST",
                     "TASK_SWAP_ANSWER",
-                    "IMPORTANT_DATE"
+                    "IMPORTANT_DATE",
+                    "EXPENSE_MONTHLY"
                   ]
                 },
                 "inApp": {

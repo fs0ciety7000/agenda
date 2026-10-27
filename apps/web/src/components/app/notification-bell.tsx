@@ -30,6 +30,7 @@ export function NotificationBell({ className }: { className?: string }) {
     if (n.occurrenceId) router.push(`/?open=${n.occurrenceId}`);
     else if (n.type === 'CALENDAR_SYNC_FAILED') router.push('/settings');
     else if (n.type === 'EXPENSE_BUDGET') router.push('/expenses');
+    else if (n.type === 'EXPENSE_MONTHLY') router.push(`/expenses?month=${n.month}`);
     else if (n.type === 'IMPORTANT_DATE') router.push('/dates');
   };
 
@@ -83,53 +84,64 @@ function NotificationRow({ n, onOpen }: { n: NotificationDto; onOpen: () => void
   const te = useTranslations('expenses');
   const format = useFormatter();
   const money = useMoney();
+  const month = (m: string | null) =>
+    format.dateTime(new Date(`${m}-15T12:00:00`), { month: 'long' });
   const text =
-    n.type === 'EXPENSE_BUDGET' && n.category
-      ? t('budgetCategory', {
-          category: te(`categories.${n.category as ExpenseCategory}`),
-          month: format.dateTime(new Date(`${n.month}-15T12:00:00`), { month: 'long' }),
-          level: n.level ?? 80,
+    n.type === 'EXPENSE_MONTHLY'
+      ? t(n.budgetCents != null ? 'monthlyBudget' : 'monthly', {
+          month: month(n.month),
           amount: money(n.amountCents ?? 0),
           budget: money(n.budgetCents ?? 0),
+          count: n.count ?? 0,
+          // Par prénom (l'API trie) : pas de classement.
+          paid: (n.paid ?? []).map((p) => `${p.name} ${money(p.amountCents)}`).join(', '),
         })
-      : n.type === 'EXPENSE_BUDGET'
-        ? t('budget', {
+      : n.type === 'EXPENSE_BUDGET' && n.category
+        ? t('budgetCategory', {
+            category: te(`categories.${n.category as ExpenseCategory}`),
             month: format.dateTime(new Date(`${n.month}-15T12:00:00`), { month: 'long' }),
             level: n.level ?? 80,
             amount: money(n.amountCents ?? 0),
             budget: money(n.budgetCents ?? 0),
           })
-        : n.type === 'IMPORTANT_DATE'
-          ? n.title
-            ? t('importantDate', { title: n.title, days: n.daysLeft ?? 0 })
-            : t('importantDateDeleted')
-          : n.type === 'TASK_SWAP_REQUEST' || n.type === 'TASK_SWAP_ANSWER'
+        : n.type === 'EXPENSE_BUDGET'
+          ? t('budget', {
+              month: format.dateTime(new Date(`${n.month}-15T12:00:00`), { month: 'long' }),
+              level: n.level ?? 80,
+              amount: money(n.amountCents ?? 0),
+              budget: money(n.budgetCents ?? 0),
+            })
+          : n.type === 'IMPORTANT_DATE'
             ? n.title
-              ? t(
-                  n.type === 'TASK_SWAP_REQUEST'
-                    ? 'swapRequest'
-                    : n.code === 'ACCEPTED'
-                      ? 'swapAccepted'
-                      : 'swapDeclined',
-                  { by: n.byName ?? '?', title: n.title },
-                )
-              : t('swapDeleted')
-            : n.type === 'TASK_THANKS'
+              ? t('importantDate', { title: n.title, days: n.daysLeft ?? 0 })
+              : t('importantDateDeleted')
+            : n.type === 'TASK_SWAP_REQUEST' || n.type === 'TASK_SWAP_ANSWER'
               ? n.title
-                ? t('thanked', { by: n.byName ?? '?', title: n.title })
-                : t('thankedDeleted', { by: n.byName ?? '?' })
-              : n.type === 'TASK_COMMENT'
+                ? t(
+                    n.type === 'TASK_SWAP_REQUEST'
+                      ? 'swapRequest'
+                      : n.code === 'ACCEPTED'
+                        ? 'swapAccepted'
+                        : 'swapDeclined',
+                    { by: n.byName ?? '?', title: n.title },
+                  )
+                : t('swapDeleted')
+              : n.type === 'TASK_THANKS'
                 ? n.title
-                  ? t('commented', { by: n.byName ?? '?', title: n.title })
-                  : t('commentedDeleted', { by: n.byName ?? '?' })
-                : n.type === 'TASK_ASSIGNED'
+                  ? t('thanked', { by: n.byName ?? '?', title: n.title })
+                  : t('thankedDeleted', { by: n.byName ?? '?' })
+                : n.type === 'TASK_COMMENT'
                   ? n.title
-                    ? t(n.recurring ? 'assignedRecurring' : 'assigned', {
-                        by: n.byName ?? '?',
-                        title: n.title,
-                      })
-                    : t('assignedDeleted', { by: n.byName ?? '?' })
-                  : t('calendarFailed');
+                    ? t('commented', { by: n.byName ?? '?', title: n.title })
+                    : t('commentedDeleted', { by: n.byName ?? '?' })
+                  : n.type === 'TASK_ASSIGNED'
+                    ? n.title
+                      ? t(n.recurring ? 'assignedRecurring' : 'assigned', {
+                          by: n.byName ?? '?',
+                          title: n.title,
+                        })
+                      : t('assignedDeleted', { by: n.byName ?? '?' })
+                    : t('calendarFailed');
   return (
     <button
       type="button"

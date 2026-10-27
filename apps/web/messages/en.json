@@ -637,7 +637,9 @@
     "swapDeleted": "Turn swap for a task deleted since",
     "importantDate": "{title}: {days, plural, =0 {today} =1 {tomorrow} other {in # days}}",
     "importantDateDeleted": "Reminder for a date deleted since",
-    "budgetCategory": "{category} · {month}: {level}% reached ({amount} of {budget})"
+    "budgetCategory": "{category} · {month}: {level}% reached ({amount} of {budget})",
+    "monthly": "Monthly summary · {month}: {amount} of shared expenses ({count, plural, one {# expense} other {# expenses}}). Paid: {paid}.",
+    "monthlyBudget": "Monthly summary · {month}: {amount} of shared expenses ({count, plural, one {# expense} other {# expenses}}, budget {budget}). Paid: {paid}."
   },
   "notificationSettings": {
     "title": "Notification preferences",
@@ -652,7 +654,8 @@
       "EXPENSE_BUDGET": "The month's shared budget reaches 80% or 100%",
       "TASK_SWAP_REQUEST": "Someone asks me to take their task",
       "TASK_SWAP_ANSWER": "An answer to my swap request",
-      "IMPORTANT_DATE": "An important date is coming up"
+      "IMPORTANT_DATE": "An important date is coming up",
+      "EXPENSE_MONTHLY": "Summary of last month's expenses, on the 1st"
     },
     "status": {
       "title": "Instant phone notifications: not active yet",

@@ -15,6 +15,12 @@ d'elle-même (ou via Google Play).
 
 ## 27 octobre 2026
 
+### Bilan du mois des dépenses (#117)
+
+- ✨ **Bilan du mois** : le 1er, une notification résume le mois écoulé : dépenses communes,
+  budget, ce que chacun a payé (par prénom, sans classement). Elle se désactive dans Réglages →
+  Notifications.
+
 ### Audit avant la sortie publique : mêmes mots partout (#115)
 
 - 🛠 **« À rattraper »** partout au lieu de « En retard » : onglet des tâches, Bilan, revue de la

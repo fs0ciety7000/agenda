@@ -15,6 +15,7 @@ description: Centre de notifications, notifications du navigateur et du téléph
 | Une demande d'échange de tour, et sa réponse | « Nicolas vous demande de prendre « Vaisselle » », « Grace prend « Vaisselle » » |
 | Une date importante approche (rappel réglé sur la date) | « Anniversaire de mamie : dans 7 jours (mercredi 14 octobre) » |
 | Le budget commun du mois, ou celui d'une catégorie, atteint 80 % ou 100 % | « Budget commun · octobre : 80 % atteint (640 € sur 800 €) » |
+| Le 1er du mois, le bilan des dépenses du mois écoulé (s'il y a eu des dépenses communes) | « Bilan du mois · septembre : 312,40 € de dépenses communes (3 dépenses, budget 800 €). Payé : Emma 200 €, Tom 112,40 € » |
 | Problème de synchronisation Google Agenda | « La synchronisation est interrompue » |
 
 Tout arrive dans le **centre de notifications** (la cloche). **Réglages → Notifications** choisit,

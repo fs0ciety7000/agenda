@@ -10,6 +10,7 @@ export const NotificationKind = z.enum([
   'TASK_SWAP_REQUEST',
   'TASK_SWAP_ANSWER',
   'IMPORTANT_DATE',
+  'EXPENSE_MONTHLY',
 ]);
 export type NotificationKind = z.infer<typeof NotificationKind>;
 
@@ -29,7 +30,10 @@ export const NotificationDto = z.object({
   byName: z.string().nullable(),
   /** CALENDAR_SYNC_FAILED : code d'erreur (CalendarErrorCode) ; TASK_SWAP_ANSWER : ACCEPTED ou DECLINED. */
   code: z.string().nullable(),
-  /** EXPENSE_BUDGET : mois (« 2026-10 »), seuil atteint (80 ou 100), dépensé et budget. */
+  /**
+   * EXPENSE_BUDGET : mois (« 2026-10 »), seuil atteint (80 ou 100), dépensé et budget.
+   * EXPENSE_MONTHLY : mois du bilan, dépenses communes du mois et budget commun (null sans budget).
+   */
   month: z.string().nullable(),
   level: z.number().int().nullable(),
   amountCents: z.number().int().nullable(),
@@ -38,6 +42,10 @@ export const NotificationDto = z.object({
   category: z.string().nullable(),
   /** IMPORTANT_DATE : jours restants avant la date (0 = aujourd'hui) ; titre et date ci-dessus. */
   daysLeft: z.number().int().nullable(),
+  /** EXPENSE_MONTHLY : nombre de dépenses communes du mois. */
+  count: z.number().int().nullable(),
+  /** EXPENSE_MONTHLY : ce que chacun a payé pour le foyer ce mois-là, par ordre alphabétique. */
+  paid: z.array(z.object({ name: z.string(), amountCents: z.number().int() })).nullable(),
 });
 export type NotificationDto = z.infer<typeof NotificationDto>;
 

@@ -844,4 +844,14 @@
     <string name="backup_phrase_again">Retapez la phrase de passe</string>
     <string name="backup_phrase_mismatch">Les deux phrases ne sont pas identiques.</string>
     <string name="backup_private_encrypted">Notez la phrase de passe à part : sans elle, personne ne peut ouvrir ce fichier, pas même vous.</string>
+    <plurals name="activity_monthly">
+        <item quantity="one">Bilan du mois · %1$s : %2$s de dépenses communes (%3$d dépense). Payé : %4$s.</item>
+        <item quantity="many">Bilan du mois · %1$s : %2$s de dépenses communes (%3$d dépenses). Payé : %4$s.</item>
+        <item quantity="other">Bilan du mois · %1$s : %2$s de dépenses communes (%3$d dépenses). Payé : %4$s.</item>
+    </plurals>
+    <plurals name="activity_monthly_budget">
+        <item quantity="one">Bilan du mois · %1$s : %2$s de dépenses communes (%3$d dépense, budget %5$s). Payé : %4$s.</item>
+        <item quantity="many">Bilan du mois · %1$s : %2$s de dépenses communes (%3$d dépenses, budget %5$s). Payé : %4$s.</item>
+        <item quantity="other">Bilan du mois · %1$s : %2$s de dépenses communes (%3$d dépenses, budget %5$s). Payé : %4$s.</item>
+    </plurals>
 </resources>

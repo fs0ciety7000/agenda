@@ -94,6 +94,15 @@ d'alerte et en texte une fois dépassée. Vous êtes prévenus tous les deux à 
 atteint »). Seules les dépenses communes comptent. Sur Android : **Budgets par catégorie**, sous
 les jauges.
 
+## Bilan du mois
+
+Le **1er de chaque mois** (à partir de 8 h), le foyer reçoit le bilan du mois écoulé : le total
+des dépenses communes, leur nombre, le budget commun s'il y en a un, et ce que chacun a payé
+pour le foyer, par ordre alphabétique : c'est une information, pas un classement. Les dépenses
+personnelles n'y figurent pas. Rien n'est envoyé un mois sans dépense commune. Toucher le bilan
+ouvre les dépenses de ce mois. Pour ne plus le recevoir : **Réglages → Notifications → Bilan des
+dépenses du mois écoulé**.
+
 ## Sur 6 mois
 
 Sous les totaux, **Sur 6 mois** montre les dépenses communes des six derniers mois (jusqu'au

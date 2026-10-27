@@ -179,6 +179,8 @@ model Household {
   timezone                 String    @default("Europe/Brussels") @db.VarChar(64)
   /// Budget mensuel des dépenses communes, en centimes (null = aucun).
   expenseBudgetCents       Int?
+  /// Dernier bilan mensuel des dépenses envoyé (« 2026-09 ») : une seule fois par mois.
+  expenseSummaryMonth      String?
   /// Lien invité vers la liste de courses (lecture seule, sans compte). Secret ; null = aucun.
   guestShoppingToken       String?   @unique @db.VarChar(40)
   guestShoppingCreatedAt   DateTime?
@@ -873,6 +875,8 @@ enum NotificationType {
   TASK_SWAP_ANSWER
   /// Date importante qui approche (rappel N jours avant).
   IMPORTANT_DATE
+  /// Bilan des dépenses du mois écoulé, le 1er.
+  EXPENSE_MONTHLY
 }
 
 model Notification {
