@@ -86,7 +86,9 @@ jobs:
 
   e2e:
     name: E2E web (Playwright)
-    runs-on: ubuntu-latest
+    # Playwright 1.56 n'installe pas Chromium sur Ubuntu 26.04 (ubuntu-latest depuis le
+    # 19 octobre 2026) : version fixée jusqu'à la montée de Playwright.
+    runs-on: ubuntu-24.04
     needs: js
     timeout-minutes: 20
     services:
