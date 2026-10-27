@@ -76,7 +76,7 @@ Le dépôt est privé : les minutes sont comptées. Chaque workflow ne tourne qu
 | Workflow | Quand |
 |---|---|
 | `CI` (API, web, E2E, images Docker) | PR et `main`, sauf changements limités à la doc ou à l'app Android |
-| `Android` | quand `apps/android/**` change |
+| `Android` | quand `apps/android/**` change ; avec les captures d'écran (artefact `android-captures`) à la demande (*Run workflow*) ou avec l'étiquette `captures` sur la PR |
 | `Android (émulateur)` | à la demande (*Run workflow*) ou étiquette `emulateur` sur la PR |
 | `Android — APK à installer` | sur `main` quand l'app Android change |
 | `Google Play — mettre à jour la fiche` | à la demande (*Run workflow*) |

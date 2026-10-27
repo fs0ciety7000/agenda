@@ -24,6 +24,8 @@ sauter d'étape.
    - **Android** : `./gradlew --offline -Ptandem.codeScanner=false -Ptandem.passkeys=false testDebugUnitTest -Pscreenshots` dans `apps/android`.
      Ces captures sont Roborazzi ; pour la police à 200 %, ajouter un test de capture avec
      `fontScale = 2f` s'il n'existe pas.
+     Si Gradle ne peut rien télécharger (bac à sable), mettre l'étiquette `captures` sur la PR :
+     le workflow `Android` les produit dans l'artefact `android-captures`.
 3. **Regarder chaque capture**, sans s'en tenir aux tests automatiques. Passer les sections 1
    à 7 de la grille : chaque point est OK, À améliorer ou Bloquant, avec le fichier de capture
    qui le montre.

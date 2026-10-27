@@ -15,6 +15,15 @@ d'elle-même (ou via Google Play).
 
 ## 27 octobre 2026
 
+### Audit avant la sortie publique : mêmes mots partout (#115)
+
+- 🛠 **« À rattraper »** partout au lieu de « En retard » : onglet des tâches, Bilan, revue de la
+  semaine, widget et récapitulatif du matin sur Android, site.
+- 🛠 **Tâches sur Android** : mêmes onglets que sur le site (Toutes, Aujourd'hui, À venir, À
+  rattraper, Sans date, Terminées).
+- 🛠 **Aide** dans le tiroir « Plus » du site, comme sur Android.
+- 🐞 **Dépenses** : plus de « Partage 100 » quand on est seul dans le foyer.
+
 ### Avis Google Play dans l'app (#114)
 
 - ✨ **Android (Google Play)** : après deux semaines d'utilisation, Tandem peut vous proposer de

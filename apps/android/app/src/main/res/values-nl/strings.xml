@@ -25,7 +25,7 @@
     <string name="greeting">Hallo %1$s 👋</string>
     <string name="today">Vandaag</string>
     <string name="today_catch_up">Nog in te halen</string>
-    <string name="overdue">Te laat</string>
+    <string name="overdue">Nog in te halen</string>
     <string name="this_week">Deze week</string>
     <string name="today_progress">%1$d van %2$d gedaan</string>
     <string name="today_empty_title">Niets voor vandaag.</string>
@@ -58,9 +58,11 @@
     <string name="priority_urgent">Dringend</string>
 
     <string name="search">Zoeken</string>
-    <string name="filter_todo">Te doen</string>
+    <string name="filter_all">Alle</string>
+    <string name="filter_today">Vandaag</string>
+    <string name="filter_overdue">Nog in te halen</string>
     <string name="filter_upcoming">Binnenkort</string>
-    <string name="filter_unscheduled">Geen datum</string>
+    <string name="filter_unscheduled">Zonder datum</string>
     <string name="filter_done">Gedaan</string>
     <string name="filter_mine">Van mij</string>
     <string name="tasks_empty">Hier geen taken.</string>
@@ -210,7 +212,7 @@
     <string name="task_moved">“%1$s” verplaatst naar %2$s</string>
     <string name="undo">Ongedaan maken</string>
     <string name="widget_name">Vandaag · Tandem</string>
-    <string name="widget_description">De taken van vandaag en de achterstallige, rechtstreeks af te vinken op het beginscherm.</string>
+    <string name="widget_description">De taken van vandaag en die nog in te halen zijn, rechtstreeks af te vinken op het beginscherm.</string>
     <string name="widget_empty">Niets voor vandaag 🎉</string>
     <string name="widget_signed_out">Open de app om je aan te melden.</string>
     <string name="assignee_suggestion_pick">Aan %1$s geven</string>
@@ -263,7 +265,7 @@
     <string name="recap_title">Vandaag</string>
     <string name="recap_setting">Ochtendoverzicht (8 uur)</string>
     <plurals name="recap_today"><item quantity="one">%d taak vandaag</item><item quantity="other">%d taken vandaag</item></plurals>
-    <plurals name="recap_overdue"><item quantity="one">%d te laat</item><item quantity="other">%d te laat</item></plurals>
+    <plurals name="recap_overdue"><item quantity="one">%d nog in te halen</item><item quantity="other">%d nog in te halen</item></plurals>
     <plurals name="recap_due"><item quantity="one">%d te doen deze week</item><item quantity="other">%d te doen deze week</item></plurals>
     <string name="templates_title">Sjablonen</string>
     <plurals name="templates_create"><item quantity="one">De taak aanmaken</item><item quantity="other">De %d taken aanmaken</item></plurals>

@@ -19,6 +19,7 @@ test('dépenses : une dépense commune, le solde, le remboursement', async ({
   await expect(page.getByRole('heading', { name: 'Dépenses', level: 1 })).toBeVisible();
   await expect(page.getByText('Aucune dépense ce mois-ci')).toBeVisible();
   await expect(page.getByText('Vous êtes à l’équilibre.')).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Partage 50 / 50' })).toBeVisible();
 
   await page.getByRole('button', { name: 'Dépense', exact: true }).first().click();
   const dialog = page.getByRole('dialog');
@@ -125,6 +126,9 @@ test('dépenses : budget commun, évolution sur 6 mois, export CSV', async ({ pa
 test('dépenses : lire un ticket préremplit la dépense et joint la photo', async ({ page }) => {
   await signUpWithHousehold(page, 'Grace');
   await page.goto('/expenses');
+  // Seule dans le foyer : pas de « Partage 100 ».
+  await expect(page.getByText('Vous êtes à l’équilibre.')).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Partage/ })).toHaveCount(0);
   const dialog = page.getByRole('dialog');
   await page.getByRole('button', { name: 'Dépense', exact: true }).first().click();
 

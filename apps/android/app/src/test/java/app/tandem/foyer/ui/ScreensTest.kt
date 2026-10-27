@@ -119,9 +119,9 @@ class ScreensTest {
             TasksScreen(state, filter, { filter = it }, {}, {}, {})
         }
         compose.onNodeWithText("Appeler le plombier").assertIsDisplayed()
-        compose.onNodeWithText("Faites").performClick()
+        compose.onNodeWithText("Terminées").performClick()
         compose.onNodeWithText("Arroser les plantes").assertIsDisplayed()
-        compose.onNodeWithText("À faire").performClick()
+        compose.onNodeWithText("Toutes").performClick()
         shot("tasks")
     }
 

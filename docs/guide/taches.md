@@ -35,7 +35,7 @@ globale (depuis n'importe quelle page), **T** revient à Aujourd'hui.
 - **Titre**, **notes**, **catégorie**, **priorité** (basse, normale, haute, urgente) ;
 - **Date**, **heure**, **durée** (l'heure demande une date) ;
 - **Échéance** sans date : *cette semaine*, *ce mois-ci* ou *avant une date* — la tâche apparaît
-  dans « À faire cette semaine », puis « en retard » une fois l'échéance passée ;
+  dans « À faire cette semaine », puis « À rattraper » une fois l'échéance passée ;
 - **Responsable** : une personne, **tous les deux**, ou **à définir**. Pour une tâche partagée à
   définir, l'app **suggère** la personne la moins chargée de la semaine ;
 - **Tâche personnelle** : visible par vous seul (jamais par l'autre, ni dans son journal) ;
@@ -119,5 +119,5 @@ semaines précédentes.
 ## Bilan
 
 L'onglet **Bilan** montre, sur 7 ou 30 jours, les tâches partagées faites, le temps passé, celles
-faites en retard, par catégorie et par personne. Il sert à s'organiser, **pas à compter les
+faites après leur date, par catégorie et par personne. Il sert à s'organiser, **pas à compter les
 points** : une tâche « à deux » compte pour la personne qui l'a cochée.

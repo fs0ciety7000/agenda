@@ -362,15 +362,18 @@ fun ExpensesScreen(
                                     modifier = Modifier.heightIn(min = 48.dp),
                                 ) { Text(stringResource(R.string.expenses_settle)) }
                             }
-                            val total = s.members.sumOf { it.weight }.coerceAtLeast(1)
-                            Text(
-                                stringResource(
-                                    R.string.expenses_split_hint,
-                                    s.members.joinToString(" / ") { "${Math.round(it.weight * 100.0 / total)}" },
-                                ),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            )
+                            // Seul dans le foyer : « Partage 100 » ne dirait rien.
+                            if (s.members.size > 1) {
+                                val total = s.members.sumOf { it.weight }.coerceAtLeast(1)
+                                Text(
+                                    stringResource(
+                                        R.string.expenses_split_hint,
+                                        s.members.joinToString(" / ") { "${Math.round(it.weight * 100.0 / total)}" },
+                                    ),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            }
                         }
                     }
                 }
