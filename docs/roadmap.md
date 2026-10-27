@@ -254,7 +254,17 @@ Validé le 26 octobre (sortie publique sur Google Play), dans cet ordre :
 - [x] Android : demande d'avis Google Play (In-App Review) après deux semaines et 5 jours
   d'utilisation, sur Aujourd'hui sans rien d'ouvert, au plus tous les quatre mois ; version
   Google Play seulement (S) 🤖 (#114)
-- [ ] Audit UI/UX complet (site, app web, Android) avant la sortie publique (M)
+- [x] Audit UI/UX complet (site, app web, Android) avant la sortie publique (M) (PR « Audit du
+  27 octobre ») : [rapport](audits/2026-10-27.md), aucun bloquant sur le web et le site ; outil de
+  captures corrigé (langue de la connexion et de l'écran vide, repas, `/help`). Suites :
+  - [ ] A1 — « À rattraper » partout (onglet des tâches, Bilan, revue, À propos, site, widget et
+    récapitulatif Android) au lieu de « En retard » (S) 🌐🤖🪧
+  - [ ] A2 — Dépenses : pas de « Partage 100 » dans un foyer d'une personne (S) 🌐🤖
+  - [ ] A3 — Site : vidéo de présentation dans chaque langue (M) 🪧
+  - [ ] A4 — Tiroir « Plus » du web : tuile « Aide », comme sur Android (S) 🌐
+  - [ ] A5 — Mêmes onglets de tâches sur le web et Android (M) 🌐🤖
+  - [ ] A6 — Android : captures régénérées et relues, TalkBack et police 200 % sur téléphone
+    avant la sortie (M) 🤖
 - [ ] **Bilan du mois** des dépenses, envoyé le 1er, neutre (voir « Rapprochement mensuel », lot
   4) (S) ⚙️🌐🤖
 - Écartés pour l'instant : routines, recettes enregistrées.

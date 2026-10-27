@@ -18,8 +18,12 @@ for (const scheme of ['light', 'dark'] as const) {
       await page.waitForTimeout(600);
       await page.screenshot({ path: `${OUT}/${tag}-${name}.png`, fullPage: true });
     };
+    // Connexion dans la langue voulue, puis comptes créés en français (libellés des helpers).
+    if (LOCALE)
+      await page.context().addCookies([{ name: 'NEXT_LOCALE', value: LOCALE, url: baseURL! }]);
     await page.goto('/login');
     await shot('login');
+    await page.context().clearCookies();
     await signUpWithHousehold(page, 'Grace');
     const partner = await addPartner(page, baseURL!, 'Nicolas');
     const hid = partner.householdId as string;
@@ -116,6 +120,10 @@ for (const scheme of ['light', 'dark'] as const) {
         ],
       },
     });
+    await page.request.post(`/v1/households/${hid}/meals`, {
+      headers: H,
+      data: { date: today, slot: 'DINNER', title: 'Lasagnes', ingredients: ['Pâtes', 'Tomates'] },
+    });
     await page.request.post(`/v1/households/${hid}/templates`, {
       headers: H,
       data: {
@@ -142,6 +150,7 @@ for (const scheme of ['light', 'dark'] as const) {
       ['history', '/history'],
       ['settings', '/settings'],
       ['about', '/about'],
+      ['help', '/help'],
     ] as const) {
       await page.goto(path);
       await shot(name);
@@ -170,6 +179,7 @@ for (const scheme of ['light', 'dark'] as const) {
     await page.context().clearCookies();
     await signUpWithHousehold(page, 'Nicolas');
     await switchLocale();
+    await page.reload();
     await shot('today-empty');
     for (const [name, path] of [
       ['shopping-empty', '/shopping'],
