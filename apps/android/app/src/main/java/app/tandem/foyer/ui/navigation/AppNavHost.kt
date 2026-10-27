@@ -672,7 +672,8 @@ private fun MainScaffold(
                 )
                 ReportScreen(
                     reportVm,
-                    faqUrl = stringResource(R.string.report_faq_url),
+                    // Questions fréquentes du site, dans la langue du compte (`/help`, publique).
+                    faqUrl = container.webBaseUrl + "help",
                     onBack = { nav.popBackStack() },
                     onMessage = onMessage,
                 )

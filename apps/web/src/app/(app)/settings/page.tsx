@@ -191,6 +191,9 @@ export default function SettingsPage() {
           <p className="text-[0.9375rem] text-text-muted">{t('helpHint')}</p>
           <div className="flex flex-wrap gap-2">
             <Button asChild variant="secondary" className="self-start">
+              <Link href="/help">{t('faq')}</Link>
+            </Button>
+            <Button asChild variant="secondary" className="self-start">
               <Link href="/report?from=/settings">{t('report')}</Link>
             </Button>
             <Button asChild variant="ghost" className="self-start">

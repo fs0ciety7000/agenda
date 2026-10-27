@@ -147,6 +147,22 @@ describe('Compte : mot de passe oublié, Google Sign-In, RGPD (intégration)', (
         .send({ token: second, password: 'nouveau mot de passe' })
         .expect(400);
     });
+
+    it('SÉCURITÉ : au plus 3 e-mails de réinitialisation par heure pour un même compte', async () => {
+      const tom = await registerUser(app, 'Tom');
+      for (let i = 0; i < 5; i++) {
+        // Toujours la même réponse : rien ne dit au demandeur que l'envoi est retenu.
+        await http()
+          .post('/v1/auth/password/forgot')
+          .set(CSRF)
+          .send({ email: tom.email })
+          .expect(202);
+      }
+      await vi.waitFor(() => expect(mail.outbox).toHaveLength(3));
+      await new Promise((r) => setTimeout(r, 300));
+      expect(mail.outbox).toHaveLength(3);
+      expect(mail.outbox.every((m) => m.to === tom.email)).toBe(true);
+    });
   });
 
   describe('Google Sign-In', () => {

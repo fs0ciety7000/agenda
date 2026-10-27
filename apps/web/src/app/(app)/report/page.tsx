@@ -5,7 +5,7 @@ import { ReportView } from './report-view';
 export default function ReportPage() {
   return (
     <Suspense>
-      <ReportView docsUrl={process.env.NEXT_PUBLIC_DOCS_URL || 'https://docs.tandem-agenda.app'} />
+      <ReportView />
     </Suspense>
   );
 }

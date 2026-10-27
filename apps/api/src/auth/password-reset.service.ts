@@ -9,6 +9,8 @@ import { AuthService } from './auth.service';
 import { PasswordService } from './password.service';
 
 const TOKEN_TTL_MS = 30 * 60_000;
+/** E-mails de réinitialisation par compte et par heure, au plus. */
+const MAX_RESETS_PER_HOUR = 3;
 const WELCOME_TTL_MS = 7 * 86_400_000;
 
 @Injectable()
@@ -39,19 +41,36 @@ export class PasswordResetService {
     if (!user || user.deletedAt) return;
     const ttl = opts.welcome ? WELCOME_TTL_MS : TOKEN_TTL_MS;
     const token = randomToken();
-    await this.prisma.$transaction([
-      this.prisma.passwordResetToken.updateMany({
+    const created = await this.prisma.$transaction(async (tx) => {
+      // Une demande à la fois par compte : le compte des envois récents ne peut pas être
+      // contourné par des demandes simultanées.
+      await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${user.id}))`;
+      // Pas plus de MAX_RESETS_PER_HOUR e-mails par compte : la boîte de quelqu'un ne se remplit
+      // pas de demandes faites par un autre (même réponse côté client, rien n'est envoyé, et le
+      // dernier lien envoyé reste valable).
+      if (!opts.welcome) {
+        const recent = await tx.passwordResetToken.count({
+          where: { userId: user.id, createdAt: { gte: new Date(Date.now() - 3_600_000) } },
+        });
+        if (recent >= MAX_RESETS_PER_HOUR) return false;
+      }
+      await tx.passwordResetToken.updateMany({
         where: { userId: user.id, usedAt: null },
         data: { usedAt: new Date() },
-      }),
-      this.prisma.passwordResetToken.create({
+      });
+      await tx.passwordResetToken.create({
         data: {
           userId: user.id,
           tokenHash: sha256Hex(token),
           expiresAt: new Date(Date.now() + ttl),
         },
-      }),
-    ]);
+      });
+      return true;
+    });
+    if (!created) {
+      this.logger.warn(`Password reset skipped: ${MAX_RESETS_PER_HOUR} sent this hour`);
+      return;
+    }
     const url = `${env().WEB_ORIGIN}/reset-password?token=${encodeURIComponent(token)}`;
     await this.mail.send({
       to: user.email,

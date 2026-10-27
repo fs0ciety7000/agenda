@@ -5,6 +5,9 @@ description: Réponses aux questions courantes sur Tandem.
 
 # Questions fréquentes
 
+Les plus courantes sont aussi dans l'app : page **Aide** (lien en bas de la page de connexion,
+ou **Réglages → Aide → Questions fréquentes**, ou depuis « Signaler un problème »).
+
 ### L'autre ne voit pas la tâche que je viens d'ajouter.
 
 Vérifiez qu'elle n'est pas **personnelle** (cadenas) : une tâche personnelle n'est visible que par

@@ -43,6 +43,9 @@ import { TasksModule } from './tasks/tasks.module';
     // V1 : stockage en mémoire (une seule instance). Passage à Redis si mise à l'échelle horizontale.
     ThrottlerModule.forRoot([
       { name: 'default', ttl: 60_000, limit: () => env().GLOBAL_RATE_LIMIT },
+      // Fenêtre d'une heure, aussi large que la minute partout : seules quelques routes
+      // (inscription) la resserrent par @Throttle({ hourly: … }).
+      { name: 'hourly', ttl: 3_600_000, limit: () => env().GLOBAL_RATE_LIMIT * 60 },
     ]),
     PrismaModule,
     MailModule,

@@ -239,6 +239,9 @@ fun SettingsScreen(
                 OutlinedButton(onClick = { onOpenWeb("") }, modifier = Modifier.heightIn(min = 48.dp)) {
                     Text(stringResource(R.string.open_website))
                 }
+                TextButton(onClick = { onOpenWeb("help") }, modifier = Modifier.heightIn(min = 48.dp)) {
+                    Text(stringResource(R.string.report_faq))
+                }
                 TextButton(onClick = { onOpenWeb("privacy") }, modifier = Modifier.heightIn(min = 48.dp)) {
                     Text(stringResource(R.string.privacy_policy))
                 }

@@ -27,6 +27,11 @@ prénom sous lequel l'autre vous verra dans les tâches.
 et ne sert **qu'une fois**. L'autre personne l'ouvre, se connecte ou crée son compte, et rejoint
 le foyer. Vous pouvez en recréer un à tout moment dans **Réglages → Foyer**.
 
+Juste après, l'étape **Votre première tâche** propose quelques idées de tâches qui reviennent
+(sortir les poubelles, faire les courses, arroser les plantes, changer les draps) : touchez-en
+une pour l'ajouter comme tâche répétée, à partir d'aujourd'hui. Vous choisirez ensuite qui s'en
+charge, à tour de rôle si vous voulez (voir [Répétitions](repetitions.md)).
+
 ## 4. (Facultatif) Connecter Google Agenda
 
 Pour voir les tâches planifiées dans votre agenda commun : voir [Calendrier](calendrier.md).

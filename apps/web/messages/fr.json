@@ -5,7 +5,8 @@
     "privacy": "Politique de confidentialité",
     "about": "À propos",
     "tagline": "L’équilibre parfait pour votre foyer.",
-    "language": "Langue"
+    "language": "Langue",
+    "help": "Aide"
   },
   "nav": {
     "today": "Aujourd'hui",
@@ -144,7 +145,18 @@
     "stepCalendar": "Connecter Google Calendar",
     "calendarBody": "Facultatif : vos tâches planifiées apparaîtront dans votre calendrier partagé (par exemple « Commun G & N »). Vous pourrez aussi le faire plus tard dans les Réglages.",
     "connectCalendar": "Connecter Google Calendar",
-    "yourNameHint": "C'est ainsi que l'autre personne vous verra dans les tâches."
+    "yourNameHint": "C'est ainsi que l'autre personne vous verra dans les tâches.",
+    "stepFirstTask": "Votre première tâche",
+    "firstTaskBody": "Une tâche qui revient souvent ? Touchez une idée pour l'ajouter ; vous choisirez ensuite qui s'en charge, à tour de rôle si vous voulez.",
+    "ideas": {
+      "trash": "Sortir les poubelles",
+      "sheets": "Changer les draps",
+      "plants": "Arroser les plantes",
+      "groceries": "Faire les courses"
+    },
+    "every": "{weeks, plural, one {chaque semaine} other {toutes les # semaines}}",
+    "added": "« {title} » ajoutée.",
+    "addIdea": "Ajouter « {title} », {every}"
   },
   "invite": {
     "title": "Rejoindre un foyer",
@@ -181,6 +193,7 @@
     "adminHint": "Comptes, foyers, sauvegardes, tests d'envoi.",
     "help": "Aide",
     "helpHint": "Un bug, une idée, une question ? Signalez-le ; la documentation répond aux questions courantes.",
+    "faq": "Questions fréquentes",
     "report": "Signaler un problème",
     "docs": "Documentation",
     "status": "État du service",
@@ -1684,5 +1697,51 @@
     "loginTitle": "Code de vérification",
     "loginIntro": "Entrez le code à 6 chiffres de votre application d'authentification, ou un code de secours.",
     "restart": "Recommencer la connexion"
+  },
+  "help": {
+    "title": "Questions fréquentes",
+    "intro": "Les réponses courtes aux questions les plus courantes.",
+    "items": {
+      "invite": {
+        "q": "Comment inviter l'autre personne ?",
+        "a": "Juste après la création du foyer, ou dans Réglages → Foyer : copiez le lien d'invitation et envoyez-le. Il est valable 7 jours et ne sert qu'une fois ; s'il a expiré, un nouveau lien s'affiche au même endroit."
+      },
+      "notSeen": {
+        "q": "L'autre ne voit pas la tâche que je viens d'ajouter.",
+        "a": "Vérifiez qu'elle n'est pas personnelle (cadenas) : une tâche personnelle n'est visible que par vous. Sinon, elle apparaît chez l'autre en quelques secondes."
+      },
+      "passkey": {
+        "q": "Comment se connecter avec une passkey ?",
+        "a": "Ajoutez-en une dans Réglages → Compte → Passkeys, sur le site ou dans l'app, puis choisissez « Se connecter avec une passkey ». Elle utilise l'empreinte, le visage ou le code de votre appareil : rien à retenir."
+      },
+      "passkeyRefused": {
+        "q": "Le téléphone refuse la passkey.",
+        "a": "Vérifiez qu'un gestionnaire de passkeys (Google, Samsung Pass…) est activé dans les paramètres du téléphone, puis réessayez. Le mot de passe et la connexion avec Google marchent toujours."
+      },
+      "barcode": {
+        "q": "Le code-barres donne « Produit inconnu ».",
+        "a": "Le produit n'est pas encore dans les bases ouvertes Open Food Facts, Open Beauty Facts ou Open Products Facts. Donnez-lui un nom une fois : le foyer le reconnaîtra ensuite, pour vous deux."
+      },
+      "offline": {
+        "q": "L'app marche-t-elle sans réseau ?",
+        "a": "Oui pour l'essentiel : les tâches et les courses se consultent, se cochent et s'ajoutent hors ligne, puis partent au retour du réseau. Les dépenses, les tickets et les codes-barres demandent une connexion."
+      },
+      "notifications": {
+        "q": "Les notifications n'arrivent pas.",
+        "a": "Sur le site : Réglages → Notifications → Activer sur ce navigateur, puis autorisez-les si le navigateur les bloque. Sur Android : autorisez les notifications de Tandem et retirez-le de l'optimisation de batterie."
+      },
+      "deleted": {
+        "q": "J'ai supprimé une tâche par erreur.",
+        "a": "Touchez « Annuler » juste après, ou retrouvez-la dans Réglages → Journal et corbeille → Corbeille pendant 30 jours."
+      },
+      "data": {
+        "q": "Où sont mes données et comment les supprimer ?",
+        "a": "Dans Réglages → Compte, vous pouvez exporter vos données ou supprimer votre compte. Le détail est dans la politique de confidentialité."
+      }
+    },
+    "more": "Pas de réponse ici ?",
+    "report": "Signaler un problème",
+    "guide": "Guide complet",
+    "status": "État du service"
   }
 }
