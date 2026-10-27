@@ -96,7 +96,7 @@ Dépenses :
 - [x] **Budget par catégorie** en plus du budget global (M) ⚙️🌐🤖 (#89)
   - [x] Android : régler les budgets par catégorie dans l'app (S) 🤖 (#92)
 - [x] **Rapprochement mensuel** : « ce mois-ci, chacun a payé… », envoyé le 1er (S) → bilan du
-  mois (#117)
+  mois (#116)
 
 Vie à deux :
 
@@ -273,7 +273,7 @@ Validé le 26 octobre (sortie publique sur Google Play), dans cet ordre :
     téléphone avant la sortie (M) 🤖
 - [x] **Bilan du mois** des dépenses, envoyé le 1er à 8 h (rattrapé jusqu'au 3) : dépenses
   communes, nombre, budget, ce que chacun a payé par prénom ; notification `EXPENSE_MONTHLY`
-  (cloche, téléphone, navigateur), désactivable (S) ⚙️🌐🤖 (#117)
+  (cloche, téléphone, navigateur), désactivable (S) ⚙️🌐🤖 (#116)
 - Écartés pour l'instant : routines, recettes enregistrées.
 
 Demandé le 10 octobre :

@@ -15,7 +15,7 @@ d'elle-même (ou via Google Play).
 
 ## 27 octobre 2026
 
-### Bilan du mois des dépenses (#117)
+### Bilan du mois des dépenses (#116)
 
 - ✨ **Bilan du mois** : le 1er, une notification résume le mois écoulé : dépenses communes,
   budget, ce que chacun a payé (par prénom, sans classement). Elle se désactive dans Réglages →
