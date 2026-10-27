@@ -17,7 +17,7 @@ test('barre du bas : tirée vers le haut, elle ouvre le tiroir « Plus » ; Éch
 
   const drawer = page.getByRole('dialog', { name: 'Plus' });
   await expect(drawer).toBeVisible();
-  for (const name of ['Dépenses', 'Notes', 'Dates importantes', 'Menus', 'Réglages']) {
+  for (const name of ['Dépenses', 'Notes', 'Dates importantes', 'Menus', 'Aide', 'Réglages']) {
     await expect(drawer.getByRole('link', { name, exact: true })).toBeVisible();
   }
   await page.keyboard.press('Escape');

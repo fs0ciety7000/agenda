@@ -29,7 +29,7 @@
     <string name="greeting">Bonjour %1$s 👋</string>
     <string name="today">Aujourd\'hui</string>
     <string name="today_catch_up">À rattraper</string>
-    <string name="overdue">En retard</string>
+    <string name="overdue">À rattraper</string>
     <string name="this_week">Cette semaine</string>
     <string name="today_progress">%1$d sur %2$d faites</string>
     <string name="today_empty_title">Rien pour aujourd\'hui.</string>
@@ -65,10 +65,12 @@
 
     <!-- Liste -->
     <string name="search">Rechercher</string>
-    <string name="filter_todo">À faire</string>
+    <string name="filter_all">Toutes</string>
+    <string name="filter_today">Aujourd\'hui</string>
+    <string name="filter_overdue">À rattraper</string>
     <string name="filter_upcoming">À venir</string>
     <string name="filter_unscheduled">Sans date</string>
-    <string name="filter_done">Faites</string>
+    <string name="filter_done">Terminées</string>
     <string name="filter_mine">Les miennes</string>
     <string name="tasks_empty">Aucune tâche ici.</string>
     <string name="no_date">Sans date</string>
@@ -222,7 +224,7 @@
     <string name="task_moved">« %1$s » déplacée au %2$s</string>
     <string name="undo">Annuler</string>
     <string name="widget_name">Aujourd\'hui · Tandem</string>
-    <string name="widget_description">Les tâches du jour et celles en retard, à cocher depuis l\'écran d\'accueil.</string>
+    <string name="widget_description">Les tâches du jour et celles à rattraper, à cocher depuis l\'écran d\'accueil.</string>
     <string name="widget_empty">Rien pour aujourd\'hui 🎉</string>
     <string name="widget_signed_out">Ouvrez l\'app pour vous connecter.</string>
     <string name="assignee_suggestion_pick">Confier à %1$s</string>
@@ -275,7 +277,7 @@
     <string name="recap_title">Aujourd\'hui</string>
     <string name="recap_setting">Récapitulatif du matin (8 h)</string>
     <plurals name="recap_today"><item quantity="one">%d tâche aujourd\'hui</item><item quantity="many">%d tâches aujourd\'hui</item><item quantity="other">%d tâches aujourd\'hui</item></plurals>
-    <plurals name="recap_overdue"><item quantity="one">%d en retard</item><item quantity="many">%d en retard</item><item quantity="other">%d en retard</item></plurals>
+    <plurals name="recap_overdue"><item quantity="one">%d à rattraper</item><item quantity="many">%d à rattraper</item><item quantity="other">%d à rattraper</item></plurals>
     <plurals name="recap_due"><item quantity="one">%d à faire cette semaine</item><item quantity="many">%d à faire cette semaine</item><item quantity="other">%d à faire cette semaine</item></plurals>
     <string name="templates_title">Modèles</string>
     <plurals name="templates_create" tools:ignore="ImpliedQuantity"><item quantity="one">Créer la tâche</item><item quantity="many">Créer les %d tâches</item><item quantity="other">Créer les %d tâches</item></plurals>

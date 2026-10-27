@@ -2,6 +2,6 @@ Aanmelden met een toegangssleutel, zonder de app te herstarten.
 • Tweestapsverificatie: code gevraagd na je wachtwoord.
 • Boodschappen: barcode live scannen, ook verzorging en huishouden; "Opnieuw proberen" als opzoeken mislukt.
 • Back-up van het huishouden, te versleutelen; gevoelige notities beschermd.
-• Kasticket: bedrag en datum van de foto gelezen.
+• Kasticket van de foto gelezen; budget per categorie.
 • Delen naar Tandem: een link wordt een taak, notitie of boodschap.
-• Tegel "Taak toevoegen"; budget per categorie; FAQ in Instellingen.
+• Taken: dezelfde tabbladen als de site; FAQ in Instellingen.

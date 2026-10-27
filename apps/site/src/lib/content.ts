@@ -182,7 +182,7 @@ const fr: Content = {
       {
         icon: 'sun',
         title: 'Aujourd’hui en un coup d’œil',
-        text: 'En retard, du jour, de la semaine : tout se coche d’un geste, sur le site comme sur le téléphone.',
+        text: 'À rattraper, du jour, de la semaine : tout se coche d’un geste, sur le site comme sur le téléphone.',
       },
       {
         icon: 'sparkles',
@@ -419,7 +419,7 @@ const en: Content = {
       {
         icon: 'sun',
         title: 'Today at a glance',
-        text: 'Overdue, today, this week: check things off in one tap, on the web and on your phone.',
+        text: 'To catch up, today, this week: check things off in one tap, on the web and on your phone.',
       },
       {
         icon: 'sparkles',
@@ -656,7 +656,7 @@ const nl: Content = {
       {
         icon: 'sun',
         title: 'Vandaag in één oogopslag',
-        text: 'Te laat, vandaag, deze week: afvinken met één tik, op het web en op je telefoon.',
+        text: 'Nog in te halen, vandaag, deze week: afvinken met één tik, op het web en op je telefoon.',
       },
       {
         icon: 'sparkles',

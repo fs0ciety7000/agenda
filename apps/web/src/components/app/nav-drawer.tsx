@@ -3,6 +3,7 @@
 import {
   BarChart3,
   Cake,
+  CircleHelp,
   History,
   type LucideIcon,
   Settings,
@@ -19,7 +20,8 @@ import { cn } from '@/lib/cn';
 /** Pages sans place dans la barre du bas (mobile) : tiroir « Plus » et page `/more`. */
 export const MORE_LINKS: {
   href: string;
-  key: 'expenses' | 'notes' | 'dates' | 'meals' | 'stats' | 'review' | 'history' | 'settings';
+  key:
+    'expenses' | 'notes' | 'dates' | 'meals' | 'stats' | 'review' | 'history' | 'help' | 'settings';
   icon: LucideIcon;
 }[] = [
   { href: '/expenses', key: 'expenses', icon: Wallet },
@@ -29,6 +31,7 @@ export const MORE_LINKS: {
   { href: '/stats', key: 'stats', icon: BarChart3 },
   { href: '/review', key: 'review', icon: Sparkles },
   { href: '/history', key: 'history', icon: History },
+  { href: '/help', key: 'help', icon: CircleHelp },
   { href: '/settings', key: 'settings', icon: Settings },
 ];
 

@@ -172,6 +172,8 @@ Pour chaque liste et chaque formulaire, vérifier :
    cd apps/android
    ./gradlew testDebugUnitTest -Pscreenshots
    ```
+   Sans SDK Android sous la main : étiquette `captures` sur la PR, ou *Run workflow* du
+   workflow `Android` ; les images sont dans l'artefact `android-captures`.
    Les images vont dans `docs/screenshots/android` ; les captures de la fiche Play se font avec
    `--tests '*StoreScreenshots*'`.
 3. **Site vitrine** : `cd apps/site && pnpm build`, puis servir `out/` et capturer les trois

@@ -41,17 +41,28 @@ class AgendaTest {
         val all = Fixtures.week()
         fun titles(f: Agenda.Filter, me: String = GRACE) = Agenda.filter(all, f, TODAY, me).map { it.title }
         assertEquals(
-            listOf("Payer l'assurance auto", "Nettoyer la salle de bain", "Sortir les poubelles", "Appeler le plombier"),
-            titles(Agenda.Filter(Agenda.View.TODO)),
+            listOf(
+                "Payer l'assurance auto", "Nettoyer la salle de bain", "Sortir les poubelles", "Rendez-vous dentiste",
+                "Courses de la semaine", "Changer les draps", "Appeler le plombier",
+            ),
+            titles(Agenda.Filter(Agenda.View.ALL)),
         )
+        assertEquals(
+            listOf("Nettoyer la salle de bain", "Sortir les poubelles", "Arroser les plantes"),
+            titles(Agenda.Filter(Agenda.View.TODAY)),
+        )
+        assertEquals(listOf("Payer l'assurance auto"), titles(Agenda.Filter(Agenda.View.OVERDUE)))
         assertEquals(listOf("Appeler le plombier"), titles(Agenda.Filter(Agenda.View.UNSCHEDULED)))
         assertEquals(listOf("Arroser les plantes"), titles(Agenda.Filter(Agenda.View.DONE)))
         assertEquals(
             listOf("Rendez-vous dentiste", "Courses de la semaine"),
             titles(Agenda.Filter(Agenda.View.UPCOMING, Agenda.Who.ME)),
         )
-        assertEquals(listOf("Sortir les poubelles"), titles(Agenda.Filter(Agenda.View.TODO, query = "POUBELLES")))
-        assertEquals(listOf("Payer l'assurance auto", "Sortir les poubelles"), titles(Agenda.Filter(who = Agenda.Who.ME), NICOLAS))
+        assertEquals(listOf("Sortir les poubelles"), titles(Agenda.Filter(Agenda.View.ALL, query = "POUBELLES")))
+        assertEquals(
+            listOf("Payer l'assurance auto", "Sortir les poubelles", "Courses de la semaine"),
+            titles(Agenda.Filter(who = Agenda.Who.ME), NICOLAS),
+        )
     }
 
     @Test

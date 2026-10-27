@@ -32,7 +32,7 @@ site du navigateur (icône à gauche de l'adresse).
 - **Notifications instantanées** quand l'autre vous confie une tâche.
 - **Rappels** avant chaque tâche planifiée qui vous concerne (délai réglable), avec les boutons
   **Fait**, **Demain** et **Ce week-end** — même hors ligne.
-- **Récapitulatif du matin** à 8 h : les tâches du jour, le nombre en retard et à faire cette
+- **Récapitulatif du matin** à 8 h : les tâches du jour, le nombre à rattraper et à faire cette
   semaine (désactivable).
 
 Le contenu des tâches ne transite jamais par les services de notification : ils ne reçoivent

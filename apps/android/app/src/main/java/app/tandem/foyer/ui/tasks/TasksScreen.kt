@@ -83,8 +83,10 @@ fun TasksScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 listOf(
-                    Agenda.View.TODO to R.string.filter_todo,
+                    Agenda.View.ALL to R.string.filter_all,
+                    Agenda.View.TODAY to R.string.filter_today,
                     Agenda.View.UPCOMING to R.string.filter_upcoming,
+                    Agenda.View.OVERDUE to R.string.filter_overdue,
                     Agenda.View.UNSCHEDULED to R.string.filter_unscheduled,
                     Agenda.View.DONE to R.string.filter_done,
                 ).forEach { (view, label) ->

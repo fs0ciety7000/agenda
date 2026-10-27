@@ -184,14 +184,17 @@ export default function ExpensesPage() {
           <h2 id="balance-title" className="font-semibold">
             {t('balanceTitle')}
           </h2>
-          <button
-            type="button"
-            onClick={() => setWeightsOpen(true)}
-            className="inline-flex min-h-11 items-center gap-1.5 text-sm text-accent underline-offset-4 hover:underline"
-          >
-            <Scale aria-hidden className="size-4" />
-            {t('splitLabel', { split: weightsLabel })}
-          </button>
+          {/* Seul dans le foyer : « Partage 100 » ne dirait rien. */}
+          {members.length > 1 && (
+            <button
+              type="button"
+              onClick={() => setWeightsOpen(true)}
+              className="inline-flex min-h-11 items-center gap-1.5 text-sm text-accent underline-offset-4 hover:underline"
+            >
+              <Scale aria-hidden className="size-4" />
+              {t('splitLabel', { split: weightsLabel })}
+            </button>
+          )}
         </div>
         {!s ? (
           <Skeleton className="h-10 w-full" />

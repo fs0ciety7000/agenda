@@ -38,7 +38,7 @@ class TodayWidgetTest {
         onNode(hasText("Aujourd'hui")).assertExists()
         onNode(hasText("1 sur 3 faites")).assertExists()
         onNode(hasText("Payer l'assurance auto")).assertExists()
-        onNode(hasText("En retard")).assertExists()
+        onNode(hasText("À rattraper")).assertExists()
         onNode(hasContentDescription("Marquer « Sortir les poubelles » comme faite")).assertExists()
         onNode(hasContentDescription("Ajout rapide")).assertExists()
     }

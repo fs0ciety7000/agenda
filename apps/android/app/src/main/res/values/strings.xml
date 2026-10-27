@@ -27,7 +27,7 @@
     <string name="greeting">Hello %1$s 👋</string>
     <string name="today">Today</string>
     <string name="today_catch_up">To catch up</string>
-    <string name="overdue">Overdue</string>
+    <string name="overdue">To catch up</string>
     <string name="this_week">This week</string>
     <string name="today_progress">%1$d of %2$d done</string>
     <string name="today_empty_title">Nothing for today.</string>
@@ -60,7 +60,9 @@
     <string name="priority_urgent">Urgent</string>
 
     <string name="search">Search</string>
-    <string name="filter_todo">To do</string>
+    <string name="filter_all">All</string>
+    <string name="filter_today">Today</string>
+    <string name="filter_overdue">To catch up</string>
     <string name="filter_upcoming">Upcoming</string>
     <string name="filter_unscheduled">No date</string>
     <string name="filter_done">Done</string>
@@ -212,7 +214,7 @@
     <string name="task_moved">“%1$s” moved to %2$s</string>
     <string name="undo">Undo</string>
     <string name="widget_name">Today · Tandem</string>
-    <string name="widget_description">Today\'s and overdue tasks, ticked right from the home screen.</string>
+    <string name="widget_description">Today\'s tasks and the ones to catch up on, ticked right from the home screen.</string>
     <string name="widget_empty">Nothing for today 🎉</string>
     <string name="widget_signed_out">Open the app to sign in.</string>
     <string name="assignee_suggestion_pick">Assign to %1$s</string>
@@ -265,7 +267,7 @@
     <string name="recap_title">Today</string>
     <string name="recap_setting">Morning summary (8 am)</string>
     <plurals name="recap_today"><item quantity="one">%d task today</item><item quantity="other">%d tasks today</item></plurals>
-    <plurals name="recap_overdue"><item quantity="one">%d overdue</item><item quantity="other">%d overdue</item></plurals>
+    <plurals name="recap_overdue"><item quantity="one">%d to catch up</item><item quantity="other">%d to catch up</item></plurals>
     <plurals name="recap_due"><item quantity="one">%d to do this week</item><item quantity="other">%d to do this week</item></plurals>
     <string name="templates_title">Templates</string>
     <plurals name="templates_create"><item quantity="one">Create the task</item><item quantity="other">Create the %d tasks</item></plurals>

@@ -69,11 +69,12 @@ object Agenda {
         else -> today.plusDays((6 - today.dayOfWeek.value).toLong())
     }
 
-    enum class View { TODO, UPCOMING, UNSCHEDULED, DONE }
+    /** Onglets de l'écran Tâches : les mêmes que sur le site (vues de l'API). */
+    enum class View { ALL, TODAY, UPCOMING, OVERDUE, UNSCHEDULED, DONE }
 
     enum class Who { EVERYONE, ME }
 
-    data class Filter(val view: View = View.TODO, val who: Who = Who.EVERYONE, val query: String = "")
+    data class Filter(val view: View = View.ALL, val who: Who = Who.EVERYONE, val query: String = "")
 
     fun filter(all: List<Occurrence>, filter: Filter, today: LocalDate, myMemberId: String?): List<Occurrence> {
         val q = filter.query.trim().lowercase()
@@ -81,8 +82,10 @@ object Agenda {
             .filter { it.status !in hidden }
             .filter {
                 when (filter.view) {
-                    // « À faire » : en retard, aujourd'hui et sans date.
-                    View.TODO -> it.status == OccurrenceStatus.TODO && (it.date == null || it.date <= today)
+                    View.ALL -> it.status == OccurrenceStatus.TODO
+                    // Comme l'API : les tâches du jour, faites comprises (en dernier).
+                    View.TODAY -> it.date == today
+                    View.OVERDUE -> it.status == OccurrenceStatus.TODO && isOverdue(it, today)
                     View.UPCOMING -> it.status == OccurrenceStatus.TODO && it.date != null && it.date > today
                     View.UNSCHEDULED -> it.status == OccurrenceStatus.TODO && it.date == null
                     View.DONE -> it.isDone
@@ -92,7 +95,11 @@ object Agenda {
             .filter { q.isEmpty() || it.title.lowercase().contains(q) || it.notes?.lowercase()?.contains(q) == true }
             .toList()
             .let { list ->
-                if (filter.view == View.DONE) list.sortedByDescending { it.completedAt } else list.sortedWith(order)
+                when (filter.view) {
+                    View.DONE -> list.sortedByDescending { it.completedAt }
+                    View.TODAY -> list.sortedWith(compareBy<Occurrence> { it.isDone }.then(order))
+                    else -> list.sortedWith(order)
+                }
             }
     }
 

@@ -317,7 +317,7 @@
       "all": "Alle",
       "today": "Vandaag",
       "upcoming": "Binnenkort",
-      "overdue": "Te laat",
+      "overdue": "Nog in te halen",
       "unscheduled": "Zonder datum",
       "done": "Gedaan",
       "personal": "Persoonlijk",
@@ -684,7 +684,7 @@
     "minutes": "{time} in totaal",
     "missedTitle": "Wat is blijven liggen",
     "missedNone": "Deze week is er niets blijven liggen. Goed gedaan, jullie allebei!",
-    "missedMore": "En nog een paar: zie “Te laat”.",
+    "missedMore": "En nog een paar: zie “Nog in te halen”.",
     "plan": "Opnieuw plannen",
     "nextTitle": "Volgende week",
     "nextTotal": "{count, plural, =0 {Nog niets gepland} one {# taak gepland} other {# taken gepland}}",
@@ -703,10 +703,10 @@
     "intro": "Gedeelde taken van het huishouden. Om samen te plannen — niet om te tellen wie meer doet.",
     "done": "Gedaan",
     "time": "Bestede tijd",
-    "late": "Te laat gedaan",
+    "late": "Gedaan na de datum",
     "lateHint": "na de geplande datum",
-    "overdue": "Te laat",
-    "overdueHint": "vandaag in te halen",
+    "overdue": "Nog in te halen",
+    "overdueHint": "datum voorbij, nog niet gedaan",
     "perDay": "Gedane taken per dag",
     "empty": "Geen taak gedaan in deze periode.",
     "showTable": "Cijfers tonen",
@@ -838,7 +838,7 @@
     "tagline": "Het perfecte evenwicht voor je huishouden.",
     "intro": "Tandem is een private app die een huishouden helpt de klusjes te verdelen: wie zet de vuilnisbakken buiten, wie doet de boodschappen, wie belt de garage. Hij bestaat als website en als Android-app.",
     "featuresTitle": "Wat de app doet",
-    "features": "Een lijst \"Vandaag\": te laat, vandaag, deze week.\nSnel toevoegen in gewone taal (\"Vuilnisbakken buitenzetten morgen 19u\"), ook met je stem.\nTerugkerende taken, om de beurt tussen de leden van het huishouden.\nGedeelde boodschappenlijst, live bijgewerkt.\nHerinneringen, en meldingen wanneer iemand je een taak geeft.\nWerkt offline, op de website en in de Android-app.",
+    "features": "Een lijst \"Vandaag\": nog in te halen, vandaag, deze week.\nSnel toevoegen in gewone taal (\"Vuilnisbakken buitenzetten morgen 19u\"), ook met je stem.\nTerugkerende taken, om de beurt tussen de leden van het huishouden.\nGedeelde boodschappenlijst, live bijgewerkt.\nHerinneringen, en meldingen wanneer iemand je een taak geeft.\nWerkt offline, op de website en in de Android-app.",
     "googleTitle": "Waarom de app toegang tot Google vraagt",
     "google": "Aanmelden met Google (optioneel): om je zonder wachtwoord aan te melden. De app ontvangt alleen je naam, e-mailadres en Google-identificatie.\nGoogle Agenda (optioneel): zodat de taken van het huishouden in een gedeelde Google-agenda op al je apparaten verschijnen. De app leest je lijst met agenda's zodat je de gedeelde kunt kiezen, en maakt, wijzigt en verwijdert daarna alleen de afspraken die bij je taken horen. Je andere afspraken leest hij niet.\nGegevens die van Google worden ontvangen, worden nooit verkocht, gedeeld of voor advertenties gebruikt.",
     "privacyLink": "Privacybeleid",
@@ -1284,6 +1284,10 @@
     "history": {
       "title": "Activiteit en prullenbak",
       "hint": "Wie wat deed, verwijderde taken"
+    },
+    "help": {
+      "title": "Hulp",
+      "hint": "Veelgestelde vragen, een probleem melden"
     },
     "settings": {
       "title": "Instellingen",

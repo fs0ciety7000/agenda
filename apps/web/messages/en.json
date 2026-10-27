@@ -317,7 +317,7 @@
       "all": "All",
       "today": "Today",
       "upcoming": "Upcoming",
-      "overdue": "Overdue",
+      "overdue": "To catch up",
       "unscheduled": "No date",
       "done": "Done",
       "personal": "Personal",
@@ -684,7 +684,7 @@
     "minutes": "{time} in total",
     "missedTitle": "What slipped",
     "missedNone": "Nothing slipped this week. Well done, both of you!",
-    "missedMore": "And a few more: see “Overdue”.",
+    "missedMore": "And a few more: see “To catch up”.",
     "plan": "Reschedule",
     "nextTitle": "Next week",
     "nextTotal": "{count, plural, =0 {Nothing planned yet} one {# task planned} other {# tasks planned}}",
@@ -703,10 +703,10 @@
     "intro": "Shared household tasks. To plan together — not to keep score.",
     "done": "Done",
     "time": "Time spent",
-    "late": "Done late",
+    "late": "Done after the date",
     "lateHint": "after their planned date",
-    "overdue": "Overdue",
-    "overdueHint": "to catch up today",
+    "overdue": "To catch up",
+    "overdueHint": "past their date, not done yet",
     "perDay": "Tasks done per day",
     "empty": "No task done in this period.",
     "showTable": "Show the numbers",
@@ -838,7 +838,7 @@
     "tagline": "The perfect balance for your household.",
     "intro": "Tandem is a private app that helps a household share its chores: who takes out the bins, who does the shopping, who calls the garage. It is available as a website and an Android app.",
     "featuresTitle": "What the app does",
-    "features": "A \"Today\" list: overdue, today, this week.\nNatural-language quick add (\"Take out the bins tomorrow 7pm\"), by voice too.\nRecurring tasks with turn-taking between household members.\nShared shopping list, updated in real time.\nReminders, and notifications when someone assigns you a task.\nWorks offline, on the website and in the Android app.",
+    "features": "A \"Today\" list: to catch up, today, this week.\nNatural-language quick add (\"Take out the bins tomorrow 7pm\"), by voice too.\nRecurring tasks with turn-taking between household members.\nShared shopping list, updated in real time.\nReminders, and notifications when someone assigns you a task.\nWorks offline, on the website and in the Android app.",
     "googleTitle": "Why the app asks for access to Google",
     "google": "Sign in with Google (optional): to sign in without a password. The app only receives your name, email address and Google identifier.\nGoogle Calendar (optional): so that household tasks appear in a shared Google calendar on all your devices. The app reads your list of calendars so you can pick the shared one, then creates, updates and deletes only the events that correspond to your tasks. It does not read your other events.\nData received from Google is never sold, shared or used for advertising.",
     "privacyLink": "Privacy policy",
@@ -1284,6 +1284,10 @@
     "history": {
       "title": "Activity and trash",
       "hint": "Who did what, deleted tasks"
+    },
+    "help": {
+      "title": "Help",
+      "hint": "Frequently asked questions, report a problem"
     },
     "settings": {
       "title": "Settings",
