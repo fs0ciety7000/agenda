@@ -254,8 +254,8 @@ Validé le 26 octobre (sortie publique sur Google Play), dans cet ordre :
 - [x] Android : demande d'avis Google Play (In-App Review) après deux semaines et 5 jours
   d'utilisation, sur Aujourd'hui sans rien d'ouvert, au plus tous les quatre mois ; version
   Google Play seulement (S) 🤖 (#114)
-- [x] Audit UI/UX complet (site, app web, Android) avant la sortie publique (M) (PR « Audit du
-  27 octobre ») : [rapport](audits/2026-10-27.md), aucun bloquant sur le web et le site ; outil de
+- [x] Audit UI/UX complet (site, app web, Android) avant la sortie publique (M) (#115) :
+  [rapport](audits/2026-10-27.md), aucun bloquant sur le web et le site ; outil de
   captures corrigé (langue de la connexion et de l'écran vide, repas, `/help`). Suites :
   - [ ] A1 — « À rattraper » partout (onglet des tâches, Bilan, revue, À propos, site, widget et
     récapitulatif Android) au lieu de « En retard » (S) 🌐🤖🪧
