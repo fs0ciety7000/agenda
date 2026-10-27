@@ -233,6 +233,12 @@ Demandé le 11 octobre :
   n'est pas une valeur à recopier) (S) 🌐⚙️ (#102)
 - [x] Android : liste des moyens de connexion (Google, passkeys) redemandée au serveur à chaque
   ouverture de l'écran de connexion, au lieu d'être gardée jusqu'à *Forcer l'arrêt* (S) 🤖 (#110)
+- [x] Sécurité : Next.js 15.5.28 (faille critique), zod, multer, body-parser et nodemailer à
+  jour ; `overrides` pour multer et body-parser (dépendances de NestJS) (S) 🌐⚙️ (#111)
+- [x] CI : job E2E fixé sur `ubuntu-24.04` (Playwright 1.56 ne prend pas en charge Ubuntu 26.04,
+  devenu `ubuntu-latest`) (S) ⚙️ (#111)
+- [ ] CI : monter Playwright vers une version qui prend en charge Ubuntu 26.04, puis remettre
+  `ubuntu-latest` sur le job E2E (S) ⚙️
 - [x] Codes-barres hors alimentaire : Open Beauty Facts puis Open Products Facts quand Open Food
   Facts ne connaît pas le produit (le code seul, un essai chacun) (S) ⚙️ (#110)
 

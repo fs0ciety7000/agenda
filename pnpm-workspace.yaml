@@ -22,10 +22,12 @@ ignoredBuiltDependencies:
 # Dépendances indirectes vulnérables (pnpm audit --prod) : versions corrigées imposées, dans
 # la même version majeure, en attendant que les paquets qui les tirent les mettent à jour.
 overrides:
+  body-parser@^2: ^2.4.0
   deepmerge-ts: ^8.0.0
   file-type: ^21.3.2
   js-yaml: ^4.3.2
   lodash: ^4.18.0
+  multer@^2: ^2.5.0
   path-to-regexp@^8: ^8.4.0
   postcss: ^8.5.23
   sharp: 0.35.5
