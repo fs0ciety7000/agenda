@@ -119,9 +119,12 @@ class ScreensTest {
             TasksScreen(state, filter, { filter = it }, {}, {}, {})
         }
         compose.onNodeWithText("Appeler le plombier").assertIsDisplayed()
-        compose.onNodeWithText("Terminées").performClick()
+        // Six onglets : la rangée défile, « Terminées » est hors de l'écran au départ.
+        compose.onNodeWithText("Terminées").performScrollTo().performClick()
         compose.onNodeWithText("Arroser les plantes").assertIsDisplayed()
-        compose.onNodeWithText("Toutes").performClick()
+        compose.onNodeWithText("À rattraper").performScrollTo().performClick()
+        compose.onNodeWithText("Payer l'assurance auto").assertIsDisplayed()
+        compose.onNodeWithText("Toutes").performScrollTo().performClick()
         shot("tasks")
     }
 
