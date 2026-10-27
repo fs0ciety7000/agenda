@@ -1,7 +1,6 @@
-Aanmelden met een toegangssleutel, zonder de app te herstarten.
-• Tweestapsverificatie: code gevraagd na je wachtwoord.
-• Boodschappen: barcode live scannen, ook verzorging en huishouden; "Opnieuw proberen" als opzoeken mislukt.
-• Back-up van het huishouden, te versleutelen; gevoelige notities beschermd.
-• Kasticket van de foto gelezen; budget per categorie.
-• Delen naar Tandem: een link wordt een taak, notitie of boodschap.
-• Taken: dezelfde tabbladen als de site; FAQ in Instellingen.
+Taken: dezelfde tabbladen als op de site (Alle, Vandaag, Binnenkort, Nog in te halen, Zonder datum, Gedaan).
+• "Nog in te halen" overal, ook in de widget en het ochtendoverzicht.
+• Boodschappen: ook barcodes van verzorgings- en huishoudproducten.
+• Aanmelden met een toegangssleutel zonder de app te herstarten.
+• Veelgestelde vragen in Instellingen.
+• Uitgaven: geen "Verdeling 100" meer als je alleen in het huishouden bent.

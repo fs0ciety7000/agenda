@@ -1,7 +1,6 @@
-Sign in with a passkey, shown without restarting the app; clear message if the phone refuses it.
-• Two-step verification: code asked after your password.
-• Shopping: live barcode scan, toiletries and household items too, "Try again" if the lookup fails.
-• Household backup, can be encrypted; sensitive notes protected.
-• Receipt read from the photo; category budgets.
-• Share to Tandem: a link becomes a task, note or shopping item.
-• Tasks: same tabs as the website; FAQ in Settings.
+Tasks: same tabs as on the website (All, Today, Upcoming, To catch up, No date, Done).
+• "To catch up" everywhere, widget and morning summary included.
+• Shopping: barcodes of toiletries and household items too.
+• Passkey sign-in without restarting the app; clear message if the phone refuses it.
+• Frequently asked questions in Settings.
+• Expenses: no more "Split 100" when you're alone in the household.
