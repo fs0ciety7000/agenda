@@ -4,8 +4,8 @@ import { content, LANGS, type Locale } from './content';
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#FAF6F2' },
-    { media: '(prefers-color-scheme: dark)', color: '#141012' },
+    { media: '(prefers-color-scheme: light)', color: '#FFFFFF' },
+    { media: '(prefers-color-scheme: dark)', color: '#0F1012' },
   ],
 };
 

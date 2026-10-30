@@ -833,4 +833,9 @@
         <item quantity="one">Maandoverzicht · %1$s: %2$s aan gedeelde uitgaven (%3$d uitgave, budget %5$s). Betaald: %4$s.</item>
         <item quantity="other">Maandoverzicht · %1$s: %2$s aan gedeelde uitgaven (%3$d uitgaven, budget %5$s). Betaald: %4$s.</item>
     </plurals>
+    <string name="settings_accent">Kleur</string>
+    <string name="accent_ink">Inkt</string>
+    <string name="accent_coral">Koraal</string>
+    <string name="accent_ocean">Oceaan</string>
+    <string name="accent_lagoon">Lagune</string>
 </resources>

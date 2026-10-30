@@ -835,4 +835,9 @@
         <item quantity="one">Monthly summary · %1$s: %2$s of shared expenses (%3$d expense, budget %5$s). Paid: %4$s.</item>
         <item quantity="other">Monthly summary · %1$s: %2$s of shared expenses (%3$d expenses, budget %5$s). Paid: %4$s.</item>
     </plurals>
+    <string name="settings_accent">Colour</string>
+    <string name="accent_ink">Ink</string>
+    <string name="accent_coral">Coral</string>
+    <string name="accent_ocean">Ocean</string>
+    <string name="accent_lagoon">Lagoon</string>
 </resources>

@@ -1,6 +1,8 @@
-# Design system — « Calme »
+# Design system — « Duo »
 
-> Sobre, premium, minimaliste. Pas de rose partout, pas de cœurs, pas de gamification.
+> Premium, épuré, dynamique : blanc franc, gris neutres, une seule couleur d'action au choix
+> (quatre thèmes), le contenu d'abord et l'action à portée du pouce. Pas de gamification.
+> Maquettes de la refonte : tableau « Tandem · Refonte de l'app » (octobre 2026).
 > Source des valeurs : `packages/design-tokens` (génère les variables CSS du web et `Tokens.kt` pour Android).
 
 ## 1. Principes
@@ -13,52 +15,61 @@
 
 ## 2. Couleurs
 
-Palette tirée du logo (`docs/brand/`) : neutres beige rosé, accent **prune** (cœur et coches du
-logo), accent rose poudré en mode sombre. Toutes les paires texte/fond respectent **4.5:1**
-(texte) et **3:1** (UI), vérifiées sur `bg`, `surface` et `surface-muted`.
+Fond blanc franc, gris neutres froids, texte presque noir. Une seule couleur porte l'action
+(boutons principaux, liens, focus, case cochée) : celle du **thème** choisi dans Réglages →
+Apparence → Couleur. Toutes les paires texte/fond respectent **4.5:1** (texte) et **3:1** (UI),
+vérifiées sur `bg`, `surface` et `surface-muted`, pour chaque thème et dans les deux modes.
 
-| Token | Light | Dark | Usage |
+| Token | Clair | Sombre | Usage |
 |---|---|---|---|
-| `bg` | `#FAF6F2` | `#141012` | Fond d'app |
-| `surface` | `#FFFFFF` | `#1D171A` | Cartes, feuilles |
-| `surface-muted` | `#F2EAE4` | `#261F23` | Zones secondaires, hover |
-| `border` | `#E6DAD2` | `#372C32` | Séparateurs |
-| `text` | `#24181D` | `#F1E9EC` | Texte principal |
-| `text-muted` | `#6F5F66` | `#B3A5AB` | Métadonnées |
-| `accent` | `#7D4460` | `#E0A9C3` | Actions primaires, focus, liens |
-| `accent-fg` | `#FFFFFF` | `#2B1220` | Texte sur accent |
-| `success` | `#2B7349` | `#6FCF97` | Terminé, synchronisé |
-| `warning` | `#8C5A00` | `#F2C46D` | En retard, sync en attente |
-| `danger` | `#B3261E` | `#F28B82` | Erreurs, suppression |
+| `bg` | `#FFFFFF` | `#0F1012` | Fond d'app |
+| `surface` | `#FFFFFF` | `#18191C` | Cartes, feuilles |
+| `surface-muted` | `#F3F4F6` | `#222327` | Zones secondaires, tuiles, puces |
+| `border` | `#E5E7EB` | `#2E3035` | Séparateurs |
+| `border-strong` | `#80848C` | `#70747C` | Champs, cases (≥ 3:1) |
+| `text` | `#17181C` | `#F2F3F5` | Texte principal |
+| `text-muted` | `#5F636B` | `#A6AAB2` | Métadonnées |
+| `accent` / `accent-fg` | selon le thème | selon le thème | Action, focus, liens |
+| `success` | `#1F7A50` | `#6FD39F` | Terminé, synchronisé |
+| `warning` | `#8A5A00` | `#F2C46D` | À rattraper, sync en attente |
+| `danger` | `#B42318` | `#F59088` | Erreurs, suppression |
 
-**Couleurs de membres** (attribuées à l'arrivée dans le foyer, modifiables) :
-`sage #557E60`, `ocean #3C7BA2`, `amber #9F691B`, `plum #7A5C99`, `clay #A65D3D`, `slate #5B6770`
-(variantes dark éclaircies de ~25 %). L'initiale d'une pastille utilise le token `on-member` :
-blanc en clair (≥ 4,5:1 sur chaque couleur), `#141012` en sombre. Les couleurs de membres ne
-servent qu'aux pastilles : graphiques et jauges restent neutres (§1.5). « À deux » = pastille
-bicolore ; « À définir » = contour pointillé neutre.
+**Thèmes** (`themes` dans `tokens.json`, `data-accent` sur `<html>` côté web, réglage gardé sur
+l'appareil) :
 
-**Bordures** : `border` (`#E6DAD2` / `#372C32`) pour les cartes et séparateurs ;
-`border-strong` (`#9A7F8B` / `#7C6672`, ≥ 3:1 sur `bg`, `surface` et `surface-muted`) pour les
-champs de saisie, listes déroulantes et zones de texte (WCAG 1.4.11).
+| Thème | Clair (texte blanc) | Sombre |
+|---|---|---|
+| Encre (par défaut) | `#17181C` | `#F2F3F5` |
+| Corail | `#C4314B` | `#FF8C98` |
+| Océan | `#1D5BD8` | `#8DB6FF` |
+| Lagune | `#0B6E6E` | `#6FD3CF` |
 
-**Texte sur une couleur pleine** (`success`, `danger`) : `surface`, jamais du blanc codé en dur
-(le blanc tombe sous 2,5:1 en sombre).
+**Couleurs de membres** : inchangées, pastilles seulement ; graphiques et jauges restent
+neutres (§1.5). L'initiale d'une pastille utilise `on-member`. **Texte sur une couleur pleine**
+(`success`, `danger`) : `surface`, jamais du blanc codé en dur.
 
-**Priorité** : pas de rouge vif. `low` = rien, `normal` = rien, `high` = petit chevron `warning`, `urgent` = chevron `danger`.
+**Priorité** : pas de rouge vif. `high` = petit chevron `warning`, `urgent` = chevron `danger`.
 
 ## 3. Typographie
 
-- **Inter** (variable, `font-feature-settings: "cv11", "ss01"`, chiffres tabulaires pour les heures).
-- Échelle (rem, base 16) : `display 2.0/1.15 semibold` (« Bonjour Grace »), `title 1.25/1.3 semibold`, `headline 1.0625/1.4 medium`, `body 0.9375/1.5 regular`, `caption 0.8125/1.4 regular`, `overline 0.75 medium uppercase +4 % tracking`.
+- **Instrument Sans**, une seule famille (web : `next/font`, Android : `res/font`, licence OFL
+  dans `assets/licenses`), chiffres tabulaires pour les heures et les montants.
+- Quatre tailles, deux graisses (400, 600 ; 500 pour les libellés) : `display 2.0/1.1 semibold`
+  (« Bonjour Emma »), `title 1.25/1.25 semibold` (titres de section, en casse de phrase, jamais
+  en capitales), `body 1.0/1.5 regular`, `caption 0.8125/1.4 medium`.
 - Android : même échelle en `sp`, respect du réglage de taille système.
 
 ## 4. Espacement, rayons, ombres, mouvement
 
 - Grille **4 px** : `0.5=2, 1=4, 2=8, 3=12, 4=16, 5=20, 6=24, 8=32, 10=40, 12=48, 16=64`.
-- Rayons : `sm 6`, `md 10` (inputs, boutons), `lg 14` (cartes), `xl 20` (sheets), `full`.
-- Ombres (light uniquement, dark = bordures) : `sm 0 1px 2px rgb(0 0 0 / .05)`, `md 0 4px 12px rgb(0 0 0 / .06)`, `lg 0 12px 32px rgb(0 0 0 / .10)`.
-- Mouvement : `fast 120 ms`, `base 180 ms`, `slow 260 ms`, courbe `cubic-bezier(.2,.8,.2,1)`. Respect de `prefers-reduced-motion` (animations remplacées par fondus instantanés).
+- Rayons : `sm 8`, `md 12` (champs), `lg 20` (cartes, tuiles), `xl 28` (feuilles), `full`
+  (boutons, puces, barre d'ajout).
+- Listes à plat sur le fond, séparateurs fins ; seules les cartes « vivantes » (courses en
+  cours, résumé) sont surélevées : ombre douce teintée `0 12px 32px rgb(23 24 28 / .10)`.
+- Mouvement : `fast 120 ms`, `base 180 ms`, `slow 260 ms`, courbe `cubic-bezier(.2,.8,.2,1)` ;
+  ressort pour les feuilles. La coche « pop » (0,8 → 1,15 → 1), la ligne faite glisse vers
+  « Fait », la feuille monte avec un léger rebond, « Journée bouclée » une seule fois.
+  Respect de `prefers-reduced-motion` et de « Supprimer les animations » (fondus de 120 ms).
 
 ## 5. Composants (web : `apps/web/src/components/ui`, Android : `ui/components`)
 

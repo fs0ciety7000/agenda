@@ -294,6 +294,21 @@ Idées proposées le 9 octobre, non retenues pour l'instant : « Je m'en occupe 
 d'envies, soirées libres, plusieurs magasins, idées de menus, cagnotte commune, échéances des
 abonnements, import d'un relevé bancaire, montre Wear OS, double authentification TOTP.
 
+### Lot 7 — Refonte « Duo » (validée le 30 octobre)
+
+Maquettes : tableau « Tandem · Refonte de l'app » (direction artistique, écrans, prototype
+animé). Blanc franc, neutres, une couleur d'action au choix, Instrument Sans, barre « Qu'est-ce
+qu'on fait ? » en bas, animations à l'action. Web et Android ensemble. Écartés : prune et
+aubergine.
+
+- [x] Fondations : neutres, quatre thèmes (Encre, Corail, Océan, Lagune) dans Réglages →
+  Apparence, Instrument Sans, rayons (S) 🌐🤖🪧 (#117)
+- [ ] Aujourd'hui : en-tête, carte « courses en direct », sections, barre d'ajout en bas (M) 🌐🤖
+- [ ] Tâches et Courses dans le nouveau style (M) 🌐🤖
+- [ ] Calendrier (bandeau de semaine) et Plus (grille de services) (M) 🌐🤖
+- [ ] Animations : coche, ligne faite, feuille à ressort, « Journée bouclée » (M) 🌐🤖
+- [ ] Site vitrine aux couleurs du nouveau thème (S) 🪧
+
 ### Propositions de design
 
 - **Hiérarchie de l'accueil** : une seule action principale (ajout rapide) ; les sections
