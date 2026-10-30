@@ -320,7 +320,6 @@
   },
   "tasksPage": {
     "title": "Taken",
-    "new": "Nieuwe taak",
     "views": "Weergaven",
     "search": "Taken filteren",
     "noDate": "Zonder datum",
@@ -348,7 +347,9 @@
     },
     "noSeries": "Geen terugkerende taken.",
     "noSeriesBody": "Maak een taak en kies “Herhalen” zodat ze automatisch terugkomt.",
-    "next": "volgende: {date}"
+    "next": "volgende: {date}",
+    "filtersOpen": "Filters",
+    "filtersCount": "{count, plural, one {# filter} other {# filters}}"
   },
   "categories": {
     "emoji": "Emoji",
@@ -777,7 +778,10 @@
     "cleared": "Mandje leeggemaakt.",
     "storeOpen": "Winkelmodus",
     "storeTitle": "In de winkel",
-    "storeLeft": "{count, plural, =0 {Alles zit in het mandje} one {Nog # artikel} other {Nog # artikels}}"
+    "storeLeft": "{count, plural, =0 {Alles zit in het mandje} one {Nog # artikel} other {Nog # artikels}}",
+    "aisleFilter": "Afdelingen",
+    "aisleAll": "Alles",
+    "mealsLink": "Menu's van de week: ingrediënten toevoegen"
   },
   "meals": {
     "title": "Maaltijden",

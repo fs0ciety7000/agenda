@@ -15,6 +15,18 @@ d'elle-même (ou via Google Play).
 
 ## 30 octobre 2026
 
+### Tâches et Courses, nouvelle apparence (#119)
+
+- ✨ **Courses : puces de rayons** en haut de la liste (« Crèmerie 2 ») pour n'afficher qu'un
+  rayon au magasin.
+- 🛠 **Courses plus lisibles** : la liste vient tout de suite après le titre ; la barre d'ajout
+  est en bas de l'écran sur téléphone (scanner un code-barres depuis la barre), les articles
+  souvent achetés juste au-dessus, et les menus de la semaine tiennent sur une ligne sous la
+  liste.
+- 🛠 **Tâches** : filtres en pilules, jours avec « dans 2 jours », lignes simples, barre
+  « Qu'est-ce qu'on fait ? » ; sur téléphone, les filtres personne, catégorie et priorité se
+  replient derrière **Filtres**.
+
 ### Nouvel écran Aujourd'hui (#118)
 
 - ✨ **Courses en direct** : en tête d'Aujourd'hui, une carte dit qui fait les courses (un article

@@ -320,7 +320,6 @@
   },
   "tasksPage": {
     "title": "Tâches",
-    "new": "Nouvelle tâche",
     "views": "Vues",
     "search": "Filtrer les tâches",
     "noDate": "Sans date",
@@ -348,7 +347,9 @@
     },
     "noSeries": "Aucune tâche récurrente.",
     "noSeriesBody": "Créez une tâche et choisissez « Répéter » pour qu'elle revienne automatiquement.",
-    "next": "prochaine : {date}"
+    "next": "prochaine : {date}",
+    "filtersOpen": "Filtres",
+    "filtersCount": "{count, plural, one {# filtre} other {# filtres}}"
   },
   "categories": {
     "emoji": "Emoji",
@@ -777,7 +778,10 @@
     "cleared": "Panier vidé.",
     "storeOpen": "Mode magasin",
     "storeTitle": "Au magasin",
-    "storeLeft": "{count, plural, =0 {Tout est dans le panier} one {Encore # article} other {Encore # articles}}"
+    "storeLeft": "{count, plural, =0 {Tout est dans le panier} one {Encore # article} other {Encore # articles}}",
+    "aisleFilter": "Rayons",
+    "aisleAll": "Tout",
+    "mealsLink": "Menus de la semaine : ajouter leurs ingrédients"
   },
   "meals": {
     "title": "Menus",

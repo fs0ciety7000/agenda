@@ -320,7 +320,6 @@
   },
   "tasksPage": {
     "title": "Tasks",
-    "new": "New task",
     "views": "Views",
     "search": "Filter tasks",
     "noDate": "No date",
@@ -348,7 +347,9 @@
     },
     "noSeries": "No recurring tasks.",
     "noSeriesBody": "Create a task and choose “Repeat” so it comes back automatically.",
-    "next": "next: {date}"
+    "next": "next: {date}",
+    "filtersOpen": "Filters",
+    "filtersCount": "{count, plural, one {# filter} other {# filters}}"
   },
   "categories": {
     "emoji": "Emoji",
@@ -777,7 +778,10 @@
     "cleared": "Basket emptied.",
     "storeOpen": "Store mode",
     "storeTitle": "At the store",
-    "storeLeft": "{count, plural, =0 {Everything is in the basket} one {# item left} other {# items left}}"
+    "storeLeft": "{count, plural, =0 {Everything is in the basket} one {# item left} other {# items left}}",
+    "aisleFilter": "Aisles",
+    "aisleAll": "All",
+    "mealsLink": "This week's meals: add their ingredients"
   },
   "meals": {
     "title": "Meals",

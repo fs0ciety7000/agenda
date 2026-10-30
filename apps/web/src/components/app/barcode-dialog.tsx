@@ -19,9 +19,12 @@ import { useBarcodeActions } from '@/lib/shopping';
 export function BarcodeButton({
   householdId,
   onAdd,
+  compact,
 }: {
   householdId: string;
   onAdd: (name: string) => void;
+  /** Bouton rond, icône seule (barre d'ajout des courses). */
+  compact?: boolean;
 }) {
   const t = useTranslations('barcode');
   const tc = useTranslations('common');
@@ -77,10 +80,22 @@ export function BarcodeButton({
         if (!v) reset();
       }}
     >
-      <Button variant="ghost" onClick={() => setOpen(true)}>
-        <ScanBarcode aria-hidden className="size-4" />
-        {t('open')}
-      </Button>
+      {compact ? (
+        <button
+          type="button"
+          aria-label={t('open')}
+          title={t('open')}
+          onClick={() => setOpen(true)}
+          className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-surface-muted text-text hover:bg-border"
+        >
+          <ScanBarcode aria-hidden className="size-5" />
+        </button>
+      ) : (
+        <Button variant="ghost" onClick={() => setOpen(true)}>
+          <ScanBarcode aria-hidden className="size-4" />
+          {t('open')}
+        </Button>
+      )}
       <DialogContent title={t('title')} description={t('intro')} closeLabel={tc('close')}>
         {!found ? (
           <div className="flex flex-col gap-4">

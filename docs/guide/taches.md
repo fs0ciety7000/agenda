@@ -7,8 +7,9 @@ description: Ajout rapide, formulaire, échéances, responsables, sous-tâches, 
 
 ## Ajout rapide
 
-Sur **Aujourd'hui**, la barre « Qu'est-ce qu'on fait ? » est en haut de la page sur ordinateur,
-et en bas de l'écran sur téléphone, juste au-dessus des onglets. Sur Android, la toucher ouvre
+Sur **Aujourd'hui** et **Tâches**, la barre « Qu'est-ce qu'on fait ? » est en haut de la page sur
+ordinateur, et en bas de l'écran sur téléphone, juste au-dessus des onglets. Sur la page Tâches
+du téléphone, les filtres personne, catégorie et priorité se replient derrière **Filtres**. Sur Android, la toucher ouvre
 l'ajout rapide ; le micro permet de dicter.
 
 L'ajout rapide comprend le français, l'anglais et le néerlandais (`morgen 19u`, `volgende maandag`,

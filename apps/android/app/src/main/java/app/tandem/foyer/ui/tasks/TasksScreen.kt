@@ -2,6 +2,7 @@ package app.tandem.foyer.ui.tasks
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -16,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
@@ -37,7 +37,9 @@ import app.tandem.foyer.ui.components.EmptyState
 import app.tandem.foyer.ui.components.SectionHeader
 import app.tandem.foyer.ui.components.SyncBanner
 import app.tandem.foyer.ui.components.TaskRow
-import app.tandem.foyer.ui.components.groupedCard
+import app.tandem.foyer.ui.components.PillChip
+import app.tandem.foyer.ui.components.flatRow
+import app.tandem.foyer.ui.components.relativeDayLabel
 import app.tandem.foyer.ui.components.currentLocale
 import app.tandem.foyer.ui.components.formatLongDate
 import app.tandem.foyer.ui.main.AgendaUiState
@@ -76,6 +78,7 @@ fun TasksScreen(
                     }
                 },
                 singleLine = true,
+                shape = CircleShape,
                 modifier = Modifier.fillMaxWidth(),
             )
             Row(
@@ -90,35 +93,33 @@ fun TasksScreen(
                     Agenda.View.UNSCHEDULED to R.string.filter_unscheduled,
                     Agenda.View.DONE to R.string.filter_done,
                 ).forEach { (view, label) ->
-                    FilterChip(
-                        selected = filter.view == view,
-                        onClick = { onFilter(filter.copy(view = view)) },
-                        label = { Text(stringResource(label)) },
-                    )
+                    PillChip(stringResource(label), filter.view == view, { onFilter(filter.copy(view = view)) })
                 }
-                FilterChip(
-                    selected = filter.who == Agenda.Who.ME,
-                    onClick = {
-                        onFilter(filter.copy(who = if (filter.who == Agenda.Who.ME) Agenda.Who.EVERYONE else Agenda.Who.ME))
-                    },
-                    label = { Text(stringResource(R.string.filter_mine)) },
-                )
+                PillChip(stringResource(R.string.filter_mine), filter.who == Agenda.Who.ME, {
+                    onFilter(filter.copy(who = if (filter.who == Agenda.Who.ME) Agenda.Who.EVERYONE else Agenda.Who.ME))
+                })
             }
             SyncBanner(state.online, state.sync)
         }
         PullToRefreshBox(isRefreshing = state.sync.refreshing, onRefresh = onRefresh, modifier = Modifier.fillMaxSize()) {
-            LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 96.dp)) {
+            LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 24.dp)) {
                 if (list.isEmpty()) item { EmptyState(stringResource(R.string.tasks_empty)) }
                 // Groupes par jour (sauf « Faites », triées par date de complétion).
                 val groups = if (filter.view == Agenda.View.DONE) listOf(null to list) else list.groupBy { it.date }.toList()
                 groups.forEach { (date, rows) ->
                     if (filter.view != Agenda.View.DONE) {
                         item(key = "h-$date") {
+                            // À droite : la date quand le titre dit « Aujourd'hui », sinon « dans 2 jours ».
                             SectionHeader(
                                 when (date) {
                                     null -> stringResource(R.string.no_date)
                                     state.today -> stringResource(R.string.today)
                                     else -> formatLongDate(date, locale)
+                                },
+                                trailing = when (date) {
+                                    null -> null
+                                    state.today -> formatLongDate(date, locale)
+                                    else -> relativeDayLabel(date, state.today)
                                 },
                             )
                         }
@@ -127,7 +128,7 @@ fun TasksScreen(
                         TaskRow(
                             it, state.members, { onToggle(it) }, { onOpen(it) },
                             myMemberId = state.myMemberId,
-                            modifier = Modifier.groupedCard(i, rows.size),
+                            modifier = Modifier.flatRow(i),
                         )
                     }
                 }

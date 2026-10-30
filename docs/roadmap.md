@@ -305,9 +305,11 @@ aubergine.
   Apparence, Instrument Sans, rayons (S) 🌐🤖🪧 (#117)
 - [x] Aujourd'hui : en-tête, carte « courses en direct », sections, barre d'ajout en bas (M) 🌐🤖
   (#118)
-- [ ] Barre « Qu'est-ce qu'on fait ? » sur les autres écrans (Tâches, Calendrier) à la place
-  du bouton flottant Android (S) 🌐🤖
-- [ ] Tâches et Courses dans le nouveau style (M) 🌐🤖
+- [x] Barre « Qu'est-ce qu'on fait ? » sur Tâches, à la place du bouton flottant Android (S) 🌐🤖
+  (#119)
+- [ ] Barre « Qu'est-ce qu'on fait ? » sur Calendrier (avec le jour choisi) (S) 🌐🤖
+- [x] Tâches et Courses dans le nouveau style : filtres en pilules, lignes à plat, puces de
+  rayons, barre d'ajout des courses en bas, menus en une ligne (M) 🌐🤖 (#119)
 - [ ] Calendrier (bandeau de semaine) et Plus (grille de services) (M) 🌐🤖
 - [ ] Animations : coche, ligne faite, feuille à ressort, « Journée bouclée » (M) 🌐🤖
 - [ ] Site vitrine aux couleurs du nouveau thème (S) 🪧

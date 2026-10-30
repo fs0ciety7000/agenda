@@ -863,4 +863,11 @@
         <item quantity="one">%1$d of %2$d item in the basket</item>
         <item quantity="other">%1$d of %2$d items in the basket</item>
     </plurals>
+    <!-- Courses, refonte « Duo » -->
+    <string name="shopping_aisle_all">All</string>
+    <plurals name="meals_planned"><item quantity="one">%d meal planned this week</item><item quantity="other">%d meals planned this week</item></plurals>
+    <string name="day_tomorrow">Tomorrow</string>
+    <string name="day_yesterday">Yesterday</string>
+    <plurals name="days_from_now"><item quantity="one">In %d day</item><item quantity="other">In %d days</item></plurals>
+    <plurals name="days_ago"><item quantity="one">%d day ago</item><item quantity="other">%d days ago</item></plurals>
 </resources>

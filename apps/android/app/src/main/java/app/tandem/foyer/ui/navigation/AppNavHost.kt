@@ -494,8 +494,10 @@ private fun MainScaffold(
         bottomBar = {
             if (onTab) {
                 Column {
-                    // Aujourd'hui : la barre d'ajout au-dessus des onglets, à portée du pouce.
-                    if (route == Tab.TODAY.route) QuickAddBar(onClick = { showQuickAdd = true }, onVoice = startVoice)
+                    // Aujourd'hui et Tâches : la barre d'ajout au-dessus des onglets, à portée du pouce.
+                    if (route == Tab.TODAY.route || route == Tab.TASKS.route) {
+                        QuickAddBar(onClick = { showQuickAdd = true }, onVoice = startVoice)
+                    }
                     BottomBar(
                         current = route,
                         onTab = { tab ->
@@ -511,7 +513,7 @@ private fun MainScaffold(
             }
         },
         floatingActionButton = {
-            if (onTab && route != Tab.SETTINGS.route && route != Tab.SHOPPING.route && route != Tab.TODAY.route) {
+            if (onTab && route != Tab.SETTINGS.route && route != Tab.SHOPPING.route && route != Tab.TODAY.route && route != Tab.TASKS.route) {
                 FloatingActionButton(onClick = { showQuickAdd = true }) {
                     Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.quick_add))
                 }
@@ -606,6 +608,7 @@ private fun MainScaffold(
                             rememberName = container.barcodes::remember,
                             onAdd = { name -> scope.launch { container.repository.addShopping(listOf(name)) } },
                             onMessage = onMessage,
+                            compact = true,
                         )
                     },
                     guestLink = {
@@ -617,6 +620,7 @@ private fun MainScaffold(
                             create = container.guestLink::create,
                             revoke = container.guestLink::revoke,
                             onMessage = onMessage,
+                            compact = true,
                         )
                     },
                 )

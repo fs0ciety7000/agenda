@@ -11,7 +11,11 @@ direct (indicateur **En direct**).
 - **Ajouter plusieurs articles d'un coup** : « lait, pain, 2 kg de pommes, œufs x12 ». Les
   **quantités** sont reconnues (« 2 kg », « x6 », « 3 »).
 - **Rangée par rayon** (fruits et légumes, crèmerie, épicerie, surgelés…). Si un article est mal
-  rangé, changez son rayon : l'app s'en souvient pour la prochaine fois.
+  rangé, changez son rayon : l'app s'en souvient pour la prochaine fois. Les **puces de rayons**
+  en haut de la liste n'en affichent qu'un (**Tout** pour revenir).
+- Sur téléphone, la **barre d'ajout** est en bas de l'écran ; son bouton scanne un code-barres
+  tant que le champ est vide. Les **menus de la semaine** tiennent sur une ligne sous la liste,
+  avec l'envoi de leurs ingrédients aux courses.
 - **Souvent achetés** : les articles habituels proposés en un geste.
 - Au magasin : cocher envoie l'article **Dans le panier** (« pris par Nicolas ») ; **Vider le
   panier** à la fin.

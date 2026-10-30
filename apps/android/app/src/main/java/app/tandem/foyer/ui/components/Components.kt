@@ -362,3 +362,31 @@ fun Modifier.groupedCard(index: Int, count: Int): Modifier {
         .background(MaterialTheme.colorScheme.surface, shape)
         .border(1.dp, MaterialTheme.colorScheme.outlineVariant, shape)
 }
+
+/** Puce-filtre en pilule (refonte « Duo ») : pleine, couleur d'action, quand elle est choisie. */
+@Composable
+fun PillChip(label: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    androidx.compose.material3.FilterChip(
+        selected = selected,
+        onClick = onClick,
+        label = { Text(label, fontWeight = if (selected) FontWeight.SemiBold else null) },
+        shape = CircleShape,
+        colors = androidx.compose.material3.FilterChipDefaults.filterChipColors(
+            selectedContainerColor = MaterialTheme.colorScheme.primary,
+            selectedLabelColor = MaterialTheme.colorScheme.onPrimary,
+        ),
+        modifier = modifier.heightIn(min = 40.dp),
+    )
+}
+
+/** « Dans 2 jours », « Il y a 3 jours », « Demain » : à droite d'un titre de jour. */
+@Composable
+fun relativeDayLabel(date: java.time.LocalDate, today: java.time.LocalDate): String {
+    val days = java.time.temporal.ChronoUnit.DAYS.between(today, date).toInt()
+    return when {
+        days == 1 -> androidx.compose.ui.res.stringResource(R.string.day_tomorrow)
+        days == -1 -> androidx.compose.ui.res.stringResource(R.string.day_yesterday)
+        days > 1 -> androidx.compose.ui.res.pluralStringResource(R.plurals.days_from_now, days, days)
+        else -> androidx.compose.ui.res.pluralStringResource(R.plurals.days_ago, -days, -days)
+    }
+}

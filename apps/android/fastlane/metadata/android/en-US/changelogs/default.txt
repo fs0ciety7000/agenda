@@ -1,3 +1,5 @@
-New Today screen: "What shall we do?" bar at the bottom, live shopping card (who is shopping, how many items in the basket).
-• New look: white background, new typeface, colour themes in Settings.
-• Monthly expense summary on the 1st: shared total, budget and what each of you paid.
+New look: white background, new typeface, colour themes in Settings.
+• Today: "What shall we do?" bar at the bottom, live shopping card.
+• Shopping: the list first, aisle chips, add bar at the bottom with the scanner, meals on one line.
+• Tasks: pill filters, simple rows.
+• Monthly expense summary on the 1st.

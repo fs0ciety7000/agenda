@@ -16,7 +16,8 @@ type DaysChoice = '1' | '7' | '30' | 'none';
  * Lien invité vers la liste de courses (baby-sitter, quelqu'un qui garde la maison) : lecture
  * seule, sans compte, un par foyer. Créer, copier, envoyer, remplacer ou couper.
  */
-export function GuestLinkButton() {
+/** `compact` : bouton rond, icône seule (en-tête des courses). */
+export function GuestLinkButton({ compact }: { compact?: boolean } = {}) {
   const t = useTranslations('guestLink');
   const tc = useTranslations('common');
   const format = useFormatter();
@@ -66,17 +67,35 @@ export function GuestLinkButton() {
         setCopied(false);
       }}
     >
-      <Button
-        variant="ghost"
-        className="self-start"
-        // Lien actif : dit aussi en toutes lettres, pas seulement par la pastille.
-        aria-label={url ? `${t('share')}, ${t('active')}` : undefined}
-        onClick={() => setOpen(true)}
-      >
-        <Link2 aria-hidden className="size-4" />
-        {t('share')}
-        {url && <span aria-hidden className="size-2 rounded-full bg-success" />}
-      </Button>
+      {compact ? (
+        <button
+          type="button"
+          aria-label={url ? `${t('share')}, ${t('active')}` : t('share')}
+          title={t('share')}
+          onClick={() => setOpen(true)}
+          className="relative inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-border bg-surface text-text hover:bg-surface-muted"
+        >
+          <Link2 aria-hidden className="size-5" />
+          {url && (
+            <span
+              aria-hidden
+              className="absolute right-2 top-2 size-2 rounded-full bg-success ring-2 ring-surface"
+            />
+          )}
+        </button>
+      ) : (
+        <Button
+          variant="ghost"
+          className="self-start"
+          // Lien actif : dit aussi en toutes lettres, pas seulement par la pastille.
+          aria-label={url ? `${t('share')}, ${t('active')}` : undefined}
+          onClick={() => setOpen(true)}
+        >
+          <Link2 aria-hidden className="size-4" />
+          {t('share')}
+          {url && <span aria-hidden className="size-2 rounded-full bg-success" />}
+        </Button>
+      )}
       <DialogContent title={t('title')} description={t('intro')} closeLabel={tc('close')}>
         {url ? (
           <div className="flex flex-col gap-3">

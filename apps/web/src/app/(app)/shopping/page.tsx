@@ -2,7 +2,7 @@
 
 import type { Aisle, ShoppingItemDto } from '@agenda/contracts';
 import { AISLES } from '@agenda/domain';
-import { Check, Plus, ShoppingCart, Store, X } from 'lucide-react';
+import { Check, ChevronRight, Plus, ShoppingCart, Store, UtensilsCrossed, X } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
@@ -33,7 +33,6 @@ import {
 export default function ShoppingPage() {
   const t = useTranslations('shopping');
   const te = useTranslations('errors');
-  const tm = useTranslations('meals');
   const tb = useTranslations('barcode');
   const { me, household } = useSession();
   const memberId = household.members.find((m) => m.userId === me.id)?.id ?? '';
@@ -46,6 +45,8 @@ export default function ShoppingPage() {
   const live = useRealtimeStatus();
   const [text, setText] = useState('');
   const [store, setStore] = useState(false);
+  // Puce de rayon choisie (null = tout) ; un rayon vidé revient à « Tout ».
+  const [aisle, setAisle] = useState<Aisle | null>(null);
   const inputId = useId();
 
   const submit = (e: FormEvent) => {
@@ -63,44 +64,40 @@ export default function ShoppingPage() {
     (m) => m.error,
   );
 
+  const aisles = AISLES.filter((a) => toBuy.some((i) => (i.aisle ?? 'OTHER') === a));
+  const current = aisle && aisles.includes(aisle) ? aisle : null;
+  const shownAisles = current ? [current] : aisles;
+
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between gap-3">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-[2rem] font-semibold leading-tight tracking-tight">{t('title')}</h1>
-          <Link href="/meals" className="text-sm text-accent underline-offset-4 hover:underline">
-            {tm('title')} →
-          </Link>
-        </div>
-        <span
-          className={cn(
-            'inline-flex items-center gap-1.5 text-[0.8125rem]',
-            live ? 'text-success' : 'text-text-muted',
-          )}
-        >
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 flex-col gap-1">
+          <h1 className="text-[2rem] font-semibold leading-tight tracking-[-0.03em]">
+            {t('title')}
+          </h1>
           <span
-            aria-hidden
-            className={cn('size-2 rounded-full', live ? 'bg-success' : 'bg-text-muted/50')}
-          />
-          {t(live ? 'live' : 'notLive')}
-        </span>
-      </div>
-
-      <div className="flex flex-wrap gap-2">
-        {items.some((i) => !i.done) && (
-          <Button variant="secondary" onClick={() => setStore(true)}>
-            <Store aria-hidden className="size-4" />
-            {t('storeOpen')}
-          </Button>
-        )}
-        <BarcodeButton
-          householdId={household.id}
-          onAdd={(name) => {
-            actions.add.mutate([name]);
-            toast({ message: tb('added', { name }) });
-          }}
-        />
-        <GuestLinkButton />
+            className={cn(
+              'inline-flex items-center gap-1.5 text-[0.8125rem] font-medium',
+              live ? 'text-success' : 'text-text-muted',
+            )}
+          >
+            <span
+              aria-hidden
+              className={cn('size-2 rounded-full', live ? 'bg-success' : 'bg-text-muted/50')}
+            />
+            {t(live ? 'live' : 'notLive')}
+          </span>
+        </div>
+        <div className="flex shrink-0 items-center gap-2">
+          {toBuy.length > 0 && (
+            <Button className="rounded-full" onClick={() => setStore(true)}>
+              <Store aria-hidden className="size-4" />
+              {/* Petit écran : icône seule, le titre garde sa place (nom lu quand même). */}
+              <span className="max-[419px]:sr-only">{t('storeOpen')}</span>
+            </Button>
+          )}
+          <GuestLinkButton compact />
+        </div>
       </div>
       {store && (
         <StoreMode
@@ -110,35 +107,58 @@ export default function ShoppingPage() {
         />
       )}
 
-      <form onSubmit={submit} className="flex gap-2">
-        <label htmlFor={inputId} className="sr-only">
-          {t('add')}
-        </label>
-        <input
-          id={inputId}
-          value={text}
-          maxLength={2000}
-          autoComplete="off"
-          placeholder={t('placeholder')}
-          onChange={(e) => setText(e.target.value)}
-          className="min-h-11 min-w-0 flex-1 rounded-md border border-border-strong bg-surface px-3 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
-        />
-        <Button type="submit" disabled={!text.trim()} aria-label={t('add')} title={t('add')}>
-          <Plus aria-hidden className="size-5" />
-        </Button>
-      </form>
-
-      {(suggestions.data?.length ?? 0) > 0 && (
-        <div className="flex flex-col gap-1.5">
-          <p className="text-[0.8125rem] text-text-muted">{t('suggestions')}</p>
-          <ul aria-label={t('suggestions')} className="flex flex-wrap gap-1.5">
+      {/* Mobile : barre d'ajout fixée en bas, à portée du pouce, suggestions au-dessus.
+          Desktop : en haut de la liste. */}
+      <div className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-30 flex flex-col-reverse gap-2 px-4 pb-3 md:static md:z-auto md:flex-col md:p-0">
+        <form
+          onSubmit={submit}
+          className="flex h-14 items-center gap-2 rounded-full border border-border bg-surface pl-5 pr-1.5 shadow-raised focus-within:border-accent focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-accent"
+        >
+          <label htmlFor={inputId} className="sr-only">
+            {t('add')}
+          </label>
+          <input
+            id={inputId}
+            value={text}
+            maxLength={2000}
+            autoComplete="off"
+            enterKeyHint="done"
+            placeholder={t('placeholder')}
+            onChange={(e) => setText(e.target.value)}
+            className="h-full min-w-0 flex-1 bg-transparent text-base font-medium outline-none placeholder:text-text-muted"
+          />
+          {text.trim() ? (
+            <button
+              type="submit"
+              aria-label={t('add')}
+              title={t('add')}
+              className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-accent text-accent-fg"
+            >
+              <Plus aria-hidden className="size-5" />
+            </button>
+          ) : (
+            <BarcodeButton
+              compact
+              householdId={household.id}
+              onAdd={(name) => {
+                actions.add.mutate([name]);
+                toast({ message: tb('added', { name }) });
+              }}
+            />
+          )}
+        </form>
+        {(suggestions.data?.length ?? 0) > 0 && (
+          <ul
+            aria-label={t('suggestions')}
+            className="-mx-4 flex gap-2 overflow-x-auto px-4 [scrollbar-width:none] md:mx-0 md:flex-wrap md:px-0 [&::-webkit-scrollbar]:hidden"
+          >
             {suggestions.data!.map((s) => (
-              <li key={s.text}>
+              <li key={s.text} className="shrink-0">
                 <button
                   type="button"
                   onClick={() => actions.add.mutate([s.text])}
                   aria-label={t('addSuggestion', { text: s.text })}
-                  className="inline-flex min-h-9 items-center gap-1 rounded-full border border-border px-3 text-sm hover:bg-surface-muted"
+                  className="inline-flex h-9 items-center gap-1 rounded-full border border-border bg-surface px-3.5 text-sm hover:bg-surface-muted"
                 >
                   <Plus aria-hidden className="size-3.5" />
                   {s.text}
@@ -146,7 +166,41 @@ export default function ShoppingPage() {
               </li>
             ))}
           </ul>
-        </div>
+        )}
+      </div>
+
+      {aisles.length > 1 && (
+        <nav
+          aria-label={t('aisleFilter')}
+          className="-mx-4 -my-1 overflow-x-auto px-4 py-1 [scrollbar-width:none] md:mx-0 md:px-0 [&::-webkit-scrollbar]:hidden"
+        >
+          <ul className="flex gap-2">
+            {[null, ...aisles].map((a) => {
+              const on = current === a;
+              const count = a
+                ? toBuy.filter((i) => (i.aisle ?? 'OTHER') === a).length
+                : toBuy.length;
+              return (
+                <li key={a ?? 'all'} className="shrink-0">
+                  <button
+                    type="button"
+                    aria-pressed={on}
+                    onClick={() => setAisle(a)}
+                    className={cn(
+                      'inline-flex h-10 items-center gap-1.5 whitespace-nowrap rounded-full border px-4 text-sm',
+                      on
+                        ? 'border-accent bg-accent font-semibold text-accent-fg'
+                        : 'border-border bg-surface hover:bg-surface-muted',
+                    )}
+                  >
+                    {a ? t(`aisles.${a}`) : t('aisleAll')}
+                    <span className="opacity-70">{count}</span>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
       )}
 
       {failed && (
@@ -181,17 +235,14 @@ export default function ShoppingPage() {
               <p className="text-[0.9375rem] text-text-muted">{t('allDone')}</p>
             ) : (
               // Rangé par rayon, dans l'ordre d'un parcours de magasin.
-              AISLES.map((aisle) => {
-                const inAisle = toBuy.filter((i) => (i.aisle ?? 'OTHER') === aisle);
-                if (!inAisle.length) return null;
+              shownAisles.map((a) => {
+                const inAisle = toBuy.filter((i) => (i.aisle ?? 'OTHER') === a);
                 return (
-                  <div key={aisle} className="flex flex-col gap-1">
-                    <h3 className="text-[0.8125rem] font-medium text-text-muted">
-                      {t(`aisles.${aisle}`)}
-                    </h3>
+                  <div key={a} className="flex flex-col">
+                    <h3 className="pt-3 text-base font-semibold">{t(`aisles.${a}`)}</h3>
                     <ItemList
                       items={inAisle}
-                      label={t(`aisles.${aisle}`)}
+                      label={t(`aisles.${a}`)}
                       onToggle={(i) => actions.toggle.mutate({ id: i.id, done: true })}
                       onRemove={(i) => actions.remove.mutate(i.id)}
                       removeLabel={(i) => t('remove', { text: i.text })}
@@ -245,6 +296,17 @@ export default function ShoppingPage() {
           )}
         </>
       )}
+
+      <Link
+        href="/meals"
+        className="flex items-center gap-3 rounded-lg bg-surface-muted px-4 py-3.5 hover:bg-border"
+      >
+        <UtensilsCrossed aria-hidden className="size-5 shrink-0" />
+        <span className="flex-1 text-sm">{t('mealsLink')}</span>
+        <ChevronRight aria-hidden className="size-4 text-text-muted" />
+      </Link>
+      {/* Mobile : la barre d'ajout fixe ne cache pas la fin de la liste. */}
+      <div aria-hidden className="h-24 md:hidden" />
     </div>
   );
 }
@@ -269,12 +331,9 @@ function ItemList({
 }) {
   const t = useTranslations('shopping');
   return (
-    <ul
-      aria-label={label}
-      className="flex flex-col divide-y divide-border rounded-lg border border-border bg-surface"
-    >
+    <ul aria-label={label} className="flex flex-col divide-y divide-border">
       {items.map((item) => (
-        <li key={item.id} className="flex min-h-12 items-center gap-2 px-2">
+        <li key={item.id} className="-ml-2.5 flex min-h-14 items-center gap-2">
           <button
             type="button"
             role="checkbox"
@@ -285,8 +344,8 @@ function ItemList({
           >
             <span
               className={cn(
-                'flex size-5 items-center justify-center rounded-sm border-[1.5px]',
-                item.done ? 'border-success bg-success text-surface' : 'border-text-muted/70',
+                'flex size-6 items-center justify-center rounded-full border-2',
+                item.done ? 'border-accent bg-accent text-accent-fg' : 'border-border-strong',
               )}
             >
               {item.done && <Check aria-hidden className="size-3.5 stroke-[3]" />}
@@ -295,7 +354,7 @@ function ItemList({
           <span className="min-w-0 flex-1 py-2">
             <span
               className={cn(
-                'block break-words text-[0.9375rem]',
+                'block break-words text-base',
                 item.done && 'text-text-muted line-through',
               )}
             >

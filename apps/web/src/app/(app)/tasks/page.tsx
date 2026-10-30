@@ -1,20 +1,21 @@
 'use client';
 
 import type { OccurrenceDto, OccurrenceQuery, TaskPriority } from '@agenda/contracts';
-import { ListChecks, Plus, Search } from 'lucide-react';
+import { ListChecks, Search, SlidersHorizontal } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useTranslations } from 'next-intl';
+import { useFormatter, useTranslations } from 'next-intl';
 import { Suspense, useEffect, useState } from 'react';
 import { useSession } from '@/components/app/household-context';
 import { TaskList } from '@/components/app/task-row';
 import { useTaskDialog } from '@/components/app/use-task-dialog';
-import { Button } from '@/components/ui/button';
+import { QuickAdd } from '@/components/app/quick-add';
 import { Select } from '@/components/ui/select';
 import { EmptyState, ErrorState, Skeleton } from '@/components/ui/states';
 import { errorKey } from '@/lib/api';
 import { cn } from '@/lib/cn';
-import { useDayLabel } from '@/lib/format';
+import { useDayLabel, useToday } from '@/lib/format';
+import { diffDays } from '@agenda/domain';
 import { useCategories, useOccurrences } from '@/lib/tasks';
 import { SeriesList } from '@/components/app/series-list';
 
@@ -70,6 +71,22 @@ function TasksView() {
   const dialog = useTaskDialog();
   const categories = useCategories(household.id);
   const dayLabel = useDayLabel();
+  const format = useFormatter();
+  const today = useToday();
+  // À droite du jour : « dans 2 jours », ou la date quand le titre dit déjà « Demain ».
+  const relativeDay = (date: string) => {
+    const d = diffDays(today, date);
+    if (Math.abs(d) <= 1)
+      return format.dateTime(new Date(`${date}T12:00:00Z`), {
+        timeZone: 'UTC',
+        weekday: 'long',
+        day: 'numeric',
+      });
+    return format.relativeTime(new Date(`${date}T12:00:00Z`), {
+      now: new Date(`${today}T12:00:00Z`),
+      unit: 'day',
+    });
+  };
 
   const tab = (TABS.includes(params.get('tab') as Tab) ? params.get('tab') : 'all') as Tab;
   const assignee = params.get('assignee') ?? '';
@@ -104,17 +121,20 @@ function TasksView() {
     ...(q ? { q } : {}),
   };
   const list = useOccurrences(household.id, query);
+  const activeFilters = [
+    assignee && tab !== 'together' && tab !== 'personal',
+    categoryId,
+    priority,
+  ].filter(Boolean).length;
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const showFilters = filtersOpen || activeFilters > 0;
   const groups = groupItems(list.data ?? [], tab === 'done');
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
-        <Button size="sm" onClick={() => dialog.openNew()}>
-          <Plus aria-hidden className="size-4" />
-          {t('new')}
-        </Button>
-      </div>
+      <h1 className="text-[2rem] font-semibold leading-tight tracking-[-0.03em]">{t('title')}</h1>
+
+      <QuickAdd onMoreOptions={dialog.openNew} />
 
       {/* Marge verticale dans la zone qui défile : sinon elle rogne les pastilles (texte agrandi).
           Fondu au bord droit (mobile) : il reste des onglets à faire défiler. */}
@@ -122,7 +142,7 @@ function TasksView() {
         aria-label={t('views')}
         className="-mx-4 -my-1 overflow-x-auto px-4 py-1 [mask-image:linear-gradient(to_right,black_85%,transparent)] [scrollbar-width:none] md:mx-0 md:px-0 md:[mask-image:none] [&::-webkit-scrollbar]:hidden"
       >
-        <ul className="flex gap-1.5">
+        <ul className="flex gap-2">
           {TABS.map((key) => {
             const next = new URLSearchParams(params);
             next.set('tab', key);
@@ -134,8 +154,9 @@ function TasksView() {
                   scroll={false}
                   aria-current={tab === key ? 'page' : undefined}
                   className={cn(
-                    'inline-flex min-h-9 items-center whitespace-nowrap rounded-full border border-border px-3.5 py-1.5 text-sm text-text-muted transition-colors hover:text-text',
-                    tab === key && 'border-text bg-text text-bg hover:text-bg',
+                    'inline-flex h-10 items-center whitespace-nowrap rounded-full border border-border bg-surface px-4 text-sm transition-colors hover:bg-surface-muted',
+                    tab === key &&
+                      'border-accent bg-accent font-semibold text-accent-fg hover:bg-accent',
                   )}
                 >
                   {t(`tabs.${key}`)}
@@ -152,69 +173,89 @@ function TasksView() {
           tab === 'recurring' && 'hidden',
         )}
       >
-        <div className="relative min-[360px]:col-span-2 md:col-span-1">
-          <label htmlFor="task-search" className="sr-only">
-            {t('search')}
-          </label>
-          <Search
-            aria-hidden
-            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-muted"
-          />
-          <input
-            id="task-search"
-            type="search"
-            value={search}
-            placeholder={t('search')}
-            onChange={(e) => {
-              setSearch(e.target.value);
-              setParam('q', e.target.value.trim());
-            }}
-            className="h-11 w-full rounded-md border border-border-strong bg-surface pl-9 pr-3 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
-          />
-        </div>
-        {tab !== 'together' && tab !== 'personal' && (
-          <Select
-            label={t('filters.person')}
-            hideLabel
-            value={assignee}
-            onChange={(e) => setParam('assignee', e.target.value)}
+        <div className="flex gap-2 min-[360px]:col-span-2 md:col-span-1">
+          <div className="relative min-w-0 flex-1">
+            <label htmlFor="task-search" className="sr-only">
+              {t('search')}
+            </label>
+            <Search
+              aria-hidden
+              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-text-muted"
+            />
+            <input
+              id="task-search"
+              type="search"
+              value={search}
+              placeholder={t('search')}
+              onChange={(e) => {
+                setSearch(e.target.value);
+                setParam('q', e.target.value.trim());
+              }}
+              className="h-11 w-full rounded-full border border-border-strong bg-surface pl-9 pr-3 text-[0.9375rem] focus-visible:border-accent focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-accent"
+            />
+          </div>
+          {/* Mobile : les trois filtres se replient derrière ce bouton (ouverts si l'un est actif). */}
+          <button
+            type="button"
+            aria-expanded={showFilters}
+            aria-controls="task-filters"
+            onClick={() => setFiltersOpen((v) => !v)}
+            className={cn(
+              'inline-flex h-11 shrink-0 items-center gap-1.5 rounded-full border px-4 text-sm md:hidden',
+              activeFilters > 0
+                ? 'border-accent bg-accent font-semibold text-accent-fg'
+                : 'border-border bg-surface',
+            )}
           >
-            <option value="">{t('filters.everyone')}</option>
-            {household.members.map((m) => (
-              <option key={m.id} value={m.id}>
-                {m.displayName}
+            <SlidersHorizontal aria-hidden className="size-4" />
+            {activeFilters > 0 ? t('filtersCount', { count: activeFilters }) : t('filtersOpen')}
+          </button>
+        </div>
+        <div id="task-filters" className={showFilters ? 'contents' : 'hidden md:contents'}>
+          {tab !== 'together' && tab !== 'personal' && (
+            <Select
+              label={t('filters.person')}
+              hideLabel
+              value={assignee}
+              onChange={(e) => setParam('assignee', e.target.value)}
+            >
+              <option value="">{t('filters.everyone')}</option>
+              {household.members.map((m) => (
+                <option key={m.id} value={m.id}>
+                  {m.displayName}
+                </option>
+              ))}
+              <option value="unassigned">{tt('unassigned')}</option>
+            </Select>
+          )}
+          <Select
+            label={t('filters.category')}
+            hideLabel
+            value={categoryId}
+            onChange={(e) => setParam('category', e.target.value)}
+          >
+            <option value="">{t('filters.allCategories')}</option>
+            {categories.data?.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.emoji ? `${c.emoji} ` : ''}
+                {c.name}
               </option>
             ))}
-            <option value="unassigned">{tt('unassigned')}</option>
           </Select>
-        )}
-        <Select
-          label={t('filters.category')}
-          hideLabel
-          value={categoryId}
-          onChange={(e) => setParam('category', e.target.value)}
-        >
-          <option value="">{t('filters.allCategories')}</option>
-          {categories.data?.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.emoji ? `${c.emoji} ` : ''}
-              {c.name}
-            </option>
-          ))}
-        </Select>
-        <Select
-          label={t('filters.priority')}
-          hideLabel
-          value={priority}
-          onChange={(e) => setParam('priority', e.target.value)}
-        >
-          <option value="">{t('filters.allPriorities')}</option>
-          {(['URGENT', 'HIGH', 'NORMAL', 'LOW'] as const).map((p) => (
-            <option key={p} value={p}>
-              {tt(`priority.${p}`)}
-            </option>
-          ))}
-        </Select>
+          <Select
+            label={t('filters.priority')}
+            hideLabel
+            value={priority}
+            onChange={(e) => setParam('priority', e.target.value)}
+          >
+            <option value="">{t('filters.allPriorities')}</option>
+            {(['URGENT', 'HIGH', 'NORMAL', 'LOW'] as const).map((p) => (
+              <option key={p} value={p}>
+                {tt(`priority.${p}`)}
+              </option>
+            ))}
+          </Select>
+        </div>
       </div>
 
       {tab === 'recurring' ? (
@@ -240,11 +281,18 @@ function TasksView() {
           {groups.map(([key, items]) => (
             <section key={key} className="flex flex-col gap-2">
               {key !== '_' && (
-                <h2 className="text-sm font-medium first-letter:uppercase">
-                  {key === 'none' ? t('noDate') : dayLabel(key, 'long')}
-                </h2>
+                <div className="flex items-baseline justify-between gap-3">
+                  <h2 className="text-base font-semibold first-letter:uppercase">
+                    {key === 'none' ? t('noDate') : dayLabel(key, 'long')}
+                  </h2>
+                  {key !== 'none' && (
+                    <span className="text-[0.8125rem] text-text-muted first-letter:uppercase">
+                      {relativeDay(key)}
+                    </span>
+                  )}
+                </div>
               )}
-              <TaskList items={items} onOpen={dialog.openEdit} />
+              <TaskList items={items} onOpen={dialog.openEdit} flat />
             </section>
           ))}
         </div>

@@ -147,3 +147,18 @@ test('Aujourd’hui : carte « courses en direct » quand l’autre coche au mag
   await live.click();
   await expect(page).toHaveURL(/\/shopping$/);
 });
+
+test('courses : une puce de rayon ne montre que ce rayon', async ({ page }) => {
+  await signUpWithHousehold(page, 'Grace');
+  await page.goto('/shopping');
+  await page.getByRole('textbox', { name: 'Ajouter à la liste' }).fill('Tomates, lait');
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('checkbox', { name: 'lait' })).toBeVisible();
+
+  const rayons = page.getByRole('navigation', { name: 'Rayons' });
+  await rayons.getByRole('button', { name: /Crèmerie/ }).click();
+  await expect(page.getByRole('checkbox', { name: 'lait' })).toBeVisible();
+  await expect(page.getByRole('checkbox', { name: 'Tomates' })).toHaveCount(0);
+  await rayons.getByRole('button', { name: /Tout/ }).click();
+  await expect(page.getByRole('checkbox', { name: 'Tomates' })).toBeVisible();
+});

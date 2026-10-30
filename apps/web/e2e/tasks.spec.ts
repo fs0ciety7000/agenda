@@ -68,3 +68,17 @@ test('création via le formulaire complet : tâche personnelle', async ({ page }
   await expect(page.getByText('Préparer une surprise')).toBeVisible();
   await expect(page.getByText('Personnel', { exact: false }).first()).toBeVisible();
 });
+
+test('tâches sur mobile : les filtres se replient derrière « Filtres »', async ({ page }, info) => {
+  test.skip(info.project.name !== 'mobile', 'Repli des filtres : mobile seulement');
+  await signUpWithHousehold(page, 'Grace');
+  await page.goto('/tasks');
+  const toggle = page.getByRole('button', { name: 'Filtres' });
+  await expect(page.getByLabel('Priorité')).toBeHidden();
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  await page.getByLabel('Priorité').selectOption('HIGH');
+  // Un filtre actif : le bouton le compte et les filtres restent ouverts.
+  await expect(page.getByRole('button', { name: '1 filtre' })).toBeVisible();
+  await expect(page.getByLabel('Priorité')).toBeVisible();
+});

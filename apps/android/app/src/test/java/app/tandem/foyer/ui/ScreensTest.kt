@@ -420,6 +420,27 @@ class ScreensTest {
     }
 
     @Test
+    fun courses_puce_de_rayon() {
+        // Deux rayons : la puce « Crèmerie » ne garde que ce rayon, « Tout » les remet.
+        screen {
+            app.tandem.foyer.ui.shopping.ShoppingScreen(
+                items = listOf(
+                    app.tandem.foyer.domain.model.ShoppingItem("1", "Tomates", false, aisle = "PRODUCE"),
+                    app.tandem.foyer.domain.model.ShoppingItem("2", "Lait", false, aisle = "DAIRY"),
+                ),
+                members = state.members, online = true, live = true, sync = SyncState(), refreshing = false,
+                onRefresh = {}, onAdd = {}, onToggle = {}, onRemove = {}, onClearDone = {},
+            )
+        }
+        compose.onNodeWithText("🧀 Crèmerie et œufs  1").performClick()
+        compose.onNodeWithText("Lait").assertIsDisplayed()
+        compose.onNodeWithText("Tomates").assertDoesNotExist()
+        compose.onNodeWithText("Tout  2").performClick()
+        compose.onNodeWithText("Tomates").assertIsDisplayed()
+        shot("shopping-aisles")
+    }
+
+    @Test
     fun ajout_rapide_depuis_un_modele() {
         val applied = mutableListOf<Pair<String, java.time.LocalDate?>>()
         var dictated = 0
