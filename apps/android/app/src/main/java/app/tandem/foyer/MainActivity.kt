@@ -6,6 +6,8 @@ import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.view.WindowCompat
@@ -14,6 +16,7 @@ import app.tandem.foyer.notifications.ReminderScheduler
 import app.tandem.foyer.ui.navigation.AppNavHost
 import app.tandem.foyer.ui.share.SharedText
 import app.tandem.foyer.ui.theme.AgendaTheme
+import app.tandem.foyer.ui.theme.DEFAULT_ACCENT
 
 class MainActivity : ComponentActivity() {
     /** Tâche ouverte depuis une notification de rappel. */
@@ -68,7 +71,8 @@ class MainActivity : ComponentActivity() {
         handle(intent)
         val container = (application as AgendaApplication).container
         setContent {
-            AgendaTheme {
+            val accent by container.settings.accent.collectAsState(initial = DEFAULT_ACCENT)
+            AgendaTheme(accent = accent) {
                 AppNavHost(
                     container = container,
                     openOccurrenceId = openOccurrence.value,

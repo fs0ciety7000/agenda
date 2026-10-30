@@ -87,6 +87,8 @@ attente ».
 
 ## Apparence et langue
 
-Thème **Système**, **Clair** ou **Sombre** dans les Réglages. L'app est en français, en
+Thème **Système**, **Clair** ou **Sombre** dans les Réglages, et la **couleur** de l'app :
+**Encre** (noir et blanc, par défaut), **Corail**, **Océan** ou **Lagune**, sur le site comme
+sur Android. Chaque appareil garde son choix. L'app est en français, en
 anglais et en néerlandais (langue du navigateur ou du téléphone, ou choix dans les Réglages ;
 une autre langue affiche l'anglais). Le choix vaut aussi pour les e-mails.

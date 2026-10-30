@@ -13,6 +13,15 @@ d'elle-même (ou via Google Play).
 **Légende** : ✨ nouveau · 🛠 amélioration · 🐞 correction · 🔒 sécurité et confidentialité ·
 ⚙️ technique
 
+## 30 octobre 2026
+
+### Nouvelle apparence : couleurs et thèmes (#117)
+
+- ✨ **Thèmes de couleur** : Encre (noir et blanc, par défaut), Corail, Océan ou Lagune, dans
+  Réglages → Apparence, sur le site et sur Android.
+- 🛠 **Nouvelle apparence** : fond blanc, gris neutres, nouvelle police (Instrument Sans), coins
+  plus arrondis. Premier pas de la refonte de l'app.
+
 ## 27 octobre 2026
 
 ### Bilan du mois des dépenses (#116)

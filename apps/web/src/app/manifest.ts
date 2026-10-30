@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'L’équilibre parfait pour votre foyer.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#FAF6F2',
-    theme_color: '#FAF6F2',
+    background_color: '#FFFFFF',
+    theme_color: '#FFFFFF',
     lang: 'fr',
     icons: [
       { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },

@@ -25,6 +25,9 @@ interface SettingsStore {
     /** Revue de la semaine, le dimanche soir (activée par défaut). */
     val weeklyReview: Flow<Boolean> get() = kotlinx.coroutines.flow.flowOf(true)
     suspend fun setWeeklyReview(enabled: Boolean) {}
+    /** Thème de couleur de l'app (cf. ui/theme), « ink » par défaut. */
+    val accent: Flow<String> get() = kotlinx.coroutines.flow.flowOf("ink")
+    suspend fun setAccent(accent: String) {}
     suspend fun setLastRefreshAt(millis: Long)
     suspend fun cacheOwner(): String?
     suspend fun setCacheOwner(userId: String?)
@@ -42,6 +45,7 @@ class DataStoreSettingsStore(private val context: Context) : SettingsStore {
     private val owner = stringPreferencesKey("cache_owner")
     private val recap = booleanPreferencesKey("morning_recap")
     private val review = booleanPreferencesKey("weekly_review")
+    private val accentKey = stringPreferencesKey("accent")
     private val ratingFirst = longPreferencesKey("rating_first_day")
     private val ratingLast = longPreferencesKey("rating_last_active_day")
     private val ratingDays = intPreferencesKey("rating_active_days")
@@ -54,6 +58,12 @@ class DataStoreSettingsStore(private val context: Context) : SettingsStore {
     override val morningRecap: Flow<Boolean> = context.settingsStore.data.map { it[recap] ?: true }
 
     override val weeklyReview: Flow<Boolean> = context.settingsStore.data.map { it[review] ?: true }
+
+    override val accent: Flow<String> = context.settingsStore.data.map { it[accentKey] ?: "ink" }
+
+    override suspend fun setAccent(accent: String) {
+        context.settingsStore.edit { it[accentKey] = accent }
+    }
 
     override suspend fun setWeeklyReview(enabled: Boolean) {
         context.settingsStore.edit { it[review] = enabled }
