@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next';
-import { Instrument_Sans } from 'next/font/google';
+import localFont from 'next/font/local';
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getTranslations } from 'next-intl/server';
 import type { ReactNode } from 'react';
@@ -8,10 +8,14 @@ import { themeInitScript } from '@/lib/theme';
 import { Providers } from './providers';
 import './globals.css';
 
-// Police unique de l'app (design system « Duo ») : 400, 500, 600.
-const sans = Instrument_Sans({
-  subsets: ['latin', 'latin-ext'],
-  weight: ['400', '500', '600'],
+// Police unique de l'app (design system « Duo ») : 400, 500, 600. Fichiers dans le dépôt
+// (latin étendu, licence OFL dans src/fonts) : le build ne dépend pas de Google Fonts.
+const sans = localFont({
+  src: [
+    { path: '../fonts/instrument-sans-regular.woff2', weight: '400', style: 'normal' },
+    { path: '../fonts/instrument-sans-medium.woff2', weight: '500', style: 'normal' },
+    { path: '../fonts/instrument-sans-semibold.woff2', weight: '600', style: 'normal' },
+  ],
   variable: '--font-instrument',
   display: 'swap',
 });
