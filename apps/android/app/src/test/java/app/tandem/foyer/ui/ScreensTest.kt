@@ -19,7 +19,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.hasScrollToIndexAction
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.isToggleable
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.tandem.foyer.data.ReminderSettings
@@ -44,7 +46,9 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.SemanticsMatcher
 import androidx.compose.ui.test.hasAnyDescendant
+import androidx.compose.ui.test.hasScrollToIndexAction
 import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performCustomAccessibilityActionWithLabel
 import androidx.compose.ui.test.performTouchInput
 import androidx.compose.ui.test.performTextInput
@@ -134,6 +138,8 @@ class ScreensTest {
             var filter by remember { mutableStateOf(Agenda.Filter()) }
             TasksScreen(state, filter, { filter = it }, {}, {}, {})
         }
+        // Sans date, en bas de la liste : on y fait défiler la liste (titres de section plus hauts).
+        compose.onNode(hasScrollToIndexAction()).performScrollToNode(hasText("Appeler le plombier"))
         compose.onNodeWithText("Appeler le plombier").assertIsDisplayed()
         // Six onglets : la rangée défile, « Terminées » est hors de l'écran au départ.
         compose.onNodeWithText("Terminées").performScrollTo().performClick()
@@ -403,7 +409,7 @@ class ScreensTest {
             )
         }
         compose.onNodeWithText("En direct").assertIsDisplayed()
-        compose.onNodeWithText("À ACHETER (1)").assertIsDisplayed()
+        compose.onNodeWithText("À acheter (1)").assertIsDisplayed()
         compose.onNodeWithText("Pris par Nicolas").assertIsDisplayed()
         compose.onNodeWithText("Ajouter à la liste").performTextInput("Œufs, beurre")
         compose.onNodeWithContentDescription("Ajouter à la liste").performClick()
