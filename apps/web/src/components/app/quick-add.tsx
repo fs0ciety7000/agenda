@@ -20,10 +20,16 @@ import type { TaskDraft } from './task-form';
 export function QuickAdd({
   onMoreOptions,
   extra,
+  defaultDate,
+  placeholder,
 }: {
   onMoreOptions: (draft: TaskDraft) => void;
   /** Action secondaire affichée à droite, sous le champ (ex. « Utiliser un modèle »). */
   extra?: React.ReactNode;
+  /** Jour choisi (calendrier) : la tâche y va si la phrase ne donne pas de date. */
+  defaultDate?: string;
+  /** « Qu'est-ce qu'on fait jeudi ? » ; sinon l'invite générale. */
+  placeholder?: string;
 }) {
   const t = useTranslations('quickAdd');
   const te = useTranslations('errors');
@@ -63,20 +69,20 @@ export function QuickAdd({
     }
     const controller = new AbortController();
     const timer = setTimeout(() => {
-      parseQuickAdd(household.id, text, controller.signal).then(setPreview, () => {});
+      parseQuickAdd(household.id, text, controller.signal, defaultDate).then(setPreview, () => {});
     }, 200);
     return () => {
       clearTimeout(timer);
       controller.abort();
     };
-  }, [text, household.id]);
+  }, [text, household.id, defaultDate]);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     if (!text.trim() || (quickAdd.isPending && !quickAdd.isPaused)) return;
     const offline = !onlineManager.isOnline();
     quickAdd.mutate(
-      { hid: household.id, text, key: crypto.randomUUID() },
+      { hid: household.id, text, key: crypto.randomUUID(), defaultDate },
       {
         onSuccess: (o) => {
           setText('');
@@ -145,7 +151,7 @@ export function QuickAdd({
             id="quick-add"
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder={t('placeholder')}
+            placeholder={placeholder ?? t('placeholder')}
             autoComplete="off"
             enterKeyHint="done"
             maxLength={500}

@@ -495,9 +495,20 @@ private fun MainScaffold(
         bottomBar = {
             if (onTab) {
                 Column {
-                    // Aujourd'hui et Tâches : la barre d'ajout au-dessus des onglets, à portée du pouce.
+                    // Aujourd'hui, Tâches et Calendrier : la barre d'ajout au-dessus des onglets, à portée
+                    // du pouce. Calendrier : la tâche va au jour choisi, sauf si la phrase en dit un.
                     if (route == Tab.TODAY.route || route == Tab.TASKS.route) {
-                        QuickAddBar(onClick = { showQuickAdd = true }, onVoice = startVoice)
+                        QuickAddBar(
+                            onClick = { vm.startQuickAdd(null); showQuickAdd = true },
+                            onVoice = { vm.startQuickAdd(null); startVoice() },
+                        )
+                    } else if (route == Tab.CALENDAR.route) {
+                        val day = selectedDay?.let(LocalDate::parse) ?: state.today
+                        QuickAddBar(
+                            onClick = { vm.startQuickAdd(day); showQuickAdd = true },
+                            onVoice = { vm.startQuickAdd(day); startVoice() },
+                            prompt = quickAddPrompt(day, state.today),
+                        )
                     }
                     BottomBar(
                         current = route,
@@ -514,7 +525,7 @@ private fun MainScaffold(
             }
         },
         floatingActionButton = {
-            if (onTab && route != Tab.SETTINGS.route && route != Tab.SHOPPING.route && route != Tab.TODAY.route && route != Tab.TASKS.route) {
+            if (onTab && route != Tab.SETTINGS.route && route != Tab.SHOPPING.route && route != Tab.TODAY.route && route != Tab.TASKS.route && route != Tab.CALENDAR.route) {
                 FloatingActionButton(onClick = { showQuickAdd = true }) {
                     Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.quick_add))
                 }
@@ -813,7 +824,10 @@ private fun MainScaffold(
                 showQuickAdd = false
                 nav.navigate("new")
             },
-            onDismiss = { showQuickAdd = false },
+            onDismiss = {
+                showQuickAdd = false
+                vm.startQuickAdd(null)
+            },
             templates = templates,
             onVoice = {
                 showQuickAdd = false
@@ -977,4 +991,21 @@ private tailrec fun Context.findActivity(): Activity? = when (this) {
     is Activity -> this
     is ContextWrapper -> baseContext.findActivity()
     else -> null
+}
+
+/** Invite de la barre d'ajout du calendrier : « Qu'est-ce qu'on fait jeudi ? », « … le 12 novembre ? ». */
+@Composable
+private fun quickAddPrompt(day: LocalDate, today: LocalDate): String? {
+    val locale = app.tandem.foyer.ui.components.currentLocale()
+    return when {
+        day == today -> null
+        day.isAfter(today) && !day.isAfter(today.plusDays(6)) -> stringResource(
+            R.string.quick_add_prompt_weekday,
+            day.dayOfWeek.getDisplayName(java.time.format.TextStyle.FULL, locale),
+        )
+        else -> stringResource(
+            R.string.quick_add_prompt_date,
+            java.time.format.DateTimeFormatter.ofPattern("d MMMM", locale).format(day),
+        )
+    }
 }

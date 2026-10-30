@@ -899,4 +899,12 @@
     <string name="drawer_settings_hint">Foyer, compte, notifications, langue</string>
     <string name="day_wrapped_title">Journée bouclée</string>
     <plurals name="day_wrapped_body" tools:ignore="ImpliedQuantity"><item quantity="one">La tâche du jour est faite. Profitez du reste de la journée.</item><item quantity="many">Les %d tâches du jour sont faites. Profitez du reste de la journée.</item><item quantity="other">Les %d tâches du jour sont faites. Profitez du reste de la journée.</item></plurals>
+    <!-- Barre d'ajout du calendrier : jour de la semaine, ou date plus lointaine -->
+    <string name="quick_add_prompt_weekday">Qu\'est-ce qu\'on fait %1$s ?</string>
+    <string name="quick_add_prompt_date">Qu\'est-ce qu\'on fait le %1$s ?</string>
+    <!-- Calendrier : vue Mois ou Semaine (bandeau) -->
+    <string name="previous_week">Semaine précédente</string>
+    <string name="next_week">Semaine suivante</string>
+    <string name="calendar_view_month">Mois</string>
+    <string name="calendar_view_week">Semaine</string>
 </resources>

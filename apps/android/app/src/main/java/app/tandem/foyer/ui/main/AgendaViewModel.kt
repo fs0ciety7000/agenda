@@ -55,7 +55,8 @@ sealed interface AgendaEvent {
     data class ThanksFailed(val result: OpResult) : AgendaEvent
 }
 
-data class QuickAddState(val text: String = "", val preview: QuickAddPreview? = null)
+/** [defaultDate] : jour choisi dans le calendrier (ajout rapide ouvert depuis ce jour). */
+data class QuickAddState(val text: String = "", val preview: QuickAddPreview? = null, val defaultDate: LocalDate? = null)
 
 @OptIn(FlowPreview::class)
 class AgendaViewModel(
@@ -93,7 +94,7 @@ class AgendaViewModel(
         // Aperçu du quick add (analyse serveur), sans spammer l'API à chaque lettre.
         _quickAdd.debounce(400).onEach { qa ->
             val text = qa.text.trim()
-            val preview = if (text.length >= 3) repository.previewQuickAdd(text) else null
+            val preview = if (text.length >= 3) repository.previewQuickAdd(text, qa.defaultDate) else null
             _quickAdd.update { if (it.text.trim() == text) it.copy(preview = preview) else it }
         }.launchIn(viewModelScope)
     }
@@ -138,11 +139,16 @@ class AgendaViewModel(
 
     fun onQuickAddText(text: String) = _quickAdd.update { it.copy(text = text, preview = null) }
 
+    /** Ouvre l'ajout rapide pour un jour (calendrier), ou sans jour (null). */
+    fun startQuickAdd(defaultDate: LocalDate?) = _quickAdd.update { it.copy(defaultDate = defaultDate, preview = null) }
+
     fun submitQuickAdd(): Boolean {
         val text = _quickAdd.value.text.trim()
         if (text.isEmpty()) return false
+        val date = _quickAdd.value.defaultDate
+        // La feuille se ferme : le prochain ajout repart sans jour imposé (sauf depuis le calendrier).
         _quickAdd.value = QuickAddState()
-        viewModelScope.launch { repository.quickAdd(text) }
+        viewModelScope.launch { repository.quickAdd(text, date) }
         return true
     }
 }

@@ -1,7 +1,6 @@
 Nouvelle apparence : fond blanc, nouvelle police, thèmes de couleur dans Réglages.
-• Aujourd'hui : barre « Qu'est-ce qu'on fait ? » en bas, carte des courses en direct.
-• Courses : la liste d'abord, puces de rayons, barre d'ajout en bas avec le scanner, menus en une ligne.
-• Tâches : filtres en pilules, lignes simples.
-• Plus : tuiles Dépenses et Dates, Réglages en bas ; calendrier redessiné.
-• « Journée bouclée » et coche animée.
+• Aujourd'hui : barre « Qu'est-ce qu'on fait ? » en bas, courses en direct, « Journée bouclée ».
+• Courses : la liste d'abord, puces de rayons, ajout en bas avec le scanner.
+• Tâches et Plus redessinés, coche animée.
+• Calendrier : vue Semaine, ajout rapide au jour choisi.
 • Bilan du mois des dépenses, le 1er.

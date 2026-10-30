@@ -20,6 +20,11 @@ disponible dans les vues jour et 3 jours.
   proposé juste après.
 - Au clavier ou avec un lecteur d'écran (TalkBack) : actions « jour précédent / suivant ».
 - Toucher un créneau vide crée une tâche à cette heure-là.
+- La barre **« Qu'est-ce qu'on fait jeudi ? »** (vue jour, ou jour touché du mois sur téléphone ;
+  sur Android, en bas du calendrier) ajoute la tâche au jour choisi, sauf si la phrase en dit un
+  autre (« demain 19h »).
+- Sur Android, **Semaine** remplace la grille du mois par un bandeau de 7 jours ; les flèches
+  passent d'une semaine à l'autre.
 
 ## Publier dans Google Agenda (facultatif)
 

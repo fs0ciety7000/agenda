@@ -94,10 +94,15 @@ export function useQuickAdd(hid: string) {
   });
 }
 
-export const parseQuickAdd = (hid: string, text: string, signal?: AbortSignal) =>
+export const parseQuickAdd = (
+  hid: string,
+  text: string,
+  signal?: AbortSignal,
+  defaultDate?: string,
+) =>
   api<QuickAddPreview>(`/v1/households/${hid}/quick-add/parse`, {
     method: 'POST',
-    json: { text },
+    json: { text, defaultDate },
     signal,
   });
 

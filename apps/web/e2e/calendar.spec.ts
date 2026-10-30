@@ -52,3 +52,32 @@ test('calendrier partagé non configuré : message clair', async ({ page }) => {
     page.getByText("La connexion à Google Calendar n'est pas activée sur ce serveur."),
   ).toBeVisible();
 });
+
+test('calendrier, vue jour : la barre d’ajout met la tâche sur le jour affiché', async ({
+  page,
+}) => {
+  await signUpWithHousehold(page, 'Emma');
+  const today = todayBrussels();
+  const x = new Date(`${today}T12:00:00Z`);
+  x.setUTCDate(x.getUTCDate() + 3);
+  const day = x.toISOString().slice(0, 10);
+  const weekday = x.toLocaleDateString('fr-FR', { weekday: 'long', timeZone: 'UTC' });
+
+  await page.goto(`/calendar?view=day&date=${day}`);
+  const quickAdd = page.getByLabel('Ajouter une tâche rapidement');
+  await expect(quickAdd).toHaveAttribute('placeholder', `Qu'est-ce qu'on fait ${weekday} ?`);
+  await quickAdd.fill('Arroser les plantes');
+  await quickAdd.press('Enter');
+  await expect(quickAdd).toHaveValue('');
+  await expect(page.getByRole('button', { name: /Arroser les plantes/ })).toBeVisible();
+
+  // La phrase l'emporte sur le jour affiché : « demain » va à demain, pas au jour affiché.
+  await quickAdd.fill('Sortir les poubelles demain');
+  await quickAdd.press('Enter');
+  await expect(quickAdd).toHaveValue('');
+  await expect(page.getByRole('button', { name: /Sortir les poubelles/ })).toHaveCount(0);
+  const tomorrow = new Date(`${today}T12:00:00Z`);
+  tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
+  await page.goto(`/calendar?view=day&date=${tomorrow.toISOString().slice(0, 10)}`);
+  await expect(page.getByRole('button', { name: /Sortir les poubelles/ })).toBeVisible();
+});

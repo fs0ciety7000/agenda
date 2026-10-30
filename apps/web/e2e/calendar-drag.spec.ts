@@ -42,7 +42,9 @@ test('calendrier : glisser, redimensionner, déplacer au clavier et annuler', as
   await expect(page.getByRole('dialog')).toHaveCount(0); // le glisser n'ouvre pas la tâche
   await expect.poll(async () => (await task.get()).startMinute).toBe(11 * 60);
 
-  // Tirer le bord inférieur : +30 minutes.
+  // Tirer le bord inférieur : +30 minutes. Bloc recentré d'abord : le toast « déplacée » occupe
+  // le bas de l'écran (barre d'ajout au-dessus de la grille).
+  await block.evaluate((el) => el.scrollIntoView({ block: 'center' }));
   const box2 = (await block.boundingBox())!;
   await page.mouse.move(box2.x + box2.width / 2, box2.y + box2.height - 3);
   await page.mouse.down();

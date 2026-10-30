@@ -30,7 +30,13 @@ import app.tandem.foyer.R
  * l'ajout rapide ; le micro, la dictée. Remplace le bouton flottant sur cet écran.
  */
 @Composable
-fun QuickAddBar(onClick: () -> Unit, onVoice: (() -> Unit)?, modifier: Modifier = Modifier) {
+fun QuickAddBar(
+    onClick: () -> Unit,
+    onVoice: (() -> Unit)?,
+    modifier: Modifier = Modifier,
+    /** « Qu'est-ce qu'on fait jeudi ? » (calendrier) ; sinon l'invite générale. */
+    prompt: String? = null,
+) {
     Surface(
         onClick = onClick,
         shape = CircleShape,
@@ -49,7 +55,7 @@ fun QuickAddBar(onClick: () -> Unit, onVoice: (() -> Unit)?, modifier: Modifier 
         ) {
             Icon(Icons.Filled.Add, contentDescription = null)
             Text(
-                stringResource(R.string.quick_add_prompt),
+                prompt ?: stringResource(R.string.quick_add_prompt),
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Medium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

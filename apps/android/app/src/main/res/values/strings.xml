@@ -876,4 +876,12 @@
     <string name="drawer_settings_hint">Household, account, notifications, language</string>
     <string name="day_wrapped_title">Day wrapped</string>
     <plurals name="day_wrapped_body"><item quantity="one">Today\'s task is done. Enjoy the rest of your day.</item><item quantity="other">All %d of today\'s tasks are done. Enjoy the rest of your day.</item></plurals>
+    <!-- Barre d'ajout du calendrier : jour de la semaine, ou date plus lointaine -->
+    <string name="quick_add_prompt_weekday">What shall we do on %1$s?</string>
+    <string name="quick_add_prompt_date">What shall we do on %1$s?</string>
+    <!-- Calendrier : vue Mois ou Semaine (bandeau) -->
+    <string name="previous_week">Previous week</string>
+    <string name="next_week">Next week</string>
+    <string name="calendar_view_month">Month</string>
+    <string name="calendar_view_week">Week</string>
 </resources>

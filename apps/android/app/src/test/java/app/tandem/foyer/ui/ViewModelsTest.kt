@@ -94,6 +94,24 @@ class ViewModelsTest {
     }
 
     @Test
+    fun `ajout rapide depuis un jour du calendrier - ce jour part avec la phrase`() = runTest(dispatcher) {
+        val repo = FakeAgendaRepository()
+        val vm = AgendaViewModel(repo, clock = clock)
+        val day = Fixtures.TODAY.plusDays(3)
+        vm.startQuickAdd(day)
+        vm.onQuickAddText("Appeler le garage")
+        assertTrue(vm.submitQuickAdd())
+        advanceUntilIdle()
+        assertEquals(listOf<java.time.LocalDate?>(day), repo.quickAddDates)
+        // Rouvert sans jour (Aujourd'hui, Tâches) : plus de jour imposé.
+        vm.startQuickAdd(null)
+        vm.onQuickAddText("Arroser")
+        vm.submitQuickAdd()
+        advanceUntilIdle()
+        assertEquals(listOf(day, null), repo.quickAddDates)
+    }
+
+    @Test
     fun `formulaire - titre obligatoire, repetition impose une date, creation`() = runTest(dispatcher) {
         val repo = FakeAgendaRepository()
         val vm = TaskFormViewModel(repo, null, null)

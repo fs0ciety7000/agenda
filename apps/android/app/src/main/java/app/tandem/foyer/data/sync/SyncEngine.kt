@@ -143,7 +143,7 @@ class SyncEngine(
             op.idempotencyKey,
             json.decodeFromString(JsonObject.serializer(), op.payload!!),
         )
-        QUICK_ADD -> api.quickAdd(op.householdId, op.idempotencyKey, QuickAddRequest(op.payload!!))
+        QUICK_ADD -> api.quickAdd(op.householdId, op.idempotencyKey, QuickAddRequest.decode(op.payload!!))
         else -> error("Unknown operation ${op.type}")
     }
 

@@ -307,13 +307,13 @@ aubergine.
   (#118)
 - [x] Barre « Qu'est-ce qu'on fait ? » sur Tâches, à la place du bouton flottant Android (S) 🌐🤖
   (#119)
-- [ ] Barre « Qu'est-ce qu'on fait ? » sur Calendrier (avec le jour choisi) (S) 🌐🤖
+- [x] Barre « Qu'est-ce qu'on fait ? » sur Calendrier (avec le jour choisi) (S) 🌐🤖 (#121)
 - [x] Tâches et Courses dans le nouveau style : filtres en pilules, lignes à plat, puces de
   rayons, barre d'ajout des courses en bas, menus en une ligne (M) 🌐🤖 (#119)
 - [x] Calendrier (bandeau de semaine, vue en pilule) et Plus (grille de tuiles, Réglages avec
   les membres) (M) 🌐🤖 (#119)
-- [ ] Android : vue jour du calendrier avec bandeau de semaine (aujourd'hui : mois + liste du
-  jour) (M) 🤖
+- [x] Android : vue Semaine du calendrier, bandeau de 7 jours au-dessus de la liste du jour (M) 🤖
+  (#121)
 - [x] Animations : coche, ligne faite, feuille à ressort, « Journée bouclée » (M) 🌐🤖 (#119)
 - [x] Site vitrine aux couleurs du nouveau thème : police, halos et barres neutres, captures et
   images de partage refaites dans les trois langues (S) 🪧 (#120)

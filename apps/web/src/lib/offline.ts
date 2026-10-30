@@ -23,7 +23,8 @@ export const offlineKeys = {
 
 export type ToggleVars = { hid: string; id: string; done: boolean };
 /** `key` : Idempotency-Key, pour qu'un renvoi ne crée jamais la tâche deux fois. */
-export type QuickAddVars = { hid: string; text: string; key: string };
+/** `defaultDate` : jour choisi dans le calendrier (si la phrase n'en donne pas). */
+export type QuickAddVars = { hid: string; text: string; key: string; defaultDate?: string };
 export type ShopAddVars = { hid: string; items: { id: string; text: string }[] };
 export type ShopUpdateVars = {
   hid: string;
@@ -58,10 +59,10 @@ export function registerOfflineMutations(qc: QueryClient) {
   });
   qc.setMutationDefaults(offlineKeys.quickAdd, {
     ...common,
-    mutationFn: ({ hid, text, key }: QuickAddVars) =>
+    mutationFn: ({ hid, text, key, defaultDate }: QuickAddVars) =>
       api<OccurrenceDto>(`/v1/households/${hid}/tasks/quick`, {
         method: 'POST',
-        json: { text },
+        json: { text, defaultDate },
         headers: { 'idempotency-key': key },
       }),
   });

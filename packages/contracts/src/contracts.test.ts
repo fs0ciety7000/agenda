@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CreateHouseholdInput, RecurrenceRule, RegisterInput } from './index';
+import { CreateHouseholdInput, IsoDate, RecurrenceRule, RegisterInput } from './index';
 
 describe('contracts', () => {
   it('normalise email', () => {
@@ -105,5 +105,13 @@ describe('récurrence & rotation', async () => {
         rotation: { mode: 'ALTERNATE', memberIds: [G] },
       }).success,
     ).toBe(false);
+  });
+});
+
+describe('IsoDate', () => {
+  it('refuse une date illisible sans lever d’exception (400, pas 500)', () => {
+    expect(IsoDate.safeParse('2026-10-30').success).toBe(true);
+    for (const bad of ['30/10/2026', '2026-02-30', '2026-13-01', 'demain', ''])
+      expect(IsoDate.safeParse(bad).success).toBe(false);
   });
 });

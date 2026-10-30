@@ -107,6 +107,16 @@ object Agenda {
     fun onDay(all: List<Occurrence>, day: LocalDate): List<Occurrence> =
         all.filter { it.date == day && it.status !in hidden }.sortedWith(compareBy<Occurrence> { it.isDone }.then(order))
 
+    /** Semaine (lundi → dimanche) qui contient [day] : bandeau de la vue Semaine du calendrier. */
+    fun weekOf(day: LocalDate): List<LocalDate> {
+        val monday = day.minusDays((day.dayOfWeek.value - 1).toLong())
+        return (0L..6L).map { monday.plusDays(it) }
+    }
+
+    /** Ids des membres qui ont au moins une tâche à faire ce jour-là (pastilles du bandeau). */
+    fun whoOnDay(all: List<Occurrence>, day: LocalDate): Set<String> =
+        all.filter { it.date == day && it.status == OccurrenceStatus.TODO }.flatMap { it.assigneeIds }.toSet()
+
     /** Nombre de tâches à faire par jour (pastilles du calendrier mensuel). */
     fun countsByDay(all: List<Occurrence>): Map<LocalDate, Int> =
         all.filter { it.date != null && it.status == OccurrenceStatus.TODO }.groupingBy { it.date!! }.eachCount()

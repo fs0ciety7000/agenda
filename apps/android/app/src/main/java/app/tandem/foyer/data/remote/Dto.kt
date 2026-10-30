@@ -216,7 +216,24 @@ data class ChecklistItemRequest(val text: String)
 data class ChecklistUpdateRequest(val done: Boolean)
 
 @Serializable
-data class QuickAddRequest(val text: String)
+data class QuickAddRequest(
+    val text: String,
+    /** Jour choisi dans le calendrier (AAAA-MM-JJ), si la phrase n'en donne pas. */
+    val defaultDate: String? = null,
+) {
+    companion object {
+        /**
+         * Contenu de l'opération en attente : le texte seul (comme avant), ou du JSON quand un
+         * jour est choisi. Les opérations déjà en file restent lisibles.
+         */
+        fun encode(text: String, defaultDate: java.time.LocalDate?): String =
+            if (defaultDate == null) text else json.encodeToString(serializer(), QuickAddRequest(text, defaultDate.toString()))
+
+        fun decode(payload: String): QuickAddRequest =
+            if (payload.startsWith("{\"text\"")) runCatching { json.decodeFromString(serializer(), payload) }.getOrElse { QuickAddRequest(payload) }
+            else QuickAddRequest(payload)
+    }
+}
 
 @Serializable
 data class QuickAddPreviewDto(

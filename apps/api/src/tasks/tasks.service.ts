@@ -492,7 +492,11 @@ export class TasksService {
     return this.get(ctx, occurrenceId);
   }
 
-  async previewQuickAdd(ctx: HouseholdContext, text: string): Promise<QuickAddPreview> {
+  async previewQuickAdd(
+    ctx: HouseholdContext,
+    text: string,
+    defaultDate?: string,
+  ): Promise<QuickAddPreview> {
     const [household, members, categories] = await Promise.all([
       this.prisma.household.findUniqueOrThrow({
         where: { id: ctx.householdId },
@@ -509,16 +513,20 @@ export class TasksService {
         orderBy: { position: 'asc' },
       }),
     ]);
-    return parseQuickAdd(text, { today: todayIn(household.timezone), members, categories });
+    const parsed = parseQuickAdd(text, { today: todayIn(household.timezone), members, categories });
+    // Ajout depuis un jour du calendrier : ce jour-là, sauf si la phrase dit autre chose.
+    return defaultDate && !parsed.date && !parsed.dueDate
+      ? { ...parsed, date: defaultDate }
+      : parsed;
   }
 
   /** Quick add : l'analyse est faite côté serveur (même comportement web et Android). */
   async quickAdd(
     ctx: HouseholdContext,
     text: string,
-    extra: { notes?: string } = {},
+    extra: { notes?: string; defaultDate?: string } = {},
   ): Promise<OccurrenceDto> {
-    const parsed = await this.previewQuickAdd(ctx, text);
+    const parsed = await this.previewQuickAdd(ctx, text, extra.defaultDate);
     if (!parsed.title) {
       throw new AppException(
         'TASK_TITLE_REQUIRED',

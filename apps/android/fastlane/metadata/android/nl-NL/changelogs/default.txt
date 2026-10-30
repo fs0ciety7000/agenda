@@ -1,7 +1,6 @@
 Nieuwe look: witte achtergrond, nieuw lettertype, kleurthema's in Instellingen.
-• Vandaag: balk "Wat gaan we doen?" onderaan, live boodschappenkaart.
-• Boodschappen: eerst de lijst, afdelingschips, toevoegbalk onderaan met de scanner, menu's op één regel.
-• Taken: filters als pillen, eenvoudige regels.
-• Meer: tegels voor Uitgaven en Datums, Instellingen onderaan; vernieuwde kalender.
-• "Dag afgerond" en een geanimeerd vinkje.
+• Vandaag: balk "Wat gaan we doen?" onderaan, live boodschappen, "Dag afgerond".
+• Boodschappen: eerst de lijst, afdelingschips, toevoegbalk onderaan met de scanner.
+• Taken en Meer vernieuwd, geanimeerd vinkje.
+• Agenda: weekweergave, snel toevoegen op de gekozen dag.
 • Maandoverzicht van de uitgaven op de 1e.

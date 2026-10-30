@@ -236,7 +236,9 @@
       "HIGH": "Hoge prioriteit",
       "URGENT": "Dringend"
     },
-    "queued": "“{text}” wordt toegevoegd zodra je weer online bent."
+    "queued": "“{text}” wordt toegevoegd zodra je weer online bent.",
+    "placeholderWeekday": "Wat gaan we {weekday} doen?",
+    "placeholderDate": "Wat gaan we op {date} doen?"
   },
   "tasks": {
     "unassigned": "Nog te bepalen",

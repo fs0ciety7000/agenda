@@ -15,6 +15,15 @@ d'elle-même (ou via Google Play).
 
 ## 30 octobre 2026
 
+### Calendrier : ajout rapide au jour choisi, vue Semaine sur Android (#121)
+
+- ✨ **« Qu'est-ce qu'on fait jeudi ? »** : dans le calendrier (vue jour, ou jour touché du mois
+  sur téléphone), la barre d'ajout met la tâche sur le jour affiché, sauf si la phrase en donne
+  un autre (« demain », « cette semaine »).
+- ✨ **Android : vue Semaine** dans le calendrier, un bandeau de 7 jours (pastille par personne)
+  au-dessus de la liste du jour ; on y dépose aussi une tâche glissée.
+- 🐞 Une date mal écrite envoyée à l'API renvoyait une erreur serveur au lieu d'un message clair.
+
 ### Site vitrine, nouvelle apparence (#120)
 
 - 🛠 **Site vitrine** aux couleurs de l'app : blanc, gris neutres, police Instrument Sans ;

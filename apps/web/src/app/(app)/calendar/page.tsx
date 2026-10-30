@@ -22,6 +22,7 @@ import {
 } from '@/components/app/calendar-drag';
 import { useSession } from '@/components/app/household-context';
 import { memberBgClass } from '@/components/app/member-avatar';
+import { QuickAdd } from '@/components/app/quick-add';
 import { TaskList } from '@/components/app/task-row';
 import { useWeekdayName } from '@/components/app/recurrence-text';
 import { useTaskDialog } from '@/components/app/use-task-dialog';
@@ -207,6 +208,23 @@ function CalendarView() {
     );
   };
 
+  // Barre d'ajout, quand un jour est choisi : le jour affiché (vue jour) ou touché (mois sur
+  // téléphone). Aujourd'hui : l'invite générale.
+  const addDay = view === 'day' ? anchor : view === 'month' && mobile ? selectedDay : undefined;
+  const tq = useTranslations('quickAdd');
+  const quickPlaceholder = (date: string) => {
+    if (date === today) return undefined;
+    const d = new Date(`${date}T12:00:00Z`);
+    const inWeek = date > today && date <= addDays(today, 6);
+    return inWeek
+      ? tq('placeholderWeekday', {
+          weekday: format.dateTime(d, { weekday: 'long', timeZone: 'UTC' }),
+        })
+      : tq('placeholderDate', {
+          date: format.dateTime(d, { day: 'numeric', month: 'long', timeZone: 'UTC' }),
+        });
+  };
+
   const go = (next: Partial<{ view: View; date: string }>) => {
     const q = new URLSearchParams(params);
     if (next.view) q.set('view', next.view);
@@ -280,6 +298,14 @@ function CalendarView() {
           label: t(v === 'week' && mobile ? 'views.threeDays' : `views.${v}`),
         }))}
       />
+
+      {addDay && (
+        <QuickAdd
+          onMoreOptions={(draft) => dialog.openNew({ ...draft, date: draft.date ?? addDay })}
+          defaultDate={addDay}
+          placeholder={quickPlaceholder(addDay)}
+        />
+      )}
 
       {view === 'day' && (
         <WeekStrip
