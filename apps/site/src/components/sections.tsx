@@ -83,7 +83,7 @@ export function Features({ t }: { t: Content }) {
               <motion.article
                 whileHover={{ y: -6 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-                className="group flex h-full flex-col gap-4 rounded-[var(--radius-xl)] border border-border bg-surface p-6 shadow-[0_1px_0_rgb(0_0_0/0.02)] transition-shadow hover:shadow-[0_24px_48px_-24px_rgb(36_24_29/0.3)]"
+                className="group flex h-full flex-col gap-4 rounded-[var(--radius-xl)] border border-border bg-surface p-6 shadow-[0_1px_0_rgb(0_0_0/0.02)] transition-shadow hover:shadow-[0_24px_48px_-24px_rgb(23_24_28/0.3)]"
               >
                 <span className="flex size-11 items-center justify-center rounded-2xl bg-accent/10 text-accent transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-6deg]">
                   <Icon className="size-5" aria-hidden />
@@ -112,7 +112,7 @@ export function How({ t }: { t: Content }) {
             whileInView={{ scaleX: 1 }}
             viewport={{ once: true, amount: 0.6 }}
             transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}
-            className="absolute top-7 right-[16%] left-[16%] hidden h-px origin-left bg-linear-to-r from-accent/60 via-member-plum/60 to-member-ocean/60 md:block"
+            className="absolute top-7 right-[16%] left-[16%] hidden h-px origin-left bg-border md:block"
           />
           {t.how.steps.map((s, i) => (
             <Reveal
@@ -159,16 +159,14 @@ export function Balance({ t }: { t: Content }) {
         </ul>
       </div>
       <Reveal y={40}>
-        <div className="relative rounded-[1.75rem] border border-border bg-surface p-7 shadow-[0_40px_80px_-40px_rgb(36_24_29/0.4)]">
-          <p className="mb-6 text-sm font-semibold tracking-wide text-text-muted uppercase">
-            {t.balance.card}
-          </p>
+        <div className="relative rounded-[1.75rem] border border-border bg-surface p-7 shadow-[0_40px_80px_-40px_rgb(23_24_28/0.4)]">
+          <p className="mb-6 text-sm font-semibold text-text-muted">{t.balance.card}</p>
           <div className="flex flex-col gap-6">
             {t.balance.rows.map((r, i) => (
               <div key={r.name} className="flex items-center gap-4">
                 <span
                   className={clsx(
-                    'flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-white',
+                    'flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-on-member',
                     BAR[r.color],
                   )}
                 >
@@ -185,7 +183,8 @@ export function Balance({ t }: { t: Content }) {
                       whileInView={{ width: `${r.value}%` }}
                       viewport={{ once: true, amount: 0.8 }}
                       transition={{ duration: 1.1, ease: EASE, delay: 0.2 + i * 0.15 }}
-                      className={clsx('h-full rounded-full', BAR[r.color])}
+                      // Barres neutres pour tous : la répartition informe, elle ne classe pas (design system §1.5).
+                      className="h-full rounded-full bg-text-muted"
                     />
                   </div>
                 </div>
@@ -246,7 +245,7 @@ export function Screens({ t, locale }: { t: Content; locale: Locale }) {
               <PhoneFrame className="pt-7">
                 {/* eslint-disable-next-line @next/next/no-img-element -- export statique */}
                 <img
-                  src={`/shots/${locale === 'fr' ? 'fr' : 'en'}/${s.file}.webp`}
+                  src={`/shots/${locale}/${s.file}.webp`}
                   alt={s.caption}
                   width={720}
                   height={1440}

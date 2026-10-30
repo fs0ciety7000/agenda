@@ -164,6 +164,10 @@ Pour chaque liste et chaque formulaire, vérifier :
    VISUAL=1 VISUAL_OUT=/tmp/shots pnpm exec playwright test visual-review
    VISUAL=1 VISUAL_LOCALE=nl VISUAL_OUT=/tmp/shots-nl pnpm exec playwright test visual-review
    VISUAL=1 VISUAL_OUT=/tmp/shots-320 pnpm exec playwright test -c playwright.narrow.config.ts visual-review
+   # Captures du site vitrine (Emma et Tom, écran visible, données traduites), par langue :
+   VISUAL=1 VISUAL_PUBLIC=1 VISUAL_LOCALE=en VISUAL_OUT=/tmp/site/en pnpm exec playwright test visual-review --project=mobile
+   node ../site/scripts/shots.mjs /tmp/site   # → apps/site/public/shots/{fr,en,nl}
+   node ../site/scripts/og-images.mjs          # images de partage
    ```
    `VISUAL_LOCALE` (`en` ou `nl`) crée les comptes en français puis affiche les écrans dans
    cette langue ; la configuration `narrow` capture à 320 px.

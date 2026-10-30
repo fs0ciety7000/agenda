@@ -1,14 +1,12 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import { ButtonLink } from '@/components/ui';
 import { DOCS_URL } from '@/lib/config';
 import { content, LANGS } from '@/lib/content';
+import { sans } from '@/lib/font';
 import { viewport } from '@/lib/metadata';
 import './globals.css';
 
 export { viewport };
-
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter', display: 'swap' });
 
 export const metadata: Metadata = {
   title: 'Tandem — 404',
@@ -32,7 +30,7 @@ d.lang=l;d.setAttribute('data-lang',l)}catch(e){}})();`;
 /** Page « introuvable » du site vitrine (aucun layout racine commun : une par langue). */
 export default function GlobalNotFound() {
   return (
-    <html lang="en" data-lang="en" className={inter.variable} suppressHydrationWarning>
+    <html lang="en" data-lang="en" className={sans.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: pickLang }} />
         <style>
@@ -67,9 +65,7 @@ export default function GlobalNotFound() {
                   />
                   <span className="text-xl">Tandem</span>
                 </a>
-                <p className="text-sm font-semibold tracking-wide text-accent uppercase">
-                  {t.code}
-                </p>
+                <p className="text-sm font-semibold text-text-muted">{t.code}</p>
                 <h1 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
                   {t.title}
                 </h1>

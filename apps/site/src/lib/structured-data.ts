@@ -23,9 +23,7 @@ export function structuredData(locale: Locale) {
     publisher: { '@id': org },
     image: `${SITE_URL}${ogImage(locale)}`,
   };
-  const screenshots = ['1_today', '3_calendar'].map(
-    (f) => `${SITE_URL}/shots/${locale === 'fr' ? 'fr' : 'en'}/${f}.webp`,
-  );
+  const screenshots = ['1_today', '3_calendar'].map((f) => `${SITE_URL}/shots/${locale}/${f}.webp`);
   return {
     '@context': 'https://schema.org',
     '@graph': [

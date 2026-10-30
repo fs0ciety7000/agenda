@@ -58,7 +58,7 @@ export function Film({ t }: { t: Content }) {
         <SectionHeading eyebrow={t.film.eyebrow} title={t.film.title} text={t.film.text} center />
         <div
           ref={box}
-          className="relative mx-auto mt-14 max-w-md overflow-hidden rounded-[28px] border border-border bg-surface shadow-[0_40px_90px_-40px_rgb(36_24_29/0.55)] md:max-w-5xl"
+          className="relative mx-auto mt-14 max-w-md overflow-hidden rounded-[28px] border border-border bg-surface shadow-[0_40px_90px_-40px_rgb(23_24_28/0.55)] md:max-w-5xl"
         >
           <video
             ref={wide}

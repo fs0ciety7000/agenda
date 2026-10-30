@@ -33,6 +33,15 @@ describe('courses : rayons', () => {
     ['Dentifrice', 'HYGIENE'],
     ['Milk', 'DAIRY'],
     ['Piles AA', 'HOUSEHOLD'],
+    ['Melk', 'DAIRY'],
+    ['12 eieren', 'DAIRY'],
+    ['Bananen', 'PRODUCE'],
+    ['Tomaten', 'PRODUCE'],
+    ['Watermeloen', 'PRODUCE'],
+    ['Volkoren brood', 'BAKERY'],
+    ['Afwasmiddel', 'HOUSEHOLD'],
+    ['Tandpasta', 'HYGIENE'],
+    ['Pindakaas', 'PANTRY'],
     ['Cadeau pour Léa', 'OTHER'],
   ])('%s → %s', (text, aisle) => {
     expect(guessAisle(text)).toBe(aisle);

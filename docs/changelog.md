@@ -15,6 +15,14 @@ d'elle-même (ou via Google Play).
 
 ## 30 octobre 2026
 
+### Site vitrine, nouvelle apparence (#120)
+
+- 🛠 **Site vitrine** aux couleurs de l'app : blanc, gris neutres, police Instrument Sans ;
+  captures de l'app refaites (dont la liste de courses), désormais aussi en néerlandais, et
+  nouvelles images de partage.
+- 🐞 **Courses en néerlandais** : « melk », « eieren », « afwasmiddel », « tandpasta »… sont
+  rangés dans le bon rayon (ils tombaient dans « Overige »).
+
 ### Animations et « Journée bouclée » (#119)
 
 - ✨ **Journée bouclée** : quand la dernière tâche du jour est cochée, Aujourd'hui le dit (les
