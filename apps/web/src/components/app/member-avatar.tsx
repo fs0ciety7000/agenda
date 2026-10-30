@@ -19,7 +19,7 @@ export function MemberAvatar({
   size = 'md',
 }: {
   member: HouseholdMemberDto;
-  size?: 'xs' | 'sm' | 'md';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
 }) {
   return (
     <span
@@ -31,7 +31,9 @@ export function MemberAvatar({
           ? 'size-5 text-[0.625rem] ring-2 ring-surface'
           : size === 'sm'
             ? 'size-6 text-xs'
-            : 'size-8 text-sm',
+            : size === 'lg'
+              ? 'size-11 font-semibold'
+              : 'size-8 text-sm',
       )}
     >
       {member.displayName.slice(0, 1).toUpperCase()}

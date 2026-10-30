@@ -51,10 +51,7 @@ export function WeekBoard({
 
   return (
     <section aria-labelledby="board-heading" className="flex flex-col gap-3">
-      <h2
-        id="board-heading"
-        className="text-xs font-medium uppercase tracking-[0.04em] text-text-muted"
-      >
+      <h2 id="board-heading" className="text-xl font-semibold tracking-[-0.01em] text-text">
         {t('boardTitle')}
       </h2>
       <div className="rounded-lg border border-border bg-surface p-2 sm:p-3">

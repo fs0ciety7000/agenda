@@ -69,7 +69,7 @@ connexion.
 
 | Écran | Rôle |
 |---|---|
-| **Aujourd'hui** | À rattraper, du jour, « qui fait quoi » sur 7 jours, les dates importantes à venir, « à faire cette semaine », les 7 prochains jours et la répartition |
+| **Aujourd'hui** | La carte des courses (qui les fait, combien d'articles dans le panier), à rattraper, du jour, « qui fait quoi » sur 7 jours, les dates importantes à venir, « à faire cette semaine », les 7 prochains jours et la répartition |
 | **Tâches** | Toutes les tâches, avec recherche et filtres (personne, catégorie, priorité, récurrentes…) |
 | **Calendrier** | Vues mois, semaine, jour ; glisser-déposer pour déplacer |
 | **Courses** | Liste de courses partagée |

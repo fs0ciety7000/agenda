@@ -103,12 +103,12 @@
     "BACKUP_PASSPHRASE_INVALID": "Onjuiste wachtzin, of beschadigd bestand."
   },
   "today": {
-    "greeting": "Hallo {name} 👋",
+    "greeting": "Hallo {name}",
     "sectionToday": "Vandaag",
     "sectionWeek": "Deze week",
     "sectionBalance": "Balans",
     "emptyTitle": "Niets voor vandaag.",
-    "emptyBody": "Geniet ervan, of voeg hierboven een taak toe.",
+    "emptyBody": "Geniet ervan, of voeg een taak toe.",
     "sectionOverdue": "Nog in te halen ({count})",
     "weekEmpty": "Niets gepland voor de komende dagen.",
     "seeStats": "Overzicht bekijken",
@@ -121,7 +121,13 @@
     "glanceCommon": "{amount} aan gedeelde uitgaven",
     "boardTitle": "Wie doet wat",
     "boardCell": "{who}, {day}: {count, plural, =0 {niets} one {# taak} other {# taken}}",
-    "boardHint": "Tik op een vakje om de taken te zien."
+    "boardHint": "Tik op een vakje om de taken te zien.",
+    "summaryLeft": "{date}. {count, plural, =0 {Alles gedaan voor vandaag.} one {Nog # taak vandaag.} other {Nog # taken vandaag.}}",
+    "summaryNone": "{date}. Niets gepland vandaag.",
+    "shoppingLive": "{name} doet de boodschappen",
+    "shoppingLiveMe": "Boodschappen bezig",
+    "shoppingLiveSince": "Live, {time}",
+    "shoppingProgress": "{done} van {total, plural, one {# artikel} other {# artikels}} in het mandje"
   },
   "placeholder": {
     "title": "Binnenkort",
@@ -221,7 +227,7 @@
   },
   "quickAdd": {
     "label": "Snel een taak toevoegen",
-    "placeholder": "Vuilnis buitenzetten morgen 19u @nicolas",
+    "placeholder": "Wat gaan we doen?",
     "moreOptions": "Meer opties",
     "previewLabel": "Herkend:",
     "added": "“{title}” toegevoegd",

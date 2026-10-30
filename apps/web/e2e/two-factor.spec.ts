@@ -60,7 +60,7 @@ test('double authentification : activée dans les Réglages, puis connexion avec
   await expect(page.getByRole('heading', { name: 'Code de vérification' })).toBeVisible();
   await page.getByLabel('Code').fill(codes[0]!);
   await page.getByRole('button', { name: 'Valider' }).click();
-  await expect(page.getByRole('heading', { name: 'Bonjour Emma 👋' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Bonjour Emma' })).toBeVisible();
 
   await openSettings(page);
   await expect(page.getByText('9 codes de secours restants.')).toBeVisible();

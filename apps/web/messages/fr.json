@@ -103,12 +103,12 @@
     "BACKUP_PASSPHRASE_INVALID": "Phrase de passe incorrecte, ou fichier abîmé."
   },
   "today": {
-    "greeting": "Bonjour {name} 👋",
+    "greeting": "Bonjour {name}",
     "sectionToday": "Aujourd'hui",
     "sectionWeek": "Cette semaine",
     "sectionBalance": "Répartition",
     "emptyTitle": "Rien pour aujourd'hui.",
-    "emptyBody": "Profitez-en, ou ajoutez une tâche ci-dessus.",
+    "emptyBody": "Profitez-en, ou ajoutez une tâche.",
     "sectionOverdue": "À rattraper ({count})",
     "weekEmpty": "Rien de prévu les prochains jours.",
     "seeStats": "Voir le bilan",
@@ -121,7 +121,13 @@
     "glanceCommon": "{amount} de dépenses communes",
     "boardTitle": "Qui fait quoi",
     "boardCell": "{who}, {day} : {count, plural, =0 {rien} one {# tâche} other {# tâches}}",
-    "boardHint": "Touchez une case pour voir ses tâches."
+    "boardHint": "Touchez une case pour voir ses tâches.",
+    "summaryLeft": "{date}. {count, plural, =0 {Tout est fait pour aujourd'hui.} one {Encore # tâche aujourd'hui.} other {Encore # tâches aujourd'hui.}}",
+    "summaryNone": "{date}. Rien de prévu aujourd'hui.",
+    "shoppingLive": "{name} fait les courses",
+    "shoppingLiveMe": "Courses en cours",
+    "shoppingLiveSince": "En direct, {time}",
+    "shoppingProgress": "{done} sur {total, plural, one {# article} other {# articles}} dans le panier"
   },
   "placeholder": {
     "title": "Bientôt disponible",
@@ -221,7 +227,7 @@
   },
   "quickAdd": {
     "label": "Ajouter une tâche rapidement",
-    "placeholder": "Sortir les poubelles demain 19h @nicolas",
+    "placeholder": "Qu'est-ce qu'on fait ?",
     "moreOptions": "Plus d'options",
     "previewLabel": "Détecté :",
     "added": "« {title} » ajoutée",

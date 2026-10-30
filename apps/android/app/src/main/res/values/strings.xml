@@ -24,7 +24,7 @@
     <string name="quick_add">Quick add</string>
     <string name="back">Back</string>
 
-    <string name="greeting">Hello %1$s 👋</string>
+    <string name="greeting">Hello %1$s</string>
     <string name="today">Today</string>
     <string name="today_catch_up">To catch up</string>
     <string name="overdue">To catch up</string>
@@ -840,4 +840,27 @@
     <string name="accent_coral">Coral</string>
     <string name="accent_ocean">Ocean</string>
     <string name="accent_lagoon">Lagoon</string>
+    <!-- Aujourd'hui, refonte « Duo » -->
+    <string name="quick_add_prompt">What shall we do?</string>
+    <string name="today_summary_none">%1$s. Nothing planned today.</string>
+    <string name="today_summary_done">%1$s. All done for today.</string>
+    <plurals name="today_summary_left">
+        <item quantity="one">%1$s. %2$d task left today.</item>
+        <item quantity="other">%1$s. %2$d tasks left today.</item>
+    </plurals>
+    <string name="today_shopping_live">%1$s is shopping</string>
+    <string name="today_shopping_live_me">Shopping in progress</string>
+    <string name="today_shopping_live_now">Live, just now</string>
+    <plurals name="today_shopping_live_since">
+        <item quantity="one">Live, %d min ago</item>
+        <item quantity="other">Live, %d min ago</item>
+    </plurals>
+    <plurals name="today_shopping_to_buy">
+        <item quantity="one">%d item to buy</item>
+        <item quantity="other">%d items to buy</item>
+    </plurals>
+    <plurals name="today_shopping_progress">
+        <item quantity="one">%1$d of %2$d item in the basket</item>
+        <item quantity="other">%1$d of %2$d items in the basket</item>
+    </plurals>
 </resources>

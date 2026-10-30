@@ -107,67 +107,77 @@ export function QuickAdd({
   if (preview?.priority === 'HIGH' || preview?.priority === 'URGENT')
     chips.push(t(`priority.${preview.priority}`));
 
+  const previewChips = (
+    <div id="quick-add-preview" aria-live="polite" className="flex flex-wrap gap-1.5 px-1">
+      {chips.length > 0 && (
+        <>
+          <span className="sr-only">{t('previewLabel')}</span>
+          {chips.map((chip) => (
+            <span
+              key={chip}
+              className="rounded-full bg-surface-muted px-2.5 py-0.5 text-[0.8125rem] text-text-muted"
+            >
+              {chip}
+            </span>
+          ))}
+        </>
+      )}
+    </div>
+  );
+
+  // Mobile : barre fixée en bas, au-dessus des onglets, à portée du pouce (aperçu au-dessus).
+  // Desktop : en haut de la page, aperçu dessous.
   return (
-    <form onSubmit={onSubmit} className="flex flex-col gap-2">
-      <div className="flex items-center gap-2 rounded-lg border border-border-strong bg-surface pl-3 pr-1 focus-within:border-accent focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-accent">
-        <Plus aria-hidden className="size-5 shrink-0 text-text-muted" />
-        <label htmlFor="quick-add" className="sr-only">
-          {t('label')}
-        </label>
-        <input
-          ref={inputRef}
-          id="quick-add"
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder={t('placeholder')}
-          autoComplete="off"
-          enterKeyHint="done"
-          maxLength={500}
-          aria-describedby="quick-add-preview"
-          className="h-12 min-w-0 flex-1 bg-transparent text-[0.9375rem] outline-none placeholder:text-text-muted"
-        />
-        <button
-          type="button"
-          onClick={() =>
-            onMoreOptions({
-              title: preview?.title ?? text,
-              date: preview?.date,
-              dueDate: preview?.dueDate,
-              startMinute: preview?.startMinute,
-              durationMinutes: preview?.durationMinutes,
-              assigneeIds: preview?.assigneeIds,
-              categoryId: preview?.categoryId,
-              priority: preview?.priority,
-            })
-          }
-          aria-label={t('moreOptions')}
-          className="inline-flex size-10 shrink-0 items-center justify-center rounded-md text-text-muted hover:bg-surface-muted hover:text-text"
-        >
-          <SlidersHorizontal aria-hidden className="size-4" />
-        </button>
-      </div>
-      <div className="flex min-h-6 items-start justify-between gap-2">
-        <div
-          id="quick-add-preview"
-          aria-live="polite"
-          className="flex flex-wrap gap-1.5 px-1 pt-0.5"
-        >
-          {chips.length > 0 && (
-            <>
-              <span className="sr-only">{t('previewLabel')}</span>
-              {chips.map((chip) => (
-                <span
-                  key={chip}
-                  className="rounded-full bg-surface-muted px-2.5 py-0.5 text-[0.8125rem] text-text-muted"
-                >
-                  {chip}
-                </span>
-              ))}
-            </>
-          )}
+    <>
+      <form
+        onSubmit={onSubmit}
+        className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-30 flex flex-col-reverse gap-2 px-4 pb-3 md:static md:z-auto md:flex-col md:p-0"
+      >
+        <div className="flex h-14 items-center gap-3 rounded-full border border-border bg-surface pl-5 pr-2 shadow-raised focus-within:border-accent focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-accent">
+          <Plus aria-hidden className="size-5 shrink-0 stroke-[2.2] text-text" />
+          <label htmlFor="quick-add" className="sr-only">
+            {t('label')}
+          </label>
+          <input
+            ref={inputRef}
+            id="quick-add"
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder={t('placeholder')}
+            autoComplete="off"
+            enterKeyHint="done"
+            maxLength={500}
+            aria-describedby="quick-add-preview"
+            className="h-full min-w-0 flex-1 bg-transparent text-base font-medium outline-none placeholder:text-text-muted"
+          />
+          <button
+            type="button"
+            onClick={() =>
+              onMoreOptions({
+                title: preview?.title ?? text,
+                date: preview?.date,
+                dueDate: preview?.dueDate,
+                startMinute: preview?.startMinute,
+                durationMinutes: preview?.durationMinutes,
+                assigneeIds: preview?.assigneeIds,
+                categoryId: preview?.categoryId,
+                priority: preview?.priority,
+              })
+            }
+            aria-label={t('moreOptions')}
+            className="inline-flex size-11 shrink-0 items-center justify-center rounded-full bg-surface-muted text-text hover:bg-border"
+          >
+            <SlidersHorizontal aria-hidden className="size-4" />
+          </button>
         </div>
-        {extra}
-      </div>
-    </form>
+        <div className="flex items-start justify-between gap-2 md:min-h-6">
+          {previewChips}
+          {extra && <div className="hidden md:block">{extra}</div>}
+        </div>
+      </form>
+      {/* Mobile : l'action secondaire reste dans la page, et la barre fixe ne cache pas la fin. */}
+      {extra && <div className="-mt-4 flex justify-end md:hidden">{extra}</div>}
+      <div aria-hidden className="order-last h-16 md:hidden" />
+    </>
   );
 }

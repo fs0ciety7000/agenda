@@ -89,6 +89,8 @@ data class ShoppingItem(
     val quantity: String? = null,
     /** Rayon (cf. [app.tandem.foyer.domain.Aisles]) ; null = pas encore rangé. */
     val aisle: String? = null,
+    /** Instant ISO de la coche (carte « courses en direct » d'Aujourd'hui). */
+    val doneAt: String? = null,
 )
 
 /** Saisie du formulaire de création / modification. */

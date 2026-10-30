@@ -32,13 +32,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import app.tandem.foyer.R
 import app.tandem.foyer.domain.Agenda
+import app.tandem.foyer.domain.ShoppingLive
+import app.tandem.foyer.domain.model.ShoppingItem
+import java.time.Instant
 import app.tandem.foyer.domain.model.Occurrence
 import app.tandem.foyer.ui.components.EmptyState
 import app.tandem.foyer.ui.components.MemberAvatar
 import app.tandem.foyer.ui.components.SectionHeader
 import app.tandem.foyer.ui.components.SyncBanner
 import app.tandem.foyer.ui.components.TaskRow
-import app.tandem.foyer.ui.components.groupedCard
+import app.tandem.foyer.ui.components.flatRow
 import app.tandem.foyer.ui.components.currentLocale
 import app.tandem.foyer.ui.components.formatDuration
 import app.tandem.foyer.ui.components.formatLongDate
@@ -69,6 +72,11 @@ fun TodayScreen(
     onThank: (Occurrence, Boolean) -> Unit = { _, _ -> },
     /** Recherche globale (loupe en haut à droite) ; null = masquée. */
     onSearch: (() -> Unit)? = null,
+    /** Liste de courses, pour la carte « courses en direct ». */
+    shopping: List<ShoppingItem> = emptyList(),
+    onOpenShopping: () -> Unit = {},
+    /** Horloge de la carte courses (tests). */
+    now: Instant = Instant.now(),
 ) {
     val sections = Agenda.todaySections(state.occurrences, state.today)
     val members = state.members
@@ -78,7 +86,7 @@ fun TodayScreen(
         onRefresh = onRefresh,
         modifier = Modifier.fillMaxSize().padding(contentPadding),
     ) {
-        LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 96.dp)) {
+        LazyColumn(Modifier.fillMaxSize(), contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 24.dp)) {
             item {
                 Row(
                     Modifier.padding(bottom = 16.dp),
@@ -109,18 +117,28 @@ fun TodayScreen(
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.semantics { heading() },
                 )
+                val date = formatLongDate(state.today, locale)
+                val left = sections.today.size - sections.todayDone
                 Text(
-                    formatLongDate(state.today, locale),
+                    when {
+                        sections.today.isEmpty() -> stringResource(R.string.today_summary_none, date)
+                        left == 0 -> stringResource(R.string.today_summary_done, date)
+                        else -> pluralStringResource(R.plurals.today_summary_left, left, date, left)
+                    },
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    modifier = Modifier.padding(top = 4.dp),
                 )
                 SyncBanner(state.online, state.sync)
                 banner()
+                ShoppingLive.summarize(shopping, now)?.let {
+                    ShoppingLiveCard(it, members, state.myMemberId, now, onOpenShopping)
+                }
             }
             if (sections.overdue.isNotEmpty()) {
                 item { SectionHeader(stringResource(R.string.today_catch_up), trailing = sections.overdue.size.toString()) }
                 itemsIndexed(sections.overdue, key = { _, it -> "o-" + it.id }) { i, it ->
-                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, showDate = true, modifier = Modifier.groupedCard(i, sections.overdue.size))
+                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, showDate = true, modifier = Modifier.flatRow(i))
                 }
             }
             item {
@@ -133,19 +151,19 @@ fun TodayScreen(
             if (sections.today.isEmpty()) {
                 item { EmptyState(stringResource(R.string.today_empty_title), stringResource(R.string.today_empty_body), illustration = R.drawable.ill_empty_today) }
             } else {
-                itemsIndexed(sections.today, key = { _, it -> "t-" + it.id }) { i, it -> TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, modifier = Modifier.groupedCard(i, sections.today.size)) }
+                itemsIndexed(sections.today, key = { _, it -> "t-" + it.id }) { i, it -> TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, modifier = Modifier.flatRow(i)) }
             }
             state.household?.let { household ->
                 item(key = "board") {
-                    WeekBoard(Agenda.weekBoard(state.occurrences, state.today, household.members), household.members) { o, i, n ->
-                        TaskRow(o, members, { onToggle(o) }, { onOpen(o) }, myMemberId = state.myMemberId, onThank = { t -> onThank(o, t) }, modifier = Modifier.groupedCard(i, n))
+                    WeekBoard(Agenda.weekBoard(state.occurrences, state.today, household.members), household.members) { o, i, _ ->
+                        TaskRow(o, members, { onToggle(o) }, { onOpen(o) }, myMemberId = state.myMemberId, onThank = { t -> onThank(o, t) }, modifier = Modifier.flatRow(i))
                     }
                 }
             }
             if (sections.dueThisWeek.isNotEmpty()) {
                 item { SectionHeader(stringResource(R.string.due_section), trailing = sections.dueThisWeek.size.toString()) }
                 itemsIndexed(sections.dueThisWeek, key = { _, it -> "d-" + it.id }) { i, it ->
-                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, modifier = Modifier.groupedCard(i, sections.dueThisWeek.size))
+                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, modifier = Modifier.flatRow(i))
                 }
             }
             item { SectionHeader(stringResource(R.string.this_week)) }
@@ -160,7 +178,7 @@ fun TodayScreen(
                 }
             } else {
                 itemsIndexed(sections.upcoming, key = { _, it -> "w-" + it.id }) { i, it ->
-                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, showDate = true, modifier = Modifier.groupedCard(i, sections.upcoming.size))
+                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, showDate = true, modifier = Modifier.flatRow(i))
                 }
             }
             if (sections.unscheduledCount > 0) {

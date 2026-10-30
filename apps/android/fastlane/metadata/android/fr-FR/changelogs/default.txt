@@ -1,3 +1,3 @@
-Nouvelle apparence : fond blanc, nouvelle police, coins plus arrondis.
-• Thèmes de couleur au choix dans Réglages : Encre, Corail, Océan ou Lagune.
+Nouvel écran Aujourd'hui : barre « Qu'est-ce qu'on fait ? » en bas, carte des courses en direct (qui les fait, combien d'articles dans le panier).
+• Nouvelle apparence : fond blanc, nouvelle police, thèmes de couleur dans Réglages.
 • Bilan du mois des dépenses, le 1er : total commun, budget et ce que chacun a payé.

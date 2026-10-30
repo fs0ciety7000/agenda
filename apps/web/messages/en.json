@@ -103,12 +103,12 @@
     "BACKUP_PASSPHRASE_INVALID": "Wrong passphrase, or damaged file."
   },
   "today": {
-    "greeting": "Hello {name} 👋",
+    "greeting": "Hello {name}",
     "sectionToday": "Today",
     "sectionWeek": "This week",
     "sectionBalance": "Balance",
     "emptyTitle": "Nothing for today.",
-    "emptyBody": "Enjoy, or add a task above.",
+    "emptyBody": "Enjoy, or add a task.",
     "sectionOverdue": "To catch up ({count})",
     "weekEmpty": "Nothing planned for the next few days.",
     "seeStats": "See summary",
@@ -121,7 +121,13 @@
     "glanceCommon": "{amount} in shared expenses",
     "boardTitle": "Who does what",
     "boardCell": "{who}, {day}: {count, plural, =0 {nothing} one {# task} other {# tasks}}",
-    "boardHint": "Tap a cell to see its tasks."
+    "boardHint": "Tap a cell to see its tasks.",
+    "summaryLeft": "{date}. {count, plural, =0 {All done for today.} one {# task left today.} other {# tasks left today.}}",
+    "summaryNone": "{date}. Nothing planned today.",
+    "shoppingLive": "{name} is shopping",
+    "shoppingLiveMe": "Shopping in progress",
+    "shoppingLiveSince": "Live, {time}",
+    "shoppingProgress": "{done} of {total, plural, one {# item} other {# items}} in the basket"
   },
   "placeholder": {
     "title": "Coming soon",
@@ -221,7 +227,7 @@
   },
   "quickAdd": {
     "label": "Quickly add a task",
-    "placeholder": "Take out the trash tomorrow 7pm @nicolas",
+    "placeholder": "What shall we do?",
     "moreOptions": "More options",
     "previewLabel": "Detected:",
     "added": "“{title}” added",
