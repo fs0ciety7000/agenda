@@ -52,7 +52,8 @@ Source : [audit du 8 octobre 2026](audits/2026-10-08.md). Légende : effort S / 
       Nog te bepalen », « À rattraper » 🌐🤖
 - [x] Captures Android : Dépenses (clair, sombre), Plus en sombre, police 200 % ; captures de
       la fiche Play régénérées (fr, en) 🤖
-- [ ] Captures de la fiche Play en néerlandais (quand la fiche nl-NL existera) 🤖
+- [x] Captures de la fiche Play en néerlandais (prêtes ; envoyées quand la fiche nl-NL existera)
+      🤖 (#122)
 
 ### Lot 3 — Confort et finitions ✅ (#88)
 
@@ -317,7 +318,9 @@ aubergine.
 - [x] Animations : coche, ligne faite, feuille à ressort, « Journée bouclée » (M) 🌐🤖 (#119)
 - [x] Site vitrine aux couleurs du nouveau thème : police, halos et barres neutres, captures et
   images de partage refaites dans les trois langues (S) 🪧 (#120)
-- [ ] Logo et vidéo du site encore dans les anciens tons (prune) : à refaire avec A3 (vidéo par
+- [x] Fiche Play aux couleurs « Duo » : bannière en Instrument Sans (fr, en, nl), six captures
+  (Courses en plus) d'Emma et Tom traduites, refaites par le workflow de la fiche (S) 🤖 (#122)
+- [ ] Logo (icône de l'app, de la fiche Play) et vidéo du site encore dans les anciens tons (prune) : à refaire avec A3 (vidéo par
   langue) (M) 🪧
 
 ### Propositions de design

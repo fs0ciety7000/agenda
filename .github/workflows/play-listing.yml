@@ -4,6 +4,7 @@ name: Google Play — mettre à jour la fiche
 # du Play Store depuis apps/android/fastlane/metadata/android (titre, descriptions courte et
 # complète, et si demandé icône, image de présentation et captures), pour fr-FR et en-US, et
 # nl-NL quand la variable PLAY_LISTING_NL vaut true (la traduction doit exister dans la console).
+# Les captures sont refaites ici depuis l'app (StoreScreenshotsTest) : toujours à jour du code.
 # Les notes de version partent avec chaque version (workflow « Android — APK à installer »).
 # Secret requis : PLAY_SERVICE_ACCOUNT_JSON (même compte de service, docs/play-store.md).
 on:
@@ -28,7 +29,7 @@ permissions:
 jobs:
   listing:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     env:
       PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
     steps:
@@ -39,6 +40,25 @@ jobs:
             echo "::error::Secret PLAY_SERVICE_ACCOUNT_JSON absent : voir docs/play-store.md."
             exit 1
           fi
+      - if: inputs.images
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '21'
+      - if: inputs.images
+        uses: gradle/actions/setup-gradle@v6
+      - name: Refaire les captures de la fiche
+        if: inputs.images
+        working-directory: apps/android
+        run: |
+          rm -f fastlane/metadata/android/*/images/phoneScreenshots/*.png
+          ./gradlew testDebugUnitTest --tests '*StoreScreenshots*' -Pscreenshots --console=plain
+      - name: Garder les captures (artefact)
+        if: inputs.images
+        uses: actions/upload-artifact@v7
+        with:
+          name: play-captures
+          path: apps/android/fastlane/metadata/android/*/images
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.3'

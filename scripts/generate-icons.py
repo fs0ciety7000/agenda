@@ -2,11 +2,13 @@
 """Génère les icônes (Android, web) depuis docs/brand/logo-source.png.
 
 Usage : pip install pillow && python3 scripts/generate-icons.py
+        (`--play` : seulement l'icône et la bannière de la fiche Google Play)
 Le logo source est un carré arrondi sur fond blanc ; on en tire :
 - une version « pleine » (coins remplis avec la couleur de fond) pour les icônes que le système
   découpe lui-même (Android adaptatif, iOS, PWA maskable) ;
 - une version « découpée » (coins transparents) pour le favicon et l'écran de connexion.
 """
+import sys
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFilter, ImageFont
@@ -14,7 +16,8 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 ROOT = Path(__file__).resolve().parent.parent
 SRC = ROOT / "docs/brand/logo-source.png"
 FASTLANE = ROOT / "apps/android/fastlane/metadata/android"
-FONT = "/usr/share/fonts/truetype/dejavu/DejaVuSans{}.ttf"  # apt install fonts-dejavu-core
+# Instrument Sans, la police de l'app (licence OFL), en TTF : Pillow ne lit pas le woff2.
+FONT = ROOT / "apps/android/app/src/main/res/font/instrument_sans_{}.ttf"
 
 # Bannière Play Store (1024 × 500) : nom, slogan, trois atouts, par langue de la fiche.
 FEATURE_TEXT = {
@@ -22,6 +25,8 @@ FEATURE_TEXT = {
               ["Tâches à deux, tours de rôle", "Rappels et widgets", "Calendrier partagé"]),
     "en-US": ("The perfect balance\nfor your household.",
               ["Shared chores, turns", "Reminders and widgets", "Shared calendar"]),
+    "nl-NL": ("De perfecte balans\nvoor je huishouden.",
+              ["Taken samen, om de beurt", "Herinneringen en widgets", "Gedeelde agenda"]),
 }
 
 
@@ -52,6 +57,8 @@ def load(src=SRC):
 
 def main():
     crop, mask, bg = load()
+    if "--play" in sys.argv[1:]:
+        return play_listing(crop, mask, bg)
     side = crop.size[0]
     full = Image.new("RGB", (side, side), bg)
     full.paste(crop, (0, 0), mask)
@@ -113,7 +120,17 @@ def main():
         w.save(public / "brand/tandem-wordmark.png", optimize=True)
         w.save(docs_img / "tandem-wordmark.png", optimize=True)
 
-    # Play Store (512, carré plein : Google applique ses propres coins).
+    play_listing(crop, mask, bg)
+    print(f"ok — fond {hex_bg}")
+
+
+def play_listing(crop, mask, bg):
+    """Icône 512 et bannière de la fiche Google Play, pour chaque langue."""
+    side = crop.size[0]
+    full = Image.new("RGB", (side, side), bg)
+    full.paste(crop, (0, 0), mask)
+    rounded = crop.convert("RGBA")
+    rounded.putalpha(mask)
     # Fond plein (aucun blanc, aucun cadre) : Google applique lui-même ses coins arrondis.
     # L'illustration, réduite pour laisser respirer les roues, est découpée juste à l'intérieur
     # du carré arrondi d'origine (son liseré disparaît) et fondue dans la couleur du fond.
@@ -131,28 +148,28 @@ def main():
     # Fiche Google Play (fastlane) : icône et bannière de chaque langue.
     for locale, (tagline, bullets) in FEATURE_TEXT.items():
         images = FASTLANE / locale / "images"
+        images.mkdir(parents=True, exist_ok=True)
         play.save(images / "icon.png", optimize=True)
         feature_graphic(rounded, tagline, bullets).save(images / "featureGraphic.png", optimize=True)
-    print(f"ok — fond {hex_bg}")
 
 
 def feature_graphic(logo, tagline, bullets):
-    """Bannière 1024 × 500 aux couleurs de l'app (design-tokens : fond, accent, textes)."""
-    bg, shade, accent = (250, 246, 242), (242, 234, 228), (125, 68, 96)
-    text, muted = (36, 24, 29), (111, 95, 102)
+    """Bannière 1024 × 500 aux couleurs « Duo » (design-tokens : fond blanc, gris, encre)."""
+    bg, shade, ink, muted = (255, 255, 255), (243, 244, 246), (23, 24, 28), (95, 99, 107)
     im = Image.new("RGB", (1024, 500), bg)
     d = ImageDraw.Draw(im)
     d.ellipse((780, -170, 1220, 240), fill=shade)
     d.ellipse((-120, 330, 220, 670), fill=shade)
-    im.paste(logo.resize((400, 400), Image.LANCZOS), (50, 50), logo.resize((400, 400), Image.LANCZOS))
-    bold = lambda size: ImageFont.truetype(FONT.format("-Bold"), size)
-    d.text((500, 68), "Tandem", font=bold(64), fill=accent)
-    d.multiline_text((500, 160), tagline, font=bold(34), fill=text, spacing=10)
-    regular = ImageFont.truetype(FONT.format(""), 22)
+    art = logo.resize((360, 360), Image.LANCZOS)
+    im.paste(art, (70, 70), art)
+    font = lambda weight, size: ImageFont.truetype(str(FONT).format(weight), size)
+    d.text((488, 64), "Tandem", font=font("semibold", 72), fill=ink)
+    d.multiline_text((490, 168), tagline, font=font("semibold", 36), fill=ink, spacing=8)
+    regular = font("regular", 24)
     for i, line in enumerate(bullets):
-        y = 290 + i * 46
-        d.ellipse((500, y + 6, 514, y + 20), fill=accent)
-        d.text((528, y), line, font=regular, fill=muted)
+        y = 292 + i * 46
+        d.ellipse((492, y + 9, 504, y + 21), fill=ink)
+        d.text((520, y), line, font=regular, fill=muted)
     return im
 
 

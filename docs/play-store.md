@@ -61,8 +61,7 @@ versions et toujours croissants.
      immédiate ; sauvegardes effacées sous 14 jours (serveur) et 30 jours (hors serveur).
 4. **Fiche Play Store** (*Présence sur le Store → Fiche principale*) : copier les textes et
    images de `apps/android/fastlane/metadata/android`
-   (`fr-FR`, puis `en-US` et `nl-NL` en traduction ; `nl-NL` n'a pas d'images propres : reprendre
-   celles de `en-US`) :
+   (`fr-FR`, puis `en-US` et `nl-NL` en traduction, chacune avec ses images) :
 
    | Champ | Fichier | Limite |
    |---|---|---|
@@ -71,7 +70,7 @@ versions et toujours croissants.
    | Description complète | `full_description.txt` | 4000 |
    | Icône 512 × 512 | `images/icon.png` | PNG 32 bits |
    | Image de présentation 1024 × 500 | `images/featureGraphic.png` | |
-   | Captures de téléphone (5) | `images/phoneScreenshots/*.png` | 1080 × 2160 |
+   | Captures de téléphone (6) | `images/phoneScreenshots/*.png` | 1080 × 2160 |
    | Notes de version | `changelogs/default.txt` | 500 |
 
    Catégorie : **Productivité**. Coordonnées : une adresse e-mail de contact (obligatoire,
@@ -160,7 +159,11 @@ Une version déjà envoyée en test interne se passe au test fermé sans nouvel 
   Gérer les traductions*), créer la variable de dépôt `PLAY_LISTING_NL=true` (GitHub → Settings →
   Secrets and variables → Actions → Variables) : la CI joindra alors aussi les notes `nl-NL`.
   Avant, Google Play refuserait l'envoi (langue absente de la fiche).
-- Captures (rendues depuis les vrais écrans, données fictives) :
+- Captures (six : Aujourd'hui, répétition, calendrier, tâches, courses, mode sombre) : rendues
+  depuis les vrais écrans (`StoreScreenshotsTest`), foyer fictif d'Emma et Tom, données traduites
+  dans chaque langue. Le workflow de la fiche les **refait lui-même** quand la case des images est
+  cochée (les fichiers du dépôt peuvent donc dater) et les garde dans l'artefact `play-captures`.
+  Pour les voir avant : étiquette `captures` sur une PR (artefact `android-captures`), ou en local :
 
   ```bash
   cd apps/android
@@ -168,12 +171,13 @@ Une version déjà envoyée en test interne se passe au test fermé sans nouvel 
   ```
 
 - Icône 512 × 512 et image de présentation 1024 × 500 (`images/icon.png`,
-  `images/featureGraphic.png`, les deux langues) : générées depuis le logo, avec les autres icônes.
-  Les textes de la bannière sont dans `FEATURE_TEXT` du script. Sans marque tierce (pas de
-  « Google » dans les visuels, règle de Google Play).
+  `images/featureGraphic.png`, les trois langues) : générées depuis le logo, aux couleurs « Duo »
+  et en Instrument Sans. Les textes de la bannière sont dans `FEATURE_TEXT` du script. Sans marque
+  tierce (pas de « Google » dans les visuels, règle de Google Play).
 
   ```bash
-  pip install pillow && python3 scripts/generate-icons.py
+  pip install pillow && python3 scripts/generate-icons.py --play   # fiche Play seulement
+  pip install pillow && python3 scripts/generate-icons.py          # toutes les icônes
   ```
 
 ## 7. Vérifications avant envoi

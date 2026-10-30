@@ -15,6 +15,11 @@ d'elle-même (ou via Google Play).
 
 ## 30 octobre 2026
 
+### Fiche Google Play aux couleurs « Duo » (#122)
+
+- 🛠 **Nouveaux visuels sur Google Play** : bannière dans le nouveau style, et six captures de
+  l'app actuelle (avec la liste de courses) dans la langue de la fiche, néerlandais compris.
+
 ### Calendrier : ajout rapide au jour choisi, vue Semaine sur Android (#121)
 
 - ✨ **« Qu'est-ce qu'on fait jeudi ? »** : dans le calendrier (vue jour, ou jour touché du mois
