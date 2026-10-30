@@ -303,7 +303,10 @@ aubergine.
 
 - [x] Fondations : neutres, quatre thèmes (Encre, Corail, Océan, Lagune) dans Réglages →
   Apparence, Instrument Sans, rayons (S) 🌐🤖🪧 (#117)
-- [ ] Aujourd'hui : en-tête, carte « courses en direct », sections, barre d'ajout en bas (M) 🌐🤖
+- [x] Aujourd'hui : en-tête, carte « courses en direct », sections, barre d'ajout en bas (M) 🌐🤖
+  (#118)
+- [ ] Barre « Qu'est-ce qu'on fait ? » sur les autres écrans (Tâches, Calendrier) à la place
+  du bouton flottant Android (S) 🌐🤖
 - [ ] Tâches et Courses dans le nouveau style (M) 🌐🤖
 - [ ] Calendrier (bandeau de semaine) et Plus (grille de services) (M) 🌐🤖
 - [ ] Animations : coche, ligne faite, feuille à ressort, « Journée bouclée » (M) 🌐🤖

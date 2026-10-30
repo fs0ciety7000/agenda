@@ -30,7 +30,7 @@ test('passkey : ajoutée dans les Réglages, puis connexion sans mot de passe', 
   await page.getByRole('button', { name: 'Se déconnecter', exact: true }).click();
   await expect(page).toHaveURL(/\/login/);
   await page.getByRole('button', { name: 'Se connecter avec une passkey' }).click();
-  await expect(page.getByRole('heading', { name: 'Bonjour Ada 👋' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Bonjour Ada' })).toBeVisible();
 
   await page.goto('/settings');
   await expect(page.getByText(/Utilisée le/)).toBeVisible();

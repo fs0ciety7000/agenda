@@ -10,6 +10,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.foundation.clickable
@@ -97,14 +99,15 @@ fun SectionHeader(text: String, modifier: Modifier = Modifier, trailing: String?
         modifier.fillMaxWidth().padding(top = 20.dp, bottom = 6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
+        // Casse de phrase, jamais en capitales (design system, §3).
         Text(
-            text.uppercase(),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            text,
+            style = MaterialTheme.typography.titleLarge,
+            fontWeight = FontWeight.SemiBold,
             modifier = Modifier.weight(1f).semantics { heading() },
         )
         trailing?.let {
-            Text(it, style = MaterialTheme.typography.labelMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(it, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
@@ -327,6 +330,15 @@ fun TaskCheck(checked: Boolean, onToggle: () -> Unit, label: String) {
                 )
             }
         }
+    }
+}
+
+/** Lignes à plat sur le fond (refonte « Duo ») : un trait fin entre deux lignes, pas de carte. */
+@Composable
+fun Modifier.flatRow(index: Int): Modifier {
+    val line = MaterialTheme.colorScheme.outlineVariant
+    return if (index == 0) this else drawBehind {
+        drawLine(line, Offset(0f, 0f), Offset(size.width, 0f), strokeWidth = 1.dp.toPx())
     }
 }
 

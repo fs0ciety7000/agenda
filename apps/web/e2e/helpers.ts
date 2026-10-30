@@ -12,7 +12,7 @@ export async function signUpWithHousehold(page: Page, name = 'Grace') {
   await page.getByLabel('Nom du foyer').fill('G & N');
   await page.getByRole('button', { name: 'Créer le foyer' }).click();
   await page.getByRole('button', { name: 'Continuer' }).click();
-  await expect(page.getByRole('heading', { name: `Bonjour ${name} 👋` })).toBeVisible();
+  await expect(page.getByRole('heading', { name: `Bonjour ${name}` })).toBeVisible();
   return { email };
 }
 

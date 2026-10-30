@@ -20,7 +20,7 @@ test('changer son mot de passe depuis les Réglages, puis se reconnecter avec', 
   await page.getByLabel('Adresse email').fill(email);
   await page.getByLabel('Mot de passe').fill('une phrase toute neuve');
   await page.getByRole('button', { name: 'Se connecter', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'Bonjour Grace 👋' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Bonjour Grace' })).toBeVisible();
 });
 
 test('politique de confidentialité : publique, liée depuis la connexion', async ({ page }) => {

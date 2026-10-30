@@ -65,7 +65,8 @@ neutres (§1.5). L'initiale d'une pastille utilise `on-member`. **Texte sur une 
 - Rayons : `sm 8`, `md 12` (champs), `lg 20` (cartes, tuiles), `xl 28` (feuilles), `full`
   (boutons, puces, barre d'ajout).
 - Listes à plat sur le fond, séparateurs fins ; seules les cartes « vivantes » (courses en
-  cours, résumé) sont surélevées : ombre douce teintée `0 12px 32px rgb(23 24 28 / .10)`.
+  cours, résumé) sont surélevées : ombre douce teintée `0 12px 32px rgb(23 24 28 / .10)` (`shadow-raised` sur le web, élévation
+  6 à 8 dp sur Android), comme la barre « Qu'est-ce qu'on fait ? ».
 - Mouvement : `fast 120 ms`, `base 180 ms`, `slow 260 ms`, courbe `cubic-bezier(.2,.8,.2,1)` ;
   ressort pour les feuilles. La coche « pop » (0,8 → 1,15 → 1), la ligne faite glisse vers
   « Fait », la feuille monte avec un léger rebond, « Journée bouclée » une seule fois.

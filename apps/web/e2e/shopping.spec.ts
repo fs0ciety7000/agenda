@@ -112,3 +112,38 @@ test('courses : mode magasin plein écran, coche par rayon', async ({ page }) =>
   await expect(store).toBeHidden();
   await expect(page.getByText('Dans le panier (1)')).toBeVisible();
 });
+
+test('Aujourd’hui : carte « courses en direct » quand l’autre coche au magasin', async ({
+  page,
+  baseURL,
+}) => {
+  await signUpWithHousehold(page, 'Grace');
+  const partner = await addPartner(page, baseURL!, 'Nicolas');
+  const base = `${baseURL}/v1/households/${partner.householdId}/shopping`;
+  const add = (text: string) =>
+    fetch(base, { method: 'POST', headers: partner.headers, body: JSON.stringify({ text }) }).then(
+      (r) => r.json() as Promise<{ id: string }>,
+    );
+  const milk = await add('Lait');
+  await add('Pain');
+
+  // Rien n'est coché : ce qu'il reste à acheter.
+  await page.goto('/');
+  const card = page
+    .getByRole('link', { name: /Courses/ })
+    .filter({ hasText: '2 articles à acheter' });
+  await expect(card).toBeVisible();
+
+  // Nicolas coche au magasin : la carte le dit, avec la progression.
+  await fetch(`${base}/${milk.id}`, {
+    method: 'PATCH',
+    headers: partner.headers,
+    body: JSON.stringify({ done: true }),
+  });
+  await page.reload();
+  const live = page.getByRole('link', { name: /Nicolas fait les courses/ });
+  await expect(live).toBeVisible();
+  await expect(live.getByRole('img', { name: '1 sur 2 articles dans le panier' })).toBeVisible();
+  await live.click();
+  await expect(page).toHaveURL(/\/shopping$/);
+});

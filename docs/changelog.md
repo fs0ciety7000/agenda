@@ -15,6 +15,16 @@ d'elle-même (ou via Google Play).
 
 ## 30 octobre 2026
 
+### Nouvel écran Aujourd'hui (#118)
+
+- ✨ **Courses en direct** : en tête d'Aujourd'hui, une carte dit qui fait les courses (un article
+  coché il y a moins de 30 minutes) et combien d'articles sont dans le panier ; sinon, ce qu'il
+  reste à acheter. Un toucher ouvre la liste.
+- 🛠 **« Qu'est-ce qu'on fait ? »** : sur téléphone, la barre d'ajout rapide passe en bas de
+  l'écran, à portée du pouce (micro pour dicter sur Android).
+- 🛠 Sous le bonjour, la date et ce qu'il reste à faire aujourd'hui ; titres de section plus
+  lisibles, tâches en lignes simples.
+
 ### Nouvelle apparence : couleurs et thèmes (#117)
 
 - ✨ **Thèmes de couleur** : Encre (noir et blanc, par défaut), Corail, Océan ou Lagune, dans

@@ -109,6 +109,7 @@ import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
+import app.tandem.foyer.ui.quickadd.QuickAddBar
 import app.tandem.foyer.ui.quickadd.QuickAddSheet
 import app.tandem.foyer.ui.share.ShareSheet
 import app.tandem.foyer.ui.share.SharedText
@@ -492,21 +493,25 @@ private fun MainScaffold(
         snackbarHost = { SnackbarHost(snackbar) },
         bottomBar = {
             if (onTab) {
-                BottomBar(
-                    current = route,
-                    onTab = { tab ->
-                        nav.navigate(tab.route) {
-                            popUpTo(nav.graph.findStartDestination().id) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    },
-                    onMore = { showDrawer = true },
-                )
+                Column {
+                    // Aujourd'hui : la barre d'ajout au-dessus des onglets, à portée du pouce.
+                    if (route == Tab.TODAY.route) QuickAddBar(onClick = { showQuickAdd = true }, onVoice = startVoice)
+                    BottomBar(
+                        current = route,
+                        onTab = { tab ->
+                            nav.navigate(tab.route) {
+                                popUpTo(nav.graph.findStartDestination().id) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        onMore = { showDrawer = true },
+                    )
+                }
             }
         },
         floatingActionButton = {
-            if (onTab && route != Tab.SETTINGS.route && route != Tab.SHOPPING.route) {
+            if (onTab && route != Tab.SETTINGS.route && route != Tab.SHOPPING.route && route != Tab.TODAY.route) {
                 FloatingActionButton(onClick = { showQuickAdd = true }) {
                     Icon(Icons.Filled.Add, contentDescription = stringResource(R.string.quick_add))
                 }
@@ -519,6 +524,14 @@ private fun MainScaffold(
                     state, vm::refresh, vm::toggle, { open(it.id) },
                     onThank = vm::thank,
                     onSearch = { nav.navigate("search") },
+                    shopping = shopping,
+                    onOpenShopping = {
+                        nav.navigate(Tab.SHOPPING.route) {
+                            popUpTo(nav.graph.findStartDestination().id) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
+                    },
                     banner = {
                         updateBanner()
                         SwapBanner(container.swaps, state.household?.members.orEmpty(), state.occurrences, vm::refresh, onMessage)

@@ -22,7 +22,7 @@
     <string name="quick_add">Snel toevoegen</string>
     <string name="back">Terug</string>
 
-    <string name="greeting">Hallo %1$s 👋</string>
+    <string name="greeting">Hallo %1$s</string>
     <string name="today">Vandaag</string>
     <string name="today_catch_up">Nog in te halen</string>
     <string name="overdue">Nog in te halen</string>
@@ -838,4 +838,27 @@
     <string name="accent_coral">Koraal</string>
     <string name="accent_ocean">Oceaan</string>
     <string name="accent_lagoon">Lagune</string>
+    <!-- Aujourd'hui, refonte « Duo » -->
+    <string name="quick_add_prompt">Wat gaan we doen?</string>
+    <string name="today_summary_none">%1$s. Niets gepland vandaag.</string>
+    <string name="today_summary_done">%1$s. Alles gedaan voor vandaag.</string>
+    <plurals name="today_summary_left">
+        <item quantity="one">%1$s. Nog %2$d taak vandaag.</item>
+        <item quantity="other">%1$s. Nog %2$d taken vandaag.</item>
+    </plurals>
+    <string name="today_shopping_live">%1$s doet de boodschappen</string>
+    <string name="today_shopping_live_me">Boodschappen bezig</string>
+    <string name="today_shopping_live_now">Live, net nu</string>
+    <plurals name="today_shopping_live_since">
+        <item quantity="one">Live, %d min geleden</item>
+        <item quantity="other">Live, %d min geleden</item>
+    </plurals>
+    <plurals name="today_shopping_to_buy">
+        <item quantity="one">%d artikel te kopen</item>
+        <item quantity="other">%d artikels te kopen</item>
+    </plurals>
+    <plurals name="today_shopping_progress">
+        <item quantity="one">%1$d van %2$d artikel in het mandje</item>
+        <item quantity="other">%1$d van %2$d artikels in het mandje</item>
+    </plurals>
 </resources>

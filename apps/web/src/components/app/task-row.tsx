@@ -250,17 +250,23 @@ export function TaskList({
   showDate,
   label,
   trailing,
+  flat,
 }: {
   items: OccurrenceDto[];
   onOpen: (o: OccurrenceDto) => void;
   showDate?: boolean;
   label?: string;
   trailing?: (o: OccurrenceDto) => React.ReactNode;
+  /** Lignes à plat sur le fond, sans carte (écran Aujourd'hui de la refonte « Duo »). */
+  flat?: boolean;
 }) {
   return (
     <ul
       aria-label={label}
-      className="divide-y divide-border rounded-lg border border-border bg-surface"
+      className={cn(
+        'divide-y divide-border',
+        flat ? '[&>li]:px-0' : 'rounded-lg border border-border bg-surface',
+      )}
     >
       {items.map((o) => (
         <TaskRow

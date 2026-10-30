@@ -16,7 +16,7 @@ test('appareils connectés : voir l’autre connexion et la déconnecter à dist
   await phone.getByLabel('Adresse email').fill(email);
   await phone.getByLabel('Mot de passe').fill('correct horse battery');
   await phone.getByRole('button', { name: 'Se connecter', exact: true }).click();
-  await expect(phone.getByRole('heading', { name: 'Bonjour Grace 👋' })).toBeVisible();
+  await expect(phone.getByRole('heading', { name: 'Bonjour Grace' })).toBeVisible();
 
   await openSettings(page);
   const list = page.getByRole('list', { name: 'Appareils connectés' });
@@ -45,7 +45,7 @@ test('appareils connectés : déconnecter tous les autres d’un coup', async ({
     await p.getByLabel('Adresse email').fill(email);
     await p.getByLabel('Mot de passe').fill('correct horse battery');
     await p.getByRole('button', { name: 'Se connecter', exact: true }).click();
-    await expect(p.getByRole('heading', { name: 'Bonjour Grace 👋' })).toBeVisible();
+    await expect(p.getByRole('heading', { name: 'Bonjour Grace' })).toBeVisible();
     others.push({ context, page: p });
   }
 

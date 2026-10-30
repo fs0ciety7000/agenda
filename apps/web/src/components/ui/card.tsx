@@ -10,7 +10,7 @@ export function Card({ className, ...props }: React.HTMLAttributes<HTMLDivElemen
 export function SectionTitle({ className, ...props }: React.HTMLAttributes<HTMLHeadingElement>) {
   return (
     <h2
-      className={cn('text-xs font-medium uppercase tracking-[0.04em] text-text-muted', className)}
+      className={cn('text-xl font-semibold tracking-[-0.01em] text-text', className)}
       {...props}
     />
   );

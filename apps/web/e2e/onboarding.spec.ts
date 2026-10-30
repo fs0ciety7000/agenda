@@ -23,7 +23,7 @@ test('inscription → création du foyer → invitation → dashboard', async ({
   );
   await page.getByRole('button', { name: 'Continuer' }).click();
 
-  await expect(page.getByRole('heading', { name: 'Bonjour Grace 👋' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Bonjour Grace' })).toBeVisible();
   await expect(page.getByText("Rien pour aujourd'hui.")).toBeVisible();
 });
 
@@ -50,7 +50,7 @@ test('accueil : une première tâche répétée en un toucher', async ({ page })
   ).toHaveCount(0);
   await page.getByRole('button', { name: 'Continuer' }).click();
 
-  await expect(page.getByRole('heading', { name: 'Bonjour Emma 👋' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Bonjour Emma' })).toBeVisible();
   await expect(page.getByText('Sortir les poubelles').first()).toBeVisible();
 });
 

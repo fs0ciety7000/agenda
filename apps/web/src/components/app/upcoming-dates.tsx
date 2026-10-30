@@ -33,10 +33,7 @@ export function UpcomingDates() {
   return (
     <section aria-labelledby="soon-heading" className="flex flex-col gap-3">
       <div className="flex items-baseline justify-between gap-3">
-        <h2
-          id="soon-heading"
-          className="text-xs font-medium uppercase tracking-[0.04em] text-text-muted"
-        >
+        <h2 id="soon-heading" className="text-xl font-semibold tracking-[-0.01em] text-text">
           {t('soon')}
         </h2>
         <Link href="/dates" className="text-sm text-accent hover:underline">

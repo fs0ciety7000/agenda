@@ -1,3 +1,3 @@
-New look: white background, new typeface, rounder corners.
-• Pick a colour theme in Settings: Ink, Coral, Ocean or Lagoon.
+New Today screen: "What shall we do?" bar at the bottom, live shopping card (who is shopping, how many items in the basket).
+• New look: white background, new typeface, colour themes in Settings.
 • Monthly expense summary on the 1st: shared total, budget and what each of you paid.

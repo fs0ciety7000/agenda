@@ -26,7 +26,7 @@
     <string name="back">Retour</string>
 
     <!-- Aujourd'hui -->
-    <string name="greeting">Bonjour %1$s 👋</string>
+    <string name="greeting">Bonjour %1$s</string>
     <string name="today">Aujourd\'hui</string>
     <string name="today_catch_up">À rattraper</string>
     <string name="overdue">À rattraper</string>
@@ -859,4 +859,27 @@
     <string name="accent_coral">Corail</string>
     <string name="accent_ocean">Océan</string>
     <string name="accent_lagoon">Lagune</string>
+    <!-- Aujourd'hui, refonte « Duo » -->
+    <string name="quick_add_prompt">Qu\'est-ce qu\'on fait ?</string>
+    <string name="today_summary_none">%1$s. Rien de prévu aujourd\'hui.</string>
+    <string name="today_summary_done">%1$s. Tout est fait pour aujourd\'hui.</string>
+    <plurals name="today_summary_left">
+        <item quantity="one">%1$s. Encore %2$d tâche aujourd\'hui.</item>
+        <item quantity="other">%1$s. Encore %2$d tâches aujourd\'hui.</item>
+    </plurals>
+    <string name="today_shopping_live">%1$s fait les courses</string>
+    <string name="today_shopping_live_me">Courses en cours</string>
+    <string name="today_shopping_live_now">En direct, à l\'instant</string>
+    <plurals name="today_shopping_live_since">
+        <item quantity="one">En direct, il y a %d min</item>
+        <item quantity="other">En direct, il y a %d min</item>
+    </plurals>
+    <plurals name="today_shopping_to_buy">
+        <item quantity="one">%d article à acheter</item>
+        <item quantity="other">%d articles à acheter</item>
+    </plurals>
+    <plurals name="today_shopping_progress">
+        <item quantity="one">%1$d sur %2$d article dans le panier</item>
+        <item quantity="other">%1$d sur %2$d articles dans le panier</item>
+    </plurals>
 </resources>
