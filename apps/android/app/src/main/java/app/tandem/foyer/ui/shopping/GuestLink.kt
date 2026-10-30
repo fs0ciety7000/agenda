@@ -8,6 +8,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -72,6 +74,8 @@ fun GuestLinkButton(
     create: suspend (days: Int?) -> GuestShoppingLinkDto?,
     revoke: suspend () -> Boolean,
     onMessage: (String) -> Unit,
+    /** Bouton rond, icône seule (en-tête des courses). */
+    compact: Boolean = false,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -106,20 +110,33 @@ fun GuestLinkButton(
         }
     }
 
-    OutlinedButton(
-        onClick = { if (online) open = true else onMessage(offline) },
-        modifier = Modifier
-            .heightIn(min = 48.dp)
-            // Lien actif : dit en toutes lettres, pas seulement par la pastille.
-            .semantics { contentDescription = if (active) "$label, $activeLabel" else label },
-    ) {
-        Icon(painterResource(R.drawable.ic_guest_link), contentDescription = null, modifier = Modifier.size(18.dp))
-        Spacer(Modifier.width(8.dp))
-        Text(label)
-        if (active) {
+    val success = if (isSystemInDarkTheme()) Tokens.Dark.success else Tokens.Light.success
+    if (compact) {
+        Box {
+            androidx.compose.material3.OutlinedIconButton(
+                onClick = { if (online) open = true else onMessage(offline) },
+                modifier = Modifier.size(48.dp)
+                    .semantics { contentDescription = if (active) "$label, $activeLabel" else label },
+            ) {
+                Icon(painterResource(R.drawable.ic_guest_link), contentDescription = null)
+            }
+            if (active) Box(Modifier.align(Alignment.TopEnd).padding(8.dp).size(8.dp).background(success, CircleShape))
+        }
+    } else {
+        OutlinedButton(
+            onClick = { if (online) open = true else onMessage(offline) },
+            modifier = Modifier
+                .heightIn(min = 48.dp)
+                // Lien actif : dit en toutes lettres, pas seulement par la pastille.
+                .semantics { contentDescription = if (active) "$label, $activeLabel" else label },
+        ) {
+            Icon(painterResource(R.drawable.ic_guest_link), contentDescription = null, modifier = Modifier.size(18.dp))
             Spacer(Modifier.width(8.dp))
-            val success = if (isSystemInDarkTheme()) Tokens.Dark.success else Tokens.Light.success
-            Box(Modifier.size(8.dp).background(success, CircleShape))
+            Text(label)
+            if (active) {
+                Spacer(Modifier.width(8.dp))
+                Box(Modifier.size(8.dp).background(success, CircleShape))
+            }
         }
     }
     if (!open) return

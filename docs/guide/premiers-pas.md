@@ -60,7 +60,7 @@ publiée. Voir [App Android](android.md).
 Sur téléphone (site et app Android), la barre du bas garde **Aujourd'hui**, **Tâches**,
 **Courses** et **Calendrier**. Toutes les autres pages (Dépenses, Notes, Dates importantes,
 Réglages…) sont dans le tiroir **Plus** : touchez **Plus**, ou tirez la barre du bas vers le
-haut.
+haut. Dépenses et Dates importantes y sont en grandes tuiles, Réglages en bas.
 
 **Rechercher** (loupe en haut, ou **/** au clavier) cherche partout à la fois : tâches, notes,
 dates importantes, dépenses et courses. Un résultat ouvre la tâche ou la page concernée. Les

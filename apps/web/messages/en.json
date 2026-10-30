@@ -113,7 +113,6 @@
     "weekEmpty": "Nothing planned for the next few days.",
     "seeStats": "See summary",
     "sectionDue": "To do this week",
-    "allDone": "All done for today 🎉",
     "glanceShopping": "Shopping",
     "glanceShoppingCount": "{count, plural, =0 {Nothing to buy} one {# item to buy} other {# items to buy}}",
     "glanceExpenses": "This month's expenses",
@@ -127,7 +126,9 @@
     "shoppingLive": "{name} is shopping",
     "shoppingLiveMe": "Shopping in progress",
     "shoppingLiveSince": "Live, {time}",
-    "shoppingProgress": "{done} of {total, plural, one {# item} other {# items}} in the basket"
+    "shoppingProgress": "{done} of {total, plural, one {# item} other {# items}} in the basket",
+    "wrappedTitle": "Day wrapped",
+    "wrappedBody": "{count, plural, one {Today's task is done.} other {All # of today's tasks are done.}} Enjoy the rest of your day."
   },
   "placeholder": {
     "title": "Coming soon",
@@ -320,7 +321,6 @@
   },
   "tasksPage": {
     "title": "Tasks",
-    "new": "New task",
     "views": "Views",
     "search": "Filter tasks",
     "noDate": "No date",
@@ -348,7 +348,9 @@
     },
     "noSeries": "No recurring tasks.",
     "noSeriesBody": "Create a task and choose “Repeat” so it comes back automatically.",
-    "next": "next: {date}"
+    "next": "next: {date}",
+    "filtersOpen": "Filters",
+    "filtersCount": "{count, plural, one {# filter} other {# filters}}"
   },
   "categories": {
     "emoji": "Emoji",
@@ -478,7 +480,9 @@
     "moveTo": "Move “{title}” to another day",
     "movePick": "Tap the day to move “{title}” to.",
     "dragTo": "Drop “{title}” on the day you want.",
-    "moveCancel": "Cancel"
+    "moveCancel": "Cancel",
+    "weekStrip": "Days of the week",
+    "weekStripDay": "{date}, {count, plural, =0 {nothing planned} one {# task} other {# tasks}}"
   },
   "privacy": {
     "google": "Sign in with Google",
@@ -777,7 +781,10 @@
     "cleared": "Basket emptied.",
     "storeOpen": "Store mode",
     "storeTitle": "At the store",
-    "storeLeft": "{count, plural, =0 {Everything is in the basket} one {# item left} other {# items left}}"
+    "storeLeft": "{count, plural, =0 {Everything is in the basket} one {# item left} other {# items left}}",
+    "aisleFilter": "Aisles",
+    "aisleAll": "All",
+    "mealsLink": "This week's meals: add their ingredients"
   },
   "meals": {
     "title": "Meals",

@@ -100,6 +100,20 @@ class ScreensTest {
     }
 
     @Test
+    fun aujourdhui_journee_bouclee() {
+        // Toutes les tâches du jour faites : « Journée bouclée », sans classement.
+        val done = state.copy(
+            occurrences = state.occurrences.map {
+                if (it.date == TODAY) it.copy(status = app.tandem.foyer.domain.model.OccurrenceStatus.DONE) else it
+            },
+        )
+        screen { TodayScreen(done, {}, {}, {}, {}) }
+        compose.onNodeWithText("Journée bouclée").assertIsDisplayed()
+        compose.onNodeWithText("Les 3 tâches du jour sont faites. Profitez du reste de la journée.").assertIsDisplayed()
+        shot("today-wrapped")
+    }
+
+    @Test
     fun aujourdhui_courses_en_direct() {
         // Nicolas a coché un article il y a 2 min : la carte le dit, avec la progression.
         val now = java.time.Instant.parse("2026-10-30T17:00:00Z")
@@ -316,11 +330,13 @@ class ScreensTest {
                 current = "settings",
                 onOpen = { opened += it },
                 onDismiss = {},
+                members = Fixtures.household.members,
             )
         }
         compose.onNodeWithText("Plus").assertIsDisplayed()
         listOf("Dépenses", "Notes", "Dates importantes", "Journal et corbeille", "Absences", "Aide", "Réglages")
             .forEach { compose.onNodeWithText(it).assertIsDisplayed() }
+        compose.onNodeWithText("Foyer, compte, notifications, langue").assertIsDisplayed()
         shot("nav-drawer")
         compose.onNodeWithText("Notes").performClick()
         assertEquals(listOf("notes"), opened)
@@ -417,6 +433,27 @@ class ScreensTest {
         compose.onNodeWithText("Lait").performClick()
         assertEquals(listOf("Lait"), toggled)
         shot("shopping")
+    }
+
+    @Test
+    fun courses_puce_de_rayon() {
+        // Deux rayons : la puce « Crèmerie » ne garde que ce rayon, « Tout » les remet.
+        screen {
+            app.tandem.foyer.ui.shopping.ShoppingScreen(
+                items = listOf(
+                    app.tandem.foyer.domain.model.ShoppingItem("1", "Tomates", false, aisle = "PRODUCE"),
+                    app.tandem.foyer.domain.model.ShoppingItem("2", "Lait", false, aisle = "DAIRY"),
+                ),
+                members = state.members, online = true, live = true, sync = SyncState(), refreshing = false,
+                onRefresh = {}, onAdd = {}, onToggle = {}, onRemove = {}, onClearDone = {},
+            )
+        }
+        compose.onNodeWithText("🧀 Crèmerie et œufs  1").performClick()
+        compose.onNodeWithText("Lait").assertIsDisplayed()
+        compose.onNodeWithText("Tomates").assertDoesNotExist()
+        compose.onNodeWithText("Tout  2").performClick()
+        compose.onNodeWithText("Tomates").assertIsDisplayed()
+        shot("shopping-aisles")
     }
 
     @Test

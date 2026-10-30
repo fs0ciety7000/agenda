@@ -289,7 +289,12 @@ export function AppShell({ children }: { children: ReactNode }) {
           })}
         </div>
       </nav>
-      <NavDrawer open={drawer} onOpenChange={setDrawer} pathname={pathname} />
+      <NavDrawer
+        open={drawer}
+        onOpenChange={setDrawer}
+        pathname={pathname}
+        members={shown?.household.members ?? []}
+      />
       {household && (
         <GlobalSearch householdId={household.id} open={search} onOpenChange={setSearch} />
       )}

@@ -68,25 +68,40 @@
     opacity: 0;
   }
 }
+/* La feuille monte avec un léger rebond (ressort), le dialogue desktop aussi, plus discret. */
 @keyframes sheet-in {
-  from {
+  0% {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(40px);
+  }
+  70% {
+    opacity: 1;
+    transform: translateY(-4px);
+  }
+  100% {
+    transform: translateY(0);
   }
 }
 @media (min-width: 640px) {
   @keyframes sheet-in {
-    from {
+    0% {
       opacity: 0;
-      transform: translate(-50%, 8px);
+      transform: translate(-50%, 12px);
+    }
+    70% {
+      opacity: 1;
+      transform: translate(-50%, -2px);
+    }
+    100% {
+      transform: translate(-50%, 0);
     }
   }
 }
 
-/* Coche qui se remplit, confettis discrets (neutralisés par « réduire les animations »). */
+/* Coche qui se remplit (neutralisée par « réduire les animations »). */
 @keyframes check-pop {
   0% {
-    transform: scale(0.6);
+    transform: scale(0.8);
   }
   60% {
     transform: scale(1.15);
@@ -95,13 +110,17 @@
     transform: scale(1);
   }
 }
-@keyframes confetti-fall {
-  from {
-    transform: translate3d(0, -8vh, 0) rotate(0deg);
-    opacity: 1;
+/* « Journée bouclée » : apparaît une fois, avec un léger rebond. */
+@keyframes wrapped-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.85);
   }
-  to {
-    transform: translate3d(var(--dx), 104vh, 0) rotate(var(--rot));
-    opacity: 0.85;
+  70% {
+    opacity: 1;
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
   }
 }

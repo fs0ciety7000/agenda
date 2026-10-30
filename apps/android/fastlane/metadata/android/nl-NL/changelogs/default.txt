@@ -1,3 +1,7 @@
-Nieuw scherm Vandaag: balk "Wat gaan we doen?" onderaan, live boodschappenkaart (wie ze doet, hoeveel artikels in het mandje).
-• Nieuwe look: witte achtergrond, nieuw lettertype, kleurthema's in Instellingen.
-• Maandoverzicht van de uitgaven op de 1e: gedeeld totaal, budget en wat ieder betaalde.
+Nieuwe look: witte achtergrond, nieuw lettertype, kleurthema's in Instellingen.
+• Vandaag: balk "Wat gaan we doen?" onderaan, live boodschappenkaart.
+• Boodschappen: eerst de lijst, afdelingschips, toevoegbalk onderaan met de scanner, menu's op één regel.
+• Taken: filters als pillen, eenvoudige regels.
+• Meer: tegels voor Uitgaven en Datums, Instellingen onderaan; vernieuwde kalender.
+• "Dag afgerond" en een geanimeerd vinkje.
+• Maandoverzicht van de uitgaven op de 1e.

@@ -1,5 +1,9 @@
 package app.tandem.foyer.ui.calendar
 
+import app.tandem.foyer.ui.theme.Tokens
+import app.tandem.foyer.ui.components.flatRow
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.gestures.detectDragGesturesAfterLongPress
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.widthIn
@@ -117,16 +121,17 @@ fun CalendarScreen(
         userScrollEnabled = drag == null,
     ) {
         item {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                IconButton(onClick = { onMonth(month.minusMonths(1)) }) {
-                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = stringResource(R.string.previous_month))
-                }
+            // Titre du mois en grand (refonte « Duo »), flèches à droite.
+            Row(Modifier.padding(start = 4.dp, bottom = 8.dp), verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     DateTimeFormatter.ofPattern("LLLL yyyy", locale).format(month).replaceFirstChar { it.titlecase(locale) },
-                    style = MaterialTheme.typography.titleLarge,
+                    style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.weight(1f).semantics { heading() },
                 )
+                IconButton(onClick = { onMonth(month.minusMonths(1)) }) {
+                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = stringResource(R.string.previous_month))
+                }
                 IconButton(onClick = { onMonth(month.plusMonths(1)) }) {
                     Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = stringResource(R.string.next_month))
                 }
@@ -192,7 +197,7 @@ fun CalendarScreen(
                             },
                     ),
             ) {
-                TaskRow(o, state.members, { onToggle(o) }, { onOpen(o) })
+                TaskRow(o, state.members, { onToggle(o) }, { onOpen(o) }, modifier = Modifier.flatRow(dayList.indexOf(o)))
             }
         }
         item {
@@ -290,17 +295,23 @@ private fun DayCell(
     val locale = currentLocale()
     val description = pluralStringResource(R.plurals.day_tasks, count, count, formatLongDate(day, locale))
     val colors = MaterialTheme.colorScheme
+    // Choisi : couleur d'action ; aujourd'hui : fond gris (comme le bandeau de semaine du site).
+    val shape = RoundedCornerShape(Tokens.Radius.md)
     Box(
         modifier.aspectRatio(1f).heightIn(min = 48.dp).padding(2.dp)
-            .background(if (isSelected) colors.primary else Color.Transparent, MaterialTheme.shapes.medium)
-            .then(
+            .background(
                 when {
-                    isDropTarget -> Modifier.background(colors.primaryContainer, MaterialTheme.shapes.medium)
-                        .border(2.dp, colors.primary, MaterialTheme.shapes.medium)
-                    isToday && !isSelected -> Modifier.border(1.5.dp, colors.primary, MaterialTheme.shapes.medium)
-                    else -> Modifier
+                    isSelected -> colors.primary
+                    isToday -> colors.surfaceVariant
+                    else -> Color.Transparent
                 },
+                shape,
             )
+            .then(
+                if (isDropTarget) Modifier.background(colors.primaryContainer, shape).border(2.dp, colors.primary, shape)
+                else Modifier,
+            )
+            .clip(shape)
             .clickable(onClick = onClick)
             .semantics {
                 contentDescription = description
@@ -313,7 +324,7 @@ private fun DayCell(
             Text(
                 day.dayOfMonth.toString(),
                 style = MaterialTheme.typography.bodyMedium,
-                fontWeight = if (isToday) FontWeight.Bold else FontWeight.Normal,
+                fontWeight = if (isToday || isSelected) FontWeight.SemiBold else FontWeight.Normal,
                 color = when {
                     isSelected -> colors.onPrimary
                     inMonth -> colors.onSurface
@@ -323,7 +334,7 @@ private fun DayCell(
             // Hauteur fixe : les chiffres restent alignés, avec ou sans pastille.
             Row(Modifier.height(5.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                 repeat(minOf(count, 3)) {
-                    Box(Modifier.size(5.dp).background(if (isSelected) colors.onPrimary else colors.primary, CircleShape))
+                    Box(Modifier.size(5.dp).background(if (isSelected) colors.onPrimary else colors.onSurfaceVariant, CircleShape))
                 }
             }
         }

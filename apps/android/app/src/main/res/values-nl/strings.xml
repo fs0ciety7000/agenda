@@ -861,4 +861,17 @@
         <item quantity="one">%1$d van %2$d artikel in het mandje</item>
         <item quantity="other">%1$d van %2$d artikels in het mandje</item>
     </plurals>
+    <!-- Courses, refonte « Duo » -->
+    <string name="shopping_aisle_all">Alles</string>
+    <plurals name="meals_planned"><item quantity="one">%d maaltijd gepland deze week</item><item quantity="other">%d maaltijden gepland deze week</item></plurals>
+    <string name="day_tomorrow">Morgen</string>
+    <string name="day_yesterday">Gisteren</string>
+    <plurals name="days_from_now"><item quantity="one">Over %d dag</item><item quantity="other">Over %d dagen</item></plurals>
+    <plurals name="days_ago"><item quantity="one">%d dag geleden</item><item quantity="other">%d dagen geleden</item></plurals>
+    <!-- Tiroir « Plus », refonte « Duo » -->
+    <string name="drawer_expenses_hint">Wie betaalde wat, en wie hoeveel schuldig is</string>
+    <string name="drawer_dates_hint">Verjaardagen, feestdagen, jaarlijks onderhoud</string>
+    <string name="drawer_settings_hint">Huishouden, account, meldingen, taal</string>
+    <string name="day_wrapped_title">Dag afgerond</string>
+    <plurals name="day_wrapped_body"><item quantity="one">De taak van vandaag is gedaan. Geniet van de rest van de dag.</item><item quantity="other">De %d taken van vandaag zijn gedaan. Geniet van de rest van de dag.</item></plurals>
 </resources>

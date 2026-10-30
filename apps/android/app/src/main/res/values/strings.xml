@@ -863,4 +863,17 @@
         <item quantity="one">%1$d of %2$d item in the basket</item>
         <item quantity="other">%1$d of %2$d items in the basket</item>
     </plurals>
+    <!-- Courses, refonte « Duo » -->
+    <string name="shopping_aisle_all">All</string>
+    <plurals name="meals_planned"><item quantity="one">%d meal planned this week</item><item quantity="other">%d meals planned this week</item></plurals>
+    <string name="day_tomorrow">Tomorrow</string>
+    <string name="day_yesterday">Yesterday</string>
+    <plurals name="days_from_now"><item quantity="one">In %d day</item><item quantity="other">In %d days</item></plurals>
+    <plurals name="days_ago"><item quantity="one">%d day ago</item><item quantity="other">%d days ago</item></plurals>
+    <!-- Tiroir « Plus », refonte « Duo » -->
+    <string name="drawer_expenses_hint">Who paid what, and who owes how much</string>
+    <string name="drawer_dates_hint">Birthdays, holidays, yearly check-ups</string>
+    <string name="drawer_settings_hint">Household, account, notifications, language</string>
+    <string name="day_wrapped_title">Day wrapped</string>
+    <plurals name="day_wrapped_body"><item quantity="one">Today\'s task is done. Enjoy the rest of your day.</item><item quantity="other">All %d of today\'s tasks are done. Enjoy the rest of your day.</item></plurals>
 </resources>

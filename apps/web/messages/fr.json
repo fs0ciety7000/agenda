@@ -113,7 +113,6 @@
     "weekEmpty": "Rien de prévu les prochains jours.",
     "seeStats": "Voir le bilan",
     "sectionDue": "À faire cette semaine",
-    "allDone": "Tout est fait pour aujourd'hui 🎉",
     "glanceShopping": "Courses",
     "glanceShoppingCount": "{count, plural, =0 {Rien à acheter} one {# article à acheter} other {# articles à acheter}}",
     "glanceExpenses": "Dépenses du mois",
@@ -127,7 +126,9 @@
     "shoppingLive": "{name} fait les courses",
     "shoppingLiveMe": "Courses en cours",
     "shoppingLiveSince": "En direct, {time}",
-    "shoppingProgress": "{done} sur {total, plural, one {# article} other {# articles}} dans le panier"
+    "shoppingProgress": "{done} sur {total, plural, one {# article} other {# articles}} dans le panier",
+    "wrappedTitle": "Journée bouclée",
+    "wrappedBody": "{count, plural, one {La tâche du jour est faite.} other {Les # tâches du jour sont faites.}} Profitez du reste de la journée."
   },
   "placeholder": {
     "title": "Bientôt disponible",
@@ -320,7 +321,6 @@
   },
   "tasksPage": {
     "title": "Tâches",
-    "new": "Nouvelle tâche",
     "views": "Vues",
     "search": "Filtrer les tâches",
     "noDate": "Sans date",
@@ -348,7 +348,9 @@
     },
     "noSeries": "Aucune tâche récurrente.",
     "noSeriesBody": "Créez une tâche et choisissez « Répéter » pour qu'elle revienne automatiquement.",
-    "next": "prochaine : {date}"
+    "next": "prochaine : {date}",
+    "filtersOpen": "Filtres",
+    "filtersCount": "{count, plural, one {# filtre} other {# filtres}}"
   },
   "categories": {
     "emoji": "Emoji",
@@ -478,7 +480,9 @@
     "moveTo": "Déplacer « {title} » à un autre jour",
     "movePick": "Touchez le jour où déplacer « {title} ».",
     "dragTo": "Lâchez « {title} » sur le jour voulu.",
-    "moveCancel": "Annuler"
+    "moveCancel": "Annuler",
+    "weekStrip": "Jours de la semaine",
+    "weekStripDay": "{date}, {count, plural, =0 {rien de prévu} one {# tâche} other {# tâches}}"
   },
   "privacy": {
     "google": "Connexion avec Google",
@@ -777,7 +781,10 @@
     "cleared": "Panier vidé.",
     "storeOpen": "Mode magasin",
     "storeTitle": "Au magasin",
-    "storeLeft": "{count, plural, =0 {Tout est dans le panier} one {Encore # article} other {Encore # articles}}"
+    "storeLeft": "{count, plural, =0 {Tout est dans le panier} one {Encore # article} other {Encore # articles}}",
+    "aisleFilter": "Rayons",
+    "aisleAll": "Tout",
+    "mealsLink": "Menus de la semaine : ajouter leurs ingrédients"
   },
   "meals": {
     "title": "Menus",

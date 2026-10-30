@@ -3,6 +3,22 @@ package app.tandem.foyer.ui.navigation
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.font.FontWeight
+import app.tandem.foyer.domain.model.Member
+import app.tandem.foyer.ui.components.MemberAvatar
+import app.tandem.foyer.ui.theme.Tokens
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
@@ -19,7 +35,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -48,9 +63,14 @@ fun drawerDestinations(withAbsences: Boolean): List<DrawerDestination> = listOfN
     DrawerDestination("settings", R.string.nav_settings, R.drawable.ic_drawer_settings),
 )
 
+/** Grandes tuiles en tête du tiroir, avec une phrase (comme sur le site). */
+private val BIG = mapOf("expenses" to R.string.drawer_expenses_hint, "dates" to R.string.drawer_dates_hint)
+
 /**
  * Tiroir de la barre du bas : s'ouvre en touchant « Plus » ou en tirant la barre vers le haut,
- * et montre toutes les autres pages d'un coup d'œil (le geste retour le referme).
+ * et montre toutes les autres pages d'un coup d'œil (le geste retour le referme). Refonte
+ * « Duo » : Dépenses et Dates en grandes tuiles, les autres en petites, Réglages en dernier sur
+ * une ligne avec les membres du foyer.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -59,46 +79,56 @@ fun NavDrawer(
     current: String?,
     onOpen: (route: String) -> Unit,
     onDismiss: () -> Unit,
+    members: List<Member> = emptyList(),
 ) {
+    val big = destinations.filter { it.route in BIG }
+    val small = destinations.filter { it.route !in BIG && it.route != "settings" }
+    val settings = destinations.firstOrNull { it.route == "settings" }
     ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Column(
             Modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp).navigationBarsPadding(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
             Text(
                 stringResource(R.string.nav_more),
                 style = MaterialTheme.typography.titleLarge,
+                fontWeight = FontWeight.SemiBold,
                 modifier = Modifier.padding(bottom = 4.dp).semantics { heading() },
             )
-            destinations.chunked(3).forEach { row ->
-                Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    row.forEach { d ->
-                        val selected = d.route == current
-                        OutlinedCard(
-                            onClick = { onOpen(d.route) },
-                            modifier = Modifier.weight(1f).fillMaxHeight().heightIn(min = 88.dp).semantics { this.selected = selected },
-                            border = if (selected) {
-                                BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary)
-                            } else {
-                                BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant)
-                            },
+            Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                big.forEach { d ->
+                    Tile(d, d.route == current, onOpen, Modifier.weight(1f).fillMaxHeight().heightIn(min = 128.dp)) { selected ->
+                        Column(
+                            Modifier.fillMaxSize().padding(16.dp),
+                            verticalArrangement = Arrangement.SpaceBetween,
                         ) {
-                            Column(
-                                Modifier.fillMaxWidth().padding(horizontal = 6.dp, vertical = 12.dp),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.spacedBy(6.dp),
-                            ) {
-                                Icon(
-                                    painterResource(d.icon),
-                                    contentDescription = null,
-                                    tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.size(24.dp),
+                            Icon(painterResource(d.icon), contentDescription = null, tint = tint(selected), modifier = Modifier.size(26.dp))
+                            Column(Modifier.padding(top = 12.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                                Text(stringResource(d.label), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                                Text(
+                                    stringResource(BIG.getValue(d.route)),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                                 )
+                            }
+                        }
+                    }
+                }
+            }
+            small.chunked(3).forEach { row ->
+                Row(Modifier.height(IntrinsicSize.Min), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    row.forEach { d ->
+                        Tile(d, d.route == current, onOpen, Modifier.weight(1f).fillMaxHeight().heightIn(min = 96.dp)) { selected ->
+                            Column(
+                                Modifier.fillMaxSize().padding(horizontal = 6.dp, vertical = 12.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+                            ) {
+                                Icon(painterResource(d.icon), contentDescription = null, tint = tint(selected), modifier = Modifier.size(24.dp))
                                 Text(
                                     stringResource(d.label),
                                     style = MaterialTheme.typography.labelLarge,
                                     textAlign = TextAlign.Center,
-                                    color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
                                 )
                             }
                         }
@@ -107,6 +137,65 @@ fun NavDrawer(
                     repeat(3 - row.size) { Spacer(Modifier.weight(1f)) }
                 }
             }
+            settings?.let { d ->
+                HorizontalDivider(Modifier.padding(top = 4.dp), color = MaterialTheme.colorScheme.outlineVariant)
+                Row(
+                    Modifier.fillMaxWidth().heightIn(min = 64.dp).clip(RoundedCornerShape(Tokens.Radius.md))
+                        .clickable { onOpen(d.route) }
+                        .semantics { selected = d.route == current },
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
+                ) {
+                    if (members.isEmpty()) {
+                        Icon(painterResource(d.icon), contentDescription = null, modifier = Modifier.size(24.dp))
+                    } else {
+                        Row(horizontalArrangement = Arrangement.spacedBy((-12).dp)) {
+                            members.take(3).forEach { m ->
+                                Box(Modifier.border(2.dp, MaterialTheme.colorScheme.surface, CircleShape)) { MemberAvatar(m, 40) }
+                            }
+                        }
+                    }
+                    Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Text(stringResource(d.label), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                        Text(
+                            stringResource(R.string.drawer_settings_hint),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    Icon(
+                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
         }
     }
+}
+
+@Composable
+private fun tint(selected: Boolean) =
+    if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+
+/** Tuile pleine, gris clair ; la page ouverte est entourée de la couleur d'action. */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun Tile(
+    d: DrawerDestination,
+    selected: Boolean,
+    onOpen: (String) -> Unit,
+    modifier: Modifier,
+    content: @Composable (Boolean) -> Unit,
+) {
+    Card(
+        onClick = { onOpen(d.route) },
+        shape = RoundedCornerShape(Tokens.Radius.lg),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant,
+            contentColor = MaterialTheme.colorScheme.onSurface,
+        ),
+        border = if (selected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null,
+        modifier = modifier.semantics { this.selected = selected },
+    ) { content(selected) }
 }

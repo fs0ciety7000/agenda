@@ -43,7 +43,7 @@ export function Segmented<T extends string>({
       className={cn(
         // flex-wrap : avec un texte agrandi (réglage d'accessibilité), les options passent sur
         // deux lignes au lieu d'être tronquées.
-        'flex flex-wrap gap-1 rounded-md border border-border bg-surface-muted p-1',
+        'flex flex-wrap gap-1 rounded-[1.5rem] bg-surface-muted p-1',
         className,
       )}
     >
@@ -62,8 +62,8 @@ export function Segmented<T extends string>({
             onClick={() => onChange(o.value)}
             onKeyDown={(e) => onKeyDown(e, i)}
             className={cn(
-              'flex min-h-10 flex-1 basis-auto items-center justify-center gap-1.5 whitespace-nowrap rounded-sm px-3 py-1.5 text-sm text-text-muted transition-colors',
-              checked && 'bg-surface font-medium text-text shadow-[0_1px_2px_rgb(0_0_0/0.06)]',
+              'flex min-h-10 flex-1 basis-auto items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-3 py-1.5 text-sm text-text-muted transition-colors',
+              checked && 'bg-surface font-semibold text-text shadow-[0_1px_2px_rgb(23_24_28/0.08)]',
             )}
           >
             {o.label}

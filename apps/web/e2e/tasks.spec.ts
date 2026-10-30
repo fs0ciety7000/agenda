@@ -68,3 +68,41 @@ test('création via le formulaire complet : tâche personnelle', async ({ page }
   await expect(page.getByText('Préparer une surprise')).toBeVisible();
   await expect(page.getByText('Personnel', { exact: false }).first()).toBeVisible();
 });
+
+test('tâches sur mobile : les filtres se replient derrière « Filtres »', async ({ page }, info) => {
+  test.skip(info.project.name !== 'mobile', 'Repli des filtres : mobile seulement');
+  await signUpWithHousehold(page, 'Grace');
+  await page.goto('/tasks');
+  const toggle = page.getByRole('button', { name: 'Filtres' });
+  await expect(page.getByLabel('Priorité')).toBeHidden();
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+  await page.getByLabel('Priorité').selectOption('HIGH');
+  // Un filtre actif : le bouton le compte et les filtres restent ouverts.
+  await expect(page.getByRole('button', { name: '1 filtre' })).toBeVisible();
+  await expect(page.getByLabel('Priorité')).toBeVisible();
+});
+
+test('journée bouclée : la dernière tâche du jour cochée, le message apparaît', async ({
+  page,
+}) => {
+  await signUpWithHousehold(page, 'Grace');
+  const quickAdd = page.getByLabel('Ajouter une tâche rapidement');
+  for (const title of ['Arroser les plantes', 'Sortir les poubelles']) {
+    await quickAdd.fill(`${title} aujourd'hui`);
+    await quickAdd.press('Enter');
+    await expect(quickAdd).toHaveValue('');
+    await expect(page.getByRole('list', { name: "Aujourd'hui" }).getByText(title)).toBeVisible();
+  }
+  const status = page.getByRole('status').filter({ hasText: 'Journée bouclée' });
+  await page.getByRole('checkbox', { name: 'Marquer « Arroser les plantes » comme faite' }).click();
+  await expect(status).toHaveCount(0);
+  await page
+    .getByRole('checkbox', { name: 'Marquer « Sortir les poubelles » comme faite' })
+    .click();
+  await expect(status).toBeVisible();
+  await expect(status).toContainText('Les 2 tâches du jour sont faites.');
+  // Encore là au rechargement, sans animation.
+  await page.reload();
+  await expect(page.getByText('Journée bouclée')).toBeVisible();
+});

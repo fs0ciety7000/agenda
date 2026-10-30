@@ -137,6 +137,8 @@ fun BarcodeButton(
     rememberName: suspend (code: String, name: String) -> Boolean,
     onAdd: (name: String) -> Unit,
     onMessage: (String) -> Unit,
+    /** Bouton rond, icône seule (barre d'ajout des courses). */
+    compact: Boolean = false,
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -163,13 +165,22 @@ fun BarcodeButton(
     }
     val search: () -> Unit = { scope.launch { flow.search() } }
 
-    OutlinedButton(
-        onClick = { if (online) open = true else onMessage(offline) },
-        modifier = Modifier.heightIn(min = 48.dp),
-    ) {
-        Icon(painterResource(R.drawable.ic_scan_barcode), contentDescription = null, modifier = Modifier.size(18.dp))
-        Spacer(Modifier.width(8.dp))
-        Text(stringResource(R.string.barcode_open))
+    if (compact) {
+        androidx.compose.material3.FilledTonalIconButton(
+            onClick = { if (online) open = true else onMessage(offline) },
+            modifier = Modifier.size(48.dp),
+        ) {
+            Icon(painterResource(R.drawable.ic_scan_barcode), contentDescription = stringResource(R.string.barcode_open))
+        }
+    } else {
+        OutlinedButton(
+            onClick = { if (online) open = true else onMessage(offline) },
+            modifier = Modifier.heightIn(min = 48.dp),
+        ) {
+            Icon(painterResource(R.drawable.ic_scan_barcode), contentDescription = null, modifier = Modifier.size(18.dp))
+            Spacer(Modifier.width(8.dp))
+            Text(stringResource(R.string.barcode_open))
+        }
     }
     if (!open) return
 

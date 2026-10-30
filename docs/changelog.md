@@ -15,6 +15,38 @@ d'elle-même (ou via Google Play).
 
 ## 30 octobre 2026
 
+### Animations et « Journée bouclée » (#119)
+
+- ✨ **Journée bouclée** : quand la dernière tâche du jour est cochée, Aujourd'hui le dit (les
+  pastilles du foyer, une coche, « Les 3 tâches du jour sont faites »). Elle remplace les
+  confettis.
+- 🛠 **Cocher** : la case prend la couleur du thème avec un petit rebond ; la tâche faite glisse
+  à sa place, en bas de la liste. Les feuilles montent avec un léger ressort.
+- ♿ Rien ne bouge si « réduire les animations » est activé (système ou Android).
+
+### Calendrier et « Plus », nouvelle apparence (#119)
+
+- ✨ **Bandeau de la semaine** en vue jour du calendrier (site) : un toucher change de jour, une
+  pastille par personne montre qui a quelque chose.
+- 🛠 **Plus** : grandes tuiles pour Dépenses et Dates, petites tuiles pour le reste, Réglages en
+  bas avec les membres du foyer.
+- 🛠 Calendrier : titre en grand, choix de la vue en pilule ; sur Android, aujourd'hui sur fond
+  gris et jour choisi en couleur.
+- 🐞 Sur téléphone, les messages en bas d'écran ne cachaient plus le calendrier : ils ne
+  remontent que sur les pages qui ont une barre d'ajout.
+
+### Tâches et Courses, nouvelle apparence (#119)
+
+- ✨ **Courses : puces de rayons** en haut de la liste (« Crèmerie 2 ») pour n'afficher qu'un
+  rayon au magasin.
+- 🛠 **Courses plus lisibles** : la liste vient tout de suite après le titre ; la barre d'ajout
+  est en bas de l'écran sur téléphone (scanner un code-barres depuis la barre), les articles
+  souvent achetés juste au-dessus, et les menus de la semaine tiennent sur une ligne sous la
+  liste.
+- 🛠 **Tâches** : filtres en pilules, jours avec « dans 2 jours », lignes simples, barre
+  « Qu'est-ce qu'on fait ? » ; sur téléphone, les filtres personne, catégorie et priorité se
+  replient derrière **Filtres**.
+
 ### Nouvel écran Aujourd'hui (#118)
 
 - ✨ **Courses en direct** : en tête d'Aujourd'hui, une carte dit qui fait les courses (un article

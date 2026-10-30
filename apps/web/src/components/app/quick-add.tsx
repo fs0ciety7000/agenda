@@ -131,7 +131,9 @@ export function QuickAdd({
     <>
       <form
         onSubmit={onSubmit}
-        className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-30 flex flex-col-reverse gap-2 px-4 pb-3 md:static md:z-auto md:flex-col md:p-0"
+        // Repère des toasts : sur téléphone, ils s'affichent au-dessus de cette barre.
+        data-dock
+        className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-30 flex flex-col-reverse gap-2 bg-[linear-gradient(to_top,var(--color-bg)_75%,transparent)] px-4 pb-3 pt-4 md:static md:bg-none md:z-auto md:flex-col md:p-0"
       >
         <div className="flex h-14 items-center gap-3 rounded-full border border-border bg-surface pl-5 pr-2 shadow-raised focus-within:border-accent focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-accent">
           <Plus aria-hidden className="size-5 shrink-0 stroke-[2.2] text-text" />

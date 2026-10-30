@@ -1,3 +1,7 @@
-Nouvel écran Aujourd'hui : barre « Qu'est-ce qu'on fait ? » en bas, carte des courses en direct (qui les fait, combien d'articles dans le panier).
-• Nouvelle apparence : fond blanc, nouvelle police, thèmes de couleur dans Réglages.
-• Bilan du mois des dépenses, le 1er : total commun, budget et ce que chacun a payé.
+Nouvelle apparence : fond blanc, nouvelle police, thèmes de couleur dans Réglages.
+• Aujourd'hui : barre « Qu'est-ce qu'on fait ? » en bas, carte des courses en direct.
+• Courses : la liste d'abord, puces de rayons, barre d'ajout en bas avec le scanner, menus en une ligne.
+• Tâches : filtres en pilules, lignes simples.
+• Plus : tuiles Dépenses et Dates, Réglages en bas ; calendrier redessiné.
+• « Journée bouclée » et coche animée.
+• Bilan du mois des dépenses, le 1er.
