@@ -14,7 +14,7 @@ class ThemeTest {
     }
 
     @Test
-    fun `theme inconnu ou efface : celui par defaut`() {
+    fun `theme inconnu ou efface, celui par defaut`() {
         assertEquals(Tokens.Accents.getValue(DEFAULT_ACCENT).light, appColors("prune", dark = false).primary)
         assertEquals(Tokens.Light.bg, appColors("coral", dark = false).background)
     }
