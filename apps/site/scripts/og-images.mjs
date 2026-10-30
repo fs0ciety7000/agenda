@@ -1,6 +1,6 @@
 // Images Open Graph du site vitrine (1200 × 630, une par langue) → public/img/og/{fr,en,nl}.png.
-// Tout vient du dépôt : illustration (assets/brand), police Inter (assets/fonts), couleurs des
-// design tokens. Rejouable après un changement de slogan ou de logo :
+// Tout vient du dépôt : illustration (assets/brand), police Instrument Sans (apps/site/src/fonts),
+// couleurs des design tokens (refonte « Duo » : blanc, neutres, encre). Rejouable après un changement de slogan ou de logo :
 //   NODE_PATH=<dossier où playwright est installé>/node_modules node apps/site/scripts/og-images.mjs
 // (ou depuis un paquet qui a @playwright/test, ex. apps/web : node ../site/scripts/og-images.mjs).
 import { mkdirSync, readFileSync } from 'node:fs';
@@ -25,8 +25,9 @@ const repo = resolve(here, '../../..');
 const out = resolve(here, '../public/img/og');
 const b64 = (p) => readFileSync(join(repo, p)).toString('base64');
 const ILLUSTRATION = `data:image/png;base64,${b64('assets/brand/tandem-icon-transparent.png')}`;
-const INTER = `data:font/woff2;base64,${b64('assets/fonts/Inter-latin-var.woff2')}`;
-const INTER_EXT = `data:font/woff2;base64,${b64('assets/fonts/Inter-latin-ext-var.woff2')}`;
+const font = (w) =>
+  `data:font/woff2;base64,${b64(`apps/site/src/fonts/instrument-sans-${w}.woff2`)}`;
+const FONTS = { 400: font('regular'), 500: font('medium'), 600: font('semibold') };
 
 // Mêmes textes que le site (content.ts : hero.title, hero.badge) et la bannière Play.
 const TEXT = {
@@ -60,18 +61,22 @@ const TEXT = {
 };
 
 const html = (t, lang) => `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><style>
-@font-face{font-family:Inter;src:url(${INTER}) format('woff2');font-weight:100 900;unicode-range:U+0000-00FF,U+2000-206F,U+20AC}
-@font-face{font-family:Inter;src:url(${INTER_EXT}) format('woff2');font-weight:100 900;unicode-range:U+0100-024F,U+1E00-1EFF}
-:root{--bg:#FAF6F2;--muted:#F2EAE4;--text:#24181D;--text-muted:#6F5F66;--accent:#7D4460;--border:#E6DAD2;--accent-fg:#FFFFFF}
+${Object.entries(FONTS)
+  .map(
+    ([w, url]) =>
+      `@font-face{font-family:'Instrument Sans';src:url(${url}) format('woff2');font-weight:${w}}`,
+  )
+  .join('\n')}
+:root{--bg:#FFFFFF;--muted:#F3F4F6;--text:#17181C;--text-muted:#5F636B;--accent:#17181C;--border:#E5E7EB;--accent-fg:#FFFFFF}
 *{margin:0;box-sizing:border-box}
 html,body{width:1200px;height:630px;overflow:hidden}
-body{background:var(--bg);color:var(--text);font-family:Inter,sans-serif;font-feature-settings:"cv11","ss01";position:relative}
+body{background:var(--bg);color:var(--text);font-family:'Instrument Sans',sans-serif;position:relative}
 .blob{position:absolute;border-radius:50%;background:var(--muted)}
 .wrap{position:relative;display:flex;align-items:center;gap:52px;height:100%;padding:0 64px 0 60px}
-.art{flex:none;width:420px;height:420px;border-radius:96px;filter:drop-shadow(0 12px 32px rgb(0 0 0/.10))}
+.art{flex:none;width:420px;height:420px;border-radius:96px;filter:drop-shadow(0 12px 32px rgb(23 24 28/.10))}
 .copy{display:flex;flex-direction:column;gap:26px;min-width:0}
-.brand{font-size:30px;font-weight:600;color:var(--accent);letter-spacing:-.01em}
-h1{font-size:52px;line-height:1.08;font-weight:650;letter-spacing:-.025em}
+.brand{font-size:30px;font-weight:600;color:var(--text);letter-spacing:-.01em}
+h1{font-size:54px;line-height:1.08;font-weight:600;letter-spacing:-.03em}
 ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:12px;font-size:25px;color:var(--text-muted)}
 li{display:flex;align-items:center;gap:14px}
 li::before{content:"";width:12px;height:12px;border-radius:50%;background:var(--accent);flex:none}

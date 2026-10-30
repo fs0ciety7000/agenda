@@ -51,9 +51,9 @@ export function Nav({ t }: { t: Content }) {
       className={clsx(
         'fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,border-color] duration-300',
         open
-          ? 'border-b border-border bg-bg shadow-[0_8px_30px_-20px_rgb(36_24_29/0.35)]'
+          ? 'border-b border-border bg-bg shadow-[0_8px_30px_-20px_rgb(23_24_28/0.35)]'
           : scrolled
-            ? 'border-b border-border bg-bg/80 shadow-[0_8px_30px_-20px_rgb(36_24_29/0.35)] backdrop-blur-xl'
+            ? 'border-b border-border bg-bg/80 shadow-[0_8px_30px_-20px_rgb(23_24_28/0.35)] backdrop-blur-xl'
             : 'border-b border-transparent',
       )}
     >

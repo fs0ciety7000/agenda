@@ -56,7 +56,8 @@ Fichiers importés, à respecter au même titre que celui-ci :
 - Notes sensibles : contenu jamais renvoyé hors de `…/reveal` ; site = mot de passe (coffre ouvert 5 min
   par session), Android = empreinte ou code vérifiés sur l'appareil ; pas de chiffrement de bout en bout (#93).
 - Refonte « Duo » : fond blanc, gris neutres, quatre thèmes de couleur d'action (Encre par défaut,
-  Corail, Océan, Lagune ; réglage par appareil), Instrument Sans ; plus de prune (#117).
+  Corail, Océan, Lagune ; réglage par appareil), Instrument Sans ; plus de prune (#117). Police
+  servie depuis le dépôt (`next/font/local`, web et site), jamais par Google Fonts (#119, #120).
 - Éditeur déclaré dans les données structurées du site : CM Interactive, studio de CARDOR Media
   (`@id` partagés avec interactive.cardormedia.com et cardormedia.com) (#97).
 

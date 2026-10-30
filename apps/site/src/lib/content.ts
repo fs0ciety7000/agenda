@@ -145,18 +145,18 @@ const fr: Content = {
     login: 'Se connecter',
   },
   mock: {
-    greeting: 'Bonjour Grace',
+    greeting: 'Bonjour Emma',
     date: 'Mardi 29 septembre',
     today: 'Aujourd’hui',
     tasks: [
-      { title: 'Arroser les plantes', meta: '08:30 · Grace', who: 'g' },
-      { title: 'Sortir les poubelles', meta: '20:00 · Nicolas · chacun son tour', who: 'n' },
+      { title: 'Arroser les plantes', meta: '08:30 · Emma', who: 'g' },
+      { title: 'Sortir les poubelles', meta: '20:00 · Tom · chacun son tour', who: 'n' },
       { title: 'Courses de la semaine', meta: '18:00 · à deux', who: 'both' },
-      { title: 'Changer les draps', meta: 'Cette semaine · Grace', who: 'g' },
+      { title: 'Changer les draps', meta: 'Cette semaine · Emma', who: 'g' },
     ],
-    toast: 'Nicolas a coché « Sortir les poubelles »',
+    toast: 'Tom a coché « Sortir les poubelles »',
     added: 'Appeler le garage',
-    addedMeta: 'demain 10:00 · Nicolas',
+    addedMeta: 'demain 10:00 · Tom',
   },
   strip: [
     'Site web',
@@ -187,7 +187,7 @@ const fr: Content = {
       {
         icon: 'sparkles',
         title: 'Ajout rapide, en langage naturel',
-        text: '« Sortir les poubelles demain 19h Grace » : date, heure et personne sont reconnues. Aussi à la voix.',
+        text: '« Sortir les poubelles demain 19h Emma » : date, heure et personne sont reconnues. Aussi à la voix.',
       },
       {
         icon: 'repeat',
@@ -250,8 +250,8 @@ const fr: Content = {
     ],
     card: 'Répartition de la semaine',
     rows: [
-      { name: 'Grace', detail: '6 tâches · 1 h 40', value: 52, color: 'ocean' },
-      { name: 'Nicolas', detail: '5 tâches · 1 h 30', value: 48, color: 'sage' },
+      { name: 'Emma', detail: '6 tâches · 1 h 40', value: 52, color: 'ocean' },
+      { name: 'Tom', detail: '5 tâches · 1 h 30', value: 48, color: 'sage' },
       { name: 'À deux', detail: '2 tâches · 1 h', value: 22, color: 'plum' },
     ],
     footnote: 'Tâches partagées du lundi au dimanche.',
@@ -262,7 +262,7 @@ const fr: Content = {
     text: 'L’app Android reprend tout le site, en mieux adaptée au téléphone : widgets, raccourcis, dictée et mode sombre.',
     items: [
       { file: '1_today', caption: 'Aujourd’hui' },
-      { file: '2_repeat', caption: 'Répétitions et tour de rôle' },
+      { file: '2_shopping', caption: 'Courses en direct' },
       { file: '3_calendar', caption: 'Calendrier' },
       { file: '4_tasks', caption: 'Toutes les tâches' },
       { file: '5_dark', caption: 'Mode sombre' },
@@ -382,18 +382,18 @@ const en: Content = {
     login: 'Sign in',
   },
   mock: {
-    greeting: 'Hello Grace',
+    greeting: 'Hello Emma',
     date: 'Tuesday, September 29',
     today: 'Today',
     tasks: [
-      { title: 'Water the plants', meta: '8:30 · Grace', who: 'g' },
-      { title: 'Take out the bins', meta: '8:00 pm · Nicolas · taking turns', who: 'n' },
+      { title: 'Water the plants', meta: '8:30 · Emma', who: 'g' },
+      { title: 'Take out the bins', meta: '8:00 pm · Tom · taking turns', who: 'n' },
       { title: 'Weekly shopping', meta: '6:00 pm · together', who: 'both' },
-      { title: 'Change the sheets', meta: 'This week · Grace', who: 'g' },
+      { title: 'Change the sheets', meta: 'This week · Emma', who: 'g' },
     ],
-    toast: 'Nicolas checked “Take out the bins”',
+    toast: 'Tom checked “Take out the bins”',
     added: 'Call the garage',
-    addedMeta: 'tomorrow 10:00 · Nicolas',
+    addedMeta: 'tomorrow 10:00 · Tom',
   },
   strip: [
     'Website',
@@ -424,7 +424,7 @@ const en: Content = {
       {
         icon: 'sparkles',
         title: 'Natural-language quick add',
-        text: '“Take out the bins tomorrow 7pm Grace”: date, time and person are recognised. By voice too.',
+        text: '“Take out the bins tomorrow 7pm Emma”: date, time and person are recognised. By voice too.',
       },
       {
         icon: 'repeat',
@@ -487,8 +487,8 @@ const en: Content = {
     ],
     card: 'This week’s split',
     rows: [
-      { name: 'Grace', detail: '6 tasks · 1 h 40', value: 52, color: 'ocean' },
-      { name: 'Nicolas', detail: '5 tasks · 1 h 30', value: 48, color: 'sage' },
+      { name: 'Emma', detail: '6 tasks · 1 h 40', value: 52, color: 'ocean' },
+      { name: 'Tom', detail: '5 tasks · 1 h 30', value: 48, color: 'sage' },
       { name: 'Together', detail: '2 tasks · 1 h', value: 22, color: 'plum' },
     ],
     footnote: 'Shared tasks, Monday to Sunday.',
@@ -499,7 +499,7 @@ const en: Content = {
     text: 'The Android app has everything the website does, tuned for the phone: widgets, shortcuts, dictation and dark mode.',
     items: [
       { file: '1_today', caption: 'Today' },
-      { file: '2_repeat', caption: 'Repeats and turn-taking' },
+      { file: '2_shopping', caption: 'Live shopping list' },
       { file: '3_calendar', caption: 'Calendar' },
       { file: '4_tasks', caption: 'All tasks' },
       { file: '5_dark', caption: 'Dark mode' },
@@ -619,18 +619,18 @@ const nl: Content = {
     login: 'Aanmelden',
   },
   mock: {
-    greeting: 'Hallo Grace',
+    greeting: 'Hallo Emma',
     date: 'Dinsdag 29 september',
     today: 'Vandaag',
     tasks: [
-      { title: 'Planten water geven', meta: '8.30 u · Grace', who: 'g' },
-      { title: 'Vuilnisbakken buitenzetten', meta: '20.00 u · Nicolas · om de beurt', who: 'n' },
+      { title: 'Planten water geven', meta: '8.30 u · Emma', who: 'g' },
+      { title: 'Vuilnisbakken buitenzetten', meta: '20.00 u · Tom · om de beurt', who: 'n' },
       { title: 'Wekelijkse boodschappen', meta: '18.00 u · samen', who: 'both' },
-      { title: 'Lakens verversen', meta: 'Deze week · Grace', who: 'g' },
+      { title: 'Lakens verversen', meta: 'Deze week · Emma', who: 'g' },
     ],
-    toast: 'Nicolas heeft “Vuilnisbakken buitenzetten” afgevinkt',
+    toast: 'Tom heeft “Vuilnisbakken buitenzetten” afgevinkt',
     added: 'Garage bellen',
-    addedMeta: 'morgen 10.00 u · Nicolas',
+    addedMeta: 'morgen 10.00 u · Tom',
   },
   strip: [
     'Website',
@@ -661,7 +661,7 @@ const nl: Content = {
       {
         icon: 'sparkles',
         title: 'Snel toevoegen in gewone taal',
-        text: '“Vuilnis buitenzetten morgen 19u Grace”: datum, uur en persoon worden herkend. Ook met je stem.',
+        text: '“Vuilnis buitenzetten morgen 19u Emma”: datum, uur en persoon worden herkend. Ook met je stem.',
       },
       {
         icon: 'repeat',
@@ -724,8 +724,8 @@ const nl: Content = {
     ],
     card: 'Verdeling van deze week',
     rows: [
-      { name: 'Grace', detail: '6 taken · 1 u 40', value: 52, color: 'ocean' },
-      { name: 'Nicolas', detail: '5 taken · 1 u 30', value: 48, color: 'sage' },
+      { name: 'Emma', detail: '6 taken · 1 u 40', value: 52, color: 'ocean' },
+      { name: 'Tom', detail: '5 taken · 1 u 30', value: 48, color: 'sage' },
       { name: 'Samen', detail: '2 taken · 1 u', value: 22, color: 'plum' },
     ],
     footnote: 'Gedeelde taken, van maandag tot zondag.',
@@ -736,7 +736,7 @@ const nl: Content = {
     text: 'De Android-app kan alles wat de website kan, afgestemd op de telefoon: widgets, snelkoppelingen, dicteren en donkere modus.',
     items: [
       { file: '1_today', caption: 'Vandaag' },
-      { file: '2_repeat', caption: 'Herhalingen en beurtrol' },
+      { file: '2_shopping', caption: 'Live boodschappenlijst' },
       { file: '3_calendar', caption: 'Agenda' },
       { file: '4_tasks', caption: 'Alle taken' },
       { file: '5_dark', caption: 'Donkere modus' },

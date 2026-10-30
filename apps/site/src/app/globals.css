@@ -13,6 +13,7 @@
   --color-accent: var(--gn-color-accent);
   --color-accent-fg: var(--gn-color-accent-fg);
   --color-success: var(--gn-color-success);
+  --color-on-member: var(--gn-color-on-member);
   --color-white: #fff;
   --color-transparent: transparent;
   --color-member-sage: var(--gn-member-sage);
@@ -26,7 +27,8 @@
   --radius-lg: var(--gn-radius-lg);
   --radius-xl: var(--gn-radius-xl);
 
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-sans:
+    var(--font-instrument), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --ease-out: var(--gn-motion-easing);
 }
 
@@ -42,7 +44,6 @@
     background: var(--color-bg);
     color: var(--color-text);
     font-family: var(--font-sans);
-    font-feature-settings: 'cv11', 'ss01';
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
   }

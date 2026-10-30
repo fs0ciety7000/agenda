@@ -315,7 +315,10 @@ aubergine.
 - [ ] Android : vue jour du calendrier avec bandeau de semaine (aujourd'hui : mois + liste du
   jour) (M) 🤖
 - [x] Animations : coche, ligne faite, feuille à ressort, « Journée bouclée » (M) 🌐🤖 (#119)
-- [ ] Site vitrine aux couleurs du nouveau thème (S) 🪧
+- [x] Site vitrine aux couleurs du nouveau thème : police, halos et barres neutres, captures et
+  images de partage refaites dans les trois langues (S) 🪧 (#120)
+- [ ] Logo et vidéo du site encore dans les anciens tons (prune) : à refaire avec A3 (vidéo par
+  langue) (M) 🪧
 
 ### Propositions de design
 

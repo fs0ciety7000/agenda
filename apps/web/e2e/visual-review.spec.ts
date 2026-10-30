@@ -4,7 +4,45 @@ import { addPartner, signUpWithHousehold, todayBrussels } from './helpers';
 // Captures de tous les écrans pour une revue visuelle (à la demande, pas en CI) :
 // VISUAL=1 VISUAL_OUT=/tmp/shots pnpm --filter @agenda/web exec playwright test visual-review
 // VISUAL_LOCALE=en (ou nl) : comptes créés en français, puis écrans affichés dans cette langue.
+// VISUAL_PUBLIC=1 : captures du site vitrine (apps/site/scripts/shots.mjs) : écran visible
+// seulement, Emma et Tom, données dans la langue affichée.
 const OUT = process.env.VISUAL_OUT!;
+const PUBLIC = !!process.env.VISUAL_PUBLIC;
+const [A, B] = PUBLIC ? ['Emma', 'Tom'] : ['Grace', 'Nicolas'];
+/** Données de démonstration traduites (captures publiques en anglais et en néerlandais). */
+const DATA: Record<string, Record<string, string>> = {
+  en: {
+    'Sortir les poubelles': 'Take out the trash',
+    'Arroser les plantes': 'Water the plants',
+    'Payer la facture d’électricité': 'Pay the electricity bill',
+    'Rendez-vous garage': 'Car service appointment',
+    'Courses pour le week-end': 'Weekend groceries',
+    'Appeler le plombier': 'Call the plumber',
+    'Ménage salle de bain': 'Clean the bathroom',
+    Lait: 'Milk',
+    Pain: 'Bread',
+    Œufs: 'Eggs',
+    Pâtes: 'Pasta',
+    Tomates: 'Tomatoes',
+    'Liquide vaisselle': 'Dish soap',
+  },
+  nl: {
+    'Sortir les poubelles': 'Vuilnis buitenzetten',
+    'Arroser les plantes': 'Planten water geven',
+    'Payer la facture d’électricité': 'Elektriciteitsrekening betalen',
+    'Rendez-vous garage': 'Afspraak garage',
+    'Courses pour le week-end': 'Boodschappen voor het weekend',
+    'Appeler le plombier': 'Loodgieter bellen',
+    'Ménage salle de bain': 'Badkamer poetsen',
+    Lait: 'Melk',
+    Pain: 'Brood',
+    Œufs: 'Eieren',
+    Pâtes: 'Pasta',
+    Tomates: 'Tomaten',
+    'Liquide vaisselle': 'Afwasmiddel',
+  },
+};
+const tr = (text: string) => (PUBLIC && LOCALE ? (DATA[LOCALE]?.[text] ?? text) : text);
 const LOCALE = process.env.VISUAL_LOCALE;
 test.skip(!process.env.VISUAL, 'revue visuelle manuelle');
 
@@ -16,7 +54,7 @@ for (const scheme of ['light', 'dark'] as const) {
     const shot = async (name: string) => {
       await page.waitForLoadState('load');
       await page.waitForTimeout(600);
-      await page.screenshot({ path: `${OUT}/${tag}-${name}.png`, fullPage: true });
+      await page.screenshot({ path: `${OUT}/${tag}-${name}.png`, fullPage: !PUBLIC });
     };
     // Connexion dans la langue voulue, puis comptes créés en français (libellés des helpers).
     if (LOCALE)
@@ -24,8 +62,8 @@ for (const scheme of ['light', 'dark'] as const) {
     await page.goto('/login');
     await shot('login');
     await page.context().clearCookies();
-    await signUpWithHousehold(page, 'Grace');
-    const partner = await addPartner(page, baseURL!, 'Nicolas');
+    await signUpWithHousehold(page, A);
+    const partner = await addPartner(page, baseURL!, B);
     const hid = partner.householdId as string;
     const switchLocale = () =>
       LOCALE
@@ -38,8 +76,8 @@ for (const scheme of ['light', 'dark'] as const) {
       x.setUTCDate(x.getUTCDate() + n);
       return x.toISOString().slice(0, 10);
     };
-    const grace = partner.members.find((m: { displayName: string }) => m.displayName === 'Grace')!;
-    const nico = partner.members.find((m: { displayName: string }) => m.displayName === 'Nicolas')!;
+    const grace = partner.members.find((m: { displayName: string }) => m.displayName === A)!;
+    const nico = partner.members.find((m: { displayName: string }) => m.displayName === B)!;
     const H = { 'x-requested-with': 'tandem' };
     const tasks = [
       { title: 'Sortir les poubelles', date: today, startMinute: 19 * 60, assigneeIds: [nico.id] },
@@ -61,7 +99,7 @@ for (const scheme of ['light', 'dark'] as const) {
         title: 'Courses pour le week-end',
         date: d(3),
         assigneeIds: [grace.id, nico.id],
-        checklist: ['Lait', 'Pain', 'Œufs'],
+        checklist: ['Lait', 'Pain', 'Œufs'].map(tr),
       },
       { title: 'Appeler le plombier', dueDate: d(4) },
       {
@@ -74,11 +112,14 @@ for (const scheme of ['light', 'dark'] as const) {
       },
     ];
     for (const data of tasks)
-      await page.request.post(`/v1/households/${hid}/tasks`, { headers: H, data });
+      await page.request.post(`/v1/households/${hid}/tasks`, {
+        headers: H,
+        data: { ...data, title: tr(data.title) },
+      });
     for (const text of ['Lait', 'Pâtes', 'Tomates', 'Liquide vaisselle'])
       await page.request.post(`/v1/households/${hid}/shopping`, {
         headers: H,
-        data: { id: crypto.randomUUID(), text },
+        data: { id: crypto.randomUUID(), text: tr(text) },
       });
     for (const data of [
       { title: 'Wi-Fi', body: 'Réseau : Maison\nCode : 4F7K-29QM', pinned: true },
@@ -157,7 +198,7 @@ for (const scheme of ['light', 'dark'] as const) {
     }
     await page.goto('/');
     await page
-      .getByRole('button', { name: /^Courses pour le week-end/ })
+      .getByRole('button', { name: new RegExp(`^${tr('Courses pour le week-end')}`) })
       .first()
       .click();
     await page.waitForTimeout(600);

@@ -37,7 +37,7 @@ export function Hero({ t }: { t: Content }) {
       id="top"
       className="relative isolate overflow-hidden pt-24 pb-20 sm:pt-36 lg:pb-28"
     >
-      {/* Halo d'ambiance : couleurs de l'app, en mouvement lent. */}
+      {/* Halo d'ambiance neutre (refonte « Duo »), en mouvement lent. */}
       <motion.div
         aria-hidden
         style={{ y: blobY }}
@@ -46,17 +46,17 @@ export function Hero({ t }: { t: Content }) {
         <motion.div
           animate={{ x: [0, 40, 0], y: [0, 30, 0], scale: [1, 1.08, 1] }}
           transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute -top-32 left-[-10%] size-[36rem] rounded-full bg-accent/20 blur-3xl"
+          className="absolute -top-32 left-[-10%] size-[36rem] rounded-full bg-text/[0.06] blur-3xl"
         />
         <motion.div
           animate={{ x: [0, -50, 0], y: [0, 40, 0] }}
           transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute top-20 right-[-15%] size-[32rem] rounded-full bg-member-ocean/15 blur-3xl"
+          className="absolute top-20 right-[-15%] size-[32rem] rounded-full bg-text/[0.04] blur-3xl"
         />
         <motion.div
           animate={{ x: [0, 30, 0], y: [0, -30, 0] }}
           transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }}
-          className="absolute bottom-[-20%] left-1/3 size-[28rem] rounded-full bg-member-sage/15 blur-3xl"
+          className="absolute bottom-[-20%] left-1/3 size-[28rem] rounded-full bg-text/[0.04] blur-3xl"
         />
       </motion.div>
 
@@ -81,10 +81,7 @@ export function Hero({ t }: { t: Content }) {
             <motion.span variants={line} className="block">
               {t.hero.title[0]}
             </motion.span>
-            <motion.span
-              variants={line}
-              className="block bg-linear-to-r from-accent via-member-plum to-member-ocean bg-clip-text pb-2 text-transparent"
-            >
+            <motion.span variants={line} className="block pb-2 text-text-muted">
               {t.hero.title[1]}
             </motion.span>
           </h1>
@@ -185,10 +182,10 @@ function PhoneMock({ t }: { t: Content }) {
             <span className="text-sm font-semibold">Tandem</span>
           </div>
           <div>
-            <p className="text-2xl font-semibold tracking-tight">{t.mock.greeting} 👋</p>
+            <p className="text-2xl font-semibold tracking-tight">{t.mock.greeting}</p>
             <p className="text-sm text-text-muted">{t.mock.date}</p>
           </div>
-          <div className="flex items-center justify-between text-[0.6875rem] font-semibold tracking-wide text-text-muted uppercase">
+          <div className="flex items-center justify-between text-[0.6875rem] font-semibold text-text-muted">
             <span>{t.mock.today}</span>
             <span>
               {done.length}/{tasks.length + (added ? 1 : 0)}
@@ -227,9 +224,7 @@ function PhoneMock({ t }: { t: Content }) {
             </AnimatePresence>
           </ul>
           <div className="mt-auto flex flex-col gap-2.5 rounded-xl border border-border bg-surface px-3.5 py-3">
-            <span className="text-[0.625rem] font-semibold tracking-wide text-text-muted uppercase">
-              {t.balance.card}
-            </span>
+            <span className="text-[0.625rem] font-semibold text-text-muted">{t.balance.card}</span>
             {t.balance.rows.slice(0, 2).map((r) => (
               <div key={r.name} className="flex items-center gap-2">
                 <span className="w-12 truncate text-[0.6875rem]">{r.name}</span>
@@ -277,7 +272,7 @@ function PhoneMock({ t }: { t: Content }) {
             transition={{ type: 'spring', stiffness: 300, damping: 24 }}
             className="absolute top-24 -left-6 z-20 flex max-w-[15rem] items-center gap-3 rounded-2xl border border-border bg-surface/95 p-3 text-sm shadow-xl backdrop-blur sm:-left-20"
           >
-            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-member-sage text-xs font-semibold text-white">
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-member-sage text-xs font-semibold text-on-member">
               N
             </span>
             <span className="leading-snug">{t.mock.toast}</span>

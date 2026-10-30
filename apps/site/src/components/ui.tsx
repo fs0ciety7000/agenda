@@ -53,7 +53,7 @@ export function SectionHeading({
         center && 'mx-auto items-center text-center',
       )}
     >
-      <span className="text-sm font-semibold tracking-wide text-accent uppercase">{eyebrow}</span>
+      <span className="text-sm font-semibold text-text-muted">{eyebrow}</span>
       <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h2>
       {text ? <p className="text-lg leading-relaxed text-text-muted">{text}</p> : null}
     </Reveal>
@@ -97,13 +97,13 @@ export function PhoneFrame({ children, className }: { children: ReactNode; class
   return (
     <div
       className={clsx(
-        'relative overflow-hidden rounded-[2.6rem] border-[10px] border-[#1d171a] bg-bg shadow-[0_40px_80px_-30px_rgb(36_24_29/0.45)] dark:border-[#0b0809]',
+        'relative overflow-hidden rounded-[2.6rem] border-[10px] border-[#17181C] bg-bg shadow-[0_40px_80px_-30px_rgb(23_24_28/0.45)] dark:border-[#0F1012]',
         className,
       )}
     >
       <div
         aria-hidden
-        className="absolute top-2 left-1/2 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-[#1d171a]"
+        className="absolute top-2 left-1/2 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-[#17181C]"
       />
       {children}
     </div>
