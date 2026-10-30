@@ -100,6 +100,20 @@ class ScreensTest {
     }
 
     @Test
+    fun aujourdhui_journee_bouclee() {
+        // Toutes les tâches du jour faites : « Journée bouclée », sans classement.
+        val done = state.copy(
+            occurrences = state.occurrences.map {
+                if (it.date == TODAY) it.copy(status = app.tandem.foyer.domain.model.OccurrenceStatus.DONE) else it
+            },
+        )
+        screen { TodayScreen(done, {}, {}, {}, {}) }
+        compose.onNodeWithText("Journée bouclée").assertIsDisplayed()
+        compose.onNodeWithText("Les 3 tâches du jour sont faites. Profitez du reste de la journée.").assertIsDisplayed()
+        shot("today-wrapped")
+    }
+
+    @Test
     fun aujourdhui_courses_en_direct() {
         // Nicolas a coché un article il y a 2 min : la carte le dit, avec la progression.
         val now = java.time.Instant.parse("2026-10-30T17:00:00Z")

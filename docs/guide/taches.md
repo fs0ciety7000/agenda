@@ -5,6 +5,11 @@ description: Ajout rapide, formulaire, échéances, responsables, sous-tâches, 
 
 # Tâches
 
+## Journée bouclée
+
+Quand toutes les tâches du jour sont faites, **Aujourd'hui** affiche « Journée bouclée », avec les
+pastilles du foyer. Rien de plus : pas de score ni de classement.
+
 ## Ajout rapide
 
 Sur **Aujourd'hui** et **Tâches**, la barre « Qu'est-ce qu'on fait ? » est en haut de la page sur

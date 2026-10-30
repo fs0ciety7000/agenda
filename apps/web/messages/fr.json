@@ -113,7 +113,6 @@
     "weekEmpty": "Rien de prévu les prochains jours.",
     "seeStats": "Voir le bilan",
     "sectionDue": "À faire cette semaine",
-    "allDone": "Tout est fait pour aujourd'hui 🎉",
     "glanceShopping": "Courses",
     "glanceShoppingCount": "{count, plural, =0 {Rien à acheter} one {# article à acheter} other {# articles à acheter}}",
     "glanceExpenses": "Dépenses du mois",
@@ -127,7 +126,9 @@
     "shoppingLive": "{name} fait les courses",
     "shoppingLiveMe": "Courses en cours",
     "shoppingLiveSince": "En direct, {time}",
-    "shoppingProgress": "{done} sur {total, plural, one {# article} other {# articles}} dans le panier"
+    "shoppingProgress": "{done} sur {total, plural, one {# article} other {# articles}} dans le panier",
+    "wrappedTitle": "Journée bouclée",
+    "wrappedBody": "{count, plural, one {La tâche du jour est faite.} other {Les # tâches du jour sont faites.}} Profitez du reste de la journée."
   },
   "placeholder": {
     "title": "Bientôt disponible",

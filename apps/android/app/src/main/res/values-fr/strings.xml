@@ -897,4 +897,6 @@
     <string name="drawer_expenses_hint">Qui a payé quoi, et qui doit combien</string>
     <string name="drawer_dates_hint">Anniversaires, fêtes, entretiens annuels</string>
     <string name="drawer_settings_hint">Foyer, compte, notifications, langue</string>
+    <string name="day_wrapped_title">Journée bouclée</string>
+    <plurals name="day_wrapped_body"><item quantity="one">La tâche du jour est faite. Profitez du reste de la journée.</item><item quantity="many">Les %d tâches du jour sont faites. Profitez du reste de la journée.</item><item quantity="other">Les %d tâches du jour sont faites. Profitez du reste de la journée.</item></plurals>
 </resources>

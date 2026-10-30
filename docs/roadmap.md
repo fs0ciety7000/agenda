@@ -314,7 +314,7 @@ aubergine.
   les membres) (M) 🌐🤖 (#119)
 - [ ] Android : vue jour du calendrier avec bandeau de semaine (aujourd'hui : mois + liste du
   jour) (M) 🤖
-- [ ] Animations : coche, ligne faite, feuille à ressort, « Journée bouclée » (M) 🌐🤖
+- [x] Animations : coche, ligne faite, feuille à ressort, « Journée bouclée » (M) 🌐🤖 (#119)
 - [ ] Site vitrine aux couleurs du nouveau thème (S) 🪧
 
 ### Propositions de design

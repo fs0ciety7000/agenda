@@ -872,4 +872,6 @@
     <string name="drawer_expenses_hint">Wie betaalde wat, en wie hoeveel schuldig is</string>
     <string name="drawer_dates_hint">Verjaardagen, feestdagen, jaarlijks onderhoud</string>
     <string name="drawer_settings_hint">Huishouden, account, meldingen, taal</string>
+    <string name="day_wrapped_title">Dag afgerond</string>
+    <plurals name="day_wrapped_body"><item quantity="one">De taak van vandaag is gedaan. Geniet van de rest van de dag.</item><item quantity="other">De %d taken van vandaag zijn gedaan. Geniet van de rest van de dag.</item></plurals>
 </resources>

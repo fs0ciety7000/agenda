@@ -113,7 +113,6 @@
     "weekEmpty": "Nothing planned for the next few days.",
     "seeStats": "See summary",
     "sectionDue": "To do this week",
-    "allDone": "All done for today 🎉",
     "glanceShopping": "Shopping",
     "glanceShoppingCount": "{count, plural, =0 {Nothing to buy} one {# item to buy} other {# items to buy}}",
     "glanceExpenses": "This month's expenses",
@@ -127,7 +126,9 @@
     "shoppingLive": "{name} is shopping",
     "shoppingLiveMe": "Shopping in progress",
     "shoppingLiveSince": "Live, {time}",
-    "shoppingProgress": "{done} of {total, plural, one {# item} other {# items}} in the basket"
+    "shoppingProgress": "{done} of {total, plural, one {# item} other {# items}} in the basket",
+    "wrappedTitle": "Day wrapped",
+    "wrappedBody": "{count, plural, one {Today's task is done.} other {All # of today's tasks are done.}} Enjoy the rest of your day."
   },
   "placeholder": {
     "title": "Coming soon",

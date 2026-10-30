@@ -113,7 +113,6 @@
     "weekEmpty": "Niets gepland voor de komende dagen.",
     "seeStats": "Overzicht bekijken",
     "sectionDue": "Te doen deze week",
-    "allDone": "Alles gedaan voor vandaag 🎉",
     "glanceShopping": "Boodschappen",
     "glanceShoppingCount": "{count, plural, =0 {Niets te kopen} one {# artikel te kopen} other {# artikels te kopen}}",
     "glanceExpenses": "Uitgaven van de maand",
@@ -127,7 +126,9 @@
     "shoppingLive": "{name} doet de boodschappen",
     "shoppingLiveMe": "Boodschappen bezig",
     "shoppingLiveSince": "Live, {time}",
-    "shoppingProgress": "{done} van {total, plural, one {# artikel} other {# artikels}} in het mandje"
+    "shoppingProgress": "{done} van {total, plural, one {# artikel} other {# artikels}} in het mandje",
+    "wrappedTitle": "Dag afgerond",
+    "wrappedBody": "{count, plural, one {De taak van vandaag is gedaan.} other {De # taken van vandaag zijn gedaan.}} Geniet van de rest van de dag."
   },
   "placeholder": {
     "title": "Binnenkort",

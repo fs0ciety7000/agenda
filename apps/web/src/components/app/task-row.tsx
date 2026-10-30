@@ -1,6 +1,7 @@
 'use client';
 
 import type * as React from 'react';
+import { useLayoutEffect, useRef } from 'react';
 
 import type { OccurrenceDto } from '@agenda/contracts';
 import {
@@ -101,7 +102,7 @@ export function TaskRow({
   ].filter(Boolean);
 
   return (
-    <li className="group flex items-start gap-3 px-4 py-3">
+    <li data-id={o.id} className="group flex items-start gap-3 px-4 py-3">
       <button
         type="button"
         role="checkbox"
@@ -114,7 +115,7 @@ export function TaskRow({
           className={cn(
             'flex size-[1.375rem] items-center justify-center rounded-full border-[1.5px] transition-colors duration-(--gn-motion-base)',
             done
-              ? 'animate-[check-pop_280ms_ease-out] border-success bg-success text-surface'
+              ? 'animate-[check-pop_var(--gn-motion-base)_var(--gn-motion-easing)] border-accent bg-accent text-accent-fg'
               : 'border-text-muted/60 group-hover:border-text-muted',
           )}
         >
@@ -260,8 +261,10 @@ export function TaskList({
   /** Lignes à plat sur le fond, sans carte (écran Aujourd'hui de la refonte « Duo »). */
   flat?: boolean;
 }) {
+  const ref = useFlip<HTMLUListElement>(items.map((o) => o.id).join());
   return (
     <ul
+      ref={ref}
       aria-label={label}
       className={cn(
         'divide-y divide-border',
@@ -298,4 +301,32 @@ function SyncBadge({ state }: { state: NonNullable<OccurrenceDto['calendarSync']
       <span className="sr-only">{t(state)}</span>
     </span>
   );
+}
+
+/**
+ * Quand l'ordre change (une tâche cochée descend vers « Fait »), chaque ligne glisse de son
+ * ancienne place à la nouvelle (technique FLIP, 260 ms) ; rien si « réduire les animations ».
+ */
+function useFlip<T extends HTMLElement>(order: string) {
+  const ref = useRef<T>(null);
+  const tops = useRef(new Map<string, number>());
+  useLayoutEffect(() => {
+    const list = ref.current;
+    if (!list) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const next = new Map<string, number>();
+    for (const el of list.querySelectorAll<HTMLElement>(':scope > li[data-id]')) {
+      const id = el.dataset.id!;
+      next.set(id, el.offsetTop);
+      const before = tops.current.get(id);
+      if (!reduce && before != null && before !== el.offsetTop) {
+        el.animate(
+          [{ transform: `translateY(${before - el.offsetTop}px)` }, { transform: 'none' }],
+          { duration: 260, easing: 'cubic-bezier(.2,.8,.2,1)' },
+        );
+      }
+    }
+    tops.current = next;
+  }, [order]);
+  return ref;
 }

@@ -1,7 +1,7 @@
 'use client';
 
-import type { OccurrenceDto } from '@agenda/contracts';
-import { CalendarCheck, ShoppingBasket, Sun, Wallet } from 'lucide-react';
+import type { HouseholdMemberDto, OccurrenceDto } from '@agenda/contracts';
+import { CalendarCheck, Check, ShoppingBasket, Sun, Wallet } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useFormatter, useNow, useTranslations } from 'next-intl';
@@ -21,8 +21,6 @@ import { UpcomingDates } from '@/components/app/upcoming-dates';
 import { WeekBoard } from '@/components/app/week-board';
 import { useTaskDialog } from '@/components/app/use-task-dialog';
 import { SectionTitle } from '@/components/ui/card';
-import { Confetti } from '@/components/ui/confetti';
-import { useToast } from '@/components/ui/toast';
 import { EmptyState, ErrorState, Skeleton } from '@/components/ui/states';
 import { api, errorKey } from '@/lib/api';
 import { cn } from '@/lib/cn';
@@ -35,7 +33,6 @@ import { endOfWeek } from '@agenda/domain';
 /** Dashboard : ouvrir → voir ce qu'il y a à faire aujourd'hui → cocher → passer à autre chose. */
 export default function TodayPage() {
   const t = useTranslations('today');
-  const toast = useToast();
   const te = useTranslations('errors');
   const { me, household } = useSession();
   const member = household.members.find((m) => m.userId === me.id);
@@ -79,18 +76,15 @@ export default function TodayPage() {
     month: 'long',
   });
 
-  // Tout est fait pour aujourd'hui : confettis (seulement au moment où ça arrive).
+  // Tout est fait pour aujourd'hui : « Journée bouclée », animée seulement au moment où ça
+  // arrive (sinon affichée d'emblée).
   const allDone = todayItems.length > 0 && todayItems.every((o) => o.status === 'DONE');
   const wasAllDone = useRef<boolean | null>(null);
   const [party, setParty] = useState(0);
   useEffect(() => {
     if (!todayQ.data) return;
-    if (wasAllDone.current === false && allDone) {
-      setParty(Date.now());
-      toast({ message: t('allDone') });
-    }
+    if (wasAllDone.current === false && allDone) setParty(Date.now());
     wasAllDone.current = allDone;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allDone, todayQ.data]);
 
   return (
@@ -113,7 +107,14 @@ export default function TodayPage() {
           <NotificationBell className="mt-1 shrink-0" />
         </div>
 
-        {party > 0 && <Confetti key={party} />}
+        {allDone && (
+          <DayWrapped
+            key={party}
+            count={todayItems.length}
+            members={household.members}
+            animate={party > 0}
+          />
+        )}
         <CalendarBanner />
         <AbsenceBanner />
         <ReviewBanner />
@@ -345,5 +346,47 @@ function ShoppingLive() {
         )}
       </span>
     </Link>
+  );
+}
+
+/**
+ * « Journée bouclée » : les pastilles du foyer et une coche, puis une phrase. Aucun score, aucun
+ * classement ; annoncée aux lecteurs d'écran (role="status").
+ */
+function DayWrapped({
+  count,
+  members,
+  animate,
+}: {
+  count: number;
+  members: HouseholdMemberDto[];
+  animate: boolean;
+}) {
+  const t = useTranslations('today');
+  return (
+    <section
+      role="status"
+      className={cn(
+        'flex flex-col items-center gap-5 py-4 text-center',
+        animate && 'animate-[wrapped-in_var(--gn-motion-slow)_var(--gn-motion-easing)]',
+      )}
+    >
+      <span aria-hidden className="relative flex pb-3">
+        {members.slice(0, 2).map((m, i) => (
+          <span key={m.id} className={cn('rounded-full ring-4 ring-bg', i > 0 && '-ml-4')}>
+            <MemberAvatar member={m} size="xl" />
+          </span>
+        ))}
+        <span className="absolute bottom-0 left-1/2 flex size-9 -translate-x-1/2 items-center justify-center rounded-full bg-text text-bg ring-4 ring-bg">
+          <Check className="size-5 stroke-[2.6]" />
+        </span>
+      </span>
+      <span className="flex flex-col gap-2">
+        <span className="text-[2rem] font-semibold leading-tight tracking-[-0.03em]">
+          {t('wrappedTitle')}
+        </span>
+        <span className="max-w-72 text-text-muted">{t('wrappedBody', { count })}</span>
+      </span>
+    </section>
   );
 }

@@ -22,6 +22,11 @@ import androidx.compose.material3.OutlinedCard
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
@@ -79,6 +84,11 @@ fun TodayScreen(
     now: Instant = Instant.now(),
 ) {
     val sections = Agenda.todaySections(state.occurrences, state.today)
+    // « Journée bouclée » : animée seulement si on a vu la journée inachevée dans cet écran
+    // (au moment où la dernière tâche est cochée), sinon affichée d'emblée.
+    val allDone = sections.today.isNotEmpty() && sections.todayDone == sections.today.size
+    var seenUndone by remember { mutableStateOf(false) }
+    LaunchedEffect(allDone, sections.today.size) { if (!allDone && sections.today.isNotEmpty()) seenUndone = true }
     val members = state.members
     val locale = currentLocale()
     PullToRefreshBox(
@@ -135,10 +145,15 @@ fun TodayScreen(
                     ShoppingLiveCard(it, members, state.myMemberId, now, onOpenShopping)
                 }
             }
+            if (allDone) {
+                item(key = "wrapped") {
+                    DayWrapped(sections.today.size, state.household?.members.orEmpty(), animate = seenUndone)
+                }
+            }
             if (sections.overdue.isNotEmpty()) {
                 item { SectionHeader(stringResource(R.string.today_catch_up), trailing = sections.overdue.size.toString()) }
                 itemsIndexed(sections.overdue, key = { _, it -> "o-" + it.id }) { i, it ->
-                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, showDate = true, modifier = Modifier.flatRow(i))
+                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, showDate = true, modifier = Modifier.animateItem().flatRow(i))
                 }
             }
             item {
@@ -151,7 +166,7 @@ fun TodayScreen(
             if (sections.today.isEmpty()) {
                 item { EmptyState(stringResource(R.string.today_empty_title), stringResource(R.string.today_empty_body), illustration = R.drawable.ill_empty_today) }
             } else {
-                itemsIndexed(sections.today, key = { _, it -> "t-" + it.id }) { i, it -> TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, modifier = Modifier.flatRow(i)) }
+                itemsIndexed(sections.today, key = { _, it -> "t-" + it.id }) { i, it -> TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, modifier = Modifier.animateItem().flatRow(i)) }
             }
             state.household?.let { household ->
                 item(key = "board") {
@@ -163,7 +178,7 @@ fun TodayScreen(
             if (sections.dueThisWeek.isNotEmpty()) {
                 item { SectionHeader(stringResource(R.string.due_section), trailing = sections.dueThisWeek.size.toString()) }
                 itemsIndexed(sections.dueThisWeek, key = { _, it -> "d-" + it.id }) { i, it ->
-                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, modifier = Modifier.flatRow(i))
+                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, modifier = Modifier.animateItem().flatRow(i))
                 }
             }
             item { SectionHeader(stringResource(R.string.this_week)) }
@@ -178,7 +193,7 @@ fun TodayScreen(
                 }
             } else {
                 itemsIndexed(sections.upcoming, key = { _, it -> "w-" + it.id }) { i, it ->
-                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, showDate = true, modifier = Modifier.flatRow(i))
+                    TaskRow(it, members, { onToggle(it) }, { onOpen(it) }, myMemberId = state.myMemberId, onThank = { t -> onThank(it, t) }, today = state.today, showDate = true, modifier = Modifier.animateItem().flatRow(i))
                 }
             }
             if (sections.unscheduledCount > 0) {

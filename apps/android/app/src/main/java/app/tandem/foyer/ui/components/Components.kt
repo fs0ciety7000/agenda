@@ -1,8 +1,12 @@
 package app.tandem.foyer.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.selection.toggleable
@@ -295,18 +299,29 @@ fun dueLabel(due: LocalDate, today: LocalDate, locale: java.util.Locale): String
 }
 
 /**
- * Case de tâche du design system : cercle de 22 dp dans une cible de 48 dp, coche animée
- * (180 ms, rebond léger ; instantanée si les animations sont réduites).
+ * Case de tâche du design system : cercle de 22 dp dans une cible de 48 dp, couleur d'action
+ * une fois cochée. Cocher fait « pop » (0,8 → 1,15 → 1 en 180 ms) ; rien au premier affichage,
+ * et instantané si les animations sont réduites (échelle système à 0).
  */
 @Composable
 fun TaskCheck(checked: Boolean, onToggle: () -> Unit, label: String) {
-    val dark = isSystemInDarkTheme()
-    val success = if (dark) Tokens.Dark.success else Tokens.Light.success
-    val scale by animateFloatAsState(
-        targetValue = if (checked) 1f else 0f,
-        animationSpec = spring(dampingRatio = 0.55f, stiffness = 900f),
-        label = "check",
-    )
+    val colors = MaterialTheme.colorScheme
+    val pop = remember { Animatable(1f) }
+    var first by remember { mutableStateOf(true) }
+    LaunchedEffect(checked) {
+        if (first) {
+            first = false
+        } else if (checked) {
+            pop.snapTo(0.8f)
+            pop.animateTo(
+                1f,
+                keyframes {
+                    durationMillis = Tokens.Motion.BASE
+                    1.15f at Tokens.Motion.BASE * 6 / 10
+                },
+            )
+        }
+    }
     Box(
         Modifier
             .size(48.dp)
@@ -317,16 +332,17 @@ fun TaskCheck(checked: Boolean, onToggle: () -> Unit, label: String) {
         Box(
             Modifier
                 .size(22.dp)
-                .border(1.5.dp, if (checked) success else MaterialTheme.colorScheme.onSurfaceVariant, CircleShape)
-                .background(if (checked) success else Color.Transparent, CircleShape),
+                .scale(pop.value)
+                .border(1.5.dp, if (checked) colors.primary else colors.onSurfaceVariant, CircleShape)
+                .background(if (checked) colors.primary else Color.Transparent, CircleShape),
             contentAlignment = Alignment.Center,
         ) {
-            if (scale > 0f) {
+            if (checked) {
                 Icon(
                     Icons.Filled.Check,
                     contentDescription = null,
-                    tint = if (dark) Tokens.Dark.surface else Tokens.Light.surface,
-                    modifier = Modifier.size(14.dp).scale(scale),
+                    tint = colors.onPrimary,
+                    modifier = Modifier.size(14.dp),
                 )
             }
         }

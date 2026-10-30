@@ -128,7 +128,7 @@ fun TasksScreen(
                         TaskRow(
                             it, state.members, { onToggle(it) }, { onOpen(it) },
                             myMemberId = state.myMemberId,
-                            modifier = Modifier.flatRow(i),
+                            modifier = Modifier.animateItem().flatRow(i),
                         )
                     }
                 }

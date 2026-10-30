@@ -15,6 +15,15 @@ d'elle-même (ou via Google Play).
 
 ## 30 octobre 2026
 
+### Animations et « Journée bouclée » (#119)
+
+- ✨ **Journée bouclée** : quand la dernière tâche du jour est cochée, Aujourd'hui le dit (les
+  pastilles du foyer, une coche, « Les 3 tâches du jour sont faites »). Elle remplace les
+  confettis.
+- 🛠 **Cocher** : la case prend la couleur du thème avec un petit rebond ; la tâche faite glisse
+  à sa place, en bas de la liste. Les feuilles montent avec un léger ressort.
+- ♿ Rien ne bouge si « réduire les animations » est activé (système ou Android).
+
 ### Calendrier et « Plus », nouvelle apparence (#119)
 
 - ✨ **Bandeau de la semaine** en vue jour du calendrier (site) : un toucher change de jour, une

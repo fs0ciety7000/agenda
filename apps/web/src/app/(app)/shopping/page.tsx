@@ -111,7 +111,7 @@ export default function ShoppingPage() {
           Desktop : en haut de la liste. */}
       <div
         data-dock
-        className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-30 flex flex-col-reverse gap-2 px-4 pb-3 md:static md:z-auto md:flex-col md:p-0"
+        className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-30 flex flex-col-reverse gap-2 bg-[linear-gradient(to_top,var(--color-bg)_75%,transparent)] px-4 pb-3 pt-4 md:static md:bg-none md:z-auto md:flex-col md:p-0"
       >
         <form
           onSubmit={submit}

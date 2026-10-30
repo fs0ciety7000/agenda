@@ -874,4 +874,6 @@
     <string name="drawer_expenses_hint">Who paid what, and who owes how much</string>
     <string name="drawer_dates_hint">Birthdays, holidays, yearly check-ups</string>
     <string name="drawer_settings_hint">Household, account, notifications, language</string>
+    <string name="day_wrapped_title">Day wrapped</string>
+    <plurals name="day_wrapped_body"><item quantity="one">Today\'s task is done. Enjoy the rest of your day.</item><item quantity="other">All %d of today\'s tasks are done. Enjoy the rest of your day.</item></plurals>
 </resources>
