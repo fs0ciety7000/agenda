@@ -2,4 +2,5 @@ New look: white background, new typeface, colour themes in Settings.
 • Today: "What shall we do?" bar at the bottom, live shopping card.
 • Shopping: the list first, aisle chips, add bar at the bottom with the scanner, meals on one line.
 • Tasks: pill filters, simple rows.
+• More: Expenses and Dates tiles, Settings at the bottom; redesigned calendar.
 • Monthly expense summary on the 1st.

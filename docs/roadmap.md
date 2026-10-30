@@ -310,7 +310,10 @@ aubergine.
 - [ ] Barre « Qu'est-ce qu'on fait ? » sur Calendrier (avec le jour choisi) (S) 🌐🤖
 - [x] Tâches et Courses dans le nouveau style : filtres en pilules, lignes à plat, puces de
   rayons, barre d'ajout des courses en bas, menus en une ligne (M) 🌐🤖 (#119)
-- [ ] Calendrier (bandeau de semaine) et Plus (grille de services) (M) 🌐🤖
+- [x] Calendrier (bandeau de semaine, vue en pilule) et Plus (grille de tuiles, Réglages avec
+  les membres) (M) 🌐🤖 (#119)
+- [ ] Android : vue jour du calendrier avec bandeau de semaine (aujourd'hui : mois + liste du
+  jour) (M) 🤖
 - [ ] Animations : coche, ligne faite, feuille à ressort, « Journée bouclée » (M) 🌐🤖
 - [ ] Site vitrine aux couleurs du nouveau thème (S) 🪧
 

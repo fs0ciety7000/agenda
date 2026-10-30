@@ -15,6 +15,17 @@ d'elle-même (ou via Google Play).
 
 ## 30 octobre 2026
 
+### Calendrier et « Plus », nouvelle apparence (#119)
+
+- ✨ **Bandeau de la semaine** en vue jour du calendrier (site) : un toucher change de jour, une
+  pastille par personne montre qui a quelque chose.
+- 🛠 **Plus** : grandes tuiles pour Dépenses et Dates, petites tuiles pour le reste, Réglages en
+  bas avec les membres du foyer.
+- 🛠 Calendrier : titre en grand, choix de la vue en pilule ; sur Android, aujourd'hui sur fond
+  gris et jour choisi en couleur.
+- 🐞 Sur téléphone, les messages en bas d'écran ne cachaient plus le calendrier : ils ne
+  remontent que sur les pages qui ont une barre d'ajout.
+
 ### Tâches et Courses, nouvelle apparence (#119)
 
 - ✨ **Courses : puces de rayons** en haut de la liste (« Crèmerie 2 ») pour n'afficher qu'un

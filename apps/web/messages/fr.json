@@ -479,7 +479,9 @@
     "moveTo": "Déplacer « {title} » à un autre jour",
     "movePick": "Touchez le jour où déplacer « {title} ».",
     "dragTo": "Lâchez « {title} » sur le jour voulu.",
-    "moveCancel": "Annuler"
+    "moveCancel": "Annuler",
+    "weekStrip": "Jours de la semaine",
+    "weekStripDay": "{date}, {count, plural, =0 {rien de prévu} one {# tâche} other {# tâches}}"
   },
   "privacy": {
     "google": "Connexion avec Google",

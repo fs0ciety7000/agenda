@@ -893,4 +893,8 @@
     <string name="day_yesterday">Hier</string>
     <plurals name="days_from_now"><item quantity="one">Dans %d jour</item><item quantity="many">Dans %d jours</item><item quantity="other">Dans %d jours</item></plurals>
     <plurals name="days_ago"><item quantity="one">Il y a %d jour</item><item quantity="many">Il y a %d jours</item><item quantity="other">Il y a %d jours</item></plurals>
+    <!-- Tiroir « Plus », refonte « Duo » -->
+    <string name="drawer_expenses_hint">Qui a payé quoi, et qui doit combien</string>
+    <string name="drawer_dates_hint">Anniversaires, fêtes, entretiens annuels</string>
+    <string name="drawer_settings_hint">Foyer, compte, notifications, langue</string>
 </resources>

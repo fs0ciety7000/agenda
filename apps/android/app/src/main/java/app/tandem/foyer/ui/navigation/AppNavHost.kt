@@ -467,6 +467,7 @@ private fun MainScaffold(
         NavDrawer(
             destinations = drawerDestinations(withAbsences = (state.household?.members?.size ?: 0) > 1),
             current = route,
+            members = state.household?.members.orEmpty(),
             onOpen = { target ->
                 showDrawer = false
                 if (target == Tab.SETTINGS.route) {

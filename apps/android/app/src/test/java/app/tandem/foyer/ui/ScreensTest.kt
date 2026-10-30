@@ -316,11 +316,13 @@ class ScreensTest {
                 current = "settings",
                 onOpen = { opened += it },
                 onDismiss = {},
+                members = Fixtures.household.members,
             )
         }
         compose.onNodeWithText("Plus").assertIsDisplayed()
         listOf("Dépenses", "Notes", "Dates importantes", "Journal et corbeille", "Absences", "Aide", "Réglages")
             .forEach { compose.onNodeWithText(it).assertIsDisplayed() }
+        compose.onNodeWithText("Foyer, compte, notifications, langue").assertIsDisplayed()
         shot("nav-drawer")
         compose.onNodeWithText("Notes").performClick()
         assertEquals(listOf("notes"), opened)

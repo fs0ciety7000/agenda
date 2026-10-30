@@ -870,4 +870,8 @@
     <string name="day_yesterday">Yesterday</string>
     <plurals name="days_from_now"><item quantity="one">In %d day</item><item quantity="other">In %d days</item></plurals>
     <plurals name="days_ago"><item quantity="one">%d day ago</item><item quantity="other">%d days ago</item></plurals>
+    <!-- Tiroir « Plus », refonte « Duo » -->
+    <string name="drawer_expenses_hint">Who paid what, and who owes how much</string>
+    <string name="drawer_dates_hint">Birthdays, holidays, yearly check-ups</string>
+    <string name="drawer_settings_hint">Household, account, notifications, language</string>
 </resources>

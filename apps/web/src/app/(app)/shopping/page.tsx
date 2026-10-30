@@ -109,7 +109,10 @@ export default function ShoppingPage() {
 
       {/* Mobile : barre d'ajout fixée en bas, à portée du pouce, suggestions au-dessus.
           Desktop : en haut de la liste. */}
-      <div className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-30 flex flex-col-reverse gap-2 px-4 pb-3 md:static md:z-auto md:flex-col md:p-0">
+      <div
+        data-dock
+        className="fixed inset-x-0 bottom-[calc(4.25rem+env(safe-area-inset-bottom))] z-30 flex flex-col-reverse gap-2 px-4 pb-3 md:static md:z-auto md:flex-col md:p-0"
+      >
         <form
           onSubmit={submit}
           className="flex h-14 items-center gap-2 rounded-full border border-border bg-surface pl-5 pr-1.5 shadow-raised focus-within:border-accent focus-within:outline-2 focus-within:outline-offset-1 focus-within:outline-accent"

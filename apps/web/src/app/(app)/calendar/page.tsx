@@ -21,6 +21,7 @@ import {
   type Placement,
 } from '@/components/app/calendar-drag';
 import { useSession } from '@/components/app/household-context';
+import { memberBgClass } from '@/components/app/member-avatar';
 import { TaskList } from '@/components/app/task-row';
 import { useWeekdayName } from '@/components/app/recurrence-text';
 import { useTaskDialog } from '@/components/app/use-task-dialog';
@@ -167,6 +168,15 @@ function CalendarView() {
         : `${monthOf}-01`;
   const occurrences = useOccurrences(household.id, { view: 'all', from, to, limit: 500 });
   const items = occurrences.data ?? [];
+  // Vue jour : le bandeau de la semaine montre qui a quoi chaque jour (même requête que la vue
+  // semaine, donc souvent déjà en cache).
+  const week = range('week', anchor);
+  const weekQ = useOccurrences(household.id, {
+    view: 'all',
+    from: week.from,
+    to: week.to,
+    limit: 500,
+  });
   const move = useMoveOccurrence(household.id);
   const toast = useToast();
   const dayLabel = useDayLabel();
@@ -235,7 +245,9 @@ function CalendarView() {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold tracking-tight first-letter:uppercase">{title}</h1>
+        <h1 className="text-[2rem] font-semibold leading-tight tracking-[-0.03em] first-letter:uppercase">
+          {title}
+        </h1>
         <div className="flex items-center gap-2">
           <Button variant="secondary" size="sm" onClick={() => go({ date: today })}>
             {t('today')}
@@ -268,6 +280,17 @@ function CalendarView() {
           label: t(v === 'week' && mobile ? 'views.threeDays' : `views.${v}`),
         }))}
       />
+
+      {view === 'day' && (
+        <WeekStrip
+          anchor={anchor}
+          today={today}
+          items={weekQ.data ?? []}
+          members={household.members}
+          dayName={dayName}
+          onPick={(date) => go({ date })}
+        />
+      )}
 
       {!occurrences.data ? (
         <Skeleton className="h-[32rem] w-full" />
@@ -833,5 +856,80 @@ export default function CalendarPage() {
     <Suspense>
       <CalendarView />
     </Suspense>
+  );
+}
+
+/**
+ * Bandeau de la semaine (vue jour) : un bouton par jour, le jour affiché en couleur d'action,
+ * aujourd'hui sur fond gris, et une pastille par personne qui a quelque chose ce jour-là.
+ */
+function WeekStrip({
+  anchor,
+  today,
+  items,
+  members,
+  dayName,
+  onPick,
+}: {
+  anchor: string;
+  today: string;
+  items: OccurrenceDto[];
+  members: HouseholdMemberDto[];
+  dayName: (weekday: number, style?: 'short' | 'long') => string;
+  onPick: (date: string) => void;
+}) {
+  const t = useTranslations('calendar');
+  const format = useFormatter();
+  const { days } = range('week', anchor);
+  return (
+    <ul aria-label={t('weekStrip')} className="grid grid-cols-7 gap-1">
+      {days.map((d) => {
+        const selected = d === anchor;
+        const dayItems = items.filter((o) => o.date === d && o.status !== 'SKIPPED');
+        const who = members.filter((m) => dayItems.some((o) => o.assigneeIds.includes(m.id)));
+        const long = format.dateTime(new Date(`${d}T12:00:00Z`), {
+          weekday: 'long',
+          day: 'numeric',
+          month: 'long',
+          timeZone: 'UTC',
+        });
+        return (
+          <li key={d}>
+            <button
+              type="button"
+              aria-pressed={selected}
+              aria-current={d === today ? 'date' : undefined}
+              aria-label={t('weekStripDay', { date: long, count: dayItems.length })}
+              onClick={() => onPick(d)}
+              className={cn(
+                'flex h-[4.75rem] w-full flex-col items-center justify-center gap-1.5 rounded-[1.375rem] transition-colors',
+                selected
+                  ? 'bg-accent text-accent-fg'
+                  : d === today
+                    ? 'bg-surface-muted hover:bg-border'
+                    : 'hover:bg-surface-muted',
+              )}
+            >
+              <span className="text-[0.8125rem] opacity-75 first-letter:uppercase">
+                {dayName(weekdayOf(d), 'short')}
+              </span>
+              <span className="text-xl font-semibold tabular-nums">{Number(d.slice(8))}</span>
+              <span aria-hidden className="flex h-1.5 gap-[3px]">
+                {who.slice(0, 3).map((m) => (
+                  <span
+                    key={m.id}
+                    className={cn(
+                      'size-1.5 rounded-full',
+                      memberBgClass(m.color),
+                      selected && 'ring-1 ring-accent-fg',
+                    )}
+                  />
+                ))}
+              </span>
+            </button>
+          </li>
+        );
+      })}
+    </ul>
   );
 }

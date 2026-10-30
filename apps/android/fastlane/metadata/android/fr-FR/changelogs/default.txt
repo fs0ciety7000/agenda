@@ -2,4 +2,5 @@ Nouvelle apparence : fond blanc, nouvelle police, thèmes de couleur dans Régla
 • Aujourd'hui : barre « Qu'est-ce qu'on fait ? » en bas, carte des courses en direct.
 • Courses : la liste d'abord, puces de rayons, barre d'ajout en bas avec le scanner, menus en une ligne.
 • Tâches : filtres en pilules, lignes simples.
+• Plus : tuiles Dépenses et Dates, Réglages en bas ; calendrier redessiné.
 • Bilan du mois des dépenses, le 1er.

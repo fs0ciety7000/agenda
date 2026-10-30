@@ -868,4 +868,8 @@
     <string name="day_yesterday">Gisteren</string>
     <plurals name="days_from_now"><item quantity="one">Over %d dag</item><item quantity="other">Over %d dagen</item></plurals>
     <plurals name="days_ago"><item quantity="one">%d dag geleden</item><item quantity="other">%d dagen geleden</item></plurals>
+    <!-- Tiroir « Plus », refonte « Duo » -->
+    <string name="drawer_expenses_hint">Wie betaalde wat, en wie hoeveel schuldig is</string>
+    <string name="drawer_dates_hint">Verjaardagen, feestdagen, jaarlijks onderhoud</string>
+    <string name="drawer_settings_hint">Huishouden, account, meldingen, taal</string>
 </resources>

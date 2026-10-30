@@ -7,7 +7,9 @@ description: Vues mois, semaine et jour, glisser-déposer, synchronisation avec 
 
 ## Le calendrier de l'app
 
-- Vues **mois**, **semaine** et **jour** ; *Aujourd'hui* pour revenir à la date du jour.
+- Vues **mois**, **semaine** et **jour** ; *Aujourd'hui* pour revenir à la date du jour. En vue
+  **jour**, un bandeau montre la semaine : touchez un jour pour l'afficher ; une pastille par
+  personne signale qui a quelque chose ce jour-là.
 - Sur téléphone (site) : la semaine devient **3 jours**, plus lisible ; le **mois** montre un
   point par tâche sous chaque jour, et le jour touché s'affiche en liste dessous, avec
   **Ajouter ce jour-là**. Pour changer une tâche de jour, touchez l'icône de calendrier au bout

@@ -479,7 +479,9 @@
     "moveTo": "“{title}” naar een andere dag verplaatsen",
     "movePick": "Tik op de dag waarnaar je “{title}” wilt verplaatsen.",
     "dragTo": "Laat “{title}” los op de dag die je wilt.",
-    "moveCancel": "Annuleren"
+    "moveCancel": "Annuleren",
+    "weekStrip": "Dagen van de week",
+    "weekStripDay": "{date}, {count, plural, =0 {niets gepland} one {# taak} other {# taken}}"
   },
   "privacy": {
     "google": "Aanmelden met Google",
