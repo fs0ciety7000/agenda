@@ -1,5 +1,9 @@
 package app.tandem.foyer.ui.calendar
 
+import app.tandem.foyer.ui.components.memberColor
+import app.tandem.foyer.ui.components.PillChip
+import app.tandem.foyer.domain.model.Member
+import androidx.compose.runtime.saveable.rememberSaveable
 import app.tandem.foyer.ui.theme.Tokens
 import app.tandem.foyer.ui.components.flatRow
 import androidx.compose.ui.draw.clip
@@ -112,12 +116,14 @@ fun CalendarScreen(
     var drag by remember { mutableStateOf<Drag?>(null) }
     var origin by remember { mutableStateOf(Offset.Zero) }
     val dayAt = { p: Offset -> cells.entries.firstOrNull { it.value.contains(p) }?.key }
+    // Mois (grille) ou Semaine (bandeau de 7 jours, plus de place pour la liste du jour).
+    var weekMode by rememberSaveable { mutableStateOf(false) }
     val prevLabel = stringResource(R.string.move_previous_day)
     val nextLabel = stringResource(R.string.move_next_day)
     Box(Modifier.fillMaxSize().onGloballyPositioned { origin = it.positionInRoot() }) {
     LazyColumn(
         Modifier.fillMaxSize().padding(contentPadding),
-        contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 96.dp),
+        contentPadding = PaddingValues(start = 12.dp, end = 12.dp, top = 12.dp, bottom = 24.dp),
         userScrollEnabled = drag == null,
     ) {
         item {
@@ -129,18 +135,53 @@ fun CalendarScreen(
                     fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.weight(1f).semantics { heading() },
                 )
-                IconButton(onClick = { onMonth(month.minusMonths(1)) }) {
-                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowLeft, contentDescription = stringResource(R.string.previous_month))
+                IconButton(onClick = {
+                    if (weekMode) selected.minusWeeks(1).let { onSelect(it); onMonth(YearMonth.from(it)) }
+                    else onMonth(month.minusMonths(1))
+                }) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.KeyboardArrowLeft,
+                        contentDescription = stringResource(if (weekMode) R.string.previous_week else R.string.previous_month),
+                    )
                 }
-                IconButton(onClick = { onMonth(month.plusMonths(1)) }) {
-                    Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = stringResource(R.string.next_month))
+                IconButton(onClick = {
+                    if (weekMode) selected.plusWeeks(1).let { onSelect(it); onMonth(YearMonth.from(it)) }
+                    else onMonth(month.plusMonths(1))
+                }) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.KeyboardArrowRight,
+                        contentDescription = stringResource(if (weekMode) R.string.next_week else R.string.next_month),
+                    )
                 }
             }
-            MonthGrid(
-                month, selected, state.today, counts, onSelect,
-                dropTarget = drag?.target,
-                onCellBounds = { day, rect -> cells[day] = rect },
-            )
+            Row(Modifier.padding(start = 4.dp, bottom = 12.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                PillChip(stringResource(R.string.calendar_view_month), !weekMode, {
+                    weekMode = false
+                    cells.clear()
+                })
+                PillChip(stringResource(R.string.calendar_view_week), weekMode, {
+                    weekMode = true
+                    cells.clear()
+                })
+            }
+            if (weekMode) {
+                WeekStrip(
+                    days = Agenda.weekOf(selected),
+                    selected = selected,
+                    today = state.today,
+                    occurrences = state.occurrences,
+                    members = state.household?.members.orEmpty(),
+                    onSelect = { onSelect(it); onMonth(YearMonth.from(it)) },
+                    dropTarget = drag?.target,
+                    onCellBounds = { day, rect -> cells[day] = rect },
+                )
+            } else {
+                MonthGrid(
+                    month, selected, state.today, counts, onSelect,
+                    dropTarget = drag?.target,
+                    onCellBounds = { day, rect -> cells[day] = rect },
+                )
+            }
         }
         item {
             SectionHeader(if (selected == state.today) stringResource(R.string.today) else formatLongDate(selected, locale))
@@ -335,6 +376,75 @@ private fun DayCell(
             Row(Modifier.height(5.dp), horizontalArrangement = Arrangement.spacedBy(2.dp)) {
                 repeat(minOf(count, 3)) {
                     Box(Modifier.size(5.dp).background(if (isSelected) colors.onPrimary else colors.onSurfaceVariant, CircleShape))
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Bandeau de la semaine (refonte « Duo ») : un bouton par jour, le jour choisi en couleur d'action,
+ * aujourd'hui sur fond gris, une pastille par personne qui a quelque chose ce jour-là. Chaque jour
+ * reçoit aussi les tâches glissées depuis la liste.
+ */
+@Composable
+private fun WeekStrip(
+    days: List<LocalDate>,
+    selected: LocalDate,
+    today: LocalDate,
+    occurrences: List<Occurrence>,
+    members: List<Member>,
+    onSelect: (LocalDate) -> Unit,
+    dropTarget: LocalDate?,
+    onCellBounds: (LocalDate, Rect) -> Unit,
+) {
+    val locale = currentLocale()
+    val colors = MaterialTheme.colorScheme
+    val counts = Agenda.countsByDay(occurrences)
+    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+        days.forEach { day ->
+            val isSelected = day == selected
+            val who = Agenda.whoOnDay(occurrences, day)
+            val count = counts[day] ?: 0
+            val description = pluralStringResource(R.plurals.day_tasks, count, count, formatLongDate(day, locale))
+            val shape = RoundedCornerShape(22.dp)
+            Column(
+                Modifier
+                    .weight(1f)
+                    .heightIn(min = 76.dp)
+                    .onGloballyPositioned { onCellBounds(day, it.boundsInRoot()) }
+                    .clip(shape)
+                    .background(
+                        when {
+                            day == dropTarget -> colors.primaryContainer
+                            isSelected -> colors.primary
+                            day == today -> colors.surfaceVariant
+                            else -> Color.Transparent
+                        },
+                        shape,
+                    )
+                    .clickable { onSelect(day) }
+                    .semantics {
+                        contentDescription = description
+                        role = Role.Button
+                        this.selected = isSelected
+                    }
+                    .padding(vertical = 10.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(6.dp),
+            ) {
+                val fg = if (isSelected) colors.onPrimary else colors.onSurface
+                Text(
+                    day.dayOfWeek.getDisplayName(TextStyle.SHORT, locale).replaceFirstChar { it.titlecase(locale) },
+                    style = MaterialTheme.typography.labelMedium,
+                    color = fg.copy(alpha = 0.75f),
+                )
+                Text(day.dayOfMonth.toString(), style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold, color = fg)
+                // Pastilles de membres (couleur + nom dans la liste du jour : jamais la couleur seule).
+                Row(Modifier.height(6.dp), horizontalArrangement = Arrangement.spacedBy(3.dp)) {
+                    members.filter { it.id in who }.take(3).forEach { m ->
+                        Box(Modifier.size(6.dp).background(memberColor(m.color), CircleShape))
+                    }
                 }
             }
         }

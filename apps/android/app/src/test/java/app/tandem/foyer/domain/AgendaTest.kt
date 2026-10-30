@@ -112,4 +112,17 @@ class AgendaTest {
         assertEquals(1, board.rows[2].cells[2].size)
         assertEquals(1, board.rows[3].cells[4].size)
     }
+
+    @Test
+    fun `semaine du bandeau - du lundi au dimanche, et qui a quelque chose chaque jour`() {
+        val week = Agenda.weekOf(TODAY)
+        assertEquals(7, week.size)
+        assertEquals(java.time.DayOfWeek.MONDAY, week.first().dayOfWeek)
+        assertEquals(true, TODAY in week)
+        val all = Fixtures.week()
+        assertEquals(setOf(GRACE, NICOLAS), Agenda.whoOnDay(all, TODAY.plusDays(2)))
+        // Une tâche faite ne compte plus (« Arroser les plantes », Grace) ; il reste ses autres tâches.
+        assertEquals(setOf(GRACE, NICOLAS), Agenda.whoOnDay(all, TODAY))
+        assertEquals(emptySet<String>(), Agenda.whoOnDay(all, TODAY.plusDays(5)))
+    }
 }

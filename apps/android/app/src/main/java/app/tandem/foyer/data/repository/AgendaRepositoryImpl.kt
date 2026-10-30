@@ -149,12 +149,13 @@ class AgendaRepositoryImpl(
         enqueue(h.id, PendingOperationEntity.CREATE, localId, payload.toString())
     }
 
-    override suspend fun quickAdd(text: String) = withContext(io) {
+    override suspend fun quickAdd(text: String, defaultDate: java.time.LocalDate?) = withContext(io) {
         val h = db.households().current() ?: return@withContext
         val localId = "local-${UUID.randomUUID()}"
-        // Le serveur analysera la phrase (date, heure, responsable) à l'envoi.
-        db.occurrences().upsert(localRow(localId, h.id, h.myMemberId, text.trim()))
-        enqueue(h.id, PendingOperationEntity.QUICK_ADD, localId, text.trim())
+        // Le serveur analysera la phrase (date, heure, responsable) à l'envoi ; en attendant, la
+        // ligne locale va sur le jour choisi (calendrier), s'il y en a un.
+        db.occurrences().upsert(localRow(localId, h.id, h.myMemberId, text.trim()).copy(date = defaultDate?.toString()))
+        enqueue(h.id, PendingOperationEntity.QUICK_ADD, localId, QuickAddRequest.encode(text.trim(), defaultDate))
     }
 
     private fun localRow(id: String, householdId: String, me: String?, title: String) = OccurrenceEntity(
@@ -180,10 +181,10 @@ class AgendaRepositoryImpl(
         scheduler.requestSync()
     }
 
-    override suspend fun previewQuickAdd(text: String): QuickAddPreview? = withContext(io) {
+    override suspend fun previewQuickAdd(text: String, defaultDate: java.time.LocalDate?): QuickAddPreview? = withContext(io) {
         val h = db.households().current() ?: return@withContext null
         try {
-            api.parseQuickAdd(h.id, QuickAddRequest(text)).body()?.let { p ->
+            api.parseQuickAdd(h.id, QuickAddRequest(text, defaultDate?.toString())).body()?.let { p ->
                 QuickAddPreview(
                     title = p.title,
                     date = p.date?.let(java.time.LocalDate::parse),

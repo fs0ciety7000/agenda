@@ -236,7 +236,9 @@
       "HIGH": "Priorité haute",
       "URGENT": "Urgente"
     },
-    "queued": "« {text} » sera ajoutée au retour du réseau."
+    "queued": "« {text} » sera ajoutée au retour du réseau.",
+    "placeholderWeekday": "Qu'est-ce qu'on fait {weekday} ?",
+    "placeholderDate": "Qu'est-ce qu'on fait le {date} ?"
   },
   "tasks": {
     "unassigned": "À définir",

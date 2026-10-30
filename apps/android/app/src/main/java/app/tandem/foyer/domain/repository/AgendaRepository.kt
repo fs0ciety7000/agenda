@@ -54,8 +54,9 @@ interface AgendaRepository {
     suspend fun refresh(): RefreshOutcome
     suspend fun toggle(occurrence: Occurrence)
     suspend fun create(draft: TaskDraft)
-    suspend fun quickAdd(text: String)
-    suspend fun previewQuickAdd(text: String): QuickAddPreview?
+    /** [defaultDate] : jour choisi dans le calendrier, si la phrase n'en donne pas. */
+    suspend fun quickAdd(text: String, defaultDate: java.time.LocalDate? = null)
+    suspend fun previewQuickAdd(text: String, defaultDate: java.time.LocalDate? = null): QuickAddPreview?
     /**
      * [recurrence] : nouvelle répétition (contrat `RecurrenceInput`) à appliquer, null = inchangée.
      */

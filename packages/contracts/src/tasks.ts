@@ -5,7 +5,12 @@ import { RecurrenceInput, RecurrenceRule, RotationInput } from './recurrence';
 export const IsoDate = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/)
-  .refine((d) => new Date(`${d}T00:00:00Z`).toISOString().startsWith(d), 'Invalid date');
+  // Zod 4 lance ce contrôle même si le format est déjà refusé : une date illisible ne doit pas
+  // faire lever toISOString (erreur 500 au lieu d'un 400).
+  .refine((d) => {
+    const t = new Date(`${d}T00:00:00Z`);
+    return !Number.isNaN(t.getTime()) && t.toISOString().startsWith(d);
+  }, 'Invalid date');
 
 const Title = z.string().trim().min(1).max(200);
 const Notes = z.string().trim().max(5000);
@@ -78,7 +83,11 @@ export const UpdateOccurrenceInput = z
   .required({ version: true });
 export type UpdateOccurrenceInput = z.infer<typeof UpdateOccurrenceInput>;
 
-export const QuickAddInput = z.object({ text: z.string().trim().min(1).max(500) });
+export const QuickAddInput = z.object({
+  text: z.string().trim().min(1).max(500),
+  /** Jour choisi dans le calendrier : utilisé si la phrase ne donne ni date ni échéance. */
+  defaultDate: IsoDate.optional(),
+});
 export type QuickAddInput = z.infer<typeof QuickAddInput>;
 
 export const OccurrenceView = z.enum([

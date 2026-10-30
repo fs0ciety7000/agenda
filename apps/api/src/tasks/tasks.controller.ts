@@ -67,7 +67,7 @@ export class TasksController {
     @CurrentHousehold() ctx: HouseholdContext,
     @Body(new ZodPipe(QuickAddInput)) body: QuickAddInput,
   ): Promise<OccurrenceDto> {
-    return this.tasks.quickAdd(ctx, body.text);
+    return this.tasks.quickAdd(ctx, body.text, { defaultDate: body.defaultDate });
   }
 
   /** Prévisualisation du quick add (aucune écriture). */
@@ -77,7 +77,7 @@ export class TasksController {
     @CurrentHousehold() ctx: HouseholdContext,
     @Body(new ZodPipe(QuickAddInput)) body: QuickAddInput,
   ): Promise<QuickAddPreview> {
-    return this.tasks.previewQuickAdd(ctx, body.text);
+    return this.tasks.previewQuickAdd(ctx, body.text, body.defaultDate);
   }
 
   /** Lister les occurrences (vue, période, filtres). */

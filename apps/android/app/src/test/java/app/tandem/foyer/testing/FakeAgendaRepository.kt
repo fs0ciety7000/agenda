@@ -39,6 +39,7 @@ class FakeAgendaRepository(
     var refreshes = 0
     val created = mutableListOf<TaskDraft>()
     val quickAdds = mutableListOf<String>()
+    val quickAddDates = mutableListOf<java.time.LocalDate?>()
     var updateResult: OpResult = OpResult.Ok
     val updates = mutableListOf<Pair<TaskDraft, EditScope>>()
     val deletes = mutableListOf<EditScope>()
@@ -51,8 +52,11 @@ class FakeAgendaRepository(
         }
     }
     override suspend fun create(draft: TaskDraft) { created += draft }
-    override suspend fun quickAdd(text: String) { quickAdds += text }
-    override suspend fun previewQuickAdd(text: String) = preview
+    override suspend fun quickAdd(text: String, defaultDate: java.time.LocalDate?) {
+        quickAdds += text
+        quickAddDates += defaultDate
+    }
+    override suspend fun previewQuickAdd(text: String, defaultDate: java.time.LocalDate?) = preview
     val recurrenceUpdates = mutableListOf<JsonObject?>()
     override suspend fun update(occurrence: Occurrence, draft: TaskDraft, scope: EditScope, recurrence: JsonObject?): OpResult {
         updates += draft to scope

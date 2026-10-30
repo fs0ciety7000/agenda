@@ -99,6 +99,36 @@ describe('Tâches (intégration)', () => {
     expect(empty.body.error.code).toBe('TASK_TITLE_REQUIRED');
   });
 
+  it('quick add depuis un jour du calendrier : ce jour par défaut, sauf si la phrase en dit un', async () => {
+    const h = await coupleHousehold(app);
+    const day = addDays(today(), 3);
+    const plain = await http()
+      .post(`${h.base}/tasks/quick`)
+      .set(h.grace.auth)
+      .send({ text: 'Appeler le garage 9h', defaultDate: day })
+      .expect(201);
+    expect(plain.body).toMatchObject({ title: 'Appeler le garage', date: day, startMinute: 540 });
+    // La phrase l'emporte : « demain », ou une échéance (« cette semaine »).
+    const said = await http()
+      .post(`${h.base}/tasks/quick`)
+      .set(h.grace.auth)
+      .send({ text: 'Arroser demain', defaultDate: day })
+      .expect(201);
+    expect(said.body.date).toBe(addDays(today(), 1));
+    const preview = await http()
+      .post(`${h.base}/quick-add/parse`)
+      .set(h.grace.auth)
+      .send({ text: 'Payer la cantine cette semaine', defaultDate: day })
+      .expect(200);
+    expect(preview.body.date).toBeUndefined();
+    expect(preview.body.dueDate).toBeDefined();
+    await http()
+      .post(`${h.base}/tasks/quick`)
+      .set(h.grace.auth)
+      .send({ text: 'Mauvais jour', defaultDate: '30/10/2026' })
+      .expect(400);
+  });
+
   it('vues : aujourd’hui, à venir, en retard, terminées', async () => {
     const h = await coupleHousehold(app);
     const make = (title: string, date: string) =>

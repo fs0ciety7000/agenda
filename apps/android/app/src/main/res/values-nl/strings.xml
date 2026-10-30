@@ -874,4 +874,12 @@
     <string name="drawer_settings_hint">Huishouden, account, meldingen, taal</string>
     <string name="day_wrapped_title">Dag afgerond</string>
     <plurals name="day_wrapped_body"><item quantity="one">De taak van vandaag is gedaan. Geniet van de rest van de dag.</item><item quantity="other">De %d taken van vandaag zijn gedaan. Geniet van de rest van de dag.</item></plurals>
+    <!-- Barre d'ajout du calendrier : jour de la semaine, ou date plus lointaine -->
+    <string name="quick_add_prompt_weekday">Wat gaan we %1$s doen?</string>
+    <string name="quick_add_prompt_date">Wat gaan we op %1$s doen?</string>
+    <!-- Calendrier : vue Mois ou Semaine (bandeau) -->
+    <string name="previous_week">Vorige week</string>
+    <string name="next_week">Volgende week</string>
+    <string name="calendar_view_month">Maand</string>
+    <string name="calendar_view_week">Week</string>
 </resources>

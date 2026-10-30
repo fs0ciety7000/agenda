@@ -180,6 +180,24 @@ class ScreensTest {
     }
 
     @Test
+    fun calendrier_vue_semaine() {
+        var selected = TODAY
+        screen {
+            var day by remember { mutableStateOf(TODAY) }
+            CalendarScreen(state, YearMonth.from(TODAY), day, {}, { day = it; selected = it }, {}, {}, {})
+        }
+        compose.onNodeWithText("Semaine").performClick()
+        // Bandeau de 7 jours à la place de la grille : pas de jour hors de la semaine.
+        compose.onNodeWithContentDescription("Jeudi 15 octobre, 0 tâche").assertDoesNotExist()
+        compose.onNodeWithContentDescription("Jeudi 1 octobre, 1 tâche").performClick()
+        assertEquals(TODAY.plusDays(2), selected)
+        compose.onNodeWithText("Courses de la semaine").assertIsDisplayed()
+        compose.onNodeWithContentDescription("Semaine suivante").performClick()
+        assertEquals(TODAY.plusDays(9), selected)
+        shot("calendar-week")
+    }
+
+    @Test
     @OptIn(androidx.compose.ui.test.ExperimentalTestApi::class)
     fun calendrier_glisser_deposer_et_actions_talkback() {
         val moves = mutableListOf<Pair<String, java.time.LocalDate>>()

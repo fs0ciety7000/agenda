@@ -236,7 +236,9 @@
       "HIGH": "High priority",
       "URGENT": "Urgent"
     },
-    "queued": "“{text}” will be added when you're back online."
+    "queued": "“{text}” will be added when you're back online.",
+    "placeholderWeekday": "What shall we do on {weekday}?",
+    "placeholderDate": "What shall we do on {date}?"
   },
   "tasks": {
     "unassigned": "Unassigned",
