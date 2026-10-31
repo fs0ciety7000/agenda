@@ -33,7 +33,7 @@ export interface Content {
   };
   lang: { label: string; current: Locale };
   /** Animations qui tournent seules : bouton pour les arrêter (WCAG 2.2.2). */
-  motion: { pause: string; play: string };
+  motion: { pause: string; play: string; next: string };
   hero: {
     badge: string;
     /** Deuxième ligne en italique (Instrument Serif), couleur d'action. */
@@ -125,7 +125,7 @@ const fr: Content = {
     menu: 'Menu',
   },
   lang: { label: 'Langue', current: 'fr' },
-  motion: { pause: 'Mettre l’animation en pause', play: 'Relancer l’animation' },
+  motion: { pause: 'Mettre l’animation en pause', play: 'Relancer l’animation', next: 'Carte suivante' },
   hero: {
     badge: 'Gratuit · sans publicité · web et Android',
     title: ['Chacun son tour,', 'c’est mieux à deux.'],
@@ -327,7 +327,7 @@ const en: Content = {
     menu: 'Menu',
   },
   lang: { label: 'Language', current: 'en' },
-  motion: { pause: 'Pause the animation', play: 'Play the animation' },
+  motion: { pause: 'Pause the animation', play: 'Play the animation', next: 'Next card' },
   hero: {
     badge: 'Free · ad-free · web and Android',
     title: ['Taking turns', 'is better together.'],
@@ -528,7 +528,7 @@ const nl: Content = {
     menu: 'Menu',
   },
   lang: { label: 'Taal', current: 'nl' },
-  motion: { pause: 'Animatie pauzeren', play: 'Animatie hervatten' },
+  motion: { pause: 'Animatie pauzeren', play: 'Animatie hervatten', next: 'Volgende kaart' },
   hero: {
     badge: 'Gratis · zonder advertenties · web en Android',
     title: ['Om de beurt,', 'samen gaat het beter.'],

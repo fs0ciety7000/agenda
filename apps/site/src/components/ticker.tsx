@@ -20,7 +20,7 @@ export function useTicker(ms: number) {
     }, ms);
     return () => window.clearInterval(id);
   }, [ms, paused]);
-  return { tick, paused, toggle: () => setPaused((p) => !p) };
+  return { tick, paused, toggle: () => setPaused((p) => !p), next: () => setTick((t) => t + 1) };
 }
 
 export function PauseButton({

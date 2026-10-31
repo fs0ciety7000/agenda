@@ -1,5 +1,8 @@
 'use client';
 
+import { ChevronRight } from 'lucide-react';
+import { LazyMotion } from 'motion/react';
+import * as m from 'motion/react-m';
 import { APP_URL, APK_URL, PLAY_URL } from '@/lib/config';
 import type { Content } from '@/lib/content';
 import { PauseButton, useTicker } from './ticker';
@@ -11,9 +14,12 @@ const WHO = {
   both: { initial: 'ET', color: 'var(--gn-member-plum)' },
 } as const;
 
+// Motion (glisser au doigt) chargé à part, après l'affichage : le reste de la page n'en paie pas le poids.
+const loadFeatures = () => import('motion/react').then((mod) => mod.domMax);
+
 /** Ouverture claire : le titre, et la pile de tâches qui se distribue (la carte du dessus part). */
 export function Hero({ t }: { t: Content }) {
-  const { tick, paused, toggle } = useTicker(2200);
+  const { tick, paused, toggle, next } = useTicker(2200);
   const tasks = t.mock.tasks;
   const deck = [0, 1, 2].map((k) => ({ k, task: tasks[(tick + k) % tasks.length]! })).reverse();
   return (
@@ -94,36 +100,52 @@ export function Hero({ t }: { t: Content }) {
               </li>
             ))}
           </ul>
-          <div aria-hidden className="relative h-[22rem]">
-            {deck.map(({ k, task }) => (
-              <div
-                key={`${tick + k}`}
-                className={k === 0 ? 'deal' : undefined}
-                style={{
-                  position: 'absolute',
-                  left: 0,
-                  right: 0,
-                  top: `${1.25 + k * 6.5}rem`,
-                  // Cartes du fond plus petites, jamais transparentes (contraste du texte).
-                  transform: `scale(${1 - k * 0.05})`,
-                  zIndex: 3 - k,
-                }}
-              >
-                <div className="flex items-center gap-4 rounded-3xl bg-surface px-6 py-5 shadow-[0_18px_40px_rgb(20_21_43/0.10)]">
-                  <span
-                    className="grid size-11 flex-none place-items-center rounded-full text-sm font-semibold text-on-member"
-                    style={{ background: WHO[task.who].color }}
-                  >
-                    {WHO[task.who].initial}
-                  </span>
-                  <span className="flex min-w-0 flex-col gap-1">
-                    <span className="truncate text-lg font-semibold">{task.title}</span>
-                    <span className="text-sm text-text-muted tabular-nums">{task.meta}</span>
-                  </span>
+          <LazyMotion features={loadFeatures} strict>
+            <div aria-hidden className="relative h-[22rem]">
+              {deck.map(({ k, task }) => (
+                <div
+                  key={`${tick + k}`}
+                  className={k === 0 ? 'deal' : undefined}
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    right: 0,
+                    top: `${1.25 + k * 6.5}rem`,
+                    // Cartes du fond plus petites, jamais transparentes (contraste du texte).
+                    transform: `scale(${1 - k * 0.05})`,
+                    zIndex: 3 - k,
+                  }}
+                >
+                  {k === 0 ? (
+                    // Carte du dessus : on la jette d'un geste, à gauche ou à droite ; « Carte suivante »
+                    // fait la même chose au clavier (WCAG 2.5.7).
+                    <m.div
+                      drag="x"
+                      dragConstraints={{ left: 0, right: 0 }}
+                      dragElastic={0.9}
+                      whileDrag={{ rotate: 4, scale: 1.02 }}
+                      onDragEnd={(_, info) => {
+                        if (Math.abs(info.offset.x) > 80 || Math.abs(info.velocity.x) > 500) next();
+                      }}
+                      className="cursor-grab touch-pan-y active:cursor-grabbing"
+                    >
+                      <Card task={task} />
+                    </m.div>
+                  ) : (
+                    <Card task={task} />
+                  )}
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          </LazyMotion>
+          <button
+            type="button"
+            onClick={next}
+            aria-label={t.motion.next}
+            className="absolute right-12 bottom-0 flex size-11 items-center justify-center rounded-full text-text-muted hover:bg-surface-muted hover:text-text"
+          >
+            <ChevronRight className="size-5" aria-hidden />
+          </button>
           <PauseButton
             paused={paused}
             onToggle={toggle}
@@ -133,5 +155,24 @@ export function Hero({ t }: { t: Content }) {
         </div>
       </div>
     </section>
+  );
+}
+
+type Task = Content['mock']['tasks'][number];
+
+function Card({ task }: { task: Task }) {
+  return (
+    <div className="flex items-center gap-4 rounded-3xl bg-surface px-6 py-5 shadow-[0_18px_40px_rgb(20_21_43/0.10)]">
+      <span
+        className="grid size-11 flex-none place-items-center rounded-full text-sm font-semibold text-on-member"
+        style={{ background: WHO[task.who].color }}
+      >
+        {WHO[task.who].initial}
+      </span>
+      <span className="flex min-w-0 flex-col gap-1">
+        <span className="truncate text-lg font-semibold">{task.title}</span>
+        <span className="text-sm text-text-muted tabular-nums">{task.meta}</span>
+      </span>
+    </div>
   );
 }
