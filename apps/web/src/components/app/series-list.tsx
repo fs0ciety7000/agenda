@@ -3,6 +3,7 @@
 import type { OccurrenceDto, SeriesDto } from '@agenda/contracts';
 import { Repeat } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { CategoryIcon } from '@/components/ui/category-icon';
 import { EmptyState, Skeleton } from '@/components/ui/states';
 import { api } from '@/lib/api';
 import { formatDuration, formatTime, useDayLabel } from '@/lib/format';
@@ -60,7 +61,16 @@ export function SeriesList({ onOpen }: { onOpen: (o: OccurrenceDto) => void }) {
               {s.startMinute != null && ` · ${formatTime(s.startMinute)}`}
               {s.durationMinutes ? ` · ${formatDuration(s.durationMinutes)}` : ''}
               {s.visibility === 'SHARED' && ` · ${rotationText(s.rotation)}`}
-              {s.category && ` · ${s.category.emoji ?? ''} ${s.category.name}`}
+              {s.category && (
+                <>
+                  {' · '}
+                  <CategoryIcon
+                    emoji={s.category.emoji}
+                    className="mr-1 inline size-3.5 align-[-2px]"
+                  />
+                  {s.category.name}
+                </>
+              )}
             </span>
           </button>
         </li>

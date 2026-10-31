@@ -135,7 +135,7 @@
     "body": "Cette section arrive dans une prochaine phase."
   },
   "onboarding": {
-    "welcome": "Bienvenue 👋",
+    "welcome": "Bienvenue",
     "tagline": "Organisons votre quotidien ensemble.",
     "stepHousehold": "Créer votre foyer",
     "householdName": "Nom du foyer",
@@ -348,7 +348,6 @@
     "filtersCount": "{count, plural, one {# filtre} other {# filtres}}"
   },
   "categories": {
-    "emoji": "Emoji",
     "name": "Nom",
     "save": "Enregistrer",
     "cancel": "Annuler",
@@ -356,7 +355,8 @@
     "delete": "Supprimer {name}",
     "confirmDelete": "Supprimer la catégorie « {name} » ? Les tâches concernées resteront, sans catégorie.",
     "add": "Nouvelle catégorie",
-    "addButton": "Ajouter"
+    "addButton": "Ajouter",
+    "icon": "Icône"
   },
   "recurrence": {
     "legend": "Répétition",
@@ -753,21 +753,21 @@
     "emptyBody": "Ajoutez ce qui manque : l'autre le voit tout de suite, même au magasin.",
     "toBuy": "À acheter ({count})",
     "inCart": "Dans le panier ({count})",
-    "allDone": "Tout est dans le panier 🎉",
+    "allDone": "Tout est dans le panier",
     "clear": "Vider le panier",
     "remove": "Retirer « {text} »",
     "takenBy": "Pris par {name}",
     "aisles": {
-      "PRODUCE": "🥕 Fruits et légumes",
-      "BAKERY": "🥖 Boulangerie",
-      "DAIRY": "🧀 Crèmerie et œufs",
-      "MEAT_FISH": "🥩 Boucherie, poisson",
-      "FROZEN": "🧊 Surgelés",
-      "PANTRY": "🥫 Épicerie",
-      "DRINKS": "🧃 Boissons",
-      "HOUSEHOLD": "🧽 Maison, entretien",
-      "HYGIENE": "🧴 Hygiène",
-      "OTHER": "🛒 Autres"
+      "PRODUCE": "Fruits et légumes",
+      "BAKERY": "Boulangerie",
+      "DAIRY": "Crèmerie et œufs",
+      "MEAT_FISH": "Boucherie, poisson",
+      "FROZEN": "Surgelés",
+      "PANTRY": "Épicerie",
+      "DRINKS": "Boissons",
+      "HOUSEHOLD": "Maison, entretien",
+      "HYGIENE": "Hygiène",
+      "OTHER": "Autres"
     },
     "suggestions": "Souvent achetés",
     "addSuggestion": "Ajouter {text}",
@@ -820,7 +820,6 @@
     "edit": "Modifier « {name} »",
     "delete": "Supprimer « {name} »",
     "confirmDelete": "Supprimer le modèle « {name} » ? Les tâches déjà créées restent.",
-    "emoji": "Emoji",
     "name": "Nom",
     "namePlaceholder": "Ménage du samedi",
     "items": "Tâches du modèle",
@@ -840,7 +839,8 @@
     "whenNone": "Sans date",
     "date": "Jour",
     "create": "{count, plural, one {Créer la tâche} other {Créer les # tâches}}",
-    "applied": "{count, plural, one {# tâche ajoutée} other {# tâches ajoutées}} depuis « {name} »"
+    "applied": "{count, plural, one {# tâche ajoutée} other {# tâches ajoutées}} depuis « {name} »",
+    "icon": "Icône"
   },
   "history": {
     "title": "Historique",
@@ -1765,5 +1765,42 @@
     "report": "Signaler un problème",
     "guide": "Guide complet",
     "status": "État du service"
+  },
+  "icons": {
+    "home": "Maison",
+    "cleaning": "Ménage",
+    "cooking": "Cuisine",
+    "groceries": "Courses",
+    "laundry": "Linge",
+    "pets": "Animaux",
+    "money": "Argent",
+    "car": "Voiture",
+    "tools": "Bricolage",
+    "plant": "Jardin",
+    "person": "Personnel",
+    "couple": "Couple",
+    "box": "Divers",
+    "kids": "Enfants",
+    "health": "Santé",
+    "sport": "Sport",
+    "school": "École",
+    "work": "Travail",
+    "travel": "Voyage",
+    "party": "Fête",
+    "calendar": "Rendez-vous",
+    "papers": "Papiers",
+    "trash": "Poubelles",
+    "bed": "Repos",
+    "carrot": "Fruits et légumes",
+    "bread": "Pain",
+    "cheese": "Crèmerie",
+    "fish": "Viande et poisson",
+    "snowflake": "Surgelés",
+    "can": "Épicerie",
+    "bottle": "Boissons",
+    "pump": "Hygiène",
+    "bulb": "Énergie",
+    "ticket": "Loisirs",
+    "none": "Sans icône"
   }
 }

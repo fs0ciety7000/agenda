@@ -213,7 +213,7 @@
     <string name="undo">Ongedaan maken</string>
     <string name="widget_name">Vandaag · Tandem</string>
     <string name="widget_description">De taken van vandaag en die nog in te halen zijn, rechtstreeks af te vinken op het beginscherm.</string>
-    <string name="widget_empty">Niets voor vandaag 🎉</string>
+    <string name="widget_empty">Niets voor vandaag</string>
     <string name="widget_signed_out">Open de app om je aan te melden.</string>
     <string name="assignee_suggestion_pick">Aan %1$s geven</string>
     <string name="checklist_title">Lijst</string>
@@ -242,7 +242,7 @@
     <string name="shopping_empty_body">Voeg toe wat ontbreekt: de ander ziet het meteen, ook in de winkel.</string>
     <string name="shopping_to_buy">Te kopen (%1$d)</string>
     <string name="shopping_in_cart">In het mandje (%1$d)</string>
-    <string name="shopping_all_done">Alles zit in het mandje 🎉</string>
+    <string name="shopping_all_done">Alles zit in het mandje</string>
     <string name="shopping_clear">Mandje leegmaken</string>
     <string name="shopping_remove">“%1$s” verwijderen</string>
     <string name="shopping_taken_by">Genomen door %1$s</string>
@@ -358,16 +358,16 @@
     <string name="shopping_suggestions">Vaak gekocht</string>
     <string name="shopping_add_suggestion">%1$s toevoegen</string>
     <string name="shopping_aisle_of">Afdeling voor %1$s</string>
-    <string name="aisle_produce">🥕 Groenten &amp; fruit</string>
-    <string name="aisle_bakery">🥖 Bakkerij</string>
-    <string name="aisle_dairy">🧀 Zuivel &amp; eieren</string>
-    <string name="aisle_meat_fish">🥩 Vlees &amp; vis</string>
-    <string name="aisle_frozen">🧊 Diepvries</string>
-    <string name="aisle_pantry">🥫 Voorraadkast</string>
-    <string name="aisle_drinks">🧃 Dranken</string>
-    <string name="aisle_household">🧽 Huishouden</string>
-    <string name="aisle_hygiene">🧴 Verzorging</string>
-    <string name="aisle_other">🛒 Overige</string>
+    <string name="aisle_produce">Groenten &amp; fruit</string>
+    <string name="aisle_bakery">Bakkerij</string>
+    <string name="aisle_dairy">Zuivel &amp; eieren</string>
+    <string name="aisle_meat_fish">Vlees &amp; vis</string>
+    <string name="aisle_frozen">Diepvries</string>
+    <string name="aisle_pantry">Voorraadkast</string>
+    <string name="aisle_drinks">Dranken</string>
+    <string name="aisle_household">Huishouden</string>
+    <string name="aisle_hygiene">Verzorging</string>
+    <string name="aisle_other">Overige</string>
     <string name="error_account_disabled">Dit account is uitgeschakeld. Neem contact op met de beheerder.</string>
 
     <!-- Signalements -->

@@ -10,6 +10,7 @@ import type {
 import { ExpenseCategory as Categories } from '@agenda/contracts';
 import { parseAmountToCents } from '@agenda/domain';
 import {
+  ArrowLeftRight,
   ArrowRight,
   ChevronLeft,
   ChevronRight,
@@ -28,6 +29,7 @@ import { useSession } from '@/components/app/household-context';
 import { MemberAvatar } from '@/components/app/member-avatar';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { CategoryIcon, expenseIcon } from '@/components/ui/category-icon';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
 import { Segmented } from '@/components/ui/segmented';
@@ -51,18 +53,6 @@ import {
 } from '@/lib/expenses';
 import { useToday } from '@/lib/format';
 import { useOnline } from '@/lib/offline';
-
-const CATEGORY_EMOJI: Record<ExpenseCategory, string> = {
-  GROCERIES: '🛒',
-  HOUSING: '🏠',
-  UTILITIES: '💡',
-  TRANSPORT: '🚗',
-  LEISURE: '🎉',
-  HEALTH: '💊',
-  KIDS: '🧸',
-  GIFTS: '🎁',
-  OTHER: '📦',
-};
 
 type Prefill = { title?: string; category?: ExpenseCategory };
 type Editing = { expense?: ExpenseDto; prefill?: Prefill } | null;
@@ -278,8 +268,8 @@ export default function ExpensesPage() {
               <ul className="flex flex-col gap-1.5">
                 {s.byCategory.map((c) => (
                   <li key={c.category} className="flex justify-between">
-                    <span>
-                      <span aria-hidden>{CATEGORY_EMOJI[c.category]} </span>
+                    <span className="inline-flex items-center gap-2">
+                      <CategoryIcon icon={expenseIcon(c.category)} className="size-4" />
                       {t(`categories.${c.category}`)}
                     </span>
                     <span className="tabular-nums">{money(c.amountCents)}</span>
@@ -307,7 +297,7 @@ export default function ExpensesPage() {
           <ul className="flex flex-col gap-2">
             {recurring.data!.map((r) => (
               <li key={r.id} className="flex flex-wrap items-center gap-3 text-[0.9375rem]">
-                <span aria-hidden>{CATEGORY_EMOJI[r.category]}</span>
+                <CategoryIcon icon={expenseIcon(r.category)} />
                 <span className="flex min-w-0 flex-1 flex-col">
                   <span>
                     {r.title} · <span className="tabular-nums">{money(r.amountCents)}</span>
@@ -373,9 +363,11 @@ export default function ExpensesPage() {
                       onClick={() => setEditing({ expense: e })}
                       className="flex w-full items-center gap-3 px-4 py-3 text-left hover:bg-surface-muted"
                     >
-                      <span aria-hidden className="text-xl">
-                        {e.kind === 'SETTLEMENT' ? '↔️' : CATEGORY_EMOJI[e.category]}
-                      </span>
+                      {e.kind === 'SETTLEMENT' ? (
+                        <ArrowLeftRight aria-hidden className="size-6 shrink-0 text-text-muted" />
+                      ) : (
+                        <CategoryIcon icon={expenseIcon(e.category)} className="size-6" />
+                      )}
                       <span className="flex min-w-0 flex-1 flex-col">
                         <span className="font-medium">
                           {e.kind === 'SETTLEMENT' ? t('settlement') : e.title}
@@ -755,7 +747,7 @@ function ExpenseDialog({
           >
             {Categories.options.map((c) => (
               <option key={c} value={c}>
-                {CATEGORY_EMOJI[c]} {t(`categories.${c}`)}
+                {t(`categories.${c}`)}
               </option>
             ))}
           </Select>
@@ -1149,8 +1141,8 @@ function CategoryBudgets({
             return (
               <li key={b.category} className="flex flex-col gap-1">
                 <span className="flex flex-wrap justify-between gap-x-3 text-[0.9375rem]">
-                  <span>
-                    <span aria-hidden>{CATEGORY_EMOJI[b.category]} </span>
+                  <span className="inline-flex items-center gap-2">
+                    <CategoryIcon icon={expenseIcon(b.category)} className="size-4" />
                     {name}
                   </span>
                   <span className={cn('tabular-nums', level === 100 && 'text-warning')}>
@@ -1241,7 +1233,7 @@ function CategoryBudgetsDialog({
               <Field
                 key={c}
                 id={`budget-${c}`}
-                label={`${CATEGORY_EMOJI[c]} ${t(`categories.${c}`)}`}
+                label={t(`categories.${c}`)}
                 inputMode="decimal"
                 autoComplete="off"
                 placeholder={t('categoryBudgetNone')}

@@ -351,8 +351,11 @@ maintenance restée dans l'ancien style, Réglages où l'on se perd.
 
 - [x] Page de maintenance (503) dans l'identité : fichier autonome, trois langues, nouvel essai
   automatique ; `infra/error-pages/503.html` et copie publique sur le site vitrine (S) 🪧 (#126)
-- [ ] Icônes de catégories maison au trait (cobalt et abricot), même source pour le web et
-  Android, à la place des émojis : contrat, migration des catégories existantes, sélecteur (M) 🌐🤖
+- [x] Icônes maison au trait (cobalt et abricot) à la place des émojis : catégories, modèles,
+  rayons des courses et dépenses ; 34 tracés dans `packages/design-tokens/category-icons.json`
+  pour le web et Android ; l'émoji reste en base (aucune migration) et s'affiche en icône (M) 🌐🤖 (#126)
+- [ ] Choisir l'icône d'une catégorie depuis l'app Android (les catégories se gèrent sur le site
+  pour l'instant) (S) 🤖
 - [ ] Réglages en quatre rubriques avec sous-pages (Foyer, Compte et sécurité, Préférences,
   Données et aide), même structure sur Android (M) 🌐🤖
 - [ ] Administration sortie des Réglages : tuile dédiée dans le tiroir « Plus » et la barre

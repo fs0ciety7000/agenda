@@ -5,7 +5,8 @@
     "dist",
     "tokens.json",
     "scripts",
-    "illustrations.json"
+    "illustrations.json",
+    "category-icons.json"
   ],
   "private": true,
   "description": "Source unique des tokens de design → variables CSS (web) et Tokens.kt (Android).",
@@ -20,6 +21,10 @@
     "./illustrations": {
       "types": "./dist/illustrations.d.ts",
       "default": "./dist/illustrations.js"
+    },
+    "./category-icons": {
+      "types": "./dist/category-icons.d.ts",
+      "default": "./dist/category-icons.js"
     }
   },
   "scripts": {

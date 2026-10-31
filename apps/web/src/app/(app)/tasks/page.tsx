@@ -239,7 +239,6 @@ function TasksView() {
             <option value="">{t('filters.allCategories')}</option>
             {categories.data?.map((c) => (
               <option key={c.id} value={c.id}>
-                {c.emoji ? `${c.emoji} ` : ''}
                 {c.name}
               </option>
             ))}

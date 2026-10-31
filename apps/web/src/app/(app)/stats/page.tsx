@@ -151,7 +151,7 @@ function StatsContent({ data }: { data: StatsDto }) {
             {data.byCategory.map((c) => (
               <BarRow
                 key={c.categoryId ?? 'none'}
-                label={c.name ? `${c.emoji ? `${c.emoji} ` : ''}${c.name}` : t('noCategory')}
+                label={c.name || t('noCategory')}
                 value={c.done}
                 max={maxCat}
                 detail={`${t('doneCount', { count: c.done })}${c.minutes ? ` · ${hours(c.minutes)}` : ''}`}

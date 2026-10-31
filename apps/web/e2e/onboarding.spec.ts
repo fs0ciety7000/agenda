@@ -13,7 +13,7 @@ test('inscription → création du foyer → invitation → dashboard', async ({
   await page.getByRole('button', { name: 'Créer mon compte' }).click();
 
   await expect(page).toHaveURL(/\/onboarding/);
-  await expect(page.getByRole('heading', { name: 'Bienvenue 👋' })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Bienvenue' })).toBeVisible();
   await page.getByLabel('Nom du foyer').fill('G & N');
   await page.getByRole('button', { name: 'Créer le foyer' }).click();
 

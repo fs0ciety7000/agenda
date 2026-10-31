@@ -1,5 +1,7 @@
 package app.tandem.foyer.ui.taskform
 
+import app.tandem.foyer.ui.components.CategoryIcons
+import app.tandem.foyer.ui.components.CategoryIcon
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -235,7 +237,8 @@ fun TaskFormScreen(
                             selected = d.categoryId == c.id,
                             enabled = !state.readOnly,
                             onClick = { onEdit { it.copy(categoryId = c.id) } },
-                            label = { Text(listOfNotNull(c.emoji, c.name).joinToString(" ")) },
+                            label = { Text(if (CategoryIcons.forEmoji(c.emoji) != null) c.name else listOfNotNull(c.emoji, c.name).joinToString(" ")) },
+                            leadingIcon = CategoryIcons.forEmoji(c.emoji)?.let { key -> { CategoryIcon(key, Modifier.size(18.dp)) } },
                         )
                     }
                 }

@@ -1,5 +1,7 @@
 package app.tandem.foyer.ui.shopping
 
+import app.tandem.foyer.ui.components.CategoryIcons
+import app.tandem.foyer.ui.components.CategoryIcon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -84,12 +86,19 @@ fun StoreMode(items: List<ShoppingItem>, onToggle: (ShoppingItem) -> Unit, onClo
                     val byAisle = toBuy.groupBy { Aisles.of(it.aisle) }
                     Aisles.ORDER.filter { byAisle.containsKey(it) }.forEach { aisle ->
                         item(key = "a-$aisle") {
-                            Text(
-                                stringResource(Aisles.label(aisle)),
-                                style = MaterialTheme.typography.titleMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                modifier = Modifier.padding(top = 8.dp).semantics { heading() },
-                            )
+                            Row(
+                                Modifier.padding(top = 8.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                CategoryIcon(CategoryIcons.forAisle(aisle))
+                                Text(
+                                    stringResource(Aisles.label(aisle)),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                    modifier = Modifier.semantics { heading() },
+                                )
+                            }
                         }
                         items(byAisle.getValue(aisle), key = { it.id }) { StoreRow(it, onToggle) }
                     }

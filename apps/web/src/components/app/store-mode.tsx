@@ -5,6 +5,7 @@ import { AISLES } from '@agenda/domain';
 import { Check } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useEffect } from 'react';
+import { CategoryIcon, aisleIcon } from '@/components/ui/category-icon';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { cn } from '@/lib/cn';
 
@@ -96,7 +97,10 @@ export function StoreMode({
                   aria-label={t(`aisles.${aisle}`)}
                   className="flex flex-col gap-2"
                 >
-                  <h3 className="text-base font-medium text-text-muted">{t(`aisles.${aisle}`)}</h3>
+                  <h3 className="flex items-center gap-2 text-base font-medium text-text-muted">
+                    <CategoryIcon icon={aisleIcon(aisle)} />
+                    {t(`aisles.${aisle}`)}
+                  </h3>
                   <ul className="flex flex-col gap-2">{inAisle.map(row)}</ul>
                 </section>
               );

@@ -66,6 +66,48 @@ writeFileSync(
     .join(' | ')}, { paths: string[] }>;\n};\nexport = illustrations;\n`,
 );
 
+// Icônes des catégories, rayons et dépenses (trait 24 px, deux tons) : même source pour le web et Android.
+// Les données gardent l'émoji (champ `emoji` des catégories) : on lui associe une icône à l'affichage.
+const categoryIcons = JSON.parse(readFileSync(join(root, 'category-icons.json'), 'utf8'));
+const iconKeys = Object.keys(categoryIcons.icons);
+const iconByEmoji = {};
+for (const [key, { emoji }] of Object.entries(categoryIcons.icons)) {
+  for (const e of emoji) {
+    if (iconByEmoji[e])
+      throw new Error(`Émoji ${e} associé à deux icônes (${iconByEmoji[e]}, ${key})`);
+    iconByEmoji[e] = key;
+  }
+}
+for (const key of [
+  ...categoryIcons.picker,
+  ...Object.values(categoryIcons.aisles),
+  ...Object.values(categoryIcons.expenses),
+]) {
+  if (!categoryIcons.icons[key]) throw new Error(`Icône inconnue : ${key}`);
+}
+writeFileSync(
+  join(dist, 'category-icons.js'),
+  `"use strict";\nmodule.exports = ${JSON.stringify({ ...categoryIcons, byEmoji: iconByEmoji }, null, 2)};\n`,
+);
+const keyUnion = iconKeys.map((k) => `'${k}'`).join(' | ');
+writeFileSync(
+  join(dist, 'category-icons.d.ts'),
+  `declare namespace categoryIcons {
+  type CategoryIconKey = ${keyUnion};
+}
+declare const categoryIcons: {
+  viewBox: number;
+  strokeWidth: number;
+  icons: Record<categoryIcons.CategoryIconKey, { emoji: string[]; paths: string[]; accent: string[] }>;
+  aisles: Record<string, categoryIcons.CategoryIconKey | undefined>;
+  expenses: Record<string, categoryIcons.CategoryIconKey | undefined>;
+  picker: categoryIcons.CategoryIconKey[];
+  byEmoji: Record<string, categoryIcons.CategoryIconKey | undefined>;
+};
+export = categoryIcons;
+`,
+);
+
 if (process.argv.includes('--android')) {
   const hex = (v) => `Color(0xFF${v.slice(1).toUpperCase()})`;
   const camel = (k) => k.replace(/-(\w)/g, (_, c) => c.toUpperCase());
@@ -138,4 +180,57 @@ ${strokes}
     );
   }
   console.warn(`Illustrations écrites dans ${drawable}`);
+
+  // Icônes : tracés en Kotlin (dessinés en Compose avec les couleurs du thème, l'accent en abricot).
+  const kstr = (v) => `"${v}"`;
+  const klist = (a) => (a.length ? `listOf(${a.map(kstr).join(', ')})` : 'emptyList()');
+  const iconsKt = `// Généré par packages/design-tokens (category-icons.json) — ne pas éditer.
+package app.tandem.foyer.ui.components
+
+/** Tracés des icônes de catégories (viewBox ${categoryIcons.viewBox}, trait ${categoryIcons.strokeWidth}). */
+object CategoryIconData {
+    const val VIEWBOX = ${categoryIcons.viewBox}f
+    const val STROKE = ${categoryIcons.strokeWidth}f
+
+    class Glyph(val paths: List<String>, val accent: List<String>)
+
+    val icons: Map<String, Glyph> = mapOf(
+${Object.entries(categoryIcons.icons)
+  .map(([k, v]) => `        "${k}" to Glyph(${klist(v.paths)}, ${klist(v.accent)}),`)
+  .join('\n')}
+    )
+
+    /** Icône associée à un émoji enregistré (catégories et modèles gardent l'émoji en base). */
+    val byEmoji: Map<String, String> = mapOf(
+${Object.entries(iconByEmoji)
+  .map(([e, k]) => `        "${e}" to "${k}",`)
+  .join('\n')}
+    )
+
+    /** Choix proposés pour une catégorie ou un modèle ; l'émoji enregistré est le premier de l'icône. */
+    val picker: List<Pair<String, String>> = listOf(
+${categoryIcons.picker.map((k) => `        "${k}" to "${categoryIcons.icons[k].emoji[0]}",`).join('\n')}
+    )
+
+    val aisles: Map<String, String> = mapOf(
+${Object.entries(categoryIcons.aisles)
+  .map(([a, k]) => `        "${a}" to "${k}",`)
+  .join('\n')}
+    )
+
+    val expenses: Map<String, String> = mapOf(
+${Object.entries(categoryIcons.expenses)
+  .map(([a, k]) => `        "${a}" to "${k}",`)
+  .join('\n')}
+    )
+}
+`;
+  writeFileSync(
+    join(
+      root,
+      '../../apps/android/app/src/main/java/app/tandem/foyer/ui/components/CategoryIconData.kt',
+    ),
+    iconsKt,
+  );
+  console.warn('CategoryIconData.kt écrit');
 }

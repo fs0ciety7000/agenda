@@ -6,6 +6,7 @@ import { LayoutTemplate, Pencil, Plus, Trash2, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
+import { CategoryIcon, CategoryIconPicker } from '@/components/ui/category-icon';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { Field } from '@/components/ui/field';
 import { Select } from '@/components/ui/select';
@@ -60,8 +61,8 @@ export function TemplatesSettings() {
         <ul className="divide-y divide-border">
           {templates.data.map((tpl) => (
             <li key={tpl.id} className="flex min-h-12 items-center gap-3 py-1.5">
-              <span aria-hidden className="w-6 text-center">
-                {tpl.emoji}
+              <span className="flex w-6 justify-center">
+                <CategoryIcon emoji={tpl.emoji} />
               </span>
               <span className="flex-1">
                 <span className="block text-[0.9375rem]">{tpl.name}</span>
@@ -126,7 +127,7 @@ function TemplateEditor({
   const categories = useCategories(household.id);
   const { save } = useTemplateMutations(household.id);
   const [name, setName] = useState(template?.name ?? '');
-  const [emoji, setEmoji] = useState(template?.emoji ?? '');
+  const [emoji, setEmoji] = useState<string | null>(template?.emoji ?? null);
   const [items, setItems] = useState<ItemForm[]>(template?.items.map(toForm) ?? [emptyItem()]);
   const [error, setError] = useState<string | null>(null);
   const setItem = (i: number, patch: Partial<ItemForm>) =>
@@ -140,7 +141,7 @@ function TemplateEditor({
       {
         id: template?.id,
         name: name.trim(),
-        emoji: emoji.trim() || null,
+        emoji,
         items: filled.map((i) => ({
           title: i.title.trim(),
           assigneeIds:
@@ -162,22 +163,18 @@ function TemplateEditor({
     <Dialog open onOpenChange={(o) => !o && onClose()}>
       <DialogContent title={t(template ? 'editTitle' : 'newTitle')} closeLabel={tc('close')}>
         <form onSubmit={submit} noValidate className="flex flex-col gap-4">
-          <div className="grid grid-cols-[4.5rem_1fr] gap-3">
-            <Field
-              label={t('emoji')}
-              value={emoji}
-              maxLength={8}
-              onChange={(e) => setEmoji(e.target.value)}
-              placeholder="🧹"
-            />
-            <Field
-              label={t('name')}
-              value={name}
-              maxLength={80}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={t('namePlaceholder')}
-              required
-            />
+          <div className="flex flex-wrap items-end gap-3">
+            <CategoryIconPicker value={emoji} onChange={setEmoji} label={t('icon')} showLabel />
+            <div className="min-w-0 flex-1">
+              <Field
+                label={t('name')}
+                value={name}
+                maxLength={80}
+                onChange={(e) => setName(e.target.value)}
+                placeholder={t('namePlaceholder')}
+                required
+              />
+            </div>
           </div>
           <ol className="flex flex-col gap-4" aria-label={t('items')}>
             {items.map((item, i) => (
@@ -242,7 +239,7 @@ function TemplateEditor({
                     <option value="">—</option>
                     {(categories.data ?? []).map((c) => (
                       <option key={c.id} value={c.id}>
-                        {[c.emoji, c.name].filter(Boolean).join(' ')}
+                        {c.name}
                       </option>
                     ))}
                   </Select>
@@ -338,7 +335,7 @@ export function ApplyTemplateButton() {
             >
               {list.map((x) => (
                 <option key={x.id} value={x.id}>
-                  {[x.emoji, x.name].filter(Boolean).join(' ')}
+                  {x.name}
                 </option>
               ))}
             </Select>

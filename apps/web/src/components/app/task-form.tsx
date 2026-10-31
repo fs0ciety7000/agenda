@@ -434,7 +434,6 @@ export function TaskFormDialog({
                 <option value="">{t('fields.noCategory')}</option>
                 {categories.data?.map((c) => (
                   <option key={c.id} value={c.id}>
-                    {c.emoji ? `${c.emoji} ` : ''}
                     {c.name}
                   </option>
                 ))}

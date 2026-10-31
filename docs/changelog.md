@@ -15,6 +15,12 @@ d'elle-même (ou via Google Play).
 
 ## 31 octobre 2026
 
+### Icônes dessinées à la place des émojis (#126)
+
+- 🛠 **Catégories, modèles, rayons des courses et dépenses** ont des icônes au trait, en cobalt et
+  abricot, sur le site comme sur Android.
+- ✨ Dans les Réglages, l'icône d'une catégorie ou d'un modèle se choisit dans une grille.
+
 ### Page de maintenance aux couleurs « Deux fils » (#126)
 
 - 🛠 Pendant une mise à jour, la page d'attente reprend la nouvelle identité, dans votre langue,

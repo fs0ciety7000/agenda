@@ -1,5 +1,8 @@
 package app.tandem.foyer.ui.quickadd
 
+import androidx.compose.foundation.layout.size
+import app.tandem.foyer.ui.components.CategoryIcons
+import app.tandem.foyer.ui.components.CategoryIcon
 import androidx.compose.ui.res.painterResource
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Icon
@@ -145,7 +148,7 @@ private fun TemplatePicker(templates: List<TaskTemplate>, today: LocalDate, onAp
     Text(stringResource(R.string.templates_title), style = MaterialTheme.typography.labelLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
     Row(Modifier.horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         templates.forEach { t ->
-            FilterChip(selected = chosen?.id == t.id, onClick = { chosen = if (chosen?.id == t.id) null else t }, label = { Text(t.label) })
+            FilterChip(selected = chosen?.id == t.id, onClick = { chosen = if (chosen?.id == t.id) null else t }, label = { Text(if (CategoryIcons.forEmoji(t.emoji) != null) t.name else t.label) }, leadingIcon = CategoryIcons.forEmoji(t.emoji)?.let { key -> { CategoryIcon(key, Modifier.size(18.dp)) } })
         }
     }
     chosen?.let { t ->

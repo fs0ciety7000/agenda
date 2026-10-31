@@ -23,6 +23,7 @@ import { cn } from '@/lib/cn';
 import { looksLikePayment, newExpenseHref } from '@/lib/expenses';
 import { formatDuration, formatTime, useDayLabel, useDueLabel } from '@/lib/format';
 import { useThanks, useToggleDone } from '@/lib/tasks';
+import { CategoryIcon } from '@/components/ui/category-icon';
 import { useToast } from '@/components/ui/toast';
 import { AssigneeAvatars, useAssigneeLabel } from './assignees';
 import { useSession } from './household-context';
@@ -183,8 +184,8 @@ export function TaskRow({
             </span>
           )}
           {o.category && (
-            <span>
-              · {o.category.emoji ? `${o.category.emoji} ` : ''}
+            <span className="inline-flex items-center gap-1">
+              · <CategoryIcon emoji={o.category.emoji} className="size-3.5" />
               {o.category.name}
             </span>
           )}
