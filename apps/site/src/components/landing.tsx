@@ -1,11 +1,11 @@
 import { content, type Locale } from '@/lib/content';
 import { jsonLd, structuredData } from '@/lib/structured-data';
-import { Film } from './film';
 import { Hero } from './hero';
 import { Nav } from './nav';
-import { Balance, Cta, Faq, Features, Footer, How, Privacy, Screens, Strip } from './sections';
+import { Faq, Features, Footer, Numbers, Privacy, Threads } from './sections';
+import { Week } from './week';
 
-/** Page d'accueil du site vitrine (une par langue). */
+/** Page d'accueil du site vitrine (une par langue), identité « Deux fils » (page F des maquettes). */
 export function Landing({ locale }: { locale: Locale }) {
   const t = content[locale];
   return (
@@ -23,15 +23,12 @@ export function Landing({ locale }: { locale: Locale }) {
       <Nav t={t} />
       <main id="main">
         <Hero t={t} />
-        <Strip t={t} />
-        <Film t={t} />
-        <Features t={t} />
-        <How t={t} />
-        <Balance t={t} />
-        <Screens t={t} locale={locale} />
+        <Threads />
+        <Week t={t} />
+        <Features t={t} locale={locale} />
+        <Numbers t={t} />
         <Privacy t={t} />
         <Faq t={t} />
-        <Cta t={t} />
       </main>
       <Footer t={t} />
     </>

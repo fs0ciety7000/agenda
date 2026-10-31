@@ -1,62 +1,56 @@
-'use client';
-
 import clsx from 'clsx';
-import { motion } from 'motion/react';
 import type { ReactNode } from 'react';
+import { WHEEL_LEFT, WHEEL_RIGHT } from '@/lib/brand';
 
-/** Courbe « douce » des design tokens (--gn-motion-easing). */
-export const EASE = [0.2, 0.8, 0.2, 1] as const;
-
-/** Apparition au défilement (une seule fois), décalable pour les grilles. `as="li"` dans une liste. */
+/**
+ * Apparition au défilement, sans JavaScript : `animation-timeline: view()` là où le navigateur le
+ * permet (globals.css, `.reveal`), sinon l'élément est simplement visible.
+ */
 export function Reveal({
-  delay = 0,
-  y = 24,
   as = 'div',
   className,
   children,
 }: {
-  delay?: number;
-  y?: number;
   as?: 'div' | 'li';
   className?: string;
   children: ReactNode;
 }) {
-  const Tag = as === 'li' ? motion.li : motion.div;
+  const Tag = as;
+  return <Tag className={clsx('reveal', className)}>{children}</Tag>;
+}
+
+/** Le symbole Tandem ; `tone="night"` pour un fond sombre (cobalt → lilas). */
+export function Mark({
+  className,
+  tone = 'paper',
+}: {
+  className?: string;
+  tone?: 'paper' | 'night';
+}) {
   return (
-    <Tag
-      initial={{ opacity: 0, y }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.25 }}
-      transition={{ duration: 0.7, ease: EASE, delay }}
-      className={className}
-    >
-      {children}
-    </Tag>
+    <svg viewBox="0 0 100 100" aria-hidden className={className}>
+      <path
+        fill={tone === 'night' ? 'var(--gn-brand-lilac)' : 'var(--gn-brand-cobalt)'}
+        d={WHEEL_LEFT}
+      />
+      <path fill="var(--gn-brand-apricot)" d={WHEEL_RIGHT} />
+    </svg>
   );
 }
 
-export function SectionHeading({
-  eyebrow,
-  title,
-  text,
-  center = false,
+/** Logo : symbole + nom en Instrument Serif. */
+export function Logo({
+  tone = 'paper',
+  className,
 }: {
-  eyebrow: string;
-  title: string;
-  text?: string;
-  center?: boolean;
+  tone?: 'paper' | 'night';
+  className?: string;
 }) {
   return (
-    <Reveal
-      className={clsx(
-        'flex max-w-2xl flex-col gap-4',
-        center && 'mx-auto items-center text-center',
-      )}
-    >
-      <span className="text-sm font-semibold text-text-muted">{eyebrow}</span>
-      <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h2>
-      {text ? <p className="text-lg leading-relaxed text-text-muted">{text}</p> : null}
-    </Reveal>
+    <span className={clsx('flex items-center gap-2.5', className)}>
+      <Mark tone={tone} className="h-[1.6em] w-[1.6em]" />
+      <span className="font-display leading-none">Tandem</span>
+    </span>
   );
 }
 
@@ -67,44 +61,35 @@ export function ButtonLink({
   className,
 }: {
   href: string;
-  variant?: 'primary' | 'secondary' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'apricot';
   children: ReactNode;
   className?: string;
 }) {
   return (
-    <motion.a
+    <a
       href={href}
-      whileHover={{ y: -2 }}
-      whileTap={{ scale: 0.97 }}
-      transition={{ type: 'spring', stiffness: 400, damping: 25 }}
       className={clsx(
-        'inline-flex h-12 items-center justify-center gap-2 rounded-full px-6 text-[0.9375rem] font-semibold transition-colors',
-        variant === 'primary' &&
-          'bg-accent text-accent-fg shadow-[0_8px_24px_-8px_color-mix(in_srgb,var(--color-accent)_60%,transparent)] hover:opacity-95',
-        variant === 'secondary' &&
-          'border border-border bg-surface text-text hover:bg-surface-muted',
-        variant === 'ghost' && 'text-text hover:bg-surface-muted',
+        'lift inline-flex min-h-12 items-center justify-center gap-2 rounded-full px-6 text-[0.9375rem] font-semibold',
+        variant === 'primary' && 'bg-accent text-accent-fg',
+        variant === 'secondary' && 'border border-current/25 text-current hover:bg-current/5',
+        variant === 'apricot' && 'bg-brand-apricot text-brand-night',
         className,
       )}
     >
       {children}
-    </motion.a>
+    </a>
   );
 }
 
-/** Cadre de téléphone (écran arrondi, encoche) pour les captures et la maquette animée. */
+/** Cadre de téléphone (écran arrondi) pour les captures. */
 export function PhoneFrame({ children, className }: { children: ReactNode; className?: string }) {
   return (
     <div
       className={clsx(
-        'relative overflow-hidden rounded-[2.6rem] border-[10px] border-[#17181C] bg-bg shadow-[0_40px_80px_-30px_rgb(23_24_28/0.45)] dark:border-[#0F1012]',
+        'relative overflow-hidden rounded-[2.75rem] border-[10px] border-[#05060F] bg-bg shadow-[0_40px_80px_-30px_rgb(5_6_15/0.6)]',
         className,
       )}
     >
-      <div
-        aria-hidden
-        className="absolute top-2 left-1/2 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-[#17181C]"
-      />
       {children}
     </div>
   );

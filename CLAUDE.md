@@ -60,7 +60,7 @@ Fichiers importés, à respecter au même titre que celui-ci :
 - Identité « Deux fils » partout (app, site, doc, Play) : logo deux roues entrelacées
   (`docs/brand`, icônes par `scripts/generate-icons.mjs`), papier `#F3EEE4` / nuit `#0E1030`,
   **cobalt seul** comme couleur d'action (plus de réglage « Couleur »), Instrument Serif pour les
-  grands titres seulement, abricot jamais en texte sur papier (#123).
+  grands titres seulement, abricot jamais en texte sur papier (#122).
 - Éditeur déclaré dans les données structurées du site : CM Interactive, studio de CARDOR Media
   (`@id` partagés avec interactive.cardormedia.com et cardormedia.com) (#97).
 

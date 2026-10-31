@@ -15,7 +15,15 @@ d'elle-même (ou via Google Play).
 
 ## 31 octobre 2026
 
-### Identité « Deux fils » (#123)
+### Site de présentation redessiné (#123)
+
+- ✨ **Nouveau site** aux couleurs « Deux fils » : une pile de tâches qui se distribue, une semaine
+  qui s'allume jour après jour, les fonctions sur fond de nuit et un pied de page gravé.
+- 🛠 Plus de vidéo : la page est plus légère et s'anime en CSS ; un bouton met les animations en
+  pause, et elles s'arrêtent si l'appareil demande moins de mouvement.
+- 🛠 Nouvelles images de partage et captures de l'app dans les trois langues.
+
+### Identité « Deux fils » (#122)
 
 - ✨ **Nouvelle identité** : un logo de deux roues entrelacées, un fond papier (nuit en mode
   sombre), le cobalt comme seule couleur d'action et les grands titres en serif.

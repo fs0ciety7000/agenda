@@ -31,7 +31,7 @@ ligne par règle). Les lire au moment de concevoir ou de relire, catégorie par 
 
 Ces règles sont générales. Les documents du dépôt l'emportent toujours :
 
-- `docs/design-system.md` (« Duo » : couleurs, Instrument Sans, rayons, mouvement, ton) ;
+- `docs/design-system.md` (« Deux fils » : couleurs, Instrument Serif et Sans, rayons, mouvement, ton) ;
 - `docs/audit-ui-ux.md` (grille de PR et points bloquants) ;
 - les « Décisions prises » de `CLAUDE.md` (couleurs de membres réservées aux pastilles,
   neutralité des chiffres, trois langues).

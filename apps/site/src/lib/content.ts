@@ -23,7 +23,7 @@ export interface Content {
   };
   nav: {
     features: string;
-    how: string;
+    week: string;
     privacy: string;
     faq: string;
     open: string;
@@ -32,8 +32,11 @@ export interface Content {
     menu: string;
   };
   lang: { label: string; current: Locale };
+  /** Animations qui tournent seules : bouton pour les arrêter (WCAG 2.2.2). */
+  motion: { pause: string; play: string };
   hero: {
     badge: string;
+    /** Deuxième ligne en italique (Instrument Serif), couleur d'action. */
     title: [string, string];
     text: string;
     primary: string;
@@ -51,37 +54,22 @@ export interface Content {
     added: string;
     addedMeta: string;
   };
-  strip: string[];
-  film: {
-    eyebrow: string;
-    title: string;
-    text: string;
-    label: string;
-    unmute: string;
-    mute: string;
-  };
   features: {
     eyebrow: string;
     title: string;
     text: string;
     items: { icon: FeatureIcon; title: string; text: string }[];
   };
-  how: { eyebrow: string; title: string; steps: { title: string; text: string }[] };
-  balance: {
+  /** La semaine : une tâche (ou deux) par jour, qui s'allume l'une après l'autre. */
+  week: {
     eyebrow: string;
-    title: string;
+    title: [string, string];
     text: string;
-    points: string[];
-    card: string;
-    rows: { name: string; detail: string; value: number; color: 'sage' | 'ocean' | 'plum' }[];
-    footnote: string;
+    /** Du lundi au dimanche : [tâche, qui], qui = 'e' (Emma), 't' (Tom) ou 'both'. */
+    days: [string, 'e' | 't' | 'both'][][];
   };
-  shots: {
-    eyebrow: string;
-    title: string;
-    text: string;
-    items: { file: string; caption: string }[];
-  };
+  /** Trois chiffres vrais (pas de statistique inventée). */
+  numbers: { value: string; unit: string; text: string }[];
   privacy: {
     eyebrow: string;
     title: string;
@@ -90,7 +78,8 @@ export interface Content {
     link: string;
   };
   faq: { eyebrow: string; title: string; items: { q: string; a: string }[] };
-  cta: { title: string; text: string; primary: string; secondary: string };
+  /** Appel final, en tête du pied de page : la seconde partie du titre est en italique. */
+  cta: { title: [string, string]; text: string; primary: string; secondary: string };
   footer: {
     tagline: string;
     product: string;
@@ -107,6 +96,8 @@ export interface Content {
       contact: string;
     };
     rights: string;
+    /** Texte alternatif de la gravure du pied de page. */
+    gravure: string;
     /** Crédit de l'éditeur : « OCC Interactive — Une division de Cardor Media ». */
     division: string;
   };
@@ -117,15 +108,15 @@ export interface Content {
 const fr: Content = {
   meta: {
     title: 'Tandem · Partager les tâches ménagères à tour de rôle',
-    ogTitle: 'Tandem · L’équilibre parfait pour votre foyer',
+    ogTitle: 'Tandem · Deux vies, un seul rythme',
     ogAlt:
-      'Illustration de Tandem : un couple souriant sur un vélo tandem. « L’équilibre parfait pour votre foyer » : tâches partagées chacun son tour, liste de courses en temps réel, rappels. Gratuit, sans publicité, web et Android.',
+      'Tandem, l’agenda partagé du foyer : deux roues entrelacées et « Chacun son tour, c’est mieux à deux ». Tâches à tour de rôle, courses en direct, calendrier commun. Gratuit, sans publicité, web et Android.',
     description:
       'Tandem répartit les tâches de la maison entre vous : tours de rôle, courses partagées, rappels, hors ligne. Gratuit, sans publicité, sur le web et Android.',
   },
   nav: {
     features: 'Fonctionnalités',
-    how: 'Comment ça marche',
+    week: 'La semaine',
     privacy: 'Confidentialité',
     faq: 'Questions',
     open: 'Ouvrir Tandem',
@@ -134,10 +125,11 @@ const fr: Content = {
     menu: 'Menu',
   },
   lang: { label: 'Langue', current: 'fr' },
+  motion: { pause: 'Mettre l’animation en pause', play: 'Relancer l’animation' },
   hero: {
     badge: 'Gratuit · sans publicité · web et Android',
-    title: ['L’équilibre parfait', 'pour votre foyer.'],
-    text: 'Qui sort les poubelles cette semaine ? Qui fait les courses ? Tandem répartit les tâches de la maison entre vous, chacun son tour, sans avoir à se le redemander.',
+    title: ['Chacun son tour,', 'c’est mieux à deux.'],
+    text: 'Tandem tient le fil de la maison : qui fait quoi, quand, et à qui le tour la prochaine fois. Les courses et le calendrier suivent, sur le web et sur Android.',
     primary: 'Commencer gratuitement',
     android: 'Télécharger pour Android',
     note: 'Un compte, un foyer, et l’autre vous rejoint en un lien.',
@@ -157,22 +149,6 @@ const fr: Content = {
     toast: 'Tom a coché « Sortir les poubelles »',
     added: 'Appeler le garage',
     addedMeta: 'demain 10:00 · Tom',
-  },
-  strip: [
-    'Site web',
-    'Application Android',
-    'Hors ligne',
-    'Temps réel',
-    'Google Calendar',
-    'Français · English · Nederlands',
-  ],
-  film: {
-    eyebrow: 'En 20 secondes',
-    title: 'Tandem, en mouvement.',
-    text: 'Cocher, répéter, replanifier : le foyer s’organise tout seul.',
-    label: 'Vidéo de présentation de Tandem (20 secondes)',
-    unmute: 'Activer le son',
-    mute: 'Couper le son',
   },
   features: {
     eyebrow: 'Fonctionnalités',
@@ -221,53 +197,31 @@ const fr: Content = {
       },
     ],
   },
-  how: {
-    eyebrow: 'Comment ça marche',
-    title: 'Prêt en trois minutes.',
-    steps: [
-      {
-        title: 'Créez votre foyer',
-        text: 'Un compte sur le site ou dans l’app, avec votre e-mail ou votre compte Google.',
-      },
-      {
-        title: 'Invitez l’autre',
-        text: 'Un lien d’invitation suffit : vous partagez les mêmes tâches, en temps réel.',
-      },
-      {
-        title: 'Laissez tourner',
-        text: 'Répétitions, tours de rôle et rappels : chacun sait ce qu’il a à faire, sans liste sur le frigo.',
-      },
+  week: {
+    eyebrow: 'La semaine',
+    title: ['Une semaine,', 'sans tableau sur le frigo.'],
+    text: 'Chaque tâche qui revient choisit seule la bonne personne. Vous n’avez plus qu’à cocher.',
+    days: [
+      [['Lessive', 'e']],
+      [
+        ['Poubelles', 't'],
+        ['Plantes', 'e'],
+      ],
+      [['Vaisselle', 't']],
+      [['Courses', 'both']],
+      [['Aspirateur', 'e']],
+      [
+        ['Draps', 'e'],
+        ['Vélos', 't'],
+      ],
+      [['Repas', 't']],
     ],
   },
-  balance: {
-    eyebrow: 'Équilibre',
-    title: 'Voir qui fait quoi, sans compter les points.',
-    text: 'La répartition de la semaine montre la charge de chacun, en nombre de tâches et en temps. Pas de classement, pas de compétition : juste de quoi en parler et rééquilibrer.',
-    points: [
-      'Suggestion de la personne la moins chargée',
-      'Mode absence : les tâches passent à l’autre',
-      'Historique « fait par » de chaque tâche',
-    ],
-    card: 'Répartition de la semaine',
-    rows: [
-      { name: 'Emma', detail: '6 tâches · 1 h 40', value: 52, color: 'ocean' },
-      { name: 'Tom', detail: '5 tâches · 1 h 30', value: 48, color: 'sage' },
-      { name: 'À deux', detail: '2 tâches · 1 h', value: 22, color: 'plum' },
-    ],
-    footnote: 'Tâches partagées du lundi au dimanche.',
-  },
-  shots: {
-    eyebrow: 'L’application',
-    title: 'La même maison, dans la poche.',
-    text: 'L’app Android reprend tout le site, en mieux adaptée au téléphone : widgets, raccourcis, dictée et mode sombre.',
-    items: [
-      { file: '1_today', caption: 'Aujourd’hui' },
-      { file: '2_shopping', caption: 'Courses en direct' },
-      { file: '3_calendar', caption: 'Calendrier' },
-      { file: '4_tasks', caption: 'Toutes les tâches' },
-      { file: '5_dark', caption: 'Mode sombre' },
-    ],
-  },
+  numbers: [
+    { value: '3', unit: 'min', text: 'pour créer le foyer et inviter l’autre' },
+    { value: '0', unit: 'pub', text: 'ni traceur publicitaire, ni données revendues' },
+    { value: '3', unit: 'langues', text: 'français, English, Nederlands' },
+  ],
   privacy: {
     eyebrow: 'Confidentialité',
     title: 'Vos affaires restent les vôtres.',
@@ -319,13 +273,15 @@ const fr: Content = {
     ],
   },
   cta: {
-    title: 'Et si la maison tournait toute seule ?',
-    text: 'Créez votre foyer, invitez l’autre, et laissez Tandem se souvenir de tout.',
+    title: ['Ce soir,', 'c’est qui ?'],
+    text: 'Tandem s’en souvient. Créez votre foyer en trois minutes.',
     primary: 'Créer mon foyer',
     secondary: 'Se connecter',
   },
   footer: {
-    tagline: 'L’équilibre parfait pour votre foyer.',
+    gravure:
+      'Gravure : un village la nuit, sous les étoiles ; deux fenêtres allumées sont reliées par un fil.',
+    tagline: 'Deux vies, un seul rythme.',
     product: 'Produit',
     help: 'Aide',
     legal: 'Confidentialité',
@@ -354,15 +310,15 @@ const fr: Content = {
 const en: Content = {
   meta: {
     title: 'Tandem · Share household chores, taking turns',
-    ogTitle: 'Tandem · The perfect balance for your household',
+    ogTitle: 'Tandem · Two lives, one rhythm',
     ogAlt:
-      'Tandem illustration: a smiling couple riding a tandem bike. “The perfect balance for your household”: shared chores taking turns, a real-time shopping list, reminders. Free, ad-free, web and Android.',
+      'Tandem, the shared household planner: two interlaced wheels and “Taking turns is better together”. Chores in turns, live shopping list, shared calendar. Free, ad-free, web and Android.',
     description:
       'Tandem shares household chores between you: turn-taking, a shared shopping list, reminders, offline. Free, ad-free, on the web and Android.',
   },
   nav: {
     features: 'Features',
-    how: 'How it works',
+    week: 'The week',
     privacy: 'Privacy',
     faq: 'FAQ',
     open: 'Open Tandem',
@@ -371,10 +327,11 @@ const en: Content = {
     menu: 'Menu',
   },
   lang: { label: 'Language', current: 'en' },
+  motion: { pause: 'Pause the animation', play: 'Play the animation' },
   hero: {
     badge: 'Free · ad-free · web and Android',
-    title: ['The perfect balance', 'for your household.'],
-    text: 'Who takes out the bins this week? Who does the shopping? Tandem shares the chores between you, taking turns, without having to ask twice.',
+    title: ['Taking turns', 'is better together.'],
+    text: 'Tandem keeps track of the house: who does what, when, and whose turn it is next time. Shopping and the calendar follow, on the web and Android.',
     primary: 'Get started for free',
     android: 'Download for Android',
     note: 'One account, one household, and the other joins with a link.',
@@ -394,22 +351,6 @@ const en: Content = {
     toast: 'Tom checked “Take out the bins”',
     added: 'Call the garage',
     addedMeta: 'tomorrow 10:00 · Tom',
-  },
-  strip: [
-    'Website',
-    'Android app',
-    'Offline',
-    'Real time',
-    'Google Calendar',
-    'English · Français · Nederlands',
-  ],
-  film: {
-    eyebrow: 'In 20 seconds',
-    title: 'Tandem, in motion.',
-    text: 'Tick, repeat, reschedule: the household runs itself. (Video in French.)',
-    label: 'Tandem presentation video (20 seconds, in French)',
-    unmute: 'Turn sound on',
-    mute: 'Turn sound off',
   },
   features: {
     eyebrow: 'Features',
@@ -458,53 +399,31 @@ const en: Content = {
       },
     ],
   },
-  how: {
-    eyebrow: 'How it works',
-    title: 'Ready in three minutes.',
-    steps: [
-      {
-        title: 'Create your household',
-        text: 'An account on the website or in the app, with your email or your Google account.',
-      },
-      {
-        title: 'Invite the other',
-        text: 'An invitation link is all it takes: you share the same tasks, in real time.',
-      },
-      {
-        title: 'Let it run',
-        text: 'Repeats, turn-taking and reminders: everyone knows what to do, no list on the fridge.',
-      },
+  week: {
+    eyebrow: 'The week',
+    title: ['A week', 'without a chart on the fridge.'],
+    text: 'Every recurring chore picks the right person on its own. All that’s left is ticking it off.',
+    days: [
+      [['Laundry', 'e']],
+      [
+        ['Bins', 't'],
+        ['Plants', 'e'],
+      ],
+      [['Dishes', 't']],
+      [['Groceries', 'both']],
+      [['Vacuuming', 'e']],
+      [
+        ['Sheets', 'e'],
+        ['Bikes', 't'],
+      ],
+      [['Dinner', 't']],
     ],
   },
-  balance: {
-    eyebrow: 'Balance',
-    title: 'See who does what, without keeping score.',
-    text: 'The weekly split shows each person’s load, in tasks and in time. No ranking, no competition: just enough to talk about it and rebalance.',
-    points: [
-      'Suggests the least busy person',
-      'Away mode: tasks move to the other',
-      '“Done by” history for every task',
-    ],
-    card: 'This week’s split',
-    rows: [
-      { name: 'Emma', detail: '6 tasks · 1 h 40', value: 52, color: 'ocean' },
-      { name: 'Tom', detail: '5 tasks · 1 h 30', value: 48, color: 'sage' },
-      { name: 'Together', detail: '2 tasks · 1 h', value: 22, color: 'plum' },
-    ],
-    footnote: 'Shared tasks, Monday to Sunday.',
-  },
-  shots: {
-    eyebrow: 'The app',
-    title: 'The same home, in your pocket.',
-    text: 'The Android app has everything the website does, tuned for the phone: widgets, shortcuts, dictation and dark mode.',
-    items: [
-      { file: '1_today', caption: 'Today' },
-      { file: '2_shopping', caption: 'Live shopping list' },
-      { file: '3_calendar', caption: 'Calendar' },
-      { file: '4_tasks', caption: 'All tasks' },
-      { file: '5_dark', caption: 'Dark mode' },
-    ],
-  },
+  numbers: [
+    { value: '3', unit: 'min', text: 'to set up the household and invite the other' },
+    { value: '0', unit: 'ads', text: 'no ad trackers, no data sold' },
+    { value: '3', unit: 'languages', text: 'français, English, Nederlands' },
+  ],
   privacy: {
     eyebrow: 'Privacy',
     title: 'Your business stays yours.',
@@ -556,13 +475,14 @@ const en: Content = {
     ],
   },
   cta: {
-    title: 'What if the house ran itself?',
-    text: 'Create your household, invite the other, and let Tandem remember everything.',
+    title: ['Tonight,', 'whose turn?'],
+    text: 'Tandem remembers. Set up your household in three minutes.',
     primary: 'Create my household',
     secondary: 'Sign in',
   },
   footer: {
-    tagline: 'The perfect balance for your household.',
+    gravure: 'Engraving: a village at night under the stars; two lit windows joined by a thread.',
+    tagline: 'Two lives, one rhythm.',
     product: 'Product',
     help: 'Help',
     legal: 'Privacy',
@@ -591,15 +511,15 @@ const en: Content = {
 const nl: Content = {
   meta: {
     title: 'Tandem · Huishoudelijke klusjes om de beurt verdelen',
-    ogTitle: 'Tandem · Het perfecte evenwicht voor je huishouden',
+    ogTitle: 'Tandem · Twee levens, één ritme',
     ogAlt:
-      'Illustratie van Tandem: een lachend koppel op een tandemfiets. “Het perfecte evenwicht voor je huishouden”: gedeelde klusjes om de beurt, een live boodschappenlijst, herinneringen. Gratis, zonder advertenties, web en Android.',
+      'Tandem, de gedeelde agenda voor het huishouden: twee verweven wielen en “Om de beurt, samen gaat het beter”. Taken om de beurt, live boodschappen, gedeelde agenda. Gratis, zonder advertenties, web en Android.',
     description:
       'Tandem verdeelt de klusjes in huis: om de beurt, een gedeelde boodschappenlijst, herinneringen, offline. Gratis, zonder advertenties, op het web en Android.',
   },
   nav: {
     features: 'Functies',
-    how: 'Hoe het werkt',
+    week: 'De week',
     privacy: 'Privacy',
     faq: 'FAQ',
     open: 'Tandem openen',
@@ -608,10 +528,11 @@ const nl: Content = {
     menu: 'Menu',
   },
   lang: { label: 'Taal', current: 'nl' },
+  motion: { pause: 'Animatie pauzeren', play: 'Animatie hervatten' },
   hero: {
     badge: 'Gratis · zonder advertenties · web en Android',
-    title: ['Het perfecte evenwicht', 'voor je huishouden.'],
-    text: 'Wie zet deze week de vuilnisbakken buiten? Wie doet de boodschappen? Tandem verdeelt de klusjes tussen jullie, om de beurt, zonder dat je het twee keer hoeft te vragen.',
+    title: ['Om de beurt,', 'samen gaat het beter.'],
+    text: 'Tandem houdt het huis bij: wie wat doet, wanneer, en wie de volgende keer aan de beurt is. Boodschappen en agenda doen mee, op het web en op Android.',
     primary: 'Gratis beginnen',
     android: 'Downloaden voor Android',
     note: 'Eén account, één huishouden, en de ander komt erbij met een link.',
@@ -631,22 +552,6 @@ const nl: Content = {
     toast: 'Tom heeft “Vuilnisbakken buitenzetten” afgevinkt',
     added: 'Garage bellen',
     addedMeta: 'morgen 10.00 u · Tom',
-  },
-  strip: [
-    'Website',
-    'Android-app',
-    'Offline',
-    'Live',
-    'Google Agenda',
-    'Nederlands · Français · English',
-  ],
-  film: {
-    eyebrow: 'In 20 seconden',
-    title: 'Tandem, in beweging.',
-    text: 'Afvinken, herhalen, verplaatsen: het huishouden loopt vanzelf. (Video in het Frans.)',
-    label: 'Presentatievideo van Tandem (20 seconden, in het Frans)',
-    unmute: 'Geluid aanzetten',
-    mute: 'Geluid uitzetten',
   },
   features: {
     eyebrow: 'Functies',
@@ -695,53 +600,31 @@ const nl: Content = {
       },
     ],
   },
-  how: {
-    eyebrow: 'Hoe het werkt',
-    title: 'Klaar in drie minuten.',
-    steps: [
-      {
-        title: 'Maak je huishouden aan',
-        text: 'Een account op de website of in de app, met je e-mailadres of je Google-account.',
-      },
-      {
-        title: 'Nodig de ander uit',
-        text: 'Een uitnodigingslink volstaat: jullie delen dezelfde taken, live.',
-      },
-      {
-        title: 'Laat het draaien',
-        text: 'Herhalingen, beurtrol en herinneringen: iedereen weet wat er moet gebeuren, zonder lijstje op de koelkast.',
-      },
+  week: {
+    eyebrow: 'De week',
+    title: ['Een week', 'zonder schema op de koelkast.'],
+    text: 'Elke terugkerende taak kiest zelf de juiste persoon. Jij hoeft alleen nog af te vinken.',
+    days: [
+      [['Was', 'e']],
+      [
+        ['Vuilnis', 't'],
+        ['Planten', 'e'],
+      ],
+      [['Afwas', 't']],
+      [['Boodschappen', 'both']],
+      [['Stofzuigen', 'e']],
+      [
+        ['Lakens', 'e'],
+        ['Fietsen', 't'],
+      ],
+      [['Koken', 't']],
     ],
   },
-  balance: {
-    eyebrow: 'Evenwicht',
-    title: 'Zie wie wat doet, zonder te tellen.',
-    text: 'De verdeling van de week toont ieders aandeel, in taken en in tijd. Geen ranglijst, geen wedstrijd: net genoeg om erover te praten en bij te sturen.',
-    points: [
-      'Stelt de minst bezette persoon voor',
-      'Afwezigheidsmodus: de taken gaan naar de ander',
-      'Geschiedenis “gedaan door” voor elke taak',
-    ],
-    card: 'Verdeling van deze week',
-    rows: [
-      { name: 'Emma', detail: '6 taken · 1 u 40', value: 52, color: 'ocean' },
-      { name: 'Tom', detail: '5 taken · 1 u 30', value: 48, color: 'sage' },
-      { name: 'Samen', detail: '2 taken · 1 u', value: 22, color: 'plum' },
-    ],
-    footnote: 'Gedeelde taken, van maandag tot zondag.',
-  },
-  shots: {
-    eyebrow: 'De app',
-    title: 'Hetzelfde huishouden, in je broekzak.',
-    text: 'De Android-app kan alles wat de website kan, afgestemd op de telefoon: widgets, snelkoppelingen, dicteren en donkere modus.',
-    items: [
-      { file: '1_today', caption: 'Vandaag' },
-      { file: '2_shopping', caption: 'Live boodschappenlijst' },
-      { file: '3_calendar', caption: 'Agenda' },
-      { file: '4_tasks', caption: 'Alle taken' },
-      { file: '5_dark', caption: 'Donkere modus' },
-    ],
-  },
+  numbers: [
+    { value: '3', unit: 'min', text: 'om het huishouden te maken en de ander uit te nodigen' },
+    { value: '0', unit: 'advertenties', text: 'geen advertentietrackers, geen data verkocht' },
+    { value: '3', unit: 'talen', text: 'français, English, Nederlands' },
+  ],
   privacy: {
     eyebrow: 'Privacy',
     title: 'Jullie zaken blijven van jullie.',
@@ -793,13 +676,15 @@ const nl: Content = {
     ],
   },
   cta: {
-    title: 'En als het huishouden nu eens vanzelf liep?',
-    text: 'Maak je huishouden aan, nodig de ander uit en laat Tandem alles onthouden.',
+    title: ['Vanavond,', 'wie is er aan de beurt?'],
+    text: 'Tandem onthoudt het. Maak je huishouden in drie minuten.',
     primary: 'Mijn huishouden aanmaken',
     secondary: 'Aanmelden',
   },
   footer: {
-    tagline: 'Het perfecte evenwicht voor je huishouden.',
+    gravure:
+      "Gravure: een dorp 's nachts onder de sterren; twee verlichte ramen verbonden door een draad.",
+    tagline: 'Twee levens, één ritme.',
     product: 'Product',
     help: 'Hulp',
     legal: 'Privacy',

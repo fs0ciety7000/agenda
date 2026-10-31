@@ -624,11 +624,11 @@ Uptime Kuma : remplacer les URL des sondes (`/healthz`, `/v1/status`…) par
 ## 15. Site vitrine
 
 Le service `site` du compose sert la page de présentation de Tandem (français sur `/`, anglais
-sur `/en/`) : pages statiques Next.js, animations Motion, mêmes design tokens que l'app. Il est
+sur `/en/`, néerlandais sur `/nl/`) : pages statiques Next.js, animations en CSS (identité
+« Deux fils »), mêmes design tokens que l'app. Il est
 **statique** et indépendant : ni API, ni base, ni traceur. Seul cookie : `lang`, posé quand on
 choisit la langue ; sans lui, `/` envoie vers `/en/` les navigateurs non francophones (nginx).
-La vidéo de présentation (`public/video`) est fabriquée depuis `assets/motion` (voir
-`assets/README.md`).
+Pas de vidéo : la page s'anime en CSS et SVG (ancienne vidéo retirée, sources dans `assets/motion`).
 
 1. **Cloudflare → DNS** : enregistrement `A` `decouvrir` vers l'IP du serveur (nuage gris au
    premier déploiement, puis orange, comme en §3.1). Un seul niveau sous `tandem-agenda.app` :
@@ -656,7 +656,7 @@ redéployer. En local : `pnpm --filter @agenda/site dev` (port 3100).
 **Référencement** : titres, descriptions et textes alternatifs dans `apps/site/src/lib/content.ts`
 (`meta`), balises dans `src/lib/metadata.ts`, données structurées dans `src/lib/structured-data.ts`,
 plan du site et `robots.txt` générés au build. Images de partage (1200 × 630, une par langue) :
-`node apps/site/scripts/og-images.mjs` avec Playwright accessible (voir l'en-tête du script). L'app
+`node scripts/generate-icons.mjs` (avec les icônes ; Playwright). L'app
 sert son propre `robots.txt` (`apps/web/src/app/robots.ts`) ; ses pages restent `noindex`. La
 redirection 302 de l'accueil de l'app est voulue (elle dépend de la session) : ne pas la passer
 en 301/308, qui serait mise en cache par les navigateurs des personnes connectées.

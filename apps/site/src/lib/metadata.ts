@@ -4,8 +4,8 @@ import { content, LANGS, type Locale } from './content';
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#FFFFFF' },
-    { media: '(prefers-color-scheme: dark)', color: '#0F1012' },
+    { media: '(prefers-color-scheme: light)', color: '#F3EEE4' },
+    { media: '(prefers-color-scheme: dark)', color: '#0E1030' },
   ],
 };
 
@@ -14,7 +14,7 @@ const OG_LOCALES: Record<Locale, string> = { fr: 'fr_BE', en: 'en_GB', nl: 'nl_B
 /** Chemin public d'une langue (`/`, `/en/`, `/nl/`). */
 export const localePath = (locale: Locale) => LANGS.find((l) => l.locale === locale)!.href;
 
-/** Image de partage 1200 × 630 d'une langue (générée par `scripts/og-images.mjs`). */
+/** Image de partage 1200 × 630 d'une langue (générée par `scripts/generate-icons.mjs`). */
 export const ogImage = (locale: Locale) => `/img/og/${locale}.png`;
 
 export function pageMetadata(locale: Locale): Metadata {

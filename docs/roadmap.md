@@ -321,7 +321,7 @@ aubergine.
 - [x] Fiche Play aux couleurs « Duo » : bannière en Instrument Sans (fr, en, nl), six captures
   (Courses en plus) d'Emma et Tom traduites, refaites par le workflow de la fiche (S) 🤖 (#122)
 - [x] Logo (icône de l'app, de la fiche Play) encore dans les anciens tons (prune) : remplacé par
-  l'identité « Deux fils » (lot 8) 🌐🤖🪧 (#123)
+  l'identité « Deux fils » (lot 8) 🌐🤖🪧 (#122)
 
 ### Lot 8 — Identité « Deux fils » (validée le 31 octobre)
 
@@ -331,12 +331,15 @@ dans `docs/brand/`. Maquettes : tableau « Tandem · Maquettes du site », page 
 
 - [x] Fondations : tokens (papier, nuit, cobalt seul, couleurs de marque), Instrument Serif pour
   les grands titres, nouveau logo et icônes (Android, web, site, doc, Play), réglage « Couleur »
-  retiré (S/M) 🌐🤖🪧 (#123)
-- [ ] Site vitrine en page F : pile de tâches qui se distribue, fil qui se dessine, semaine qui
-  s'allume, footer gravé (village de nuit), sans vidéo ; trois langues, Lighthouse ≥ 95 (M) 🪧
-- [ ] Documentation (Docusaurus) aux couleurs de l'identité ; images de partage refaites (S) 🪧
+  retiré (S/M) 🌐🤖🪧 (#122)
+- [x] Site vitrine en page F : pile de tâches qui se distribue, fil qui se dessine, semaine qui
+  s'allume, footer gravé (village de nuit), sans vidéo ni bibliothèque d'animation (CSS), bouton
+  pause ; trois langues, Lighthouse mobile 96-97 / 100 / 100 / 100 (M) 🪧 (#123)
+- [x] Images de partage du site refaites (`scripts/generate-icons.mjs`) 🪧 (#123)
+- [ ] Documentation (Docusaurus) aux couleurs de l'identité (S) 🪧
 - [ ] Accueil de l'app web plus léger : Lighthouse ≥ 90 stable sur `/` en CI (S) 🌐
-- [ ] Captures du site et de la fiche Play refaites dans la nouvelle identité (S) 🪧🤖
+- [x] Captures de l'app du site refaites dans la nouvelle identité 🪧 (#123) ; celles de la fiche
+  Play se refont au lancement du workflow de la fiche 🤖
 
 ### Propositions de design
 

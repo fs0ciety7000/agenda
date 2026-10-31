@@ -1,414 +1,188 @@
-'use client';
-
-import clsx from 'clsx';
-import {
-  ArrowRight,
-  Bell,
-  CalendarDays,
-  Check,
-  Download,
-  LayoutGrid,
-  Lock,
-  Megaphone,
-  Minus,
-  Plus,
-  Repeat,
-  ShieldCheck,
-  ShoppingCart,
-  Sparkles,
-  Sun,
-  WifiOff,
-  type LucideIcon,
-} from 'lucide-react';
-import { motion, useReducedMotion, useScroll, useTransform } from 'motion/react';
-import { useEffect, useRef, useState } from 'react';
+import { ArrowRight } from 'lucide-react';
 import { APK_URL, APP_URL, CONTACT_EMAIL, DOCS_URL, PLAY_URL } from '@/lib/config';
-import type { Content, FeatureIcon, Locale } from '@/lib/content';
+import type { Content, Locale } from '@/lib/content';
+import { Gravure } from './gravure';
 import { OtherLangs } from './nav';
 import { PublisherCredit } from './publisher-credit';
-import { EASE, PhoneFrame, Reveal, SectionHeading } from './ui';
+import { ButtonLink, Logo, PhoneFrame, Reveal } from './ui';
 
-const ICONS: Record<FeatureIcon, LucideIcon> = {
-  sun: Sun,
-  sparkles: Sparkles,
-  repeat: Repeat,
-  cart: ShoppingCart,
-  bell: Bell,
-  offline: WifiOff,
-  calendar: CalendarDays,
-  widget: LayoutGrid,
-};
-
-/** Bandeau défilant : où et comment Tandem fonctionne. */
-export function Strip({ t }: { t: Content }) {
-  const reduce = useReducedMotion();
-  const items = [...t.strip, ...t.strip];
+/** Le fil : deux lignes (cobalt, abricot) qui se dessinent sous l'ouverture. */
+export function Threads() {
   return (
-    <div className="relative overflow-hidden border-y border-border bg-surface/60 py-5">
-      <div className="pointer-events-none absolute inset-y-0 left-0 z-10 w-24 bg-linear-to-r from-bg to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-24 bg-linear-to-l from-bg to-transparent" />
-      <motion.ul
-        animate={reduce ? undefined : { x: ['0%', '-50%'] }}
-        transition={{ duration: 28, repeat: Infinity, ease: 'linear' }}
-        className="flex w-max gap-12 pr-12"
-      >
-        {items.map((label, i) => (
-          <li
-            key={`${label}-${i}`}
-            aria-hidden={i >= t.strip.length}
-            className="flex items-center gap-3 text-lg font-medium whitespace-nowrap text-text-muted"
-          >
-            <span className="size-1.5 rounded-full bg-accent" />
-            {label}
-          </li>
-        ))}
-      </motion.ul>
-    </div>
-  );
-}
-
-export function Features({ t }: { t: Content }) {
-  return (
-    <section id="features" className="mx-auto max-w-6xl px-5 py-24 sm:py-32">
-      <SectionHeading
-        eyebrow={t.features.eyebrow}
-        title={t.features.title}
-        text={t.features.text}
+    <svg
+      aria-hidden
+      viewBox="0 0 1440 160"
+      preserveAspectRatio="none"
+      className="block h-28 w-full sm:h-40"
+    >
+      <path
+        d="M-20 120C200 20 360 150 560 80S900 10 1060 90S1320 140 1460 40"
+        fill="none"
+        stroke="var(--gn-brand-cobalt)"
+        strokeWidth="2"
+        vectorEffect="non-scaling-stroke"
+        className="draw"
       />
-      <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {t.features.items.map((f, i) => {
-          const Icon = ICONS[f.icon];
-          return (
-            <Reveal key={f.title} delay={(i % 4) * 0.08}>
-              <motion.article
-                whileHover={{ y: -6 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 22 }}
-                className="group flex h-full flex-col gap-4 rounded-[var(--radius-xl)] border border-border bg-surface p-6 shadow-[0_1px_0_rgb(0_0_0/0.02)] transition-shadow hover:shadow-[0_24px_48px_-24px_rgb(23_24_28/0.3)]"
-              >
-                <span className="flex size-11 items-center justify-center rounded-2xl bg-accent/10 text-accent transition-transform duration-300 group-hover:scale-110 group-hover:rotate-[-6deg]">
-                  <Icon className="size-5" aria-hidden />
-                </span>
-                <h3 className="text-lg font-semibold tracking-tight">{f.title}</h3>
-                <p className="text-[0.9375rem] leading-relaxed text-text-muted">{f.text}</p>
-              </motion.article>
-            </Reveal>
-          );
-        })}
-      </div>
-    </section>
+      <path
+        d="M-20 90C220 150 380 30 580 100S920 150 1080 60S1340 20 1460 110"
+        fill="none"
+        stroke="var(--gn-brand-apricot)"
+        strokeWidth="2"
+        vectorEffect="non-scaling-stroke"
+        className="draw"
+        style={{ animationDelay: '300ms', animationDuration: '3.2s' }}
+      />
+    </svg>
   );
 }
 
-export function How({ t }: { t: Content }) {
+/** Nuit : les fonctions, numérotées, à côté du téléphone. */
+export function Features({ t, locale }: { t: Content; locale: Locale }) {
   return (
-    <section id="how" className="relative overflow-hidden bg-surface-muted/60 py-24 sm:py-32">
-      <div className="mx-auto max-w-6xl px-5">
-        <SectionHeading eyebrow={t.how.eyebrow} title={t.how.title} center />
-        <ol className="relative mt-16 grid gap-10 md:grid-cols-3">
-          <motion.li
-            aria-hidden
-            role="presentation"
-            initial={{ scaleX: 0 }}
-            whileInView={{ scaleX: 1 }}
-            viewport={{ once: true, amount: 0.6 }}
-            transition={{ duration: 1.2, ease: EASE, delay: 0.2 }}
-            className="absolute top-7 right-[16%] left-[16%] hidden h-px origin-left bg-border md:block"
-          />
-          {t.how.steps.map((s, i) => (
-            <Reveal
-              as="li"
-              key={s.title}
-              delay={0.15 * i}
-              className="relative flex flex-col items-center gap-4 text-center"
-            >
-              <motion.span
-                initial={{ scale: 0.6, opacity: 0 }}
-                whileInView={{ scale: 1, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ type: 'spring', stiffness: 260, damping: 18, delay: 0.15 * i + 0.2 }}
-                className="relative z-10 flex size-14 items-center justify-center rounded-full border border-border bg-surface text-lg font-semibold text-accent shadow-lg"
-              >
-                {i + 1}
-              </motion.span>
-              <h3 className="text-xl font-semibold tracking-tight">{s.title}</h3>
-              <p className="max-w-xs leading-relaxed text-text-muted">{s.text}</p>
-            </Reveal>
-          ))}
-        </ol>
-      </div>
-    </section>
-  );
-}
-
-const BAR = { sage: 'bg-member-sage', ocean: 'bg-member-ocean', plum: 'bg-member-plum' } as const;
-
-export function Balance({ t }: { t: Content }) {
-  return (
-    <section className="mx-auto grid max-w-6xl items-center gap-14 px-5 py-24 sm:py-32 lg:grid-cols-2">
-      <div className="flex flex-col gap-8">
-        <SectionHeading eyebrow={t.balance.eyebrow} title={t.balance.title} text={t.balance.text} />
-        <ul className="flex flex-col gap-3">
-          {t.balance.points.map((p, i) => (
-            <Reveal as="li" key={p} delay={0.1 * i} className="flex items-center gap-3">
-              <span className="flex size-6 items-center justify-center rounded-full bg-success/15 text-success">
-                <Check className="size-3.5" strokeWidth={3} aria-hidden />
-              </span>
-              <span className="text-[0.9375rem]">{p}</span>
-            </Reveal>
-          ))}
-        </ul>
-      </div>
-      <Reveal y={40}>
-        <div className="relative rounded-[1.75rem] border border-border bg-surface p-7 shadow-[0_40px_80px_-40px_rgb(23_24_28/0.4)]">
-          <p className="mb-6 text-sm font-semibold text-text-muted">{t.balance.card}</p>
-          <div className="flex flex-col gap-6">
-            {t.balance.rows.map((r, i) => (
-              <div key={r.name} className="flex items-center gap-4">
-                <span
-                  className={clsx(
-                    'flex size-10 shrink-0 items-center justify-center rounded-full text-sm font-semibold text-on-member',
-                    BAR[r.color],
-                  )}
-                >
-                  {r.name.slice(0, 1)}
-                </span>
-                <div className="flex flex-1 flex-col gap-2">
-                  <div className="flex items-baseline justify-between gap-3">
-                    <span className="font-medium">{r.name}</span>
-                    <span className="text-sm text-text-muted">{r.detail}</span>
-                  </div>
-                  <div className="h-2.5 overflow-hidden rounded-full bg-surface-muted">
-                    <motion.div
-                      initial={{ width: 0 }}
-                      whileInView={{ width: `${r.value}%` }}
-                      viewport={{ once: true, amount: 0.8 }}
-                      transition={{ duration: 1.1, ease: EASE, delay: 0.2 + i * 0.15 }}
-                      // Barres neutres pour tous : la répartition informe, elle ne classe pas (design system §1.5).
-                      className="h-full rounded-full bg-text-muted"
-                    />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <p className="mt-6 text-sm text-text-muted">{t.balance.footnote}</p>
-          <motion.span
-            animate={{ rotate: [0, 8, 0], y: [0, -6, 0] }}
-            transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-            className="absolute -top-5 -right-5 flex size-14 items-center justify-center rounded-2xl bg-accent text-2xl shadow-xl"
-            aria-hidden
-          >
-            ⚖️
-          </motion.span>
+    <section
+      id="features"
+      className="night rounded-t-[3rem] bg-brand-night px-5 py-24 text-brand-paper sm:py-32"
+    >
+      <div className="mx-auto flex max-w-6xl flex-wrap items-start gap-16">
+        <div className="flex flex-[0_1_20rem] justify-center lg:sticky lg:top-24">
+          <PhoneFrame className="w-[17rem] rotate-3">
+            {/* eslint-disable-next-line @next/next/no-img-element -- export statique */}
+            <img
+              src={`/shots/${locale}/2_shopping.webp`}
+              alt=""
+              width={720}
+              height={1440}
+              loading="lazy"
+              decoding="async"
+              className="block h-auto w-full"
+            />
+          </PhoneFrame>
         </div>
-      </Reveal>
-    </section>
-  );
-}
-
-export function Screens({ t, locale }: { t: Content; locale: Locale }) {
-  const ref = useRef<HTMLElement>(null);
-  const [wide, setWide] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia('(min-width: 1024px)');
-    const update = () => setWide(mq.matches);
-    update();
-    mq.addEventListener('change', update);
-    return () => mq.removeEventListener('change', update);
-  }, []);
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
-  const x = useTransform(scrollYProgress, [0, 1], ['6%', '-22%']);
-
-  return (
-    <section ref={ref} className="overflow-hidden bg-surface-muted/60 py-24 sm:py-32">
-      <div className="mx-auto max-w-6xl px-5">
-        <SectionHeading eyebrow={t.shots.eyebrow} title={t.shots.title} text={t.shots.text} />
-      </div>
-      <motion.ul
-        style={wide ? { x } : undefined}
-        className="mt-14 flex snap-x snap-mandatory gap-6 overflow-x-auto px-5 pb-6 lg:overflow-visible lg:px-[max(1.25rem,calc((100vw-72rem)/2+1.25rem))]"
-      >
-        {t.shots.items.map((s, i) => (
-          <motion.li
-            key={s.file}
-            initial={{ opacity: 0, y: 40 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.7, ease: EASE, delay: 0.08 * i }}
-            className="flex w-[15rem] shrink-0 snap-center flex-col items-center gap-4 sm:w-[16.5rem]"
-          >
-            <motion.div
-              whileHover={{ y: -10, rotate: i % 2 ? 1.5 : -1.5 }}
-              transition={{ type: 'spring', stiffness: 250, damping: 20 }}
-              className="w-full"
-            >
-              <PhoneFrame className="pt-7">
-                {/* eslint-disable-next-line @next/next/no-img-element -- export statique */}
-                <img
-                  src={`/shots/${locale}/${s.file}.webp`}
-                  alt={s.caption}
-                  width={720}
-                  height={1440}
-                  loading="lazy"
-                  className="block aspect-[1/2] w-full object-cover"
-                />
-              </PhoneFrame>
-            </motion.div>
-            <span className="text-sm font-medium text-text-muted">{s.caption}</span>
-          </motion.li>
-        ))}
-      </motion.ul>
-    </section>
-  );
-}
-
-const PRIVACY_ICONS: LucideIcon[] = [Megaphone, ShieldCheck, Download, Lock];
-
-export function Privacy({ t }: { t: Content }) {
-  return (
-    <section id="privacy" className="mx-auto max-w-6xl px-5 py-24 sm:py-32">
-      <div className="grid gap-14 lg:grid-cols-[0.9fr_1.1fr]">
-        <div className="flex flex-col gap-6">
-          <SectionHeading
-            eyebrow={t.privacy.eyebrow}
-            title={t.privacy.title}
-            text={t.privacy.text}
-          />
-          <Reveal>
-            <a
-              href={`${APP_URL}/privacy`}
-              className="group inline-flex items-center gap-2 font-semibold text-accent"
-            >
-              {t.privacy.link}
-              <ArrowRight
-                className="size-4 transition-transform group-hover:translate-x-1"
-                aria-hidden
-              />
-            </a>
+        <div className="flex min-w-0 flex-[1_1_32rem] flex-col">
+          <Reveal className="mb-8 flex flex-col gap-3">
+            <span className="text-sm font-medium text-brand-mist">{t.features.eyebrow}</span>
+            <h2 className="font-display text-[clamp(2.5rem,5vw,4.5rem)] leading-none tracking-[-0.03em]">
+              {t.features.title}
+            </h2>
+            <p className="max-w-xl text-lg leading-relaxed text-brand-mist">{t.features.text}</p>
           </Reveal>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2">
-          {t.privacy.items.map((item, i) => {
-            const Icon = PRIVACY_ICONS[i] ?? ShieldCheck;
-            return (
-              <Reveal key={item.title} delay={0.08 * i}>
-                <div className="flex h-full flex-col gap-3 rounded-[var(--radius-xl)] border border-border bg-surface p-6">
-                  <Icon className="size-6 text-accent" aria-hidden />
-                  <h3 className="font-semibold tracking-tight">{item.title}</h3>
-                  <p className="text-[0.9375rem] leading-relaxed text-text-muted">{item.text}</p>
-                </div>
+          <ol>
+            {t.features.items.map((f, i) => (
+              <Reveal
+                as="li"
+                key={f.title}
+                className="feature flex items-baseline gap-6 rounded-2xl border-t border-brand-paper/15 py-6"
+              >
+                <span className="w-10 flex-none font-display text-[1.625rem] text-brand-lilac tabular-nums">
+                  {String(i + 1).padStart(2, '0')}
+                </span>
+                <span className="flex flex-col gap-1.5">
+                  <h3 className="text-[1.375rem] font-semibold">{f.title}</h3>
+                  <span className="leading-relaxed text-brand-mist">{f.text}</span>
+                </span>
               </Reveal>
-            );
-          })}
+            ))}
+          </ol>
         </div>
       </div>
     </section>
   );
 }
 
-export function Faq({ t }: { t: Content }) {
-  const [open, setOpen] = useState<number | null>(0);
+/** Trois chiffres vrais, en grand serif. */
+export function Numbers({ t }: { t: Content }) {
   return (
-    <section id="faq" className="mx-auto max-w-3xl px-5 py-24 sm:py-32">
-      <SectionHeading eyebrow={t.faq.eyebrow} title={t.faq.title} center />
-      <ul className="mt-12 flex flex-col gap-3">
-        {t.faq.items.map((item, i) => {
-          const expanded = open === i;
-          return (
-            <Reveal
-              as="li"
-              key={item.q}
-              delay={0.05 * i}
-              className="overflow-hidden rounded-2xl border border-border bg-surface"
-            >
-              <h3>
-                <button
-                  type="button"
-                  aria-expanded={expanded}
-                  aria-controls={`faq-${i}`}
-                  onClick={() => setOpen(expanded ? null : i)}
-                  className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left font-semibold"
-                >
-                  {item.q}
-                  <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-surface-muted text-accent">
-                    {expanded ? (
-                      <Minus className="size-4" aria-hidden />
-                    ) : (
-                      <Plus className="size-4" aria-hidden />
-                    )}
-                  </span>
-                </button>
-              </h3>
-              {/* Réponse toujours présente dans le HTML (repliée, inerte) : lisible par les moteurs
-                  de recherche et cohérente avec les données structurées FAQPage. */}
-              <motion.div
-                id={`faq-${i}`}
-                initial={false}
-                animate={expanded ? { height: 'auto', opacity: 1 } : { height: 0, opacity: 0 }}
-                transition={{ duration: 0.35, ease: EASE }}
-                className="overflow-hidden"
-                aria-hidden={!expanded}
-                inert={!expanded}
+    <section className="night bg-brand-night px-5 pb-24 text-brand-paper sm:pb-32">
+      <ul className="mx-auto grid max-w-6xl gap-4 sm:grid-cols-3">
+        {t.numbers.map((n, i) => (
+          <Reveal
+            as="li"
+            key={n.text}
+            className="flex flex-col gap-2 rounded-[2rem] border border-brand-paper/15 p-9"
+          >
+            <span className="font-display text-[7.5rem] leading-[0.9] tracking-[-0.04em]">
+              {n.value}
+              <span
+                className={`text-[2.5rem] italic ${i === 1 ? 'text-brand-apricot' : 'text-brand-lilac'}`}
               >
-                <p className="px-6 pb-6 leading-relaxed text-text-muted">{item.a}</p>
-              </motion.div>
-            </Reveal>
-          );
-        })}
+                {' '}
+                {n.unit}
+              </span>
+            </span>
+            <span className="text-lg text-brand-mist">{n.text}</span>
+          </Reveal>
+        ))}
       </ul>
     </section>
   );
 }
 
-export function Cta({ t }: { t: Content }) {
+export function Privacy({ t }: { t: Content }) {
   return (
-    <section className="px-5 pb-24">
-      <Reveal y={40}>
-        <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-7 overflow-hidden rounded-[2rem] bg-accent px-6 py-20 text-center text-accent-fg sm:px-12">
-          <motion.div
-            aria-hidden
-            animate={{ rotate: 360 }}
-            transition={{ duration: 60, repeat: Infinity, ease: 'linear' }}
-            className="pointer-events-none absolute -top-1/2 left-1/2 size-[60rem] -translate-x-1/2 rounded-full bg-[conic-gradient(from_0deg,transparent,rgb(255_255_255/0.12),transparent_40%)]"
-          />
-          <motion.img
-            src="/img/logo.png"
-            alt=""
-            width={112}
-            height={112}
-            animate={{ y: [0, -10, 0] }}
-            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
-            className="relative size-28 rounded-[1.75rem] shadow-2xl"
-          />
-          <h2 className="relative max-w-2xl text-balance text-3xl font-semibold tracking-tight sm:text-5xl">
-            {t.cta.title}
+    <section id="privacy" className="px-5 py-24 sm:py-32">
+      <div className="mx-auto flex max-w-6xl flex-col gap-12">
+        <Reveal className="flex max-w-4xl flex-col gap-4">
+          <span className="text-sm font-medium text-text-muted">{t.privacy.eyebrow}</span>
+          <h2 className="font-display text-[clamp(2.5rem,5.5vw,5rem)] leading-none tracking-[-0.03em]">
+            {t.privacy.title}
           </h2>
-          <p className="relative max-w-xl text-lg opacity-85">{t.cta.text}</p>
-          <div className="relative flex flex-wrap justify-center gap-3">
-            <motion.a
-              href={`${APP_URL}/register`}
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.97 }}
-              className="inline-flex h-12 items-center gap-2 rounded-full bg-accent-fg px-6 font-semibold text-accent"
-            >
-              {t.cta.primary}
-              <ArrowRight className="size-4" aria-hidden />
-            </motion.a>
-            <motion.a
-              href={`${APP_URL}/login`}
-              whileHover={{ y: -2 }}
-              whileTap={{ scale: 0.97 }}
-              className="inline-flex h-12 items-center rounded-full border border-current/30 px-6 font-semibold"
-            >
-              {t.cta.secondary}
-            </motion.a>
-          </div>
-        </div>
-      </Reveal>
+          <p className="max-w-2xl text-lg leading-relaxed text-text-muted">{t.privacy.text}</p>
+        </Reveal>
+        <ul className="grid gap-8 border-t border-border pt-8 sm:grid-cols-2 lg:grid-cols-4">
+          {t.privacy.items.map((item) => (
+            <Reveal as="li" key={item.title} className="flex flex-col gap-2">
+              <h3 className="text-lg font-semibold">{item.title}</h3>
+              <p className="leading-relaxed text-text-muted">{item.text}</p>
+            </Reveal>
+          ))}
+        </ul>
+        <a
+          href={`${APP_URL}/privacy`}
+          className="group inline-flex w-fit items-center gap-2 font-semibold text-accent"
+        >
+          {t.privacy.link}
+          <ArrowRight
+            className="size-4 transition-transform group-hover:translate-x-1"
+            aria-hidden
+          />
+        </a>
+      </div>
     </section>
   );
 }
 
+/** Questions : `<details>` natif (clavier, lecteurs d'écran, sans JavaScript), réponses dans le HTML. */
+export function Faq({ t }: { t: Content }) {
+  return (
+    <section id="faq" className="px-5 pb-24 sm:pb-32">
+      <div className="mx-auto flex max-w-3xl flex-col">
+        <h2 className="mb-6 font-display text-[clamp(2.25rem,4vw,3.5rem)] tracking-[-0.02em]">
+          {t.faq.title}
+        </h2>
+        {t.faq.items.map((item, i) => (
+          <details
+            key={item.q}
+            open={i === 0}
+            className="faq border-t border-border py-5 last:border-b"
+          >
+            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 text-lg font-semibold">
+              {item.q}
+              <span
+                aria-hidden
+                className="faq-sign flex size-8 flex-none items-center justify-center rounded-full bg-surface-muted text-accent"
+              >
+                +
+              </span>
+            </summary>
+            <p className="mt-3 leading-relaxed text-text-muted">{item.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+/** Pied de page : appel final, liens, puis la gravure de nuit. */
 export function Footer({ t }: { t: Content }) {
   const l = t.footer.links;
   const columns = [
@@ -437,37 +211,44 @@ export function Footer({ t }: { t: Content }) {
     },
   ];
   return (
-    <footer className="border-t border-border">
-      <div className="mx-auto grid max-w-6xl gap-12 px-5 py-16 md:grid-cols-[1.4fr_repeat(3,1fr)]">
+    <footer className="night overflow-hidden bg-brand-night text-brand-paper">
+      <div className="mx-auto flex max-w-6xl flex-col items-center gap-6 px-5 pt-24 pb-14 text-center sm:pt-28">
+        <h2 className="font-display text-[clamp(3rem,7vw,6.5rem)] leading-[0.95] tracking-[-0.035em]">
+          {t.cta.title[0]} <span className="text-brand-apricot italic">{t.cta.title[1]}</span>
+        </h2>
+        <p className="max-w-xl text-lg text-brand-mist">{t.cta.text}</p>
+        <div className="flex flex-wrap justify-center gap-3">
+          <ButtonLink
+            href={`${APP_URL}/register`}
+            variant="apricot"
+            className="min-h-14 px-7 text-base"
+          >
+            {t.cta.primary}
+          </ButtonLink>
+          <ButtonLink
+            href={`${APP_URL}/login`}
+            variant="secondary"
+            className="min-h-14 px-7 text-base"
+          >
+            {t.cta.secondary}
+          </ButtonLink>
+        </div>
+      </div>
+
+      <div className="mx-auto grid max-w-6xl gap-12 border-t border-brand-paper/15 px-5 pt-12 md:grid-cols-[1.4fr_repeat(4,1fr)]">
         <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-2.5">
-            {/* eslint-disable-next-line @next/next/no-img-element -- export statique */}
-            <img
-              src="/img/icon-192.png"
-              alt=""
-              width={36}
-              height={36}
-              className="size-9 rounded-[10px]"
-            />
-            <span className="text-lg font-semibold">Tandem</span>
-          </div>
-          <p className="max-w-xs text-text-muted">{t.footer.tagline}</p>
-          <div className="flex gap-4">
-            <OtherLangs
-              t={t}
-              className="text-sm text-text-muted underline underline-offset-4 hover:text-text"
-            />
-          </div>
+          <Logo tone="night" className="text-[2.25rem]" />
+          <p className="max-w-xs text-brand-mist">{t.footer.tagline}</p>
         </div>
         {columns.map((c) => (
           <div key={c.title} className="flex flex-col gap-3">
-            <h2 className="text-sm font-semibold">{c.title}</h2>
-            <ul className="flex flex-col gap-2">
+            <h2 className="font-display text-[1.375rem] italic">{c.title}</h2>
+            <ul className="flex flex-col gap-1">
               {c.links.map((link) => (
                 <li key={link.label}>
                   <a
                     href={link.href}
-                    className="text-[0.9375rem] text-text-muted transition-colors hover:text-text"
+                    className="footer-link inline-flex min-h-8 items-center text-[0.9375rem]"
                   >
                     {link.label}
                   </a>
@@ -476,12 +257,25 @@ export function Footer({ t }: { t: Content }) {
             </ul>
           </div>
         ))}
+        <div className="flex flex-col gap-3">
+          <h2 className="font-display text-[1.375rem] italic">{t.lang.label}</h2>
+          <div className="flex flex-col items-start gap-1">
+            <OtherLangs
+              t={t}
+              className="footer-link inline-flex min-h-8 items-center text-[0.9375rem]"
+            />
+          </div>
+        </div>
       </div>
-      <div className="flex flex-col items-center gap-1 border-t border-border px-5 py-6 text-center text-sm text-text-muted">
-        <p>
-          © {new Date().getFullYear()} Tandem · {t.footer.rights}
-        </p>
-        <PublisherCredit t={t} />
+
+      <Gravure label={t.footer.gravure} />
+      <div className="border-t border-brand-paper/15">
+        <div className="mx-auto flex max-w-6xl flex-col items-center gap-1 px-5 py-5 text-center text-[0.8125rem] text-brand-mist sm:flex-row sm:justify-between sm:text-left">
+          <p>
+            © {new Date().getFullYear()} Tandem · {t.footer.rights}
+          </p>
+          <PublisherCredit t={t} />
+        </div>
       </div>
     </footer>
   );
