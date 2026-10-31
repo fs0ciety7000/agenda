@@ -338,8 +338,8 @@ dans `docs/brand/`. Maquettes : tableau « Tandem · Maquettes du site », page 
 - [x] Images de partage du site refaites (`scripts/generate-icons.mjs`) 🪧 (#123)
 - [x] Documentation (Docusaurus) aux couleurs de l'identité : papier, nuit, cobalt, titres en
   Instrument Serif, polices servies par le site (S) 🪧 (#123)
-- [ ] Captures Android de la doc (`docs/screenshots/android`) dans la nouvelle identité : étiquette
-  `captures` puis copie de l'artefact (S) 🤖
+- [x] Captures Android de la doc (`docs/screenshots/android`) et de la fiche Play dans la nouvelle
+  identité, depuis l'artefact `android-captures` (S) 🤖 (#124)
 - [ ] Accueil de l'app web plus léger : Lighthouse ≥ 90 stable sur `/` en CI (S) 🌐
 - [x] Captures de l'app du site refaites dans la nouvelle identité 🪧 (#123) ; celles de la fiche
   Play se refont au lancement du workflow de la fiche 🤖

@@ -15,6 +15,11 @@ d'elle-même (ou via Google Play).
 
 ## 31 octobre 2026
 
+### Captures Android dans la nouvelle identité (#124)
+
+- 🛠 Les captures de l'app Android dans le guide et sur la fiche Google Play montrent l'identité
+  « Deux fils ».
+
 ### Site de présentation redessiné (#123)
 
 - ✨ **Nouveau site** aux couleurs « Deux fils » : une pile de tâches qui se distribue, une semaine
