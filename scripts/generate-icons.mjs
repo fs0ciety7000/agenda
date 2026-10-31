@@ -131,9 +131,30 @@ async function play() {
  */
 function maintenancePage() {
   const T = {
-    fr: ['Erreur 503', 'Tandem revient dans un instant', 'Le service est momentanément indisponible, souvent le temps d’une mise à jour. Vos données sont en sécurité et la page se recharge d’elle-même.', 'Réessayer', 'Retour à l’accueil', 'Nouvel essai automatique dans {s} s'],
-    en: ['Error 503', 'Tandem will be back in a moment', 'The service is briefly unavailable, usually during an update. Your data is safe and this page reloads by itself.', 'Try again', 'Back to home', 'Trying again automatically in {s} s'],
-    nl: ['Fout 503', 'Tandem is zo terug', 'De dienst is even niet beschikbaar, meestal tijdens een update. Je gegevens zijn veilig en deze pagina laadt zichzelf opnieuw.', 'Opnieuw proberen', 'Terug naar de start', 'Automatisch opnieuw over {s} s'],
+    fr: [
+      'Erreur 503',
+      'Tandem revient dans un instant',
+      'Le service est momentanément indisponible, souvent le temps d’une mise à jour. Vos données sont en sécurité et la page se recharge d’elle-même.',
+      'Réessayer',
+      'Retour à l’accueil',
+      'Nouvel essai automatique dans {s} s',
+    ],
+    en: [
+      'Error 503',
+      'Tandem will be back in a moment',
+      'The service is briefly unavailable, usually during an update. Your data is safe and this page reloads by itself.',
+      'Try again',
+      'Back to home',
+      'Trying again automatically in {s} s',
+    ],
+    nl: [
+      'Fout 503',
+      'Tandem is zo terug',
+      'De dienst is even niet beschikbaar, meestal tijdens een update. Je gegevens zijn veilig en deze pagina laadt zichzelf opnieuw.',
+      'Opnieuw proberen',
+      'Terug naar de start',
+      'Automatisch opnieuw over {s} s',
+    ],
   };
   return `<!doctype html>
 <html lang="fr">
