@@ -36,7 +36,7 @@ export default async function AboutPage() {
           className="rounded-3xl shadow-[0_4px_16px_rgb(0_0_0/0.08)]"
         />
         <div className="flex flex-col gap-2">
-          <h1 className="text-4xl font-semibold tracking-tight">Tandem</h1>
+          <h1 className="font-display text-5xl font-normal tracking-[-0.02em]">Tandem</h1>
           <p className="text-xl text-text-muted">{t('tagline')}</p>
         </div>
         <p className="max-w-2xl text-[0.9375rem] leading-relaxed">{t('intro')}</p>

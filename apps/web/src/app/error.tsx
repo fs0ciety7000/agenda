@@ -12,7 +12,9 @@ export default function PageError({ error, reset }: { error: Error; reset: () =>
   useEffect(() => reportError(error), [error]);
   return (
     <main id="main" className="mx-auto flex min-h-dvh max-w-sm flex-col justify-center gap-4 px-4">
-      <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
+      <h1 className="font-display text-[2rem] font-normal leading-tight tracking-[-0.02em]">
+        {t('title')}
+      </h1>
       <p className="text-[0.9375rem] text-text-muted">{t('body')}</p>
       <div className="flex flex-wrap gap-2">
         <Button onClick={reset}>{t('retry')}</Button>

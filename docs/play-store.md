@@ -171,13 +171,13 @@ Une version déjà envoyée en test interne se passe au test fermé sans nouvel 
   ```
 
 - Icône 512 × 512 et image de présentation 1024 × 500 (`images/icon.png`,
-  `images/featureGraphic.png`, les trois langues) : générées depuis le logo, aux couleurs « Duo »
-  et en Instrument Sans. Les textes de la bannière sont dans `FEATURE_TEXT` du script. Sans marque
+  `images/featureGraphic.png`, les trois langues) : générées depuis le symbole
+  (`docs/brand/tandem-symbol.svg`), identité « Deux fils » (nuit, Instrument Serif). Les textes de la bannière sont dans `FEATURE_TEXT` du script. Sans marque
   tierce (pas de « Google » dans les visuels, règle de Google Play).
 
   ```bash
-  pip install pillow && python3 scripts/generate-icons.py --play   # fiche Play seulement
-  pip install pillow && python3 scripts/generate-icons.py          # toutes les icônes
+  node scripts/generate-icons.mjs --play   # fiche Play seulement
+  node scripts/generate-icons.mjs          # toutes les icônes (Android, web, site, doc)
   ```
 
 ## 7. Vérifications avant envoi

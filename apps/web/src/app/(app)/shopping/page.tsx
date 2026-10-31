@@ -72,7 +72,7 @@ export default function ShoppingPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-1">
-          <h1 className="text-[2rem] font-semibold leading-tight tracking-[-0.03em]">
+          <h1 className="font-display text-[2.375rem] font-normal leading-[1.05] tracking-[-0.02em]">
             {t('title')}
           </h1>
           <span

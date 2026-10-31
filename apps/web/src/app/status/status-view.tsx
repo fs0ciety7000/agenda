@@ -58,7 +58,9 @@ export function StatusView() {
         <Link href="/about" className="text-sm text-text-muted hover:text-text">
           Tandem
         </Link>
-        <h1 className="text-3xl font-semibold tracking-tight">{t('title')}</h1>
+        <h1 className="font-display text-[2.5rem] font-normal leading-tight tracking-[-0.02em]">
+          {t('title')}
+        </h1>
         <p className="text-[0.9375rem] text-text-muted">{t('intro')}</p>
       </header>
 

@@ -131,7 +131,7 @@ export function AuthForm({ mode }: { mode: 'login' | 'register' }) {
       className="flex flex-col gap-5"
     >
       <div className="flex flex-col gap-1.5">
-        <h1 className="text-2xl font-semibold tracking-tight">
+        <h1 className="font-display text-[2rem] font-normal leading-tight tracking-[-0.02em]">
           {t(isLogin ? 'auth.loginTitle' : 'auth.registerTitle')}
         </h1>
         <p className="text-[0.9375rem] text-text-muted">
@@ -313,7 +313,9 @@ function TwoFactorStep({
   return (
     <form onSubmit={submit} noValidate className="flex flex-col gap-5">
       <div className="flex flex-col gap-1.5">
-        <h1 className="text-2xl font-semibold tracking-tight">{t('twoFactor.loginTitle')}</h1>
+        <h1 className="font-display text-[2rem] font-normal leading-tight tracking-[-0.02em]">
+          {t('twoFactor.loginTitle')}
+        </h1>
         <p className="text-[0.9375rem] text-text-muted">{t('twoFactor.loginIntro')}</p>
       </div>
       <Field

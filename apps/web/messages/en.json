@@ -183,13 +183,6 @@
       "light": "Light",
       "dark": "Dark"
     },
-    "accentTitle": "Colour",
-    "accent": {
-      "ink": "Ink",
-      "coral": "Coral",
-      "ocean": "Ocean",
-      "lagoon": "Lagoon"
-    },
     "calendar": "Shared calendar",
     "calendarSoon": "Google Calendar connection is coming in phase 4.",
     "account": "Account",

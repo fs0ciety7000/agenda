@@ -37,7 +37,9 @@ export default async function HelpPage() {
           ← Tandem
         </Link>
       </p>
-      <h1 className="text-3xl font-semibold tracking-tight">{t('title')}</h1>
+      <h1 className="font-display text-[2.5rem] font-normal leading-tight tracking-[-0.02em]">
+        {t('title')}
+      </h1>
       <p className="mt-2 text-[0.9375rem] text-text-muted">{t('intro')}</p>
       {ITEMS.map((key) => (
         <section key={key} className="mt-8" aria-labelledby={`h-${key}`}>

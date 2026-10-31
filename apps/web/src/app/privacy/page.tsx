@@ -37,7 +37,9 @@ export default async function PrivacyPage() {
           ← Tandem
         </Link>
       </p>
-      <h1 className="text-3xl font-semibold tracking-tight">{t('title')}</h1>
+      <h1 className="font-display text-[2.5rem] font-normal leading-tight tracking-[-0.02em]">
+        {t('title')}
+      </h1>
       <p className="mt-2 text-sm text-text-muted">{t('updated')}</p>
       <p className="mt-6 text-[0.9375rem] leading-relaxed">{t('intro')}</p>
       {SECTIONS.map((key) => (

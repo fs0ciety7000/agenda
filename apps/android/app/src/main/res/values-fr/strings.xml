@@ -854,11 +854,6 @@
         <item quantity="many">Bilan du mois · %1$s : %2$s de dépenses communes (%3$d dépenses, budget %5$s). Payé : %4$s.</item>
         <item quantity="other">Bilan du mois · %1$s : %2$s de dépenses communes (%3$d dépenses, budget %5$s). Payé : %4$s.</item>
     </plurals>
-    <string name="settings_accent">Couleur</string>
-    <string name="accent_ink">Encre</string>
-    <string name="accent_coral">Corail</string>
-    <string name="accent_ocean">Océan</string>
-    <string name="accent_lagoon">Lagune</string>
     <!-- Aujourd'hui, refonte « Duo » -->
     <string name="quick_add_prompt">Qu\'est-ce qu\'on fait ?</string>
     <string name="today_summary_none">%1$s. Rien de prévu aujourd\'hui.</string>

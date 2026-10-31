@@ -28,16 +28,7 @@ import { Card, SectionTitle } from '@/components/ui/card';
 import { api } from '@/lib/api';
 import { cn } from '@/lib/cn';
 import { clearOfflineData } from '@/lib/offline';
-import tokens from '@agenda/design-tokens';
-import {
-  ACCENTS,
-  applyAccent,
-  applyTheme,
-  readAccent,
-  readTheme,
-  type Accent,
-  type ThemePreference,
-} from '@/lib/theme';
+import { applyTheme, readTheme, type ThemePreference } from '@/lib/theme';
 
 const THEMES: ThemePreference[] = ['system', 'light', 'dark'];
 
@@ -48,10 +39,8 @@ export default function SettingsPage() {
   const queryClient = useQueryClient();
   const { household, me } = useSession();
   const [theme, setTheme] = useState<ThemePreference>('system');
-  const [accent, setAccent] = useState<Accent>('ink');
   useEffect(() => {
     setTheme(readTheme());
-    setAccent(readAccent());
   }, []);
 
   const signOut = useMutation({
@@ -66,7 +55,9 @@ export default function SettingsPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
+      <h1 className="font-display text-[2rem] font-normal leading-tight tracking-[-0.02em]">
+        {t('title')}
+      </h1>
 
       <section className="flex flex-col gap-3" aria-labelledby="s-household">
         <SectionTitle id="s-household">{t('household')}</SectionTitle>
@@ -165,39 +156,6 @@ export default function SettingsPage() {
               )}
             >
               {t(`theme.${value}`)}
-            </button>
-          ))}
-        </div>
-        <h3 id="s-accent" className="text-[0.9375rem] font-medium">
-          {t('accentTitle')}
-        </h3>
-        <div role="radiogroup" aria-labelledby="s-accent" className="flex flex-wrap gap-3">
-          {ACCENTS.map((value) => (
-            <button
-              key={value}
-              role="radio"
-              aria-checked={accent === value}
-              onClick={() => {
-                applyAccent(value);
-                setAccent(value);
-              }}
-              className={cn(
-                'flex min-h-11 items-center gap-2 rounded-full border border-border bg-surface py-1.5 pl-1.5 pr-4 text-sm text-text transition-colors',
-                accent === value && 'border-text font-medium',
-              )}
-            >
-              {/* Pastille partagée : la couleur en clair et en sombre. */}
-              <span
-                aria-hidden
-                className="flex size-8 overflow-hidden rounded-full border border-border"
-              >
-                <span
-                  className="flex-1"
-                  style={{ background: tokens.themes[value].light.accent }}
-                />
-                <span className="flex-1" style={{ background: tokens.themes[value].dark.accent }} />
-              </span>
-              {t(`accent.${value}`)}
             </button>
           ))}
         </div>

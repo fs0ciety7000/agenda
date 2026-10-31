@@ -1,21 +1,23 @@
 package app.tandem.foyer.ui.theme
 
+import androidx.compose.ui.graphics.Color
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
 class ThemeTest {
     @Test
-    fun `chaque theme change la couleur d action, clair et sombre`() {
-        for ((name, accent) in Tokens.Accents) {
-            assertEquals(name, accent.light, appColors(name, dark = false).primary)
-            assertEquals(name, accent.onLight, appColors(name, dark = false).onPrimary)
-            assertEquals(name, accent.dark, appColors(name, dark = true).primary)
-        }
+    fun `identite Deux fils, papier et cobalt en clair, nuit et lilas en sombre`() {
+        assertEquals(Color(0xFFF3EEE4), LightColors.background)
+        assertEquals(Color(0xFF2D4BFF), LightColors.primary)
+        assertEquals(Color(0xFFFFFFFF), LightColors.onPrimary)
+        assertEquals(Color(0xFF0E1030), DarkColors.background)
+        assertEquals(Color(0xFF8F96FF), DarkColors.primary)
+        assertEquals(Color(0xFF0E1030), DarkColors.onPrimary)
     }
 
     @Test
-    fun `theme inconnu ou efface, celui par defaut`() {
-        assertEquals(Tokens.Accents.getValue(DEFAULT_ACCENT).light, appColors("prune", dark = false).primary)
-        assertEquals(Tokens.Light.bg, appColors("coral", dark = false).background)
+    fun `le cobalt de l action est celui de la marque`() {
+        assertEquals(Tokens.Brand.cobalt, LightColors.primary)
+        assertEquals(Tokens.Brand.lilac, DarkColors.primary)
     }
 }

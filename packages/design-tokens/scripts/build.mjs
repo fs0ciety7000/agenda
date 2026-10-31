@@ -15,34 +15,13 @@ const vars = (mode) =>
   ].join('\n');
 
 const shared = [
+  ...Object.entries(tokens.brand).map(([k, v]) => `  --gn-brand-${k}: ${v};`),
   ...Object.entries(tokens.radius).map(([k, v]) => `  --gn-radius-${k}: ${v}px;`),
   `  --gn-motion-fast: ${tokens.motion.fast}ms;`,
   `  --gn-motion-base: ${tokens.motion.base}ms;`,
   `  --gn-motion-slow: ${tokens.motion.slow}ms;`,
   `  --gn-motion-easing: ${tokens.motion.easing};`,
 ].join('\n');
-
-// Thèmes : seule la couleur d'action change (<html data-accent>) ; « ink » est celle de base.
-const accentVars = (theme, mode) =>
-  Object.entries(tokens.themes[theme][mode])
-    .map(([k, v]) => `  --gn-color-${k}: ${v};`)
-    .join('\n');
-const themeCss = Object.keys(tokens.themes)
-  .filter((name) => name !== 'ink')
-  .map(
-    (name) => `:root[data-accent='${name}'] {
-${accentVars(name, 'light')}
-}
-@media (prefers-color-scheme: dark) {
-  :root[data-accent='${name}']:not([data-theme='light']) {
-${accentVars(name, 'dark')}
-  }
-}
-:root[data-theme='dark'][data-accent='${name}'] {
-${accentVars(name, 'dark')}
-}`,
-  )
-  .join('\n');
 
 // Le mode sombre suit le système, sauf si <html data-theme> force un thème.
 const css = `/* Généré par @agenda/design-tokens — ne pas éditer. */
@@ -61,7 +40,6 @@ ${vars('dark')}
 ${vars('dark')}
   color-scheme: dark;
 }
-${themeCss}
 `;
 writeFileSync(join(dist, 'tokens.css'), css);
 writeFileSync(
@@ -101,23 +79,12 @@ package app.tandem.foyer.ui.theme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
-/** Couleur d'action d'un thème, en clair et en sombre. */
-data class Accent(val light: Color, val onLight: Color, val dark: Color, val onDark: Color)
-
 object Tokens {
 ${palette('Light', tokens.color.light)}
 ${palette('Dark', tokens.color.dark)}
 ${palette('MemberLight', tokens.member.light)}
 ${palette('MemberDark', tokens.member.dark)}
-    /** Thèmes au choix (Réglages → Apparence) ; « ink » par défaut. */
-    val Accents: Map<String, Accent> = mapOf(
-${Object.entries(tokens.themes)
-  .map(
-    ([name, t]) =>
-      `        "${name}" to Accent(${hex(t.light.accent)}, ${hex(t.light['accent-fg'])}, ${hex(t.dark.accent)}, ${hex(t.dark['accent-fg'])}),`,
-  )
-  .join('\n')}
-    )
+${palette('Brand', tokens.brand)}
     object Radius {
 ${Object.entries(tokens.radius)
   .map(([k, v]) => `        val ${k} = ${v}.dp`)

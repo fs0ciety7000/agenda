@@ -35,7 +35,9 @@ function ResetForm() {
 
   return (
     <div className="flex flex-col gap-5">
-      <h1 className="text-2xl font-semibold tracking-tight">{t('resetTitle')}</h1>
+      <h1 className="font-display text-[2rem] font-normal leading-tight tracking-[-0.02em]">
+        {t('resetTitle')}
+      </h1>
       {done ? (
         <>
           <p className="text-[0.9375rem] text-text-muted">{t('resetDone')}</p>

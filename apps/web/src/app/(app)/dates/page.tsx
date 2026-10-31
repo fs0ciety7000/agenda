@@ -108,7 +108,9 @@ export default function ImportantDatesPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-[2rem] font-semibold leading-tight tracking-tight">{t('title')}</h1>
+        <h1 className="font-display text-[2.375rem] font-normal leading-[1.05] tracking-[-0.02em]">
+          {t('title')}
+        </h1>
         {list.length > 0 && (
           <Button onClick={() => open(null)} disabled={!online}>
             <Plus aria-hidden className="size-4" />

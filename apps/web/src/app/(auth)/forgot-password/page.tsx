@@ -35,7 +35,9 @@ export default function ForgotPasswordPage() {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-1.5">
-        <h1 className="text-2xl font-semibold tracking-tight">{t('forgotTitle')}</h1>
+        <h1 className="font-display text-[2rem] font-normal leading-tight tracking-[-0.02em]">
+          {t('forgotTitle')}
+        </h1>
         <p className="text-[0.9375rem] text-text-muted">
           {sent ? t('forgotSent') : t('forgotSubtitle')}
         </p>

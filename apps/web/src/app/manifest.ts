@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-/** « Ajouter à l'écran d'accueil » (Chrome Android, iOS) : icônes générées par scripts/generate-icons.py. */
+/** « Ajouter à l'écran d'accueil » (Chrome Android, iOS) : icônes générées par scripts/generate-icons.mjs. */
 export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'Tandem',
@@ -8,8 +8,8 @@ export default function manifest(): MetadataRoute.Manifest {
     description: 'L’équilibre parfait pour votre foyer.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#FFFFFF',
-    theme_color: '#FFFFFF',
+    background_color: '#F3EEE4',
+    theme_color: '#F3EEE4',
     lang: 'fr',
     icons: [
       { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },

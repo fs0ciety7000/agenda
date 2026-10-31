@@ -320,8 +320,23 @@ aubergine.
   images de partage refaites dans les trois langues (S) 🪧 (#120)
 - [x] Fiche Play aux couleurs « Duo » : bannière en Instrument Sans (fr, en, nl), six captures
   (Courses en plus) d'Emma et Tom traduites, refaites par le workflow de la fiche (S) 🤖 (#122)
-- [ ] Logo (icône de l'app, de la fiche Play) et vidéo du site encore dans les anciens tons (prune) : à refaire avec A3 (vidéo par
-  langue) (M) 🪧
+- [x] Logo (icône de l'app, de la fiche Play) encore dans les anciens tons (prune) : remplacé par
+  l'identité « Deux fils » (lot 8) 🌐🤖🪧 (#123)
+
+### Lot 8 — Identité « Deux fils » (validée le 31 octobre)
+
+Identité refaite avec le skill brand-identity (trois pistes comparées, A retenue) : deux roues
+entrelacées, papier et nuit, cobalt et abricot, Instrument Serif + Instrument Sans. Kit de marque
+dans `docs/brand/`. Maquettes : tableau « Tandem · Maquettes du site », page F retenue.
+
+- [x] Fondations : tokens (papier, nuit, cobalt seul, couleurs de marque), Instrument Serif pour
+  les grands titres, nouveau logo et icônes (Android, web, site, doc, Play), réglage « Couleur »
+  retiré (S/M) 🌐🤖🪧 (#123)
+- [ ] Site vitrine en page F : pile de tâches qui se distribue, fil qui se dessine, semaine qui
+  s'allume, footer gravé (village de nuit), sans vidéo ; trois langues, Lighthouse ≥ 95 (M) 🪧
+- [ ] Documentation (Docusaurus) aux couleurs de l'identité ; images de partage refaites (S) 🪧
+- [ ] Accueil de l'app web plus léger : Lighthouse ≥ 90 stable sur `/` en CI (S) 🌐
+- [ ] Captures du site et de la fiche Play refaites dans la nouvelle identité (S) 🪧🤖
 
 ### Propositions de design
 

@@ -147,7 +147,9 @@ export default function ExpensesPage() {
     <div className="flex flex-col gap-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-[2rem] font-semibold leading-tight tracking-tight">{t('title')}</h1>
+          <h1 className="font-display text-[2.375rem] font-normal leading-[1.05] tracking-[-0.02em]">
+            {t('title')}
+          </h1>
           <p className="text-[0.9375rem] capitalize text-text-muted">{monthLabel}</p>
         </div>
         <div className="flex flex-wrap items-center gap-1">

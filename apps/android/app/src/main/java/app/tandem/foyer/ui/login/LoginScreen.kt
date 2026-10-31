@@ -34,7 +34,6 @@ import androidx.compose.ui.semantics.LiveRegionMode
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.liveRegion
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -71,7 +70,7 @@ fun LoginScreen(
                 contentDescription = stringResource(R.string.app_name),
                 modifier = Modifier.size(72.dp),
             )
-            Text(stringResource(R.string.login_title), style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
+            Text(stringResource(R.string.login_title), style = MaterialTheme.typography.headlineMedium)
             Text(
                 stringResource(R.string.login_subtitle),
                 style = MaterialTheme.typography.bodyLarge,
@@ -175,7 +174,6 @@ private fun TwoFactorForm(state: LoginUiState, viewModel: LoginViewModel) {
         Text(
             stringResource(R.string.two_factor_title),
             style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.SemiBold,
             modifier = Modifier.semantics { heading() },
         )
         Text(

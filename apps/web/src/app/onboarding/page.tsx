@@ -82,7 +82,7 @@ export default function OnboardingPage() {
     >
       <div className="flex flex-col gap-2">
         <Image src="/icons/icon-192.png" alt="" width={64} height={64} priority className="mb-4" />
-        <h1 className="text-[2rem] font-semibold leading-tight tracking-tight">
+        <h1 className="font-display text-[2.375rem] font-normal leading-[1.05] tracking-[-0.02em]">
           {t('onboarding.welcome')}
         </h1>
         <p className="text-[1.0625rem] text-text-muted">{t('onboarding.tagline')}</p>

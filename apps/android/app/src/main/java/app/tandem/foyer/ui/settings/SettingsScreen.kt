@@ -1,11 +1,6 @@
 package app.tandem.foyer.ui.settings
 
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -36,12 +31,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import app.tandem.foyer.R
-import app.tandem.foyer.ui.theme.Tokens
-import app.tandem.foyer.ui.theme.DEFAULT_ACCENT
-import androidx.compose.ui.draw.clip
 import app.tandem.foyer.data.ReminderSettings
 import app.tandem.foyer.domain.model.CalendarLinkState
 import app.tandem.foyer.domain.model.CalendarStatus
@@ -73,9 +64,6 @@ fun SettingsScreen(
     weeklyReview: Boolean = true,
     onWeeklyReview: (Boolean) -> Unit = {},
     onRetryPush: () -> Unit = {},
-    /** Thème de couleur (cf. ui/theme/Tokens.Accents). */
-    accent: String = DEFAULT_ACCENT,
-    onAccent: (String) -> Unit = {},
     /** Langue de l'app : "" (téléphone), "fr", "en" ou "nl". */
     language: String = "",
     onLanguage: (String) -> Unit = {},
@@ -95,7 +83,6 @@ fun SettingsScreen(
         Text(
             stringResource(R.string.nav_settings),
             style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.SemiBold,
             modifier = Modifier.semantics { heading() },
         )
         SectionHeader(stringResource(R.string.settings_household))
@@ -221,29 +208,6 @@ fun SettingsScreen(
                 TextButton(onClick = { onOpenWeb("settings") }, modifier = Modifier.heightIn(min = 48.dp)) {
                     Text(stringResource(R.string.notification_preferences))
                 }
-            }
-        }
-
-        SectionHeader(stringResource(R.string.settings_accent))
-        Row(
-            Modifier.horizontalScroll(rememberScrollState()).padding(vertical = 4.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            val dark = isSystemInDarkTheme()
-            listOf(
-                "ink" to R.string.accent_ink,
-                "coral" to R.string.accent_coral,
-                "ocean" to R.string.accent_ocean,
-                "lagoon" to R.string.accent_lagoon,
-            ).forEach { (key, label) ->
-                val color = Tokens.Accents.getValue(key).let { if (dark) it.dark else it.light }
-                FilterChip(
-                    selected = accent == key,
-                    onClick = { onAccent(key) },
-                    label = { Text(stringResource(label)) },
-                    leadingIcon = { Box(Modifier.size(18.dp).clip(CircleShape).background(color)) },
-                    modifier = Modifier.heightIn(min = 48.dp),
-                )
             }
         }
 

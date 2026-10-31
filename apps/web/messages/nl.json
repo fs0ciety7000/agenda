@@ -183,13 +183,6 @@
       "light": "Licht",
       "dark": "Donker"
     },
-    "accentTitle": "Kleur",
-    "accent": {
-      "ink": "Inkt",
-      "coral": "Koraal",
-      "ocean": "Oceaan",
-      "lagoon": "Lagune"
-    },
     "calendar": "Gedeelde agenda",
     "calendarSoon": "De koppeling met Google Agenda komt in fase 4.",
     "account": "Account",
