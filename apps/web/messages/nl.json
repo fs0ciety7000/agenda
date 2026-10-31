@@ -135,7 +135,7 @@
     "body": "Dit onderdeel komt in een latere fase."
   },
   "onboarding": {
-    "welcome": "Welkom 👋",
+    "welcome": "Welkom",
     "tagline": "Laten we jullie dagelijks leven samen organiseren.",
     "stepHousehold": "Maak je huishouden aan",
     "householdName": "Naam van het huishouden",
@@ -348,7 +348,6 @@
     "filtersCount": "{count, plural, one {# filter} other {# filters}}"
   },
   "categories": {
-    "emoji": "Emoji",
     "name": "Naam",
     "save": "Opslaan",
     "cancel": "Annuleren",
@@ -356,7 +355,8 @@
     "delete": "{name} verwijderen",
     "confirmDelete": "De categorie “{name}” verwijderen? De taken blijven bestaan, zonder categorie.",
     "add": "Nieuwe categorie",
-    "addButton": "Toevoegen"
+    "addButton": "Toevoegen",
+    "icon": "Icoon"
   },
   "recurrence": {
     "legend": "Herhalen",
@@ -753,21 +753,21 @@
     "emptyBody": "Voeg toe wat ontbreekt: de ander ziet het meteen, ook in de winkel.",
     "toBuy": "Te kopen ({count})",
     "inCart": "In het mandje ({count})",
-    "allDone": "Alles zit in het mandje 🎉",
+    "allDone": "Alles zit in het mandje",
     "clear": "Mandje leegmaken",
     "remove": "“{text}” verwijderen",
     "takenBy": "Genomen door {name}",
     "aisles": {
-      "PRODUCE": "🥕 Groenten & fruit",
-      "BAKERY": "🥖 Bakkerij",
-      "DAIRY": "🧀 Zuivel & eieren",
-      "MEAT_FISH": "🥩 Vlees & vis",
-      "FROZEN": "🧊 Diepvries",
-      "PANTRY": "🥫 Voorraadkast",
-      "DRINKS": "🧃 Dranken",
-      "HOUSEHOLD": "🧽 Huishouden",
-      "HYGIENE": "🧴 Verzorging",
-      "OTHER": "🛒 Overige"
+      "PRODUCE": "Groenten & fruit",
+      "BAKERY": "Bakkerij",
+      "DAIRY": "Zuivel & eieren",
+      "MEAT_FISH": "Vlees & vis",
+      "FROZEN": "Diepvries",
+      "PANTRY": "Voorraadkast",
+      "DRINKS": "Dranken",
+      "HOUSEHOLD": "Huishouden",
+      "HYGIENE": "Verzorging",
+      "OTHER": "Overige"
     },
     "suggestions": "Vaak gekocht",
     "addSuggestion": "{text} toevoegen",
@@ -820,7 +820,6 @@
     "edit": "“{name}” bewerken",
     "delete": "“{name}” verwijderen",
     "confirmDelete": "Het sjabloon “{name}” verwijderen? Taken die al zijn aangemaakt, blijven bestaan.",
-    "emoji": "Emoji",
     "name": "Naam",
     "namePlaceholder": "Zaterdagse poetsbeurt",
     "items": "Taken in het sjabloon",
@@ -840,7 +839,8 @@
     "whenNone": "Geen datum",
     "date": "Dag",
     "create": "{count, plural, one {De taak aanmaken} other {De # taken aanmaken}}",
-    "applied": "{count, plural, one {# taak toegevoegd} other {# taken toegevoegd}} uit “{name}”"
+    "applied": "{count, plural, one {# taak toegevoegd} other {# taken toegevoegd}} uit “{name}”",
+    "icon": "Icoon"
   },
   "history": {
     "title": "Geschiedenis",
@@ -1765,5 +1765,42 @@
     "report": "Een probleem melden",
     "guide": "Volledige handleiding",
     "status": "Status van de dienst"
+  },
+  "icons": {
+    "home": "Huis",
+    "cleaning": "Schoonmaak",
+    "cooking": "Koken",
+    "groceries": "Boodschappen",
+    "laundry": "Was",
+    "pets": "Huisdieren",
+    "money": "Geld",
+    "car": "Auto",
+    "tools": "Klussen",
+    "plant": "Tuin",
+    "person": "Persoonlijk",
+    "couple": "Samen",
+    "box": "Overig",
+    "kids": "Kinderen",
+    "health": "Gezondheid",
+    "sport": "Sport",
+    "school": "School",
+    "work": "Werk",
+    "travel": "Reizen",
+    "party": "Feest",
+    "calendar": "Afspraak",
+    "papers": "Papieren",
+    "trash": "Afval",
+    "bed": "Rust",
+    "carrot": "Groente en fruit",
+    "bread": "Brood",
+    "cheese": "Zuivel",
+    "fish": "Vlees en vis",
+    "snowflake": "Diepvries",
+    "can": "Voorraad",
+    "bottle": "Drinken",
+    "pump": "Verzorging",
+    "bulb": "Energie",
+    "ticket": "Vrije tijd",
+    "none": "Geen icoon"
   }
 }

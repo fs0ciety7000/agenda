@@ -60,6 +60,6 @@ class TodayWidgetTest {
     fun `journee vide`() = runGlanceAppWidgetUnitTest {
         setContext(ApplicationProvider.getApplicationContext())
         provideComposable { TodayWidgetContent(TodaySnapshot(signedIn = true, members = Fixtures.household.members.associateBy { it.id })) }
-        onNode(hasText("Rien pour aujourd'hui 🎉")).assertExists()
+        onNode(hasText("Rien pour aujourd'hui")).assertExists()
     }
 }

@@ -1,5 +1,7 @@
 package app.tandem.foyer.ui.shopping
 
+import app.tandem.foyer.ui.components.CategoryIcons
+import app.tandem.foyer.ui.components.CategoryIcon
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.imePadding
@@ -189,12 +191,19 @@ fun ShoppingScreen(
                     // Rangé par rayon, dans l'ordre d'un parcours de magasin.
                     (current?.let(::listOf) ?: aisles).forEach { aisle ->
                         item(key = "aisle-$aisle") {
-                            Text(
-                                stringResource(Aisles.label(aisle)),
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.SemiBold,
-                                modifier = Modifier.padding(top = 12.dp, bottom = 2.dp).semantics { heading() },
-                            )
+                            Row(
+                                Modifier.padding(top = 12.dp, bottom = 2.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            ) {
+                                CategoryIcon(CategoryIcons.forAisle(aisle))
+                                Text(
+                                    stringResource(Aisles.label(aisle)),
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = FontWeight.SemiBold,
+                                    modifier = Modifier.semantics { heading() },
+                                )
+                            }
                         }
                         itemsIndexed(byAisle.getValue(aisle), key = { _, it -> it.id }) { i, it ->
                             ItemRow(it, null, onToggle, onRemove, onAisle, Modifier.flatRow(i))
@@ -331,16 +340,16 @@ private fun ItemRow(
         }
         if (onAisle != null) {
             Box {
-                IconButton(onClick = { menu = true }) {
-                    Icon(
-                        painterResource(R.drawable.ic_aisle),
-                        contentDescription = stringResource(R.string.shopping_aisle_of, item.text),
-                    )
+                // L'icône montre le rayon actuel ; le menu garde les libellés entiers.
+                val aisleLabel = stringResource(R.string.shopping_aisle_of, item.text)
+                IconButton(onClick = { menu = true }, modifier = Modifier.semantics { contentDescription = aisleLabel }) {
+                    CategoryIcon(CategoryIcons.forAisle(Aisles.of(item.aisle)))
                 }
                 DropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
                     Aisles.ORDER.forEach { a ->
                         DropdownMenuItem(
                             text = { Text(stringResource(Aisles.label(a))) },
+                            leadingIcon = { CategoryIcon(CategoryIcons.forAisle(a)) },
                             onClick = {
                                 menu = false
                                 if (a != Aisles.of(item.aisle)) onAisle(item, a)

@@ -1,6 +1,12 @@
 package app.tandem.foyer.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.foundation.text.appendInlineContent
+import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
@@ -147,11 +153,17 @@ fun TaskRow(
     val canThank = onThank != null && doneBy != null && myMemberId != null && doneBy != myMemberId
     val iThanked = myMemberId != null && myMemberId in o.thankedBy
     val thanksReceived = if (doneBy != null && doneBy == myMemberId) o.thankedBy.filter { it != myMemberId } else emptyList()
-    val meta = buildList {
+    // L'icône de la catégorie s'insère dans la ligne de méta, devant son nom.
+    val categoryIcon = CategoryIcons.forEmoji(o.category?.emoji)
+    var categoryIndex = -1
+    val metaParts = buildList {
         if (showDate && o.date != null && today != null) add(formatShortDate(o.date, locale, today))
         if (o.date == null && o.dueDate != null) add(dueLabel(o.dueDate, today ?: LocalDate.now(), locale))
         o.startMinute?.let { add(formatMinute(it)) }
-        o.category?.let { add(listOfNotNull(it.emoji, it.name).joinToString(" ")) }
+        o.category?.let {
+            categoryIndex = size
+            add(if (categoryIcon != null) it.name else listOfNotNull(it.emoji, it.name).joinToString(" "))
+        }
         add(assigneeLabel(o, members))
         if (o.visibility == Visibility.PERSONAL) add(stringResource(R.string.personal))
         if (o.isRecurring) add("↻")
@@ -159,7 +171,7 @@ fun TaskRow(
         if (thanksReceived.isNotEmpty()) {
             add("♥ " + stringResource(R.string.thanks_from, thanksReceived.joinToString(" & ") { members[it]?.displayName ?: "?" }))
         }
-    }.joinToString(" · ")
+    }
     val priority = when (o.priority) {
         Priority.URGENT -> stringResource(R.string.priority_urgent)
         Priority.HIGH -> stringResource(R.string.priority_high)
@@ -191,9 +203,25 @@ fun TaskRow(
                 buildAnnotatedString {
                     if (priority != null && !o.isDone) {
                         withStyle(SpanStyle(color = priorityColor)) { append("⌃ $priority") }
-                        if (meta.isNotEmpty()) append(" · ")
+                        if (metaParts.isNotEmpty()) append(" · ")
                     }
-                    append(meta)
+                    metaParts.forEachIndexed { i, part ->
+                        if (i > 0) append(" · ")
+                        if (i == categoryIndex && categoryIcon != null) {
+                            appendInlineContent(CATEGORY_ICON, "")
+                            append(" ")
+                        }
+                        append(part)
+                    }
+                },
+                inlineContent = if (categoryIcon != null) {
+                    mapOf(
+                        CATEGORY_ICON to InlineTextContent(
+                            Placeholder(1.1.em, 1.1.em, PlaceholderVerticalAlign.TextCenter),
+                        ) { CategoryIcon(categoryIcon, Modifier.fillMaxSize()) },
+                    )
+                } else {
+                    emptyMap()
                 },
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
@@ -218,6 +246,8 @@ fun TaskRow(
         SyncIcon(o)
     }
 }
+
+private const val CATEGORY_ICON = "category"
 
 @Composable
 private fun SyncIcon(o: Occurrence) {

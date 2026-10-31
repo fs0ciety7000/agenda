@@ -108,7 +108,7 @@ export function QuickAdd({
   if (preview?.assigneeIds) chips.push(assigneeLabel(preview.assigneeIds));
   if (preview?.categoryId) {
     const c = categories.data?.find((x) => x.id === preview.categoryId);
-    if (c) chips.push(`${c.emoji ?? ''} ${c.name}`.trim());
+    if (c) chips.push(c.name);
   }
   if (preview?.priority === 'HIGH' || preview?.priority === 'URGENT')
     chips.push(t(`priority.${preview.priority}`));

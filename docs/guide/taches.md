@@ -107,6 +107,14 @@ sous la tâche. Un nouvel appui retire le merci ; rouvrir la tâche efface les m
 aspirateur, salle de bain, draps). **Utiliser un modèle** crée toutes ses tâches pour aujourd'hui,
 demain, ce week-end, un autre jour ou sans date.
 
+## Catégories et icônes
+
+**Réglages → Catégories** : renommer, ajouter ou supprimer une catégorie, et lui choisir une
+icône. Touchez le bouton d'icône à gauche du nom : une grille de dessins s'ouvre (maison, ménage,
+cuisine, enfants, santé…), ou **Sans icône**. Les modèles de tâches se règlent de la même façon.
+Les rayons des courses et les catégories de dépenses ont aussi leur icône, sur le site comme sur
+Android.
+
 ## Journal d'activité
 
 **Réglages → Journal et corbeille → Journal** : qui a fait quoi, et quand (création, modification,

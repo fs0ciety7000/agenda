@@ -13,6 +13,7 @@ import { useSession } from '@/components/app/household-context';
 import { StoreMode } from '@/components/app/store-mode';
 import { Button } from '@/components/ui/button';
 import { SectionTitle } from '@/components/ui/card';
+import { CategoryIcon, aisleIcon } from '@/components/ui/category-icon';
 import { EmptyState, ErrorState, Skeleton } from '@/components/ui/states';
 import { useToast } from '@/components/ui/toast';
 import { newExpenseHref } from '@/lib/expenses';
@@ -196,6 +197,12 @@ export default function ShoppingPage() {
                         : 'border-border bg-surface hover:bg-surface-muted',
                     )}
                   >
+                    {a && (
+                      <CategoryIcon
+                        icon={aisleIcon(a)}
+                        className={cn('size-4', on && 'text-current')}
+                      />
+                    )}
                     {a ? t(`aisles.${a}`) : t('aisleAll')}
                     <span className="opacity-70">{count}</span>
                   </button>
@@ -242,7 +249,10 @@ export default function ShoppingPage() {
                 const inAisle = toBuy.filter((i) => (i.aisle ?? 'OTHER') === a);
                 return (
                   <div key={a} className="flex flex-col">
-                    <h3 className="pt-3 text-base font-semibold">{t(`aisles.${a}`)}</h3>
+                    <h3 className="flex items-center gap-2 pt-3 text-base font-semibold">
+                      <CategoryIcon icon={aisleIcon(a)} />
+                      {t(`aisles.${a}`)}
+                    </h3>
                     <ItemList
                       items={inAisle}
                       label={t(`aisles.${a}`)}
@@ -373,10 +383,10 @@ function ItemList({
             )}
           </span>
           {onAisle && (
-            // Seul l'emoji du rayon est visible (le libellé complet ne tient pas dans 44 px) ;
+            // Seule l'icône du rayon est visible (le libellé complet ne tient pas dans 44 px) ;
             // le menu natif garde les libellés entiers.
             <span className="relative flex h-9 w-11 shrink-0 items-center justify-center rounded-md text-base hover:bg-surface-muted">
-              <span aria-hidden>{t(`aisles.${item.aisle ?? 'OTHER'}`).split(' ')[0]}</span>
+              <CategoryIcon icon={aisleIcon(item.aisle ?? 'OTHER')} />
               <select
                 aria-label={t('aisleOf', { text: item.text })}
                 value={item.aisle ?? 'OTHER'}

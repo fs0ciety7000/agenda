@@ -215,7 +215,7 @@
     <string name="undo">Undo</string>
     <string name="widget_name">Today · Tandem</string>
     <string name="widget_description">Today\'s tasks and the ones to catch up on, ticked right from the home screen.</string>
-    <string name="widget_empty">Nothing for today 🎉</string>
+    <string name="widget_empty">Nothing for today</string>
     <string name="widget_signed_out">Open the app to sign in.</string>
     <string name="assignee_suggestion_pick">Assign to %1$s</string>
     <string name="checklist_title">List</string>
@@ -244,7 +244,7 @@
     <string name="shopping_empty_body">Add what\'s missing: the other person sees it right away, even at the shop.</string>
     <string name="shopping_to_buy">To buy (%1$d)</string>
     <string name="shopping_in_cart">In the basket (%1$d)</string>
-    <string name="shopping_all_done">Everything is in the basket 🎉</string>
+    <string name="shopping_all_done">Everything is in the basket</string>
     <string name="shopping_clear">Empty the basket</string>
     <string name="shopping_remove">Remove “%1$s”</string>
     <string name="shopping_taken_by">Picked up by %1$s</string>
@@ -360,16 +360,16 @@
     <string name="shopping_suggestions">Often bought</string>
     <string name="shopping_add_suggestion">Add %1$s</string>
     <string name="shopping_aisle_of">Aisle for %1$s</string>
-    <string name="aisle_produce">🥕 Fruit &amp; veg</string>
-    <string name="aisle_bakery">🥖 Bakery</string>
-    <string name="aisle_dairy">🧀 Dairy &amp; eggs</string>
-    <string name="aisle_meat_fish">🥩 Meat &amp; fish</string>
-    <string name="aisle_frozen">🧊 Frozen</string>
-    <string name="aisle_pantry">🥫 Pantry</string>
-    <string name="aisle_drinks">🧃 Drinks</string>
-    <string name="aisle_household">🧽 Household</string>
-    <string name="aisle_hygiene">🧴 Toiletries</string>
-    <string name="aisle_other">🛒 Other</string>
+    <string name="aisle_produce">Fruit &amp; veg</string>
+    <string name="aisle_bakery">Bakery</string>
+    <string name="aisle_dairy">Dairy &amp; eggs</string>
+    <string name="aisle_meat_fish">Meat &amp; fish</string>
+    <string name="aisle_frozen">Frozen</string>
+    <string name="aisle_pantry">Pantry</string>
+    <string name="aisle_drinks">Drinks</string>
+    <string name="aisle_household">Household</string>
+    <string name="aisle_hygiene">Toiletries</string>
+    <string name="aisle_other">Other</string>
     <string name="error_account_disabled">This account is disabled. Contact the administrator.</string>
 
     <!-- Signalements -->

@@ -225,7 +225,7 @@
     <string name="undo">Annuler</string>
     <string name="widget_name">Aujourd\'hui · Tandem</string>
     <string name="widget_description">Les tâches du jour et celles à rattraper, à cocher depuis l\'écran d\'accueil.</string>
-    <string name="widget_empty">Rien pour aujourd\'hui 🎉</string>
+    <string name="widget_empty">Rien pour aujourd\'hui</string>
     <string name="widget_signed_out">Ouvrez l\'app pour vous connecter.</string>
     <string name="assignee_suggestion_pick">Confier à %1$s</string>
     <string name="checklist_title">Liste</string>
@@ -254,7 +254,7 @@
     <string name="shopping_empty_body">Ajoutez ce qui manque : l\'autre le voit tout de suite, même au magasin.</string>
     <string name="shopping_to_buy">À acheter (%1$d)</string>
     <string name="shopping_in_cart">Dans le panier (%1$d)</string>
-    <string name="shopping_all_done">Tout est dans le panier 🎉</string>
+    <string name="shopping_all_done">Tout est dans le panier</string>
     <string name="shopping_clear">Vider le panier</string>
     <string name="shopping_remove">Retirer « %1$s »</string>
     <string name="shopping_taken_by">Pris par %1$s</string>
@@ -370,16 +370,16 @@
     <string name="shopping_suggestions">Souvent achetés</string>
     <string name="shopping_add_suggestion">Ajouter %1$s</string>
     <string name="shopping_aisle_of">Rayon de %1$s</string>
-    <string name="aisle_produce">🥕 Fruits et légumes</string>
-    <string name="aisle_bakery">🥖 Boulangerie</string>
-    <string name="aisle_dairy">🧀 Crèmerie et œufs</string>
-    <string name="aisle_meat_fish">🥩 Boucherie, poisson</string>
-    <string name="aisle_frozen">🧊 Surgelés</string>
-    <string name="aisle_pantry">🥫 Épicerie</string>
-    <string name="aisle_drinks">🧃 Boissons</string>
-    <string name="aisle_household">🧽 Maison, entretien</string>
-    <string name="aisle_hygiene">🧴 Hygiène</string>
-    <string name="aisle_other">🛒 Autres</string>
+    <string name="aisle_produce">Fruits et légumes</string>
+    <string name="aisle_bakery">Boulangerie</string>
+    <string name="aisle_dairy">Crèmerie et œufs</string>
+    <string name="aisle_meat_fish">Boucherie, poisson</string>
+    <string name="aisle_frozen">Surgelés</string>
+    <string name="aisle_pantry">Épicerie</string>
+    <string name="aisle_drinks">Boissons</string>
+    <string name="aisle_household">Maison, entretien</string>
+    <string name="aisle_hygiene">Hygiène</string>
+    <string name="aisle_other">Autres</string>
     <string name="error_account_disabled">Ce compte est désactivé. Contactez l’administrateur.</string>
 
     <!-- Signalements -->

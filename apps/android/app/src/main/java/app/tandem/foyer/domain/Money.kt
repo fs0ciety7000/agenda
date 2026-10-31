@@ -38,7 +38,7 @@ object Money {
      */
     fun categoryBudgets(amounts: Map<String, String>): Pair<List<Pair<String, Long>>, Set<String>> {
         val invalid = mutableSetOf<String>()
-        val budgets = CATEGORY_EMOJI.keys.mapNotNull { category ->
+        val budgets = CATEGORIES.mapNotNull { category ->
             val text = amounts[category].orEmpty().trim()
             if (text.isEmpty()) return@mapNotNull null
             val cents = parseCents(text)
@@ -68,16 +68,6 @@ object Money {
         else -> 0
     }
 
-    /** Emoji des catégories (mêmes que sur le site). */
-    val CATEGORY_EMOJI = linkedMapOf(
-        "GROCERIES" to "🛒",
-        "HOUSING" to "🏠",
-        "UTILITIES" to "💡",
-        "TRANSPORT" to "🚗",
-        "LEISURE" to "🎉",
-        "HEALTH" to "💊",
-        "KIDS" to "🧸",
-        "GIFTS" to "🎁",
-        "OTHER" to "📦",
-    )
+    /** Catégories de dépense, dans l'ordre d'affichage (icônes : CategoryIcons.forExpense). */
+    val CATEGORIES = listOf("GROCERIES", "HOUSING", "UTILITIES", "TRANSPORT", "LEISURE", "HEALTH", "KIDS", "GIFTS", "OTHER")
 }

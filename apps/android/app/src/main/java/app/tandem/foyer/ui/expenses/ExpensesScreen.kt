@@ -1,5 +1,7 @@
 package app.tandem.foyer.ui.expenses
 
+import app.tandem.foyer.ui.components.CategoryIcons
+import app.tandem.foyer.ui.components.CategoryIcon
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.clickable
@@ -422,9 +424,10 @@ fun ExpensesScreen(
                                 modifier = Modifier.semantics { heading() },
                             )
                             state.recurring.forEach { r ->
-                                Row(verticalAlignment = Alignment.CenterVertically) {
+                                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                                    CategoryIcon(CategoryIcons.forExpense(r.category))
                                     Column(Modifier.weight(1f)) {
-                                        Text("${Money.CATEGORY_EMOJI[r.category] ?: "📦"} ${r.title} · ${money(r.amountCents)}", style = MaterialTheme.typography.bodyLarge)
+                                        Text("${r.title} · ${money(r.amountCents)}", style = MaterialTheme.typography.bodyLarge)
                                         Text(
                                             stringResource(R.string.expenses_recurring_line, r.dayOfMonth, name(r.paidById)),
                                             style = MaterialTheme.typography.bodySmall,
@@ -582,9 +585,10 @@ private fun CategoryBudgets(s: ExpenseSummaryDto, money: (Long) -> String, enabl
             val used = s.byCategory.firstOrNull { it.category == b.category }?.amountCents ?: 0L
             val level = Money.budgetLevel(used, b.budgetCents)
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    CategoryIcon(CategoryIcons.forExpense(b.category), Modifier.size(18.dp))
                     Text(
-                        "${Money.CATEGORY_EMOJI[b.category] ?: "📦"} ${categoryLabel(b.category)}",
+                        categoryLabel(b.category),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier.weight(1f),
                     )
@@ -629,12 +633,13 @@ private fun CategoryBudgetsDialog(
         text = {
             Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Text(stringResource(R.string.expenses_category_budgets_hint))
-                Money.CATEGORY_EMOJI.forEach { (category, emoji) ->
+                Money.CATEGORIES.forEach { category ->
                     val error = category in invalid
                     OutlinedTextField(
                         value = amounts[category].orEmpty(),
                         onValueChange = { amounts[category] = it; invalid.remove(category) },
-                        label = { Text("$emoji ${categoryLabel(category)}") },
+                        label = { Text(categoryLabel(category)) },
+                        leadingIcon = { CategoryIcon(CategoryIcons.forExpense(category)) },
                         placeholder = { Text(stringResource(R.string.expenses_category_budgets_none)) },
                         isError = error,
                         supportingText = if (error) ({ Text(stringResource(R.string.expenses_amount_invalid)) }) else null,
@@ -800,7 +805,11 @@ private fun ExpenseRow(e: ExpenseDto, name: (String?) -> String, money: (Long) -
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Text(if (settlement) "↔️" else Money.CATEGORY_EMOJI[e.category] ?: "📦", style = MaterialTheme.typography.titleLarge)
+            if (settlement) {
+                Text("⇄", style = MaterialTheme.typography.titleLarge, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            } else {
+                CategoryIcon(CategoryIcons.forExpense(e.category), Modifier.size(26.dp))
+            }
             Column(Modifier.weight(1f)) {
                 Text(
                     if (settlement) stringResource(R.string.expenses_settlement) else e.title,
@@ -1064,8 +1073,13 @@ private fun ExpenseSheet(
             }
             Text(stringResource(R.string.expenses_category), style = MaterialTheme.typography.titleSmall)
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Money.CATEGORY_EMOJI.forEach { (key, emoji) ->
-                    FilterChip(selected = category == key, onClick = { category = key }, label = { Text("$emoji ${categoryLabel(key)}") })
+                Money.CATEGORIES.forEach { key ->
+                    FilterChip(
+                        selected = category == key,
+                        onClick = { category = key },
+                        label = { Text(categoryLabel(key)) },
+                        leadingIcon = { CategoryIcon(CategoryIcons.forExpense(key), Modifier.size(18.dp)) },
+                    )
                 }
             }
             OutlinedTextField(

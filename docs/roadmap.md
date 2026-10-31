@@ -344,6 +344,23 @@ dans `docs/brand/`. Maquettes : tableau « Tandem · Maquettes du site », page 
 - [x] Captures de l'app du site refaites dans la nouvelle identité 🪧 (#123) ; celles de la fiche
   Play se refont au lancement du workflow de la fiche 🤖
 
+### Lot 9 — Finitions de l'identité (validé le 31 octobre)
+
+Retours après la mise en ligne de « Deux fils » : émojis des catégories hors identité, page de
+maintenance restée dans l'ancien style, Réglages où l'on se perd.
+
+- [x] Page de maintenance (503) dans l'identité : fichier autonome, trois langues, nouvel essai
+  automatique ; `infra/error-pages/503.html` et copie publique sur le site vitrine (S) 🪧 (#126)
+- [x] Icônes maison au trait (cobalt et abricot) à la place des émojis : catégories, modèles,
+  rayons des courses et dépenses ; 34 tracés dans `packages/design-tokens/category-icons.json`
+  pour le web et Android ; l'émoji reste en base (aucune migration) et s'affiche en icône (M) 🌐🤖 (#126)
+- [ ] Choisir l'icône d'une catégorie depuis l'app Android (les catégories se gèrent sur le site
+  pour l'instant) (S) 🤖
+- [ ] Réglages en quatre rubriques avec sous-pages (Foyer, Compte et sécurité, Préférences,
+  Données et aide), même structure sur Android (M) 🌐🤖
+- [ ] Administration sortie des Réglages : tuile dédiée dans le tiroir « Plus » et la barre
+  latérale, pour l'admin seulement (S) 🌐🤖
+
 ### Propositions de design
 
 - **Hiérarchie de l'accueil** : une seule action principale (ajout rapide) ; les sections

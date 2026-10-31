@@ -135,7 +135,7 @@
     "body": "This section is coming in a later phase."
   },
   "onboarding": {
-    "welcome": "Welcome 👋",
+    "welcome": "Welcome",
     "tagline": "Let's organise your everyday life together.",
     "stepHousehold": "Create your household",
     "householdName": "Household name",
@@ -348,7 +348,6 @@
     "filtersCount": "{count, plural, one {# filter} other {# filters}}"
   },
   "categories": {
-    "emoji": "Emoji",
     "name": "Name",
     "save": "Save",
     "cancel": "Cancel",
@@ -356,7 +355,8 @@
     "delete": "Delete {name}",
     "confirmDelete": "Delete the “{name}” category? Its tasks will stay, without a category.",
     "add": "New category",
-    "addButton": "Add"
+    "addButton": "Add",
+    "icon": "Icon"
   },
   "recurrence": {
     "legend": "Repeat",
@@ -753,21 +753,21 @@
     "emptyBody": "Add what's missing: the other person sees it right away, even at the shop.",
     "toBuy": "To buy ({count})",
     "inCart": "In the basket ({count})",
-    "allDone": "Everything is in the basket 🎉",
+    "allDone": "Everything is in the basket",
     "clear": "Empty the basket",
     "remove": "Remove “{text}”",
     "takenBy": "Picked up by {name}",
     "aisles": {
-      "PRODUCE": "🥕 Fruit & veg",
-      "BAKERY": "🥖 Bakery",
-      "DAIRY": "🧀 Dairy & eggs",
-      "MEAT_FISH": "🥩 Meat & fish",
-      "FROZEN": "🧊 Frozen",
-      "PANTRY": "🥫 Pantry",
-      "DRINKS": "🧃 Drinks",
-      "HOUSEHOLD": "🧽 Household",
-      "HYGIENE": "🧴 Toiletries",
-      "OTHER": "🛒 Other"
+      "PRODUCE": "Fruit & veg",
+      "BAKERY": "Bakery",
+      "DAIRY": "Dairy & eggs",
+      "MEAT_FISH": "Meat & fish",
+      "FROZEN": "Frozen",
+      "PANTRY": "Pantry",
+      "DRINKS": "Drinks",
+      "HOUSEHOLD": "Household",
+      "HYGIENE": "Toiletries",
+      "OTHER": "Other"
     },
     "suggestions": "Often bought",
     "addSuggestion": "Add {text}",
@@ -820,7 +820,6 @@
     "edit": "Edit “{name}”",
     "delete": "Delete “{name}”",
     "confirmDelete": "Delete the template “{name}”? Tasks already created stay.",
-    "emoji": "Emoji",
     "name": "Name",
     "namePlaceholder": "Saturday cleaning",
     "items": "Template tasks",
@@ -840,7 +839,8 @@
     "whenNone": "No date",
     "date": "Day",
     "create": "{count, plural, one {Create the task} other {Create the # tasks}}",
-    "applied": "{count, plural, one {# task added} other {# tasks added}} from “{name}”"
+    "applied": "{count, plural, one {# task added} other {# tasks added}} from “{name}”",
+    "icon": "Icon"
   },
   "history": {
     "title": "History",
@@ -1765,5 +1765,42 @@
     "report": "Report a problem",
     "guide": "Full guide",
     "status": "Service status"
+  },
+  "icons": {
+    "home": "Home",
+    "cleaning": "Cleaning",
+    "cooking": "Cooking",
+    "groceries": "Groceries",
+    "laundry": "Laundry",
+    "pets": "Pets",
+    "money": "Money",
+    "car": "Car",
+    "tools": "DIY",
+    "plant": "Garden",
+    "person": "Personal",
+    "couple": "Couple",
+    "box": "Misc",
+    "kids": "Kids",
+    "health": "Health",
+    "sport": "Sport",
+    "school": "School",
+    "work": "Work",
+    "travel": "Travel",
+    "party": "Celebration",
+    "calendar": "Appointment",
+    "papers": "Paperwork",
+    "trash": "Bins",
+    "bed": "Rest",
+    "carrot": "Fruit and veg",
+    "bread": "Bread",
+    "cheese": "Dairy",
+    "fish": "Meat and fish",
+    "snowflake": "Frozen",
+    "can": "Pantry",
+    "bottle": "Drinks",
+    "pump": "Hygiene",
+    "bulb": "Utilities",
+    "ticket": "Leisure",
+    "none": "No icon"
   }
 }

@@ -5,6 +5,7 @@ import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useState, type FormEvent } from 'react';
 import { Button } from '@/components/ui/button';
+import { CategoryIcon, CategoryIconPicker } from '@/components/ui/category-icon';
 import { Skeleton } from '@/components/ui/states';
 import { useToast } from '@/components/ui/toast';
 import { errorKey } from '@/lib/api';
@@ -29,21 +30,14 @@ function CategoryEditor({
 }) {
   const t = useTranslations('categories');
   const [name, setName] = useState(initial?.name ?? '');
-  const [emoji, setEmoji] = useState(initial?.emoji ?? '');
+  const [emoji, setEmoji] = useState<string | null>(initial?.emoji ?? null);
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    if (name.trim()) onSubmit({ name: name.trim(), emoji: emoji.trim() || null });
+    if (name.trim()) onSubmit({ name: name.trim(), emoji });
   };
   return (
     <form onSubmit={submit} className="flex flex-wrap items-center gap-2">
-      <input
-        aria-label={t('emoji')}
-        value={emoji}
-        onChange={(e) => setEmoji(e.target.value)}
-        maxLength={16}
-        placeholder="🏷️"
-        className={`${inputClass} w-14 text-center`}
-      />
+      <CategoryIconPicker value={emoji} onChange={setEmoji} label={t('icon')} />
       <input
         aria-label={t('name')}
         value={name}
@@ -65,7 +59,7 @@ function CategoryEditor({
   );
 }
 
-/** Catégories configurables par le foyer (renommer, emoji, ajouter, supprimer). */
+/** Catégories configurables par le foyer (renommer, icône, ajouter, supprimer). */
 export function CategoriesSettings() {
   const t = useTranslations('categories');
   const te = useTranslations('errors');
@@ -99,8 +93,8 @@ export function CategoriesSettings() {
               </div>
             ) : (
               <>
-                <span aria-hidden className="w-6 text-center">
-                  {c.emoji}
+                <span className="flex w-6 justify-center">
+                  <CategoryIcon emoji={c.emoji} />
                 </span>
                 <span className="flex-1 text-[0.9375rem]">{c.name}</span>
                 <button
