@@ -1,0 +1,45 @@
+# Page de maintenance de Tandem servie par Traefik (proxy de Coolify), sans offre payante
+# Cloudflare. À coller dans Coolify : Servers → (le serveur) → Proxy → Dynamic Configurations,
+# fichier « tandem-maintenance.yaml ». Traefik le recharge seul, sans redémarrage.
+#
+# Deux cas couverts :
+#   1. Le conteneur `web` est absent (redéploiement, arrêt, plantage) : Coolify retire alors son
+#      routeur et Traefik répondrait « 404 page not found ». Le routeur de secours ci-dessous, de
+#      priorité minimale, prend le relais pour le même domaine et affiche la page.
+#   2. Le conteneur est là mais ne répond pas (502, 503, 504) : ajouter le middleware au routeur
+#      de `web` (label facultatif, voir docs/deployment.md).
+#
+# La page vient du site vitrine (copie de infra/error-pages/503.html, publiée à chaque build).
+http:
+  middlewares:
+    tandem-maintenance:
+      errors:
+        status:
+          - '502-504'
+        service: tandem-error-pages
+        query: '/503.html'
+
+  routers:
+    tandem-maintenance-fallback:
+      rule: 'Host(`tandem-agenda.app`)'
+      priority: 1
+      entryPoints:
+        - https
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - tandem-maintenance
+      service: tandem-down
+
+  services:
+    # Le site vitrine, joint par son adresse publique (il vit dans un autre conteneur).
+    tandem-error-pages:
+      loadBalancer:
+        passHostHeader: false
+        servers:
+          - url: 'https://decouvrir.tandem-agenda.app'
+    # Service volontairement injoignable : sa réponse 502 déclenche la page de maintenance.
+    tandem-down:
+      loadBalancer:
+        servers:
+          - url: 'http://127.0.0.1:9'

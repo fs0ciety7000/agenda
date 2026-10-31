@@ -352,13 +352,26 @@ même adresse (prise de contrôle possible). Pour lier Google à un compte cré�
 
 `infra/error-pages/503.html` : page autonome (polices et logo intégrés, trois langues selon le
 navigateur, nouvel essai toutes les 30 s), générée par `node scripts/generate-icons.mjs`. Elle
-n'est pas servie par l'app : la déposer là où le proxy affiche ses erreurs quand `web` ne répond
-pas.
+n'est pas servie par l'app mais par **Traefik**, le proxy de Coolify : les pages d'erreur personnalisées de
+Cloudflare sont payantes. La copie publique du site vitrine
+(`https://decouvrir.tandem-agenda.app/503.html`) sert de source.
 
-- **Cloudflare** : *Rules → Custom Error Rules* (ou *Custom Pages → 5XX errors*), avec l'adresse
-  `https://decouvrir.tandem-agenda.app/503.html` (copie publiée par le site vitrine). Selon l'offre,
-  Cloudflare peut exiger un marqueur dans la page : le vérifier dans l'aperçu avant de publier.
-- **Coolify / Traefik** : un middleware `errors` pointant vers un petit service qui sert ce fichier.
+1. Coolify → *Servers* → le serveur → *Proxy* → *Dynamic Configurations* → ajouter
+   `tandem-maintenance.yaml` avec le contenu de
+   [`infra/traefik/tandem-maintenance.yaml`](https://github.com/fs0ciety7000/agenda/blob/main/infra/traefik/tandem-maintenance.yaml).
+   Traefik le recharge seul.
+   - Un **routeur de secours** (priorité 1, même domaine) affiche la page quand le conteneur
+     `web` est absent (redéploiement, arrêt) : sans lui, Traefik répondrait « 404 page not found ».
+   - Les noms `https` (entrée) et `letsencrypt` (certificats) sont ceux de Coolify par défaut ; les
+     adapter si le proxy a été personnalisé.
+2. Facultatif, pour un conteneur présent qui ne répond pas (502 à 504) : service `web` →
+   *Container Labels*, ajouter `tandem-maintenance@file` aux middlewares du routeur HTTPS généré
+   (ligne `traefik.http.routers.<nom>.middlewares=…`, en gardant ceux déjà listés), puis
+   redéployer.
+3. Vérifier : arrêter `web` dans Coolify, ouvrir `https://tandem-agenda.app` (la page s'affiche
+   dans la langue du navigateur et réessaie toutes les 30 s), puis relancer `web`.
+
+Le site vitrine doit avoir été redéployé depuis l'ajout de la page (`/503.html` en ligne).
 
 ## 10. Surveillance et maintenance
 
