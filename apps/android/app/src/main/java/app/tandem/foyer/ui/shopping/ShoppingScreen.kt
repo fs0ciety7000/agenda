@@ -143,7 +143,6 @@ fun ShoppingScreen(
                     Text(
                         stringResource(R.string.shopping_title),
                         style = MaterialTheme.typography.headlineMedium,
-                        fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.semantics { heading() },
                     )
                     LiveIndicator(live)

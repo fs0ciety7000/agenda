@@ -32,10 +32,12 @@
   --radius-xl: var(--gn-radius-xl);
 
   /* Cartes « vivantes » et barre d'ajout (design system, §4). */
-  --shadow-raised: 0 12px 32px rgb(23 24 28 / 0.1), 0 1px 2px rgb(23 24 28 / 0.06);
+  --shadow-raised: 0 12px 32px rgb(20 21 43 / 0.1), 0 1px 2px rgb(20 21 43 / 0.06);
 
   --font-sans:
     var(--font-instrument), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  /* Grands titres (identité « Deux fils ») : Instrument Serif, une seule graisse. */
+  --font-display: var(--font-instrument-serif), Georgia, 'Times New Roman', serif;
   --ease-out: var(--gn-motion-easing);
 }
 

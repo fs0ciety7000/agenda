@@ -5,23 +5,32 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
 import app.tandem.foyer.R
 
-/** Police unique de l'app (design system « Duo », comme le site) : 400, 500, 600. */
+/** Police du texte (identité « Deux fils », comme le site) : 400, 500, 600. */
 val InstrumentSans = FontFamily(
     Font(R.font.instrument_sans_regular, FontWeight.Normal),
     Font(R.font.instrument_sans_medium, FontWeight.Medium),
     Font(R.font.instrument_sans_semibold, FontWeight.SemiBold),
 )
 
+/** Grands titres (« Bonjour Emma », titres de page, « Journée bouclée ») : une seule graisse, 400. */
+val InstrumentSerif = FontFamily(Font(R.font.instrument_serif_regular, FontWeight.Normal))
+
 private fun TextStyle.sans() = copy(fontFamily = InstrumentSans)
 
-/** Échelle Material 3, en Instrument Sans ; les tailles suivent le réglage du téléphone (sp). */
+// Le serif est dessiné serré : −2 % d'approche, comme sur le site.
+private fun TextStyle.serif() = copy(fontFamily = InstrumentSerif, fontWeight = FontWeight.Normal, letterSpacing = (-0.02).em)
+
+/** Échelle Material 3 : serif pour display et grands titres, Instrument Sans ailleurs ; tailles en sp. */
 internal val AppTypography = Typography().run {
     copy(
-        displayLarge = displayLarge.sans(), displayMedium = displayMedium.sans(), displaySmall = displaySmall.sans(),
-        headlineLarge = headlineLarge.sans().copy(fontWeight = FontWeight.SemiBold),
-        headlineMedium = headlineMedium.sans().copy(fontWeight = FontWeight.SemiBold),
+        displayLarge = displayLarge.serif(), displayMedium = displayMedium.serif(), displaySmall = displaySmall.serif(),
+        headlineLarge = headlineLarge.serif(),
+        // Un serif à 400 paraît plus petit qu'un sans à 600 : un cran au-dessus (28 → 32 sp).
+        headlineMedium = headlineMedium.serif().copy(fontSize = 32.sp, lineHeight = 38.sp),
         headlineSmall = headlineSmall.sans().copy(fontWeight = FontWeight.SemiBold),
         titleLarge = titleLarge.sans().copy(fontWeight = FontWeight.SemiBold),
         titleMedium = titleMedium.sans().copy(fontWeight = FontWeight.SemiBold),

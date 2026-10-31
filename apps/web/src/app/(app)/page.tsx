@@ -93,7 +93,7 @@ export default function TodayPage() {
       <div className="flex min-w-0 flex-col gap-8">
         <div className="flex items-start justify-between gap-3">
           <div className="flex min-w-0 flex-col gap-1.5">
-            <h1 className="text-[2rem] font-semibold leading-tight tracking-[-0.03em]">
+            <h1 className="font-display text-[2.375rem] font-normal leading-[1.05] tracking-[-0.02em]">
               {t('greeting', { name: member?.displayName ?? me.displayName })}
             </h1>
             {todayQ.data && (
@@ -382,7 +382,7 @@ function DayWrapped({
         </span>
       </span>
       <span className="flex flex-col gap-2">
-        <span className="text-[2rem] font-semibold leading-tight tracking-[-0.03em]">
+        <span className="font-display text-[2.375rem] font-normal leading-[1.05] tracking-[-0.02em]">
           {t('wrappedTitle')}
         </span>
         <span className="max-w-72 text-text-muted">{t('wrappedBody', { count })}</span>

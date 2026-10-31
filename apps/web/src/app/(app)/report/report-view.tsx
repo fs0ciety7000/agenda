@@ -34,7 +34,9 @@ export function ReportView() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{t('title')}</h1>
+        <h1 className="font-display text-[2rem] font-normal leading-tight tracking-[-0.02em]">
+          {t('title')}
+        </h1>
         <p className="mt-1 text-[0.9375rem] text-text-muted">{t('intro')}</p>
         <p className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[0.9375rem]">
           <Link

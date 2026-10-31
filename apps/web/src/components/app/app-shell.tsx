@@ -147,7 +147,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           className="mb-6 flex items-center justify-center gap-3 rounded-md px-1 xl:justify-start xl:px-3"
         >
           <Image src="/icons/icon-192.png" alt="" width={36} height={36} className="size-9" />
-          <span className="sr-only text-[0.9375rem] font-semibold xl:not-sr-only">
+          <span className="sr-only font-display text-[1.375rem] leading-none xl:not-sr-only">
             {t('app.name')}
           </span>
         </Link>
@@ -196,7 +196,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="-mt-2 mb-6 flex items-center justify-between gap-2 md:hidden">
           <Link href="/" className="flex w-fit items-center gap-2">
             <Image src="/icons/icon-192.png" alt="" width={28} height={28} className="size-7" />
-            <span className="text-[0.9375rem] font-semibold">{t('app.name')}</span>
+            <span className="font-display text-[1.375rem] leading-none">{t('app.name')}</span>
           </Link>
           <button
             type="button"

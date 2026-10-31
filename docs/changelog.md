@@ -13,7 +13,22 @@ d'elle-même (ou via Google Play).
 **Légende** : ✨ nouveau · 🛠 amélioration · 🐞 correction · 🔒 sécurité et confidentialité ·
 ⚙️ technique
 
+## 31 octobre 2026
+
+### Identité « Deux fils » (#123)
+
+- ✨ **Nouvelle identité** : un logo de deux roues entrelacées, un fond papier (nuit en mode
+  sombre), le cobalt comme seule couleur d'action et les grands titres en serif.
+- ✨ **Nouvelles icônes** de l'app, du site, de la documentation et de la fiche Google Play.
+- 🛠 Le réglage « Couleur » disparaît : l'app suit la couleur de la marque ; Système, Clair et
+  Sombre restent au choix.
+
 ## 30 octobre 2026
+
+### Fiche Google Play aux couleurs « Duo » (#122)
+
+- 🛠 **Nouveaux visuels sur Google Play** : bannière dans le nouveau style, et six captures de
+  l'app actuelle (avec la liste de courses) dans la langue de la fiche, néerlandais compris.
 
 ### Calendrier : ajout rapide au jour choisi, vue Semaine sur Android (#121)
 

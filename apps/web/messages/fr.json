@@ -183,13 +183,6 @@
       "light": "Clair",
       "dark": "Sombre"
     },
-    "accentTitle": "Couleur",
-    "accent": {
-      "ink": "Encre",
-      "coral": "Corail",
-      "ocean": "Océan",
-      "lagoon": "Lagune"
-    },
     "calendar": "Calendrier partagé",
     "calendarSoon": "La connexion à Google Calendar arrive en phase 4.",
     "account": "Compte",

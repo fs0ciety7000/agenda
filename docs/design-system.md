@@ -1,8 +1,9 @@
-# Design system — « Duo »
+# Design system — « Deux fils »
 
-> Premium, épuré, dynamique : blanc franc, gris neutres, une seule couleur d'action au choix
-> (quatre thèmes), le contenu d'abord et l'action à portée du pouce. Pas de gamification.
-> Maquettes de la refonte : tableau « Tandem · Refonte de l'app » (octobre 2026).
+> Deux vies, un seul rythme : papier chaud, nuit profonde, une seule couleur d'action (cobalt),
+> des grands titres en serif et le contenu d'abord. Pas de gamification.
+> Identité : kit de marque `docs/brand/tandem-guidelines.pdf` (logo, couleurs, typographie),
+> sources SVG dans `docs/brand/`. Maquettes : tableau « Tandem · Maquettes du site » (oct. 2026).
 > Source des valeurs : `packages/design-tokens` (génère les variables CSS du web et `Tokens.kt` pour Android).
 
 ## 1. Principes
@@ -15,34 +16,30 @@
 
 ## 2. Couleurs
 
-Fond blanc franc, gris neutres froids, texte presque noir. Une seule couleur porte l'action
-(boutons principaux, liens, focus, case cochée) : celle du **thème** choisi dans Réglages →
-Apparence → Couleur. Toutes les paires texte/fond respectent **4.5:1** (texte) et **3:1** (UI),
-vérifiées sur `bg`, `surface` et `surface-muted`, pour chaque thème et dans les deux modes.
+Fond **papier**, cartes blanches dessus, texte **encre** ; en sombre, la **nuit**. Une seule
+couleur porte l'action (boutons principaux, liens, focus, case cochée) : le **cobalt** de la
+marque, lilas en sombre. Pas de réglage de couleur. Toutes les paires texte/fond respectent
+**4.5:1** (texte) et **3:1** (UI), vérifiées sur `bg`, `surface` et `surface-muted`, dans les deux
+modes.
 
 | Token | Clair | Sombre | Usage |
 |---|---|---|---|
-| `bg` | `#FFFFFF` | `#0F1012` | Fond d'app |
-| `surface` | `#FFFFFF` | `#18191C` | Cartes, feuilles |
-| `surface-muted` | `#F3F4F6` | `#222327` | Zones secondaires, tuiles, puces |
-| `border` | `#E5E7EB` | `#2E3035` | Séparateurs |
-| `border-strong` | `#80848C` | `#70747C` | Champs, cases (≥ 3:1) |
-| `text` | `#17181C` | `#F2F3F5` | Texte principal |
-| `text-muted` | `#5F636B` | `#A6AAB2` | Métadonnées |
-| `accent` / `accent-fg` | selon le thème | selon le thème | Action, focus, liens |
-| `success` | `#1F7A50` | `#6FD39F` | Terminé, synchronisé |
+| `bg` | `#F3EEE4` papier | `#0E1030` nuit | Fond d'app |
+| `surface` | `#FFFFFF` | `#171A3F` | Cartes, feuilles |
+| `surface-muted` | `#E9E3D6` | `#22264F` | Zones secondaires, tuiles, puces |
+| `border` | `#DCD4C4` | `#2E3263` | Séparateurs |
+| `border-strong` | `#7C7766` | `#7479A6` | Champs, cases (≥ 3:1) |
+| `text` | `#14152B` encre | `#F3EEE4` | Texte principal |
+| `text-muted` | `#5C5A6E` ardoise | `#A9ACC9` brume | Métadonnées |
+| `accent` / `accent-fg` | `#2D4BFF` / blanc | `#8F96FF` / nuit | Action, focus, liens |
+| `success` | `#176D45` | `#6FD39F` | Terminé, synchronisé |
 | `warning` | `#8A5A00` | `#F2C46D` | À rattraper, sync en attente |
 | `danger` | `#B42318` | `#F59088` | Erreurs, suppression |
 
-**Thèmes** (`themes` dans `tokens.json`, `data-accent` sur `<html>` côté web, réglage gardé sur
-l'appareil) :
-
-| Thème | Clair (texte blanc) | Sombre |
-|---|---|---|
-| Encre (par défaut) | `#17181C` | `#F2F3F5` |
-| Corail | `#C4314B` | `#FF8C98` |
-| Océan | `#1D5BD8` | `#8DB6FF` |
-| Lagune | `#0B6E6E` | `#6FD3CF` |
+**Couleurs de marque** (`brand` dans `tokens.json`, `--gn-brand-*` côté web) : cobalt
+`#2D4BFF`, abricot `#FF8F5A`, nuit `#0E1030`, papier `#F3EEE4`, lilas `#8F96FF`, brume
+`#A9ACC9`. Logo, site, illustrations et visuels ; l'**abricot** ne sert jamais au texte sur papier
+(contraste trop faible) : éclat sur la nuit, seconde roue du logo, gravures.
 
 **Couleurs de membres** : inchangées, pastilles seulement ; graphiques et jauges restent
 neutres (§1.5). L'initiale d'une pastille utilise `on-member`. **Texte sur une couleur pleine**
@@ -52,11 +49,14 @@ neutres (§1.5). L'initiale d'une pastille utilise `on-member`. **Texte sur une 
 
 ## 3. Typographie
 
-- **Instrument Sans**, une seule famille (web : `next/font`, Android : `res/font`, licence OFL
-  dans `assets/licenses`), chiffres tabulaires pour les heures et les montants.
-- Quatre tailles, deux graisses (400, 600 ; 500 pour les libellés) : `display 2.0/1.1 semibold`
-  (« Bonjour Emma »), `title 1.25/1.25 semibold` (titres de section, en casse de phrase, jamais
-  en capitales), `body 1.0/1.5 regular`, `caption 0.8125/1.4 medium`.
+- **Instrument Sans** pour le texte, **Instrument Serif** (400, et son italique sur le site)
+  pour les grands titres : « Bonjour Emma », titres de page, « Journée bouclée ». Même
+  superfamille, même hauteur d'x. Web : `next/font/local` (`font-display`), Android :
+  `res/font`, licence OFL dans `assets/licenses` et `src/fonts/OFL.txt`. Chiffres tabulaires
+  pour les heures et les montants.
+- Échelle : `display 2.375/1.05 serif 400 −2 %` (titres de page), `title 1.25/1.25 sans 600`
+  (titres de section, en casse de phrase, jamais en capitales), `body 1.0/1.5 regular`,
+  `caption 0.8125/1.4 medium`. Le serif n'est jamais en gras (une seule graisse) ni sous 24 px.
 - Android : même échelle en `sp`, respect du réglage de taille système.
 
 ## 4. Espacement, rayons, ombres, mouvement

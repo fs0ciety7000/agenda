@@ -8,8 +8,9 @@ import { themeInitScript } from '@/lib/theme';
 import { Providers } from './providers';
 import './globals.css';
 
-// Police unique de l'app (design system « Duo ») : 400, 500, 600. Fichiers dans le dépôt
-// (latin étendu, licence OFL dans src/fonts) : le build ne dépend pas de Google Fonts.
+// Polices de l'identité « Deux fils » : Instrument Sans (400, 500, 600) pour le texte, Instrument
+// Serif pour les grands titres. Fichiers dans le dépôt (latin étendu, licence OFL dans src/fonts) :
+// le build ne dépend pas de Google Fonts.
 const sans = localFont({
   src: [
     { path: '../fonts/instrument-sans-regular.woff2', weight: '400', style: 'normal' },
@@ -18,6 +19,14 @@ const sans = localFont({
   ],
   variable: '--font-instrument',
   display: 'swap',
+});
+const serif = localFont({
+  src: [{ path: '../fonts/instrument-serif-regular.woff2', weight: '400', style: 'normal' }],
+  variable: '--font-instrument-serif',
+  display: 'swap',
+  // Titres seulement : pas de préchargement (le texte passe d'abord), secours aux mêmes métriques.
+  preload: false,
+  adjustFontFallback: 'Times New Roman',
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -33,8 +42,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 export const viewport: Viewport = {
   themeColor: [
-    { media: '(prefers-color-scheme: light)', color: '#FFFFFF' },
-    { media: '(prefers-color-scheme: dark)', color: '#0F1012' },
+    { media: '(prefers-color-scheme: light)', color: '#F3EEE4' },
+    { media: '(prefers-color-scheme: dark)', color: '#0E1030' },
   ],
 };
 
@@ -42,7 +51,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
   const locale = await getLocale();
   const t = await getTranslations('app');
   return (
-    <html lang={locale} className={sans.variable} suppressHydrationWarning>
+    <html lang={locale} className={`${sans.variable} ${serif.variable}`} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
       </head>

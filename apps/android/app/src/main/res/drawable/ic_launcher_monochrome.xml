@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Icône thématique (Android 13+) : le logo Tandem (deux personnes sur un tandem) redessiné en
-  silhouette d'une seule couleur, teintée par le système selon le fond d'écran. Réduit à 85 % :
-  tout reste dans la zone sûre au centre des 108 dp.
+  Icône thématique (Android 13+) : le symbole « Deux fils » (docs/brand/tandem-symbol.svg) en une
+  couleur, teintée par le système. 64 dp de dessin au centre des 108 dp (zone sûre).
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
@@ -10,25 +9,15 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
     <group
-        android:pivotX="54"
-        android:pivotY="54"
-        android:scaleX="0.85"
-        android:scaleY="0.85">
-        <!-- Roues. -->
-        <path
-            android:strokeColor="#FF000000"
-            android:strokeWidth="3"
-            android:pathData="M23,69a11,11 0,1 0,22 0a11,11 0,1 0,-22 0M65,69a11,11 0,1 0,22 0a11,11 0,1 0,-22 0" />
-        <!-- Cadre, guidon, selles, deux personnes. -->
-        <path
-            android:strokeColor="#FF000000"
-            android:strokeWidth="3"
-            android:strokeLineCap="round"
-            android:strokeLineJoin="round"
-            android:pathData="M34,69L42,55L68,55L76,69M42,55L49,69L34,69M68,55L62,69L49,69M68,55L71,46L75,46M44,52H48M60,52H64M47,51L45,40M45,43L55,48M47,51L52,60L50,66M62,51L62,39M62,42L70,46M62,51L67,60L64,66" />
-        <!-- Têtes. -->
+        android:scaleX="0.64"
+        android:scaleY="0.64"
+        android:translateX="22"
+        android:translateY="22">
         <path
             android:fillColor="#FF000000"
-            android:pathData="M40.5,34a4.5,4.5 0,1 0,9 0a4.5,4.5 0,1 0,-9 0M57.5,33a4.5,4.5 0,1 0,9 0a4.5,4.5 0,1 0,-9 0" />
+            android:pathData="M2 50C2 32.879 15.879 19 33 19C38.015 19 42.751 20.191 46.943 22.305C44.041 23.506 42 26.365 42 29.7C42 29.774 42.001 29.847 42.003 29.921C39.255 28.686 36.208 28 33 28C20.85 28 11 37.85 11 50C11 62.15 20.85 72 33 72C45.15 72 55 62.15 55 50C55 45.406 53.592 41.141 51.184 37.613C54.475 37.125 57.112 34.633 57.815 31.417C61.699 36.595 64 43.029 64 50C64 67.121 50.121 81 33 81C15.879 81 2 67.121 2 50Z" />
+        <path
+            android:fillColor="#FF000000"
+            android:pathData="M36 50C36 32.879 49.879 19 67 19C84.121 19 98 32.879 98 50C98 67.121 84.121 81 67 81C61.985 81 57.249 79.809 53.057 77.695C55.959 76.494 58 73.635 58 70.3C58 70.226 57.999 70.153 57.997 70.079C60.745 71.314 63.792 72 67 72C79.15 72 89 62.15 89 50C89 37.85 79.15 28 67 28C54.85 28 45 37.85 45 50C45 54.594 46.408 58.859 48.816 62.387C45.525 62.875 42.888 65.367 42.185 68.583C38.301 63.405 36 56.971 36 50Z" />
     </group>
 </vector>

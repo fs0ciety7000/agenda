@@ -64,7 +64,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import app.tandem.foyer.ui.absences.AbsencesScreen
 import app.tandem.foyer.ui.rating.STORE_REVIEW_SUPPORTED
-import app.tandem.foyer.ui.theme.DEFAULT_ACCENT
 import app.tandem.foyer.ui.rating.requestStoreReview
 import app.tandem.foyer.ui.report.ReportScreen
 import app.tandem.foyer.ui.report.ReportViewModel
@@ -203,7 +202,6 @@ private fun MainScaffold(
     val reminders by container.settings.reminders.collectAsStateWithLifecycle(initialValue = ReminderSettings())
     val morningRecap by container.settings.morningRecap.collectAsStateWithLifecycle(initialValue = true)
     val weeklyReview by container.settings.weeklyReview.collectAsStateWithLifecycle(initialValue = true)
-    val accent by container.settings.accent.collectAsStateWithLifecycle(initialValue = DEFAULT_ACCENT)
     val nav = rememberNavController()
     val backStack by nav.currentBackStackEntryAsState()
     val route = backStack?.destination?.route
@@ -679,8 +677,6 @@ private fun MainScaffold(
                     weeklyReview = weeklyReview,
                     onWeeklyReview = { scope.launch { container.settings.setWeeklyReview(it) } },
                     onRetryPush = { scope.launch { container.push.register() } },
-                    accent = accent,
-                    onAccent = { scope.launch { container.settings.setAccent(it) } },
                     language = remember { AppLanguage.current(context) },
                     onLanguage = { tag ->
                         val activity = context.findActivity() ?: return@SettingsScreen

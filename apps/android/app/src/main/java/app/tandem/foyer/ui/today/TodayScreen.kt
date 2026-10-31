@@ -124,7 +124,6 @@ fun TodayScreen(
                 Text(
                     stringResource(R.string.greeting, state.me?.displayName ?: ""),
                     style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.SemiBold,
                     modifier = Modifier.semantics { heading() },
                 )
                 val date = formatLongDate(state.today, locale)

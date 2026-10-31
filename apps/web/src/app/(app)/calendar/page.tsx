@@ -263,7 +263,7 @@ function CalendarView() {
   return (
     <div className="flex flex-col gap-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-[2rem] font-semibold leading-tight tracking-[-0.03em] first-letter:uppercase">
+        <h1 className="font-display text-[2.375rem] font-normal leading-[1.05] tracking-[-0.02em] first-letter:uppercase">
           {title}
         </h1>
         <div className="flex items-center gap-2">
@@ -936,7 +936,7 @@ function WeekStrip({
                     : 'hover:bg-surface-muted',
               )}
             >
-              <span className="text-[0.8125rem] opacity-75 first-letter:uppercase">
+              <span className="text-[0.8125rem] opacity-90 first-letter:uppercase">
                 {dayName(weekdayOf(d), 'short')}
               </span>
               <span className="text-xl font-semibold tabular-nums">{Number(d.slice(8))}</span>
