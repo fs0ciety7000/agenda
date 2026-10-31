@@ -15,7 +15,7 @@ const sharp = req(req.resolve('sharp', { paths: [req.resolve('next')] }));
 const src = process.argv[2];
 if (!src) throw new Error('Usage : node apps/site/scripts/shots.mjs <dossier des captures>');
 
-// Capture de la revue visuelle → fichier du site (content.ts : shots.items).
+// Capture de la revue visuelle → fichier du site (2_shopping : fonctions ; 1, 3 : données structurées).
 const MAP = {
   '1_today': 'mobile-light-today',
   '2_shopping': 'mobile-light-shopping',

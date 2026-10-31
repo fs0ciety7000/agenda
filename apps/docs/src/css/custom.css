@@ -1,44 +1,96 @@
-/* Couleurs du design system « Calme » (packages/design-tokens/tokens.json). */
+/* Identité « Deux fils » (packages/design-tokens/tokens.json, docs/design-system.md) : papier et
+   cobalt en clair, nuit et lilas en sombre ; Instrument Serif pour les titres, Instrument Sans pour
+   le texte, servies depuis static/fonts (licence OFL jointe). */
+@font-face {
+  font-family: 'Instrument Sans';
+  src: url('/fonts/instrument-sans-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Instrument Sans';
+  src: url('/fonts/instrument-sans-medium.woff2') format('woff2');
+  font-weight: 500;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Instrument Sans';
+  src: url('/fonts/instrument-sans-semibold.woff2') format('woff2');
+  font-weight: 600 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  src: url('/fonts/instrument-serif-regular.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Instrument Serif';
+  src: url('/fonts/instrument-serif-italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: swap;
+}
+
 :root {
-  --ifm-color-primary: #7d4460;
-  --ifm-color-primary-dark: #713d56;
-  --ifm-color-primary-darker: #6a3a52;
-  --ifm-color-primary-darkest: #573043;
-  --ifm-color-primary-light: #894b6a;
-  --ifm-color-primary-lighter: #904e6e;
-  --ifm-color-primary-lightest: #a3597d;
-  --ifm-background-color: #faf6f2;
+  --ifm-color-primary: #2d4bff;
+  --ifm-color-primary-dark: #1e3dff;
+  --ifm-color-primary-darker: #1535f5;
+  --ifm-color-primary-darkest: #102bc9;
+  --ifm-color-primary-light: #4560ff;
+  --ifm-color-primary-lighter: #506aff;
+  --ifm-color-primary-lightest: #7489ff;
+  --ifm-background-color: #f3eee4;
   --ifm-background-surface-color: #ffffff;
-  --ifm-font-color-base: #24181d;
-  --ifm-color-emphasis-600: #6f5f66;
-  --ifm-toc-border-color: #e6dad2;
-  --ifm-hr-border-color: #e6dad2;
+  --ifm-font-color-base: #14152b;
+  --ifm-color-emphasis-600: #5c5a6e;
+  --ifm-toc-border-color: #dcd4c4;
+  --ifm-hr-border-color: #dcd4c4;
   --ifm-code-font-size: 92%;
-  --ifm-global-radius: 10px;
-  --ifm-navbar-background-color: #ffffff;
-  --ifm-footer-background-color: #24181d;
+  --ifm-global-radius: 12px;
+  --ifm-navbar-background-color: #f3eee4;
+  --ifm-footer-background-color: #0e1030;
   --ifm-font-family-base:
-    system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  --docusaurus-highlighted-code-line-bg: rgba(125, 68, 96, 0.1);
+    'Instrument Sans', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+    sans-serif;
+  --ifm-heading-font-family: 'Instrument Serif', Georgia, 'Times New Roman', serif;
+  --ifm-heading-font-weight: 400;
+  --docusaurus-highlighted-code-line-bg: rgba(45, 75, 255, 0.1);
 }
 
 [data-theme='dark'] {
-  --ifm-color-primary: #e0a9c3;
-  --ifm-color-primary-dark: #d78fb1;
-  --ifm-color-primary-darker: #d282a8;
-  --ifm-color-primary-darkest: #c35c8c;
-  --ifm-color-primary-light: #e9c3d5;
-  --ifm-color-primary-lighter: #eed0de;
-  --ifm-color-primary-lightest: #f8ecf2;
-  --ifm-background-color: #141012;
-  --ifm-background-surface-color: #1d171a;
-  --ifm-font-color-base: #f1e9ec;
-  --ifm-color-emphasis-600: #b3a5ab;
-  --ifm-toc-border-color: #372c32;
-  --ifm-hr-border-color: #372c32;
-  --ifm-navbar-background-color: #1d171a;
-  --ifm-footer-background-color: #1d171a;
-  --docusaurus-highlighted-code-line-bg: rgba(224, 169, 195, 0.15);
+  --ifm-color-primary: #8f96ff;
+  --ifm-color-primary-dark: #7179ff;
+  --ifm-color-primary-darker: #626bff;
+  --ifm-color-primary-darkest: #3540ff;
+  --ifm-color-primary-light: #adb3ff;
+  --ifm-color-primary-lighter: #bcc1ff;
+  --ifm-color-primary-lightest: #e9eaff;
+  --ifm-background-color: #0e1030;
+  --ifm-background-surface-color: #171a3f;
+  --ifm-font-color-base: #f3eee4;
+  --ifm-color-emphasis-600: #a9acc9;
+  --ifm-toc-border-color: #2e3263;
+  --ifm-hr-border-color: #2e3263;
+  --ifm-navbar-background-color: #0e1030;
+  --ifm-footer-background-color: #171a3f;
+  --docusaurus-highlighted-code-line-bg: rgba(143, 150, 255, 0.15);
+}
+
+/* Titres en serif : une seule graisse, approche serrée ; le nom dans la barre aussi. */
+.markdown h1,
+.markdown h2,
+.markdown h3 {
+  letter-spacing: -0.02em;
+}
+.markdown h1 {
+  font-size: 3rem;
+}
+.navbar__title {
+  font-family: var(--ifm-heading-font-family);
+  font-size: 1.5rem;
+  font-weight: 400;
 }
 
 .markdown img {
@@ -62,7 +114,7 @@
   width: calc(25% - 12px);
   min-width: 140px;
   max-width: 220px;
-  box-shadow: 0 2px 12px rgba(36, 24, 29, 0.12);
+  box-shadow: 0 2px 12px rgba(20, 21, 43, 0.12);
 }
 
 /* Référence de l'API (Swagger UI) : lisible en thème sombre. */

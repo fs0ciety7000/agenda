@@ -120,8 +120,8 @@ Pour chaque liste et chaque formulaire, vérifier :
 
 - [ ] La promesse se comprend au-dessus de la ligne de flottaison sur mobile, avec l'appel à
   l'action principal visible.
-- [ ] Lighthouse ≥ 95 dans les quatre catégories ; LCP < 2,5 s en 4G ; la vidéo n'est pas
-  chargée avant d'être visible.
+- [ ] Lighthouse ≥ 95 dans les quatre catégories ; LCP < 2,5 s en 4G ; images sous la ligne de
+  flottaison chargées en différé.
 - [ ] SEO :
   - `title` et `description` propres à chaque langue ;
   - `hreflang` vers les trois langues et `canonical` ;
@@ -167,7 +167,7 @@ Pour chaque liste et chaque formulaire, vérifier :
    # Captures du site vitrine (Emma et Tom, écran visible, données traduites), par langue :
    VISUAL=1 VISUAL_PUBLIC=1 VISUAL_LOCALE=en VISUAL_OUT=/tmp/site/en pnpm exec playwright test visual-review --project=mobile
    node ../site/scripts/shots.mjs /tmp/site   # → apps/site/public/shots/{fr,en,nl}
-   node ../site/scripts/og-images.mjs          # images de partage
+   node ../../scripts/generate-icons.mjs       # icônes et images de partage
    ```
    `VISUAL_LOCALE` (`en` ou `nl`) crée les comptes en français puis affiche les écrans dans
    cette langue ; la configuration `narrow` capture à 320 px.

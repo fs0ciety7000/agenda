@@ -1,7 +1,8 @@
 @import 'tailwindcss';
 @import '@agenda/design-tokens/tokens.css';
 
-/* Même thème que le site web (apps/web) : couleurs, rayons et mouvement des design tokens. */
+/* Même thème que l'app web (apps/web) : couleurs, rayons et mouvement des design tokens, plus les
+   couleurs de marque de l'identité « Deux fils » (sections de nuit, gravure). */
 @theme {
   --color-*: initial;
   --color-bg: var(--gn-color-bg);
@@ -14,6 +15,12 @@
   --color-accent-fg: var(--gn-color-accent-fg);
   --color-success: var(--gn-color-success);
   --color-on-member: var(--gn-color-on-member);
+  --color-brand-night: var(--gn-brand-night);
+  --color-brand-paper: var(--gn-brand-paper);
+  --color-brand-cobalt: var(--gn-brand-cobalt);
+  --color-brand-apricot: var(--gn-brand-apricot);
+  --color-brand-lilac: var(--gn-brand-lilac);
+  --color-brand-mist: var(--gn-brand-mist);
   --color-white: #fff;
   --color-transparent: transparent;
   --color-member-sage: var(--gn-member-sage);
@@ -29,6 +36,7 @@
 
   --font-sans:
     var(--font-instrument), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: var(--font-instrument-serif), Georgia, 'Times New Roman', serif;
   --ease-out: var(--gn-motion-easing);
 }
 
@@ -135,6 +143,137 @@
   60%,
   100% {
     transform: none;
+  }
+}
+
+/* Identité « Deux fils » : mouvements de la page. Tout s'arrête avec prefers-reduced-motion. */
+@layer components {
+  /* Sections de nuit : focus et lien de l'éditeur lisibles sur le fond sombre. */
+  .night :focus-visible {
+    outline-color: var(--gn-brand-lilac);
+  }
+  .night .brand-link:is(:hover, :focus-visible) {
+    color: var(--gn-brand-paper);
+  }
+  .lift {
+    transition:
+      transform var(--gn-motion-base) var(--ease-out),
+      box-shadow var(--gn-motion-base) var(--ease-out);
+  }
+  .lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px -10px rgb(45 75 255 / 0.45);
+  }
+  .lift:active {
+    transform: scale(0.97);
+  }
+  .footer-link {
+    color: var(--gn-brand-mist);
+    transition: color var(--gn-motion-fast) var(--ease-out);
+  }
+  .footer-link:hover {
+    color: var(--gn-brand-apricot);
+  }
+  .feature {
+    transition:
+      background-color var(--gn-motion-base) var(--ease-out),
+      padding var(--gn-motion-slow) var(--ease-out);
+  }
+  .feature:hover {
+    background: rgb(243 238 228 / 0.05);
+    padding-left: 1.25rem;
+  }
+  .faq[open] .faq-sign {
+    transform: rotate(45deg);
+  }
+  .faq-sign {
+    transition: transform var(--gn-motion-base) var(--ease-out);
+  }
+  .faq summary::-webkit-details-marker {
+    display: none;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .rise {
+      animation: rise 900ms var(--ease-out) both;
+    }
+    .deal {
+      animation: deal 420ms var(--ease-out);
+    }
+    .menu-in {
+      animation: rise 260ms var(--ease-out) both;
+    }
+    .draw {
+      stroke-dasharray: 3200;
+      animation: draw 2.8s 400ms var(--ease-out) both;
+    }
+    .draw-slow {
+      stroke-dasharray: 3200;
+      animation: draw 5s 600ms ease-out both;
+    }
+    .spin-slow {
+      animation: spin 60s linear infinite;
+    }
+    .spin-slow-reverse {
+      animation: spin 60s linear infinite reverse;
+    }
+    .twinkle {
+      animation: twinkle 3s ease-in-out infinite;
+    }
+    .glow {
+      animation: glow 4s ease-in-out infinite;
+    }
+    /* Apparition au défilement, sans JavaScript, là où le navigateur sait le faire. */
+    @supports (animation-timeline: view()) {
+      .reveal {
+        animation: rise linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 60%;
+      }
+    }
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+}
+@keyframes deal {
+  from {
+    opacity: 0;
+    transform: translateY(-18px) rotate(-4deg) scale(0.96);
+  }
+}
+@keyframes draw {
+  from {
+    stroke-dashoffset: 3200;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@keyframes twinkle {
+  50% {
+    opacity: 0.9;
+  }
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+}
+@keyframes glow {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
   }
 }
 

@@ -2,6 +2,7 @@
 // Génère les icônes et visuels de marque depuis docs/brand/*.svg (identité « Deux fils »).
 //
 // Usage : node scripts/generate-icons.mjs [--play]   (--play : seulement la fiche Google Play)
+// Produit aussi les images de partage du site (apps/site/public/img/og/{fr,en,nl}.png).
 // Rendu par le Chromium de Playwright (require('playwright')), polices du dépôt intégrées :
 // le résultat ne dépend ni du réseau ni des polices du système.
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -93,6 +94,27 @@ function featureGraphic([l1, l2, line]) {
 </div>`;
 }
 
+/** Images de partage du site vitrine (1200 × 630), mêmes textes que l'ouverture (content.ts). */
+const OG_TEXT = {
+  fr: ['Chacun son tour,', 'c’est mieux à deux.', 'Gratuit · sans publicité · web et Android'],
+  en: ['Taking turns', 'is better together.', 'Free · ad-free · web and Android'],
+  nl: ['Om de beurt,', 'samen gaat het beter.', 'Gratis · zonder advertenties · web en Android'],
+};
+
+function ogImage([l1, l2, badge]) {
+  return featureGraphic([l1, l2, badge])
+    .replace('width:1024px;height:500px', 'width:1200px;height:630px')
+    .replace(
+      '<svg style="position:absolute;inset:0" width="1024" height="500">',
+      '<svg style="position:absolute;left:0;top:-50px" width="1200" height="630" viewBox="0 0 1024 500" preserveAspectRatio="none">',
+    )
+    .replace(
+      'top:150px;font-family:BrandSerif;font-size:92px',
+      'top:170px;font-family:BrandSerif;font-size:104px',
+    )
+    .replace('left:74px;top:338px;font-size:22px', 'left:74px;top:420px;font-size:26px');
+}
+
 async function play() {
   await shot('docs/brand/play-store-icon-512.png', tile(512), 512, 512);
   for (const [locale, text] of Object.entries(FEATURE_TEXT)) {
@@ -104,6 +126,9 @@ async function play() {
 
 await play();
 if (!process.argv.includes('--play')) {
+  for (const [lang, text] of Object.entries(OG_TEXT)) {
+    await shot(`apps/site/public/img/og/${lang}.png`, ogImage(text), 1200, 630);
+  }
   const res = 'apps/android/app/src/main/res';
   // Android : icône adaptative (108 dp ; 64 dp de dessin, dans le cercle des masques ronds).
   for (const [density, scale] of Object.entries({

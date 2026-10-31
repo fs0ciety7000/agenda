@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import { ButtonLink } from '@/components/ui';
+import { ButtonLink, Logo } from '@/components/ui';
 import { DOCS_URL } from '@/lib/config';
 import { content, LANGS } from '@/lib/content';
-import { sans } from '@/lib/font';
+import { sans, serif } from '@/lib/font';
 import { viewport } from '@/lib/metadata';
 import './globals.css';
 
@@ -30,7 +30,12 @@ d.lang=l;d.setAttribute('data-lang',l)}catch(e){}})();`;
 /** Page « introuvable » du site vitrine (aucun layout racine commun : une par langue). */
 export default function GlobalNotFound() {
   return (
-    <html lang="en" data-lang="en" className={sans.variable} suppressHydrationWarning>
+    <html
+      lang="en"
+      data-lang="en"
+      className={`${sans.variable} ${serif.variable}`}
+      suppressHydrationWarning
+    >
       <head>
         <script dangerouslySetInnerHTML={{ __html: pickLang }} />
         <style>
@@ -41,10 +46,6 @@ export default function GlobalNotFound() {
       </head>
       <body>
         <main className="relative isolate flex min-h-svh items-center overflow-hidden px-5 py-16">
-          <div aria-hidden className="pointer-events-none absolute inset-0 -z-10">
-            <div className="absolute -top-32 left-[-20%] size-[28rem] rounded-full bg-accent/15 blur-3xl sm:size-[36rem]" />
-            <div className="absolute right-[-20%] bottom-[-15%] size-[24rem] rounded-full bg-member-ocean/12 blur-3xl sm:size-[32rem]" />
-          </div>
           {LANGS.map(({ locale, href }) => {
             const t = content[locale].notFound;
             return (
@@ -54,19 +55,11 @@ export default function GlobalNotFound() {
                 lang={locale}
                 className="mx-auto flex w-full max-w-xl flex-col items-center gap-6 text-center"
               >
-                <a href={href} className="flex items-center gap-2.5 font-semibold tracking-tight">
-                  {/* eslint-disable-next-line @next/next/no-img-element -- export statique */}
-                  <img
-                    src="/img/icon-192.png"
-                    alt=""
-                    width={40}
-                    height={40}
-                    className="size-10 rounded-[11px]"
-                  />
-                  <span className="text-xl">Tandem</span>
+                <a href={href} className="text-[2rem]">
+                  <Logo />
                 </a>
                 <p className="text-sm font-semibold text-text-muted">{t.code}</p>
-                <h1 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
+                <h1 className="text-balance font-display text-5xl tracking-[-0.03em] sm:text-6xl">
                   {t.title}
                 </h1>
                 <p className="text-pretty text-lg leading-relaxed text-text-muted">{t.text}</p>
