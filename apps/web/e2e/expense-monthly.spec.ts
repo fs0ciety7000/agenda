@@ -5,7 +5,7 @@ test('bilan du mois des dépenses : réglable dans les préférences de notifica
   page,
 }) => {
   await signUpWithHousehold(page, 'Emma');
-  await openSettings(page);
+  await openSettings(page, 'Préférences');
   const label = 'Bilan des dépenses du mois écoulé, le 1er';
   await expect(page.getByRole('rowheader', { name: label })).toBeVisible();
   const push = page.getByRole('checkbox', { name: `${label} — Notification` });

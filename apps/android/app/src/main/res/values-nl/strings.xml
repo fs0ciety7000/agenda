@@ -866,7 +866,7 @@
     <!-- Tiroir « Plus », refonte « Duo » -->
     <string name="drawer_expenses_hint">Wie betaalde wat, en wie hoeveel schuldig is</string>
     <string name="drawer_dates_hint">Verjaardagen, feestdagen, jaarlijks onderhoud</string>
-    <string name="drawer_settings_hint">Huishouden, account, meldingen, taal</string>
+    <string name="drawer_settings_hint">Huishouden, account, voorkeuren, gegevens</string>
     <string name="day_wrapped_title">Dag afgerond</string>
     <plurals name="day_wrapped_body"><item quantity="one">De taak van vandaag is gedaan. Geniet van de rest van de dag.</item><item quantity="other">De %d taken van vandaag zijn gedaan. Geniet van de rest van de dag.</item></plurals>
     <!-- Barre d'ajout du calendrier : jour de la semaine, ou date plus lointaine -->
@@ -877,4 +877,17 @@
     <string name="next_week">Volgende week</string>
     <string name="calendar_view_month">Maand</string>
     <string name="calendar_view_week">Week</string>
+    <string name="settings_section_household">Huishouden</string>
+    <string name="settings_section_household_hint">Leden, categorieën, sjablonen</string>
+    <string name="settings_section_account">Account en beveiliging</string>
+    <string name="settings_section_account_hint">Passkeys, tweestapsverificatie, apparaten, uitloggen</string>
+    <string name="settings_section_preferences">Voorkeuren</string>
+    <string name="settings_section_preferences_hint">Agenda, herinneringen, meldingen, taal</string>
+    <string name="settings_section_data">Gegevens en hulp</string>
+    <string name="settings_section_data_hint">Back-up, hulp, privacy</string>
+    <string name="settings_help">Hulp</string>
+    <string name="settings_data_web">Gegevens en privacy op de website</string>
+    <string name="settings_household_web_hint">Categorieën, taaksjablonen en toevoegen per e-mail stel je in op de website.</string>
+    <string name="settings_household_web">Instellen op de website</string>
+    <string name="nav_admin">Beheer</string>
 </resources>

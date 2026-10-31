@@ -891,7 +891,7 @@
     <!-- Tiroir « Plus », refonte « Duo » -->
     <string name="drawer_expenses_hint">Qui a payé quoi, et qui doit combien</string>
     <string name="drawer_dates_hint">Anniversaires, fêtes, entretiens annuels</string>
-    <string name="drawer_settings_hint">Foyer, compte, notifications, langue</string>
+    <string name="drawer_settings_hint">Foyer, compte, préférences, données</string>
     <string name="day_wrapped_title">Journée bouclée</string>
     <plurals name="day_wrapped_body" tools:ignore="ImpliedQuantity"><item quantity="one">La tâche du jour est faite. Profitez du reste de la journée.</item><item quantity="many">Les %d tâches du jour sont faites. Profitez du reste de la journée.</item><item quantity="other">Les %d tâches du jour sont faites. Profitez du reste de la journée.</item></plurals>
     <!-- Barre d'ajout du calendrier : jour de la semaine, ou date plus lointaine -->
@@ -902,4 +902,17 @@
     <string name="next_week">Semaine suivante</string>
     <string name="calendar_view_month">Mois</string>
     <string name="calendar_view_week">Semaine</string>
+    <string name="settings_section_household">Foyer</string>
+    <string name="settings_section_household_hint">Membres, catégories, modèles</string>
+    <string name="settings_section_account">Compte et sécurité</string>
+    <string name="settings_section_account_hint">Passkeys, double authentification, appareils, déconnexion</string>
+    <string name="settings_section_preferences">Préférences</string>
+    <string name="settings_section_preferences_hint">Calendrier, rappels, notifications, langue</string>
+    <string name="settings_section_data">Données et aide</string>
+    <string name="settings_section_data_hint">Sauvegarde, aide, confidentialité</string>
+    <string name="settings_help">Aide</string>
+    <string name="settings_data_web">Données et confidentialité sur le site</string>
+    <string name="settings_household_web_hint">Les catégories, les modèles de tâches et l\'ajout par e-mail se règlent sur le site.</string>
+    <string name="settings_household_web">Régler sur le site</string>
+    <string name="nav_admin">Administration</string>
 </resources>

@@ -49,6 +49,6 @@ tâche récurrente montre son **historique** : les dernières fois et qui l'a fa
 
 ## Mode absence
 
-**Réglages → Absences** : « Grace est absente du 3 au 10 ». Pendant l'absence, ses tâches
+**Réglages → Foyer → Absences** : « Grace est absente du 3 au 10 ». Pendant l'absence, ses tâches
 **partagées** passent à l'autre membre (tours de rôle compris), puis tout reprend son cours. Les
 tâches personnelles ne changent pas. Annuler l'absence remet les tours de rôle en place.

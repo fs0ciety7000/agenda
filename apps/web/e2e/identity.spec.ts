@@ -8,7 +8,7 @@ test('identité « Deux fils » : papier et cobalt, plus de réglage de couleur'
   // Un ancien choix de couleur (refonte Duo) est oublié au chargement.
   await page.addInitScript(() => localStorage.setItem('gn-accent', 'ocean'));
   await signUpWithHousehold(page, 'Emma');
-  await openSettings(page);
+  await openSettings(page, 'Préférences');
   await expect(page.getByRole('radiogroup', { name: 'Couleur' })).toHaveCount(0);
   await expect(page.locator('html')).not.toHaveAttribute('data-accent', /.+/);
   await page.emulateMedia({ colorScheme: 'light' });

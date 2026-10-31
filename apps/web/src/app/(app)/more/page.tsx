@@ -9,13 +9,13 @@ import { MoreGrid } from '@/components/app/nav-drawer';
 export default function MorePage() {
   const t = useTranslations('more');
   const pathname = usePathname();
-  const { household } = useSession();
+  const { household, me } = useSession();
   return (
     <div className="flex flex-col gap-6">
       <h1 className="font-display text-[2.375rem] font-normal leading-[1.05] tracking-[-0.02em]">
         {t('title')}
       </h1>
-      <MoreGrid pathname={pathname} members={household.members} />
+      <MoreGrid pathname={pathname} members={household.members} admin={me.isAdmin} />
     </div>
   );
 }

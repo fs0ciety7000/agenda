@@ -31,5 +31,5 @@ approche : tout ce qu'on se redemande trouve sa place dans **Notes**. Sur télé
   lecture.
 
 Les notes sont des données du foyer : elles restent après la suppression d'un compte (l'auteur
-devient « ancien membre ») et figurent dans l'export de vos données (**Réglages → Données &
+devient « ancien membre ») et figurent dans l'export de vos données (**Réglages → Données et aide → Données &
 confidentialité**).

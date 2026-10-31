@@ -5,7 +5,7 @@ test('signaler un problème : depuis les Réglages, informations techniques visi
   page,
 }) => {
   await signUpWithHousehold(page, 'Grace');
-  await page.goto('/settings');
+  await page.goto('/settings/data');
   await page.getByRole('link', { name: 'Signaler un problème' }).click();
   await expect(page.getByRole('heading', { name: 'Signaler un problème', level: 1 })).toBeVisible();
 
@@ -21,7 +21,7 @@ test('signaler un problème : depuis les Réglages, informations techniques visi
   const diagnostics = page.getByLabel('Joindre les informations techniques');
   await expect(diagnostics).not.toBeChecked();
   await page.getByText('Voir exactement ce qui sera envoyé').click();
-  await expect(page.getByText('/settings', { exact: true })).toBeVisible();
+  await expect(page.getByText('/settings/data', { exact: true })).toBeVisible();
   await diagnostics.check();
   await expect(page.getByLabel(/recontacté/)).not.toBeChecked();
 

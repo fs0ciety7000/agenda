@@ -348,17 +348,21 @@ Sécurité : un compte Google n'est jamais rattaché automatiquement à un compt
 même adresse (prise de contrôle possible). Pour lier Google à un compte créé avec un mot de passe :
 **Réglages → Données & confidentialité → Lier Google**.
 
-### Page de maintenance (503)
+### Pages d'erreur et de maintenance
 
-`infra/error-pages/503.html` : page autonome (polices et logo intégrés, trois langues selon le
-navigateur, nouvel essai toutes les 30 s), générée par `node scripts/generate-icons.mjs`. Elle
-n'est pas servie par l'app : la déposer là où le proxy affiche ses erreurs quand `web` ne répond
-pas.
+Elles ne sont pas servies par l'app mais par le service Coolify **`error-pages`** (projet
+Monitoring), commun à tous les sites du serveur. Sa route Traefik de secours, de priorité
+minimale, répond pour tout domaine dont l'application ne répond plus (redéploiement, arrêt,
+plantage) et choisit les pages de la marque d'après le domaine. Les pages d'erreur
+personnalisées de Cloudflare sont payantes : elles ne sont pas utilisées.
 
-- **Cloudflare** : *Rules → Custom Error Rules* (ou *Custom Pages → 5XX errors*), avec l'adresse
-  `https://decouvrir.tandem-agenda.app/503.html` (copie publiée par le site vitrine). Selon l'offre,
-  Cloudflare peut exiger un marqueur dans la page : le vérifier dans l'aperçu avant de publier.
-- **Coolify / Traefik** : un middleware `errors` pointant vers un petit service qui sert ce fichier.
+- Pages de Tandem : `error-pages/sites/tandem/` du dépôt `fs0ciety7000/coolify` (404, 502, 503,
+  504, maintenance), dans l'identité « Deux fils », trois langues selon le navigateur, nouvel
+  essai toutes les 30 s. Domaines couverts : `error-pages/sites/tandem/brand.json`.
+- Les modifier dans ce dépôt (règles dans `error-pages/SPEC.md`) puis pousser sur `main` : Coolify
+  redéploie seul. Aperçu : `https://errors.fs0ciety.org/sites/tandem/503.html`.
+- Nouveau domaine pour Tandem : l'ajouter à `brand.json`, puis lancer
+  `node scripts/generate.mjs` (dans `error-pages/`).
 
 ## 10. Surveillance et maintenance
 

@@ -61,6 +61,12 @@ Fichiers importés, à respecter au même titre que celui-ci :
   (`docs/brand`, icônes par `scripts/generate-icons.mjs`), papier `#F3EEE4` / nuit `#0E1030`,
   **cobalt seul** comme couleur d'action (plus de réglage « Couleur »), Instrument Serif pour les
   grands titres seulement, abricot jamais en texte sur papier (#122).
+- Réglages : sommaire de quatre rubriques (Foyer, Compte et sécurité, Préférences, Données et aide),
+  une sous-page chacune (`/settings/…` ; sur Android, rubriques dans l'écran) ; Administration
+  hors Réglages : tuile du tiroir « Plus » et barre latérale, admin seulement (#128).
+- Pages d'erreur et de maintenance : service Coolify `error-pages` commun au serveur (dépôt
+  `fs0ciety7000/coolify`, `error-pages/sites/tandem/`), route Traefik de secours ; plus de copie
+  dans ce dépôt, pas de pages d'erreur Cloudflare, payantes (#128).
 - Éditeur déclaré dans les données structurées du site : CM Interactive, studio de CARDOR Media
   (`@id` partagés avec interactive.cardormedia.com et cardormedia.com) (#97).
 

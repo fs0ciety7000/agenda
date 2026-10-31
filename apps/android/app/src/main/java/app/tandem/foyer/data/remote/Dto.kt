@@ -105,7 +105,14 @@ data class PasskeyDto(
 data class UpdateMeRequest(val locale: String)
 
 @Serializable
-data class MeDto(val id: String, val email: String, val displayName: String, val locale: String)
+data class MeDto(
+    val id: String,
+    val email: String,
+    val displayName: String,
+    val locale: String,
+    /** Administrateur (ADMIN_EMAILS) : tuile Administration du tiroir « Plus ». */
+    val isAdmin: Boolean = false,
+)
 
 @Serializable
 data class AuthResponseDto(

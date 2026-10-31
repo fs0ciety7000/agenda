@@ -52,7 +52,7 @@ les tâches : [Tâches](taches.md).
 
 ## 6. Installer l'app Android (facultatif)
 
-**Réglages → Compte → Application Android → Télécharger**, ou depuis Google Play si l'app y est
+**Réglages → Données et aide → Application Android → Télécharger**, ou depuis Google Play si l'app y est
 publiée. Voir [App Android](android.md).
 
 ## Se repérer
@@ -76,4 +76,4 @@ connexion.
 | **Notes** | Codes Wi-Fi, mesures, idées cadeaux, partagés (dans **Plus** sur téléphone) |
 | **Dates importantes** | Anniversaires et entretiens, rappelés à l'avance (dans **Plus** sur téléphone) |
 | **Bilan** | Ce qui a été fait sur 7 ou 30 jours, par catégorie et par personne |
-| **Réglages** | Foyer, catégories, modèles, notifications, calendrier, compte, données |
+| **Réglages** | Quatre rubriques : Foyer, Compte et sécurité, Préférences, Données et aide |

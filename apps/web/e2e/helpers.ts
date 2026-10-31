@@ -67,12 +67,20 @@ export const todayBrussels = () =>
   new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Brussels' }).format(new Date());
 
 /** Ouvre les Réglages : lien de la navigation (desktop) ou « Plus » → Réglages (mobile). */
-export async function openSettings(page: Page) {
+/** Rubriques des Réglages (libellés du sommaire, en français). */
+export type SettingsSection = 'Foyer' | 'Compte et sécurité' | 'Préférences' | 'Données et aide';
+
+/** Ouvre les Réglages par la navigation, puis la rubrique demandée s'il y en a une. */
+export async function openSettings(page: Page, section?: SettingsSection) {
   const direct = page.getByRole('link', { name: 'Réglages', exact: true });
   if (await direct.first().isVisible()) await direct.first().click();
   else {
     await page.getByRole('button', { name: 'Plus', exact: true }).click();
     await page.getByRole('link', { name: /^Réglages/ }).click();
   }
-  await page.waitForURL(/\/settings/);
+  await page.waitForURL(/\/settings$/);
+  if (section) {
+    await page.getByRole('link', { name: new RegExp(`^${section}`) }).click();
+    await page.waitForURL(/\/settings\/\w+/);
+  }
 }

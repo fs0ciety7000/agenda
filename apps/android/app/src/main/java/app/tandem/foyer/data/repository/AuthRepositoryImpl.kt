@@ -175,4 +175,4 @@ class AuthRepositoryImpl(
     }
 }
 
-private fun MeDto.toDomain() = User(id = id, email = email, displayName = displayName)
+private fun MeDto.toDomain() = User(id = id, email = email, displayName = displayName, isAdmin = isAdmin)

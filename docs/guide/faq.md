@@ -6,7 +6,7 @@ description: Réponses aux questions courantes sur Tandem.
 # Questions fréquentes
 
 Les plus courantes sont aussi dans l'app : page **Aide** (lien en bas de la page de connexion,
-ou **Réglages → Aide → Questions fréquentes**, ou depuis « Signaler un problème »).
+ou **Réglages → Données et aide → Aide → Questions fréquentes**, ou depuis « Signaler un problème »).
 
 ### L'autre ne voit pas la tâche que je viens d'ajouter.
 
@@ -20,7 +20,7 @@ Responsable **Tous les deux** dans le formulaire, ou `@nous` / « … à deux »
 
 ### J'ai supprimé une tâche par erreur.
 
-**Annuler** juste après, ou **Réglages → Journal et corbeille → Corbeille** pendant 30 jours.
+**Annuler** juste après, ou **Réglages → Foyer → Journal et corbeille → Corbeille** pendant 30 jours.
 
 ### Je veux déplacer une seule fois une tâche répétée.
 
@@ -28,7 +28,7 @@ Glissez-la dans le calendrier, ou modifiez-la et choisissez **Uniquement cette o
 
 ### Les notifications n'arrivent pas.
 
-- Site : **Réglages → Notifications → Activer sur ce navigateur** ; si « bloquées », autorisez-les
+- Site : **Réglages → Préférences → Notifications → Activer sur ce navigateur** ; si « bloquées », autorisez-les
   dans les réglages du navigateur pour ce site. Sur iPhone, ajoutez d'abord le site à l'écran
   d'accueil.
 - Android : autorisez les notifications de l'app dans les réglages du téléphone et désactivez

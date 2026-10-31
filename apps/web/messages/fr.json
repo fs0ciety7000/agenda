@@ -20,7 +20,8 @@
     "expenses": "Dépenses",
     "more": "Plus",
     "notes": "Notes",
-    "dates": "Dates"
+    "dates": "Dates",
+    "admin": "Administration"
   },
   "auth": {
     "loginTitle": "Bon retour",
@@ -195,16 +196,32 @@
     "activity": "Journal et corbeille",
     "activityHint": "Qui a fait quoi, et les tâches supprimées depuis moins de 30 jours.",
     "activityOpen": "Ouvrir le journal",
-    "admin": "Administration",
-    "adminOpen": "Ouvrir l'administration",
-    "adminHint": "Comptes, foyers, sauvegardes, tests d'envoi.",
     "help": "Aide",
     "helpHint": "Un bug, une idée, une question ? Signalez-le ; la documentation répond aux questions courantes.",
     "faq": "Questions fréquentes",
     "report": "Signaler un problème",
     "docs": "Documentation",
     "status": "État du service",
-    "backup": "Sauvegarde du foyer"
+    "backup": "Sauvegarde du foyer",
+    "sections": {
+      "household": {
+        "title": "Foyer",
+        "hint": "Membres, absences, catégories, modèles, ajout par e-mail"
+      },
+      "account": {
+        "title": "Compte et sécurité",
+        "hint": "Mot de passe, passkeys, double authentification, appareils"
+      },
+      "preferences": {
+        "title": "Préférences",
+        "hint": "Apparence, langue, notifications, calendrier"
+      },
+      "data": {
+        "title": "Données et aide",
+        "hint": "Confidentialité, sauvegarde, aide, app Android"
+      }
+    },
+    "signIn": "Connexion"
   },
   "common": {
     "loading": "Chargement…",
@@ -1309,7 +1326,7 @@
     },
     "settings": {
       "title": "Réglages",
-      "hint": "Foyer, compte, notifications, langue"
+      "hint": "Foyer, compte, préférences, données"
     },
     "notes": {
       "title": "Notes",
@@ -1318,6 +1335,10 @@
     "dates": {
       "title": "Dates importantes",
       "hint": "Anniversaires, fêtes, entretiens annuels"
+    },
+    "admin": {
+      "title": "Administration",
+      "hint": "Comptes, foyers, sauvegardes, tests d’envoi"
     }
   },
   "expenses": {

@@ -1,7 +1,7 @@
 "Two threads" identity: logo, paper background, cobalt, serif headings.
 • Drawn icons for categories, aisles and expenses.
+• Settings in four sections: Household, Account and security, Preferences, Data and help.
 • Today: "What shall we do?" bar at the bottom, live shopping, "Day wrapped".
 • Shopping: the list first, aisle chips, add bar at the bottom with the scanner.
 • Redesigned Tasks and More, animated check.
 • Calendar: Week view, quick add on the chosen day.
-• Monthly expense summary on the 1st.

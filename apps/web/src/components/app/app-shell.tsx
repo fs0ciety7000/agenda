@@ -8,6 +8,7 @@ import {
   Menu,
   Search,
   Settings,
+  ShieldUser,
   ShoppingCart,
   StickyNote,
   Sun,
@@ -40,13 +41,21 @@ type NavKey =
   | 'stats'
   | 'notes'
   | 'dates'
+  | 'admin'
   | 'settings'
   | 'more';
 /**
  * Barre du bas (mobile) : cinq onglets au plus. Les pages `mobile: false` sont regroupées dans
  * « Plus » (`/more`), qui n'existe que sur mobile (`desktop: false`).
  */
-const NAV: { href: string; key: NavKey; icon: LucideIcon; mobile?: false; desktop?: false }[] = [
+const NAV: {
+  href: string;
+  key: NavKey;
+  icon: LucideIcon;
+  mobile?: false;
+  desktop?: false;
+  adminOnly?: true;
+}[] = [
   { href: '/', key: 'today', icon: Sun },
   { href: '/tasks', key: 'tasks', icon: ListChecks },
   { href: '/shopping', key: 'shopping', icon: ShoppingCart },
@@ -56,6 +65,7 @@ const NAV: { href: string; key: NavKey; icon: LucideIcon; mobile?: false; deskto
   { href: '/dates', key: 'dates', icon: Cake, mobile: false },
   { href: '/calendar', key: 'calendar', icon: CalendarDays },
   { href: '/stats', key: 'stats', icon: BarChart3, mobile: false },
+  { href: '/admin', key: 'admin', icon: ShieldUser, mobile: false, adminOnly: true },
   { href: '/settings', key: 'settings', icon: Settings, mobile: false },
   { href: '/more', key: 'more', icon: Menu, desktop: false },
 ];
@@ -164,21 +174,23 @@ export function AppShell({ children }: { children: ReactNode }) {
             /
           </kbd>
         </button>
-        {NAV.filter((n) => n.desktop !== false).map(({ href, key, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            aria-current={isActive(href) ? 'page' : undefined}
-            className={cn(
-              'flex h-11 items-center gap-3 rounded-md px-3 text-[0.9375rem] text-text-muted transition-colors hover:bg-surface-muted hover:text-text',
-              'justify-center xl:justify-start',
-              isActive(href) && 'bg-surface-muted font-medium text-text',
-            )}
-          >
-            <Icon aria-hidden className="size-5 stroke-[1.5]" />
-            <span className="sr-only xl:not-sr-only">{t(`nav.${key}`)}</span>
-          </Link>
-        ))}
+        {NAV.filter((n) => n.desktop !== false && (!n.adminOnly || me.data?.isAdmin)).map(
+          ({ href, key, icon: Icon }) => (
+            <Link
+              key={href}
+              href={href}
+              aria-current={isActive(href) ? 'page' : undefined}
+              className={cn(
+                'flex h-11 items-center gap-3 rounded-md px-3 text-[0.9375rem] text-text-muted transition-colors hover:bg-surface-muted hover:text-text',
+                'justify-center xl:justify-start',
+                isActive(href) && 'bg-surface-muted font-medium text-text',
+              )}
+            >
+              <Icon aria-hidden className="size-5 stroke-[1.5]" />
+              <span className="sr-only xl:not-sr-only">{t(`nav.${key}`)}</span>
+            </Link>
+          ),
+        )}
       </nav>
 
       <main
@@ -294,6 +306,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         onOpenChange={setDrawer}
         pathname={pathname}
         members={shown?.household.members ?? []}
+        admin={me.data?.isAdmin ?? false}
       />
       {household && (
         <GlobalSearch householdId={household.id} open={search} onOpenChange={setSearch} />

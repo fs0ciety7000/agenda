@@ -21,7 +21,7 @@ test('double authentification : activée dans les Réglages, puis connexion avec
   page,
 }) => {
   const { email } = await signUpWithHousehold(page, 'Emma');
-  await openSettings(page);
+  await openSettings(page, 'Compte et sécurité');
   await page.getByRole('button', { name: 'Activer', exact: true }).click();
 
   // Mot de passe du compte d'abord, comme pour le coffre.
@@ -62,6 +62,6 @@ test('double authentification : activée dans les Réglages, puis connexion avec
   await page.getByRole('button', { name: 'Valider' }).click();
   await expect(page.getByRole('heading', { name: 'Bonjour Emma' })).toBeVisible();
 
-  await openSettings(page);
+  await openSettings(page, 'Compte et sécurité');
   await expect(page.getByText('9 codes de secours restants.')).toBeVisible();
 });

@@ -5,7 +5,7 @@ const HEADERS = { 'x-requested-with': 'tandem' };
 
 test('modèle de tâches : créé dans les Réglages, utilisé depuis Aujourd’hui', async ({ page }) => {
   await signUpWithHousehold(page, 'Grace');
-  await page.goto('/settings');
+  await page.goto('/settings/household');
   await page.getByRole('button', { name: 'Nouveau modèle' }).click();
   const editor = page.getByRole('dialog', { name: 'Nouveau modèle' });
   await editor.getByRole('textbox', { name: 'Nom', exact: true }).fill('Ménage du samedi');

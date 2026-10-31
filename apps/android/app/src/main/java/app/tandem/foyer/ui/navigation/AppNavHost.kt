@@ -463,12 +463,17 @@ private fun MainScaffold(
     }
     if (showDrawer) {
         NavDrawer(
-            destinations = drawerDestinations(withAbsences = (state.household?.members?.size ?: 0) > 1),
+            destinations = drawerDestinations(
+                withAbsences = (state.household?.members?.size ?: 0) > 1,
+                withAdmin = user?.isAdmin == true,
+            ),
             current = route,
             members = state.household?.members.orEmpty(),
             onOpen = { target ->
                 showDrawer = false
-                if (target == Tab.SETTINGS.route) {
+                if (target == ADMIN_ROUTE) {
+                    openWeb(context, container.webBaseUrl, "admin")
+                } else if (target == Tab.SETTINGS.route) {
                     nav.navigate(target) {
                         popUpTo(nav.graph.findStartDestination().id) { saveState = true }
                         launchSingleTop = true
@@ -705,7 +710,7 @@ private fun MainScaffold(
                             TwoFactorRow(
                                 online = state.online,
                                 status = container.passkeys::twoFactor,
-                                onManage = { openWeb(context, container.webBaseUrl, "settings#s-account") },
+                                onManage = { openWeb(context, container.webBaseUrl, "settings/account") },
                             )
                         }
                     },

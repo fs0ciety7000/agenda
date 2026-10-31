@@ -174,7 +174,7 @@ function CalendarStep({ householdId }: { householdId: string }) {
       </h2>
       <p className="text-[0.9375rem] text-text-muted">{t('calendarBody')}</p>
       <Button asChild variant="secondary" className="self-start">
-        <a href={connectUrl('/settings')}>{t('connectCalendar')}</a>
+        <a href={connectUrl('/settings/preferences')}>{t('connectCalendar')}</a>
       </Button>
     </Card>
   );

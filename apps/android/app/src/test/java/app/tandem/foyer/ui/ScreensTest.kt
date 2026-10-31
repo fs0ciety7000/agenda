@@ -19,6 +19,9 @@ import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import org.junit.Assert.assertTrue
+import androidx.compose.ui.test.onLast
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.hasScrollToIndexAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.performScrollToNode
@@ -354,10 +357,27 @@ class ScreensTest {
         compose.onNodeWithText("Plus").assertIsDisplayed()
         listOf("Dépenses", "Notes", "Dates importantes", "Journal et corbeille", "Absences", "Aide", "Réglages")
             .forEach { compose.onNodeWithText(it).assertIsDisplayed() }
-        compose.onNodeWithText("Foyer, compte, notifications, langue").assertIsDisplayed()
+        compose.onNodeWithText("Foyer, compte, préférences, données").assertIsDisplayed()
+        // Administration : seulement pour un compte admin.
+        compose.onNodeWithText("Administration").assertDoesNotExist()
         shot("nav-drawer")
         compose.onNodeWithText("Notes").performClick()
         assertEquals(listOf("notes"), opened)
+    }
+
+    @Test
+    fun tiroir_plus_admin() {
+        val opened = mutableListOf<String>()
+        screen {
+            app.tandem.foyer.ui.navigation.NavDrawer(
+                destinations = app.tandem.foyer.ui.navigation.drawerDestinations(withAbsences = false, withAdmin = true),
+                current = null,
+                onOpen = { opened += it },
+                onDismiss = {},
+            )
+        }
+        compose.onNodeWithText("Administration").performClick()
+        assertEquals(listOf(app.tandem.foyer.ui.navigation.ADMIN_ROUTE), opened)
     }
 
     /** Les six illustrations d'états vides (même tracé que le site), en clair et en sombre. */
@@ -420,12 +440,37 @@ class ScreensTest {
                 push = PushState.Registered,
             )
         }
-        // Les pages du foyer sont dans le tiroir « Plus » : l'écran commence par les réglages.
+        // Sommaire : les quatre rubriques, dans l'ordre du site ; les pages du foyer sont dans « Plus ».
         compose.onNodeWithText("Réglages").assertIsDisplayed()
         compose.onNodeWithText("Qui a payé quoi, et qui doit combien.").assertDoesNotExist()
+        listOf("Foyer", "Compte et sécurité", "Préférences", "Données et aide").forEach {
+            compose.onNodeWithText(it).assertIsDisplayed()
+        }
+        shot("settings")
+        // Une rubrique s'ouvre, puis « Réglages » ramène au sommaire.
+        compose.onNodeWithText("Préférences").performClick()
         compose.onNodeWithText("✓ Synchronisé avec « Commun G & N »").performScrollTo().assertIsDisplayed()
         compose.onNodeWithText("Actives : ce téléphone est enregistré.", substring = true).performScrollTo().assertIsDisplayed()
-        shot("settings")
+        shot("settings-preferences")
+        compose.onNodeWithText("Réglages").performScrollTo().performClick()
+        compose.onNodeWithText("Données et aide").assertIsDisplayed()
+    }
+
+    @Test
+    fun reglages_compte() {
+        var signedOut = false
+        screen {
+            SettingsScreen(
+                state, User("u", "grace@example.be", "Grace"), null,
+                ReminderSettings(), notificationsAllowed = true, version = "0.2.0",
+                onReminders = {}, onRequestNotifications = {}, onOpenWeb = {}, onSignOut = { signedOut = true },
+                initialSection = app.tandem.foyer.ui.settings.SettingsSection.ACCOUNT,
+            )
+        }
+        compose.onNodeWithText("Compte et sécurité").assertIsDisplayed()
+        compose.onNodeWithText("Se déconnecter").performScrollTo().performClick()
+        compose.onAllNodesWithText("Se déconnecter").onLast().performClick()
+        assertTrue(signedOut)
     }
 
     @Test

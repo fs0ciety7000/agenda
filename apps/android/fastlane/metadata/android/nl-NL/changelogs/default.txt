@@ -1,7 +1,6 @@
 Identiteit "Twee draden": logo, papieren achtergrond, kobalt, schreeftitels.
 • Getekende iconen voor categorieën, afdelingen en uitgaven.
+• Instellingen in vier rubrieken: Huishouden, Account en beveiliging, Voorkeuren, Gegevens en hulp.
 • Vandaag: balk "Wat gaan we doen?" onderaan, live boodschappen, "Dag afgerond".
 • Boodschappen: eerst de lijst, afdelingschips, toevoegbalk onderaan met de scanner.
 • Taken en Meer vernieuwd, geanimeerd vinkje.
-• Agenda: weekweergave, snel toevoegen op de gekozen dag.
-• Maandoverzicht van de uitgaven op de 1e.

@@ -7,7 +7,7 @@ description: Installer l'app, mises à jour, widgets, raccourcis, dictée, rappe
 
 ## Installer
 
-- **Depuis le site** : **Réglages → Compte → Application Android → Télécharger**, puis
+- **Depuis le site** : **Réglages → Données et aide → Application Android → Télécharger**, puis
   *Installer* (Android demande la première fois d'autoriser le navigateur à « installer des
   applications inconnues »). L'app se **met ensuite à jour d'elle-même** : un bandeau « Nouvelle
   version disponible » propose l'installation, vos données sont conservées.
@@ -32,5 +32,5 @@ description: Installer l'app, mises à jour, widgets, raccourcis, dictée, rappe
 
 ## Déconnexion
 
-**Réglages → Se déconnecter** efface du téléphone la copie locale des tâches et l'identifiant de
+**Réglages → Compte et sécurité → Se déconnecter** efface du téléphone la copie locale des tâches et l'identifiant de
 notification.

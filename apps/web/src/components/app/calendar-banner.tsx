@@ -24,7 +24,7 @@ export function CalendarBanner() {
       <div className="flex flex-col gap-1 text-sm">
         <p>{errorText(link.errorCode, link.summary)}</p>
         <Link
-          href="/settings"
+          href="/settings/preferences"
           className="font-medium text-accent underline-offset-4 hover:underline"
         >
           {t('fix')}

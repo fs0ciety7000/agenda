@@ -5,8 +5,10 @@ description: Page d'administration réservée aux comptes listés dans ADMIN_EMA
 
 # Administration
 
-La page **Réglages → Administration** n'apparaît que pour les comptes dont l'adresse figure dans
-la variable serveur `ADMIN_EMAILS` (voir [Déploiement](../deployment.md)).
+La page **Administration** n'apparaît que pour les comptes dont l'adresse figure dans la variable
+serveur `ADMIN_EMAILS` (voir [Déploiement](../deployment.md)). On l'ouvre par la tuile
+**Administration** du tiroir « Plus » (téléphone) ou par le lien de la barre latérale
+(ordinateur) ; dans l'app Android, la tuile ouvre la page du site.
 
 | Onglet | Contenu |
 |---|---|

@@ -22,7 +22,7 @@ test('passkey : ajoutée dans les Réglages, puis connexion sans mot de passe', 
   });
 
   await signUpWithHousehold(page, 'Ada');
-  await page.goto('/settings');
+  await page.goto('/settings/account');
   await page.getByRole('button', { name: 'Ajouter une passkey' }).click();
   await expect(page.getByText('Passkey ajoutée')).toBeVisible();
   await expect(page.getByText(/Ajoutée le/)).toBeVisible();
@@ -32,6 +32,6 @@ test('passkey : ajoutée dans les Réglages, puis connexion sans mot de passe', 
   await page.getByRole('button', { name: 'Se connecter avec une passkey' }).click();
   await expect(page.getByRole('heading', { name: 'Bonjour Ada' })).toBeVisible();
 
-  await page.goto('/settings');
+  await page.goto('/settings/account');
   await expect(page.getByText(/Utilisée le/)).toBeVisible();
 });

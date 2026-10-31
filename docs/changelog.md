@@ -15,6 +15,15 @@ d'elle-même (ou via Google Play).
 
 ## 31 octobre 2026
 
+### Réglages en quatre rubriques (#128)
+
+- 🛠 **Réglages rangés** en quatre rubriques : Foyer, Compte et sécurité, Préférences, Données et
+  aide, chacune sur sa page, sur le site comme sur Android.
+- 🛠 **Administration** (administrateurs seulement) : une tuile du tiroir « Plus » et un lien de
+  la barre latérale, au lieu d'une section des Réglages.
+- 🛠 Les pages d'erreur (page introuvable, mise à jour en cours, maintenance) reprennent elles
+  aussi l'identité « Deux fils ».
+
 ### Icônes dessinées à la place des émojis (#126)
 
 - 🛠 **Catégories, modèles, rayons des courses et dépenses** ont des icônes au trait, en cobalt et

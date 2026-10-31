@@ -39,7 +39,7 @@ export function PrivacySettings() {
     const err = params.get('error');
     if (err === 'GOOGLE_ALREADY_LINKED' || err === 'GOOGLE_FAILED')
       toast({ message: te(err), tone: 'error' });
-    if (params.get('linked') || err) router.replace('/settings', { scroll: false });
+    if (params.get('linked') || err) router.replace('/settings/data', { scroll: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
