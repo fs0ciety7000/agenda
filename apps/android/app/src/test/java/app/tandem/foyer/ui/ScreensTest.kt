@@ -466,7 +466,7 @@ class ScreensTest {
                 onRefresh = {}, onAdd = {}, onToggle = {}, onRemove = {}, onClearDone = {},
             )
         }
-        compose.onNodeWithText("🧀 Crèmerie et œufs  1").performClick()
+        compose.onNodeWithText("Crèmerie et œufs  1").performClick()
         compose.onNodeWithText("Lait").assertIsDisplayed()
         compose.onNodeWithText("Tomates").assertDoesNotExist()
         compose.onNodeWithText("Tout  2").performClick()
@@ -489,7 +489,7 @@ class ScreensTest {
         }
         compose.onNodeWithContentDescription("Dicter la tâche").performClick()
         assertEquals(1, dictated)
-        compose.onNodeWithText("🧹 Ménage du samedi").performClick()
+        compose.onNodeWithText("Ménage du samedi").performClick()
         compose.onNodeWithText("Aspirateur · Salle de bain").assertIsDisplayed()
         compose.onNodeWithText("Demain").performClick()
         compose.onNodeWithText("Créer les 2 tâches").performClick()

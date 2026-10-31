@@ -208,7 +208,7 @@ fun TaskRow(
                     metaParts.forEachIndexed { i, part ->
                         if (i > 0) append(" · ")
                         if (i == categoryIndex && categoryIcon != null) {
-                            appendInlineContent(CATEGORY_ICON, "")
+                            appendInlineContent(CATEGORY_ICON)
                             append(" ")
                         }
                         append(part)
