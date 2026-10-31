@@ -125,7 +125,11 @@ const fr: Content = {
     menu: 'Menu',
   },
   lang: { label: 'Langue', current: 'fr' },
-  motion: { pause: 'Mettre l’animation en pause', play: 'Relancer l’animation', next: 'Carte suivante' },
+  motion: {
+    pause: 'Mettre l’animation en pause',
+    play: 'Relancer l’animation',
+    next: 'Carte suivante',
+  },
   hero: {
     badge: 'Gratuit · sans publicité · web et Android',
     title: ['Chacun son tour,', 'c’est mieux à deux.'],

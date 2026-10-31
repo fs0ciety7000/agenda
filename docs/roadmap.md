@@ -333,10 +333,13 @@ dans `docs/brand/`. Maquettes : tableau « Tandem · Maquettes du site », page 
   les grands titres, nouveau logo et icônes (Android, web, site, doc, Play), réglage « Couleur »
   retiré (S/M) 🌐🤖🪧 (#122)
 - [x] Site vitrine en page F : pile de tâches qui se distribue, fil qui se dessine, semaine qui
-  s'allume, footer gravé (village de nuit), sans vidéo ni bibliothèque d'animation (CSS), bouton
-  pause ; trois langues, Lighthouse mobile 96-97 / 100 / 100 / 100 (M) 🪧 (#123)
+  s'allume, footer gravé (village de nuit), sans vidéo, animations en CSS (motion seulement pour jeter la
+  carte du dessus d'un geste), bouton pause ; trois langues, Lighthouse mobile 96-97 / 100 / 100 / 100 (M) 🪧 (#123)
 - [x] Images de partage du site refaites (`scripts/generate-icons.mjs`) 🪧 (#123)
-- [ ] Documentation (Docusaurus) aux couleurs de l'identité (S) 🪧
+- [x] Documentation (Docusaurus) aux couleurs de l'identité : papier, nuit, cobalt, titres en
+  Instrument Serif, polices servies par le site (S) 🪧 (#123)
+- [ ] Captures Android de la doc (`docs/screenshots/android`) dans la nouvelle identité : étiquette
+  `captures` puis copie de l'artefact (S) 🤖
 - [ ] Accueil de l'app web plus léger : Lighthouse ≥ 90 stable sur `/` en CI (S) 🌐
 - [x] Captures de l'app du site refaites dans la nouvelle identité 🪧 (#123) ; celles de la fiche
   Play se refont au lancement du workflow de la fiche 🤖

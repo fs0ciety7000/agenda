@@ -8,7 +8,7 @@ const appUrl = process.env.APP_URL ?? 'https://tandem-agenda.app';
 
 const config: Config = {
   title: 'Tandem',
-  tagline: 'L’équilibre parfait pour votre foyer — documentation',
+  tagline: 'Deux vies, un seul rythme — documentation',
   favicon: 'img/favicon.png',
   url,
   baseUrl: '/',

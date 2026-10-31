@@ -22,6 +22,8 @@ d'elle-même (ou via Google Play).
 - 🛠 Plus de vidéo : la page est plus légère et s'anime en CSS ; un bouton met les animations en
   pause, et elles s'arrêtent si l'appareil demande moins de mouvement.
 - 🛠 Nouvelles images de partage et captures de l'app dans les trois langues.
+- ✨ La carte du dessus de la pile se jette d'un geste (ou avec « Carte suivante »).
+- 🛠 **Documentation** aux couleurs « Deux fils » (papier, nuit, cobalt, titres en serif).
 
 ### Identité « Deux fils » (#122)
 
