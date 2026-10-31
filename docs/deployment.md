@@ -348,6 +348,18 @@ Sécurité : un compte Google n'est jamais rattaché automatiquement à un compt
 même adresse (prise de contrôle possible). Pour lier Google à un compte créé avec un mot de passe :
 **Réglages → Données & confidentialité → Lier Google**.
 
+### Page de maintenance (503)
+
+`infra/error-pages/503.html` : page autonome (polices et logo intégrés, trois langues selon le
+navigateur, nouvel essai toutes les 30 s), générée par `node scripts/generate-icons.mjs`. Elle
+n'est pas servie par l'app : la déposer là où le proxy affiche ses erreurs quand `web` ne répond
+pas.
+
+- **Cloudflare** : *Rules → Custom Error Rules* (ou *Custom Pages → 5XX errors*), avec l'adresse
+  `https://decouvrir.tandem-agenda.app/503.html` (copie publiée par le site vitrine). Selon l'offre,
+  Cloudflare peut exiger un marqueur dans la page : le vérifier dans l'aperçu avant de publier.
+- **Coolify / Traefik** : un middleware `errors` pointant vers un petit service qui sert ce fichier.
+
 ## 10. Surveillance et maintenance
 
 Vue complète (sondes internes, page `/status`, alertes, Uptime Kuma, Prometheus) :

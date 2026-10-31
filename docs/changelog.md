@@ -15,6 +15,11 @@ d'elle-même (ou via Google Play).
 
 ## 31 octobre 2026
 
+### Page de maintenance aux couleurs « Deux fils » (#126)
+
+- 🛠 Pendant une mise à jour, la page d'attente reprend la nouvelle identité, dans votre langue,
+  et réessaie toute seule.
+
 ### Captures Android dans la nouvelle identité (#125)
 
 - 🛠 Les captures de l'app Android dans le guide et sur la fiche Google Play montrent l'identité

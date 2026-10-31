@@ -124,8 +124,84 @@ async function play() {
   }
 }
 
+/**
+ * Page de maintenance (erreur 503) autonome : un seul fichier HTML, polices et symbole intégrés,
+ * trois langues (langue du navigateur, anglais sinon), nouvel essai automatique. À déposer là où
+ * le proxy sert ses pages d'erreur (docs/deployment.md, « Page de maintenance »).
+ */
+function maintenancePage() {
+  const T = {
+    fr: ['Erreur 503', 'Tandem revient dans un instant', 'Le service est momentanément indisponible, souvent le temps d’une mise à jour. Vos données sont en sécurité et la page se recharge d’elle-même.', 'Réessayer', 'Retour à l’accueil', 'Nouvel essai automatique dans {s} s'],
+    en: ['Error 503', 'Tandem will be back in a moment', 'The service is briefly unavailable, usually during an update. Your data is safe and this page reloads by itself.', 'Try again', 'Back to home', 'Trying again automatically in {s} s'],
+    nl: ['Fout 503', 'Tandem is zo terug', 'De dienst is even niet beschikbaar, meestal tijdens een update. Je gegevens zijn veilig en deze pagina laadt zichzelf opnieuw.', 'Opnieuw proberen', 'Terug naar de start', 'Automatisch opnieuw over {s} s'],
+  };
+  return `<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="${PAPER}" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="${NIGHT}" media="(prefers-color-scheme: dark)">
+<title>Tandem · 503</title>
+<!-- Généré par scripts/generate-icons.mjs — ne pas éditer. -->
+<style>
+${FONTS}
+:root{--bg:${PAPER};--card:#fff;--text:${INK};--muted:#5C5A6E;--accent:${COBALT};--accent-fg:#fff;--border:#DCD4C4;--a:${COBALT}}
+@media (prefers-color-scheme:dark){:root{--bg:${NIGHT};--card:#171A3F;--text:${PAPER};--muted:${MIST};--accent:${LILAC};--accent-fg:${NIGHT};--border:#2E3263;--a:${LILAC}}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:flex;flex-direction:column;background:var(--bg);color:var(--text);font:400 17px/1.55 BrandSans,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+header{padding:28px 32px}
+.logo{display:inline-flex;align-items:center;gap:10px;color:var(--text);text-decoration:none;font:400 28px/1 BrandSerif,Georgia,serif}
+main{flex:1;display:grid;place-items:center;padding:24px 16px 48px}
+.card{max-width:34rem;width:100%;background:var(--card);border:1px solid var(--border);border-radius:28px;padding:48px 32px;text-align:center}
+.wheels{width:132px;height:88px;margin:0 auto 24px}
+.wheels g{transform-box:fill-box;transform-origin:center;animation:spin 6s linear infinite}
+.wheels g+g{animation-direction:reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.wheels g{animation:none}}
+.code{margin:0;font:500 13px/1 BrandSans,system-ui,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+h1{margin:12px 0;font:400 clamp(2rem,6vw,2.75rem)/1.05 BrandSerif,Georgia,serif;letter-spacing:-.02em}
+p{margin:0 auto;max-width:28rem;color:var(--muted)}
+.actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:28px}
+.btn{display:inline-flex;align-items:center;min-height:48px;padding:0 24px;border-radius:999px;font:600 16px/1 BrandSans,system-ui,sans-serif;text-decoration:none;cursor:pointer;border:0}
+.primary{background:var(--accent);color:var(--accent-fg)}
+.ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn:focus-visible{outline:2px solid var(--a);outline-offset:2px}
+.retry{margin-top:20px;font-size:14px}
+footer{padding:24px;text-align:center;font-size:14px}
+footer a{color:var(--muted)}
+</style>
+</head>
+<body>
+<header><a class="logo" href="https://tandem-agenda.app/"><svg width="36" height="36" viewBox="0 0 100 100" aria-hidden="true"><path fill="var(--a)" d="${left}"/><path fill="${APRICOT}" d="${right}"/></svg>Tandem</a></header>
+<main>
+<div class="card" role="status">
+<svg class="wheels" viewBox="0 0 100 100" aria-hidden="true"><g><path fill="var(--a)" d="${left}"/></g><g><path fill="${APRICOT}" d="${right}"/></g></svg>
+<p class="code" data-t="0">${T.fr[0]}</p>
+<h1 data-t="1">${T.fr[1]}</h1>
+<p data-t="2">${T.fr[2]}</p>
+<div class="actions"><button class="btn primary" type="button" onclick="location.reload()" data-t="3">${T.fr[3]}</button><a class="btn ghost" href="https://tandem-agenda.app/" data-t="4">${T.fr[4]}</a></div>
+<p class="retry" aria-live="off" id="retry"></p>
+</div>
+</main>
+<footer><a href="https://tandem-agenda.app/">tandem-agenda.app</a></footer>
+<script>
+(function(){var T=${JSON.stringify(T)};var l=(navigator.language||'en').slice(0,2);if(!T[l])l='en';document.documentElement.lang=l;
+document.querySelectorAll('[data-t]').forEach(function(e){e.textContent=T[l][+e.getAttribute('data-t')]});
+var s=30,r=document.getElementById('retry');(function tick(){r.textContent=T[l][5].replace('{s}',s);if(s--<=0){location.reload();return}setTimeout(tick,1000)})();})();
+</script>
+</body>
+</html>
+`;
+}
+
 await play();
 if (!process.argv.includes('--play')) {
+  mkdirSync(join(ROOT, 'infra/error-pages'), { recursive: true });
+  writeFileSync(join(ROOT, 'infra/error-pages/503.html'), maintenancePage());
+  // Copie publique (site vitrine) : adresse à donner à Cloudflare pour sa page d'erreur 5xx.
+  writeFileSync(join(ROOT, 'apps/site/public/503.html'), maintenancePage());
   for (const [lang, text] of Object.entries(OG_TEXT)) {
     await shot(`apps/site/public/img/og/${lang}.png`, ogImage(text), 1200, 630);
   }
