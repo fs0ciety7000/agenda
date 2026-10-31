@@ -15,7 +15,7 @@ d'elle-même (ou via Google Play).
 
 ## 31 octobre 2026
 
-### Captures Android dans la nouvelle identité (#124)
+### Captures Android dans la nouvelle identité (#125)
 
 - 🛠 Les captures de l'app Android dans le guide et sur la fiche Google Play montrent l'identité
   « Deux fils ».
