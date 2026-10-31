@@ -21,7 +21,8 @@ d'elle-même (ou via Google Play).
   aide, chacune sur sa page, sur le site comme sur Android.
 - 🛠 **Administration** (administrateurs seulement) : une tuile du tiroir « Plus » et un lien de
   la barre latérale, au lieu d'une section des Réglages.
-- ⚙️ La page de maintenance est servie par le proxy du serveur (Traefik).
+- 🛠 Les pages d'erreur (page introuvable, mise à jour en cours, maintenance) reprennent elles
+  aussi l'identité « Deux fils ».
 
 ### Icônes dessinées à la place des émojis (#126)
 

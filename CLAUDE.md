@@ -64,9 +64,9 @@ Fichiers importés, à respecter au même titre que celui-ci :
 - Réglages : sommaire de quatre rubriques (Foyer, Compte et sécurité, Préférences, Données et aide),
   une sous-page chacune (`/settings/…` ; sur Android, rubriques dans l'écran) ; Administration
   hors Réglages : tuile du tiroir « Plus » et barre latérale, admin seulement (#128).
-- Page de maintenance : servie par Traefik (configuration dynamique de Coolify,
-  `infra/traefik/tandem-maintenance.yaml`, routeur de secours), source sur le site vitrine ;
-  pas de pages d'erreur Cloudflare, payantes (#128).
+- Pages d'erreur et de maintenance : service Coolify `error-pages` commun au serveur (dépôt
+  `fs0ciety7000/coolify`, `error-pages/sites/tandem/`), route Traefik de secours ; plus de copie
+  dans ce dépôt, pas de pages d'erreur Cloudflare, payantes (#128).
 - Éditeur déclaré dans les données structurées du site : CM Interactive, studio de CARDOR Media
   (`@id` partagés avec interactive.cardormedia.com et cardormedia.com) (#97).
 

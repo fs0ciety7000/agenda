@@ -360,8 +360,9 @@ maintenance restée dans l'ancien style, Réglages où l'on se perd.
   Données et aide), même structure sur Android ; anciens liens redirigés (M) 🌐🤖 (#128)
 - [x] Administration sortie des Réglages : tuile dédiée dans le tiroir « Plus » et la barre
   latérale, pour l'admin seulement ; sur Android, la tuile ouvre la page du site (S) 🌐🤖 (#128)
-- [x] Page de maintenance servie par Traefik (configuration dynamique Coolify, routeur de
-  secours) : les pages d'erreur Cloudflare sont payantes (S) 🪧 (#128)
+- [x] Page de maintenance servie par Traefik : c'était déjà le rôle du service Coolify
+  `error-pages` (dépôt `coolify`), dont les pages Tandem passent à « Deux fils » ; la copie de ce
+  dépôt est retirée (S) 🪧 (#128)
 
 ### Propositions de design
 

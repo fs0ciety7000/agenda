@@ -11,5 +11,3 @@ apps/docs/package-lock.json
 apps/docs/static/openapi.json
 apps/docs/static/swagger
 # Généré par scripts/generate-icons.mjs.
-infra/error-pages
-apps/site/public/503.html
