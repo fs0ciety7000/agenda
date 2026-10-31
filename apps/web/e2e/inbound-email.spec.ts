@@ -6,7 +6,7 @@ import { signUpWithHousehold } from './helpers';
 test('ajouter par e-mail : créer, remplacer et désactiver son adresse', async ({ page }) => {
   test.skip(!process.env.INBOUND_EMAIL_ADDRESS, 'INBOUND_EMAIL_ADDRESS non configuré');
   await signUpWithHousehold(page, 'Grace');
-  await page.goto('/settings');
+  await page.goto('/settings/household');
   await page.getByRole('button', { name: 'Créer mon adresse' }).click();
   const input = page.getByRole('textbox', { name: 'Votre adresse pour créer des tâches' });
   await expect(input).toHaveValue(/^[a-f0-9]{32}@/);

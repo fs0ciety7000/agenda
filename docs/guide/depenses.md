@@ -100,7 +100,7 @@ Le **1er de chaque mois** (à partir de 8 h), le foyer reçoit le bilan du mois 
 des dépenses communes, leur nombre, le budget commun s'il y en a un, et ce que chacun a payé
 pour le foyer, par ordre alphabétique : c'est une information, pas un classement. Les dépenses
 personnelles n'y figurent pas. Rien n'est envoyé un mois sans dépense commune. Toucher le bilan
-ouvre les dépenses de ce mois. Pour ne plus le recevoir : **Réglages → Notifications → Bilan des
+ouvre les dépenses de ce mois. Pour ne plus le recevoir : **Réglages → Préférences → Notifications → Bilan des
 dépenses du mois écoulé**.
 
 ## Sur 6 mois
@@ -129,7 +129,7 @@ partage** : changer les proportions ne réécrit pas le passé.
   impair va à l'un des deux).
 - Tout le foyer voit les dépenses communes et les avances ; une dépense perso n'est visible que
   de la personne qui l'a payée.
-- Les dépenses font partie de l'**export de vos données** (Réglages → Données & confidentialité).
+- Les dépenses font partie de l'**export de vos données** (Réglages → Données et aide → Données & confidentialité).
   À la suppression d'un compte, ses dépenses perso sont effacées ; les dépenses communes restent
   pour que les soldes de l'autre restent justes, au nom d'« Ancien membre ».
 - Sur Android, les dépenses demandent une connexion (budget et export compris) ; les proportions se règlent sur le site, et

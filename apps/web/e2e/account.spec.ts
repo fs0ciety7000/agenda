@@ -3,7 +3,7 @@ import { openSettings, signUpWithHousehold } from './helpers';
 
 test('changer son mot de passe depuis les Réglages, puis se reconnecter avec', async ({ page }) => {
   const { email } = await signUpWithHousehold(page, 'Grace');
-  await openSettings(page);
+  await openSettings(page, 'Compte et sécurité');
 
   await page.getByLabel('Mot de passe actuel').fill('pas le bon mot de passe');
   await page.getByLabel('Nouveau mot de passe', { exact: true }).fill('une phrase toute neuve');

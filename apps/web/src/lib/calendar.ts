@@ -23,7 +23,7 @@ export const useAvailableCalendars = (hid: string, enabled: boolean) =>
   });
 
 /** URL de démarrage de l'autorisation Google Calendar (navigation pleine page). */
-export const connectUrl = (next = '/settings') =>
+export const connectUrl = (next = '/settings/preferences') =>
   `/v1/calendar/google/connect?next=${encodeURIComponent(next)}`;
 
 export function useCalendarMutations(hid: string) {

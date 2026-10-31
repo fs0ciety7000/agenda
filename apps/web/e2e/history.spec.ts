@@ -33,7 +33,7 @@ test('supprimer, annuler ; corbeille, journal et export', async ({ page }) => {
 
   // Corbeille.
   await remove();
-  await page.goto('/settings');
+  await page.goto('/settings/household');
   await page.getByRole('link', { name: 'Ouvrir le journal' }).click();
   await expect(page.getByRole('heading', { name: 'Journal et corbeille' })).toBeVisible();
   await expect(page.getByText('a supprimé « Payer la facture »').first()).toBeVisible();

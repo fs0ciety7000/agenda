@@ -70,7 +70,7 @@ export function CalendarSettings() {
         ),
         tone: 'error',
       });
-    if (params.get('calendar') || err) router.replace('/settings', { scroll: false });
+    if (params.get('calendar') || err) router.replace('/settings/preferences', { scroll: false });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

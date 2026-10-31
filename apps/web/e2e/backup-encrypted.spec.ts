@@ -12,7 +12,7 @@ test('sauvegarde chiffrée : phrase de passe au téléchargement, demandée à l
   await page.keyboard.press('Enter');
   await expect(page.getByRole('checkbox', { name: 'Thé vert' })).toBeVisible();
 
-  await openSettings(page);
+  await openSettings(page, 'Données et aide');
   await page.getByLabel('Chiffrer avec une phrase de passe').check();
   const download = page.getByRole('button', { name: 'Télécharger la sauvegarde' });
   await page.getByLabel('Phrase de passe', { exact: true }).fill('quatre mots pour la sauvegarde');

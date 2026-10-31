@@ -13,7 +13,7 @@ test('sauvegarde du foyer : téléchargée avec le mot de passe, restaurée par 
   await page.keyboard.press('Enter');
   await expect(page.getByRole('checkbox', { name: 'Café en grains' })).toBeVisible();
 
-  await openSettings(page);
+  await openSettings(page, 'Données et aide');
   await page.getByRole('button', { name: 'Télécharger la sauvegarde' }).click();
   // Elle contient les notes sensibles : mot de passe demandé, comme pour les afficher.
   const dialog = page.getByRole('dialog', { name: 'Confirmer pour télécharger' });
@@ -42,7 +42,7 @@ test('sauvegarde du foyer : téléchargée avec le mot de passe, restaurée par 
   await p2.getByRole('button', { name: 'Continuer' }).click();
   await p2.goto('/shopping');
   await expect(p2.getByRole('checkbox', { name: 'Café en grains' })).toBeVisible();
-  await openSettings(p2);
+  await openSettings(p2, 'Foyer');
   await expect(p2.getByRole('list', { name: 'Membres' }).getByText('en attente')).toBeVisible();
   await other.close();
 });

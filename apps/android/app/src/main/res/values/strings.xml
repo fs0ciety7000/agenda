@@ -868,7 +868,7 @@
     <!-- Tiroir « Plus », refonte « Duo » -->
     <string name="drawer_expenses_hint">Who paid what, and who owes how much</string>
     <string name="drawer_dates_hint">Birthdays, holidays, yearly check-ups</string>
-    <string name="drawer_settings_hint">Household, account, notifications, language</string>
+    <string name="drawer_settings_hint">Household, account, preferences, data</string>
     <string name="day_wrapped_title">Day wrapped</string>
     <plurals name="day_wrapped_body"><item quantity="one">Today\'s task is done. Enjoy the rest of your day.</item><item quantity="other">All %d of today\'s tasks are done. Enjoy the rest of your day.</item></plurals>
     <!-- Barre d'ajout du calendrier : jour de la semaine, ou date plus lointaine -->
@@ -879,4 +879,17 @@
     <string name="next_week">Next week</string>
     <string name="calendar_view_month">Month</string>
     <string name="calendar_view_week">Week</string>
+    <string name="settings_section_household">Household</string>
+    <string name="settings_section_household_hint">Members, categories, templates</string>
+    <string name="settings_section_account">Account and security</string>
+    <string name="settings_section_account_hint">Passkeys, two-factor authentication, devices, sign out</string>
+    <string name="settings_section_preferences">Preferences</string>
+    <string name="settings_section_preferences_hint">Calendar, reminders, notifications, language</string>
+    <string name="settings_section_data">Data and help</string>
+    <string name="settings_section_data_hint">Backup, help, privacy</string>
+    <string name="settings_help">Help</string>
+    <string name="settings_data_web">Data and privacy on the website</string>
+    <string name="settings_household_web_hint">Categories, task templates and adding by email are managed on the website.</string>
+    <string name="settings_household_web">Manage on the website</string>
+    <string name="nav_admin">Administration</string>
 </resources>

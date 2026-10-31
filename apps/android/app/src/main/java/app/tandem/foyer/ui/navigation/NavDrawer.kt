@@ -52,14 +52,19 @@ import app.tandem.foyer.R
 /** Une page du tiroir « Plus » : son itinéraire, son libellé et son icône. */
 data class DrawerDestination(val route: String, @StringRes val label: Int, @DrawableRes val icon: Int)
 
+/** Tuile Administration : ouvre la page `/admin` du site (pas d'écran dans l'app). */
+const val ADMIN_ROUTE = "admin"
+
 /** Pages sans place dans la barre du bas, dans l'ordre du site. */
-fun drawerDestinations(withAbsences: Boolean): List<DrawerDestination> = listOfNotNull(
+fun drawerDestinations(withAbsences: Boolean, withAdmin: Boolean = false): List<DrawerDestination> = listOfNotNull(
     DrawerDestination("expenses", R.string.expenses_title, R.drawable.ic_drawer_wallet),
     DrawerDestination("notes", R.string.notes_title, R.drawable.ic_drawer_note),
     DrawerDestination("dates", R.string.dates_title, R.drawable.ic_drawer_cake),
     DrawerDestination("history", R.string.settings_history, R.drawable.ic_drawer_history),
     if (withAbsences) DrawerDestination("absences", R.string.absences_title, R.drawable.ic_drawer_away) else null,
     DrawerDestination("report", R.string.report_section, R.drawable.ic_drawer_flag),
+    // Administration : page du site, pour l'admin seulement.
+    if (withAdmin) DrawerDestination(ADMIN_ROUTE, R.string.nav_admin, R.drawable.ic_drawer_admin) else null,
     DrawerDestination("settings", R.string.nav_settings, R.drawable.ic_drawer_settings),
 )
 

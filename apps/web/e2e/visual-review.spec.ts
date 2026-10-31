@@ -190,6 +190,10 @@ for (const scheme of ['light', 'dark'] as const) {
       ['review', '/review'],
       ['history', '/history'],
       ['settings', '/settings'],
+      ['settings-household', '/settings/household'],
+      ['settings-account', '/settings/account'],
+      ['settings-preferences', '/settings/preferences'],
+      ['settings-data', '/settings/data'],
       ['about', '/about'],
       ['help', '/help'],
     ] as const) {

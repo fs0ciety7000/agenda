@@ -8,6 +8,7 @@ import {
   History,
   type LucideIcon,
   Settings,
+  ShieldUser,
   Sparkles,
   StickyNote,
   UtensilsCrossed,
@@ -24,8 +25,19 @@ import { MemberAvatar } from './member-avatar';
 export const MORE_LINKS: {
   href: string;
   key:
-    'expenses' | 'notes' | 'dates' | 'meals' | 'stats' | 'review' | 'history' | 'help' | 'settings';
+    | 'expenses'
+    | 'notes'
+    | 'dates'
+    | 'meals'
+    | 'stats'
+    | 'review'
+    | 'history'
+    | 'help'
+    | 'admin'
+    | 'settings';
   icon: LucideIcon;
+  /** Réservé aux administrateurs (ADMIN_EMAILS). */
+  adminOnly?: true;
 }[] = [
   { href: '/expenses', key: 'expenses', icon: Wallet },
   { href: '/notes', key: 'notes', icon: StickyNote },
@@ -35,6 +47,7 @@ export const MORE_LINKS: {
   { href: '/review', key: 'review', icon: Sparkles },
   { href: '/history', key: 'history', icon: History },
   { href: '/help', key: 'help', icon: CircleHelp },
+  { href: '/admin', key: 'admin', icon: ShieldUser, adminOnly: true },
   { href: '/settings', key: 'settings', icon: Settings },
 ];
 
@@ -42,20 +55,24 @@ const BIG = ['expenses', 'dates'] as const;
 
 /**
  * Grille des autres pages (refonte « Duo ») : deux grandes tuiles (Dépenses, Dates), les autres
- * en petites tuiles, et Réglages en dernier, sur une ligne avec les membres du foyer.
+ * en petites tuiles (Administration pour l'admin seulement), et Réglages en dernier, sur une
+ * ligne avec les membres du foyer.
  */
 export function MoreGrid({
   pathname,
   members,
+  admin = false,
   onNavigate,
 }: {
   pathname: string;
   /** Membres du foyer (pastilles de la ligne Réglages). */
   members: HouseholdMemberDto[];
+  /** Compte administrateur : ajoute la tuile Administration. */
+  admin?: boolean;
   onNavigate?: () => void;
 }) {
   const t = useTranslations('more');
-  const links = MORE_LINKS.filter((l) => l.key !== 'settings');
+  const links = MORE_LINKS.filter((l) => l.key !== 'settings' && (admin || !l.adminOnly));
   const tile = (active: boolean) =>
     cn(
       'flex rounded-lg bg-surface-muted text-text transition-colors hover:bg-border focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent',
@@ -149,17 +166,24 @@ export function NavDrawer({
   onOpenChange,
   pathname,
   members,
+  admin = false,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   pathname: string;
   members: HouseholdMemberDto[];
+  admin?: boolean;
 }) {
   const t = useTranslations('more');
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent title={t('title')} closeLabel={t('close')}>
-        <MoreGrid pathname={pathname} members={members} onNavigate={() => onOpenChange(false)} />
+        <MoreGrid
+          pathname={pathname}
+          members={members}
+          admin={admin}
+          onNavigate={() => onOpenChange(false)}
+        />
       </DialogContent>
     </Dialog>
   );

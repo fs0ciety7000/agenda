@@ -41,7 +41,7 @@ import { GoogleApiError, GoogleCalendarClient } from './google-calendar.client';
 const FLOW_COOKIE = 'gn_cal_oauth';
 const FLOW_PATH = '/v1/calendar/google';
 const safeNext = (next?: string) =>
-  next && next.startsWith('/') && !next.startsWith('//') ? next : '/settings';
+  next && next.startsWith('/') && !next.startsWith('//') ? next : '/settings/preferences';
 const withParam = (path: string, param: string) =>
   `${path}${path.includes('?') ? '&' : '?'}${param}`;
 
@@ -119,7 +119,7 @@ export class CalendarController {
       this.logger.warn(
         `Calendar connection failed: flow cookie ${raw ? `invalid (${e instanceof Error ? e.message : String(e)})` : 'missing'}`,
       );
-      return res.redirect('/settings?calendarError=GOOGLE_FLOW_EXPIRED');
+      return res.redirect('/settings/preferences?calendarError=GOOGLE_FLOW_EXPIRED');
     }
     if (error) {
       this.logger.warn(`Calendar connection failed: Google returned error=${error}`);

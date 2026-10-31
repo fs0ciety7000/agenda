@@ -304,7 +304,7 @@ export class AuthService {
         os: device.os,
         at: new Date(),
         timeZone: membership?.household.timezone ?? 'Europe/Brussels',
-        url: `${env().WEB_ORIGIN}/settings#s-account`,
+        url: `${env().WEB_ORIGIN}/settings/account`,
       });
       await this.mail.send({ to: user.email, ...email });
     } catch (e) {

@@ -16,7 +16,7 @@ l'avance. Sur téléphone, **Plus → Dates importantes** ; sur ordinateur, **Da
   obligatoire, et la date passe en « Passée » ensuite.
 - **Rappel** : le jour même, la veille, ou 3, 7, 14 ou 30 jours avant (7 par défaut). Le rappel
   arrive à **tout le foyer**, dans la cloche et en notification, à partir de 8 h (heure du foyer),
-  une seule fois par occurrence. Il se règle dans **Réglages → Notifications** (« Date importante
+  une seule fois par occurrence. Il se règle dans **Réglages → Préférences → Notifications** (« Date importante
   qui approche »).
 - La liste montre les dates **les plus proches d'abord** : « mardi 13 octobre · dans 5 jours ·
   76 ans ».

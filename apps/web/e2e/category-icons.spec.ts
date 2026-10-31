@@ -5,7 +5,7 @@ test('catégories : icônes maison à la place des émojis, choisies dans une gr
   page,
 }) => {
   await signUpWithHousehold(page, 'Emma');
-  await openSettings(page);
+  await openSettings(page, 'Foyer');
   // Les catégories par défaut (émoji en base) s'affichent avec leur icône dessinée.
   const list = page.getByRole('button', { name: 'Modifier Maison' }).locator('xpath=ancestor::ul');
   await expect(list.locator('svg').first()).toBeVisible();

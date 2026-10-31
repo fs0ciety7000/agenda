@@ -12,9 +12,9 @@ description: Obtenir de l'aide, signaler un bug, proposer une idée ou poser une
 
 ## Envoyer un signalement
 
-- **Site** : **Réglages → Aide → Signaler un problème** (ou le bouton *Signaler ce problème* sur
+- **Site** : **Réglages → Données et aide → Aide → Signaler un problème** (ou le bouton *Signaler ce problème* sur
   une page d'erreur).
-- **App Android** : **Réglages → Aide**.
+- **App Android** : **Réglages → Données et aide**.
 
 Choisissez le type (**Bug**, **Idée**, **Question**, **Autre**), résumez en quelques mots, puis
 détaillez : ce que vous faisiez, ce qui s'est passé, ce que vous attendiez. Vous pouvez joindre

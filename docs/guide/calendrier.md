@@ -31,7 +31,7 @@ disponible dans les vues jour et 3 jours.
 Les tâches planifiées peuvent apparaître dans un **agenda Google partagé** du foyer (par exemple
 « Commun G & N »).
 
-1. **Réglages → Calendrier partagé → Connecter Google Calendar**, puis accepter l'accès sur
+1. **Réglages → Préférences → Calendrier partagé → Connecter Google Calendar**, puis accepter l'accès sur
    l'écran Google (cocher les deux cases demandées).
 2. Choisir le calendrier commun. Il doit être modifiable par votre compte ; s'il n'apparaît pas,
    demandez à la personne qui l'a créé de le partager avec vous (« Modifier les événements »).
@@ -56,7 +56,7 @@ Ce qui se passe ensuite :
 Pas de compte Google ? Un **lien iCal privé** affiche vos tâches datées dans n'importe quel agenda,
 en lecture seule :
 
-1. **Réglages → Calendrier → Abonnement iCal → Créer mon lien**, puis **Copier**.
+1. **Réglages → Préférences → Calendrier partagé → Abonnement iCal → Créer mon lien**, puis **Copier**.
 2. Dans votre agenda :
    - **Apple Calendrier** (Mac, iPhone) : *Ouvrir dans Apple Calendrier*, ou *Fichier → Nouvel
      abonnement* et coller le lien ;

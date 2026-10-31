@@ -1,7 +1,7 @@
 Identité « Deux fils » : logo, fond papier, cobalt, titres en serif.
 • Icônes dessinées pour catégories, rayons et dépenses.
+• Réglages en quatre rubriques : Foyer, Compte et sécurité, Préférences, Données et aide.
 • Aujourd'hui : barre « Qu'est-ce qu'on fait ? » en bas, courses en direct, « Journée bouclée ».
 • Courses : la liste d'abord, puces de rayons, ajout en bas avec le scanner.
 • Tâches et Plus redessinés, coche animée.
 • Calendrier : vue Semaine, ajout rapide au jour choisi.
-• Bilan du mois des dépenses, le 1er.

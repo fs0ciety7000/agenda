@@ -208,13 +208,13 @@ export class GoogleSignInController {
     // Rattachement depuis les Réglages (utilisateur déjà connecté).
     if (flow.linkUserId) {
       if (identity && identity.userId !== flow.linkUserId)
-        return fail('GOOGLE_ALREADY_LINKED', '/settings');
+        return fail('GOOGLE_ALREADY_LINKED', '/settings/data');
       if (!identity) {
         await this.prisma.authIdentity.create({
           data: { userId: flow.linkUserId, provider: 'GOOGLE', providerSubject: profile.sub },
         });
       }
-      return res.redirect('/settings?linked=google');
+      return res.redirect('/settings/data?linked=google');
     }
 
     let user = identity && !identity.user.deletedAt ? identity.user : null;

@@ -28,7 +28,7 @@ export function NotificationBell({ className }: { className?: string }) {
     if (!n.readAt) markRead.mutate([n.id]);
     setOpen(false);
     if (n.occurrenceId) router.push(`/?open=${n.occurrenceId}`);
-    else if (n.type === 'CALENDAR_SYNC_FAILED') router.push('/settings');
+    else if (n.type === 'CALENDAR_SYNC_FAILED') router.push('/settings/preferences');
     else if (n.type === 'EXPENSE_BUDGET') router.push('/expenses');
     else if (n.type === 'EXPENSE_MONTHLY') router.push(`/expenses?month=${n.month}`);
     else if (n.type === 'IMPORTANT_DATE') router.push('/dates');

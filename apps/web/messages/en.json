@@ -20,7 +20,8 @@
     "expenses": "Expenses",
     "more": "More",
     "notes": "Notes",
-    "dates": "Dates"
+    "dates": "Dates",
+    "admin": "Administration"
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -195,16 +196,32 @@
     "activity": "Activity and trash",
     "activityHint": "Who did what, and tasks deleted in the last 30 days.",
     "activityOpen": "Open the activity log",
-    "admin": "Administration",
-    "adminOpen": "Open administration",
-    "adminHint": "Accounts, households, backups, delivery tests.",
     "help": "Help",
     "helpHint": "A bug, an idea, a question? Report it; the documentation answers common questions.",
     "faq": "Frequently asked questions",
     "report": "Report a problem",
     "docs": "Documentation",
     "status": "Service status",
-    "backup": "Household backup"
+    "backup": "Household backup",
+    "sections": {
+      "household": {
+        "title": "Household",
+        "hint": "Members, absences, categories, templates, add by email"
+      },
+      "account": {
+        "title": "Account and security",
+        "hint": "Password, passkeys, two-factor authentication, devices"
+      },
+      "preferences": {
+        "title": "Preferences",
+        "hint": "Appearance, language, notifications, calendar"
+      },
+      "data": {
+        "title": "Data and help",
+        "hint": "Privacy, backup, help, Android app"
+      }
+    },
+    "signIn": "Sign-in"
   },
   "common": {
     "loading": "Loading…",
@@ -1309,7 +1326,7 @@
     },
     "settings": {
       "title": "Settings",
-      "hint": "Household, account, notifications, language"
+      "hint": "Household, account, preferences, data"
     },
     "notes": {
       "title": "Notes",
@@ -1318,6 +1335,10 @@
     "dates": {
       "title": "Important dates",
       "hint": "Birthdays, anniversaries, yearly servicing"
+    },
+    "admin": {
+      "title": "Administration",
+      "hint": "Accounts, households, backups, send tests"
     }
   },
   "expenses": {

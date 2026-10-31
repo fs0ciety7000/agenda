@@ -1,245 +1,56 @@
 'use client';
 
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useTranslations } from 'next-intl';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useSession } from '@/components/app/household-context';
-import { CalendarSettings } from '@/components/app/calendar-settings';
-import { CategoriesSettings } from '@/components/app/categories-settings';
-import { TemplatesSettings } from '@/components/app/templates';
-import { InboundEmailSettings } from '@/components/app/inbound-email';
-import { AbsencesSettings } from '@/components/app/absences';
-import { BackupSettings } from '@/components/app/backup-settings';
-import { TwoFactorSettings } from '@/components/app/two-factor-settings';
-import { IcalFeedSettings } from '@/components/app/ical-feed';
-import { InviteLink } from '@/components/app/invite-link';
-import { LanguageSwitcher } from '@/components/app/language-switcher';
-import { AndroidAppCard } from '@/components/app/android-app-card';
-import { NotificationSettings } from '@/components/app/notification-settings';
-import { PasskeySettings } from '@/components/app/passkeys';
-import { DeviceSessions } from '@/components/app/device-sessions';
-import { PasswordSettings } from '@/components/app/password-settings';
-import { PrivacySettings } from '@/components/app/privacy-settings';
 import { MemberAvatar } from '@/components/app/member-avatar';
-import { Button } from '@/components/ui/button';
-import { Card, SectionTitle } from '@/components/ui/card';
-import { api } from '@/lib/api';
-import { cn } from '@/lib/cn';
-import { clearOfflineData } from '@/lib/offline';
-import { applyTheme, readTheme, type ThemePreference } from '@/lib/theme';
+import { SettingsMenu } from '@/components/app/settings-nav';
 
-const THEMES: ThemePreference[] = ['system', 'light', 'dark'];
+/**
+ * Anciennes adresses (avant les rubriques) : retours de Google et liens des e-mails déjà
+ * envoyés arrivent sur `/settings` ; on les renvoie vers la bonne sous-page.
+ */
+function LegacyRedirect() {
+  const router = useRouter();
+  const params = useSearchParams();
+  useEffect(() => {
+    const query = params.toString();
+    const suffix = query ? `?${query}` : '';
+    if (params.has('calendar') || params.has('calendarError'))
+      router.replace(`/settings/preferences${suffix}`);
+    else if (params.has('linked') || params.has('error')) router.replace(`/settings/data${suffix}`);
+    else if (window.location.hash === '#s-account') router.replace('/settings/account');
+  }, [params, router]);
+  return null;
+}
 
+/** Réglages : le foyer en tête, puis les quatre rubriques. */
 export default function SettingsPage() {
   const t = useTranslations('settings');
-  const tb = useTranslations('backup');
-  const router = useRouter();
-  const queryClient = useQueryClient();
   const { household, me } = useSession();
-  const [theme, setTheme] = useState<ThemePreference>('system');
-  useEffect(() => {
-    setTheme(readTheme());
-  }, []);
-
-  const signOut = useMutation({
-    mutationFn: (all: boolean) =>
-      api<void>(all ? '/v1/auth/logout-all' : '/v1/auth/logout', { method: 'POST', json: {} }),
-    onSettled: async () => {
-      queryClient.clear();
-      await clearOfflineData();
-      router.replace('/login');
-    },
-  });
-
   return (
     <div className="flex flex-col gap-8">
+      <Suspense>
+        <LegacyRedirect />
+      </Suspense>
       <h1 className="font-display text-[2rem] font-normal leading-tight tracking-[-0.02em]">
         {t('title')}
       </h1>
-
-      <section className="flex flex-col gap-3" aria-labelledby="s-household">
-        <SectionTitle id="s-household">{t('household')}</SectionTitle>
-        <Card className="flex flex-col gap-5">
-          <p className="text-lg font-medium">{household.name}</p>
-          <ul aria-label={t('members')} className="flex flex-col gap-3">
-            {household.members.map((m) => (
-              <li key={m.id} className="flex items-center gap-3">
-                <MemberAvatar member={m} />
-                <span className="text-[0.9375rem]">{m.displayName}</span>
-                {m.role === 'OWNER' && (
-                  <span className="text-[0.8125rem] text-text-muted">· {t('owner')}</span>
-                )}
-                {m.pending && (
-                  <span className="text-[0.8125rem] text-text-muted">· {tb('pending')}</span>
-                )}
-              </li>
-            ))}
-          </ul>
-          {/* Membre restauré pas encore arrivé : un nouveau lien remplace celui qui aurait expiré. */}
-          {(household.members.length < 2 || household.members.some((m) => m.pending)) && (
-            <InviteLink householdId={household.id} />
-          )}
-        </Card>
-      </section>
-
-      <AbsencesSettings />
-
-      <section className="flex flex-col gap-3" aria-labelledby="s-categories">
-        <SectionTitle id="s-categories">{t('categories')}</SectionTitle>
-        <Card>
-          <CategoriesSettings />
-        </Card>
-      </section>
-
-      <section className="flex flex-col gap-3" aria-labelledby="s-templates">
-        <SectionTitle id="s-templates">{t('templates')}</SectionTitle>
-        <Card>
-          <TemplatesSettings />
-        </Card>
-      </section>
-
-      <InboundEmailSettings householdId={household.id} />
-
-      {me.isAdmin && (
-        <section className="flex flex-col gap-3" aria-labelledby="s-admin">
-          <SectionTitle id="s-admin">{t('admin')}</SectionTitle>
-          <Card className="flex flex-wrap items-center justify-between gap-3">
-            <p className="text-[0.9375rem] text-text-muted">{t('adminHint')}</p>
-            <Button asChild variant="secondary">
-              <Link href="/admin">{t('adminOpen')}</Link>
-            </Button>
-          </Card>
-        </section>
-      )}
-
-      <section className="flex flex-col gap-3" aria-labelledby="s-activity">
-        <SectionTitle id="s-activity">{t('activity')}</SectionTitle>
-        <Card className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-[0.9375rem] text-text-muted">{t('activityHint')}</p>
-          <Button asChild variant="secondary">
-            <Link href="/history">{t('activityOpen')}</Link>
-          </Button>
-        </Card>
-      </section>
-
-      <section className="flex flex-col gap-3" aria-labelledby="s-calendar">
-        <SectionTitle id="s-calendar">{t('calendar')}</SectionTitle>
-        <Card className="flex flex-col gap-4">
-          <Suspense>
-            <CalendarSettings />
-          </Suspense>
-          <IcalFeedSettings householdId={household.id} />
-        </Card>
-      </section>
-
-      <section className="flex flex-col gap-3" aria-labelledby="s-appearance">
-        <SectionTitle id="s-appearance">{t('appearance')}</SectionTitle>
-        <div
-          role="radiogroup"
-          aria-labelledby="s-appearance"
-          className="inline-flex self-start rounded-md border border-border bg-surface p-1"
-        >
-          {THEMES.map((value) => (
-            <button
-              key={value}
-              role="radio"
-              aria-checked={theme === value}
-              onClick={() => {
-                applyTheme(value);
-                setTheme(value);
-              }}
-              className={cn(
-                'min-h-9 rounded-sm px-4 py-1.5 text-sm text-text-muted transition-colors',
-                theme === value && 'bg-surface-muted font-medium text-text',
-              )}
-            >
-              {t(`theme.${value}`)}
-            </button>
+      <div className="flex items-center gap-4">
+        <span className="flex shrink-0">
+          {household.members.slice(0, 3).map((m, i) => (
+            <span key={m.id} className={i > 0 ? '-ml-3 rounded-full ring-2 ring-bg' : ''}>
+              <MemberAvatar member={m} size="lg" />
+            </span>
           ))}
-        </div>
-      </section>
-
-      <section className="flex flex-col gap-3" aria-labelledby="s-language">
-        <SectionTitle id="s-language">{t('language')}</SectionTitle>
-        <LanguageSwitcher account label={t('language')} />
-      </section>
-
-      <section className="flex flex-col gap-3" aria-labelledby="s-notifications">
-        <SectionTitle id="s-notifications">{t('notifications')}</SectionTitle>
-        <Card>
-          <NotificationSettings />
-        </Card>
-      </section>
-
-      <section className="flex flex-col gap-3" aria-labelledby="s-privacy">
-        <SectionTitle id="s-privacy">{t('privacy')}</SectionTitle>
-        <Card>
-          <Suspense>
-            <PrivacySettings />
-          </Suspense>
-        </Card>
-      </section>
-
-      <section className="flex flex-col gap-3" aria-labelledby="s-backup">
-        <SectionTitle id="s-backup">{t('backup')}</SectionTitle>
-        <Card>
-          <BackupSettings householdId={household.id} />
-        </Card>
-      </section>
-
-      <section className="flex flex-col gap-3" aria-labelledby="s-help">
-        <SectionTitle id="s-help">{t('help')}</SectionTitle>
-        <Card className="flex flex-col gap-3">
-          <p className="text-[0.9375rem] text-text-muted">{t('helpHint')}</p>
-          <div className="flex flex-wrap gap-2">
-            <Button asChild variant="secondary" className="self-start">
-              <Link href="/help">{t('faq')}</Link>
-            </Button>
-            <Button asChild variant="secondary" className="self-start">
-              <Link href="/report?from=/settings">{t('report')}</Link>
-            </Button>
-            <Button asChild variant="ghost" className="self-start">
-              <a href={process.env.NEXT_PUBLIC_DOCS_URL || 'https://docs.tandem-agenda.app'}>
-                {t('docs')}
-              </a>
-            </Button>
-            <Button asChild variant="ghost" className="self-start">
-              <Link href="/status">{t('status')}</Link>
-            </Button>
-          </div>
-        </Card>
-      </section>
-
-      <section className="flex flex-col gap-3" aria-labelledby="s-account">
-        <SectionTitle id="s-account">{t('account')}</SectionTitle>
-        <Card className="flex flex-col gap-4">
-          <PasswordSettings />
-          <PasskeySettings />
-          <TwoFactorSettings />
-        </Card>
-        <Card className="flex flex-col gap-4">
-          <DeviceSessions />
-        </Card>
-        <AndroidAppCard />
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <Button
-            variant="secondary"
-            onClick={() => signOut.mutate(false)}
-            loading={signOut.isPending && !signOut.variables}
-          >
-            {t('logout')}
-          </Button>
-          <Button
-            variant="ghost"
-            onClick={() => signOut.mutate(true)}
-            loading={signOut.isPending && signOut.variables}
-          >
-            {t('logoutAll')}
-          </Button>
-        </div>
-      </section>
+        </span>
+        <span className="flex min-w-0 flex-col">
+          <span className="break-words text-lg font-medium">{household.name}</span>
+          <span className="break-words text-[0.875rem] text-text-muted">{me.email}</span>
+        </span>
+      </div>
+      <SettingsMenu />
     </div>
   );
 }

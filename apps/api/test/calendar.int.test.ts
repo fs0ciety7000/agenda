@@ -58,7 +58,7 @@ describe('Google Calendar — connexion, synchronisation, erreurs (intégration)
 
   async function startFlow(auth: Record<string, string>) {
     const start = await http()
-      .get('/v1/calendar/google/connect?next=/settings')
+      .get('/v1/calendar/google/connect?next=/settings/preferences')
       .set(auth)
       .expect(302);
     const state = new URL(start.headers.location!).searchParams.get('state')!;
@@ -76,7 +76,7 @@ describe('Google Calendar — connexion, synchronisation, erreurs (intégration)
       )
       .set('Cookie', flow)
       .expect(302);
-    expect(res.headers.location).toBe('/settings?calendar=connected');
+    expect(res.headers.location).toBe('/settings/preferences?calendar=connected');
   }
 
   const weeklyTask = (h: Awaited<ReturnType<typeof setup>>, extra: object = {}) =>
@@ -101,11 +101,11 @@ describe('Google Calendar — connexion, synchronisation, erreurs (intégration)
     it('connexion lancée depuis un autre domaine : retour aux réglages sur le bon domaine', async () => {
       const h = await setup({ link: false });
       const res = await http()
-        .get('/v1/calendar/google/connect?next=/settings')
+        .get('/v1/calendar/google/connect?next=/settings/preferences')
         .set(h.nicolas.auth)
         .set('x-forwarded-host', 'ancien.example')
         .expect(302);
-      expect(res.headers.location).toBe('http://localhost:3000/settings');
+      expect(res.headers.location).toBe('http://localhost:3000/settings/preferences');
       expect(res.headers['set-cookie']).toBeUndefined();
     });
 
@@ -136,22 +136,24 @@ describe('Google Calendar — connexion, synchronisation, erreurs (intégration)
       };
       // Cookie de flux absent (autre navigateur, cookies bloqués ou > 10 min).
       let res = await callback('code=x%7Cy&state=s');
-      expect(res.headers.location).toBe('/settings?calendarError=GOOGLE_FLOW_EXPIRED');
+      expect(res.headers.location).toBe('/settings/preferences?calendarError=GOOGLE_FLOW_EXPIRED');
       // Annulation sur l'écran Google.
       let f = await startFlow(h.grace.auth);
       res = await callback(`error=access_denied&state=${f.state}`, f.flow);
-      expect(res.headers.location).toBe('/settings?calendarError=GOOGLE_DENIED');
+      expect(res.headers.location).toBe('/settings/preferences?calendarError=GOOGLE_DENIED');
       // state falsifié.
       f = await startFlow(h.grace.auth);
       res = await callback('code=x%7Cy&state=forged', f.flow);
-      expect(res.headers.location).toBe('/settings?calendarError=GOOGLE_FLOW_EXPIRED');
+      expect(res.headers.location).toBe('/settings/preferences?calendarError=GOOGLE_FLOW_EXPIRED');
       // Consentement granulaire : accès aux événements décoché.
       google.uncheckedScopes = ['https://www.googleapis.com/auth/calendar.events'];
       try {
         f = await startFlow(h.grace.auth);
         const code = encodeURIComponent(`sub-scopes-${h.householdId}|grace@gmail.test`);
         res = await callback(`code=${code}&state=${f.state}`, f.flow);
-        expect(res.headers.location).toBe('/settings?calendarError=GOOGLE_SCOPES_MISSING');
+        expect(res.headers.location).toBe(
+          '/settings/preferences?calendarError=GOOGLE_SCOPES_MISSING',
+        );
       } finally {
         google.uncheckedScopes = [];
       }
@@ -159,7 +161,7 @@ describe('Google Calendar — connexion, synchronisation, erreurs (intégration)
       google.failNext('token.exchange', 'bad_request');
       f = await startFlow(h.grace.auth);
       res = await callback(`code=a%7Cb&state=${f.state}`, f.flow);
-      expect(res.headers.location).toBe('/settings?calendarError=GOOGLE_FAILED');
+      expect(res.headers.location).toBe('/settings/preferences?calendarError=GOOGLE_FAILED');
 
       const grace = await http().get(`${h.base}/calendar`).set(h.grace.auth).expect(200);
       expect(grace.body.connection).toBeNull();

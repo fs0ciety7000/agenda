@@ -92,6 +92,10 @@ for (const scheme of ['light', 'dark'] as const) {
         '/review',
         '/history',
         '/settings',
+        '/settings/household',
+        '/settings/account',
+        '/settings/preferences',
+        '/settings/data',
         '/report',
       ]) {
         await page.goto(path);

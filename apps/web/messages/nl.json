@@ -20,7 +20,8 @@
     "expenses": "Uitgaven",
     "more": "Meer",
     "notes": "Notities",
-    "dates": "Data"
+    "dates": "Data",
+    "admin": "Beheer"
   },
   "auth": {
     "loginTitle": "Welkom terug",
@@ -195,16 +196,32 @@
     "activity": "Activiteit en prullenbak",
     "activityHint": "Wie wat deed, en taken die de afgelopen 30 dagen zijn verwijderd.",
     "activityOpen": "Activiteitenlog openen",
-    "admin": "Beheer",
-    "adminOpen": "Beheer openen",
-    "adminHint": "Accounts, huishoudens, back-ups, verzendtests.",
     "help": "Hulp",
     "helpHint": "Een bug, een idee, een vraag? Meld het; de documentatie beantwoordt veelgestelde vragen.",
     "faq": "Veelgestelde vragen",
     "report": "Een probleem melden",
     "docs": "Documentatie",
     "status": "Status van de dienst",
-    "backup": "Back-up van het huishouden"
+    "backup": "Back-up van het huishouden",
+    "sections": {
+      "household": {
+        "title": "Huishouden",
+        "hint": "Leden, afwezigheden, categorieën, sjablonen, toevoegen per e-mail"
+      },
+      "account": {
+        "title": "Account en beveiliging",
+        "hint": "Wachtwoord, passkeys, tweestapsverificatie, apparaten"
+      },
+      "preferences": {
+        "title": "Voorkeuren",
+        "hint": "Weergave, taal, meldingen, agenda"
+      },
+      "data": {
+        "title": "Gegevens en hulp",
+        "hint": "Privacy, back-up, hulp, Android-app"
+      }
+    },
+    "signIn": "Inloggen"
   },
   "common": {
     "loading": "Laden…",
@@ -1309,7 +1326,7 @@
     },
     "settings": {
       "title": "Instellingen",
-      "hint": "Huishouden, account, meldingen, taal"
+      "hint": "Huishouden, account, voorkeuren, gegevens"
     },
     "notes": {
       "title": "Notities",
@@ -1318,6 +1335,10 @@
     "dates": {
       "title": "Belangrijke data",
       "hint": "Verjaardagen, jubilea, jaarlijks onderhoud"
+    },
+    "admin": {
+      "title": "Beheer",
+      "hint": "Accounts, huishoudens, back-ups, verzendtests"
     }
   },
   "expenses": {

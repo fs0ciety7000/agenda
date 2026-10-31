@@ -36,7 +36,7 @@ describe('E-mail « Nouvel appareil connecté »', () => {
     await vi.waitFor(() => expect(alertsFor(user.email)).toHaveLength(1));
     const alert = alertsFor(user.email)[0]!;
     expect(alert.text).toContain('Chrome sur Windows');
-    expect(alert.text).toContain('/settings#s-account');
+    expect(alert.text).toContain('/settings/account');
 
     // Même navigateur, même système : pas de nouvel e-mail.
     await login(user.email, CHROME_WINDOWS.replace('Chrome/141.0', 'Chrome/142.0'));

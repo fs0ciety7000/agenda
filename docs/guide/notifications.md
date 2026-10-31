@@ -18,12 +18,12 @@ description: Centre de notifications, notifications du navigateur et du téléph
 | Le 1er du mois, le bilan des dépenses du mois écoulé (s'il y a eu des dépenses communes) | « Bilan du mois · septembre : 312,40 € de dépenses communes (3 dépenses, budget 800 €). Payé : Emma 200 €, Tom 112,40 € » |
 | Problème de synchronisation Google Agenda | « La synchronisation est interrompue » |
 
-Tout arrive dans le **centre de notifications** (la cloche). **Réglages → Notifications** choisit,
+Tout arrive dans le **centre de notifications** (la cloche). **Réglages → Préférences → Notifications** choisit,
 pour chaque type, *Dans l'app* et/ou *Notification* (téléphone et navigateurs activés).
 
 ## Sur le navigateur
 
-**Réglages → Notifications → Activer sur ce navigateur** : les notifications arrivent même site
+**Réglages → Préférences → Notifications → Activer sur ce navigateur** : les notifications arrivent même site
 fermé, sur ordinateur comme sur mobile. Sur iPhone, ajoutez d'abord le site à l'écran d'accueil
 (Partager → Sur l'écran d'accueil). Si elles sont bloquées, autorisez-les dans les réglages du
 site du navigateur (icône à gauche de l'adresse).

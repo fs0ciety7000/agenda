@@ -18,7 +18,7 @@ test('appareils connectés : voir l’autre connexion et la déconnecter à dist
   await phone.getByRole('button', { name: 'Se connecter', exact: true }).click();
   await expect(phone.getByRole('heading', { name: 'Bonjour Grace' })).toBeVisible();
 
-  await openSettings(page);
+  await openSettings(page, 'Compte et sécurité');
   const list = page.getByRole('list', { name: 'Appareils connectés' });
   await expect(list.getByText('Cet appareil')).toBeVisible();
   await expect(list.getByText('Firefox · Linux')).toBeVisible();
@@ -49,7 +49,7 @@ test('appareils connectés : déconnecter tous les autres d’un coup', async ({
     others.push({ context, page: p });
   }
 
-  await openSettings(page);
+  await openSettings(page, 'Compte et sécurité');
   const list = page.getByRole('list', { name: 'Appareils connectés' });
   await expect(list.getByText('Edge · Windows')).toBeVisible();
   await page.getByRole('button', { name: 'Déconnecter les autres appareils' }).click();

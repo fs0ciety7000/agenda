@@ -61,7 +61,7 @@ d'écraser son travail : vérifiez, puis enregistrez à nouveau.
 - **Reporter** en un geste : *Demain* ou *Ce week-end* depuis la fiche, la notification de rappel
   ou le widget Android.
 - **Supprimer** envoie la tâche à la **corbeille** du foyer, où elle reste **30 jours**
-  (**Réglages → Journal et corbeille**). *Annuler* est aussi proposé juste après.
+  (**Réglages → Foyer → Journal et corbeille**). *Annuler* est aussi proposé juste après.
 
 ## Sous-tâches et listes
 
@@ -103,13 +103,13 @@ sous la tâche. Un nouvel appui retire le merci ; rouvrir la tâche efface les m
 
 ## Modèles de tâches
 
-**Réglages → Modèles de tâches** : un modèle regroupe plusieurs tâches (« Ménage du samedi » :
+**Réglages → Foyer → Modèles de tâches** : un modèle regroupe plusieurs tâches (« Ménage du samedi » :
 aspirateur, salle de bain, draps). **Utiliser un modèle** crée toutes ses tâches pour aujourd'hui,
 demain, ce week-end, un autre jour ou sans date.
 
 ## Catégories et icônes
 
-**Réglages → Catégories** : renommer, ajouter ou supprimer une catégorie, et lui choisir une
+**Réglages → Foyer → Catégories** : renommer, ajouter ou supprimer une catégorie, et lui choisir une
 icône. Touchez le bouton d'icône à gauche du nom : une grille de dessins s'ouvre (maison, ménage,
 cuisine, enfants, santé…), ou **Sans icône**. Les modèles de tâches se règlent de la même façon.
 Les rayons des courses et les catégories de dépenses ont aussi leur icône, sur le site comme sur
@@ -117,7 +117,7 @@ Android.
 
 ## Journal d'activité
 
-**Réglages → Journal et corbeille → Journal** : qui a fait quoi, et quand (création, modification,
+**Réglages → Foyer → Journal et corbeille → Journal** : qui a fait quoi, et quand (création, modification,
 « a terminé », suppression, restauration…). Exportable en **CSV**. Conservé **un an**. Vos tâches
 personnelles n'y apparaissent que pour vous.
 
@@ -131,7 +131,7 @@ Le dimanche, un bandeau sur **Aujourd'hui** ouvre la **Revue de la semaine** (au
 - la semaine suivante : nombre de tâches prévues et répartition entre vous.
 
 Sur **Android**, une notification « Votre semaine » arrive le dimanche à 19 h et ouvre la revue.
-Elle se désactive dans **Réglages → Notifications**. Les flèches permettent aussi de revoir les
+Elle se désactive dans **Réglages → Préférences → Notifications**. Les flèches permettent aussi de revoir les
 semaines précédentes.
 
 ## Bilan

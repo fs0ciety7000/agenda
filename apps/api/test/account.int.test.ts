@@ -329,7 +329,7 @@ describe('Compte : mot de passe oublié, Google Sign-In, RGPD (intégration)', (
         )
         .set('Cookie', [flowCookie])
         .expect(302);
-      expect(res.headers.location).toBe('/settings?linked=google');
+      expect(res.headers.location).toBe('/settings/data?linked=google');
       expect(
         await prisma.authIdentity.findFirst({ where: { providerSubject: sub } }),
       ).toMatchObject({ userId: login.body.user.id });
