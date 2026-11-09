@@ -14,7 +14,11 @@ services:
         # Site vitrine : « / » sans session y redirige (vide = page de connexion), cf. §15.
         SITE_URL: ${SITE_URL:-https://decouvrir.tandem-agenda.app}
     restart: unless-stopped
+    # Mémoire bornée (docs/deployment.md §10.1) : tas V8 plafonné à 512 Mo, conteneur à 768 Mo
+    # (tas + code, tampons et sharp hors tas). Au-delà, OOM puis relance par `restart`.
+    mem_limit: 768m
     environment:
+      NODE_OPTIONS: --max-old-space-size=512
       # Adresse affichée sur /privacy (politique de confidentialité).
       PRIVACY_CONTACT_EMAIL: ${PRIVACY_CONTACT_EMAIL:-support@tandem-agenda.app}
       SITE_URL: ${SITE_URL:-https://decouvrir.tandem-agenda.app}
@@ -30,10 +34,15 @@ services:
       context: .
       dockerfile: apps/api/Dockerfile
     restart: unless-stopped
+    # Mémoire bornée (docs/deployment.md §10.1) : tas V8 à 640 Mo (restauration d'une sauvegarde :
+    # JSON jusqu'à 64 Mo analysé en mémoire), conteneur à 1 Go (fichiers de la sauvegarde hors tas,
+    # jusqu'à ~216 Mo, plus Tesseract et zbar, lancés comme processus enfants).
+    mem_limit: 1g
     expose:
       - '4000'
     environment:
       NODE_ENV: production
+      NODE_OPTIONS: --max-old-space-size=640
       PORT: '4000'
       # Origine PUBLIQUE du web (CORS, redirections OAuth).
       WEB_ORIGIN: ${WEB_ORIGIN:?WEB_ORIGIN est requis (ex. https://tandem-agenda.app)}
