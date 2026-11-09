@@ -412,6 +412,26 @@ Vue complète (sondes internes, page `/status`, alertes, Uptime Kuma, Prometheus
   4. Vérifier : Sentry → *Issues* ; les alertes email sont actives par défaut.
   Aucune donnée personnelle n'est envoyée (ni email, ni contenu des tâches, ni jetons).
 
+### 10.1 Mémoire des conteneurs
+
+Node.js ne rend pas sa mémoire tant qu'on ne lui fixe pas de plafond : sans borne, le conteneur
+`web` a atteint 3,85 Go après 9 jours (novembre 2026), pour 200 à 400 Mo attendus. Les deux
+services Node sont donc bornés dans `docker-compose.prod.yml` (rien à régler dans Coolify) :
+
+| Service | Tas V8 (`NODE_OPTIONS`) | Conteneur (`mem_limit`) | Pourquoi |
+|---|---|---|---|
+| `web` | `--max-old-space-size=512` | `768m` | Rendu Next.js ; la marge couvre le code, les tampons et l'optimisation d'images (sharp, hors tas) |
+| `api` | `--max-old-space-size=640` | `1g` | Restauration d'une sauvegarde (JSON jusqu'à 64 Mo analysé, fichiers jusqu'à ~216 Mo hors tas) ; Tesseract et zbar tournent dans le même conteneur |
+
+- Le plafond du tas fait travailler le ramasse-miettes plus tôt ; s'il ne suffit pas (vraie
+  fuite), Node s'arrête (`JavaScript heap out of memory` dans les logs) ou le noyau tue le
+  conteneur (OOM, code 137), et `restart: unless-stopped` le relance en quelques secondes.
+- Suivre la mémoire : Dozzle ou `docker stats` sur le serveur (Coolify n'affiche pas de
+  métriques pour une application Docker Compose). Un conteneur qui redémarre souvent ou reste
+  collé à sa limite signale une fuite à chercher, pas une limite à relever.
+- Relever une limite : modifier les deux valeurs ensemble dans `docker-compose.prod.yml` (le tas
+  à environ deux tiers du conteneur), puis redéployer.
+
 ## 11. Checklist de sécurité
 
 - [ ] Nuage orange actif, SSL **Full (strict)**, Always Use HTTPS.
@@ -443,6 +463,7 @@ Vue complète (sondes internes, page `/status`, alertes, Uptime Kuma, Prometheus
 | Synchro arrêtée au bout d'une semaine | App OAuth restée en *Testing* | La publier « In production », puis *Reconnecter* dans Réglages |
 | Tâches « en attente » de synchro qui n'avancent pas | `redis` non *healthy*, ou quota Google | Logs `api` (`Calendar sync mode: queue`, `Sweep …`) ; le balayage reprend toutes les 10 min |
 | « La lecture des tickets est indisponible » | Tesseract absent de l'image (image ancienne ou construite à la main) | Logs `api` : `Tesseract unavailable` ; reconstruire l'image de l'API |
+| `web` ou `api` redémarre seul, code 137 ou `JavaScript heap out of memory` dans les logs | Limite mémoire atteinte (§10.1) | Une fois : rien à faire, le service est relancé. Souvent : chercher la fuite (mémoire qui monte au fil des jours) avant de relever la limite |
 | Build `web` échoue sur `next/font` | Pas d'accès à `fonts.googleapis.com` pendant le build | Autoriser la sortie réseau du serveur pendant le build |
 
 ## 13. Site de documentation

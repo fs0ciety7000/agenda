@@ -201,6 +201,9 @@ test('calendrier mois sur téléphone : appui long sur « Déplacer », puis gli
   const handle = page.getByRole('button', {
     name: 'Déplacer « Sortir le compost » à un autre jour',
   });
+  // Un mois sur six lignes (novembre 2026) pousse la liste du jour sous la barre d'ajout fixée
+  // en bas : on la remonte au milieu de l'écran, comme le ferait le doigt, avant de la toucher.
+  await handle.evaluate((el) => el.scrollIntoView({ block: 'center' }));
   const from = (await handle.boundingBox())!;
   // Case du jour visé (le même numéro peut aussi exister dans le mois voisin affiché).
   const cell = page.locator(`button[data-date="${other}"]`);

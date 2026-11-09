@@ -364,6 +364,16 @@ maintenance restée dans l'ancien style, Réglages où l'on se perd.
   `error-pages` (dépôt `coolify`), dont les pages Tandem passent à « Deux fils » ; la copie de ce
   dépôt est retirée (S) 🪧 (#128)
 
+### Exploitation
+
+- [x] Mémoire bornée pour `web` et `api` : tas V8 plafonné (`NODE_OPTIONS`) et limite du
+  conteneur (`mem_limit`) ; `web` avait atteint 3,85 Go en 9 jours (S) ⚙️🌐 (#130)
+- [x] E2E : le glisser tactile du calendrier mois échouait les mois sur six lignes (novembre
+  2026), la poignée passant sous la barre d'ajout fixée en bas ; le test la remonte avant le
+  geste (S) 🌐 (#130)
+- [ ] Trouver la cause de la croissance mémoire du serveur Next.js : mesure reproductible en
+  local, suspects classés, correction (à prioriser ensemble) (M) 🌐
+
 ### Propositions de design
 
 - **Hiérarchie de l'accueil** : une seule action principale (ajout rapide) ; les sections
