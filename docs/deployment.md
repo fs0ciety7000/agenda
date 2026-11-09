@@ -415,8 +415,9 @@ Vue complète (sondes internes, page `/status`, alertes, Uptime Kuma, Prometheus
 ### 10.1 Mémoire des conteneurs
 
 Node.js ne rend pas sa mémoire tant qu'on ne lui fixe pas de plafond : sans borne, le conteneur
-`web` a atteint 3,85 Go après 9 jours (novembre 2026), pour 200 à 400 Mo attendus. Les deux
-services Node sont donc bornés dans `docker-compose.prod.yml` (rien à régler dans Coolify) :
+`web` a atteint 3,85 Go après 9 jours (novembre 2026), pour 200 à 400 Mo attendus. La cause
+(cache TanStack Query gardé 7 jours à chaque rendu serveur) est corrigée (#131) ; les deux
+services Node restent bornés dans `docker-compose.prod.yml` (rien à régler dans Coolify) :
 
 | Service | Tas V8 (`NODE_OPTIONS`) | Conteneur (`mem_limit`) | Pourquoi |
 |---|---|---|---|
