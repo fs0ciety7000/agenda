@@ -371,7 +371,7 @@ maintenance restée dans l'ancien style, Réglages où l'on se perd.
 - [x] Cause de la croissance mémoire du serveur Next.js : le cache TanStack Query (conservation
   de 7 jours pour le hors-ligne) armait, à chaque rendu serveur, un minuteur qui gardait tout le
   cache du rendu en mémoire pendant 7 jours (~0,2 Mo par page) ; plus de minuteur côté serveur,
-  mémoire stable sur 3 000 rendus en local (S) 🌐 (#PR2)
+  mémoire stable sur 3 000 rendus en local (S) 🌐 (#131)
 
 ### Propositions de design
 
