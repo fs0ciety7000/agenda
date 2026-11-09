@@ -1,40 +1,11 @@
 'use client';
 
-import { QueryClient, onlineManager } from '@tanstack/react-query';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { useEffect, useState, type ReactNode } from 'react';
 import { ToastProvider } from '@/components/ui/toast';
-import { ApiError } from '@/lib/api';
-import {
-  LEGACY_PERSIST_KEY,
-  PERSIST_KEY,
-  PERSIST_MAX_AGE,
-  registerOfflineMutations,
-} from '@/lib/offline';
-
-function makeClient() {
-  // TanStack Query suppose le réseau disponible au démarrage : on part de l'état réel.
-  if (typeof navigator !== 'undefined') onlineManager.setOnline(navigator.onLine);
-  const client = new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 30_000,
-        // Gardées assez longtemps pour être relues hors ligne (cache persistant).
-        gcTime: PERSIST_MAX_AGE,
-        refetchOnWindowFocus: true,
-        // Pas de retry sur les erreurs client (401, 404…) : seulement réseau / 5xx.
-        retry: (count, e) =>
-          count < 2 && (!(e instanceof ApiError) || e.status === 0 || e.status >= 500),
-      },
-      // Par défaut, une action échoue tout de suite hors ligne (message d'erreur) ; seules celles
-      // de lib/offline.ts sont mises en file.
-      mutations: { networkMode: 'always' },
-    },
-  });
-  registerOfflineMutations(client);
-  return client;
-}
+import { LEGACY_PERSIST_KEY, PERSIST_KEY, PERSIST_MAX_AGE } from '@/lib/offline';
+import { makeClient } from '@/lib/query-client';
 
 /** Stockage local (tâches, courses…) : relu au démarrage, même sans réseau. */
 const persister =
