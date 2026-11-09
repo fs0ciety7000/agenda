@@ -368,6 +368,9 @@ maintenance restée dans l'ancien style, Réglages où l'on se perd.
 
 - [x] Mémoire bornée pour `web` et `api` : tas V8 plafonné (`NODE_OPTIONS`) et limite du
   conteneur (`mem_limit`) ; `web` avait atteint 3,85 Go en 9 jours (S) ⚙️🌐 (#130)
+- [x] E2E : le glisser tactile du calendrier mois échouait les mois sur six lignes (novembre
+  2026), la poignée passant sous la barre d'ajout fixée en bas ; le test la remonte avant le
+  geste (S) 🌐 (#130)
 - [x] Cause de la croissance mémoire du serveur Next.js : le cache TanStack Query (conservation
   de 7 jours pour le hors-ligne) armait, à chaque rendu serveur, un minuteur qui gardait tout le
   cache du rendu en mémoire pendant 7 jours (~0,2 Mo par page) ; plus de minuteur côté serveur,
