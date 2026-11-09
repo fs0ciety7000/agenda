@@ -367,7 +367,7 @@ maintenance restée dans l'ancien style, Réglages où l'on se perd.
 ### Exploitation
 
 - [x] Mémoire bornée pour `web` et `api` : tas V8 plafonné (`NODE_OPTIONS`) et limite du
-  conteneur (`mem_limit`) ; `web` avait atteint 3,85 Go en 9 jours (S) ⚙️🌐 (#129)
+  conteneur (`mem_limit`) ; `web` avait atteint 3,85 Go en 9 jours (S) ⚙️🌐 (#130)
 - [ ] Trouver la cause de la croissance mémoire du serveur Next.js : mesure reproductible en
   local, suspects classés, correction (à prioriser ensemble) (M) 🌐
 
